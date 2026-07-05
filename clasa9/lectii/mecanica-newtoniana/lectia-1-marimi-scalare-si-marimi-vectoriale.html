@@ -1,15 +1,29 @@
 <!DOCTYPE html>
+
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Lecția 1: Mărimi scalare și mărimi vectoriale</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Lecția 1: Mărimi scalare și mărimi vectoriale</title>
+<link href="../../../main.css" rel="stylesheet"/><style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
 
-  <!-- CSS comun pentru toate paginile proiectului -->
-  <link rel="stylesheet" href="../../../assets/css/main.css" />
+    .lesson-page.is-active {
+      display: flex;
+    }
 
-  <!-- MathJax pentru formule -->
-  <script>
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+</style>
+<script>
     window.MathJax = {
       tex: {
         inlineMath: [['$', '$'], ['\\(', '\\)']],
@@ -18,1169 +32,619 @@
       svg: { fontCache: 'global' }
     };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-
-  <!-- Stiluri fallback pentru previzualizare locală.
-       În repository, mută acest bloc în assets/css/main.css dacă vrei CSS strict comun. -->
-  <style id="lesson-fallback">
-    :root{
-      --bg:#f4f7fb;
-      --panel:#ffffff;
-      --ink:#172033;
-      --muted:#5f6b7a;
-      --brand:#2563eb;
-      --brand-2:#0f766e;
-      --accent:#f59e0b;
-      --soft:#eaf2ff;
-      --soft-2:#ecfdf5;
-      --danger:#dc2626;
-      --ok:#15803d;
-      --radius:26px;
-      --shadow:0 18px 45px rgba(15,23,42,.12);
-      --maxw:1120px;
-    }
-
-    *{ box-sizing:border-box; }
-
-    html, body{
-      margin:0;
-      min-height:100%;
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34rem),
-        radial-gradient(circle at bottom right, rgba(20,184,166,.14), transparent 32rem),
-        var(--bg);
-      color:var(--ink);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height:1.55;
-    }
-
-    body{ overflow-x:hidden; }
-
-    .app{
-      width:min(var(--maxw), calc(100vw - 28px));
-      min-height:100vh;
-      margin:0 auto;
-      padding:clamp(14px, 2vw, 24px) 0 96px;
-      display:flex;
-      align-items:stretch;
-    }
-
-    .page{
-      display:none;
-      width:100%;
-      min-height:calc(100vh - 128px);
-      margin:auto 0;
-      background:rgba(255,255,255,.92);
-      backdrop-filter: blur(10px);
-      border:1px solid rgba(148,163,184,.28);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:clamp(20px, 4vw, 52px);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .page.active{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      animation:fadeIn .22s ease-out;
-    }
-
-    @keyframes fadeIn{
-      from{ opacity:.25; transform:translateY(8px); }
-      to{ opacity:1; transform:translateY(0); }
-    }
-
-    .top-banner{
-      display:flex;
-      gap:16px;
-      align-items:center;
-      justify-content:space-between;
-      padding:18px 20px;
-      border-radius:24px;
-      background:linear-gradient(135deg, #2563eb, #0f766e);
-      color:#fff;
-      margin-bottom:clamp(18px, 3vw, 34px);
-      box-shadow:0 16px 35px rgba(37,99,235,.22);
-    }
-
-    .top-banner strong{
-      font-size:clamp(1.05rem, 1.8vw, 1.35rem);
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      width:max-content;
-      padding:7px 12px;
-      border-radius:999px;
-      background:rgba(37,99,235,.10);
-      color:#1e40af;
-      font-weight:700;
-      font-size:clamp(.82rem, 1.5vw, .95rem);
-    }
-
-    .chip.light{
-      background:rgba(255,255,255,.18);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.24);
-    }
-
-    .crumbs{
-      margin:0 0 12px;
-      color:var(--muted);
-      font-size:clamp(.86rem, 1.5vw, 1rem);
-      font-weight:650;
-    }
-
-    h1{
-      margin:0 0 18px;
-      font-size:clamp(2rem, 6vw, 4.7rem);
-      line-height:1.03;
-      letter-spacing:-.04em;
-    }
-
-    h2{
-      margin:0 0 18px;
-      font-size:clamp(1.65rem, 4.2vw, 3.2rem);
-      line-height:1.08;
-      letter-spacing:-.035em;
-    }
-
-    h3{
-      margin:0 0 10px;
-      font-size:clamp(1.2rem, 2.4vw, 1.65rem);
-      line-height:1.18;
-    }
-
-    p, li, td, th{
-      font-size:clamp(1.02rem, 2.25vw, 1.45rem);
-    }
-
-    p{ margin:0 0 16px; }
-
-    ul, ol{
-      margin:0;
-      padding-left:1.25em;
-    }
-
-    li{ margin:.35em 0; }
-
-    .lead{
-      font-size:clamp(1.18rem, 2.65vw, 1.7rem);
-      color:#26354f;
-      max-width:900px;
-    }
-
-    .idea{
-      margin-top:clamp(14px, 2vw, 24px);
-      padding:clamp(16px, 2.2vw, 22px);
-      border-radius:22px;
-      background:var(--soft);
-      border-left:8px solid var(--brand);
-      font-size:clamp(1.08rem, 2.35vw, 1.52rem);
-    }
-
-    .callout{
-      padding:clamp(16px, 2.5vw, 26px);
-      border-radius:24px;
-      background:linear-gradient(180deg, #ffffff, #f8fafc);
-      border:1px solid rgba(148,163,184,.35);
-      box-shadow:0 12px 24px rgba(15,23,42,.06);
-    }
-
-    .callout.green{
-      background:linear-gradient(180deg, #f0fdf4, #ffffff);
-      border-color:rgba(22,163,74,.25);
-    }
-
-    .callout.yellow{
-      background:linear-gradient(180deg, #fffbeb, #ffffff);
-      border-color:rgba(245,158,11,.28);
-    }
-
-    .callout.blue{
-      background:linear-gradient(180deg, #eff6ff, #ffffff);
-      border-color:rgba(37,99,235,.28);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:clamp(14px, 2vw, 24px);
-      align-items:stretch;
-    }
-
-    .grid.three{
-      grid-template-columns:repeat(3, minmax(0,1fr));
-    }
-
-    .formula{
-      display:block;
-      width:max-content;
-      max-width:100%;
-      margin:12px 0 0;
-      padding:12px 16px;
-      border-radius:18px;
-      background:#0f172a;
-      color:#fff;
-      font-size:clamp(1.05rem, 2.4vw, 1.55rem);
-      overflow-x:auto;
-    }
-
-    .split{
-      display:grid;
-      grid-template-columns:minmax(0, 1.1fr) minmax(260px, .9fr);
-      gap:clamp(18px, 3vw, 34px);
-      align-items:center;
-    }
-
-    .mini-table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border-radius:20px;
-      border:1px solid rgba(148,163,184,.28);
-      background:#fff;
-    }
-
-    .mini-table th,
-    .mini-table td{
-      padding:14px 16px;
-      text-align:left;
-      border-bottom:1px solid rgba(148,163,184,.22);
-      vertical-align:top;
-    }
-
-    .mini-table tr:last-child td{ border-bottom:0; }
-    .mini-table th{
-      background:#eff6ff;
-      color:#1e3a8a;
-      font-size:clamp(.95rem, 1.9vw, 1.2rem);
-    }
-
-    .svg-card{
-      width:100%;
-      min-height:240px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px;
-      border-radius:24px;
-      background:
-        linear-gradient(#fff, #fff) padding-box,
-        linear-gradient(135deg, rgba(37,99,235,.45), rgba(20,184,166,.35)) border-box;
-      border:1px solid transparent;
-      box-shadow:0 12px 28px rgba(15,23,42,.08);
-    }
-
-    svg{
-      max-width:100%;
-      height:auto;
-      font-family:inherit;
-    }
-
-    .steps{
-      counter-reset: step;
-      list-style:none;
-      padding:0;
-      display:grid;
-      gap:12px;
-    }
-
-    .steps li{
-      counter-increment: step;
-      position:relative;
-      padding:14px 16px 14px 58px;
-      border-radius:18px;
-      background:#f8fafc;
-      border:1px solid rgba(148,163,184,.24);
-    }
-
-    .steps li::before{
-      content:counter(step);
-      position:absolute;
-      left:14px;
-      top:14px;
-      width:30px;
-      height:30px;
-      display:grid;
-      place-items:center;
-      border-radius:50%;
-      background:var(--brand);
-      color:#fff;
-      font-weight:800;
-    }
-
-    .quiz{
-      display:grid;
-      gap:14px;
-    }
-
-    .q{
-      padding:16px;
-      border:1px solid rgba(148,163,184,.3);
-      border-radius:20px;
-      background:#fff;
-    }
-
-    .q p{
-      font-weight:750;
-      margin-bottom:10px;
-    }
-
-    .q label{
-      display:block;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-size:clamp(1rem, 2.1vw, 1.3rem);
-    }
-
-    .q label:hover{
-      background:#f1f5f9;
-    }
-
-    .feedback{
-      margin-top:10px;
-      font-weight:700;
-      min-height:1.6em;
-      font-size:clamp(.98rem, 1.9vw, 1.2rem);
-    }
-
-    .feedback.ok{ color:var(--ok); }
-    .feedback.bad{ color:var(--danger); }
-
-    .quiz-actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:8px;
-    }
-
-    button, .btn{
-      border:0;
-      border-radius:999px;
-      padding:12px 18px;
-      font-weight:800;
-      font-size:clamp(.96rem, 1.8vw, 1.12rem);
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      background:#e2e8f0;
-      color:#172033;
-    }
-
-    .primary{
-      background:linear-gradient(135deg, #2563eb, #1d4ed8);
-      color:#fff;
-    }
-
-    .secondary{
-      background:#f1f5f9;
-      color:#0f172a;
-      border:1px solid rgba(148,163,184,.4);
-    }
-
-    .final-banner{
-      margin-top:22px;
-      padding:clamp(18px, 3vw, 28px);
-      border-radius:26px;
-      background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(13,148,136,.13));
-      border:1px solid rgba(37,99,235,.22);
-    }
-
-    .final-actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:18px;
-    }
-
-    .bottom-nav{
-      position:fixed;
-      z-index:20;
-      left:50%;
-      bottom:calc(14px + env(safe-area-inset-bottom));
-      transform:translateX(-50%);
-      width:min(var(--maxw), calc(100vw - 28px));
-      display:grid;
-      grid-template-columns:auto 1fr auto;
-      gap:12px;
-      align-items:center;
-      padding:10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.88);
-      backdrop-filter: blur(14px);
-      border:1px solid rgba(148,163,184,.34);
-      box-shadow:0 16px 38px rgba(15,23,42,.18);
-    }
-
-    .bottom-nav button{
-      padding:12px 18px;
-      white-space:nowrap;
-    }
-
-    .bottom-nav button:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
-
-    .counter{
-      text-align:center;
-      color:var(--muted);
-      font-weight:800;
-      font-size:clamp(.94rem, 1.8vw, 1.1rem);
-    }
-
-    @media (max-width: 860px){
-      .app{
-        width:min(100vw - 18px, var(--maxw));
-        padding-top:10px;
-        padding-bottom:92px;
-      }
-      .page{
-        min-height:calc(100vh - 112px);
-        border-radius:22px;
-      }
-      .split,
-      .grid,
-      .grid.three{
-        grid-template-columns:1fr;
-      }
-      .top-banner{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-      .svg-card{ min-height:190px; }
-    }
-
-    @media (max-width: 540px){
-      .page{
-        padding:20px;
-        justify-content:flex-start;
-      }
-      .bottom-nav{
-        grid-template-columns:1fr 1fr;
-        border-radius:24px;
-      }
-      .counter{
-        grid-column:1 / -1;
-        grid-row:1;
-      }
-      #prevBtn{ grid-column:1; grid-row:2; }
-      #nextBtn{ grid-column:2; grid-row:2; }
-      .bottom-nav button{
-        width:100%;
-        padding:12px 10px;
-      }
-      .mini-table th,
-      .mini-table td{
-        padding:11px 12px;
-      }
-      .final-actions .btn{
-        width:100%;
-      }
-    }
-
-    @media (min-width: 1180px){
-      .page{
-        min-height:760px;
-      }
-    }
-  </style>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
-
-<body>
-  <main class="app" id="app">
-
-    <!-- Pagina 1 -->
-    <section class="page active" data-title="Start">
-      <div class="top-banner">
-        <strong>Fizică • Clasa a IX-a • Mecanică newtoniană</strong>
-        <span class="chip light">Lecția 1</span>
-      </div>
-
-      <p class="crumbs">Mecanică newtoniană › Mărimi fizice</p>
-      <h1>Mărimi scalare și mărimi vectoriale</h1>
-
-      <p class="lead">
-        În această lecție învățăm cum descriem corect mărimile fizice. Uneori este suficientă
-        o valoare numerică și o unitate de măsură; alteori trebuie precizate și direcția, sensul
-        și modul de reprezentare.
+<body class="lesson-body">
+<main class="lesson-shell" id="lectie">
+<section aria-hidden="false" class="lesson-page lesson-cover is-active" data-page="1" data-title="Start" id="pagina-1" tabindex="-1">
+<header class="site-header lesson-header blue">
+<span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+<h1>Lecția 1</h1>
+<p>Mărimi scalare și mărimi vectoriale</p>
+</header>
+<div class="lesson-banner">
+<h2>Ce învățăm?</h2>
+<p>
+          În fizică descriem lumea cu ajutorul mărimilor fizice.
+          Unele se exprimă complet printr-un număr și o unitate de măsură.
+          Altele au nevoie și de direcție și sens.
+        </p>
+</div>
+<div class="lesson-card">
+<h3>Ideea lecției</h3>
+<p>
+          Un rezultat fizic nu este complet doar pentru că are un număr.
+          Trebuie să știm ce mărime descrie, în ce unitate este exprimată
+          și, pentru vectori, încotro este orientată.
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<span class="lesson-page-label">Pagina 1 / 15</span>
+<a class="lesson-button" data-next="" href="#pagina-2">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="2" data-title="Observăm" hidden="" id="pagina-2" tabindex="-1">
+<span class="lesson-page-label">Pagina 2 / 15</span>
+<h2>1. Observăm din viața de zi cu zi</h2>
+<div class="lesson-two-columns">
+<article class="mini-card">
+<h3>Exemplu scalar</h3>
+<p>
+            Când spunem: „masa ghiozdanului este $5\,\text{kg}$”,
+            informația este completă pentru scopul obișnuit.
+          </p>
+<p>
+            Nu are sens să întrebăm: „în ce direcție are masa?”.
+            Masa nu are orientare.
+          </p>
+</article>
+<article class="mini-card">
+<h3>Exemplu vectorial</h3>
+<p>
+            Când spunem: „asupra cutiei acționează o forță de
+            $20\,\text{N}$”, informația nu este completă.
+          </p>
+<p>
+            Trebuie să știm dacă forța este orientată spre dreapta,
+            spre stânga, în sus, în jos etc.
+          </p>
+</article>
+</div>
+<div class="lesson-highlight">
+<p>
+          Întrebare de gândire: dacă două persoane împing aceeași cutie
+          cu forțe de $20\,\text{N}$, dar în sensuri opuse, efectul este același?
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-1">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-3">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="3" data-title="Principiul" hidden="" id="pagina-3" tabindex="-1">
+<span class="lesson-page-label">Pagina 3 / 15</span>
+<h2>2. Principiul fizic</h2>
+<p>
+        O <strong>mărime fizică</strong> este o proprietate a unui corp,
+        a unui sistem sau a unui fenomen care poate fi măsurată ori calculată.
       </p>
-
-      <div class="idea">
-        <strong>Ideea lecției:</strong> în fizică, un rezultat nu este complet doar pentru că are un număr.
-        Trebuie să știm ce mărime descrie, în ce unitate este exprimată și, pentru vectori,
-        încotro este orientată.
-      </div>
-    </section>
-
-    <!-- Pagina 2 -->
-    <section class="page" data-title="Observăm">
-      <h2>1. Observăm din viața de zi cu zi</h2>
-
-      <div class="grid">
-        <div class="callout blue">
-          <h3>Exemplu scalar</h3>
-          <p>
-            Când spunem: „masa ghiozdanului este $5\,\text{kg}$”, informația este completă
-            pentru scopul obișnuit.
-          </p>
-          <p>
-            Nu are sens să întrebăm: „în ce direcție are masa?” Masa nu are orientare.
-          </p>
-        </div>
-
-        <div class="callout green">
-          <h3>Exemplu vectorial</h3>
-          <p>
-            Când spunem: „asupra cutiei acționează o forță de $20\,\text{N}$”, informația
-            nu este completă.
-          </p>
-          <p>
-            Trebuie să știm și <strong>direcția</strong> și <strong>sensul</strong> forței:
-            spre dreapta, spre stânga, în sus, în jos etc.
-          </p>
-        </div>
-      </div>
-
-      <div class="idea">
-        <strong>Întrebare de gândire:</strong> dacă două persoane împing aceeași cutie cu forțe de
-        $20\,\text{N}$, dar în sensuri opuse, efectul este același?
-      </div>
-    </section>
-
-    <!-- Pagina 3 -->
-    <section class="page" data-title="Principiul">
-      <div class="split">
-        <div>
-          <h2>2. Principiul fizic</h2>
-          <p>
-            O <strong>mărime fizică</strong> este o proprietate a unui corp sau fenomen care poate fi
-            măsurată ori calculată.
-          </p>
-
-          <p>
-            În forma cea mai simplă, o mărime fizică se exprimă prin:
-          </p>
-
-          <span class="formula">$mărime = valoare\ numerică + unitate\ de\ măsură$</span>
-
-          <p style="margin-top:18px">
-            Pentru unele mărimi, această descriere nu este suficientă. La vectori se adaugă
-            și orientarea în spațiu.
-          </p>
-        </div>
-
-        <div class="svg-card" aria-label="schemă: valoare, unitate, orientare">
-          <svg viewBox="0 0 420 260" role="img">
-            <defs>
-              <marker id="arrA" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"></path>
-              </marker>
-            </defs>
-            <rect x="25" y="30" width="370" height="200" rx="24" fill="#eff6ff" stroke="#bfdbfe" />
-            <text x="210" y="78" text-anchor="middle" font-size="23" font-weight="800" fill="#172033">Mărime fizică</text>
-            <line x1="210" y1="95" x2="210" y2="132" stroke="#2563eb" stroke-width="5" marker-end="url(#arrA)" />
-            <rect x="48" y="150" width="96" height="44" rx="14" fill="#fff"/>
-            <text x="96" y="178" text-anchor="middle" font-size="17" font-weight="800" fill="#1e3a8a">valoare</text>
-            <text x="162" y="178" font-size="24" fill="#64748b">+</text>
-            <rect x="184" y="150" width="96" height="44" rx="14" fill="#fff"/>
-            <text x="232" y="178" text-anchor="middle" font-size="17" font-weight="800" fill="#1e3a8a">unitate</text>
-            <text x="298" y="178" font-size="24" fill="#64748b">+</text>
-            <rect x="320" y="150" width="64" height="44" rx="14" fill="#fff"/>
-            <text x="352" y="178" text-anchor="middle" font-size="17" font-weight="800" fill="#0f766e">sens</text>
-            <text x="210" y="218" text-anchor="middle" font-size="15" fill="#475569">la vectori contează și orientarea</text>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 4 -->
-    <section class="page" data-title="Scalari">
-      <h2>3. Mărimi scalare</h2>
-
-      <p>
-        O <strong>mărime scalară</strong> este complet determinată prin valoare numerică și unitate
-        de măsură. Ea nu are direcție și nu are sens.
+<div class="formula-card">
+<p>$\text{mărime fizică} = \text{valoare numerică} + \text{unitate de măsură}$</p>
+</div>
+<p>
+        Pentru unele mărimi, această descriere este suficientă.
+        Pentru altele, cum sunt forța sau viteza, trebuie precizată și
+        orientarea în spațiu.
       </p>
-
-      <span class="formula">$m = 5\,\text{kg}, \quad t = 10\,\text{s}, \quad T = 20^\circ\text{C}$</span>
-
-      <div class="callout yellow" style="margin-top:18px">
-        <h3>Exemple importante</h3>
-        <table class="mini-table">
-          <thead>
-            <tr>
-              <th>Mărime scalară</th>
-              <th>Ce exprimă?</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>masa $m$</td>
-              <td>cantitatea de materie a unui corp</td>
-            </tr>
-            <tr>
-              <td>timpul $t$</td>
-              <td>durata unui fenomen</td>
-            </tr>
-            <tr>
-              <td>distanța parcursă $d$</td>
-              <td>lungimea drumului urmat</td>
-            </tr>
-            <tr>
-              <td>temperatura $T$</td>
-              <td>starea de încălzire a unui corp</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Pagina 5 -->
-    <section class="page" data-title="Vectori">
-      <h2>4. Mărimi vectoriale</h2>
-
-      <p>
+<div aria-label="Schemă mărimi fizice" class="vector-demo">
+<span>Mărime fizică</span>
+<span class="arrow-right">→</span>
+<span>valoare + unitate</span>
+<span class="arrow-right">→</span>
+<span>la vectori: direcție + sens</span>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-2">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-4">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="4" data-title="Scalari" hidden="" id="pagina-4" tabindex="-1">
+<span class="lesson-page-label">Pagina 4 / 15</span>
+<h2>3. Mărimi scalare</h2>
+<p>
+        O <strong>mărime scalară</strong> este complet determinată prin
+        valoare numerică și unitate de măsură.
+        Ea nu are direcție și nu are sens.
+      </p>
+<div class="formula-card">
+<p>$m = 5\,\text{kg}, \qquad t = 10\,\text{s}, \qquad T = 20^\circ\text{C}$</p>
+</div>
+<div class="responsive-table">
+<table>
+<thead>
+<tr>
+<th>Mărime scalară</th>
+<th>Ce exprimă?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>masa $m$</td>
+<td>cantitatea de materie a unui corp</td>
+</tr>
+<tr>
+<td>timpul $t$</td>
+<td>durata unui fenomen</td>
+</tr>
+<tr>
+<td>distanța parcursă $d$</td>
+<td>lungimea drumului urmat</td>
+</tr>
+<tr>
+<td>temperatura $T$</td>
+<td>starea de încălzire a unui corp</td>
+</tr>
+</tbody>
+</table>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-3">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-5">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="5" data-title="Vectori" hidden="" id="pagina-5" tabindex="-1">
+<span class="lesson-page-label">Pagina 5 / 15</span>
+<h2>4. Mărimi vectoriale</h2>
+<p>
         O <strong>mărime vectorială</strong> este complet determinată prin:
       </p>
-
-      <div class="grid">
-        <div class="callout blue">
-          <ul>
-            <li><strong>modul</strong> — valoarea numerică;</li>
-            <li><strong>unitate de măsură</strong>;</li>
-            <li><strong>direcție</strong> — dreapta pe care acționează;</li>
-            <li><strong>sens</strong> — orientarea pe acea direcție.</li>
-          </ul>
-        </div>
-
-        <div class="callout green">
-          <h3>Exemple</h3>
-          <p>
-            Deplasarea $\Delta\vec r$, viteza $\vec v$, accelerația $\vec a$,
-            forța $\vec F$, greutatea $\vec G$ și impulsul $\vec p$ sunt mărimi vectoriale.
-          </p>
-        </div>
-      </div>
-
-      <div class="idea">
-        Un vector se notează de obicei cu o săgeată deasupra simbolului:
-        $\vec F$, $\vec v$, $\vec a$. Modulul vectorului se poate nota $|\vec F|$ sau simplu $F$.
-      </div>
-    </section>
-
-    <!-- Pagina 6 -->
-    <section class="page" data-title="Direcție și sens">
-      <div class="split">
-        <div>
-          <h2>5. Direcție și sens</h2>
-
-          <p>
-            <strong>Direcția</strong> este linia pe care se află vectorul: orizontală, verticală,
-            oblică etc.
-          </p>
-
-          <p>
-            <strong>Sensul</strong> arată încotro este orientat vectorul pe acea direcție.
-          </p>
-
-          <div class="idea">
-            Doi vectori pot avea aceeași direcție, dar sensuri opuse. De exemplu:
-            „spre dreapta” și „spre stânga” sunt pe aceeași direcție orizontală.
-          </div>
-        </div>
-
-        <div class="svg-card" aria-label="vectori cu aceeași direcție și sensuri opuse">
-          <svg viewBox="0 0 420 260" role="img">
-            <defs>
-              <marker id="arrB" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#2563eb"></path>
-              </marker>
-              <marker id="arrC" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#dc2626"></path>
-              </marker>
-            </defs>
-            <rect x="28" y="28" width="364" height="204" rx="24" fill="#ffffff" stroke="#dbeafe"/>
-            <line x1="70" y1="92" x2="345" y2="92" stroke="#cbd5e1" stroke-width="4" stroke-dasharray="8 8"/>
-            <line x1="95" y1="92" x2="250" y2="92" stroke="#2563eb" stroke-width="9" marker-end="url(#arrB)" />
-            <text x="171" y="72" text-anchor="middle" font-size="19" font-weight="800" fill="#1e40af">spre dreapta</text>
-            <line x1="325" y1="165" x2="170" y2="165" stroke="#dc2626" stroke-width="9" marker-end="url(#arrC)" />
-            <text x="248" y="202" text-anchor="middle" font-size="19" font-weight="800" fill="#991b1b">spre stânga</text>
-            <line x1="70" y1="165" x2="345" y2="165" stroke="#cbd5e1" stroke-width="4" stroke-dasharray="8 8"/>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 7 -->
-    <section class="page" data-title="Reprezentare">
-      <h2>6. Cum desenăm un vector?</h2>
-
-      <div class="grid">
-        <div class="callout blue">
-          <h3>Un vector se reprezintă printr-o săgeată</h3>
-          <ol class="steps">
-            <li>originea indică punctul de aplicare;</li>
-            <li>dreapta săgeții indică direcția;</li>
-            <li>vârful săgeții indică sensul;</li>
-            <li>lungimea săgeții este proporțională cu modulul.</li>
-          </ol>
-        </div>
-
-        <div class="callout green">
-          <h3>Exemplu de scară</h3>
-          <p>
-            Dacă alegem scara:
-          </p>
-          <span class="formula">$1\,\text{cm} \leftrightarrow 5\,\text{N}$</span>
-          <p style="margin-top:16px">
-            atunci o forță de $15\,\text{N}$ se desenează cu o săgeată de $3\,\text{cm}$.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 8 -->
-    <section class="page" data-title="Distanță și deplasare">
-      <div class="split">
-        <div>
-          <h2>7. Distanță parcursă și deplasare</h2>
-
-          <p>
-            <strong>Distanța parcursă</strong> este o mărime scalară: arată cât drum a parcurs corpul.
-          </p>
-
-          <p>
-            <strong>Deplasarea</strong> este o mărime vectorială: unește poziția inițială cu poziția finală.
-          </p>
-
-          <span class="formula">$|\Delta \vec r| \leq d$</span>
-
-          <div class="idea">
-            Dacă pleci de acasă, faci un tur și revii acasă, distanța parcursă este diferită de zero,
-            dar deplasarea este zero.
-          </div>
-        </div>
-
-        <div class="svg-card" aria-label="distanță parcursă și deplasare">
-          <svg viewBox="0 0 420 285" role="img">
-            <defs>
-              <marker id="arrD" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#0f766e"></path>
-              </marker>
-              <marker id="arrE" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#2563eb"></path>
-              </marker>
-            </defs>
-            <rect x="26" y="26" width="368" height="230" rx="24" fill="#fff" stroke="#dbeafe"/>
-            <circle cx="86" cy="204" r="9" fill="#2563eb"/>
-            <text x="86" y="232" text-anchor="middle" font-size="17" font-weight="800">Start</text>
-            <circle cx="330" cy="74" r="9" fill="#0f766e"/>
-            <text x="330" y="50" text-anchor="middle" font-size="17" font-weight="800">Final</text>
-            <path d="M86 204 C130 125, 184 250, 228 160 S292 92, 330 74" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round"/>
-            <line x1="86" y1="204" x2="330" y2="74" stroke="#0f766e" stroke-width="7" marker-end="url(#arrD)"/>
-            <text x="205" y="116" text-anchor="middle" font-size="17" font-weight="800" fill="#0f766e">deplasare</text>
-            <text x="210" y="257" text-anchor="middle" font-size="16" fill="#92400e">drumul curb = distanța parcursă</text>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 9 -->
-    <section class="page" data-title="Exemplu">
-      <h2>8. Exemplu rezolvat pas cu pas</h2>
-
-      <p>
-        Un elev merge $3\,\text{km}$ spre est, apoi $4\,\text{km}$ spre nord.
-        Determină distanța parcursă și modulul deplasării.
-      </p>
-
-      <div class="grid">
-        <div class="callout blue">
-          <h3>Pasul 1: distanța</h3>
-          <p>
-            Distanța este lungimea drumului efectiv:
-          </p>
-          <span class="formula">$d = 3\,\text{km} + 4\,\text{km} = 7\,\text{km}$</span>
-
-          <h3 style="margin-top:20px">Pasul 2: deplasarea</h3>
-          <p>
-            Deplasarea este diagonala triunghiului dreptunghic:
-          </p>
-          <span class="formula">$|\Delta\vec r|=\sqrt{3^2+4^2}=5\,\text{km}$</span>
-        </div>
-
-        <div class="svg-card" aria-label="triunghi 3-4-5 pentru deplasare">
-          <svg viewBox="0 0 420 300" role="img">
-            <defs>
-              <marker id="arrF" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#2563eb"></path>
-              </marker>
-              <marker id="arrG" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#0f766e"></path>
-              </marker>
-            </defs>
-            <rect x="25" y="25" width="370" height="240" rx="24" fill="#fff" stroke="#dbeafe"/>
-            <line x1="85" y1="210" x2="245" y2="210" stroke="#2563eb" stroke-width="9" marker-end="url(#arrF)" />
-            <line x1="245" y1="210" x2="245" y2="70" stroke="#2563eb" stroke-width="9" marker-end="url(#arrF)" />
-            <line x1="85" y1="210" x2="245" y2="70" stroke="#0f766e" stroke-width="8" marker-end="url(#arrG)" />
-            <text x="165" y="238" text-anchor="middle" font-size="18" font-weight="800" fill="#1e40af">3 km est</text>
-            <text x="270" y="145" font-size="18" font-weight="800" fill="#1e40af">4 km nord</text>
-            <text x="145" y="122" text-anchor="middle" font-size="18" font-weight="800" fill="#0f766e">5 km</text>
-            <path d="M223 210 L223 188 L245 188" fill="none" stroke="#64748b" stroke-width="4"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="idea">
-        Observă: distanța parcursă este $7\,\text{km}$, dar modulul deplasării este doar $5\,\text{km}$.
-      </div>
-    </section>
-
-    <!-- Pagina 10 -->
-    <section class="page" data-title="Adunarea vectorilor">
-      <h2>9. Cum compunem vectorii?</h2>
-
-      <div class="grid">
-        <div class="callout blue">
-          <h3>Regula triunghiului</h3>
-          <p>
-            Pentru a aduna doi vectori, mutăm al doilea vector cu originea în vârful primului.
-            Vectorul rezultant unește originea primului cu vârful ultimului.
-          </p>
-          <span class="formula">$\vec R = \vec a + \vec b$</span>
-        </div>
-
-        <div class="svg-card" aria-label="regula triunghiului pentru adunarea vectorilor">
-          <svg viewBox="0 0 430 260" role="img">
-            <defs>
-              <marker id="arrH" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#2563eb"></path>
-              </marker>
-              <marker id="arrI" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#0f766e"></path>
-              </marker>
-              <marker id="arrJ" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                <path d="M0,0 L0,8 L11,4 z" fill="#dc2626"></path>
-              </marker>
-            </defs>
-            <rect x="25" y="28" width="380" height="205" rx="24" fill="#fff" stroke="#dbeafe"/>
-            <line x1="80" y1="180" x2="205" y2="180" stroke="#2563eb" stroke-width="9" marker-end="url(#arrH)" />
-            <line x1="205" y1="180" x2="305" y2="80" stroke="#0f766e" stroke-width="9" marker-end="url(#arrI)" />
-            <line x1="80" y1="180" x2="305" y2="80" stroke="#dc2626" stroke-width="7" marker-end="url(#arrJ)" />
-            <text x="140" y="205" text-anchor="middle" font-size="18" font-weight="800" fill="#1e40af">$\vec a$</text>
-            <text x="265" y="145" text-anchor="middle" font-size="18" font-weight="800" fill="#0f766e">$\vec b$</text>
-            <text x="185" y="105" text-anchor="middle" font-size="18" font-weight="800" fill="#991b1b">$\vec R$</text>
-          </svg>
-        </div>
-      </div>
-
-      <div class="idea">
-        Pentru vectori perpendiculari, modulul rezultantei se poate calcula cu teorema lui Pitagora:
-        $R=\sqrt{a^2+b^2}$.
-      </div>
-    </section>
-
-    <!-- Pagina 11 -->
-    <section class="page" data-title="Cazuri rapide">
-      <h2>10. Trei cazuri rapide</h2>
-
-      <div class="grid three">
-        <div class="callout blue">
-          <h3>Același sens</h3>
-          <p>
-            Dacă vectorii au aceeași direcție și același sens, modulele se adună.
-          </p>
-          <span class="formula">$R = a + b$</span>
-        </div>
-
-        <div class="callout yellow">
-          <h3>Sensuri opuse</h3>
-          <p>
-            Dacă au aceeași direcție, dar sensuri opuse, modulele se scad.
-          </p>
-          <span class="formula">$R = |a - b|$</span>
-        </div>
-
-        <div class="callout green">
-          <h3>Perpendiculare</h3>
-          <p>
-            Dacă formează un unghi de $90^\circ$, folosim Pitagora.
-          </p>
-          <span class="formula">$R=\sqrt{a^2+b^2}$</span>
-        </div>
-      </div>
-
-      <div class="idea">
-        <strong>Nu aduna mecanic numerele!</strong> La vectori contează orientarea.
-        Două forțe de $10\,\text{N}$ pot avea rezultanta $20\,\text{N}$, $0\,\text{N}$ sau altă valoare,
-        în funcție de unghiul dintre ele.
-      </div>
-    </section>
-
-    <!-- Pagina 12 -->
-    <section class="page" data-title="Greșeli frecvente">
-      <h2>11. Greșeli frecvente</h2>
-
-      <div class="grid">
-        <div class="callout yellow">
-          <h3>Greșeala 1</h3>
-          <p>
-            „Vectorul este doar un număr.”
-          </p>
-          <p>
-            Corect: numărul este doar modulul vectorului. Vectorul are și direcție, și sens.
-          </p>
-        </div>
-
-        <div class="callout yellow">
-          <h3>Greșeala 2</h3>
-          <p>
-            „Distanța parcursă și deplasarea sunt același lucru.”
-          </p>
-          <p>
-            Corect: distanța este scalară; deplasarea este vectorială.
-          </p>
-        </div>
-
-        <div class="callout yellow">
-          <h3>Greșeala 3</h3>
-          <p>
-            „Dacă două forțe au același modul, atunci au același efect.”
-          </p>
-          <p>
-            Corect: efectul depinde și de orientarea forțelor.
-          </p>
-        </div>
-
-        <div class="callout blue">
-          <h3>Întrebare de verificare</h3>
-          <p>
-            Pentru fiecare mărime întreabă-te:
-          </p>
-          <p>
-            „Este suficient să dau valoarea și unitatea sau trebuie să precizez și încotro?”
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 13 -->
-    <section class="page" data-title="Verificare 1">
-      <h2>12. Verifică rapid</h2>
-
-      <div class="quiz" data-quiz>
-        <div class="q" data-answer="b">
-          <p>1. Care dintre următoarele mărimi este vectorială?</p>
-          <label><input type="radio" name="q1" value="a"> temperatura</label>
-          <label><input type="radio" name="q1" value="b"> forța</label>
-          <label><input type="radio" name="q1" value="c"> masa</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="q" data-answer="a">
-          <p>2. Distanța parcursă este:</p>
-          <label><input type="radio" name="q2" value="a"> mărime scalară</label>
-          <label><input type="radio" name="q2" value="b"> mărime vectorială</label>
-          <label><input type="radio" name="q2" value="c"> mereu egală cu deplasarea</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="q" data-answer="c">
-          <p>3. Pentru a descrie complet o forță trebuie să precizăm:</p>
-          <label><input type="radio" name="q3" value="a"> doar valoarea numerică</label>
-          <label><input type="radio" name="q3" value="b"> doar unitatea de măsură</label>
-          <label><input type="radio" name="q3" value="c"> modulul, unitatea, direcția și sensul</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="quiz-actions">
-          <button class="primary" type="button" data-check>Verifică răspunsurile</button>
-          <button class="secondary" type="button" data-reset>Reia</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 14 -->
-    <section class="page" data-title="Verificare 2">
-      <h2>13. Aplică în situații simple</h2>
-
-      <div class="quiz" data-quiz>
-        <div class="q" data-answer="b">
-          <p>1. Un elev pleacă de la bancă, face un tur al clasei și revine la bancă. Deplasarea lui este:</p>
-          <label><input type="radio" name="q4" value="a"> egală cu distanța parcursă</label>
-          <label><input type="radio" name="q4" value="b"> zero</label>
-          <label><input type="radio" name="q4" value="c"> imposibil de determinat</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="q" data-answer="a">
-          <p>2. Două forțe egale, coliniare și opuse au rezultanta:</p>
-          <label><input type="radio" name="q5" value="a"> zero</label>
-          <label><input type="radio" name="q5" value="b"> dublul unei forțe</label>
-          <label><input type="radio" name="q5" value="c"> mereu mai mare decât fiecare forță</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="q" data-answer="c">
-          <p>3. Care exprimare este completă pentru o viteză vectorială?</p>
-          <label><input type="radio" name="q6" value="a"> $10$</label>
-          <label><input type="radio" name="q6" value="b"> $10\,\text{m/s}$</label>
-          <label><input type="radio" name="q6" value="c"> $10\,\text{m/s}$ spre nord</label>
-          <div class="feedback"></div>
-        </div>
-
-        <div class="quiz-actions">
-          <button class="primary" type="button" data-check>Verifică răspunsurile</button>
-          <button class="secondary" type="button" data-reset>Reia</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pagina 15 -->
-    <section class="page" data-title="Sinteză">
-      <h2>14. Reține esențialul</h2>
-
-      <div class="callout green">
-        <ul>
-          <li>O mărime scalară are valoare numerică și unitate de măsură.</li>
-          <li>O mărime vectorială are modul, unitate, direcție și sens.</li>
-          <li>Vectorii se reprezintă prin săgeți.</li>
-          <li>Distanța parcursă este scalară; deplasarea este vectorială.</li>
-          <li>La compunerea vectorilor contează orientarea, nu doar valorile numerice.</li>
-        </ul>
-      </div>
-
-      <div class="final-banner">
-        <h3>Ai terminat lecția.</h3>
-        <p>
-          Prof. Dănuț Andronie<br>
-          e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a>
+<ol class="lesson-list numbered">
+<li><strong>modul</strong> — valoarea numerică;</li>
+<li><strong>unitate de măsură</strong>;</li>
+<li><strong>direcție</strong> — dreapta pe care se află vectorul;</li>
+<li><strong>sens</strong> — orientarea pe acea direcție.</li>
+</ol>
+<div class="lesson-card">
+<h3>Exemple importante</h3>
+<p>
+          Deplasarea $\Delta\vec r$, viteza $\vec v$, accelerația $\vec a$,
+          forța $\vec F$, greutatea $\vec G$ și impulsul $\vec p$
+          sunt mărimi vectoriale.
         </p>
+</div>
+<div class="formula-card">
+<p>$|\vec F| = F$</p>
+</div>
+<p>
+        Simbolul $\vec F$ reprezintă vectorul forță.
+        Simbolul $|\vec F|$ sau $F$ reprezintă modulul, adică valoarea forței.
+      </p>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-4">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-6">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="6" data-title="Direcție și sens" hidden="" id="pagina-6" tabindex="-1">
+<span class="lesson-page-label">Pagina 6 / 15</span>
+<h2>5. Direcție și sens</h2>
+<p>
+<strong>Direcția</strong> este linia pe care se află vectorul:
+        orizontală, verticală, oblică etc.
+      </p>
+<p>
+<strong>Sensul</strong> arată încotro este orientat vectorul pe acea direcție.
+      </p>
+<div class="vector-demo">
+<span>spre dreapta</span>
+<span class="vector-line"></span>
+<span class="arrow-right">→</span>
+<span class="arrow-left">←</span>
+<span class="vector-line"></span>
+<span>spre stânga</span>
+</div>
+<div class="lesson-highlight">
+<p>
+          Doi vectori pot avea aceeași direcție, dar sensuri opuse.
+          „Spre dreapta” și „spre stânga” sunt pe aceeași direcție orizontală.
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-5">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-7">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="7" data-title="Reprezentare" hidden="" id="pagina-7" tabindex="-1">
+<span class="lesson-page-label">Pagina 7 / 15</span>
+<h2>6. Cum desenăm un vector?</h2>
+<p>
+        Un vector se reprezintă printr-o săgeată.
+      </p>
+<ul class="lesson-list">
+<li>originea săgeții indică punctul de aplicare;</li>
+<li>dreapta săgeții indică direcția;</li>
+<li>vârful săgeții indică sensul;</li>
+<li>lungimea săgeții este proporțională cu modulul.</li>
+</ul>
+<div class="vector-demo">
+<span>Punct de aplicare</span>
+<span class="vector-line"></span>
+<span class="arrow-right">→</span>
+<span>sens</span>
+</div>
+<div class="problem-card">
+<h3>Exemplu de scară</h3>
+<p>
+          Dacă alegem scara $1\,\text{cm} \leftrightarrow 5\,\text{N}$,
+          atunci o forță de $15\,\text{N}$ se desenează cu o săgeată
+          de $3\,\text{cm}$.
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-6">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-8">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="8" data-title="Distanță și deplasare" hidden="" id="pagina-8" tabindex="-1">
+<span class="lesson-page-label">Pagina 8 / 15</span>
+<h2>7. Distanță parcursă și deplasare</h2>
+<div class="lesson-two-columns">
+<article class="mini-card">
+<h3>Distanța parcursă</h3>
+<p>
+            Este o mărime scalară.
+            Arată cât drum a parcurs corpul.
+          </p>
+</article>
+<article class="mini-card">
+<h3>Deplasarea</h3>
+<p>
+            Este o mărime vectorială.
+            Unește poziția inițială cu poziția finală.
+          </p>
+</article>
+</div>
+<div class="formula-card">
+<p>$|\Delta \vec r| \leq d$</p>
+</div>
+<div class="lesson-highlight">
+<p>
+          Dacă pleci de acasă, faci un tur și revii acasă,
+          distanța parcursă este diferită de zero,
+          dar deplasarea este zero.
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-7">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-9">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="9" data-title="Exemplu" hidden="" id="pagina-9" tabindex="-1">
+<span class="lesson-page-label">Pagina 9 / 15</span>
+<h2>8. Exemplu rezolvat pas cu pas</h2>
+<div class="problem-card">
+<h3>Problemă</h3>
+<p>
+          Un elev merge $3\,\text{km}$ spre est, apoi $4\,\text{km}$ spre nord.
+          Determină distanța parcursă și modulul deplasării.
+        </p>
+</div>
+<div class="lesson-card">
+<h3>Pasul 1: distanța</h3>
+<p>
+          Distanța este lungimea drumului efectiv:
+        </p>
+<p>$d = 3\,\text{km} + 4\,\text{km} = 7\,\text{km}$</p>
+</div>
+<div class="answer-card">
+<h3>Pasul 2: deplasarea</h3>
+<p>
+          Deplasarea este diagonala triunghiului dreptunghic:
+        </p>
+<p>$|\Delta\vec r|=\sqrt{3^2+4^2}=5\,\text{km}$</p>
+</div>
+<div class="vector-demo">
+<span>$3\,\text{km}$ est</span>
+<span class="arrow-right">→</span>
+<span>$4\,\text{km}$ nord</span>
+<span class="arrow-right">↗</span>
+<span>$5\,\text{km}$</span>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-8">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-10">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="10" data-title="Adunarea vectorilor" hidden="" id="pagina-10" tabindex="-1">
+<span class="lesson-page-label">Pagina 10 / 15</span>
+<h2>9. Cum compunem vectorii?</h2>
+<p>
+        La vectori nu este suficient să adunăm doar numerele.
+        Trebuie ținut cont de orientarea fiecărui vector.
+      </p>
+<div class="lesson-card">
+<h3>Regula triunghiului</h3>
+<p>
+          Pentru a aduna doi vectori, mutăm al doilea vector cu originea
+          în vârful primului. Vectorul rezultant unește originea primului
+          cu vârful ultimului.
+        </p>
+</div>
+<div class="formula-card">
+<p>$\vec R = \vec a + \vec b$</p>
+</div>
+<div class="vector-demo">
+<span>$\vec a$</span>
+<span class="arrow-right">→</span>
+<span>$\vec b$</span>
+<span class="arrow-right">↗</span>
+<span>$\vec R$</span>
+</div>
+<p>
+        Pentru vectori perpendiculari, modulul rezultantei se poate calcula
+        cu teorema lui Pitagora:
+      </p>
+<div class="formula-card">
+<p>$R=\sqrt{a^2+b^2}$</p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-9">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-11">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="11" data-title="Cazuri rapide" hidden="" id="pagina-11" tabindex="-1">
+<span class="lesson-page-label">Pagina 11 / 15</span>
+<h2>10. Trei cazuri rapide</h2>
+<div class="lesson-two-columns">
+<article class="mini-card">
+<h3>Același sens</h3>
+<p>
+            Dacă vectorii au aceeași direcție și același sens,
+            modulele se adună.
+          </p>
+<p>$R = a + b$</p>
+</article>
+<article class="mini-card">
+<h3>Sensuri opuse</h3>
+<p>
+            Dacă au aceeași direcție, dar sensuri opuse,
+            modulele se scad.
+          </p>
+<p>$R = |a - b|$</p>
+</article>
+</div>
+<div class="mini-card">
+<h3>Vectori perpendiculari</h3>
+<p>
+          Dacă formează un unghi de $90^\circ$, folosim teorema lui Pitagora.
+        </p>
+<p>$R=\sqrt{a^2+b^2}$</p>
+</div>
+<div class="lesson-banner warning-card">
+<p>
+          Nu aduna mecanic numerele!
+          Două forțe de $10\,\text{N}$ pot avea rezultanta $20\,\text{N}$,
+          $0\,\text{N}$ sau altă valoare, în funcție de unghiul dintre ele.
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-10">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-12">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="12" data-title="Greșeli frecvente" hidden="" id="pagina-12" tabindex="-1">
+<span class="lesson-page-label">Pagina 12 / 15</span>
+<h2>11. Greșeli frecvente</h2>
+<div class="lesson-card">
+<h3>Greșeala 1</h3>
+<p>
+          „Vectorul este doar un număr.”
+        </p>
+<p>
+          Corect: numărul este doar modulul vectorului.
+          Vectorul are și direcție, și sens.
+        </p>
+</div>
+<div class="lesson-card">
+<h3>Greșeala 2</h3>
+<p>
+          „Distanța parcursă și deplasarea sunt același lucru.”
+        </p>
+<p>
+          Corect: distanța este scalară; deplasarea este vectorială.
+        </p>
+</div>
+<div class="lesson-card">
+<h3>Greșeala 3</h3>
+<p>
+          „Dacă două forțe au același modul, atunci au același efect.”
+        </p>
+<p>
+          Corect: efectul depinde și de orientarea forțelor.
+        </p>
+</div>
+<div class="lesson-highlight">
+<p>
+          Întreabă-te mereu: este suficient să dau valoarea și unitatea,
+          sau trebuie să precizez și încotro?
+        </p>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-11">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-13">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="13" data-title="Verificare 1" hidden="" id="pagina-13" tabindex="-1">
+<span class="lesson-page-label">Pagina 13 / 15</span>
+<h2>12. Verifică rapid</h2>
+<div class="problem-card">
+<h3>1. Care dintre următoarele mărimi este vectorială?</h3>
+<ul class="lesson-list">
+<li>temperatura</li>
+<li>forța</li>
+<li>masa</li>
+</ul>
+<details class="answer-card">
+<summary>Vezi răspunsul</summary>
+<p>
+            Răspuns corect: <strong>forța</strong>.
+            Forța are modul, unitate, direcție și sens.
+          </p>
+</details>
+</div>
+<div class="problem-card">
+<h3>2. Distanța parcursă este:</h3>
+<ul class="lesson-list">
+<li>mărime scalară</li>
+<li>mărime vectorială</li>
+<li>mereu egală cu deplasarea</li>
+</ul>
+<details class="answer-card">
+<summary>Vezi răspunsul</summary>
+<p>
+            Răspuns corect: <strong>mărime scalară</strong>.
+            Ea arată lungimea drumului parcurs.
+          </p>
+</details>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-12">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-14">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page" data-page="14" data-title="Verificare 2" hidden="" id="pagina-14" tabindex="-1">
+<span class="lesson-page-label">Pagina 14 / 15</span>
+<h2>13. Aplică în situații simple</h2>
+<div class="problem-card">
+<h3>1. Un elev face un tur al clasei și revine în același loc. Deplasarea lui este:</h3>
+<ul class="lesson-list">
+<li>egală cu distanța parcursă</li>
+<li>zero</li>
+<li>imposibil de determinat</li>
+</ul>
+<details class="answer-card">
+<summary>Vezi răspunsul</summary>
+<p>
+            Răspuns corect: <strong>zero</strong>.
+            Poziția inițială și poziția finală coincid.
+          </p>
+</details>
+</div>
+<div class="problem-card">
+<h3>2. Două forțe egale, coliniare și opuse au rezultanta:</h3>
+<ul class="lesson-list">
+<li>zero</li>
+<li>dublul unei forțe</li>
+<li>mereu mai mare decât fiecare forță</li>
+</ul>
+<details class="answer-card">
+<summary>Vezi răspunsul</summary>
+<p>
+            Răspuns corect: <strong>zero</strong>,
+            deoarece efectele lor se compensează.
+          </p>
+</details>
+</div>
+<div class="problem-card">
+<h3>3. Care exprimare este completă pentru o viteză vectorială?</h3>
+<ul class="lesson-list">
+<li>$10$</li>
+<li>$10\,\text{m/s}$</li>
+<li>$10\,\text{m/s}$ spre nord</li>
+</ul>
+<details class="answer-card">
+<summary>Vezi răspunsul</summary>
+<p>
+            Răspuns corect: <strong>$10\,\text{m/s}$ spre nord</strong>.
+            Pentru vectori trebuie precizat și sensul.
+          </p>
+</details>
+</div>
+<nav aria-label="Navigare lecție" class="lesson-page-nav">
+<a class="lesson-button secondary" data-prev="" href="#pagina-13">Înapoi</a>
+<a class="lesson-button" data-next="" href="#pagina-15">Mergi mai departe</a>
+</nav>
+</section>
+<section aria-hidden="true" class="lesson-page lesson-last-page" data-page="15" data-title="Sinteză" hidden="" id="pagina-15" tabindex="-1">
+<span class="lesson-page-label">Pagina 15 / 15</span>
+<h2>14. Reține esențialul</h2>
+<ul class="lesson-list">
+<li>O mărime scalară are valoare numerică și unitate de măsură.</li>
+<li>O mărime vectorială are modul, unitate, direcție și sens.</li>
+<li>Vectorii se reprezintă prin săgeți.</li>
+<li>Distanța parcursă este scalară; deplasarea este vectorială.</li>
+<li>La compunerea vectorilor contează orientarea, nu doar valorile numerice.</li>
+</ul>
+<div class="answer-card">
+<h3>Ai terminat lecția.</h3>
+<p>
+          Acum poți verifica rapid orice mărime fizică întrebând:
+          „Am nevoie doar de valoare și unitate sau și de orientare?”
+        </p>
+</div>
+<footer class="lesson-footer">
+<p><strong>Prof. Dănuț Andronie</strong></p>
+<p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+<nav aria-label="Navigare finală" class="lesson-actions">
+<a class="lesson-button secondary" data-prev="" href="#pagina-14">Înapoi</a>
+<a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+<a class="lesson-button" href="lectia-2-adunarea-vectorilor.html">Mergi la următoarea lecție</a>
+</nav>
+</footer>
+</section>
+</main>
 
-        <div class="final-actions">
-          <a class="btn secondary" href="./index.html">Înapoi la capitol</a>
-          <a class="btn primary" href="./lectia-2.html">Mergi la următoarea lectie</a>
-        </div>
-      </div>
-    </section>
+<script>
+    (function () {
+      const pages = Array.from(document.querySelectorAll('.lesson-page'));
+      const totalPages = pages.length;
 
-  </main>
+      function numberFromHash() {
+        const match = window.location.hash.match(/^#pagina-(\d+)$/);
+        const number = match ? Number(match[1]) : 1;
+        if (!Number.isInteger(number)) return 1;
+        return Math.min(Math.max(number, 1), totalPages);
+      }
 
-  <nav class="bottom-nav" aria-label="Navigare pagini lecție">
-    <button id="prevBtn" class="secondary" type="button">‹ Înapoi</button>
-    <div class="counter" id="counter">Pagina 1 / 15</div>
-    <button id="nextBtn" class="primary" type="button">Înainte ›</button>
-  </nav>
+      function showPage(pageNumber, updateHash) {
+        const safeNumber = Math.min(Math.max(pageNumber, 1), totalPages);
+        const activePage = pages[safeNumber - 1];
 
-  <script>
-    (function(){
-      const pages = Array.from(document.querySelectorAll('.page'));
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const counter = document.getElementById('counter');
-      const nextLessonHref = './lectia-2.html';
-      let current = 0;
+        pages.forEach(function (page, index) {
+          const isActive = index === safeNumber - 1;
+          page.hidden = !isActive;
+          page.classList.toggle('is-active', isActive);
+          page.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        });
 
-      function showPage(index){
-        if(index < 0 || index >= pages.length) return;
-        pages[current].classList.remove('active');
-        current = index;
-        pages[current].classList.add('active');
+        if (updateHash) {
+          history.pushState({ page: safeNumber }, '', '#pagina-' + safeNumber);
+        }
 
-        prevBtn.disabled = current === 0;
-        nextBtn.textContent = current === pages.length - 1 ? 'Următoarea lecție ›' : 'Înainte ›';
-        counter.textContent = `Pagina ${current + 1} / ${pages.length}`;
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        activePage.focus({ preventScroll: true });
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const title = activePage.getAttribute('data-title');
+        if (title) {
+          document.title = 'Lecția 1: ' + title + ' | Mărimi scalare și mărimi vectoriale';
+        }
 
-        if(window.MathJax && MathJax.typesetPromise){
-          MathJax.typesetPromise([pages[current]]).catch(() => {});
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([activePage]).catch(function () {});
         }
       }
 
-      prevBtn.addEventListener('click', () => showPage(current - 1));
-      nextBtn.addEventListener('click', () => {
-        if(current === pages.length - 1){
-          window.location.href = nextLessonHref;
-        } else {
-          showPage(current + 1);
+      document.addEventListener('click', function (event) {
+        const link = event.target.closest('a[href^="#pagina-"]');
+        if (!link) return;
+
+        const match = link.getAttribute('href').match(/#pagina-(\d+)/);
+        if (!match) return;
+
+        event.preventDefault();
+        showPage(Number(match[1]), true);
+      });
+
+      window.addEventListener('popstate', function () {
+        showPage(numberFromHash(), false);
+      });
+
+      window.addEventListener('hashchange', function () {
+        showPage(numberFromHash(), false);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        const current = numberFromHash();
+
+        if (event.key === 'ArrowRight' && current < totalPages) {
+          showPage(current + 1, true);
+        }
+
+        if (event.key === 'ArrowLeft' && current > 1) {
+          showPage(current - 1, true);
         }
       });
 
-      document.addEventListener('keydown', (event) => {
-        if(event.key === 'ArrowLeft') showPage(current - 1);
-        if(event.key === 'ArrowRight'){
-          if(current < pages.length - 1) showPage(current + 1);
-        }
-      });
-
-      let startX = null;
-      document.addEventListener('touchstart', (event) => {
-        startX = event.changedTouches[0].screenX;
-      }, { passive: true });
-
-      document.addEventListener('touchend', (event) => {
-        if(startX === null) return;
-        const endX = event.changedTouches[0].screenX;
-        const diff = endX - startX;
-        if(Math.abs(diff) > 70){
-          if(diff > 0) showPage(current - 1);
-          else if(current < pages.length - 1) showPage(current + 1);
-        }
-        startX = null;
-      }, { passive: true });
-
-      document.querySelectorAll('[data-check]').forEach(button => {
-        button.addEventListener('click', () => {
-          const quiz = button.closest('[data-quiz]');
-          quiz.querySelectorAll('.q').forEach((question) => {
-            const answer = question.dataset.answer;
-            const checked = question.querySelector('input[type="radio"]:checked');
-            const feedback = question.querySelector('.feedback');
-
-            feedback.classList.remove('ok', 'bad');
-
-            if(!checked){
-              feedback.textContent = 'Alege un răspuns.';
-              feedback.classList.add('bad');
-              return;
-            }
-
-            if(checked.value === answer){
-              feedback.textContent = 'Corect!';
-              feedback.classList.add('ok');
-            } else {
-              feedback.textContent = 'Mai verifică: gândește dacă mărimea are sau nu orientare.';
-              feedback.classList.add('bad');
-            }
-          });
-        });
-      });
-
-      document.querySelectorAll('[data-reset]').forEach(button => {
-        button.addEventListener('click', () => {
-          const quiz = button.closest('[data-quiz]');
-          quiz.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
-          quiz.querySelectorAll('.feedback').forEach(feedback => {
-            feedback.textContent = '';
-            feedback.classList.remove('ok', 'bad');
-          });
-        });
-      });
-
-      showPage(0);
+      showPage(numberFromHash(), false);
     })();
-  </script>
-</body>
+</script></body>
 </html>
