@@ -1,1 +1,595 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 11: Vectorul deplasare</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
 
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 880px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .svg-grid {
+      stroke: #dbeafe;
+      stroke-width: 1;
+    }
+
+    .svg-axis {
+      stroke: #334155;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .svg-dashed {
+      stroke-dasharray: 9 9;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(16px, 2.4vw, 26px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(20px, 2.2vw, 30px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+  <svg aria-hidden="true" focusable="false" height="0" width="0" style="position:absolute; left:-9999px; overflow:hidden;">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+  </svg>
+
+  <main class="lesson-shell">
+    <section class="lesson-page lesson-cover" id="pagina-1">
+      <header class="lesson-header">
+        <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+        <h1>Lecția 11: Vectorul deplasare</h1>
+        <p>În această lecție învățăm să descriem schimbarea poziției unui corp cu ajutorul unui vector orientat de la poziția inițială spre poziția finală.</p>
+      </header>
+
+      <div class="lesson-banner">
+        <h2>Ideea de bază</h2>
+        <p>
+          În cinematică nu este suficient să știm „cât s-a mers”.
+          Trebuie să știm și <strong>de unde</strong> a plecat corpul și <strong>unde</strong> a ajuns.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="lectia-10-miscare-mecanica-repaus.html">Înapoi la lecția 10</a>
+        <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-2" hidden>
+      <span class="lesson-page-label">Pagina 2 din 13</span>
+      <h2>Principiul fizic</h2>
+
+      <div class="lesson-card">
+        <p>
+          Mișcarea mecanică înseamnă schimbarea poziției în timp față de un sistem de referință.
+          Pentru a descrie această schimbare folosim <strong>vectorul deplasare</strong>.
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>vectorul deplasare: schimbarea vectorului de poziție</p>
+      </div>
+
+      <div class="lesson-highlight">
+        Întrebare de pornire: dacă pleci de acasă, te plimbi în jurul blocului și revii acasă, ai parcurs drum, dar care este deplasarea ta?
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+        <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-3" hidden>
+      <span class="lesson-page-label">Pagina 3 din 13</span>
+      <h2>Vectorul de poziție</h2>
+
+      <div class="lesson-card">
+        <p>
+          Poziția unui punct material față de originea $O$ este descrisă prin vectorul de poziție:
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{r}$</p>
+      </div>
+
+      <p>
+        Dacă mobilul se află inițial în punctul $A$, are vectorul de poziție $\overrightarrow{r_1}$.
+        Dacă ajunge în punctul $B$, are vectorul de poziție $\overrightarrow{r_2}$.
+      </p>
+
+      <svg class="lesson-svg" viewBox="0 0 720 320" role="img" aria-label="Vectori de poziție pentru punctele A și B">
+        <line x1="70" y1="260" x2="650" y2="260" class="svg-axis" marker-end="url(#arrow-blue)" />
+        <line x1="90" y1="280" x2="90" y2="50" class="svg-axis" marker-end="url(#arrow-blue)" />
+        <text x="658" y="266" class="svg-label">x</text>
+        <text x="82" y="42" class="svg-label">y</text>
+        <circle cx="90" cy="260" r="6" fill="#0f172a" />
+        <text x="58" y="286" class="svg-label">O</text>
+
+        <circle cx="250" cy="190" r="8" fill="#2563eb" />
+        <text x="232" y="176" class="svg-label">A</text>
+        <line x1="90" y1="260" x2="250" y2="190" stroke="#2563eb" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-blue)" />
+        <text x="145" y="205" class="svg-label">r₁</text>
+
+        <circle cx="520" cy="110" r="8" fill="#f97316" />
+        <text x="530" y="100" class="svg-label">B</text>
+        <line x1="90" y1="260" x2="520" y2="110" stroke="#f97316" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+        <text x="310" y="152" class="svg-label">r₂</text>
+      </svg>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+        <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-4" hidden>
+      <span class="lesson-page-label">Pagina 4 din 13</span>
+      <h2>Definiția vectorului deplasare</h2>
+
+      <div class="lesson-card">
+        <p>
+          <strong>Vectorul deplasare</strong> unește poziția inițială cu poziția finală.
+          El pornește din punctul $A$ și se termină în punctul $B$.
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>$\Delta\overrightarrow{r}=\overrightarrow{r_2}-\overrightarrow{r_1}$</p>
+      </div>
+
+      <div class="lesson-highlight">
+        Simbolul $\Delta$ se citește „variație”. Deci $\Delta\overrightarrow{r}$ înseamnă variația vectorului de poziție.
+      </div>
+
+      <svg class="lesson-svg" viewBox="0 0 720 300" role="img" aria-label="Vectorul deplasare de la A la B">
+        <circle cx="180" cy="210" r="9" fill="#2563eb" />
+        <text x="160" y="195" class="svg-label">A</text>
+        <circle cx="530" cy="95" r="9" fill="#f97316" />
+        <text x="540" y="90" class="svg-label">B</text>
+
+        <path d="M180 210 C260 130, 390 250, 530 95" fill="none" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10" />
+        <line x1="180" y1="210" x2="530" y2="95" stroke="#16a34a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-green)" />
+        <text x="318" y="124" class="svg-label">deplasare</text>
+        <text x="260" y="252" class="svg-small">traiectorie posibilă</text>
+      </svg>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+        <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-5" hidden>
+      <span class="lesson-page-label">Pagina 5 din 13</span>
+      <h2>Deplasare și distanță parcursă</h2>
+
+      <div class="lesson-two-columns">
+        <div class="mini-card">
+          <h3>Distanța parcursă</h3>
+          <p>Este lungimea drumului urmat efectiv de corp. Este o mărime scalară.</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>Vectorul deplasare</h3>
+          <p>Unește direct poziția inițială cu poziția finală. Este o mărime vectorială.</p>
+        </div>
+      </div>
+
+      <div class="formula-card">
+        <p>$|\Delta\overrightarrow{r}| \leq s$</p>
+      </div>
+
+      <p>
+        Modulul deplasării este cel mult egal cu distanța parcursă $s$.
+        Egalitatea apare când mișcarea se face în linie dreaptă, fără întoarcere.
+      </p>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+        <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-6" hidden>
+      <span class="lesson-page-label">Pagina 6 din 13</span>
+      <h2>Exemplu simplu: dus și întors</h2>
+
+      <div class="problem-card">
+        <p>
+          Un elev merge 100 m spre est până la magazin, apoi se întoarce 100 m la punctul de plecare.
+          Care este distanța parcursă? Care este deplasarea?
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Rezolvare pas cu pas</h3>
+        <ol class="lesson-list numbered">
+          <li>Distanța parcursă este lungimea totală a drumului: $s=100\,m+100\,m=200\,m$.</li>
+          <li>Poziția finală coincide cu poziția inițială.</li>
+          <li>Vectorul deplasare este nul: $\Delta\overrightarrow{r}=\overrightarrow{0}$.</li>
+        </ol>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Răspuns: distanța parcursă este $200\,m$, dar deplasarea este zero.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+        <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-7" hidden>
+      <span class="lesson-page-label">Pagina 7 din 13</span>
+      <h2>Pe o axă: deplasarea are semn</h2>
+
+      <div class="lesson-card">
+        <p>
+          Dacă mișcarea are loc pe o singură axă, de exemplu axa $Ox$, deplasarea se calculează prin diferența coordonatelor:
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>$\Delta x=x_2-x_1$</p>
+      </div>
+
+      <div class="lesson-two-columns">
+        <div class="mini-card">
+          <h3>$\Delta x &gt; 0$</h3>
+          <p>Mobilul se deplasează în sensul pozitiv al axei.</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>$\Delta x &lt; 0$</h3>
+          <p>Mobilul se deplasează în sens opus axei pozitive.</p>
+        </div>
+      </div>
+
+      <svg class="lesson-svg" viewBox="0 0 720 220" role="img" aria-label="Deplasarea pe axa Ox">
+        <line x1="80" y1="120" x2="650" y2="120" class="svg-axis" marker-end="url(#arrow-blue)" />
+        <text x="660" y="126" class="svg-label">x</text>
+        <line x1="180" y1="100" x2="180" y2="140" stroke="#334155" stroke-width="4" />
+        <line x1="520" y1="100" x2="520" y2="140" stroke="#334155" stroke-width="4" />
+        <text x="154" y="170" class="svg-label">x₁</text>
+        <text x="494" y="170" class="svg-label">x₂</text>
+        <line x1="180" y1="82" x2="520" y2="82" stroke="#16a34a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-green)" />
+        <text x="310" y="62" class="svg-label">Δx &gt; 0</text>
+      </svg>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+        <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-8" hidden>
+      <span class="lesson-page-label">Pagina 8 din 13</span>
+      <h2>Exemplu pe axă</h2>
+
+      <div class="problem-card">
+        <p>
+          Un mobil se află inițial la $x_1=2\,m$ și ajunge la $x_2=9\,m$.
+          Determină deplasarea pe axa $Ox$.
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Rezolvare pas cu pas</h3>
+        <ol class="lesson-list numbered">
+          <li>Scriem formula: $\Delta x=x_2-x_1$.</li>
+          <li>Înlocuim datele: $\Delta x=9\,m-2\,m$.</li>
+          <li>Calculăm: $\Delta x=7\,m$.</li>
+        </ol>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Deplasarea este $+7\,m$, deci are sensul pozitiv al axei $Ox$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+        <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-9" hidden>
+      <span class="lesson-page-label">Pagina 9 din 13</span>
+      <h2>În plan: componentele deplasării</h2>
+
+      <div class="lesson-card">
+        <p>
+          În plan, punctul inițial are coordonatele $A(x_1,y_1)$, iar punctul final are coordonatele $B(x_2,y_2)$.
+          Vectorul deplasare are două componente:
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>$\Delta x=x_2-x_1$ &nbsp;&nbsp; și &nbsp;&nbsp; $\Delta y=y_2-y_1$</p>
+      </div>
+
+      <div class="formula-card">
+        <p>$|\Delta\overrightarrow{r}|=\sqrt{(\Delta x)^2+(\Delta y)^2}$</p>
+      </div>
+
+      <p>
+        Folosim teorema lui Pitagora, deoarece componentele pe axele perpendiculare formează un triunghi dreptunghic.
+      </p>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+        <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-10" hidden>
+      <span class="lesson-page-label">Pagina 10 din 13</span>
+      <h2>Deplasarea în plan: desen</h2>
+
+      <svg class="lesson-svg" viewBox="0 0 720 420" role="img" aria-label="Componentele vectorului deplasare în plan">
+        <line x1="80" y1="340" x2="650" y2="340" class="svg-axis" marker-end="url(#arrow-blue)" />
+        <line x1="100" y1="360" x2="100" y2="60" class="svg-axis" marker-end="url(#arrow-blue)" />
+        <text x="660" y="346" class="svg-label">x</text>
+        <text x="92" y="50" class="svg-label">y</text>
+
+        <circle cx="210" cy="290" r="8" fill="#2563eb" />
+        <text x="188" y="276" class="svg-label">A</text>
+
+        <circle cx="540" cy="120" r="8" fill="#f97316" />
+        <text x="550" y="112" class="svg-label">B</text>
+
+        <line x1="210" y1="290" x2="540" y2="120" stroke="#16a34a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-green)" />
+        <text x="338" y="176" class="svg-label">Δr</text>
+
+        <line x1="210" y1="290" x2="540" y2="290" stroke="#2563eb" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-blue)" />
+        <text x="352" y="322" class="svg-label">Δx</text>
+
+        <line x1="540" y1="290" x2="540" y2="120" stroke="#f97316" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+        <text x="555" y="210" class="svg-label">Δy</text>
+
+        <line x1="540" y1="120" x2="540" y2="290" class="svg-grid svg-dashed" />
+        <line x1="210" y1="290" x2="540" y2="290" class="svg-grid svg-dashed" />
+      </svg>
+
+      <div class="lesson-highlight">
+        Vectorul verde este deplasarea. Segmentele albastru și portocaliu arată componentele sale pe axe.
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+        <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-11" hidden>
+      <span class="lesson-page-label">Pagina 11 din 13</span>
+      <h2>Exemplu în plan</h2>
+
+      <div class="problem-card">
+        <p>
+          Un mobil pleacă din punctul $A(2\,m,1\,m)$ și ajunge în punctul $B(8\,m,5\,m)$.
+          Determină componentele deplasării și modulul ei.
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Rezolvare pas cu pas</h3>
+        <ol class="lesson-list numbered">
+          <li>$\Delta x=x_2-x_1=8\,m-2\,m=6\,m$.</li>
+          <li>$\Delta y=y_2-y_1=5\,m-1\,m=4\,m$.</li>
+          <li>$|\Delta\overrightarrow{r}|=\sqrt{6^2+4^2}\,m=\sqrt{52}\,m$.</li>
+          <li>$|\Delta\overrightarrow{r}|\approx 7{,}2\,m$.</li>
+        </ol>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Deplasarea are componentele $6\,m$ și $4\,m$, iar modulul ei este aproximativ $7{,}2\,m$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+        <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-12" hidden>
+      <span class="lesson-page-label">Pagina 12 din 13</span>
+      <h2>Verifică-te</h2>
+
+      <div class="mini-quiz">
+        <details>
+          <summary>1. Un corp pleacă din $A$ și ajunge în $B$. Unde este originea vectorului deplasare?</summary>
+          <p>Originea vectorului deplasare este în punctul inițial $A$.</p>
+        </details>
+
+        <details>
+          <summary>2. Dacă poziția finală este aceeași cu poziția inițială, ce deplasare are corpul?</summary>
+          <p>Vectorul deplasare este nul: $\Delta\overrightarrow{r}=\overrightarrow{0}$.</p>
+        </details>
+
+        <details>
+          <summary>3. Pe axa $Ox$, $x_1=10\,m$ și $x_2=3\,m$. Care este $\Delta x$?</summary>
+          <p>$\Delta x=3\,m-10\,m=-7\,m$. Semnul minus arată sens opus axei pozitive.</p>
+        </details>
+      </div>
+
+      <div class="lesson-highlight">
+        Nu confunda distanța parcursă cu vectorul deplasare: distanța urmărește drumul, deplasarea unește începutul cu sfârșitul.
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+        <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page lesson-last-page" id="pagina-13" hidden>
+      <span class="lesson-page-label">Pagina 13 din 13</span>
+      <h2>Reținem</h2>
+
+      <div class="lesson-card">
+        <ul class="lesson-list">
+          <li>Vectorul deplasare arată schimbarea poziției unui corp.</li>
+          <li>El este orientat de la poziția inițială spre poziția finală.</li>
+          <li>$\Delta\overrightarrow{r}=\overrightarrow{r_2}-\overrightarrow{r_1}$.</li>
+          <li>În mișcarea pe axă: $\Delta x=x_2-x_1$.</li>
+          <li>Distanța parcursă este scalară; deplasarea este vectorială.</li>
+          <li>Dacă mobilul revine în punctul de plecare, deplasarea este zero.</li>
+        </ul>
+      </div>
+
+      <div class="lesson-highlight">
+        Întrebare finală: poți construi un exemplu în care distanța parcursă este mare, dar deplasarea este mică?
+      </div>
+
+      <footer class="lesson-footer">
+        <p><strong>Prof. Dănuț Andronie</strong></p>
+        <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+        <div class="lesson-actions">
+          <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+          <a class="lesson-button" href="lectia-12-viteza.html">Mergi la următoarea lectie</a>
+        </div>
+      </footer>
+
+      <nav class="lesson-page-nav" aria-label="Navigare lecție">
+        <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const pages = Array.from(document.querySelectorAll('.lesson-page'));
+
+      function pageFromHash() {
+        const match = window.location.hash.match(/^#pagina-(\d+)$/);
+        if (!match) return 1;
+        const pageNumber = Number(match[1]);
+        if (!Number.isInteger(pageNumber) || pageNumber < 1 || pageNumber > pages.length) {
+          return 1;
+        }
+        return pageNumber;
+      }
+
+      function showPage() {
+        const pageNumber = pageFromHash();
+
+        pages.forEach((page, index) => {
+          const isActive = index === pageNumber - 1;
+          page.hidden = !isActive;
+          page.classList.toggle('is-active', isActive);
+        });
+
+        const activePage = document.getElementById(`pagina-${pageNumber}`);
+        if (activePage) {
+          activePage.setAttribute('tabindex', '-1');
+          activePage.focus({ preventScroll: true });
+        }
+
+        try {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        } catch (error) {
+          window.scrollTo(0, 0);
+        }
+      }
+
+      window.addEventListener('hashchange', showPage);
+      window.addEventListener('DOMContentLoaded', showPage);
+      showPage();
+    })();
+  </script>
+</body>
+</html>
