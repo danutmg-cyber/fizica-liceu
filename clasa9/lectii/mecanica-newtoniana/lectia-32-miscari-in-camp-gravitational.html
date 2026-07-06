@@ -1,1 +1,772 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 32: Mișcări în câmp gravitațional</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .blue-line {
+      stroke: #2563eb;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .orange-line {
+      stroke: #f97316;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .green-line {
+      stroke: #16a34a;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .dashed-line {
+      stroke-dasharray: 12 10;
+    }
+
+    .fall-path {
+      stroke: #94a3b8;
+      stroke-width: 8;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 32px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small,
+      .svg-note {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover" id="pagina-1">
+  <header class="site-header lesson-header">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 32: Mișcări în câmp gravitațional</h1>
+    <p>Aplicăm mișcarea rectilinie uniform variată la căderea liberă și la aruncarea verticală.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Întrebare de pornire:</strong> De ce o minge aruncată vertical în sus încetinește, se oprește o clipă și apoi cade?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Principiul fizic este acesta: lângă suprafața Pământului, dacă neglijăm rezistența aerului, toate corpurile au aceeași accelerație gravitațională, orientată vertical în jos.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 15</span>
+  <h2>Ce studiem?</h2>
+
+  <div class="lesson-card">
+    <p>În această lecție studiem mișcarea corpurilor aflate numai sub acțiunea gravitației.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Cădere liberă</h3>
+      <p>Corpul este lăsat să cadă sau este aruncat vertical în jos.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Aruncare verticală</h3>
+      <p>Corpul este lansat vertical în sus, apoi revine sub acțiunea gravitației.</p>
+    </div>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Modelul folosit: mișcare pe verticală, la înălțimi mici față de raza Pământului, fără rezistența aerului.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 15</span>
+  <h2>Accelerația gravitațională</h2>
+
+  <div class="formula-card">
+    <p>$g \approx 9{,}8\,\text{m/s}^2$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Accelerația gravitațională arată cu cât se modifică viteza unui corp în fiecare secundă, dacă asupra lui acționează doar gravitația.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Vectorul accelerației gravitaționale se notează $\overrightarrow{g}$ și este orientat spre centrul Pământului, adică vertical în jos.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 360" role="img" aria-label="Accelerația gravitațională este orientată în jos">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <rect x="120" y="295" width="660" height="18" rx="9" fill="#94a3b8"></rect>
+    <circle cx="450" cy="115" r="42" fill="#f97316"></circle>
+    <line x1="450" y1="168" x2="450" y2="260" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <text x="475" y="225" class="svg-label">g⃗</text>
+    <text x="285" y="345" class="svg-note">Pământul atrage corpul în jos</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 15</span>
+  <h2>Alegerea axei este foarte importantă</h2>
+
+  <div class="lesson-card">
+    <p>Pentru mișcările pe verticală alegem o axă $Oy$. Semnul accelerației depinde de sensul pozitiv ales.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Axa pozitivă în sus</h3>
+      <p>$a_y = -g$</p>
+      <p>Gravitația are sens opus axei.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Axa pozitivă în jos</h3>
+      <p>$a_y = +g$</p>
+      <p>Gravitația are același sens cu axa.</p>
+    </div>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>În această lecție folosim cel mai des axa $Oy$ pozitivă în sus, deci $a_y=-g$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 15</span>
+  <h2>Ecuațiile mișcării</h2>
+
+  <div class="lesson-card">
+    <p>Mișcarea în câmp gravitațional uniform este o mișcare rectilinie uniform variată.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v_y = v_{0y} - gt$</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$y = y_0 + v_{0y}t - \dfrac{gt^2}{2}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Aceste formule se folosesc când axa $Oy$ este orientată vertical în sus.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 15</span>
+  <h2>Căderea liberă din repaus</h2>
+
+  <div class="lesson-card">
+    <p>Căderea liberă din repaus înseamnă că viteza inițială este zero: $v_0=0$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Dacă alegem axa pozitivă în jos, formulele devin mai simple.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v = gt$</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$h = \dfrac{gt^2}{2}$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>În căderea liberă, viteza crește cu aproximativ $9{,}8\,\text{m/s}$ în fiecare secundă.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 15</span>
+  <h2>Exemplu: corp lăsat să cadă</h2>
+
+  <div class="problem-card">
+    <p><strong>Problemă:</strong> Un corp este lăsat să cadă de la înălțimea $h=20\,\text{m}$. Neglijăm aerul. După cât timp ajunge la sol?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Folosim formula pentru căderea din repaus:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$h=\dfrac{gt^2}{2}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Izolăm timpul:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$t=\sqrt{\dfrac{2h}{g}}$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$t=\sqrt{\dfrac{2\cdot20}{9{,}8}}\approx2{,}02\,\text{s}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 15</span>
+  <h2>Viteza la sol</h2>
+
+  <div class="lesson-card">
+    <p>Pentru corpul din exemplul anterior, putem afla viteza cu care ajunge la sol.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v=gt$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$v=9{,}8\cdot2{,}02\approx19{,}8\,\text{m/s}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Putem folosi și formula fără timp:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v^2=2gh$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$v=\sqrt{2gh}=\sqrt{2\cdot9{,}8\cdot20}\approx19{,}8\,\text{m/s}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 15</span>
+  <h2>Aruncarea verticală în sus</h2>
+
+  <div class="lesson-card">
+    <p>La aruncarea verticală în sus, viteza inițială este orientată în sus, iar accelerația gravitațională este orientată în jos.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 420" role="img" aria-label="Aruncarea verticală în sus">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <rect x="110" y="350" width="680" height="16" rx="8" fill="#94a3b8"></rect>
+    <path d="M450,330 C450,260 450,190 450,110" class="fall-path dashed-line"></path>
+    <circle cx="450" cy="330" r="28" fill="#f97316"></circle>
+    <line x1="390" y1="330" x2="390" y2="250" class="orange-line" marker-end="url(#arrow-orange)"></line>
+    <text x="305" y="292" class="svg-label">v⃗₀</text>
+    <line x1="515" y1="170" x2="515" y2="260" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <text x="535" y="225" class="svg-label">g⃗</text>
+    <text x="320" y="72" class="svg-note">sus: viteza scade până devine zero</text>
+  </svg>
+
+  <div class="formula-card">
+    <p>$v_y = v_0 - gt$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 15</span>
+  <h2>Punctul cel mai înalt</h2>
+
+  <div class="lesson-card">
+    <p>În punctul cel mai înalt, corpul nu mai urcă. Viteza instantanee este zero.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v_y=0$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Din $v_y=v_0-gt$ obținem timpul de urcare:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$t_u=\dfrac{v_0}{g}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Înălțimea maximă se poate calcula cu:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$H_{\max}=\dfrac{v_0^2}{2g}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 15</span>
+  <h2>Exemplu: aruncare verticală</h2>
+
+  <div class="problem-card">
+    <p><strong>Problemă:</strong> O minge este aruncată vertical în sus cu viteza $v_0=20\,\text{m/s}$. Ce înălțime maximă atinge?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>La înălțimea maximă, viteza devine zero, deci folosim:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$H_{\max}=\dfrac{v_0^2}{2g}$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$H_{\max}=\dfrac{20^2}{2\cdot9{,}8}=\dfrac{400}{19{,}6}\approx20{,}4\,\text{m}$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Răspuns: mingea urcă aproximativ $20{,}4\,\text{m}$, dacă neglijăm rezistența aerului.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 15</span>
+  <h2>Timpul de urcare și timpul total</h2>
+
+  <div class="lesson-card">
+    <p>Pentru aceeași minge, timpul de urcare este:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$t_u=\dfrac{v_0}{g}$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$t_u=\dfrac{20}{9{,}8}\approx2{,}04\,\text{s}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Dacă mingea revine la aceeași înălțime de la care a fost aruncată, timpul de coborâre este egal cu timpul de urcare.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$t_{\text{total}}=2t_u=\dfrac{2v_0}{g}$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$t_{\text{total}}\approx4{,}08\,\text{s}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 15</span>
+  <h2>Semnele contează</h2>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Situație</th>
+          <th>Semnul vitezei</th>
+          <th>Semnul accelerației</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Corpul urcă</td>
+          <td>$v_y>0$</td>
+          <td>$a_y=-g$</td>
+        </tr>
+        <tr>
+          <td>În punctul cel mai înalt</td>
+          <td>$v_y=0$</td>
+          <td>$a_y=-g$</td>
+        </tr>
+        <tr>
+          <td>Corpul coboară</td>
+          <td>$v_y<0$</td>
+          <td>$a_y=-g$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Accelerația gravitațională nu dispare în vârful traiectoriei. Doar viteza devine zero pentru un moment.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 15</span>
+  <h2>Algoritm de rezolvare</h2>
+
+  <div class="lesson-card">
+    <ol class="lesson-list numbered">
+      <li>Alege axa verticală și sensul pozitiv.</li>
+      <li>Scrie datele: $y_0$, $v_{0y}$, $a_y$.</li>
+      <li>Pune semnele corect.</li>
+      <li>Alege formula potrivită.</li>
+      <li>Calculează și verifică unitățile.</li>
+    </ol>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Cu timp</h3>
+      <p>$v_y=v_{0y}+a_yt$</p>
+      <p>$y=y_0+v_{0y}t+\dfrac{a_yt^2}{2}$</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Fără timp</h3>
+      <p>$v_y^2-v_{0y}^2=2a_y(y-y_0)$</p>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <p>În problemele de cădere și aruncare verticală, cea mai frecventă eroare este alegerea greșită a semnului pentru $a_y$ sau $v_{0y}$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+    <a class="lesson-button" href="#pagina-15">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-15" hidden>
+  <span class="lesson-page-label">Pagina 15 din 15</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>În câmp gravitațional uniform, fără rezistența aerului, mișcarea pe verticală este uniform variată.</li>
+      <li>Accelerația gravitațională este orientată în jos și are valoarea aproximativă $g=9{,}8\,\text{m/s}^2$.</li>
+      <li>Dacă axa este orientată în sus, atunci $a_y=-g$.</li>
+      <li>La aruncarea verticală în sus, corpul încetinește până când $v_y=0$, apoi coboară.</li>
+      <li>În punctul cel mai înalt accelerația nu este zero; ea rămâne $\overrightarrow{g}$, orientată în jos.</li>
+    </ul>
+  </div>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. Ce fel de mișcare este căderea liberă?</summary>
+      <p>Este o mișcare rectilinie uniform variată, dacă neglijăm rezistența aerului.</p>
+    </details>
+
+    <details>
+      <summary>2. Ce valoare are viteza în punctul cel mai înalt?</summary>
+      <p>Viteza instantanee este zero: $v_y=0$.</p>
+    </details>
+
+    <details>
+      <summary>3. Ce se întâmplă cu accelerația în punctul cel mai înalt?</summary>
+      <p>Accelerația rămâne $\overrightarrow{g}$, orientată în jos.</p>
+    </details>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-33-miscarea-pe-plan-inclinat.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-14">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>

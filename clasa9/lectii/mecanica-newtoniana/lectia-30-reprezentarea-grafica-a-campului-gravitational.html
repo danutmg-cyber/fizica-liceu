@@ -1,1 +1,666 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 30: Reprezentarea grafică a câmpului gravitațional</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .field-line {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 5;
+      stroke-linecap: round;
+    }
+
+    .field-line-orange {
+      fill: none;
+      stroke: #f97316;
+      stroke-width: 5;
+      stroke-linecap: round;
+    }
+
+    .field-line-green {
+      fill: none;
+      stroke: #16a34a;
+      stroke-width: 5;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .field-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .field-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.3vw, 30px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 23px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<svg aria-hidden="true" focusable="false" height="0" width="0" style="position:absolute; left:-9999px; overflow:hidden;">
+  <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+</svg>
+
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover is-active" id="pagina-1">
+  <header class="lesson-header blue">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 30: Reprezentarea grafică a câmpului gravitațional</h1>
+    <p>Învățăm să desenăm câmpul gravitațional prin linii de câmp, vectori și grafice simple.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Ideea de bază:</strong> un câmp invizibil poate fi studiat dacă îl reprezentăm prin desene corecte: săgeți, linii de câmp și grafice.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 14</span>
+  <h2>De ce avem nevoie de reprezentări?</h2>
+
+  <div class="lesson-card">
+    <p>Câmpul gravitațional nu se vede direct. Vedem doar efectul lui: corpurile sunt atrase.</p>
+    <p>În fizică folosim reprezentări grafice pentru a vedea mai clar <strong>direcția</strong>, <strong>sensul</strong> și <strong>intensitatea</strong> câmpului.</p>
+  </div>
+
+  <div class="field-chip-row">
+    <span class="field-chip">săgeți</span>
+    <span class="field-chip">linii de câmp</span>
+    <span class="field-chip">grafice</span>
+  </div>
+
+  <div class="answer-card">
+    <p>O reprezentare bună nu este doar un desen frumos. Ea transmite informație fizică.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 14</span>
+  <h2>Principiul fizic</h2>
+
+  <div class="lesson-card">
+    <p>În fiecare punct din spațiu, câmpul gravitațional este descris prin vectorul intensitate:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$$\overrightarrow{g}=\frac{\overrightarrow{F_g}}{m}$$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Vectorul $\overrightarrow{g}$ are direcția și sensul forței gravitaționale care ar acționa asupra unui corp de probă.</p>
+  </div>
+
+  <div class="answer-card">
+    <p>De aceea, când desenăm câmpul, desenăm de fapt orientarea vectorului $\overrightarrow{g}$ în diferite puncte.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 14</span>
+  <h2>Reprezentarea prin vectori</h2>
+
+  <div class="lesson-card">
+    <p>În puncte diferite, desenăm săgeți care arată vectorul $\overrightarrow{g}$.</p>
+    <p>În jurul Pământului, aceste săgeți sunt orientate spre centrul Pământului.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 420" role="img" aria-label="Vectori ai câmpului gravitațional orientați spre Pământ">
+    <circle cx="450" cy="210" r="82" fill="#bfdbfe" stroke="#2563eb" stroke-width="5"></circle>
+    <text x="415" y="220" class="svg-label">Pământ</text>
+
+    <line x1="450" y1="55" x2="450" y2="125" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="450" y1="365" x2="450" y2="295" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="295" y1="210" x2="365" y2="210" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="605" y1="210" x2="535" y2="210" class="field-line" marker-end="url(#arrow-blue)"></line>
+
+    <line x1="335" y1="95" x2="385" y2="145" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="565" y1="95" x2="515" y2="145" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="335" y1="325" x2="385" y2="275" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="565" y1="325" x2="515" y2="275" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+
+    <text x="470" y="85" class="svg-label">g⃗</text>
+    <text x="610" y="190" class="svg-label">g⃗</text>
+    <text x="270" y="195" class="svg-label">g⃗</text>
+    <text x="470" y="360" class="svg-label">g⃗</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 14</span>
+  <h2>Liniile de câmp gravitațional</h2>
+
+  <div class="lesson-card">
+    <p>O linie de câmp este o linie imaginară desenată astfel încât tangenta la ea indică direcția vectorului $\overrightarrow{g}$.</p>
+    <p>Sensul liniei de câmp este sensul în care ar fi atras un corp de probă.</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Pentru gravitație, liniile de câmp sunt orientate <strong>spre corpul care atrage</strong>.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 420" role="img" aria-label="Linii de câmp gravitațional spre corpul central">
+    <circle cx="450" cy="210" r="72" fill="#fed7aa" stroke="#f97316" stroke-width="5"></circle>
+    <text x="423" y="218" class="svg-label">M</text>
+
+    <line x1="450" y1="42" x2="450" y2="132" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="450" y1="378" x2="450" y2="288" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="282" y1="210" x2="372" y2="210" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="618" y1="210" x2="528" y2="210" class="field-line" marker-end="url(#arrow-blue)"></line>
+
+    <line x1="331" y1="91" x2="390" y2="150" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="569" y1="91" x2="510" y2="150" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="331" y1="329" x2="390" y2="270" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="569" y1="329" x2="510" y2="270" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+
+    <path d="M450 42 C490 100, 490 130, 450 132" class="field-line-green" marker-end="url(#arrow-green)"></path>
+    <text x="90" y="380" class="svg-note">Săgețile arată sensul atracției gravitaționale.</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 14</span>
+  <h2>Câmp central</h2>
+
+  <div class="lesson-card">
+    <p>În jurul unei planete sau al unei stele, câmpul gravitațional se reprezintă adesea ca <strong>un câmp central</strong>.</p>
+    <p>Liniile de câmp sunt radiale și intră spre centrul corpului.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$$\text{câmp central: liniile se întâlnesc în centru}$$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>Cu cât suntem mai aproape de corpul care atrage, cu atât câmpul este mai intens.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 14</span>
+  <h2>Câmp uniform</h2>
+
+  <div class="lesson-card">
+    <p>Aproape de suprafața Pământului, pe distanțe mici, câmpul gravitațional poate fi considerat <strong>aproape uniform</strong>.</p>
+    <p>Atunci vectorii $\overrightarrow{g}$ sunt aproape paraleli, au același sens și aproape aceeași mărime.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 420" role="img" aria-label="Câmp gravitațional uniform lângă suprafața Pământului">
+    <rect x="70" y="315" width="760" height="36" rx="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="4"></rect>
+    <text x="315" y="390" class="svg-label">suprafața Pământului</text>
+
+    <line x1="180" y1="55" x2="180" y2="275" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="330" y1="55" x2="330" y2="275" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="480" y1="55" x2="480" y2="275" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="630" y1="55" x2="630" y2="275" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="780" y1="55" x2="780" y2="275" class="field-line" marker-end="url(#arrow-blue)"></line>
+
+    <text x="198" y="105" class="svg-label">g⃗</text>
+    <text x="348" y="105" class="svg-label">g⃗</text>
+    <text x="498" y="105" class="svg-label">g⃗</text>
+    <text x="648" y="105" class="svg-label">g⃗</text>
+    <text x="798" y="105" class="svg-label">g⃗</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 14</span>
+  <h2>Densitatea liniilor de câmp</h2>
+
+  <div class="lesson-card">
+    <p>O regulă importantă: unde liniile de câmp sunt mai dese, câmpul este mai intens.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Linii mai dese</h3>
+      <p>câmp mai puternic</p>
+    </div>
+    <div class="mini-card">
+      <h3>Linii mai rare</h3>
+      <p>câmp mai slab</p>
+    </div>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 360" role="img" aria-label="Densitatea liniilor de câmp arată intensitatea câmpului">
+    <circle cx="220" cy="180" r="58" fill="#fed7aa" stroke="#f97316" stroke-width="5"></circle>
+    <text x="145" y="320" class="svg-note">aproape: linii dese</text>
+    <line x1="220" y1="45" x2="220" y2="112" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="126" y1="86" x2="176" y2="136" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="314" y1="86" x2="264" y2="136" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="98" y1="180" x2="154" y2="180" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="342" y1="180" x2="286" y2="180" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="126" y1="274" x2="176" y2="224" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="314" y1="274" x2="264" y2="224" class="field-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="220" y1="315" x2="220" y2="248" class="field-line" marker-end="url(#arrow-blue)"></line>
+
+    <circle cx="680" cy="180" r="58" fill="#dbeafe" stroke="#2563eb" stroke-width="5"></circle>
+    <text x="600" y="320" class="svg-note">departe: linii rare</text>
+    <line x1="680" y1="32" x2="680" y2="112" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="532" y1="180" x2="614" y2="180" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="828" y1="180" x2="746" y2="180" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+    <line x1="680" y1="328" x2="680" y2="248" class="field-line-orange" marker-end="url(#arrow-orange)"></line>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 14</span>
+  <h2>Graficul lui $g$ în funcție de distanță</h2>
+
+  <div class="lesson-card">
+    <p>Pentru un corp sferic, în exteriorul lui, intensitatea câmpului gravitațional scade când distanța față de centru crește.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$$g=\frac{G M}{r^2}$$</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 430" role="img" aria-label="Graficul calitativ al intensității câmpului gravitațional în funcție de distanță">
+    <line x1="100" y1="350" x2="805" y2="350" class="axis-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="100" y1="350" x2="100" y2="65" class="axis-line" marker-end="url(#arrow-blue)"></line>
+
+    <text x="815" y="358" class="svg-label">r</text>
+    <text x="70" y="60" class="svg-label">g</text>
+
+    <path d="M150 95 C230 140, 280 195, 345 245 C440 315, 570 335, 760 345" fill="none" stroke="#f97316" stroke-width="7" stroke-linecap="round"></path>
+
+    <line x1="180" y1="350" x2="180" y2="360" stroke="#0f172a" stroke-width="4"></line>
+    <line x1="330" y1="350" x2="330" y2="360" stroke="#0f172a" stroke-width="4"></line>
+    <line x1="510" y1="350" x2="510" y2="360" stroke="#0f172a" stroke-width="4"></line>
+
+    <text x="163" y="390" class="svg-small">R</text>
+    <text x="305" y="390" class="svg-small">2R</text>
+    <text x="485" y="390" class="svg-small">3R</text>
+    <text x="420" y="120" class="svg-note">scade repede la început, apoi mai lent</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 14</span>
+  <h2>Cum citim graficul?</h2>
+
+  <div class="lesson-card">
+    <p>Graficul $g(r)$ ne spune cum se modifică intensitatea câmpului când ne îndepărtăm de centrul corpului.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>La distanță mică</h3>
+      <p>$g$ este mai mare: atracția este mai puternică.</p>
+    </div>
+    <div class="mini-card">
+      <h3>La distanță mare</h3>
+      <p>$g$ este mai mic: atracția este mai slabă.</p>
+    </div>
+  </div>
+
+  <div class="answer-card">
+    <p>Dacă distanța față de centru se dublează, atunci pentru modelul $g=\frac{GM}{r^2}$ intensitatea devine de patru ori mai mică.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 14</span>
+  <h2>Reguli pentru un desen corect</h2>
+
+  <ol class="lesson-list numbered">
+    <li>Desenează corpul care creează câmpul.</li>
+    <li>Arată sensul atracției prin săgeți orientate spre corp.</li>
+    <li>Folosește linii mai dese unde câmpul este mai intens.</li>
+    <li>Nu desena liniile de câmp ca și cum ar porni din masă; pentru gravitație ele intră spre masă.</li>
+  </ol>
+
+  <div class="warning-card lesson-card">
+    <p><strong>Atenție:</strong> liniile de câmp sunt un model. Ele ne ajută să interpretăm câmpul, dar nu sunt fire reale în spațiu.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 14</span>
+  <h2>Exemplu ghidat</h2>
+
+  <div class="problem-card">
+    <p><strong>Sarcină:</strong> desenează câmpul gravitațional în jurul Lunii.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1:</strong> reprezinți Luna printr-un cerc.</p>
+    <p><strong>Pasul 2:</strong> trasezi linii radiale în jurul ei.</p>
+    <p><strong>Pasul 3:</strong> pui săgețile spre centrul Lunii.</p>
+  </div>
+
+  <div class="answer-card">
+    <p>Concluzie: câmpul gravitațional al Lunii este reprezentat prin linii orientate spre Lună, iar liniile sunt mai dese aproape de suprafața ei.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 14</span>
+  <h2>Verifică rapid</h2>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. În ce sens sunt orientate liniile câmpului gravitațional?</summary>
+      <p>Spre corpul care produce câmpul gravitațional, de exemplu spre centrul Pământului.</p>
+    </details>
+
+    <details>
+      <summary>2. Ce înseamnă linii de câmp mai dese?</summary>
+      <p>Înseamnă că intensitatea câmpului este mai mare în acea regiune.</p>
+    </details>
+
+    <details>
+      <summary>3. Cum arată câmpul gravitațional uniform?</summary>
+      <p>Prin linii paralele, egal distanțate, orientate în același sens.</p>
+    </details>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 14</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>Câmpul gravitațional poate fi reprezentat prin vectori $\overrightarrow{g}$.</li>
+      <li>Liniile de câmp gravitațional sunt orientate spre corpul care atrage.</li>
+      <li>Densitatea liniilor arată intensitatea câmpului.</li>
+      <li>Aproape de suprafața Pământului, câmpul poate fi considerat uniform.</li>
+      <li>La distanțe mari, intensitatea câmpului gravitațional scade.</li>
+    </ul>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-31-miscarea-rectilinie-uniform-variata.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>

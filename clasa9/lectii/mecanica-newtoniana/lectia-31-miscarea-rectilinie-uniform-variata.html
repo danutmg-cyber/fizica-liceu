@@ -1,1 +1,797 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 31: Mișcarea rectilinie uniform variată</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .motion-line {
+      stroke: #94a3b8;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+
+    .blue-line {
+      stroke: #2563eb;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .orange-line {
+      stroke: #f97316;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .green-line {
+      stroke: #16a34a;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .dashed-line {
+      stroke-dasharray: 12 10;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 32px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small,
+      .svg-note {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover" id="pagina-1">
+  <header class="site-header lesson-header">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 31: Mișcarea rectilinie uniform variată</h1>
+    <p>În această lecție învățăm cum descriem mișcarea pe o linie dreaptă atunci când viteza se schimbă regulat.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Întrebare de pornire:</strong> Ce se întâmplă cu viteza unei mașini când pornește de la semafor și accelerează uniform?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Principiul fizic este acesta: dacă accelerația rămâne constantă, atunci viteza se modifică în mod egal în intervale de timp egale.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 16</span>
+  <h2>Ce înseamnă „rectilinie uniform variată”?</h2>
+
+  <div class="lesson-card">
+    <p><strong>Rectilinie</strong> înseamnă că traiectoria este o linie dreaptă.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Uniform variată</strong> înseamnă că viteza se schimbă uniform, adică accelerația este constantă.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$a_x = \text{constant}$</p>
+  </div>
+
+  <p>Mișcarea poate fi accelerată sau încetinită, în funcție de sensul vitezei și al accelerației.</p>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 16</span>
+  <h2>Modelul fizic</h2>
+
+  <p>Considerăm un corp mic, numit mobil, care se deplasează pe axa $Ox$.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 920 360" role="img" aria-label="Mobil care se mișcă pe axa Ox">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <line x1="80" y1="250" x2="830" y2="250" class="axis-line" marker-end="url(#arrow-blue)"></line>
+    <text x="840" y="260" class="svg-label">x</text>
+
+    <line x1="170" y1="235" x2="170" y2="265" class="axis-line"></line>
+    <line x1="570" y1="235" x2="570" y2="265" class="axis-line"></line>
+
+    <circle cx="170" cy="250" r="18" fill="#2563eb"></circle>
+    <circle cx="570" cy="250" r="18" fill="#f97316"></circle>
+
+    <text x="135" y="215" class="svg-label">M₀</text>
+    <text x="548" y="215" class="svg-label">M</text>
+    <text x="138" y="310" class="svg-small">x₀</text>
+    <text x="560" y="310" class="svg-small">x</text>
+
+    <line x1="190" y1="170" x2="290" y2="170" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="590" y1="170" x2="760" y2="170" class="orange-line" marker-end="url(#arrow-orange)"></line>
+    <line x1="395" y1="120" x2="505" y2="120" class="green-line" marker-end="url(#arrow-green)"></line>
+
+    <text x="205" y="145" class="svg-label">v₀</text>
+    <text x="660" y="145" class="svg-label">v</text>
+    <text x="420" y="95" class="svg-label">a</text>
+
+    <path d="M190 285 C300 330 450 330 560 285" class="green-line" marker-end="url(#arrow-green)"></path>
+    <text x="330" y="345" class="svg-label">sₓ = x - x₀</text>
+  </svg>
+
+  <div class="lesson-highlight">
+    <p>În mișcarea rectilinie, lucrăm cel mai simplu cu proiecții pe axa $Ox$: $v_x$, $a_x$, $s_x$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 16</span>
+  <h2>Accelerația constantă</h2>
+
+  <p>Accelerația arată cât de repede se schimbă viteza.</p>
+
+  <div class="formula-card">
+    <p>$a_x = \dfrac{v_x - v_{0x}}{t}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Dacă $a_x$ este constantă, atunci aceeași creștere sau scădere a vitezei se repetă în fiecare secundă.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Exemplu</h3>
+      <p>$a_x = 2\,m/s^2$</p>
+      <p>Viteza crește cu $2\,m/s$ în fiecare secundă.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Exemplu</h3>
+      <p>$a_x = -3\,m/s^2$</p>
+      <p>Proiecția vitezei scade cu $3\,m/s$ în fiecare secundă.</p>
+    </div>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 16</span>
+  <h2>Legea vitezei</h2>
+
+  <p>Din definiția accelerației, aflăm viteza la momentul $t$.</p>
+
+  <div class="formula-card">
+    <p>$v_x = v_{0x} + a_x t$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Aceasta este <strong>legea vitezei</strong> pentru mișcarea rectilinie uniform variată.</p>
+  </div>
+
+  <ul class="lesson-list">
+    <li>$v_{0x}$ este proiecția vitezei inițiale.</li>
+    <li>$a_x$ este proiecția accelerației.</li>
+    <li>$t$ este timpul scurs de la începutul mișcării.</li>
+  </ul>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 16</span>
+  <h2>Accelerată sau încetinită?</h2>
+
+  <p>Contează semnul lui $v_{0x}$ și semnul lui $a_x$.</p>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Situație</th>
+          <th>Interpretare</th>
+          <th>Ce se întâmplă cu viteza?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$v_{0x}$ și $a_x$ au același semn</td>
+          <td>Accelerația are același sens cu mișcarea</td>
+          <td>Viteza crește în modul</td>
+        </tr>
+        <tr>
+          <td>$v_{0x}$ și $a_x$ au semne opuse</td>
+          <td>Accelerația este opusă mișcării</td>
+          <td>Viteza scade în modul</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Nu semnul lui $a_x$ spune singur dacă mobilul „accelerează” sau „încetinește”, ci comparația dintre $v_{0x}$ și $a_x$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 16</span>
+  <h2>Exemplu: pornire de pe loc</h2>
+
+  <div class="problem-card">
+    <p>Un automobil pornește de pe loc cu accelerația $a = 2\,m/s^2$. Ce viteză are după $5\,s$?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1.</strong> Scriem datele:</p>
+    <p>$v_0 = 0$, $a = 2\,m/s^2$, $t = 5\,s$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 2.</strong> Aplicăm legea vitezei:</p>
+    <p>$v = v_0 + at$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$v = 0 + 2 \cdot 5 = 10\,m/s$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 16</span>
+  <h2>Graficul accelerației</h2>
+
+  <p>În această mișcare, accelerația este constantă.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 920 420" role="img" aria-label="Grafic a în funcție de t pentru accelerație constantă">
+    <defs>
+      <marker id="arrow-blue-p8" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+    </defs>
+
+    <line x1="120" y1="340" x2="820" y2="340" class="axis-line" marker-end="url(#arrow-blue-p8)"></line>
+    <line x1="120" y1="340" x2="120" y2="70" class="axis-line" marker-end="url(#arrow-blue-p8)"></line>
+
+    <text x="830" y="350" class="svg-label">t</text>
+    <text x="82" y="68" class="svg-label">aₓ</text>
+
+    <line x1="120" y1="190" x2="790" y2="190" class="orange-line"></line>
+    <text x="720" y="170" class="svg-note">aₓ = constant</text>
+
+    <line x1="120" y1="250" x2="790" y2="250" class="grid-line"></line>
+    <line x1="120" y1="130" x2="790" y2="130" class="grid-line"></line>
+    <line x1="270" y1="340" x2="270" y2="70" class="grid-line"></line>
+    <line x1="520" y1="340" x2="520" y2="70" class="grid-line"></line>
+  </svg>
+
+  <div class="lesson-card">
+    <p>Graficul $a_x(t)$ este o dreaptă paralelă cu axa timpului.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 16</span>
+  <h2>Graficul vitezei</h2>
+
+  <p>Viteza este o funcție liniară de timp.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 920 430" role="img" aria-label="Grafic v în funcție de t pentru mișcare uniform variată">
+    <defs>
+      <marker id="arrow-blue-p9" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange-p9" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+    </defs>
+
+    <line x1="120" y1="350" x2="820" y2="350" class="axis-line" marker-end="url(#arrow-blue-p9)"></line>
+    <line x1="120" y1="350" x2="120" y2="70" class="axis-line" marker-end="url(#arrow-blue-p9)"></line>
+
+    <text x="830" y="360" class="svg-label">t</text>
+    <text x="82" y="72" class="svg-label">vₓ</text>
+
+    <line x1="120" y1="300" x2="780" y2="120" class="orange-line" marker-end="url(#arrow-orange-p9)"></line>
+    <text x="540" y="112" class="svg-note">vₓ = v₀ₓ + aₓt</text>
+
+    <line x1="120" y1="300" x2="780" y2="300" class="grid-line"></line>
+    <line x1="780" y1="350" x2="780" y2="120" class="grid-line dashed-line"></line>
+    <text x="70" y="307" class="svg-small">v₀ₓ</text>
+    <text x="760" y="385" class="svg-small">t</text>
+  </svg>
+
+  <div class="lesson-highlight">
+    <p>Panta graficului $v_x(t)$ este accelerația $a_x$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 16</span>
+  <h2>Deplasarea în mișcare uniform variată</h2>
+
+  <p>În graficul $v_x(t)$, deplasarea este aria de sub grafic.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 920 450" role="img" aria-label="Aria de sub graficul vitezei reprezintă deplasarea">
+    <defs>
+      <marker id="arrow-blue-p10" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange-p10" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+    </defs>
+
+    <line x1="120" y1="360" x2="820" y2="360" class="axis-line" marker-end="url(#arrow-blue-p10)"></line>
+    <line x1="120" y1="360" x2="120" y2="70" class="axis-line" marker-end="url(#arrow-blue-p10)"></line>
+
+    <text x="830" y="370" class="svg-label">t</text>
+    <text x="82" y="72" class="svg-label">vₓ</text>
+
+    <polygon points="120,310 740,140 740,360 120,360" fill="#dbeafe" stroke="#93c5fd" stroke-width="3"></polygon>
+    <line x1="120" y1="310" x2="740" y2="140" class="orange-line" marker-end="url(#arrow-orange-p10)"></line>
+    <line x1="740" y1="360" x2="740" y2="140" class="grid-line dashed-line"></line>
+
+    <text x="390" y="280" class="svg-label">aria = sₓ</text>
+    <text x="72" y="318" class="svg-small">v₀ₓ</text>
+    <text x="720" y="395" class="svg-small">t</text>
+  </svg>
+
+  <div class="lesson-card">
+    <p>Pentru o linie dreaptă în graficul vitezei, aria este aria unui trapez.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 16</span>
+  <h2>Legea deplasării</h2>
+
+  <p>Deplasarea pe axa $Ox$ se calculează cu relația:</p>
+
+  <div class="formula-card">
+    <p>$s_x = v_{0x}t + \dfrac{a_x t^2}{2}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Dacă poziția inițială este $x_0$, atunci coordonata la momentul $t$ este:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$x = x_0 + v_{0x}t + \dfrac{a_x t^2}{2}$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Aceasta este legea mișcării rectilinii uniform variate.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 16</span>
+  <h2>Exemplu: cât se deplasează?</h2>
+
+  <div class="problem-card">
+    <p>Un mobil pornește de pe loc cu $a = 2\,m/s^2$. Ce distanță parcurge în $5\,s$?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1.</strong> Datele problemei:</p>
+    <p>$v_0 = 0$, $a = 2\,m/s^2$, $t = 5\,s$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 2.</strong> Folosim legea deplasării:</p>
+    <p>$s = v_0t + \dfrac{at^2}{2}$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$s = 0 \cdot 5 + \dfrac{2 \cdot 5^2}{2} = 25\,m$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 16</span>
+  <h2>Formula lui Galilei</h2>
+
+  <p>Uneori timpul nu este cunoscut și nici nu ni se cere. Atunci folosim o relație fără $t$.</p>
+
+  <div class="formula-card">
+    <p>$v_x^2 - v_{0x}^2 = 2a_xs_x$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Această relație se numește <strong>formula lui Galilei</strong>.</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>O folosim când apar $v$, $v_0$, $a$ și $s$, dar nu apare timpul.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 16</span>
+  <h2>Exemplu de frânare</h2>
+
+  <div class="problem-card">
+    <p>Un corp are viteza inițială $v_0 = 20\,m/s$ și frânează cu $a = -4\,m/s^2$. Ce viteză are după $3\,s$?</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1.</strong> Alegem sensul mișcării ca sens pozitiv.</p>
+    <p>Atunci frânarea are accelerație negativă: $a=-4\,m/s^2$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 2.</strong> Aplicăm legea vitezei:</p>
+    <p>$v = v_0 + at$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$v = 20 + (-4)\cdot 3 = 8\,m/s$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Corpul încă se mișcă înainte, dar mai încet.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+    <a class="lesson-button" href="#pagina-15">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-15" hidden>
+  <span class="lesson-page-label">Pagina 15 din 16</span>
+  <h2>Metoda de rezolvare</h2>
+
+  <div class="lesson-card">
+    <ol class="lesson-list numbered">
+      <li>Alege axa $Ox$ și sensul pozitiv.</li>
+      <li>Scrie datele: $x_0$, $v_0$, $a$, $t$, $s$.</li>
+      <li>Pune semnul corect pentru $v_0$ și $a$.</li>
+      <li>Alege formula potrivită.</li>
+      <li>Calculează și verifică unitățile.</li>
+    </ol>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Cu timp</h3>
+      <p>$v = v_0 + at$</p>
+      <p>$s = v_0t + \dfrac{at^2}{2}$</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Fără timp</h3>
+      <p>$v^2 - v_0^2 = 2as$</p>
+    </div>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-14">Înapoi</a>
+    <a class="lesson-button" href="#pagina-16">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-16" hidden>
+  <span class="lesson-page-label">Pagina 16 din 16</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>Mișcarea rectilinie uniform variată are traiectorie dreaptă și accelerație constantă.</li>
+      <li>Legea vitezei este $v_x = v_{0x} + a_xt$.</li>
+      <li>Legea mișcării este $x = x_0 + v_{0x}t + \dfrac{a_xt^2}{2}$.</li>
+      <li>Graficul $a_x(t)$ este o dreaptă orizontală.</li>
+      <li>Graficul $v_x(t)$ este o dreaptă oblică.</li>
+      <li>Formula lui Galilei este $v_x^2 - v_{0x}^2 = 2a_xs_x$.</li>
+    </ul>
+  </div>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. Ce mărime este constantă în această mișcare?</summary>
+      <p>Accelerația este constantă.</p>
+    </details>
+
+    <details>
+      <summary>2. Ce reprezintă aria de sub graficul $v_x(t)$?</summary>
+      <p>Reprezintă deplasarea $s_x$.</p>
+    </details>
+
+    <details>
+      <summary>3. Când folosim formula lui Galilei?</summary>
+      <p>Când vrem să legăm viteza, accelerația și deplasarea fără să folosim timpul.</p>
+    </details>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-32-miscari-in-camp-gravitational.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-15">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>

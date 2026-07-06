@@ -1,1 +1,750 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 37: Forța centripetă</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .blue-line {
+      stroke: #2563eb;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .orange-line {
+      stroke: #f97316;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .green-line {
+      stroke: #16a34a;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .red-line {
+      stroke: #dc2626;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .dashed-line {
+      stroke-dasharray: 12 10;
+    }
+
+    .circle-path {
+      fill: #eff6ff;
+      stroke: #1d4ed8;
+      stroke-width: 5;
+    }
+
+    .circle-thin {
+      fill: none;
+      stroke: #93c5fd;
+      stroke-width: 4;
+    }
+
+    .point-dot {
+      fill: #f97316;
+      stroke: #9a3412;
+      stroke-width: 3;
+    }
+
+    .surface {
+      fill: #e0f2fe;
+      stroke: #1d4ed8;
+      stroke-width: 4;
+    }
+
+    .car-body {
+      fill: #f97316;
+      stroke: #9a3412;
+      stroke-width: 3;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 32px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small,
+      .svg-note {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover is-active" id="pagina-1">
+  <header class="lesson-header orange">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 37<br>Forța centripetă</h1>
+    <p>Un corp poate rămâne pe o traiectorie circulară numai dacă asupra lui acționează o rezultantă orientată spre centrul cercului.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Întrebare de pornire:</strong> ce îl „ține” pe un corp pe cerc: o forță nouă sau o forță cunoscută cu rol special?</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 14</span>
+  <h2>Principiul fizic</h2>
+
+  <p>În lecția anterioară am văzut că în mișcarea circulară uniformă există accelerație centripetă, orientată spre centrul cercului:</p>
+
+  <div class="formula-card">
+    <p>$\overrightarrow{a_c}$ este orientată spre centru</p>
+  </div>
+
+  <p>Conform principiului fundamental al mecanicii, o accelerație apare numai dacă asupra corpului acționează o rezultantă a forțelor:</p>
+
+  <div class="formula-card">
+    <p>$\overrightarrow{F}_{rez}=m\overrightarrow{a}$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Deci, dacă accelerația este spre centru, atunci și rezultanta forțelor trebuie să fie spre centru.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 14</span>
+  <h2>Ce este forța centripetă?</h2>
+
+  <p><strong>Forța centripetă</strong> este rezultanta forțelor orientată spre centrul traiectoriei circulare.</p>
+
+  <div class="formula-card">
+    <p>$\overrightarrow{F_c}=m\overrightarrow{a_c}$</p>
+  </div>
+
+  <div class="lesson-card warning-card">
+    <p><strong>Atenție:</strong> forța centripetă nu este, de obicei, o forță nouă. Ea este <strong>rolul</strong> pe care îl are o forță cunoscută sau rezultanta mai multor forțe.</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Exemplu</h3>
+      <p>La o piatră legată de un fir, tensiunea din fir are rol centripet.</p>
+    </div>
+    <div class="mini-card">
+      <h3>Exemplu</h3>
+      <p>La un satelit, atracția gravitațională are rol centripet.</p>
+    </div>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 14</span>
+  <h2>Direcția forței centripete</h2>
+
+  <p>În orice punct al traiectoriei, viteza este tangentă la cerc, iar forța centripetă este orientată pe rază, spre centru.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 900 560" role="img" aria-label="Forța centripetă orientată spre centrul cercului">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="450" cy="280" r="170" class="circle-path"></circle>
+    <circle cx="450" cy="280" r="8" fill="#0f172a"></circle>
+    <text x="465" y="292" class="svg-label">O</text>
+
+    <circle cx="620" cy="280" r="16" class="point-dot"></circle>
+    <line x1="620" y1="280" x2="620" y2="145" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="620" y1="280" x2="475" y2="280" class="green-line" marker-end="url(#arrow-green)"></line>
+
+    <text x="640" y="165" class="svg-label">v⃗</text>
+    <text x="525" y="255" class="svg-label">F⃗c</text>
+    <text x="250" y="500" class="svg-note">F⃗c este mereu spre centrul O, nu în sensul mișcării.</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 14</span>
+  <h2>Formula forței centripete</h2>
+
+  <p>Știm din lecția despre accelerația centripetă că:</p>
+
+  <div class="formula-card">
+    <p>$a_c=\dfrac{v^2}{R}$</p>
+  </div>
+
+  <p>Aplicăm relația $\overrightarrow{F}=m\overrightarrow{a}$. Pentru modulul forței centripete obținem:</p>
+
+  <div class="formula-card">
+    <p>$F_c=m\dfrac{v^2}{R}$</p>
+  </div>
+
+  <ul class="lesson-list">
+    <li>$m$ este masa corpului, măsurată în $\mathrm{kg}$;</li>
+    <li>$v$ este viteza liniară, măsurată în $\mathrm{m/s}$;</li>
+    <li>$R$ este raza cercului, măsurată în $\mathrm{m}$;</li>
+    <li>$F_c$ se măsoară în newtoni: $\mathrm{N}$.</li>
+  </ul>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 14</span>
+  <h2>Forme echivalente</h2>
+
+  <p>În funcție de datele problemei, forța centripetă poate fi scrisă în mai multe forme.</p>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Ce cunoști?</th>
+          <th>Formula utilă</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Viteza liniară $v$ și raza $R$</td>
+          <td>$F_c=m\dfrac{v^2}{R}$</td>
+        </tr>
+        <tr>
+          <td>Viteza unghiulară $\omega$ și raza $R$</td>
+          <td>$F_c=m\omega^2R$</td>
+        </tr>
+        <tr>
+          <td>Perioada $T$ și raza $R$</td>
+          <td>$F_c=m\dfrac{4\pi^2R}{T^2}$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lesson-card">
+    <p>Toate formulele exprimă aceeași idee: cu cât corpul este mai greu sau se mișcă mai repede, cu atât este necesară o forță centripetă mai mare.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 14</span>
+  <h2>Forța centripetă nu este „a patra forță”</h2>
+
+  <p>În probleme, nu desenăm automat o forță separată numită „centripetă”. Mai întâi desenăm forțele reale, apoi vedem care componentă sau rezultantă este spre centru.</p>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Situație</th>
+          <th>Forța cu rol centripet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Piatra legată de fir</td>
+          <td>Tensiunea din fir</td>
+        </tr>
+        <tr>
+          <td>Mașină în viraj pe drum orizontal</td>
+          <td>Frecarea statică dintre roți și drum</td>
+        </tr>
+        <tr>
+          <td>Satelit în jurul Pământului</td>
+          <td>Forța gravitațională</td>
+        </tr>
+        <tr>
+          <td>Corp pe un cerc vertical</td>
+          <td>Rezultanta dintre greutate, normală/tensiune</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 14</span>
+  <h2>Exemplu: corp legat de fir</h2>
+
+  <p>Un corp se rotește pe un cerc orizontal, fiind legat de un fir. În această situație, firul trage corpul spre centru.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 900 560" role="img" aria-label="Tensiunea firului are rol centripet">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <ellipse cx="450" cy="300" rx="230" ry="120" fill="#eff6ff" stroke="#93c5fd" stroke-width="4"></ellipse>
+    <circle cx="450" cy="300" r="8" fill="#0f172a"></circle>
+    <text x="465" y="313" class="svg-label">O</text>
+
+    <circle cx="680" cy="300" r="22" class="point-dot"></circle>
+    <line x1="450" y1="300" x2="680" y2="300" stroke="#334155" stroke-width="4" stroke-dasharray="10 10"></line>
+    <line x1="680" y1="300" x2="500" y2="300" class="green-line" marker-end="url(#arrow-green)"></line>
+    <path d="M680 300 C690 230 620 210 570 210" class="blue-line" marker-end="url(#arrow-blue)"></path>
+
+    <text x="565" y="270" class="svg-label">T⃗ = F⃗c</text>
+    <text x="570" y="195" class="svg-label">v⃗</text>
+    <text x="210" y="500" class="svg-note">Tensiunea din fir produce accelerația centripetă.</text>
+  </svg>
+
+  <div class="formula-card">
+    <p>$T=F_c=m\dfrac{v^2}{R}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 14</span>
+  <h2>Exemplu: automobil în viraj</h2>
+
+  <p>Pe un drum orizontal, o mașină poate lua curba deoarece frecarea statică dintre pneuri și drum acționează spre centrul curbei.</p>
+
+  <svg class="lesson-svg" viewBox="0 0 900 560" role="img" aria-label="Frecarea statică are rol centripet în viraj">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="450" cy="280" r="190" fill="none" stroke="#93c5fd" stroke-width="30"></circle>
+    <circle cx="450" cy="280" r="8" fill="#0f172a"></circle>
+    <text x="465" y="292" class="svg-label">centrul curbei</text>
+
+    <rect x="610" y="230" width="95" height="55" rx="12" class="car-body" transform="rotate(18 657 258)"></rect>
+    <circle cx="632" cy="289" r="9" fill="#0f172a"></circle>
+    <circle cx="690" cy="307" r="9" fill="#0f172a"></circle>
+
+    <line x1="660" y1="270" x2="520" y2="282" class="green-line" marker-end="url(#arrow-green)"></line>
+    <path d="M660 270 C685 220 630 180 585 165" class="blue-line" marker-end="url(#arrow-blue)"></path>
+
+    <text x="525" y="250" class="svg-label">F⃗f</text>
+    <text x="585" y="150" class="svg-label">v⃗</text>
+    <text x="125" y="510" class="svg-note">Dacă frecarea nu este suficientă, automobilul nu mai poate urma curba.</text>
+  </svg>
+
+  <div class="formula-card">
+    <p>$F_f$ are rol centripet: $F_f=m\dfrac{v^2}{R}$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 14</span>
+  <h2>Exemplu rezolvat 1</h2>
+
+  <div class="problem-card">
+    <p>Un corp de masă $m=0{,}5\,\mathrm{kg}$ se rotește pe un cerc de rază $R=0{,}8\,\mathrm{m}$ cu viteza $v=4\,\mathrm{m/s}$. Determină forța centripetă.</p>
+  </div>
+
+  <h3>Rezolvare pas cu pas</h3>
+  <ol class="lesson-list numbered">
+    <li>Principiul folosit: $F_c=m\dfrac{v^2}{R}$.</li>
+    <li>Înlocuim datele: $F_c=0{,}5\cdot\dfrac{4^2}{0{,}8}$.</li>
+    <li>Calculăm: $4^2=16$, deci $F_c=0{,}5\cdot\dfrac{16}{0{,}8}$.</li>
+    <li>$\dfrac{16}{0{,}8}=20$, iar $0{,}5\cdot20=10$.</li>
+  </ol>
+
+  <div class="answer-card">
+    <p><strong>Răspuns:</strong> $F_c=10\,\mathrm{N}$, orientată spre centrul cercului.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 14</span>
+  <h2>Exemplu rezolvat 2</h2>
+
+  <div class="problem-card">
+    <p>Un automobil de masă $m=1000\,\mathrm{kg}$ parcurge un viraj de rază $R=50\,\mathrm{m}$ cu viteza $v=10\,\mathrm{m/s}$. Ce forță rezultantă trebuie să fie orientată spre centrul curbei?</p>
+  </div>
+
+  <h3>Rezolvare</h3>
+  <ol class="lesson-list numbered">
+    <li>În viraj, rezultanta radială are rol centripet.</li>
+    <li>Aplicăm formula: $F_c=m\dfrac{v^2}{R}$.</li>
+    <li>$F_c=1000\cdot\dfrac{10^2}{50}$.</li>
+    <li>$10^2=100$, iar $\dfrac{100}{50}=2$.</li>
+    <li>$F_c=1000\cdot2=2000\,\mathrm{N}$.</li>
+  </ol>
+
+  <div class="answer-card">
+    <p><strong>Răspuns:</strong> automobilul are nevoie de o forță centripetă de $2000\,\mathrm{N}$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 14</span>
+  <h2>Viteză maximă în viraj</h2>
+
+  <p>Pe un drum orizontal, frecarea statică maximă poate limita viteza în viraj. Dacă frecarea asigură forța centripetă, avem:</p>
+
+  <div class="formula-card">
+    <p>$\mu mg = m\dfrac{v^2}{R}$</p>
+  </div>
+
+  <p>Observăm că masa se simplifică. Pentru viteza maximă rezultă:</p>
+
+  <div class="formula-card">
+    <p>$v_{max}=\sqrt{\mu gR}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Interpretare:</strong> raza mai mare permite viraj cu viteză mai mare. Aderența mai bună, adică un coeficient $\mu$ mai mare, permite de asemenea viteză mai mare.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 14</span>
+  <h2>Greșeli frecvente</h2>
+
+  <div class="lesson-card warning-card">
+    <ul class="lesson-list">
+      <li><strong>Greșeală:</strong> se desenează mereu o forță separată numită $F_c$. Corect: $F_c$ este rezultanta radială, nu neapărat o forță nouă.</li>
+      <li><strong>Greșeală:</strong> forța centripetă este desenată tangent la cerc. Corect: ea este orientată spre centru.</li>
+      <li><strong>Greșeală:</strong> se folosește diametrul în loc de rază. Corect: în formule apare $R$.</li>
+      <li><strong>Greșeală:</strong> se confundă forța centripetă cu forța centrifugă. Forța centrifugă apare în descrierea dintr-un sistem de referință neinerțial, temă pentru lecția următoare.</li>
+    </ul>
+  </div>
+
+  <div class="chip-row">
+    <span class="chip">$F_c=m\dfrac{v^2}{R}$</span>
+    <span class="chip">$F_c=m\omega^2R$</span>
+    <span class="chip">$F_c=m\dfrac{4\pi^2R}{T^2}$</span>
+    <span class="chip">sens: spre centru</span>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 14</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>Forța centripetă este rezultanta forțelor orientată spre centrul cercului.</li>
+      <li>Formula principală este $F_c=m\dfrac{v^2}{R}$.</li>
+      <li>Formule echivalente: $F_c=m\omega^2R$ și $F_c=m\dfrac{4\pi^2R}{T^2}$.</li>
+      <li>Forța centripetă nu este întotdeauna o forță nouă; poate fi tensiune, frecare, greutate, normală sau gravitație.</li>
+      <li>Fără rezultantă spre centru, corpul nu poate rămâne pe traiectorie circulară.</li>
+    </ul>
+  </div>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. În ce direcție este orientată forța centripetă?</summary>
+      <p>Spre centrul cercului, de-a lungul razei.</p>
+    </details>
+
+    <details>
+      <summary>2. Ce forță are rol centripet pentru o mașină în viraj pe drum orizontal?</summary>
+      <p>Frecarea statică dintre roți și drum.</p>
+    </details>
+
+    <details>
+      <summary>3. Dacă viteza se dublează, cum se modifică $F_c$?</summary>
+      <p>Forța centripetă devine de patru ori mai mare, deoarece depinde de $v^2$.</p>
+    </details>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-38-forte-de-inertie.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>

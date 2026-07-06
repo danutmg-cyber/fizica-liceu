@@ -1,1 +1,704 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 36: Accelerația centripetă</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .blue-line {
+      stroke: #2563eb;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .orange-line {
+      stroke: #f97316;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .green-line {
+      stroke: #16a34a;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .red-line {
+      stroke: #dc2626;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .dashed-line {
+      stroke-dasharray: 12 10;
+    }
+
+    .circle-path {
+      fill: #eff6ff;
+      stroke: #1d4ed8;
+      stroke-width: 5;
+    }
+
+    .circle-thin {
+      fill: none;
+      stroke: #93c5fd;
+      stroke-width: 4;
+    }
+
+    .point-dot {
+      fill: #f97316;
+      stroke: #9a3412;
+      stroke-width: 3;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 32px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small,
+      .svg-note {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover is-active" id="pagina-1">
+  <header class="lesson-header orange">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 36<br>Accelerația centripetă</h1>
+    <p>În mișcarea circulară uniformă, viteza are modul constant, dar direcția ei se schimbă continuu. De aceea apare o accelerație orientată spre centrul cercului.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Întrebare de pornire:</strong> dacă un corp merge pe cerc cu aceeași viteză, mai putem spune că are accelerație?</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 14</span>
+  <h2>Principiul fizic</h2>
+
+  <div class="lesson-card">
+    <p>Accelerația măsoară cât de repede se modifică viteza:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$\overrightarrow{a}=\dfrac{\Delta \overrightarrow{v}}{\Delta t}$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>În mișcarea circulară uniformă se schimbă <strong>direcția</strong> vitezei, chiar dacă modulul vitezei rămâne constant.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 14</span>
+  <h2>De ce există accelerație?</h2>
+
+  <div class="lesson-card">
+    <p>Viteza este o mărime vectorială. Ea are:</p>
+    <ul class="lesson-list">
+      <li>modul;</li>
+      <li>direcție;</li>
+      <li>sens.</li>
+    </ul>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Mișcare rectilinie uniformă</h3>
+      <p>Modulul și direcția vitezei rămân constante.</p>
+      <p>$a=0$</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Mișcare circulară uniformă</h3>
+      <p>Modulul vitezei este constant, dar direcția vitezei se schimbă.</p>
+      <p>$a_c\ne 0$</p>
+    </div>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 14</span>
+  <h2>Direcția accelerației centripete</h2>
+
+  <svg class="lesson-svg" viewBox="0 0 900 520" role="img" aria-label="Vectorul viteză tangent și accelerația centripetă spre centru">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="450" cy="260" r="155" class="circle-path"></circle>
+    <circle cx="450" cy="260" r="7" fill="#0f172a"></circle>
+    <text x="462" y="255" class="svg-label">O</text>
+
+    <circle cx="605" cy="260" r="14" class="point-dot"></circle>
+    <text x="625" y="266" class="svg-label">M</text>
+
+    <line x1="605" y1="260" x2="605" y2="120" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <text x="620" y="165" class="svg-label">v⃗</text>
+
+    <line x1="605" y1="260" x2="482" y2="260" class="green-line" marker-end="url(#arrow-green)"></line>
+    <text x="520" y="245" class="svg-label">a⃗c</text>
+
+    <line x1="450" y1="260" x2="605" y2="260" class="orange-line dashed-line"></line>
+    <text x="520" y="292" class="svg-small">raza R</text>
+
+    <text x="165" y="470" class="svg-note">v⃗ este tangent la cerc; a⃗c este orientată spre centru.</text>
+  </svg>
+
+  <div class="lesson-highlight">
+    <p>Accelerația centripetă este perpendiculară pe viteză și are sensul spre centrul traiectoriei.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 14</span>
+  <h2>Definiție</h2>
+
+  <div class="lesson-card">
+    <p><strong>Accelerația centripetă</strong> este accelerația unui corp care se mișcă pe o traiectorie circulară. Ea arată schimbarea direcției vitezei și este orientată mereu spre centrul cercului.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$a_c=\dfrac{v^2}{R}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>unde:</p>
+    <ul class="lesson-list">
+      <li>$a_c$ este accelerația centripetă;</li>
+      <li>$v$ este viteza liniară;</li>
+      <li>$R$ este raza traiectoriei circulare.</li>
+    </ul>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 14</span>
+  <h2>Unitatea de măsură</h2>
+
+  <div class="lesson-card">
+    <p>Din formula $a_c=\dfrac{v^2}{R}$ verificăm unitatea:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$[a_c]=\dfrac{(m/s)^2}{m}=\dfrac{m^2/s^2}{m}=m/s^2$</p>
+  </div>
+
+  <div class="answer-card">
+    <p>Accelerația centripetă se măsoară în $\mathrm{m/s^2}$, la fel ca orice accelerație.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 14</span>
+  <h2>Legătura cu viteza unghiulară</h2>
+
+  <div class="lesson-card">
+    <p>Știm din lecțiile anterioare că viteza liniară și viteza unghiulară sunt legate prin:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v=\omega R$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Înlocuim în formula accelerației centripete:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$a_c=\dfrac{(\omega R)^2}{R}=\omega^2R$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 14</span>
+  <h2>Formule echivalente</h2>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Formula</th>
+          <th>Când este utilă?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$a_c=\dfrac{v^2}{R}$</td>
+          <td>Când cunoști viteza liniară și raza.</td>
+        </tr>
+        <tr>
+          <td>$a_c=\omega^2R$</td>
+          <td>Când cunoști viteza unghiulară și raza.</td>
+        </tr>
+        <tr>
+          <td>$a_c=\dfrac{4\pi^2R}{T^2}$</td>
+          <td>Când cunoști perioada rotației.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Toate cele trei formule descriu aceeași mărime fizică: accelerația spre centru.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 14</span>
+  <h2>Observație importantă</h2>
+
+  <div class="lesson-card">
+    <p>Dacă viteza liniară crește de două ori, accelerația centripetă crește de patru ori, deoarece viteza apare la pătrat:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$a_c=\dfrac{v^2}{R}$</p>
+  </div>
+
+  <div class="lesson-card warning-card">
+    <p>De aceea, în viraje, creșterea vitezei este foarte importantă pentru siguranță. O viteză dublă cere o accelerație centripetă de patru ori mai mare.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 14</span>
+  <h2>Exemplu rezolvat 1</h2>
+
+  <div class="problem-card">
+    <p>Un corp se mișcă uniform pe un cerc de rază $R=2\,m$, cu viteza $v=6\,m/s$. Determină accelerația centripetă.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1.</strong> Alegem formula potrivită:</p>
+    <p>$a_c=\dfrac{v^2}{R}$</p>
+    <p><strong>Pasul 2.</strong> Înlocuim datele:</p>
+    <p>$a_c=\dfrac{6^2}{2}$</p>
+    <p><strong>Pasul 3.</strong> Calculăm:</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$a_c=18\,m/s^2$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 14</span>
+  <h2>Exemplu rezolvat 2</h2>
+
+  <div class="problem-card">
+    <p>Un punct de pe marginea unei roți se află la distanța $R=0{,}40\,m$ de centru. Roata are viteza unghiulară $\omega=5\,rad/s$. Determină $a_c$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p><strong>Pasul 1.</strong> Pentru că se dă $\omega$, folosim:</p>
+    <p>$a_c=\omega^2R$</p>
+    <p><strong>Pasul 2.</strong> Înlocuim:</p>
+    <p>$a_c=5^2\cdot 0{,}40$</p>
+    <p><strong>Pasul 3.</strong> Calculăm:</p>
+  </div>
+
+  <div class="answer-card">
+    <p>$a_c=10\,m/s^2$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 14</span>
+  <h2>Grafic: sensul vectorilor</h2>
+
+  <svg class="lesson-svg" viewBox="0 0 900 540" role="img" aria-label="Accelerația centripetă în mai multe poziții pe cerc">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="450" cy="270" r="170" class="circle-thin"></circle>
+    <circle cx="450" cy="270" r="7" fill="#0f172a"></circle>
+    <text x="462" y="264" class="svg-label">O</text>
+
+    <circle cx="620" cy="270" r="12" class="point-dot"></circle>
+    <line x1="620" y1="270" x2="620" y2="140" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="620" y1="270" x2="490" y2="270" class="green-line" marker-end="url(#arrow-green)"></line>
+
+    <circle cx="450" cy="100" r="12" class="point-dot"></circle>
+    <line x1="450" y1="100" x2="320" y2="100" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="450" y1="100" x2="450" y2="230" class="green-line" marker-end="url(#arrow-green)"></line>
+
+    <circle cx="280" cy="270" r="12" class="point-dot"></circle>
+    <line x1="280" y1="270" x2="280" y2="400" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="280" y1="270" x2="410" y2="270" class="green-line" marker-end="url(#arrow-green)"></line>
+
+    <text x="645" y="180" class="svg-label">v⃗</text>
+    <text x="535" y="255" class="svg-label">a⃗c</text>
+    <text x="330" y="85" class="svg-label">v⃗</text>
+    <text x="462" y="175" class="svg-label">a⃗c</text>
+    <text x="294" y="390" class="svg-label">v⃗</text>
+    <text x="330" y="255" class="svg-label">a⃗c</text>
+
+    <text x="185" y="500" class="svg-note">În orice punct, a⃗c este îndreptată spre centrul O.</text>
+  </svg>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 14</span>
+  <h2>Greșeli frecvente</h2>
+
+  <div class="lesson-card warning-card">
+    <ul class="lesson-list">
+      <li><strong>Greșeală:</strong> „Mișcare uniformă înseamnă accelerație zero.” Corect: doar în mișcarea rectilinie uniformă accelerația este zero.</li>
+      <li><strong>Greșeală:</strong> accelerația centripetă este tangentă. Corect: ea este orientată spre centru.</li>
+      <li><strong>Greșeală:</strong> se folosește diametrul în loc de rază. Corect: în formule apare $R$, raza cercului.</li>
+      <li><strong>Greșeală:</strong> se confundă $a_c$ cu viteza. Accelerația arată schimbarea vitezei, nu viteza însăși.</li>
+    </ul>
+  </div>
+
+  <div class="chip-row">
+    <span class="chip">$a_c=\dfrac{v^2}{R}$</span>
+    <span class="chip">$a_c=\omega^2R$</span>
+    <span class="chip">$a_c=\dfrac{4\pi^2R}{T^2}$</span>
+    <span class="chip">$a⃗_c \rightarrow O$</span>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 14</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>În mișcarea circulară uniformă, modulul vitezei este constant.</li>
+      <li>Direcția vitezei se schimbă continuu, deci există accelerație.</li>
+      <li>Accelerația centripetă este orientată spre centrul cercului.</li>
+      <li>Formula principală este $a_c=\dfrac{v^2}{R}$.</li>
+      <li>Formule echivalente: $a_c=\omega^2R$ și $a_c=\dfrac{4\pi^2R}{T^2}$.</li>
+      <li>Unitatea de măsură este $\mathrm{m/s^2}$.</li>
+    </ul>
+  </div>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. Cum este orientată accelerația centripetă?</summary>
+      <p>Spre centrul cercului, de-a lungul razei.</p>
+    </details>
+
+    <details>
+      <summary>2. Dacă viteza liniară se dublează, ce se întâmplă cu $a_c$?</summary>
+      <p>Accelerația centripetă devine de patru ori mai mare, deoarece $a_c$ depinde de $v^2$.</p>
+    </details>
+
+    <details>
+      <summary>3. Ce forță produce această accelerație?</summary>
+      <p>Aceasta este tema lecției următoare: forța centripetă.</p>
+    </details>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-37-forta-centripeta.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>

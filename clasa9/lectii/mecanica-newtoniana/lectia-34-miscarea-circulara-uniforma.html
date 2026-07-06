@@ -1,1 +1,706 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 34: Mișcarea circulară uniformă</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    /* Comportament de paginare: designul general rămâne în main.css. */
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru lizibilitate pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 44px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 38px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(18px, 2.2vw, 28px);
+    }
+
+    .lesson-button {
+      min-height: 64px;
+      padding: 16px 28px;
+      font-size: clamp(21px, 2.6vw, 31px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 54px);
+    }
+
+    .lesson-svg {
+      display: block;
+      width: 100%;
+      max-width: 980px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .axis-line {
+      stroke: #0f172a;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .grid-line {
+      stroke: #dbeafe;
+      stroke-width: 2;
+    }
+
+    .blue-line {
+      stroke: #2563eb;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .orange-line {
+      stroke: #f97316;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .green-line {
+      stroke: #16a34a;
+      stroke-width: 6;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .dashed-line {
+      stroke-dasharray: 12 10;
+    }
+
+    .circle-path {
+      fill: #eff6ff;
+      stroke: #1d4ed8;
+      stroke-width: 5;
+    }
+
+    .point-dot {
+      fill: #f97316;
+      stroke: #9a3412;
+      stroke-width: 3;
+    }
+
+    .mini-quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-quiz details {
+      padding: clamp(18px, 2.6vw, 30px);
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    .mini-quiz summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(23px, 2.7vw, 38px);
+      color: #1d4ed8;
+    }
+
+    .mini-quiz details p {
+      margin-top: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 32px);
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-label {
+        font-size: 22px;
+      }
+
+      .svg-small,
+      .svg-note {
+        font-size: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover" id="pagina-1">
+  <header class="lesson-header blue">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Mecanică newtoniană</span>
+    <h1>Lecția 34: Mișcarea circulară uniformă</h1>
+    <p>Învățăm cum descriem mișcarea unui corp care se deplasează pe un cerc cu viteză constantă în modul.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Ideea principală:</strong> în mișcarea circulară uniformă, modulul vitezei rămâne constant, dar direcția vitezei se schimbă continuu.</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Începe printr-o observație simplă: gândește-te la vârful acului secundar al unui ceas. El revine mereu în aceeași poziție, după același timp. Aceasta este o mișcare periodică pe cerc.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 din 14</span>
+  <h2>Principiul fizic</h2>
+
+  <div class="lesson-card">
+    <p>Un mobil se află în <strong>mișcare circulară</strong> dacă traiectoria lui este un cerc. Dacă parcurge arce egale în intervale de timp egale, mișcarea este <strong>circulară uniformă</strong>.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>traiectorie circulară + viteză constantă în modul</p>
+  </div>
+
+  <p>Atenție: „uniformă” nu înseamnă că vectorul viteză este constant. Înseamnă doar că <strong>valoarea numerică</strong> a vitezei rămâne aceeași.</p>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 din 14</span>
+  <h2>Modelul geometric</h2>
+
+  <svg class="lesson-svg" viewBox="0 0 900 470" role="img" aria-label="Mișcare circulară uniformă pe un cerc">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="420" cy="235" r="145" class="circle-path"></circle>
+    <circle cx="420" cy="235" r="7" fill="#0f172a"></circle>
+    <text x="432" y="228" class="svg-label">O</text>
+
+    <line x1="420" y1="235" x2="545" y2="162" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <text x="475" y="175" class="svg-label">r</text>
+
+    <circle cx="545" cy="162" r="15" class="point-dot"></circle>
+    <text x="565" y="154" class="svg-label">M</text>
+
+    <line x1="545" y1="162" x2="660" y2="230" class="orange-line" marker-end="url(#arrow-orange)"></line>
+    <text x="640" y="217" class="svg-label">v⃗</text>
+
+    <path d="M 420 90 A 145 145 0 0 1 562 206" class="green-line" marker-end="url(#arrow-green)"></path>
+    <text x="498" y="105" class="svg-label">sensul mișcării</text>
+
+    <text x="75" y="415" class="svg-note">Mobilul se deplasează pe cerc. Viteza este tangentă la traiectorie.</text>
+  </svg>
+
+  <div class="lesson-highlight">
+    <p>Raza cercului este $r$. Poziția mobilului pe cerc se poate descrie prin unghiul format de raza $OM$ cu o direcție aleasă ca reper.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 din 14</span>
+  <h2>Vectorul viteză</h2>
+
+  <div class="lesson-card">
+    <p>În orice punct al cercului, vectorul viteză $\overrightarrow{v}$ este tangent la cerc. Tangenta este perpendiculară pe raza dusă în acel punct.</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$\overrightarrow{v}\perp\overrightarrow{r}$</p>
+  </div>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Ce rămâne constant?</h3>
+      <p>Modulul vitezei: $v=\text{constant}$.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Ce se schimbă?</h3>
+      <p>Direcția vectorului $\overrightarrow{v}$ se schimbă permanent.</p>
+    </div>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 din 14</span>
+  <h2>Perioada mișcării</h2>
+
+  <p><strong>Perioada</strong> este timpul necesar pentru o rotație completă.</p>
+
+  <div class="formula-card">
+    <p>$T=\dfrac{\Delta t}{N}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>În formulă, $\Delta t$ este timpul total, iar $N$ este numărul de rotații efectuate în acel timp.</p>
+  </div>
+
+  <div class="answer-card">
+    <p><strong>Unitatea de măsură:</strong> perioada se măsoară în secunde, $[T]=s$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 din 14</span>
+  <h2>Frecvența</h2>
+
+  <p><strong>Frecvența</strong> arată câte rotații se efectuează într-o secundă.</p>
+
+  <div class="formula-card">
+    <p>$f=\dfrac{N}{\Delta t}$</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$f=\dfrac{1}{T}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Unitatea de măsură este hertz: $[f]=Hz=s^{-1}$. Dacă un disc are $f=5\,Hz$, el face 5 rotații într-o secundă.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 din 14</span>
+  <h2>Radianul</h2>
+
+  <div class="lesson-card">
+    <p>În mișcarea circulară folosim adesea unghiuri măsurate în <strong>radiani</strong>. Un radian este unghiul la centru care corespunde unui arc de lungime egală cu raza cercului.</p>
+  </div>
+
+  <svg class="lesson-svg" viewBox="0 0 900 430" role="img" aria-label="Radianul într-un cerc">
+    <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+
+    <circle cx="420" cy="220" r="140" fill="#f8fafc" stroke="#93c5fd" stroke-width="5"></circle>
+    <circle cx="420" cy="220" r="7" fill="#0f172a"></circle>
+    <line x1="420" y1="220" x2="560" y2="220" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <line x1="420" y1="220" x2="496" y2="102" class="blue-line" marker-end="url(#arrow-blue)"></line>
+    <path d="M560 220 A140 140 0 0 0 496 102" class="orange-line" marker-end="url(#arrow-orange)"></path>
+    <path d="M475 220 A55 55 0 0 0 450 174" class="green-line" marker-end="url(#arrow-green)"></path>
+
+    <text x="470" y="245" class="svg-label">r</text>
+    <text x="445" y="155" class="svg-label">r</text>
+    <text x="535" y="150" class="svg-label">arc = r</text>
+    <text x="472" y="190" class="svg-label">1 rad</text>
+  </svg>
+
+  <div class="formula-card">
+    <p>$360^\circ=2\pi\,rad$</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 din 14</span>
+  <h2>Viteza unghiulară</h2>
+
+  <p><strong>Viteza unghiulară</strong> arată cât de repede se schimbă unghiul de rotație.</p>
+
+  <div class="formula-card">
+    <p>$\omega=\dfrac{\Delta\varphi}{\Delta t}$</p>
+  </div>
+
+  <div class="lesson-card">
+    <p>Pentru o rotație completă, unghiul parcurs este $2\pi$ radiani. Dacă timpul unei rotații este $T$, atunci:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$\omega=\dfrac{2\pi}{T}=2\pi f$</p>
+  </div>
+
+  <p>Unitatea de măsură este $rad/s$. În calcule, radianul se tratează ca o unitate adimensională.</p>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 din 14</span>
+  <h2>Viteza liniară</h2>
+
+  <p><strong>Viteza liniară</strong> este viteza cu care mobilul parcurge arcul de cerc.</p>
+
+  <div class="formula-card">
+    <p>$v=\dfrac{2\pi r}{T}$</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v=2\pi r f$</p>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Cu cât raza cercului este mai mare, cu atât punctul de pe margine parcurge o distanță mai mare la aceeași rotație.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 din 14</span>
+  <h2>Legătura dintre $v$ și $\omega$</h2>
+
+  <div class="lesson-card">
+    <p>Deoarece $\omega=\dfrac{2\pi}{T}$, iar $v=\dfrac{2\pi r}{T}$, obținem o relație foarte importantă:</p>
+  </div>
+
+  <div class="formula-card">
+    <p>$v=\omega r$</p>
+  </div>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Mărime</th>
+          <th>Simbol</th>
+          <th>Unitate</th>
+          <th>Ce descrie?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Perioadă</td>
+          <td>$T$</td>
+          <td>$s$</td>
+          <td>timpul unei rotații</td>
+        </tr>
+        <tr>
+          <td>Frecvență</td>
+          <td>$f$</td>
+          <td>$Hz$</td>
+          <td>rotații pe secundă</td>
+        </tr>
+        <tr>
+          <td>Viteză unghiulară</td>
+          <td>$\omega$</td>
+          <td>$rad/s$</td>
+          <td>unghi parcurs pe secundă</td>
+        </tr>
+        <tr>
+          <td>Viteză liniară</td>
+          <td>$v$</td>
+          <td>$m/s$</td>
+          <td>arc parcurs pe secundă</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 din 14</span>
+  <h2>Exemplu rezolvat pas cu pas</h2>
+
+  <div class="problem-card">
+    <p>Un punct de pe marginea unei roți de rază $r=0{,}25\,m$ face o rotație în $T=2\,s$. Determină frecvența, viteza unghiulară și viteza liniară.</p>
+  </div>
+
+  <div class="lesson-card">
+    <h3>Pasul 1: frecvența</h3>
+    <p>$f=\dfrac{1}{T}=\dfrac{1}{2}=0{,}5\,Hz$.</p>
+  </div>
+
+  <div class="lesson-card">
+    <h3>Pasul 2: viteza unghiulară</h3>
+    <p>$\omega=\dfrac{2\pi}{T}=\dfrac{2\pi}{2}=\pi\,rad/s\approx 3{,}14\,rad/s$.</p>
+  </div>
+
+  <div class="answer-card">
+    <h3>Pasul 3: viteza liniară</h3>
+    <p>$v=\omega r=3{,}14\cdot 0{,}25\approx 0{,}785\,m/s$.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 din 14</span>
+  <h2>De ce nu este mișcare rectilinie uniformă?</h2>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>Mișcare rectilinie uniformă</h3>
+      <p>Traiectoria este o dreaptă, iar vectorul viteză este constant.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>Mișcare circulară uniformă</h3>
+      <p>Traiectoria este un cerc, iar vectorul viteză își schimbă direcția.</p>
+    </div>
+  </div>
+
+  <div class="lesson-highlight">
+    <p>Chiar dacă $v$ este constant ca modul, schimbarea direcției vitezei înseamnă că mișcarea circulară uniformă are accelerație. Aceasta va fi studiată în lecția despre accelerația centripetă.</p>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 din 14</span>
+  <h2>Greșeli frecvente</h2>
+
+  <div class="lesson-card warning-card">
+    <ul class="lesson-list">
+      <li><strong>Greșeală:</strong> „Dacă viteza este constantă, nu există accelerație.” În mișcarea circulară, direcția vitezei se schimbă.</li>
+      <li><strong>Greșeală:</strong> se confundă $T$ cu $f$. Perioada este timp, frecvența este număr de rotații pe secundă.</li>
+      <li><strong>Greșeală:</strong> se folosește diametrul în locul razei. În formulele $v=\omega r$ și $v=\dfrac{2\pi r}{T}$ intră raza.</li>
+    </ul>
+  </div>
+
+  <div class="chip-row">
+    <span class="chip">$T=\dfrac{1}{f}$</span>
+    <span class="chip">$\omega=2\pi f$</span>
+    <span class="chip">$v=\omega r$</span>
+  </div>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+    <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+  </nav>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-14" hidden>
+  <span class="lesson-page-label">Pagina 14 din 14</span>
+  <h2>Reține esențialul</h2>
+
+  <div class="lesson-card">
+    <ul class="lesson-list">
+      <li>Mișcarea circulară uniformă are traiectorie circulară.</li>
+      <li>Modulul vitezei este constant: $v=\text{constant}$.</li>
+      <li>Vectorul viteză este tangent la cerc și își schimbă direcția.</li>
+      <li>Perioada: $T=\dfrac{\Delta t}{N}$.</li>
+      <li>Frecvența: $f=\dfrac{N}{\Delta t}=\dfrac{1}{T}$.</li>
+      <li>Viteza unghiulară: $\omega=\dfrac{2\pi}{T}=2\pi f$.</li>
+      <li>Viteza liniară: $v=\dfrac{2\pi r}{T}=\omega r$.</li>
+    </ul>
+  </div>
+
+  <div class="mini-quiz">
+    <details>
+      <summary>1. Unde este orientată viteza în mișcarea circulară?</summary>
+      <p>Viteza este tangentă la cerc în punctul în care se află mobilul.</p>
+    </details>
+
+    <details>
+      <summary>2. Ce înseamnă $T=4\,s$?</summary>
+      <p>Înseamnă că mobilul face o rotație completă în 4 secunde.</p>
+    </details>
+
+    <details>
+      <summary>3. Ce relație există între $v$ și $\omega$?</summary>
+      <p>$v=\omega r$. Pentru aceeași viteză unghiulară, punctele mai depărtate de axă au viteză liniară mai mare.</p>
+    </details>
+  </div>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions" aria-label="Navigare finală">
+      <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-35-legea-miscarii-circulare-uniforme.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+
+  <nav class="lesson-page-nav" aria-label="Navigare lecție">
+    <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+  </nav>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+    const total = pages.length;
+
+    function normalizeHash() {
+      const match = window.location.hash.match(/^#pagina-(\d+)$/);
+      let index = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(index) || index < 1) {
+        index = 1;
+      }
+
+      if (index > total) {
+        index = total;
+      }
+
+      return index;
+    }
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        const active = i === index - 1;
+        page.toggleAttribute('hidden', !active);
+        page.classList.toggle('is-active', active);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updatePage() {
+      const index = normalizeHash();
+
+      if (window.location.hash !== '#pagina-' + index) {
+        history.replaceState(null, '', '#pagina-' + index);
+      }
+
+      showPage(index);
+    }
+
+    window.addEventListener('hashchange', updatePage);
+    document.addEventListener('DOMContentLoaded', updatePage);
+    updatePage();
+  })();
+</script>
+</body>
+</html>
