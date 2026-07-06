@@ -1,1 +1,612 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecția 5: Prisma optică. Dispersia luminii</title>
+  <link href="../../../assets/css/main.css" rel="stylesheet">
 
+  <style id="lesson-single-page-pager">
+    .lesson-page[hidden] {
+      display: none !important;
+    }
+
+    .lesson-page.is-active {
+      display: flex;
+    }
+
+    .lesson-page:focus {
+      outline: none;
+    }
+
+    .lesson-page-nav {
+      align-items: center;
+    }
+
+    /* Font mărit pentru citire comodă pe telefon, tabletă și PC. */
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.08;
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 3.8vw, 46px);
+    }
+
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(23px, 2.7vw, 39px);
+      line-height: 1.58;
+    }
+
+    .lesson-page-label {
+      font-size: clamp(19px, 2.1vw, 27px);
+    }
+
+    .lesson-button {
+      font-size: clamp(21px, 2.5vw, 31px);
+      min-height: 64px;
+      padding: 16px 26px;
+    }
+
+    .formula-card p {
+      font-size: clamp(28px, 4vw, 54px);
+    }
+
+    .lesson-header h1 {
+      font-size: clamp(40px, 7vw, 82px);
+    }
+
+    .lesson-header p {
+      font-size: clamp(23px, 3vw, 38px);
+    }
+
+    .lesson-kicker {
+      font-size: clamp(18px, 2vw, 26px);
+    }
+
+    .svg-card {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 24px;
+      background: #ffffff;
+      padding: clamp(12px, 2vw, 24px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+    }
+
+    .svg-card svg {
+      width: 100%;
+      min-width: 720px;
+      height: auto;
+      display: block;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      fill: #334155;
+    }
+
+    .svg-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+      fill: #475569;
+    }
+
+    .spectrum-band {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(80px, 1fr));
+      overflow: hidden;
+      border-radius: 22px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+      background: #ffffff;
+    }
+
+    .spectrum-band span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 86px;
+      padding: 12px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: clamp(18px, 2.1vw, 28px);
+      text-shadow: 0 2px 6px rgba(0,0,0,.35);
+      text-align: center;
+    }
+
+    .spectrum-band span:nth-child(1) { background: #dc2626; }
+    .spectrum-band span:nth-child(2) { background: #ea580c; }
+    .spectrum-band span:nth-child(3) { background: #facc15; color: #111827; text-shadow: none; }
+    .spectrum-band span:nth-child(4) { background: #16a34a; }
+    .spectrum-band span:nth-child(5) { background: #0ea5e9; }
+    .spectrum-band span:nth-child(6) { background: #4f46e5; }
+    .spectrum-band span:nth-child(7) { background: #7c3aed; }
+
+    .warning-list li::marker {
+      color: #f97316;
+      font-weight: bold;
+    }
+
+    .check-list li::marker {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .mini-definition {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    @media (max-width: 600px) {
+      .svg-card svg {
+        min-width: 620px;
+      }
+
+      .spectrum-band {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute; width:0; height:0; overflow:hidden;">
+  <defs>
+      <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+      </marker>
+      <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+      </marker>
+      <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+        <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+      </marker>
+    </defs>
+</svg>
+
+<main class="lesson-shell">
+
+<section class="lesson-page lesson-cover is-active" id="pagina-1">
+  <header class="lesson-header">
+    <span class="lesson-kicker">Fizică • Clasa a IX-a • Optică geometrică</span>
+    <h1>Lecția 5: Prisma optică. Dispersia luminii</h1>
+    <p>Vom vedea de ce o prismă poate schimba direcția luminii și cum lumina albă se descompune în culori.</p>
+  </header>
+
+  <div class="lesson-banner">
+    <p><strong>Întrebare de pornire:</strong> ce ai observat până acum despre lumina care trece printr-un pahar, printr-un geam gros sau prin picături de apă?</p>
+  </div>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-2" hidden>
+  <span class="lesson-page-label">Pagina 2 / 13</span>
+  <h2>Principiul fizic</h2>
+
+  <p>O prismă optică produce două fenomene importante:</p>
+
+  <div class="lesson-two-columns">
+    <div class="mini-card">
+      <h3>1. Refracția</h3>
+      <p>Lumina își schimbă direcția la trecerea dintr-un mediu transparent în altul.</p>
+    </div>
+
+    <div class="mini-card">
+      <h3>2. Dispersia</h3>
+      <p>Lumina albă se separă în culori, deoarece fiecare culoare se refractă puțin diferit.</p>
+    </div>
+  </div>
+
+  <div class="formula-card">
+    <p>$n_1\sin i=n_2\sin r$</p>
+  </div>
+
+  <p>Aceasta este legea refracției. În prismă, raza se refractă la prima față și apoi încă o dată la a doua față.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+    <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-3" hidden>
+  <span class="lesson-page-label">Pagina 3 / 13</span>
+  <h2>Ce este prisma optică?</h2>
+
+  <p>O <strong>prismă optică</strong> este un corp transparent, mărginit de fețe plane, care poate devia lumina.</p>
+
+  <div class="lesson-card">
+    <p>În lecțiile de bază folosim de obicei o <strong>prismă triunghiulară</strong>. Secțiunea ei are forma unui triunghi.</p>
+  </div>
+
+  <div class="svg-card">
+    <svg viewBox="0 0 760 360" role="img" aria-label="Prismă triunghiulară">
+      <polygon points="330,70 170,300 520,300" fill="#dbeafe" stroke="#2563eb" stroke-width="5"/>
+      <line x1="45" y1="185" x2="230" y2="185" stroke="#2563eb" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+      <line x1="230" y1="185" x2="440" y2="225" stroke="#f97316" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-orange)"/>
+      <line x1="440" y1="225" x2="670" y2="165" stroke="#16a34a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-green)"/>
+
+      <text x="70" y="160" class="svg-label">rază incidentă</text>
+      <text x="470" y="145" class="svg-label">rază emergentă</text>
+      <text x="270" y="328" class="svg-label">prismă</text>
+      <text x="540" y="294" class="svg-small">baza prismei</text>
+    </svg>
+  </div>
+
+  <p>În desen, raza emergentă nu mai are aceeași direcție cu raza incidentă. Ea este <strong>deviată</strong>.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+    <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-4" hidden>
+  <span class="lesson-page-label">Pagina 4 / 13</span>
+  <h2>De ce se deviază lumina?</h2>
+
+  <p>Prisma are două suprafețe de separare aer–sticlă și sticlă–aer. La fiecare suprafață are loc refracție.</p>
+
+  <ol class="lesson-list numbered">
+    <li>La intrarea în prismă, lumina trece din aer în sticlă și se schimbă viteza de propagare.</li>
+    <li>În interiorul prismei, raza merge pe o nouă direcție.</li>
+    <li>La ieșire, lumina trece din sticlă în aer și se refractă din nou.</li>
+  </ol>
+
+  <div class="lesson-highlight">
+    <p>Rezultatul celor două refracții este o abatere totală a razei față de direcția inițială.</p>
+  </div>
+
+  <p>Pentru o prismă triunghiulară aflată în aer, raza este deviată, în general, spre <strong>baza prismei</strong>.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+    <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-5" hidden>
+  <span class="lesson-page-label">Pagina 5 / 13</span>
+  <h2>Lumina albă nu este o singură culoare</h2>
+
+  <p>Lumina albă, cum este lumina Soarelui, este un amestec de mai multe radiații colorate.</p>
+
+  <div class="spectrum-band" aria-label="Spectrul luminii albe">
+    <span>roșu</span>
+    <span>orange</span>
+    <span>galben</span>
+    <span>verde</span>
+    <span>albastru</span>
+    <span>indigo</span>
+    <span>violet</span>
+  </div>
+
+  <p>Când lumina albă trece prin prismă, culorile se separă. Tabloul de culori obținut se numește <strong>spectru</strong>.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+    <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-6" hidden>
+  <span class="lesson-page-label">Pagina 6 / 13</span>
+  <h2>Dispersia luminii</h2>
+
+  <p><strong>Dispersia luminii</strong> este fenomenul prin care lumina albă se descompune în culorile componente la trecerea printr-un mediu dispersiv, cum este sticla prismei.</p>
+
+  <div class="formula-card">
+    <p>lumină albă $\longrightarrow$ roșu + orange + galben + verde + albastru + indigo + violet</p>
+  </div>
+
+  <p>Fizic, explicația este aceasta: indicele de refracție al sticlei nu este exact același pentru toate culorile.</p>
+
+  <div class="lesson-card">
+    <p>De aceea, fiecare culoare iese din prismă pe o direcție ușor diferită.</p>
+  </div>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+    <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-7" hidden>
+  <span class="lesson-page-label">Pagina 7 / 13</span>
+  <h2>Care culoare se abate mai mult?</h2>
+
+  <p>Într-o prismă obișnuită de sticlă:</p>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Culoarea</th>
+          <th>Abaterea prin prismă</th>
+          <th>Observație</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Roșu</td>
+          <td>mai mică</td>
+          <td>este deviat mai puțin</td>
+        </tr>
+        <tr>
+          <td>Verde</td>
+          <td>intermediară</td>
+          <td>se află între roșu și violet</td>
+        </tr>
+        <tr>
+          <td>Violet</td>
+          <td>mai mare</td>
+          <td>este deviat mai mult</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Ordinea culorilor din spectru apare deoarece lumina de culori diferite are lungimi de undă diferite și se refractă diferit.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+    <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-8" hidden>
+  <span class="lesson-page-label">Pagina 8 / 13</span>
+  <h2>Desen: lumina albă se descompune</h2>
+
+  <div class="svg-card">
+    <svg viewBox="0 0 860 460" role="img" aria-label="Dispersia luminii prin prismă">
+      <rect x="0" y="0" width="860" height="460" fill="#f8fafc"/>
+      <polygon points="405,95 250,375 570,375" fill="#dbeafe" stroke="#2563eb" stroke-width="5"/>
+
+      <line x1="55" y1="240" x2="286" y2="240" stroke="#334155" stroke-width="9" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+      <text x="70" y="210" class="svg-label">lumină albă</text>
+
+      <line x1="286" y1="240" x2="450" y2="263" stroke="#f97316" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-orange)"/>
+      <line x1="450" y1="263" x2="760" y2="170" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+      <line x1="450" y1="263" x2="760" y2="205" stroke="#ea580c" stroke-width="6" stroke-linecap="round"/>
+      <line x1="450" y1="263" x2="760" y2="240" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
+      <line x1="450" y1="263" x2="760" y2="275" stroke="#16a34a" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-green)"/>
+      <line x1="450" y1="263" x2="760" y2="310" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+      <line x1="450" y1="263" x2="760" y2="345" stroke="#4f46e5" stroke-width="6" stroke-linecap="round"/>
+      <line x1="450" y1="263" x2="760" y2="380" stroke="#7c3aed" stroke-width="6" stroke-linecap="round"/>
+
+      <text x="610" y="155" class="svg-label" fill="#dc2626">roșu</text>
+      <text x="610" y="395" class="svg-label" fill="#7c3aed">violet</text>
+      <text x="285" y="410" class="svg-label">prismă optică</text>
+      <text x="575" y="115" class="svg-small">roșul se abate mai puțin</text>
+      <text x="575" y="430" class="svg-small">violetul se abate mai mult</text>
+    </svg>
+  </div>
+
+  <p>În realitate spectrul este continuu: culorile trec treptat una în alta.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+    <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-9" hidden>
+  <span class="lesson-page-label">Pagina 9 / 13</span>
+  <h2>Legătura cu refracția</h2>
+
+  <p>În lecția despre refracție ai învățat că direcția razei se schimbă din cauza schimbării vitezei luminii în alt mediu.</p>
+
+  <div class="formula-card">
+    <p>$n=\dfrac{c}{v}$</p>
+  </div>
+
+  <p>La dispersie apare un detaliu nou: în sticlă, viteza luminii depinde ușor de culoare.</p>
+
+  <div class="lesson-card">
+    <p><span class="mini-definition">Ideea-cheie:</span> dacă indicele de refracție este puțin diferit pentru fiecare culoare, și unghiul de refracție va fi puțin diferit.</p>
+  </div>
+
+  <p>Astfel, un singur fascicul alb poate deveni un evantai de raze colorate.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+    <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-10" hidden>
+  <span class="lesson-page-label">Pagina 10 / 13</span>
+  <h2>Experiment simplu</h2>
+
+  <p>Poți observa efecte asemănătoare dispersiei în situații cotidiene.</p>
+
+  <ol class="lesson-list numbered">
+    <li>Privește lumina Soarelui care trece printr-un pahar cu apă.</li>
+    <li>Așază o coală albă în dreptul luminii ieșite.</li>
+    <li>Schimbă încet poziția paharului.</li>
+    <li>Caută apariția unor pete sau margini colorate.</li>
+  </ol>
+
+  <div class="answer-card">
+    <p><strong>Atenție:</strong> nu privi direct spre Soare. Observă doar lumina proiectată pe hârtie sau pe perete.</p>
+  </div>
+
+  <p>Un curcubeu apare tot prin refracție, reflexie internă și dispersie în picăturile de apă din atmosferă.</p>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+    <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-11" hidden>
+  <span class="lesson-page-label">Pagina 11 / 13</span>
+  <h2>Aplicație: spectroscopul</h2>
+
+  <p>Prisma poate fi folosită pentru a analiza lumina emisă de diferite surse.</p>
+
+  <div class="lesson-card">
+    <p>Un <strong>spectroscop</strong> este un aparat care permite observarea vizuală a spectrelor.</p>
+  </div>
+
+  <p>Cu ajutorul spectrului putem afla informații despre sursa de lumină. De exemplu, astronomii folosesc spectrele pentru a studia stelele.</p>
+
+  <div class="responsive-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Sursă de lumină</th>
+          <th>Ce observăm în spectru?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Soarele</td>
+          <td>spectru aproape continuu, cu multe culori</td>
+        </tr>
+        <tr>
+          <td>lampă cu gaz</td>
+          <td>linii luminoase caracteristice substanței</td>
+        </tr>
+        <tr>
+          <td>LED colorat</td>
+          <td>o zonă îngustă de culori</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+    <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page" id="pagina-12" hidden>
+  <span class="lesson-page-label">Pagina 12 / 13</span>
+  <h2>Exemplu rezolvat pas cu pas</h2>
+
+  <div class="problem-card">
+    <p><strong>Problemă:</strong> O rază de lumină albă cade pe o prismă de sticlă. Pe ecran apar mai multe culori. Care culoare este deviată mai mult: roșu sau violet?</p>
+  </div>
+
+  <ol class="lesson-list numbered">
+    <li><strong>Principiul:</strong> prisma produce refracție și dispersie.</li>
+    <li><strong>Dispersia:</strong> culorile se separă deoarece se refractă diferit.</li>
+    <li><strong>Comparația:</strong> în sticlă, violetul se abate mai mult decât roșul.</li>
+  </ol>
+
+  <div class="answer-card">
+    <p><strong>Răspuns:</strong> raza violetă este deviată mai mult decât raza roșie.</p>
+  </div>
+
+  <details class="lesson-card">
+    <summary>Verifică-te</summary>
+    <p>De ce nu spunem că prisma „creează” culorile?</p>
+    <p><strong>Răspuns:</strong> deoarece culorile erau deja componente ale luminii albe; prisma doar le separă.</p>
+  </details>
+
+  <div class="lesson-page-nav">
+    <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+    <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+  </div>
+</section>
+
+<section class="lesson-page lesson-last-page" id="pagina-13" hidden>
+  <span class="lesson-page-label">Pagina 13 / 13</span>
+  <h2>Recapitulare</h2>
+
+  <ul class="lesson-list check-list">
+    <li>Prisma optică este un corp transparent care deviază lumina prin refracție.</li>
+    <li>O prismă triunghiulară aflată în aer deviază raza, în general, spre baza prismei.</li>
+    <li>Lumina albă este un amestec de radiații colorate.</li>
+    <li>Dispersia este descompunerea luminii albe în culorile componente.</li>
+    <li>Spectrul este tabloul culorilor obținut după dispersie.</li>
+    <li>Roșul se abate mai puțin, iar violetul se abate mai mult.</li>
+    <li>Dispersia apare deoarece indicele de refracție depinde de culoarea luminii.</li>
+  </ul>
+
+  <footer class="lesson-footer">
+    <p><strong>Prof. Dănuț Andronie</strong></p>
+    <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+    <div class="lesson-actions">
+      <a class="lesson-button secondary" href="../optica-geometrica/index.html">Înapoi la capitol</a>
+      <a class="lesson-button" href="lectia-6-lentile-subtiri-notiuni-fundamentale.html">Mergi la următoarea lecție</a>
+    </div>
+  </footer>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+
+    function pageNumberFromHash() {
+      const match = window.location.hash.match(/pagina-(\d+)/);
+      const number = match ? parseInt(match[1], 10) : 1;
+      if (!Number.isFinite(number)) return 1;
+      return Math.min(Math.max(number, 1), pages.length);
+    }
+
+    function showPage(number) {
+      pages.forEach((page, index) => {
+        const isActive = index === number - 1;
+        page.hidden = !isActive;
+        page.classList.toggle('is-active', isActive);
+      });
+
+      const active = pages[number - 1];
+      if (active) {
+        active.setAttribute('tabindex', '-1');
+        active.focus({ preventScroll: true });
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function update() {
+      showPage(pageNumberFromHash());
+    }
+
+    window.addEventListener('hashchange', update);
+
+    if (!window.location.hash) {
+      window.history.replaceState(null, '', '#pagina-1');
+    }
+
+    update();
+  })();
+</script>
+</body>
+</html>
