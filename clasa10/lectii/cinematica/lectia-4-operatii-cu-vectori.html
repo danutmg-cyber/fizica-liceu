@@ -1,1 +1,790 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lecția 4: Operații cu vectori</title>
+  <link rel="stylesheet" href="../../../assets/css/main.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    .lesson-page[hidden] {
+      display: none !important;
+    }
 
+    .lesson-large .lesson-page p,
+    .lesson-large .lesson-page li,
+    .lesson-large .lesson-page td,
+    .lesson-large .lesson-page th {
+      font-size: clamp(23px, 2.55vw, 36px);
+      line-height: 1.55;
+    }
+
+    .lesson-large .lesson-page h2 {
+      font-size: clamp(36px, 5.7vw, 66px);
+    }
+
+    .lesson-large .lesson-page h3 {
+      font-size: clamp(27px, 3.4vw, 42px);
+    }
+
+    .lesson-large .formula-card p {
+      font-size: clamp(30px, 4vw, 52px);
+    }
+
+    .lesson-large .lesson-button {
+      font-size: clamp(21px, 2.4vw, 30px);
+      min-height: 64px;
+    }
+
+    .svg-card {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: clamp(12px, 2vw, 24px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+      overflow-x: auto;
+    }
+
+    .svg-card svg {
+      width: 100%;
+      min-width: 660px;
+      height: auto;
+      display: block;
+    }
+
+    .svg-label {
+      font: 700 24px Arial, Helvetica, sans-serif;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font: 600 18px Arial, Helvetica, sans-serif;
+      fill: #334155;
+    }
+
+    .svg-blue {
+      stroke: #2563eb;
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+
+    .svg-orange {
+      stroke: #f97316;
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+
+    .svg-green {
+      stroke: #16a34a;
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+
+    @media (max-width: 600px) {
+      .lesson-large .lesson-page p,
+      .lesson-large .lesson-page li,
+      .lesson-large .lesson-page td,
+      .lesson-large .lesson-page th {
+        font-size: 22px;
+      }
+
+      .svg-card svg {
+        min-width: 620px;
+      }
+    }
+  </style>
+</head>
+<body class="lesson-body lesson-large">
+  <main class="lesson-shell">
+
+    <section class="lesson-page lesson-cover" id="pagina-1">
+      <header class="lesson-header blue">
+        <span class="lesson-kicker">Fizică • Clasa a X-a • Cinematică</span>
+        <h1>Lecția 4: Operații cu vectori</h1>
+        <p>
+          În cinematică folosim vectori pentru poziție, deplasare, viteză și accelerație.
+          De aceea trebuie să știm să îi adunăm, să îi scădem și să îi descompunem pe axe.
+        </p>
+      </header>
+
+      <div class="lesson-banner">
+        <p>
+          <strong>Întrebare de pornire:</strong> Dacă mergi întâi spre est și apoi spre nord,
+          deplasarea finală este suma simplă a distanțelor sau un vector nou?
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <p>
+          Principiul fizic: mărimile vectoriale nu se compun ca numerele obișnuite.
+          La ele contează simultan <strong>modulul</strong>, <strong>direcția</strong> și <strong>sensul</strong>.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button" href="#pagina-2">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-2" hidden>
+      <span class="lesson-page-label">Pagina 2</span>
+      <h2>De ce avem nevoie de vectori?</h2>
+
+      <p>
+        Unele mărimi fizice sunt complet determinate numai de valoare numerică.
+        De exemplu, masa unui corp este suficient descrisă prin $m=2\,kg$.
+      </p>
+
+      <p>
+        Alte mărimi au nevoie și de direcție și sens. De exemplu, deplasarea
+        $\Delta\overrightarrow{r}$ ne spune nu doar „cât”, ci și „încotro”.
+      </p>
+
+      <div class="responsive-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Mărimi scalare</th>
+              <th>Mărimi vectoriale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>masa $m$</td>
+              <td>deplasarea $\Delta\overrightarrow{r}$</td>
+            </tr>
+            <tr>
+              <td>timpul $t$</td>
+              <td>viteza $\overrightarrow{v}$</td>
+            </tr>
+            <tr>
+              <td>distanța parcursă $l$</td>
+              <td>accelerația $\overrightarrow{a}$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+        <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-3" hidden>
+      <span class="lesson-page-label">Pagina 3</span>
+      <h2>Elementele unui vector</h2>
+
+      <p>
+        Un vector este reprezentat printr-o săgeată. Lungimea săgeții arată modulul,
+        dreapta suport arată direcția, iar vârful săgeții arată sensul.
+      </p>
+
+      <div class="svg-card" aria-label="Elementele unui vector">
+        <svg viewBox="0 0 820 330" role="img">
+          <defs>
+            <marker id="l4p3-arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="l4p3-arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+            </marker>
+          </defs>
+
+          <line x1="110" y1="170" x2="650" y2="170" stroke="#cbd5e1" stroke-width="4" stroke-dasharray="12 10"/>
+          <line x1="160" y1="170" x2="580" y2="170" class="svg-blue" marker-end="url(#l4p3-arrow-blue)"/>
+          <circle cx="160" cy="170" r="9" fill="#2563eb"/>
+          <text x="150" y="215" class="svg-label">origine</text>
+          <text x="555" y="215" class="svg-label">vârf</text>
+          <text x="330" y="132" class="svg-label">modul</text>
+          <text x="300" y="250" class="svg-small">direcția este dreapta pe care se află vectorul</text>
+
+          <line x1="330" y1="110" x2="430" y2="110" stroke="#f97316" stroke-width="5" marker-end="url(#l4p3-arrow-orange)"/>
+          <text x="448" y="118" class="svg-small">sens</text>
+        </svg>
+      </div>
+
+      <div class="formula-card">
+        <p>$\left|\overrightarrow{a}\right|=a$</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+        <a class="lesson-button" href="#pagina-4">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-4" hidden>
+      <span class="lesson-page-label">Pagina 4</span>
+      <h2>Vectori egali și vectori opuși</h2>
+
+      <div class="lesson-two-columns">
+        <div class="mini-card">
+          <h3>Vectori egali</h3>
+          <p>
+            Au același modul, aceeași direcție și același sens.
+          </p>
+          <div class="formula-card">
+            <p>$\overrightarrow{a}=\overrightarrow{b}$</p>
+          </div>
+        </div>
+
+        <div class="mini-card">
+          <h3>Vectori opuși</h3>
+          <p>
+            Au același modul și aceeași direcție, dar sensuri opuse.
+          </p>
+          <div class="formula-card">
+            <p>$\overrightarrow{b}=-\overrightarrow{a}$</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-highlight">
+        <p>
+          Vectorii se pot translata paralel cu ei înșiși, fără să se schimbe.
+          Contează mărimea, direcția și sensul, nu locul unde desenăm săgeata.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+        <a class="lesson-button" href="#pagina-5">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-5" hidden>
+      <span class="lesson-page-label">Pagina 5</span>
+      <h2>Adunarea vectorilor: regula triunghiului</h2>
+
+      <p>
+        Pentru a aduna doi vectori, așezăm originea celui de-al doilea vector în vârful
+        primului. Vectorul sumă pornește de la originea primului și ajunge în vârful celui de-al doilea.
+      </p>
+
+      <div class="svg-card" aria-label="Regula triunghiului pentru adunarea vectorilor">
+        <svg viewBox="0 0 820 430" role="img">
+          <defs>
+            <marker id="l4p5-arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="l4p5-arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+            </marker>
+            <marker id="l4p5-arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+            </marker>
+          </defs>
+
+          <line x1="130" y1="310" x2="420" y2="310" class="svg-blue" marker-end="url(#l4p5-arrow-blue)"/>
+          <line x1="420" y1="310" x2="610" y2="150" class="svg-orange" marker-end="url(#l4p5-arrow-orange)"/>
+          <line x1="130" y1="310" x2="610" y2="150" class="svg-green" marker-end="url(#l4p5-arrow-green)"/>
+
+          <text x="250" y="345" class="svg-label">$\overrightarrow{a}$</text>
+          <text x="515" y="250" class="svg-label">$\overrightarrow{b}$</text>
+          <text x="330" y="190" class="svg-label">$\overrightarrow{R}$</text>
+          <text x="190" y="70" class="svg-small">vârful lui $\overrightarrow{a}$ devine originea lui $\overrightarrow{b}$</text>
+          <text x="265" y="110" class="svg-small">$\overrightarrow{R}=\overrightarrow{a}+\overrightarrow{b}$</text>
+        </svg>
+      </div>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{R}=\overrightarrow{a}+\overrightarrow{b}$</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+        <a class="lesson-button" href="#pagina-6">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-6" hidden>
+      <span class="lesson-page-label">Pagina 6</span>
+      <h2>Adunarea vectorilor: regula paralelogramului</h2>
+
+      <p>
+        Dacă doi vectori au aceeași origine, construim paralelogramul care are acești vectori
+        ca laturi. Diagonala paralelogramului este vectorul sumă.
+      </p>
+
+      <div class="svg-card" aria-label="Regula paralelogramului">
+        <svg viewBox="0 0 820 430" role="img">
+          <defs>
+            <marker id="l4p6-arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="l4p6-arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+            </marker>
+            <marker id="l4p6-arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+            </marker>
+          </defs>
+
+          <line x1="160" y1="320" x2="540" y2="320" class="svg-blue" marker-end="url(#l4p6-arrow-blue)"/>
+          <line x1="160" y1="320" x2="330" y2="150" class="svg-orange" marker-end="url(#l4p6-arrow-orange)"/>
+          <line x1="330" y1="150" x2="710" y2="150" stroke="#2563eb" stroke-width="4" stroke-dasharray="12 10"/>
+          <line x1="540" y1="320" x2="710" y2="150" stroke="#f97316" stroke-width="4" stroke-dasharray="12 10"/>
+          <line x1="160" y1="320" x2="710" y2="150" class="svg-green" marker-end="url(#l4p6-arrow-green)"/>
+
+          <text x="330" y="355" class="svg-label">$\overrightarrow{a}$</text>
+          <text x="205" y="210" class="svg-label">$\overrightarrow{b}$</text>
+          <text x="420" y="215" class="svg-label">$\overrightarrow{R}$</text>
+          <text x="185" y="75" class="svg-small">diagonala este suma vectorilor</text>
+        </svg>
+      </div>
+
+      <div class="lesson-highlight">
+        <p>
+          Adunarea vectorilor este comutativă:
+          $\overrightarrow{a}+\overrightarrow{b}=\overrightarrow{b}+\overrightarrow{a}$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+        <a class="lesson-button" href="#pagina-7">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-7" hidden>
+      <span class="lesson-page-label">Pagina 7</span>
+      <h2>Cazuri simple de adunare</h2>
+
+      <div class="responsive-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Situație</th>
+              <th>Modulul sumei</th>
+              <th>Observație</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Vectori cu același sens</td>
+              <td>$R=a+b$</td>
+              <td>modulele se adună</td>
+            </tr>
+            <tr>
+              <td>Vectori cu sensuri opuse</td>
+              <td>$R=|a-b|$</td>
+              <td>modulele se scad</td>
+            </tr>
+            <tr>
+              <td>Vectori perpendiculari</td>
+              <td>$R=\sqrt{a^2+b^2}$</td>
+              <td>folosim teorema lui Pitagora</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{R}=\overrightarrow{a}+\overrightarrow{b}$</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+        <a class="lesson-button" href="#pagina-8">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-8" hidden>
+      <span class="lesson-page-label">Pagina 8</span>
+      <h2>Scăderea vectorilor</h2>
+
+      <p>
+        Scăderea unui vector înseamnă adunarea cu vectorul opus.
+      </p>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{a}-\overrightarrow{b}=\overrightarrow{a}+(-\overrightarrow{b})$</p>
+      </div>
+
+      <div class="svg-card" aria-label="Scăderea vectorilor">
+        <svg viewBox="0 0 820 360" role="img">
+          <defs>
+            <marker id="l4p8-arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="l4p8-arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+            </marker>
+            <marker id="l4p8-arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+            </marker>
+          </defs>
+
+          <line x1="140" y1="260" x2="470" y2="260" class="svg-blue" marker-end="url(#l4p8-arrow-blue)"/>
+          <line x1="470" y1="260" x2="290" y2="120" class="svg-orange" marker-end="url(#l4p8-arrow-orange)"/>
+          <line x1="140" y1="260" x2="290" y2="120" class="svg-green" marker-end="url(#l4p8-arrow-green)"/>
+
+          <text x="280" y="298" class="svg-label">$\overrightarrow{a}$</text>
+          <text x="360" y="180" class="svg-label">$-\overrightarrow{b}$</text>
+          <text x="185" y="165" class="svg-label">$\overrightarrow{a}-\overrightarrow{b}$</text>
+          <text x="130" y="70" class="svg-small">pentru scădere, întoarcem sensul lui $\overrightarrow{b}$</text>
+        </svg>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Interpretare: $\overrightarrow{a}-\overrightarrow{b}$ este vectorul care, adunat cu
+          $\overrightarrow{b}$, dă $\overrightarrow{a}$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+        <a class="lesson-button" href="#pagina-9">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-9" hidden>
+      <span class="lesson-page-label">Pagina 9</span>
+      <h2>Componentele unui vector</h2>
+
+      <p>
+        Un vector poate fi înlocuit prin doi vectori perpendiculari, orientați pe axe.
+        Aceștia se numesc componentele vectorului.
+      </p>
+
+      <div class="svg-card" aria-label="Componentele unui vector">
+        <svg viewBox="0 0 820 480" role="img">
+          <defs>
+            <marker id="l4p9-arrow-blue" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="l4p9-arrow-orange" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#f97316"></path>
+            </marker>
+            <marker id="l4p9-arrow-green" markerWidth="12" markerHeight="12" refX="7" refY="6" orient="auto">
+              <path d="M2,4 L8,6 L2,8 Z" fill="#16a34a"></path>
+            </marker>
+          </defs>
+
+          <line x1="130" y1="380" x2="740" y2="380" stroke="#0f172a" stroke-width="4" marker-end="url(#l4p9-arrow-blue)"/>
+          <line x1="130" y1="380" x2="130" y2="70" stroke="#0f172a" stroke-width="4" marker-end="url(#l4p9-arrow-blue)"/>
+
+          <line x1="130" y1="380" x2="610" y2="150" class="svg-green" marker-end="url(#l4p9-arrow-green)"/>
+          <line x1="130" y1="380" x2="610" y2="380" class="svg-blue" marker-end="url(#l4p9-arrow-blue)"/>
+          <line x1="610" y1="380" x2="610" y2="150" class="svg-orange" marker-end="url(#l4p9-arrow-orange)"/>
+          <line x1="610" y1="150" x2="610" y2="380" stroke="#94a3b8" stroke-width="3" stroke-dasharray="8 8"/>
+          <line x1="130" y1="150" x2="610" y2="150" stroke="#94a3b8" stroke-width="3" stroke-dasharray="8 8"/>
+
+          <text x="745" y="390" class="svg-label">x</text>
+          <text x="105" y="65" class="svg-label">y</text>
+          <text x="350" y="415" class="svg-label">$a_x$</text>
+          <text x="630" y="265" class="svg-label">$a_y$</text>
+          <text x="360" y="245" class="svg-label">$\overrightarrow{a}$</text>
+          <text x="230" y="345" class="svg-small">$\alpha$</text>
+          <path d="M205 380 A75 75 0 0 0 197 348" fill="none" stroke="#f97316" stroke-width="4"/>
+        </svg>
+      </div>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{a}=\overrightarrow{a}_x+\overrightarrow{a}_y$</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+        <a class="lesson-button" href="#pagina-10">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-10" hidden>
+      <span class="lesson-page-label">Pagina 10</span>
+      <h2>Proiecțiile vectorului pe axe</h2>
+
+      <p>
+        Dacă vectorul $\overrightarrow{a}$ face unghiul $\alpha$ cu axa $Ox$, atunci
+        proiecțiile lui pe axe sunt:
+      </p>
+
+      <div class="formula-card">
+        <p>$a_x=a\cos\alpha$</p>
+        <p>$a_y=a\sin\alpha$</p>
+      </div>
+
+      <p>
+        Dacă știm proiecțiile, putem afla modulul vectorului:
+      </p>
+
+      <div class="formula-card">
+        <p>$a=\sqrt{a_x^2+a_y^2}$</p>
+      </div>
+
+      <p>
+        Iar direcția poate fi descrisă prin:
+      </p>
+
+      <div class="formula-card">
+        <p>$\tan\alpha=\dfrac{a_y}{a_x}$</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+        <a class="lesson-button" href="#pagina-11">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-11" hidden>
+      <span class="lesson-page-label">Pagina 11</span>
+      <h2>Scrierea vectorului cu versori</h2>
+
+      <p>
+        În plan, folosim de obicei doi versori: $\overrightarrow{i}$ pe axa $Ox$
+        și $\overrightarrow{j}$ pe axa $Oy$.
+      </p>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{a}=a_x\overrightarrow{i}+a_y\overrightarrow{j}$</p>
+      </div>
+
+      <div class="lesson-card">
+        <p>
+          Exemplu: dacă $a_x=3$ și $a_y=4$, atunci:
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{a}=3\overrightarrow{i}+4\overrightarrow{j}$</p>
+        <p>$a=\sqrt{3^2+4^2}=5$</p>
+      </div>
+
+      <div class="lesson-highlight">
+        <p>
+          Proiecțiile pot fi pozitive, negative sau nule, în funcție de sensul vectorului față de axe.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+        <a class="lesson-button" href="#pagina-12">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-12" hidden>
+      <span class="lesson-page-label">Pagina 12</span>
+      <h2>Exemplu rezolvat: deplasare în două direcții</h2>
+
+      <div class="problem-card">
+        <p>
+          Un elev merge $300\,m$ spre est, apoi $400\,m$ spre nord.
+          Determină modulul deplasării rezultante.
+        </p>
+      </div>
+
+      <h3>Rezolvare pas cu pas</h3>
+      <ol class="lesson-list numbered">
+        <li>Deplasările sunt perpendiculare.</li>
+        <li>Construim vectorul rezultant: diagonala triunghiului dreptunghic.</li>
+        <li>Aplicăm teorema lui Pitagora:</li>
+      </ol>
+
+      <div class="formula-card">
+        <p>$R=\sqrt{300^2+400^2}$</p>
+        <p>$R=\sqrt{90000+160000}$</p>
+        <p>$R=\sqrt{250000}=500\,m$</p>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Răspuns: deplasarea rezultantă are modulul $500\,m$.
+          Distanța parcursă este însă $300+400=700\,m$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+        <a class="lesson-button" href="#pagina-13">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-13" hidden>
+      <span class="lesson-page-label">Pagina 13</span>
+      <h2>Exemplu rezolvat: componente</h2>
+
+      <div class="problem-card">
+        <p>
+          Un vector are modulul $a=10\,m$ și face unghiul $\alpha=30^\circ$
+          cu axa $Ox$. Determină proiecțiile $a_x$ și $a_y$.
+        </p>
+      </div>
+
+      <h3>Rezolvare pas cu pas</h3>
+      <ol class="lesson-list numbered">
+        <li>Scriem formulele: $a_x=a\cos\alpha$, $a_y=a\sin\alpha$.</li>
+        <li>Folosim valorile: $\cos 30^\circ\approx0{,}866$, $\sin30^\circ=0{,}5$.</li>
+        <li>Calculăm proiecțiile.</li>
+      </ol>
+
+      <div class="formula-card">
+        <p>$a_x=10\cdot0{,}866=8{,}66\,m$</p>
+        <p>$a_y=10\cdot0{,}5=5\,m$</p>
+      </div>
+
+      <div class="answer-card">
+        <p>
+          Răspuns: $a_x\approx8{,}66\,m$, iar $a_y=5\,m$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+        <a class="lesson-button" href="#pagina-14">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-14" hidden>
+      <span class="lesson-page-label">Pagina 14</span>
+      <h2>Greșeli frecvente</h2>
+
+      <div class="lesson-two-columns">
+        <div class="mini-card warning-card">
+          <h3>1. Adunare ca numerele</h3>
+          <p>
+            Nu scriem mereu $R=a+b$. Formula aceasta este corectă doar pentru vectori coliniari,
+            cu același sens.
+          </p>
+        </div>
+
+        <div class="mini-card warning-card">
+          <h3>2. Ignorarea sensului</h3>
+          <p>
+            Pe o axă, un vector poate avea proiecție pozitivă sau negativă.
+          </p>
+        </div>
+      </div>
+
+      <div class="lesson-two-columns">
+        <div class="mini-card warning-card">
+          <h3>3. Confuzie între modul și proiecție</h3>
+          <p>
+            Modulul $a$ este mereu pozitiv, dar proiecția $a_x$ poate fi negativă.
+          </p>
+        </div>
+
+        <div class="mini-card warning-card">
+          <h3>4. Unghi ales greșit</h3>
+          <p>
+            Dacă unghiul este față de axa $Ox$, folosim $a_x=a\cos\alpha$ și $a_y=a\sin\alpha$.
+          </p>
+        </div>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+        <a class="lesson-button" href="#pagina-15">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-15" hidden>
+      <span class="lesson-page-label">Pagina 15</span>
+      <h2>Verifică dacă ai înțeles</h2>
+
+      <ol class="lesson-list numbered">
+        <li>
+          Doi vectori coliniari au modulele $7\,m$ și $4\,m$ și același sens.
+          Care este modulul sumei?
+        </li>
+        <li>
+          Aceiași vectori au sensuri opuse. Care este modulul diferenței geometrice?
+        </li>
+        <li>
+          Un vector are componentele $a_x=6$ și $a_y=8$.
+          Care este modulul lui?
+        </li>
+        <li>
+          Ce înseamnă să scazi vectorul $\overrightarrow{b}$ din vectorul $\overrightarrow{a}$?
+        </li>
+      </ol>
+
+      <div class="answer-card">
+        <p>
+          Răspunsuri ghidate: $11\,m$; $3\,m$; $\sqrt{6^2+8^2}=10$;
+          $\overrightarrow{a}-\overrightarrow{b}=\overrightarrow{a}+(-\overrightarrow{b})$.
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-14">Înapoi</a>
+        <a class="lesson-button" href="#pagina-16">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page lesson-last-page" id="pagina-16" hidden>
+      <span class="lesson-page-label">Pagina 16</span>
+      <h2>Recapitulare</h2>
+
+      <ul class="lesson-list">
+        <li>Vectorul este caracterizat prin modul, direcție și sens.</li>
+        <li>Adunarea vectorilor se face prin regula triunghiului sau regula paralelogramului.</li>
+        <li>Scăderea vectorilor înseamnă adunarea cu vectorul opus.</li>
+        <li>Un vector poate fi descompus pe axe perpendiculare.</li>
+        <li>Proiecțiile unui vector sunt mărimi algebrice: pot fi pozitive, negative sau nule.</li>
+      </ul>
+
+      <div class="formula-card">
+        <p>$\overrightarrow{R}=\overrightarrow{a}+\overrightarrow{b}$</p>
+        <p>$\overrightarrow{a}-\overrightarrow{b}=\overrightarrow{a}+(-\overrightarrow{b})$</p>
+        <p>$a_x=a\cos\alpha,\quad a_y=a\sin\alpha$</p>
+        <p>$a=\sqrt{a_x^2+a_y^2}$</p>
+      </div>
+
+      <footer class="lesson-footer">
+        <p>Prof. Dănuț Andronie</p>
+        <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+        <div class="lesson-actions">
+          <a class="lesson-button secondary" href="../cinematica/">Înapoi la capitol</a>
+          <a class="lesson-button" href="lectia-5-miscarea-rectilinie-uniforma-viteza.html">
+            Mergi la următoarea lecție
+          </a>
+        </div>
+      </footer>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-15">Înapoi</a>
+      </nav>
+    </section>
+
+  </main>
+
+  <script>
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+
+    function showPageFromHash() {
+      const match = window.location.hash.match(/pagina-(\d+)/);
+      let pageNumber = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(pageNumber) || pageNumber < 1 || pageNumber > pages.length) {
+        pageNumber = 1;
+        window.location.hash = '#pagina-1';
+        return;
+      }
+
+      pages.forEach((page, index) => {
+        page.hidden = index !== pageNumber - 1;
+      });
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    window.addEventListener('hashchange', showPageFromHash);
+    window.addEventListener('DOMContentLoaded', showPageFromHash);
+  </script>
+</body>
+</html>
