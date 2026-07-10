@@ -1,1 +1,438 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lecția 15: Ecuația undei plane</title>
+  <link rel="stylesheet" href="../../../assets/css/main.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    [hidden] { display: none !important; }
+    .lesson-page p, .lesson-page li, .lesson-page td, .lesson-page th {
+      font-size: clamp(24px, 2.8vw, 38px);
+      line-height: 1.55;
+    }
+    .lesson-page h2 { font-size: clamp(38px, 6vw, 70px); }
+    .lesson-page h3 { font-size: clamp(28px, 4vw, 46px); }
+    .lesson-page-label { font-size: clamp(20px, 2.4vw, 30px); }
+    .formula-card p { font-size: clamp(28px, 4vw, 54px); }
+    .formula-card .small-formula { font-size: clamp(22px, 2.8vw, 36px); font-weight: 500; }
+    .lesson-button { font-size: clamp(22px, 2.7vw, 34px); min-height: 68px; padding: 18px 28px; }
+    .svg-card {
+      background:#ffffff;
+      border-radius:24px;
+      padding:clamp(14px,2vw,24px);
+      box-shadow:0 16px 36px rgba(15,23,42,.12);
+      overflow-x:auto;
+    }
+    .svg-card svg { width:100%; min-width:720px; height:auto; display:block; }
+    .svg-text { font-family:Arial, Helvetica, sans-serif; font-size:25px; font-weight:700; fill:#0f172a; }
+    .svg-small { font-family:Arial, Helvetica, sans-serif; font-size:20px; font-weight:600; fill:#334155; }
+    .svg-axis { stroke:#0f172a; stroke-width:4; }
+    .svg-wave { fill:none; stroke:#2563eb; stroke-width:7; stroke-linecap:round; }
+    .svg-dash { stroke:#64748b; stroke-width:3; stroke-dasharray:8 8; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      padding:12px 18px;
+      background:#dbeafe;
+      color:#1e3a8a;
+      font-weight:800;
+      font-size:clamp(22px,2.8vw,36px);
+    }
+    .check-card {
+      border-left:10px solid #16a34a;
+      background:#f0fdf4;
+    }
+    .danger-note {
+      border-left:10px solid #ef4444;
+      background:#fff7ed;
+    }
+    @media (max-width:600px){
+      .lesson-page p,.lesson-page li,.lesson-page td,.lesson-page th{font-size:23px;}
+      .svg-card svg{min-width:660px;}
+    }
+    @media print { [hidden] { display:flex!important; } }
+  </style>
+</head>
+<body class="lesson-body">
+  <main class="lesson-shell">
 
+    <section class="lesson-page lesson-cover" id="pagina-1">
+      <header class="lesson-header">
+        <span class="lesson-kicker">Clasa a X-a • Oscilații și unde mecanice</span>
+        <h1>Lecția 15<br>Ecuația undei plane</h1>
+        <p>Învățăm să descriem matematic o undă care se propagă pe o direcție, folosind timpul $t$, poziția $x$, perioada $T$ și lungimea de undă $\lambda$.</p>
+      </header>
+      <div class="lesson-banner">
+        <p><strong>Ideea lecției:</strong> o undă nu face toate punctele mediului să oscileze simultan. Punctele mai îndepărtate încep să oscileze cu întârziere.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button" href="#pagina-2">Începem</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-2" hidden>
+      <span class="lesson-page-label">Pagina 2 / 16</span>
+      <h2>Principiul fizic</h2>
+      <div class="lesson-card">
+        <p>Unda mecanică este propagarea unei oscilații printr-un mediu elastic. Sursa oscilează prima, iar informația despre oscilație ajunge mai târziu la punctele aflate la distanță.</p>
+      </div>
+      <div class="formula-card">
+        <p>$\Delta t=\dfrac{x}{v}$</p>
+        <p class="small-formula">întârzierea cu care oscilația ajunge la punctul aflat la distanța $x$</p>
+      </div>
+      <p>Dacă unda se propagă de la stânga la dreapta cu viteza $v$, punctul $P$ aflat la distanța $x$ copiază mișcarea sursei, dar cu întârzierea $\Delta t$.</p>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+        <a class="lesson-button" href="#pagina-3">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-3" hidden>
+      <span class="lesson-page-label">Pagina 3 / 16</span>
+      <h2>Modelul undei plane</h2>
+      <div class="lesson-card">
+        <p>O undă plană este o idealizare: fronturile de undă sunt plane paralele, iar propagarea se face pe o direcție bine aleasă, pe care o notăm cu axa $Ox$.</p>
+      </div>
+      <div class="svg-card" aria-label="Undă plană care se propagă spre dreapta">
+        <svg viewBox="0 0 900 430" role="img">
+          <defs>
+            <marker id="arrowBlue15" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrowDark15" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#0f172a"></path>
+            </marker>
+          </defs>
+          <line x1="70" y1="225" x2="830" y2="225" class="svg-axis" marker-end="url(#arrowDark15)"></line>
+          <text x="835" y="232" class="svg-text">x</text>
+          <path class="svg-wave" d="M80 225 C120 120, 170 120, 210 225 S300 330, 340 225 S430 120, 470 225 S560 330, 600 225 S690 120, 730 225 S820 330, 860 225"></path>
+          <line x1="120" y1="118" x2="120" y2="340" class="svg-dash"></line>
+          <line x1="470" y1="118" x2="470" y2="340" class="svg-dash"></line>
+          <line x1="120" y1="360" x2="470" y2="360" stroke="#16a34a" stroke-width="5" marker-start="url(#arrowDark15)" marker-end="url(#arrowDark15)"></line>
+          <text x="285" y="398" class="svg-text">λ</text>
+          <line x1="120" y1="225" x2="120" y2="126" stroke="#f97316" stroke-width="5" marker-end="url(#arrowBlue15)"></line>
+          <text x="92" y="110" class="svg-text">A</text>
+          <line x1="610" y1="80" x2="745" y2="80" stroke="#2563eb" stroke-width="6" marker-end="url(#arrowBlue15)"></line>
+          <text x="590" y="55" class="svg-text">propagare</text>
+          <circle cx="210" cy="225" r="9" fill="#ef4444"></circle>
+          <text x="190" y="258" class="svg-small">P(x)</text>
+        </svg>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+        <a class="lesson-button" href="#pagina-4">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-4" hidden>
+      <span class="lesson-page-label">Pagina 4 / 16</span>
+      <h2>De la sursă la punctul $P$</h2>
+      <p>Să presupunem că sursa $O$ oscilează după legea:</p>
+      <div class="formula-card">
+        <p>$y_O(t)=A\sin \omega t$</p>
+      </div>
+      <p>Punctul $P$, aflat la distanța $x$, oscilează ca sursa, dar după timpul de întârziere $\Delta t=\dfrac{x}{v}$.</p>
+      <div class="formula-card">
+        <p>$y_P(t)=A\sin \omega\left(t-\dfrac{x}{v}\right)$</p>
+      </div>
+      <p>Aceasta este prima formă importantă a ecuației undei progresive.</p>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+        <a class="lesson-button" href="#pagina-5">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-5" hidden>
+      <span class="lesson-page-label">Pagina 5 / 16</span>
+      <h2>Forma cu $T$ și $\lambda$</h2>
+      <p>Știm relațiile fundamentale ale undei:</p>
+      <div class="pill-row">
+        <span class="pill">$\omega=\dfrac{2\pi}{T}$</span>
+        <span class="pill">$\lambda=vT$</span>
+      </div>
+      <p>Înlocuim în formula de pe pagina anterioară:</p>
+      <div class="formula-card">
+        <p>$y=A\sin 2\pi\left(\dfrac{t}{T}-\dfrac{x}{\lambda}\right)$</p>
+      </div>
+      <div class="lesson-card check-card">
+        <p>Această formă arată direct dubla periodicitate: în timp prin $T$ și în spațiu prin $\lambda$.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+        <a class="lesson-button" href="#pagina-6">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-6" hidden>
+      <span class="lesson-page-label">Pagina 6 / 16</span>
+      <h2>Numărul de undă $k$</h2>
+      <p>Pentru o scriere mai scurtă, introducem numărul de undă:</p>
+      <div class="formula-card">
+        <p>$k=\dfrac{2\pi}{\lambda}$</p>
+      </div>
+      <p>Unitatea lui este $rad/m$, deși radianul este adesea tratat ca unitate adimensională.</p>
+      <div class="formula-card">
+        <p>$y=A\sin(\omega t-kx)$</p>
+        <p class="small-formula">unda care se propagă în sensul pozitiv al axei $Ox$</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+        <a class="lesson-button" href="#pagina-7">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-7" hidden>
+      <span class="lesson-page-label">Pagina 7 / 16</span>
+      <h2>Cu fază inițială</h2>
+      <p>Dacă sursa nu pornește din poziția $y=0$ la momentul $t=0$, introducem faza inițială $\varphi_0$.</p>
+      <div class="formula-card">
+        <p>$y(x,t)=A\sin(\omega t-kx+\varphi_0)$</p>
+      </div>
+      <div class="lesson-card">
+        <p>Semnul din fața lui $kx$ ne spune sensul propagării:</p>
+        <ul class="lesson-list">
+          <li>$\omega t-kx$ → propagare spre $+Ox$;</li>
+          <li>$\omega t+kx$ → propagare spre $-Ox$.</li>
+        </ul>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+        <a class="lesson-button" href="#pagina-8">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-8" hidden>
+      <span class="lesson-page-label">Pagina 8 / 16</span>
+      <h2>Ce înseamnă faza undei?</h2>
+      <p>Faza spune în ce stare de oscilație se află particula mediului.</p>
+      <div class="formula-card">
+        <p>$\varphi(x,t)=\omega t-kx+\varphi_0$</p>
+      </div>
+      <div class="responsive-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Mărime</th>
+              <th>Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$\omega t$</td>
+              <td>partea temporală: oscilația avansează în timp</td>
+            </tr>
+            <tr>
+              <td>$kx$</td>
+              <td>partea spațială: punctele aflate mai departe sunt întârziate</td>
+            </tr>
+            <tr>
+              <td>$\varphi_0$</td>
+              <td>faza inițială a sursei</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+        <a class="lesson-button" href="#pagina-9">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-9" hidden>
+      <span class="lesson-page-label">Pagina 9 / 16</span>
+      <h2>Periodicitate în timp</h2>
+      <p>Alegem un punct fix al mediului, adică $x$ este constant. Atunci elongația se repetă după fiecare perioadă $T$.</p>
+      <div class="formula-card">
+        <p>$y(x,t+T)=y(x,t)$</p>
+      </div>
+      <p>Explicația este simplă: faza crește cu $2\pi$, iar sinusul are aceeași valoare după o rotație completă.</p>
+      <div class="lesson-highlight">
+        <p>La același punct, repetarea se face în timp.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+        <a class="lesson-button" href="#pagina-10">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-10" hidden>
+      <span class="lesson-page-label">Pagina 10 / 16</span>
+      <h2>Periodicitate în spațiu</h2>
+      <p>Alegem același moment de timp, adică $t$ este constant. Punctele aflate la distanțe care diferă cu $\lambda$ au aceeași stare de oscilație.</p>
+      <div class="formula-card">
+        <p>$y(x+\lambda,t)=y(x,t)$</p>
+      </div>
+      <div class="lesson-card">
+        <p>Dacă două puncte sunt separate prin:</p>
+        <ul class="lesson-list">
+          <li>$\Delta x=\lambda$ → sunt în concordanță de fază;</li>
+          <li>$\Delta x=\dfrac{\lambda}{2}$ → sunt în opoziție de fază;</li>
+          <li>$\Delta x=m\lambda$ → sunt în concordanță de fază, unde $m$ este număr întreg.</li>
+        </ul>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+        <a class="lesson-button" href="#pagina-11">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-11" hidden>
+      <span class="lesson-page-label">Pagina 11 / 16</span>
+      <h2>Defazajul dintre două puncte</h2>
+      <p>Pentru două puncte ale aceleiași unde, la același moment, diferența de fază este:</p>
+      <div class="formula-card">
+        <p>$\Delta\varphi=k\Delta x=\dfrac{2\pi}{\lambda}\Delta x$</p>
+      </div>
+      <div class="problem-card">
+        <h3>Exemplu rapid</h3>
+        <p>Dacă $\lambda=6\,m$ și $\Delta x=1{,}5\,m$, atunci:</p>
+        <p>$\Delta\varphi=\dfrac{2\pi}{6}\cdot1{,}5=\dfrac{\pi}{2}$.</p>
+      </div>
+      <p>Cele două puncte sunt defazate cu un sfert de perioadă.</p>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+        <a class="lesson-button" href="#pagina-12">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-12" hidden>
+      <span class="lesson-page-label">Pagina 12 / 16</span>
+      <h2>Viteza de fază</h2>
+      <p>Un punct de aceeași fază, de exemplu o creastă, se deplasează cu viteza de propagare a undei.</p>
+      <div class="formula-card">
+        <p>$v=\dfrac{\omega}{k}=\lambda\nu=\dfrac{\lambda}{T}$</p>
+      </div>
+      <div class="lesson-card danger-note">
+        <p><strong>Atenție:</strong> $v$ este viteza de propagare a undei, nu viteza de oscilație a particulelor mediului. Particulele mediului oscilează în jurul pozițiilor de echilibru.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+        <a class="lesson-button" href="#pagina-13">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-13" hidden>
+      <span class="lesson-page-label">Pagina 13 / 16</span>
+      <h2>Problemă rezolvată 1</h2>
+      <div class="problem-card">
+        <h3>Enunț</h3>
+        <p>O undă are amplitudinea $A=5\,cm$, perioada $T=2\,s$ și lungimea de undă $\lambda=4\,m$. Scrie ecuația undei care se propagă spre $+Ox$, fără fază inițială.</p>
+      </div>
+      <div class="answer-card">
+        <h3>Rezolvare pas cu pas</h3>
+        <p>1. Folosim forma:</p>
+        <p>$y=A\sin 2\pi\left(\dfrac{t}{T}-\dfrac{x}{\lambda}\right)$</p>
+        <p>2. Înlocuim datele:</p>
+        <p>$y=5\sin 2\pi\left(\dfrac{t}{2}-\dfrac{x}{4}\right)\,cm$</p>
+        <p>3. Dacă vrem $y$ în SI: $A=0{,}05\,m$.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+        <a class="lesson-button" href="#pagina-14">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-14" hidden>
+      <span class="lesson-page-label">Pagina 14 / 16</span>
+      <h2>Problemă rezolvată 2</h2>
+      <div class="problem-card">
+        <h3>Enunț</h3>
+        <p>O undă se propagă cu $v=20\,m/s$ și are frecvența $\nu=5\,Hz$. Determină $\lambda$, $\omega$ și $k$.</p>
+      </div>
+      <div class="answer-card">
+        <h3>Rezolvare pas cu pas</h3>
+        <p>1. Lungimea de undă:</p>
+        <p>$\lambda=\dfrac{v}{\nu}=\dfrac{20}{5}=4\,m$</p>
+        <p>2. Pulsația:</p>
+        <p>$\omega=2\pi\nu=10\pi\,rad/s$</p>
+        <p>3. Numărul de undă:</p>
+        <p>$k=\dfrac{2\pi}{\lambda}=\dfrac{2\pi}{4}=\dfrac{\pi}{2}\,rad/m$</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+        <a class="lesson-button" href="#pagina-15">Mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-15" hidden>
+      <span class="lesson-page-label">Pagina 15 / 16</span>
+      <h2>Greșeli frecvente</h2>
+      <div class="lesson-card">
+        <ul class="lesson-list">
+          <li><strong>Confuzie între $x$ și $y$:</strong> $x$ arată poziția de-a lungul direcției de propagare, iar $y$ este elongația particulei.</li>
+          <li><strong>Semnul greșit:</strong> pentru propagare spre $+Ox$ folosim de obicei $\omega t-kx$.</li>
+          <li><strong>Amestec de unități:</strong> dacă $A$ este în centimetri, atunci și $y$ iese în centimetri; în SI folosim metri.</li>
+          <li><strong>Uitarea fazei inițiale:</strong> dacă problema precizează starea inițială, poate fi nevoie de $\varphi_0$.</li>
+        </ul>
+      </div>
+      <div class="lesson-highlight">
+        <p>Întreabă-te mereu: „Unda merge spre dreapta sau spre stânga?” și „Lucrez în metri și secunde?”</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-14">Înapoi</a>
+        <a class="lesson-button" href="#pagina-16">Final</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page lesson-last-page" id="pagina-16" hidden>
+      <span class="lesson-page-label">Pagina 16 / 16</span>
+      <h2>Reține esențialul</h2>
+      <div class="formula-card">
+        <p>$y(x,t)=A\sin(\omega t-kx+\varphi_0)$</p>
+        <p class="small-formula">$k=\dfrac{2\pi}{\lambda}$, $v=\dfrac{\omega}{k}=\lambda\nu$</p>
+      </div>
+      <div class="lesson-card">
+        <p>Ecuația undei plane descrie simultan două lucruri: oscilația în timp și repetarea formei în spațiu. De aceea conține atât $t$, cât și $x$.</p>
+      </div>
+      <footer class="lesson-footer">
+        <p>Prof. Dănuț Andronie</p>
+        <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+        <div class="lesson-actions">
+          <a class="lesson-button secondary" href="../oscilatii-si-unde-mecanice/">Înapoi la capitol</a>
+          <a class="lesson-button" href="lectia-16-principiul-lui-huygens.html">Mergi la următoarea lecție</a>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+
+    function showPageFromHash() {
+      const match = window.location.hash.match(/pagina-(\d+)/);
+      let pageNumber = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(pageNumber) || pageNumber < 1 || pageNumber > pages.length) {
+        pageNumber = 1;
+        window.location.hash = '#pagina-1';
+        return;
+      }
+
+      pages.forEach((page, index) => {
+        page.hidden = index !== pageNumber - 1;
+      });
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    window.addEventListener('hashchange', showPageFromHash);
+    window.addEventListener('DOMContentLoaded', showPageFromHash);
+  </script>
+</body>
+</html>

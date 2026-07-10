@@ -1,1 +1,577 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendulul elastic</title>
+  <link rel="stylesheet" href="../../../assets/css/main.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    [hidden] { display: none !important; }
 
+    .lesson-page p,
+    .lesson-page li,
+    .lesson-page td,
+    .lesson-page th {
+      font-size: clamp(24px, 2.8vw, 38px);
+      line-height: 1.55;
+    }
+
+    .lesson-page h2 {
+      font-size: clamp(38px, 6vw, 70px);
+    }
+
+    .lesson-page h3 {
+      font-size: clamp(28px, 4vw, 46px);
+    }
+
+    .lesson-page-label {
+      font-size: clamp(20px, 2.4vw, 30px);
+    }
+
+    .formula-card p {
+      font-size: clamp(30px, 4.2vw, 58px);
+    }
+
+    .lesson-button {
+      font-size: clamp(22px, 2.7vw, 34px);
+      min-height: 68px;
+      padding: 18px 28px;
+    }
+
+    .big-emphasis {
+      font-size: clamp(30px, 4.1vw, 56px) !important;
+      font-weight: 800;
+      color: #1d4ed8;
+    }
+
+    .formula-note {
+      font-size: clamp(22px, 2.5vw, 34px) !important;
+      color: #dbeafe;
+      font-weight: 400;
+    }
+
+    .svg-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: clamp(14px, 2vw, 24px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+      overflow-x: auto;
+    }
+
+    .svg-card svg {
+      width: 100%;
+      min-width: 760px;
+      height: auto;
+      display: block;
+    }
+
+    .svg-text {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .svg-small {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 21px;
+      font-weight: 600;
+      fill: #334155;
+    }
+
+    .svg-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 24px);
+    }
+
+    .check-item {
+      border-radius: 22px;
+      padding: clamp(16px, 2.4vw, 28px);
+      background: #eff6ff;
+      border: 2px solid #bfdbfe;
+    }
+
+    .check-item p {
+      font-size: clamp(22px, 2.5vw, 34px) !important;
+    }
+
+    @media (max-width: 900px) {
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .lesson-page p,
+      .lesson-page li,
+      .lesson-page td,
+      .lesson-page th {
+        font-size: 23px;
+      }
+
+      .svg-card svg {
+        min-width: 690px;
+      }
+    }
+
+    @media print {
+      [hidden] { display: flex !important; }
+    }
+  </style>
+</head>
+<body class="lesson-body">
+  <main class="lesson-shell">
+
+    <section class="lesson-page lesson-cover" id="pagina-1">
+      <header class="lesson-header">
+        <span class="lesson-kicker">Clasa a X-a • Oscilații și unde mecanice</span>
+        <h1>Pendulul elastic</h1>
+        <p>Modelăm un corp prins de un resort ideal și aflăm de ce masa și constanta elastică stabilesc ritmul oscilației.</p>
+      </header>
+
+      <div class="lesson-banner">
+        <p class="big-emphasis">Ideea lecției</p>
+        <p>Un pendul elastic oscilează deoarece resortul îl readuce spre poziția de echilibru, iar inerția îl face să treacă dincolo de această poziție.</p>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button" href="#pagina-2">Începem</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-2" hidden>
+      <span class="lesson-page-label">Pagina 2 / 16</span>
+      <h2>Ce vei înțelege</h2>
+      <div class="lesson-card">
+        <ul class="lesson-list">
+          <li>Ce este pendulul elastic și ce rol are resortul.</li>
+          <li>De ce poziția de echilibru nu este același lucru cu lungimea nedeformată a resortului.</li>
+          <li>Cum apare relația $a_x=-\dfrac{k}{m}x$.</li>
+          <li>Cum calculăm perioada: $T=2\pi\sqrt{\dfrac{m}{k}}$.</li>
+          <li>Cum se determină experimental perioada: $T=\dfrac{t}{N}$.</li>
+        </ul>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-1">Înapoi</a>
+        <a class="lesson-button" href="#pagina-3">Mergi mai departe</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-3" hidden>
+      <span class="lesson-page-label">Pagina 3 / 16</span>
+      <h2>Principiul fizic</h2>
+      <div class="lesson-card">
+        <p>Pendulul elastic este un exemplu de <strong>oscillator liniar armonic</strong>. El are două ingrediente:</p>
+        <ul class="lesson-list">
+          <li><strong>forță de revenire</strong>: resortul tinde să aducă masa spre echilibru;</li>
+          <li><strong>inerție</strong>: masa nu se oprește imediat în echilibru, ci continuă mișcarea.</li>
+        </ul>
+      </div>
+      <div class="formula-card">
+        <p>$F_x=-kx$</p>
+        <p class="formula-note">Forța este opusă elongației. De aceea semnul este minus.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-2">Înapoi</a>
+        <a class="lesson-button" href="#pagina-4">Modelul fizic</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-4" hidden>
+      <span class="lesson-page-label">Pagina 4 / 16</span>
+      <h2>Modelul: corp + resort</h2>
+      <div class="lesson-two-columns">
+        <div class="lesson-card">
+          <h3>Pendul elastic</h3>
+          <p>Un corp de masă $m$ este prins de un resort de constantă elastică $k$.</p>
+          <p>În modelul ideal, neglijăm masa resortului și frecările.</p>
+        </div>
+        <div class="lesson-card">
+          <h3>Mișcare verticală</h3>
+          <p>În cazul vertical, greutatea alungește resortul. Totuși, oscilația se studiază față de poziția de echilibru.</p>
+        </div>
+      </div>
+
+      <div class="svg-card" aria-label="Pendul elastic vertical">
+        <svg viewBox="0 0 900 470" role="img">
+          <defs>
+            <marker id="arrow-blue-p4" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrow-orange-p4" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#f97316"></path>
+            </marker>
+          </defs>
+          <rect x="80" y="40" width="740" height="390" rx="28" fill="#f8fafc" stroke="#dbeafe" stroke-width="3"></rect>
+          <line x1="450" y1="70" x2="450" y2="110" stroke="#0f172a" stroke-width="8" stroke-linecap="round"></line>
+          <polyline points="450,110 420,130 480,150 420,170 480,190 420,210 480,230 420,250 480,270 450,290" fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <rect x="390" y="290" width="120" height="90" rx="18" fill="#f97316" stroke="#c2410c" stroke-width="4"></rect>
+          <text x="450" y="345" class="svg-text" text-anchor="middle">m</text>
+          <line x1="610" y1="85" x2="610" y2="380" stroke="#64748b" stroke-width="3" stroke-dasharray="10 10"></line>
+          <line x1="580" y1="290" x2="670" y2="290" stroke="#16a34a" stroke-width="5"></line>
+          <text x="690" y="298" class="svg-small">poziția de echilibru</text>
+          <line x1="450" y1="335" x2="450" y2="410" stroke="#f97316" stroke-width="6" marker-end="url(#arrow-orange-p4)"></line>
+          <text x="500" y="400" class="svg-small">$\overrightarrow{G}=m\overrightarrow{g}$</text>
+          <line x1="450" y1="300" x2="450" y2="225" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow-blue-p4)"></line>
+          <text x="500" y="245" class="svg-small">forța elastică</text>
+          <text x="120" y="95" class="svg-label">Resortul stochează energie când este deformat.</text>
+          <text x="120" y="130" class="svg-label">Masa oferă inerția mișcării.</text>
+        </svg>
+      </div>
+
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-3">Înapoi</a>
+        <a class="lesson-button" href="#pagina-5">Poziția de echilibru</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-5" hidden>
+      <span class="lesson-page-label">Pagina 5 / 16</span>
+      <h2>Poziția de echilibru</h2>
+      <div class="lesson-card">
+        <p>În poziția de echilibru, corpul stă pe loc. Deci rezultanta forțelor este nulă.</p>
+        <p>Pentru pendulul elastic vertical, greutatea este compensată de forța elastică.</p>
+      </div>
+      <div class="formula-card">
+        <p>$mg=kx_0$</p>
+        <p class="formula-note">$x_0$ este alungirea statică a resortului, nu amplitudinea oscilației.</p>
+      </div>
+      <div class="lesson-highlight">
+        <p>Atenție: alegem originea axei în poziția de echilibru. De acolo măsurăm elongația $x$.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-4">Înapoi</a>
+        <a class="lesson-button" href="#pagina-6">Elongația</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-6" hidden>
+      <span class="lesson-page-label">Pagina 6 / 16</span>
+      <h2>Elongația față de echilibru</h2>
+      <div class="lesson-card">
+        <p>Dacă deplasăm corpul cu $x$ față de poziția de echilibru, rezultanta forțelor are forma simplă:</p>
+      </div>
+      <div class="formula-card">
+        <p>$F_R=-kx$</p>
+      </div>
+      <div class="svg-card" aria-label="Forța de revenire este opusă elongației">
+        <svg viewBox="0 0 900 380" role="img">
+          <defs>
+            <marker id="arrow-blue-p6" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrow-orange-p6" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#f97316"></path>
+            </marker>
+          </defs>
+          <rect x="80" y="45" width="740" height="290" rx="28" fill="#f8fafc" stroke="#dbeafe" stroke-width="3"></rect>
+          <line x1="160" y1="190" x2="740" y2="190" stroke="#64748b" stroke-width="4"></line>
+          <line x1="450" y1="135" x2="450" y2="245" stroke="#16a34a" stroke-width="5"></line>
+          <text x="415" y="125" class="svg-small">O</text>
+          <circle cx="610" cy="190" r="45" fill="#f97316" stroke="#c2410c" stroke-width="4"></circle>
+          <text x="610" y="200" class="svg-text" text-anchor="middle">m</text>
+          <line x1="450" y1="270" x2="610" y2="270" stroke="#f97316" stroke-width="6" marker-end="url(#arrow-orange-p6)"></line>
+          <text x="520" y="310" class="svg-small" text-anchor="middle">elongație $x>0$</text>
+          <line x1="610" y1="190" x2="500" y2="190" stroke="#2563eb" stroke-width="8" marker-end="url(#arrow-blue-p6)"></line>
+          <text x="565" y="155" class="svg-small" text-anchor="middle">$F_R=-kx$</text>
+          <text x="150" y="90" class="svg-label">Când $x$ este pozitiv, forța de revenire este spre stânga.</text>
+        </svg>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-5">Înapoi</a>
+        <a class="lesson-button" href="#pagina-7">Ecuația</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-7" hidden>
+      <span class="lesson-page-label">Pagina 7 / 16</span>
+      <h2>Ecuația mișcării</h2>
+      <div class="lesson-card">
+        <p>Aplicăm principiul fundamental al dinamicii pe direcția mișcării:</p>
+      </div>
+      <div class="formula-card">
+        <p>$ma_x=F_R=-kx$</p>
+        <p>$a_x=-\dfrac{k}{m}x$</p>
+      </div>
+      <div class="lesson-card">
+        <p>Accelerația este proporțională cu elongația, dar are sens opus. Aceasta este semnătura mișcării oscilatorii armonice.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-6">Înapoi</a>
+        <a class="lesson-button" href="#pagina-8">Pulsația proprie</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-8" hidden>
+      <span class="lesson-page-label">Pagina 8 / 16</span>
+      <h2>Pulsația proprie</h2>
+      <div class="lesson-card">
+        <p>Comparăm ecuația pendulului elastic cu forma generală a oscilatorului armonic:</p>
+      </div>
+      <div class="formula-card">
+        <p>$a_x+\omega_0^2x=0$</p>
+        <p>$\omega_0^2=\dfrac{k}{m}$</p>
+        <p>$\omega_0=\sqrt{\dfrac{k}{m}}$</p>
+      </div>
+      <div class="lesson-highlight">
+        <p>$\omega_0$ se numește pulsație proprie, deoarece depinde doar de proprietățile sistemului: $k$ și $m$.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-7">Înapoi</a>
+        <a class="lesson-button" href="#pagina-9">Perioada</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-9" hidden>
+      <span class="lesson-page-label">Pagina 9 / 16</span>
+      <h2>Perioada și frecvența</h2>
+      <div class="formula-card">
+        <p>$T=\dfrac{2\pi}{\omega_0}=2\pi\sqrt{\dfrac{m}{k}}$</p>
+        <p>$\nu=\dfrac{1}{T}=\dfrac{1}{2\pi}\sqrt{\dfrac{k}{m}}$</p>
+      </div>
+      <div class="responsive-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Mărime</th>
+              <th>Simbol</th>
+              <th>Unitate SI</th>
+              <th>Semnificație</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>masa corpului</td>
+              <td>$m$</td>
+              <td>$kg$</td>
+              <td>inerția oscilatorului</td>
+            </tr>
+            <tr>
+              <td>constanta elastică</td>
+              <td>$k$</td>
+              <td>$N/m$</td>
+              <td>rigiditatea resortului</td>
+            </tr>
+            <tr>
+              <td>perioada</td>
+              <td>$T$</td>
+              <td>$s$</td>
+              <td>durata unei oscilații complete</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-8">Înapoi</a>
+        <a class="lesson-button" href="#pagina-10">Interpretare</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-10" hidden>
+      <span class="lesson-page-label">Pagina 10 / 16</span>
+      <h2>Cum se schimbă perioada?</h2>
+      <div class="lesson-two-columns">
+        <div class="mini-card">
+          <h3>Mărim masa</h3>
+          <p>Dacă $m$ crește, perioada $T$ crește.</p>
+          <p>Corpul are inerție mai mare și își schimbă viteza mai greu.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Mărim constanta $k$</h3>
+          <p>Dacă $k$ crește, perioada $T$ scade.</p>
+          <p>Resortul este mai rigid și produce o forță de revenire mai mare.</p>
+        </div>
+      </div>
+      <div class="formula-card">
+        <p>$T=2\pi\sqrt{\dfrac{m}{k}}$</p>
+      </div>
+      <div class="lesson-highlight">
+        <p>În modelul ideal, perioada nu depinde de amplitudine, atât timp cât resortul rămâne în domeniul elastic.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-9">Înapoi</a>
+        <a class="lesson-button" href="#pagina-11">Metodă experimentală</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-11" hidden>
+      <span class="lesson-page-label">Pagina 11 / 16</span>
+      <h2>Determinare experimentală</h2>
+      <div class="lesson-card">
+        <p>În laborator, este mai precis să cronometrezi mai multe oscilații, nu una singură.</p>
+      </div>
+      <div class="formula-card">
+        <p>$T=\dfrac{t}{N}$</p>
+        <p class="formula-note">$t$ este timpul total pentru $N$ oscilații complete.</p>
+      </div>
+      <div class="lesson-card">
+        <h3>Altă metodă</h3>
+        <p>Dacă măsurăm alungirea statică $x_0$, din $mg=kx_0$ rezultă:</p>
+      </div>
+      <div class="formula-card">
+        <p>$T=2\pi\sqrt{\dfrac{x_0}{g}}$</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-10">Înapoi</a>
+        <a class="lesson-button" href="#pagina-12">Exemplu 1</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-12" hidden>
+      <span class="lesson-page-label">Pagina 12 / 16</span>
+      <h2>Exemplu 1: calculează perioada</h2>
+      <div class="problem-card">
+        <p>Un corp de masă $m=0{,}50\,kg$ este prins de un resort cu $k=200\,N/m$. Determină $\omega_0$, $T$ și $\nu$.</p>
+      </div>
+      <div class="answer-card">
+        <ol class="numbered">
+          <li>$\omega_0=\sqrt{\dfrac{k}{m}}=\sqrt{\dfrac{200}{0{,}50}}=\sqrt{400}=20\,s^{-1}$.</li>
+          <li>$T=\dfrac{2\pi}{\omega_0}=\dfrac{2\pi}{20}\approx0{,}314\,s$.</li>
+          <li>$\nu=\dfrac{1}{T}\approx\dfrac{1}{0{,}314}\approx3{,}18\,Hz$.</li>
+        </ol>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-11">Înapoi</a>
+        <a class="lesson-button" href="#pagina-13">Exemplu 2</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-13" hidden>
+      <span class="lesson-page-label">Pagina 13 / 16</span>
+      <h2>Exemplu 2: folosim alungirea statică</h2>
+      <div class="problem-card">
+        <p>Un corp suspendat de un resort produce alungirea statică $x_0=2{,}5\,cm$. Considerăm $g=10\,m/s^2$. Determină perioada oscilațiilor.</p>
+      </div>
+      <div class="answer-card">
+        <ol class="numbered">
+          <li>Transformăm: $x_0=2{,}5\,cm=0{,}025\,m$.</li>
+          <li>Folosim relația $T=2\pi\sqrt{\dfrac{x_0}{g}}$.</li>
+          <li>$T=2\pi\sqrt{\dfrac{0{,}025}{10}}=2\pi\sqrt{0{,}0025}$.</li>
+          <li>$T=2\pi\cdot0{,}05\approx0{,}314\,s$.</li>
+        </ol>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-12">Înapoi</a>
+        <a class="lesson-button" href="#pagina-14">Exemplu 3</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-14" hidden>
+      <span class="lesson-page-label">Pagina 14 / 16</span>
+      <h2>Exemplu 3: găsește constanta resortului</h2>
+      <div class="problem-card">
+        <p>Un pendul elastic cu masa $m=0{,}20\,kg$ are perioada $T=0{,}50\,s$. Determină constanta elastică $k$.</p>
+      </div>
+      <div class="answer-card">
+        <ol class="numbered">
+          <li>Pornim de la $T=2\pi\sqrt{\dfrac{m}{k}}$.</li>
+          <li>Ridicăm la pătrat: $T^2=4\pi^2\dfrac{m}{k}$.</li>
+          <li>Izolăm necunoscuta: $k=\dfrac{4\pi^2m}{T^2}$.</li>
+          <li>$k=\dfrac{4\pi^2\cdot0{,}20}{0{,}50^2}\approx31{,}6\,N/m$.</li>
+        </ol>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-13">Înapoi</a>
+        <a class="lesson-button" href="#pagina-15">Verificare rapidă</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-15" hidden>
+      <span class="lesson-page-label">Pagina 15 / 16</span>
+      <h2>Verificare rapidă</h2>
+      <div class="check-grid">
+        <div class="check-item">
+          <p><strong>1.</strong> Dacă masa se mărește de 4 ori, cum se schimbă perioada?</p>
+        </div>
+        <div class="check-item">
+          <p><strong>2.</strong> Dacă resortul devine de 9 ori mai rigid, cum se schimbă perioada?</p>
+        </div>
+        <div class="check-item">
+          <p><strong>3.</strong> Ce reprezintă $x_0$ în relația $mg=kx_0$?</p>
+        </div>
+        <div class="check-item">
+          <p><strong>4.</strong> De ce forța de revenire are semnul minus în $F_R=-kx$?</p>
+        </div>
+      </div>
+      <div class="answer-card">
+        <p>Răspunsuri scurte: 1) se dublează; 2) devine de 3 ori mai mică; 3) alungirea statică; 4) forța este opusă deplasării față de echilibru.</p>
+      </div>
+      <nav class="lesson-page-nav">
+        <a class="lesson-button secondary" href="#pagina-14">Înapoi</a>
+        <a class="lesson-button" href="#pagina-16">Încheiere</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page lesson-last-page" id="pagina-16" hidden>
+      <span class="lesson-page-label">Pagina 16 / 16</span>
+      <h2>Ideile esențiale</h2>
+      <div class="lesson-card">
+        <ul class="lesson-list">
+          <li>Pendulul elastic este un corp de masă $m$ legat de un resort cu constanta $k$.</li>
+          <li>Oscilația se descrie față de poziția de echilibru, nu față de lungimea nedeformată.</li>
+          <li>Forța rezultantă este de revenire: $F_R=-kx$.</li>
+          <li>Ecuația mișcării este $a_x+\omega_0^2x=0$, cu $\omega_0=\sqrt{\dfrac{k}{m}}$.</li>
+          <li>Perioada este $T=2\pi\sqrt{\dfrac{m}{k}}$.</li>
+        </ul>
+      </div>
+      <div class="warning-card lesson-card">
+        <h3>Greșeala cea mai frecventă</h3>
+        <p>Să confunzi alungirea statică $x_0$ cu elongația $x$. $x_0$ descrie poziția de echilibru; $x$ descrie abaterea instantanee față de echilibru.</p>
+      </div>
+
+      <footer class="lesson-footer">
+        <p>Prof. Dănuț Andronie</p>
+        <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+        <div class="lesson-actions">
+          <a class="lesson-button secondary" href="../oscilatii-si-unde-mecanice/">Înapoi la capitol</a>
+          <a class="lesson-button" href="lectia-4-pendulul-gravitational.html">Mergi la următoarea lecție</a>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    const pages = Array.from(document.querySelectorAll('.lesson-page'));
+
+    function showPageFromHash() {
+      const match = window.location.hash.match(/pagina-(\d+)/);
+      let pageNumber = match ? Number(match[1]) : 1;
+
+      if (!Number.isInteger(pageNumber) || pageNumber < 1 || pageNumber > pages.length) {
+        pageNumber = 1;
+        window.location.hash = '#pagina-1';
+        return;
+      }
+
+      pages.forEach((page, index) => {
+        page.hidden = index !== pageNumber - 1;
+      });
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    window.addEventListener('hashchange', showPageFromHash);
+    window.addEventListener('DOMContentLoaded', showPageFromHash);
+  </script>
+</body>
+</html>
