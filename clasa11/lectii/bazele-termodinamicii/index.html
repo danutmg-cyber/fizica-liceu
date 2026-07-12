@@ -1,1 +1,881 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Cuprinsul capitolului Bazele termodinamicii pentru clasa a XI-a: energie internă, lucru mecanic, căldură, principiile termodinamicii, motoare termice, ciclul Carnot și protecția mediului.">
+  <title>Bazele termodinamicii | Fizică, clasa a XI-a</title>
 
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+  <style>
+    :root {
+      --td-bg: #f2f7f4;
+      --td-surface: #ffffff;
+      --td-text: #10231b;
+      --td-muted: #52655c;
+      --td-border: #cbd9d1;
+      --td-green: #166534;
+      --td-emerald: #047857;
+      --td-teal: #0f766e;
+      --td-blue: #1d4ed8;
+      --td-orange: #c2410c;
+      --td-purple: #6d28d9;
+      --td-shadow: 0 18px 42px rgba(15, 58, 40, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 1rem;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(22, 101, 52, .08), transparent 26rem),
+        var(--td-bg);
+      color: var(--td-text);
+    }
+
+    a { color: inherit; }
+
+    .chapter-shell {
+      width: min(100% - 28px, 1180px);
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 34px) 0 42px;
+    }
+
+    .chapter-hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 64px);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(255, 255, 255, .22), transparent 18rem),
+        linear-gradient(135deg, #052e16, #166534 55%, #0f766e);
+      color: #fff;
+      box-shadow: var(--td-shadow);
+    }
+
+    .chapter-hero::after {
+      content: "";
+      position: absolute;
+      right: -86px;
+      bottom: -128px;
+      width: 330px;
+      height: 330px;
+      border: 38px solid rgba(255,255,255,.1);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 850px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      padding: 7px 13px;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 999px;
+      background: rgba(2,44,34,.28);
+      font-size: clamp(.92rem, 2vw, 1.05rem);
+      font-weight: 850;
+    }
+
+    .chapter-hero h1 {
+      margin: 0;
+      font-size: clamp(2.15rem, 7vw, 4.8rem);
+      line-height: 1.03;
+      letter-spacing: -.035em;
+    }
+
+    .chapter-hero .lead {
+      max-width: 780px;
+      margin: 20px 0 0;
+      font-size: clamp(1.08rem, 2.6vw, 1.42rem);
+      line-height: 1.56;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .chapter-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 49px;
+      padding: 12px 17px;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 850;
+      line-height: 1.2;
+      transition: transform .16s ease, filter .16s ease;
+    }
+
+    .chapter-button:hover { transform: translateY(-2px); }
+
+    .chapter-button:focus-visible,
+    .lesson-link:focus-visible {
+      outline: 4px solid #facc15;
+      outline-offset: 3px;
+    }
+
+    .chapter-button.primary {
+      background: #fff;
+      color: #14532d;
+    }
+
+    .chapter-button.secondary {
+      border-color: rgba(255,255,255,.55);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 27px;
+    }
+
+    .stat {
+      min-width: 135px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 16px;
+      background: rgba(2,44,34,.28);
+      backdrop-filter: blur(4px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.25rem;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 2px;
+      color: #d1fae5;
+      font-size: .95rem;
+    }
+
+    .formula-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .formula-chip {
+      display: grid;
+      place-items: center;
+      min-height: 84px;
+      padding: 12px;
+      border: 1px solid var(--td-border);
+      border-radius: 17px;
+      background: var(--td-surface);
+      color: var(--td-green);
+      text-align: center;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      font-weight: 850;
+      box-shadow: 0 8px 20px rgba(15, 58, 40, .07);
+    }
+
+    .section-heading {
+      margin: clamp(36px, 6vw, 64px) 0 20px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(1.75rem, 4vw, 2.65rem);
+      line-height: 1.16;
+    }
+
+    .section-heading p {
+      max-width: 800px;
+      margin: 10px 0 0;
+      color: var(--td-muted);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.56;
+    }
+
+    .module {
+      --accent: var(--td-green);
+      margin-top: 24px;
+      padding: clamp(20px, 3vw, 30px);
+      border: 1px solid var(--td-border);
+      border-radius: 26px;
+      background: rgba(255,255,255,.76);
+      box-shadow: 0 12px 30px rgba(15,58,40,.08);
+    }
+
+    .module.blue { --accent: var(--td-blue); }
+    .module.orange { --accent: var(--td-orange); }
+    .module.purple { --accent: var(--td-purple); }
+
+    .module-header {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .module-icon {
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--accent) 13%, white);
+      color: var(--accent);
+      font-size: 1.8rem;
+      font-weight: 900;
+    }
+
+    .module-number {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: .9rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .module h2 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3.4vw, 2.15rem);
+      line-height: 1.2;
+    }
+
+    .module-summary {
+      margin: 7px 0 0;
+      color: var(--td-muted);
+      line-height: 1.52;
+    }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .lesson-link {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid var(--td-border);
+      border-left: 6px solid var(--accent);
+      border-radius: 17px;
+      background: var(--td-surface);
+      text-decoration: none;
+      box-shadow: 0 7px 18px rgba(15,58,40,.06);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+    .lesson-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 13px 25px rgba(15,58,40,.12);
+    }
+
+    .lesson-number {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--accent) 13%, white);
+      color: var(--accent);
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+
+    .lesson-title {
+      display: block;
+      font-size: clamp(1rem, 2vw, 1.14rem);
+      line-height: 1.3;
+      font-weight: 850;
+    }
+
+    .lesson-note {
+      display: block;
+      margin-top: 5px;
+      color: var(--td-muted);
+      font-size: .91rem;
+      line-height: 1.4;
+    }
+
+    .arrow {
+      color: var(--accent);
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+
+    .badge {
+      display: inline-flex;
+      margin-left: 7px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: .72rem;
+      font-weight: 900;
+      vertical-align: .15em;
+    }
+
+    .assessment-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(16px, 2.6vw, 24px);
+    }
+
+    .assessment-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 235px;
+      padding: clamp(22px, 3.4vw, 34px);
+      border-radius: 24px;
+      color: #fff;
+      box-shadow: var(--td-shadow);
+    }
+
+    .assessment-card.recap {
+      background: linear-gradient(135deg, #075985, #0891b2);
+    }
+
+    .assessment-card.test {
+      background: linear-gradient(135deg, #7c2d12, #ea580c);
+    }
+
+    .assessment-card h3 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .assessment-card p {
+      margin: 10px 0 0;
+      font-size: 1.04rem;
+      line-height: 1.56;
+    }
+
+    .assessment-card .chapter-button {
+      align-self: flex-start;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .study-path {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 22px 0 0;
+      list-style: none;
+      counter-reset: study-step;
+    }
+
+    .study-path li {
+      padding: 23px 15px 18px;
+      border: 1px solid var(--td-border);
+      border-radius: 18px;
+      background: var(--td-surface);
+      text-align: center;
+      font-weight: 850;
+      line-height: 1.38;
+      box-shadow: 0 8px 20px rgba(15,58,40,.07);
+    }
+
+    .study-path li::before {
+      counter-increment: study-step;
+      content: counter(study-step);
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      margin: -41px auto 12px;
+      border-radius: 50%;
+      background: var(--td-green);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .chapter-footer {
+      margin-top: clamp(40px, 7vw, 74px);
+      padding: clamp(24px, 4vw, 40px);
+      border-radius: 25px;
+      background: #10231b;
+      color: #fff;
+      text-align: center;
+    }
+
+    .chapter-footer p {
+      margin: 5px 0;
+      font-size: 1.04rem;
+    }
+
+    .chapter-footer a { color: #bbf7d0; }
+
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .footer-actions .chapter-button {
+      min-width: min(100%, 240px);
+    }
+
+    .footer-actions .primary {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    .footer-actions .secondary {
+      border-color: #86efac;
+      background: transparent;
+      color: #fff;
+    }
+
+    @supports not (background: color-mix(in srgb, red 10%, white)) {
+      .module-icon,
+      .lesson-number { background: #ecfdf5; }
+    }
+
+    @media (max-width: 900px) {
+      .formula-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .study-path { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .lesson-grid,
+      .assessment-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .chapter-shell { width: min(100% - 18px, 1180px); }
+      .chapter-hero { border-radius: 22px; }
+      .formula-strip { grid-template-columns: 1fr; }
+
+      .module-header {
+        grid-template-columns: 50px 1fr;
+        gap: 12px;
+      }
+
+      .module-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        font-size: 1.4rem;
+      }
+
+      .lesson-link {
+        grid-template-columns: 42px 1fr;
+      }
+
+      .lesson-number {
+        width: 40px;
+        height: 40px;
+      }
+
+      .arrow { display: none; }
+
+      .study-path { grid-template-columns: 1fr; }
+
+      .hero-actions,
+      .footer-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .chapter-button,
+      .footer-actions .chapter-button {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .chapter-button,
+      .lesson-link { transition: none; }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+  <main class="chapter-shell">
+    <header class="chapter-hero">
+      <div class="hero-content">
+        <p class="eyebrow">Clasa a XI-a • Capitolul 2 • 16 lecții</p>
+        <h1>Bazele termodinamicii</h1>
+        <p class="lead">
+          Studiem transferul și transformarea energiei: energia internă a gazului,
+          lucrul mecanic, căldura, principiile termodinamicii și limitele reale ale
+          motoarelor termice.
+        </p>
+
+        <div class="hero-actions">
+          <a class="chapter-button primary" href="lectia-1-energia-interna-a-gazului-ideal.html">
+            Începe cu lecția 1
+          </a>
+          <a class="chapter-button secondary" href="#lectii">
+            Vezi toate lecțiile
+          </a>
+        </div>
+
+        <div class="hero-stats" aria-label="Structura capitolului">
+          <div class="stat">
+            <strong>16 lecții</strong>
+            <span>în ordine progresivă</span>
+          </div>
+          <div class="stat">
+            <strong>3 opționale</strong>
+            <span>pentru profil real</span>
+          </div>
+          <div class="stat">
+            <strong>Recapitulare</strong>
+            <span>și test final</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section aria-labelledby="formule-title">
+      <div class="section-heading">
+        <h2 id="formule-title">Harta formulelor principale</h2>
+        <p>
+          Formulele capătă sens când identifici sistemul, schimburile de energie
+          și convenția de semn folosită.
+        </p>
+      </div>
+
+      <div class="formula-strip">
+        <div class="formula-chip">\(U=\dfrac{i}{2}\nu RT\)</div>
+        <div class="formula-chip">\(L=\displaystyle\int p\,dV\)</div>
+        <div class="formula-chip">\(Q=\Delta U+L\)</div>
+        <div class="formula-chip">\(\eta=\dfrac{L}{Q_1}\)</div>
+      </div>
+    </section>
+
+    <section id="lectii" aria-labelledby="lectii-title">
+      <div class="section-heading">
+        <h2 id="lectii-title">Parcursul capitolului</h2>
+        <p>
+          Lecțiile sunt grupate tematic. Parcurgerea în ordine ajută la construirea
+          treptată a bilanțului energetic și a noțiunii de randament.
+        </p>
+      </div>
+
+      <section class="module" aria-labelledby="modul-1-title">
+        <div class="module-header">
+          <div class="module-icon" aria-hidden="true">ΔU</div>
+          <div>
+            <p class="module-number">Modulul 1 • Lecțiile 1–6</p>
+            <h2 id="modul-1-title">Energia internă, lucrul și căldura</h2>
+            <p class="module-summary">
+              Definim mărimile energetice și stabilim cum depind ele de starea și
+              transformarea sistemului termodinamic.
+            </p>
+          </div>
+        </div>
+
+        <div class="lesson-grid">
+          <a class="lesson-link" href="lectia-1-energia-interna-a-gazului-ideal.html">
+            <span class="lesson-number">1</span>
+            <span>
+              <span class="lesson-title">Energia internă a gazului ideal</span>
+              <span class="lesson-note">Energia microscopică asociată mișcării moleculelor.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-2-energia-interna-marime-de-stare.html">
+            <span class="lesson-number">2</span>
+            <span>
+              <span class="lesson-title">Energia internă — mărime de stare</span>
+              <span class="lesson-note">Variația depinde numai de stările inițială și finală.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-3-energia-interna-a-gazului-ideal-monoatomic.html">
+            <span class="lesson-number">3</span>
+            <span>
+              <span class="lesson-title">Energia internă a gazului ideal monoatomic</span>
+              <span class="lesson-note">Relația \(U=\frac{3}{2}\nu RT\) și interpretarea ei.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-4-lucrul-gazului-in-procese-termodinamice.html">
+            <span class="lesson-number">4</span>
+            <span>
+              <span class="lesson-title">Lucrul gazului în procese termodinamice</span>
+              <span class="lesson-note">Aria de sub graficul \(p(V)\) și convenția de semn.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-5-cantitatea-de-caldura.html">
+            <span class="lesson-number">5</span>
+            <span>
+              <span class="lesson-title">Cantitatea de căldură</span>
+              <span class="lesson-note">Transferul de energie produs de diferența de temperatură.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-6-coeficienti-calorici.html">
+            <span class="lesson-number">6</span>
+            <span>
+              <span class="lesson-title">Coeficienți calorici</span>
+              <span class="lesson-note">Capacitate calorică, căldură specifică și căldură molară.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="module blue" aria-labelledby="modul-2-title">
+        <div class="module-header">
+          <div class="module-icon" aria-hidden="true">I</div>
+          <div>
+            <p class="module-number">Modulul 2 • Lecțiile 7–8</p>
+            <h2 id="modul-2-title">Principiul întâi al termodinamicii</h2>
+            <p class="module-summary">
+              Construim bilanțul energetic și îl aplicăm transformărilor izocore,
+              izobare, izoterme și adiabatice.
+            </p>
+          </div>
+        </div>
+
+        <div class="lesson-grid">
+          <a class="lesson-link" href="lectia-7-principiul-intai-al-termodinamicii.html">
+            <span class="lesson-number">7</span>
+            <span>
+              <span class="lesson-title">Principiul întâi al termodinamicii</span>
+              <span class="lesson-note">Conservarea energiei: \(Q=\Delta U+L\).</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-8-aplicarea-principiului-intai-la-transformari-simple.html">
+            <span class="lesson-number">8</span>
+            <span>
+              <span class="lesson-title">Aplicarea principiului întâi la transformări simple</span>
+              <span class="lesson-note">Bilanțul energetic pentru procesele gazului ideal.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="module orange" aria-labelledby="modul-3-title">
+        <div class="module-header">
+          <div class="module-icon" aria-hidden="true">η</div>
+          <div>
+            <p class="module-number">Modulul 3 • Lecțiile 9–11</p>
+            <h2 id="modul-3-title">Mașini termice și frigorifice</h2>
+            <p class="module-summary">
+              Urmărim transformarea căldurii în lucru mecanic și funcționarea
+              inversă a instalațiilor frigorifice.
+            </p>
+          </div>
+        </div>
+
+        <div class="lesson-grid">
+          <a class="lesson-link" href="lectia-9-motoare-cu-ardere-interna.html">
+            <span class="lesson-number">9</span>
+            <span>
+              <span class="lesson-title">Motoare cu ardere internă</span>
+              <span class="lesson-note">Cicluri de funcționare și transformarea energiei combustibilului.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-10-randamentul-motoarelor-termice.html">
+            <span class="lesson-number">10</span>
+            <span>
+              <span class="lesson-title">Randamentul motoarelor termice</span>
+              <span class="lesson-note">Raportul dintre lucrul util și căldura primită.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-11-masini-frigorifice-optional-real.html">
+            <span class="lesson-number">11</span>
+            <span>
+              <span class="lesson-title">Mașini frigorifice <span class="badge">Opțional • real</span></span>
+              <span class="lesson-note">Transferul căldurii de la sursa rece la sursa caldă.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="module purple" aria-labelledby="modul-4-title">
+        <div class="module-header">
+          <div class="module-icon" aria-hidden="true">II</div>
+          <div>
+            <p class="module-number">Modulul 4 • Lecțiile 12–16</p>
+            <h2 id="modul-4-title">Sensul proceselor, Carnot și mediul</h2>
+            <p class="module-summary">
+              Analizăm ireversibilitatea, limita teoretică a randamentului și
+              consecințele energetice și ecologice ale mașinilor termice.
+            </p>
+          </div>
+        </div>
+
+        <div class="lesson-grid">
+          <a class="lesson-link" href="lectia-12-procese-reversibile-si-ireversibile-optional-real.html">
+            <span class="lesson-number">12</span>
+            <span>
+              <span class="lesson-title">Procese reversibile și ireversibile <span class="badge">Opțional • real</span></span>
+              <span class="lesson-note">Idealizarea reversibilă și sensul spontan al proceselor reale.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-13-principiul-al-doilea-al-termodinamicii-optional-real.html">
+            <span class="lesson-number">13</span>
+            <span>
+              <span class="lesson-title">Principiul al doilea al termodinamicii <span class="badge">Opțional • real</span></span>
+              <span class="lesson-note">Limitele transformării integrale a căldurii în lucru.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-14-ciclul-carnot.html">
+            <span class="lesson-number">14</span>
+            <span>
+              <span class="lesson-title">Ciclul Carnot</span>
+              <span class="lesson-note">Două izoterme și două adiabate într-un ciclu reversibil.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-15-valoarea-maxima-a-randamentului.html">
+            <span class="lesson-number">15</span>
+            <span>
+              <span class="lesson-title">Valoarea maximă a randamentului</span>
+              <span class="lesson-note">Limita \(\eta_{\max}=1-\frac{T_2}{T_1}\).</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="lesson-link" href="lectia-16-masinile-termice-si-protectia-mediului.html">
+            <span class="lesson-number">16</span>
+            <span>
+              <span class="lesson-title">Mașinile termice și protecția mediului</span>
+              <span class="lesson-note">Consum de resurse, emisii, eficiență și soluții responsabile.</span>
+            </span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </section>
+    </section>
+
+    <section aria-labelledby="metoda-title">
+      <div class="section-heading">
+        <h2 id="metoda-title">Metoda de lucru pentru probleme</h2>
+        <p>
+          În termodinamică, interpretarea procesului și convenția de semn sunt la
+          fel de importante ca înlocuirea numerică în formule.
+        </p>
+      </div>
+
+      <ol class="study-path">
+        <li>Definește sistemul și stările</li>
+        <li>Identifică procesul și diagrama</li>
+        <li>Scrie bilanțul \(Q=\Delta U+L\)</li>
+        <li>Verifică semnele, unitățile și sensul rezultatului</li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="evaluare-title">
+      <div class="section-heading">
+        <h2 id="evaluare-title">Recapitulare și evaluare</h2>
+        <p>
+          După lecția 16, reorganizează formulele și conceptele, apoi verifică
+          înțelegerea prin testul capitolului.
+        </p>
+      </div>
+
+      <div class="assessment-grid">
+        <article class="assessment-card recap">
+          <div>
+            <h3>Recapitularea capitolului</h3>
+            <p>
+              Reia energia internă, lucrul, căldura, principiile termodinamicii,
+              randamentul și ciclul Carnot într-o singură hartă conceptuală.
+            </p>
+          </div>
+          <a class="chapter-button" href="recapitulare.html">
+            Deschide recapitularea
+          </a>
+        </article>
+
+        <article class="assessment-card test">
+          <div>
+            <h3>Test — Bazele termodinamicii</h3>
+            <p>
+              Verifică definițiile, interpretarea diagramelor și rezolvarea
+              problemelor energetice din întregul capitol.
+            </p>
+          </div>
+          <a class="chapter-button" href="test-bazele-termodinamicii.html">
+            Începe testul
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <footer class="chapter-footer">
+      <p><strong>Prof. Dănuț Andronie</strong></p>
+      <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+      <div class="footer-actions">
+        <a class="chapter-button secondary" href="../index.html">
+          Înapoi la lecțiile clasei a XI-a
+        </a>
+        <a class="chapter-button primary" href="../lichide-solide-transformari-de-faza/index.html">
+          Mergi la următorul capitol
+        </a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
