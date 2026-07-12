@@ -1,1 +1,821 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lecție de fizică pentru clasa a XI-a: legea lui Ohm pentru circuitul întreg, rezistența internă, tensiunea la borne și probleme rezolvate.">
+  <title>Legea lui Ohm pentru un circuit întreg | Fizică, clasa a XI-a</title>
 
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+  <style>
+    [hidden] { display: none !important; }
+
+    .lesson-figure {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.4rem 0;
+      padding: clamp(12px, 2vw, 24px);
+      border-radius: 24px;
+      background: #eff6ff;
+    }
+
+    .lesson-figure svg {
+      display: block;
+      width: min(100%, 980px);
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .concept-grid,
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 22px);
+    }
+
+    .quick-check {
+      margin: 0;
+      padding: clamp(16px, 2.5vw, 26px);
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .quick-check summary {
+      cursor: pointer;
+      color: #1d4ed8;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 700;
+    }
+
+    .quick-check p {
+      margin-top: 14px;
+    }
+
+    .step-label {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    .formula-choice {
+      text-align: center;
+    }
+
+    .formula-choice strong {
+      display: block;
+      margin: 0.45rem 0;
+      color: #1d4ed8;
+      font-size: clamp(26px, 4vw, 42px);
+    }
+
+    .danger-card {
+      border-left: 8px solid #dc2626;
+    }
+
+    @media (max-width: 760px) {
+      .concept-grid,
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+  <main class="lesson-shell" aria-label="Lecția Legea lui Ohm pentru un circuit întreg">
+
+    <section class="lesson-page lesson-cover" id="pagina-1" data-page="1">
+      <header class="lesson-header site-header">
+        <span class="lesson-kicker">Clasa a XI-a • Electrocinetică</span>
+        <h1>Legea lui Ohm pentru un circuit întreg</h1>
+        <p>
+          Cum determinăm intensitatea curentului când luăm în considerare atât
+          rezistența consumatorului, cât și rezistența internă a sursei?
+        </p>
+      </header>
+
+      <div class="lesson-banner">
+        <h2>Întrebarea de pornire</h2>
+        <p>
+          O baterie are tensiunea electromotoare de \(12\,\mathrm{V}\).
+          De ce tensiunea măsurată la bornele ei poate scădea atunci când bateria
+          alimentează un consumator?
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>La finalul lecției vei putea</h3>
+        <ul class="lesson-list">
+          <li>să identifici rezistența exterioară \(R\) și rezistența internă \(r\);</li>
+          <li>să deduci legea lui Ohm pentru circuitul întreg;</li>
+          <li>să folosești relația \(I=\mathcal{E}/(R+r)\);</li>
+          <li>să calculezi tensiunea la borne \(U=\mathcal{E}-Ir\);</li>
+          <li>să explici mersul în gol și scurtcircuitul;</li>
+          <li>să verifici bilanțul energetic al circuitului.</li>
+        </ul>
+      </div>
+
+      <div class="formula-card">
+        <p>
+          Relația centrală:
+          \[
+            \boxed{I=\frac{\mathcal{E}}{R+r}}.
+          \]
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button" href="#pagina-2">Începe lecția →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-2" data-page="2" hidden>
+      <span class="lesson-page-label">Pagina 2 din 8</span>
+      <h2>Modelul fizic al circuitului întreg</h2>
+
+      <p>
+        Un circuit simplu este format dintr-o sursă și un consumator. Rezistorul
+        exterior are rezistența \(R\), iar sursa reală are tensiunea electromotoare
+        \(\mathcal{E}\) și rezistența internă \(r\).
+      </p>
+
+      <div class="lesson-highlight">
+        Sursa și consumatorul sunt parcurse de același curent, fiind legate în serie.
+        Rezistența totală a circuitului este:
+        \[
+          R_{\mathrm{tot}}=R+r.
+        \]
+      </div>
+
+      <figure class="lesson-figure">
+        <svg viewBox="0 0 1000 560" role="img" aria-labelledby="circuit-title circuit-desc">
+          <title id="circuit-title">Circuit întreg cu rezistență exterioară și rezistență internă</title>
+          <desc id="circuit-desc">
+            Circuitul conține o sursă cu tensiunea electromotoare epsilon și
+            rezistența internă r, precum și un rezistor exterior R.
+          </desc>
+
+          <defs>
+            <marker id="whole-current-arrow" markerWidth="12" markerHeight="12"
+                    refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#1d4ed8"></path>
+            </marker>
+          </defs>
+
+          <path d="M140,145 H860 V430 H140 Z"
+                fill="none" stroke="#475569" stroke-width="10"
+                stroke-linecap="round"></path>
+
+          <polyline points="585,145 620,95 670,195 720,95 770,195 815,145"
+                    fill="none" stroke="#dc2626" stroke-width="10"
+                    stroke-linejoin="round"></polyline>
+          <text x="700" y="65" text-anchor="middle"
+                font-size="31" font-weight="700" fill="#dc2626">R</text>
+          <text x="700" y="245" text-anchor="middle"
+                font-size="27" fill="#0f172a">circuit exterior</text>
+
+          <rect x="225" y="330" width="260" height="180" rx="28"
+                fill="#fee2e2" stroke="#dc2626" stroke-width="7"></rect>
+          <text x="355" y="378" text-anchor="middle"
+                font-size="28" font-weight="700" fill="#dc2626">SURSĂ REALĂ</text>
+
+          <line x1="275" y1="410" x2="275" y2="485"
+                stroke="#0f172a" stroke-width="7"></line>
+          <line x1="315" y1="427" x2="315" y2="468"
+                stroke="#0f172a" stroke-width="7"></line>
+          <text x="295" y="535" text-anchor="middle"
+                font-size="28" font-weight="700" fill="#0f172a">𝓔</text>
+
+          <polyline points="355,447 380,415 410,479 440,415 465,447"
+                    fill="none" stroke="#92400e" stroke-width="8"
+                    stroke-linejoin="round"></polyline>
+          <text x="410" y="400" text-anchor="middle"
+                font-size="28" font-weight="700" fill="#92400e">r</text>
+
+          <line x1="190" y1="90" x2="475" y2="90"
+                stroke="#1d4ed8" stroke-width="9"
+                marker-end="url(#whole-current-arrow)"></line>
+          <text x="330" y="65" text-anchor="middle"
+                font-size="29" font-weight="700" fill="#1d4ed8">I</text>
+
+          <circle cx="140" cy="145" r="14" fill="#0f172a"></circle>
+          <circle cx="860" cy="145" r="14" fill="#0f172a"></circle>
+          <text x="115" y="125" font-size="27" font-weight="700" fill="#0f172a">A</text>
+          <text x="875" y="125" font-size="27" font-weight="700" fill="#0f172a">B</text>
+
+          <text x="675" y="510" text-anchor="middle"
+                font-size="30" font-weight="700" fill="#1e3a8a">
+            Rtot = R + r
+          </text>
+        </svg>
+      </figure>
+
+      <div class="concept-grid">
+        <article class="mini-card">
+          <h3>Rezistența exterioară \(R\)</h3>
+          <p>
+            Aparține consumatorului și conductoarelor din afara sursei.
+          </p>
+        </article>
+
+        <article class="mini-card">
+          <h3>Rezistența internă \(r\)</h3>
+          <p>
+            Caracterizează opoziția din interiorul sursei: electrolit, electrozi
+            și alte componente interne.
+          </p>
+        </article>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-1">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-3">Deducerea legii →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-3" data-page="3" hidden>
+      <span class="lesson-page-label">Pagina 3 din 8</span>
+      <h2>Deducerea legii din conservarea energiei</h2>
+
+      <p>
+        În timpul \(t\), prin circuit este transportată sarcina:
+        \[
+          q=It.
+        \]
+      </p>
+
+      <p>
+        Lucrul efectuat de forțele neelectrostatice din sursă este:
+      </p>
+
+      <div class="formula-card">
+        <p>
+          \[
+            L_{\mathrm{sec}}=\mathcal{E}q=\mathcal{E}It.
+          \]
+        </p>
+      </div>
+
+      <p>
+        În circuitul rezistiv, această energie se transformă în căldură atât în
+        rezistența exterioară \(R\), cât și în rezistența internă \(r\):
+      </p>
+
+      <div class="formula-card">
+        <p>
+          \[
+            Q=I^2(R+r)t.
+          \]
+        </p>
+      </div>
+
+      <p>
+        Aplicăm legea conservării și transformării energiei:
+        \[
+          L_{\mathrm{sec}}=Q.
+        \]
+      </p>
+
+      <div class="lesson-card">
+        <p>
+          \[
+            \mathcal{E}It=I^2(R+r)t.
+          \]
+        </p>
+        <p>
+          Pentru \(I\neq0\) și \(t\neq0\), simplificăm cu \(It\):
+          \[
+            \mathcal{E}=I(R+r).
+          \]
+        </p>
+      </div>
+
+      <div class="formula-card">
+        <p>
+          \[
+            \boxed{I=\frac{\mathcal{E}}{R+r}}.
+          \]
+        </p>
+      </div>
+
+      <div class="lesson-highlight">
+        Intensitatea este egală cu raportul dintre t.e.m. a sursei și rezistența
+        totală a circuitului.
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-2">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-4">Tensiunea la borne →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-4" data-page="4" hidden>
+      <span class="lesson-page-label">Pagina 4 din 8</span>
+      <h2>Tensiunea la borne și căderea internă</h2>
+
+      <p>
+        Din relația
+        \[
+          \mathcal{E}=I(R+r)
+        \]
+        separăm cele două căderi de tensiune:
+      </p>
+
+      <div class="formula-card">
+        <p>
+          \[
+            \boxed{\mathcal{E}=IR+Ir}.
+          \]
+        </p>
+      </div>
+
+      <div class="concept-grid">
+        <article class="mini-card formula-choice">
+          <h3>Tensiunea la borne</h3>
+          <strong>\(U=IR\)</strong>
+          <p>Este tensiunea pe circuitul exterior.</p>
+        </article>
+
+        <article class="mini-card formula-choice">
+          <h3>Căderea internă</h3>
+          <strong>\(u=Ir\)</strong>
+          <p>Este tensiunea „pierdută” în interiorul sursei.</p>
+        </article>
+      </div>
+
+      <div class="formula-card">
+        <p>
+          \[
+            \boxed{\mathcal{E}=U+u},
+            \qquad
+            \boxed{U=\mathcal{E}-Ir}.
+          \]
+        </p>
+      </div>
+
+      <p>
+        Tensiunea la borne scade liniar când intensitatea crește:
+        \[
+          U(I)=\mathcal{E}-rI.
+        \]
+      </p>
+
+      <figure class="lesson-figure">
+        <svg viewBox="0 0 1000 560" role="img" aria-labelledby="graph-title graph-desc">
+          <title id="graph-title">Graficul tensiunii la borne în funcție de curent</title>
+          <desc id="graph-desc">
+            Graficul este o dreaptă descrescătoare. Intersecția cu axa tensiunii
+            este tensiunea electromotoare, iar panta are modulul egal cu rezistența internă.
+          </desc>
+
+          <defs>
+            <marker id="graph-axis-arrow" markerWidth="12" markerHeight="12"
+                    refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L12,6 L0,12 Z" fill="#1e3a8a"></path>
+            </marker>
+          </defs>
+
+          <line x1="150" y1="470" x2="900" y2="470"
+                stroke="#1e3a8a" stroke-width="6"
+                marker-end="url(#graph-axis-arrow)"></line>
+          <line x1="150" y1="470" x2="150" y2="75"
+                stroke="#1e3a8a" stroke-width="6"
+                marker-end="url(#graph-axis-arrow)"></line>
+
+          <g stroke="#cbd5e1" stroke-width="2">
+            <line x1="150" y1="370" x2="860" y2="370"></line>
+            <line x1="150" y1="270" x2="860" y2="270"></line>
+            <line x1="150" y1="170" x2="860" y2="170"></line>
+            <line x1="325" y1="470" x2="325" y2="100"></line>
+            <line x1="500" y1="470" x2="500" y2="100"></line>
+            <line x1="675" y1="470" x2="675" y2="100"></line>
+            <line x1="850" y1="470" x2="850" y2="100"></line>
+          </g>
+
+          <line x1="150" y1="125" x2="800" y2="470"
+                stroke="#dc2626" stroke-width="9"></line>
+
+          <circle cx="150" cy="125" r="10" fill="#dc2626"></circle>
+          <circle cx="800" cy="470" r="10" fill="#dc2626"></circle>
+
+          <text x="918" y="495" font-size="31" font-weight="700" fill="#1e3a8a">I</text>
+          <text x="112" y="75" font-size="31" font-weight="700" fill="#1e3a8a">U</text>
+          <text x="92" y="135" font-size="29" font-weight="700" fill="#dc2626">𝓔</text>
+          <text x="780" y="515" font-size="27" font-weight="700" fill="#dc2626">
+            Isc = 𝓔/r
+          </text>
+
+          <text x="535" y="260" text-anchor="middle"
+                font-size="30" font-weight="700" fill="#dc2626">
+            U = 𝓔 − rI
+          </text>
+          <text x="500" y="550" text-anchor="middle"
+                font-size="27" fill="#0f172a">
+            panta dreptei = −r
+          </text>
+        </svg>
+      </figure>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-3">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-5">Regimuri și puteri →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-5" data-page="5" hidden>
+      <span class="lesson-page-label">Pagina 5 din 8</span>
+      <h2>Mersul în gol, scurtcircuitul și bilanțul puterilor</h2>
+
+      <div class="concept-grid">
+        <article class="mini-card">
+          <h3>Mers în gol</h3>
+          <p>
+            Circuitul exterior este deschis, deci \(R\to\infty\) și:
+            \[
+              I=0.
+            \]
+            Prin urmare:
+            \[
+              U_0=\mathcal{E}.
+            \]
+          </p>
+        </article>
+
+        <article class="mini-card danger-card">
+          <h3>Scurtcircuit</h3>
+          <p>
+            Rezistența exterioară devine foarte mică, \(R\approx0\):
+            \[
+              I_{\mathrm{sc}}=\frac{\mathcal{E}}{r}.
+            \]
+            Curentul poate deveni periculos de mare.
+          </p>
+        </article>
+      </div>
+
+      <div class="warning-card lesson-card danger-card">
+        <h3>Regulă de siguranță</h3>
+        <p>
+          Nu scurtcircuita o baterie sau o sursă pentru a-i „măsura curentul”.
+          Curentul mare poate încălzi rapid firele și sursa, provocând arsuri,
+          deteriorări sau incendiu.
+        </p>
+      </div>
+
+      <h3>Bilanțul puterilor</h3>
+
+      <p>
+        Înmulțim relația
+        \[
+          \mathcal{E}=I(R+r)
+        \]
+        cu intensitatea \(I\):
+      </p>
+
+      <div class="formula-card">
+        <p>
+          \[
+            \boxed{\mathcal{E}I=I^2R+I^2r}.
+          \]
+        </p>
+      </div>
+
+      <div class="concept-grid">
+        <article class="mini-card formula-choice">
+          <h3>Puterea sursei</h3>
+          <strong>\(P_{\mathrm{s}}=\mathcal{E}I\)</strong>
+          <p>Puterea totală transformată de sursă în energie electrică.</p>
+        </article>
+
+        <article class="mini-card formula-choice">
+          <h3>Puterea utilă</h3>
+          <strong>\(P_{\mathrm{u}}=UI=I^2R\)</strong>
+          <p>Puterea transmisă circuitului exterior.</p>
+        </article>
+
+        <article class="mini-card formula-choice">
+          <h3>Pierderea internă</h3>
+          <strong>\(P_{\mathrm{int}}=I^2r\)</strong>
+          <p>Puterea transformată în căldură în interiorul sursei.</p>
+        </article>
+
+        <article class="mini-card formula-choice">
+          <h3>Randamentul</h3>
+          <strong>\(\eta=\dfrac{U}{\mathcal{E}}=\dfrac{R}{R+r}\)</strong>
+          <p>Raportul dintre puterea utilă și puterea totală a sursei.</p>
+        </article>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-4">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-6">Exemplul 1 →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-6" data-page="6" hidden>
+      <span class="lesson-page-label">Pagina 6 din 8</span>
+      <h2>Exemplul 1 — curentul și tensiunea la borne</h2>
+
+      <div class="problem-card">
+        <h3>Enunț</h3>
+        <p>
+          O sursă are tensiunea electromotoare
+          \(\mathcal{E}=12\,\mathrm{V}\) și rezistența internă
+          \(r=1\,\Omega\). La bornele ei este conectat un rezistor
+          \(R=5\,\Omega\). Determină:
+          a) intensitatea curentului;
+          b) tensiunea la borne;
+          c) căderea internă de tensiune.
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <p>
+          <span class="step-label">Pasul 1</span>
+          Calculăm rezistența totală:
+        </p>
+        <p>
+          \[
+            R_{\mathrm{tot}}=R+r=5+1=6\,\Omega.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 2</span>
+          Aplicăm legea lui Ohm pentru circuitul întreg:
+        </p>
+        <p>
+          \[
+            I=\frac{\mathcal{E}}{R+r}
+            =\frac{12\,\mathrm{V}}{6\,\Omega}
+            =2\,\mathrm{A}.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 3</span>
+          Calculăm tensiunea la borne:
+        </p>
+        <p>
+          \[
+            U=IR=2\,\mathrm{A}\cdot5\,\Omega=10\,\mathrm{V}.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 4</span>
+          Calculăm căderea internă:
+        </p>
+        <p>
+          \[
+            u=Ir=2\,\mathrm{A}\cdot1\,\Omega=2\,\mathrm{V}.
+          \]
+        </p>
+      </div>
+
+      <div class="answer-card">
+        <h3>Răspuns și verificare</h3>
+        <p>
+          \[
+            \boxed{I=2\,\mathrm{A}},
+            \qquad
+            \boxed{U=10\,\mathrm{V}},
+            \qquad
+            \boxed{u=2\,\mathrm{V}}.
+          \]
+        </p>
+        <p>
+          Verificare:
+          \[
+            U+u=10+2=12\,\mathrm{V}=\mathcal{E}.
+          \]
+        </p>
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-5">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-7">Exemplul 2 →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page" id="pagina-7" data-page="7" hidden>
+      <span class="lesson-page-label">Pagina 7 din 8</span>
+      <h2>Exemplul 2 — determinarea rezistenței interne</h2>
+
+      <div class="problem-card">
+        <h3>Enunț</h3>
+        <p>
+          La circuit deschis, tensiunea măsurată la bornele unei surse este
+          \(U_0=9\,\mathrm{V}\). Când sursa debitează curentul
+          \(I=0{,}5\,\mathrm{A}\), tensiunea la borne devine
+          \(U=8\,\mathrm{V}\). Determină rezistența internă.
+        </p>
+      </div>
+
+      <div class="lesson-card">
+        <p>
+          <span class="step-label">Pasul 1</span>
+          La mers în gol, \(I=0\), deci:
+        </p>
+        <p>
+          \[
+            \mathcal{E}=U_0=9\,\mathrm{V}.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 2</span>
+          Folosim relația tensiunii la borne:
+        </p>
+        <p>
+          \[
+            U=\mathcal{E}-Ir.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 3</span>
+          Exprimăm rezistența internă:
+        </p>
+        <p>
+          \[
+            r=\frac{\mathcal{E}-U}{I}.
+          \]
+        </p>
+
+        <p>
+          <span class="step-label">Pasul 4</span>
+          Înlocuim:
+        </p>
+        <p>
+          \[
+            r=\frac{9\,\mathrm{V}-8\,\mathrm{V}}{0{,}5\,\mathrm{A}}
+            =2\,\Omega.
+          \]
+        </p>
+      </div>
+
+      <div class="answer-card">
+        <h3>Răspuns</h3>
+        <p>
+          \[
+            \boxed{r=2\,\Omega}.
+          \]
+        </p>
+      </div>
+
+      <div class="lesson-highlight">
+        Verificare:
+        \[
+          Ir=0{,}5\cdot2=1\,\mathrm{V},
+          \qquad
+          U=\mathcal{E}-Ir=9-1=8\,\mathrm{V}.
+        \]
+      </div>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-6">← Înapoi</a>
+        <a class="lesson-button" href="#pagina-8">Recapitulare →</a>
+      </nav>
+    </section>
+
+    <section class="lesson-page lesson-last-page" id="pagina-8" data-page="8" hidden>
+      <span class="lesson-page-label">Pagina 8 din 8</span>
+      <h2>Greșeli frecvente și verificare rapidă</h2>
+
+      <div class="warning-card lesson-card">
+        <h3>Greșeli frecvente</h3>
+        <ul class="lesson-list">
+          <li>a folosi \(I=\mathcal{E}/R\) și a omite rezistența internă;</li>
+          <li>a confunda t.e.m. \(\mathcal{E}\) cu tensiunea la borne \(U\);</li>
+          <li>a scrie \(U=\mathcal{E}+Ir\) pentru o sursă care debitează curent;</li>
+          <li>a considera că tensiunea la borne rămâne mereu egală cu t.e.m.;</li>
+          <li>a calcula rezistența totală prin \(R-r\) în loc de \(R+r\);</li>
+          <li>a ignora pericolul scurtcircuitului.</li>
+        </ul>
+      </div>
+
+      <div class="check-grid" aria-label="Verificare rapidă">
+        <details class="quick-check">
+          <summary>1. Care este rezistența totală?</summary>
+          <p>\(R_{\mathrm{tot}}=R+r\).</p>
+        </details>
+
+        <details class="quick-check">
+          <summary>2. Care este legea circuitului întreg?</summary>
+          <p>\(I=\mathcal{E}/(R+r)\).</p>
+        </details>
+
+        <details class="quick-check">
+          <summary>3. Cum calculăm tensiunea la borne?</summary>
+          <p>\(U=IR=\mathcal{E}-Ir\).</p>
+        </details>
+
+        <details class="quick-check">
+          <summary>4. Ce se întâmplă la mers în gol?</summary>
+          <p>\(I=0\), iar tensiunea la borne este \(U_0=\mathcal{E}\).</p>
+        </details>
+      </div>
+
+      <div class="formula-card">
+        <p>
+          Sinteză:
+          \[
+            \boxed{
+              I=\frac{\mathcal{E}}{R+r},
+              \qquad
+              \mathcal{E}=U+Ir,
+              \qquad
+              U=\mathcal{E}-Ir
+            }.
+          \]
+        </p>
+      </div>
+
+      <footer class="lesson-footer">
+        <p><strong>Prof. Dănuț Andronie</strong></p>
+        <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+        <div class="lesson-actions">
+          <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+          <a class="lesson-button" href="lectia-11-masurarea-intensitatii-curentului-optional-real.html">
+            Mergi la următoarea lecție
+          </a>
+        </div>
+      </footer>
+
+      <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+        <a class="lesson-button secondary" href="#pagina-7">← Pagina anterioară</a>
+        <a class="lesson-button" href="#pagina-1">Reia lecția</a>
+      </nav>
+    </section>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const pages = Array.from(document.querySelectorAll('.lesson-page'));
+      const pageIds = new Set(pages.map(page => page.id));
+
+      function showPageFromHash() {
+        let targetId = window.location.hash.slice(1);
+
+        if (!pageIds.has(targetId)) {
+          targetId = 'pagina-1';
+          history.replaceState(null, '', '#pagina-1');
+        }
+
+        pages.forEach(page => {
+          const active = page.id === targetId;
+          page.hidden = !active;
+          page.setAttribute('aria-hidden', String(!active));
+        });
+
+        const activePage = document.getElementById(targetId);
+        if (activePage) {
+          activePage.setAttribute('tabindex', '-1');
+          activePage.focus({ preventScroll: true });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      window.addEventListener('hashchange', showPageFromHash);
+      window.addEventListener('DOMContentLoaded', showPageFromHash);
+
+      window.addEventListener('keydown', function (event) {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+        const currentId = window.location.hash.slice(1) || 'pagina-1';
+        const currentIndex = pages.findIndex(page => page.id === currentId);
+
+        if (event.key === 'ArrowRight' && currentIndex < pages.length - 1) {
+          window.location.hash = pages[currentIndex + 1].id;
+        }
+
+        if (event.key === 'ArrowLeft' && currentIndex > 0) {
+          window.location.hash = pages[currentIndex - 1].id;
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

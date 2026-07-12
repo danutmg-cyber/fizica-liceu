@@ -1,1 +1,994 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lecție de fizică pentru clasa a XI-a: tranzistorul bipolar, structura npn și pnp, emitor, bază, colector, polarizare, relația curenților, amplificare și comutație.">
+  <title>Tranzistorul | Fizică, clasa a XI-a</title>
 
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+  <style>
+    [hidden] { display: none !important; }
+
+    .lesson-figure {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.4rem 0;
+      padding: clamp(12px, 2vw, 24px);
+      border-radius: 24px;
+      background: #eff6ff;
+    }
+
+    .lesson-figure svg {
+      display: block;
+      width: min(100%, 980px);
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .concept-grid,
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 22px);
+    }
+
+    .quick-check {
+      margin: 0;
+      padding: clamp(16px, 2.5vw, 26px);
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .quick-check summary {
+      cursor: pointer;
+      color: #1d4ed8;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 700;
+    }
+
+    .quick-check p { margin-top: 14px; }
+
+    .step-label {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    .formula-choice { text-align: center; }
+
+    .formula-choice strong {
+      display: block;
+      margin: 0.45rem 0;
+      color: #1d4ed8;
+      font-size: clamp(24px, 4vw, 40px);
+    }
+
+    .danger-card { border-left: 8px solid #dc2626; }
+
+    @media (max-width: 760px) {
+      .concept-grid,
+      .check-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body class="lesson-body">
+<main class="lesson-shell" aria-label="Lecția Tranzistorul">
+
+  <section class="lesson-page lesson-cover" id="pagina-1" data-page="1">
+    <header class="lesson-header site-header">
+      <span class="lesson-kicker">Clasa a XI-a • Electrocinetică</span>
+      <h1>Tranzistorul</h1>
+      <p>
+        Dispozitiv semiconductor cu trei regiuni, capabil să amplifice semnale
+        și să comande curenți electrici.
+      </p>
+    </header>
+
+    <div class="lesson-banner">
+      <h2>Întrebarea de pornire</h2>
+      <p>
+        Cum poate un curent foarte mic aplicat la intrarea unui dispozitiv să
+        controleze un curent mult mai mare într-un alt circuit?
+      </p>
+    </div>
+
+    <div class="lesson-card">
+      <h3>La finalul lecției vei putea</h3>
+      <ul class="lesson-list">
+        <li>să descrii structura tranzistoarelor \(npn\) și \(pnp\);</li>
+        <li>să explici rolul emitorului, bazei și colectorului;</li>
+        <li>să stabilești polarizarea corectă în regimul activ;</li>
+        <li>să folosești relația \(I_E=I_B+I_C\);</li>
+        <li>să explici amplificarea unui semnal;</li>
+        <li>să descrii tranzistorul ca întrerupător electronic.</li>
+      </ul>
+    </div>
+
+    <div class="formula-card">
+      <p>
+        Relația fundamentală dintre curenți:
+        \[
+          \boxed{I_E=I_B+I_C}.
+        \]
+      </p>
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button" href="#pagina-2">Începe lecția →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-2" data-page="2" hidden>
+    <span class="lesson-page-label">Pagina 2 din 8</span>
+    <h2>Structura tranzistorului bipolar</h2>
+
+    <p>
+      Tranzistorul bipolar este format din trei regiuni semiconductoare așezate
+      succesiv. Există două tipuri principale:
+    </p>
+
+    <div class="concept-grid">
+      <article class="mini-card formula-choice">
+        <h3>Tranzistor \(npn\)</h3>
+        <strong>\(n-p-n\)</strong>
+        <p>Purtătorii principali injectați de emitor sunt electronii.</p>
+      </article>
+
+      <article class="mini-card formula-choice">
+        <h3>Tranzistor \(pnp\)</h3>
+        <strong>\(p-n-p\)</strong>
+        <p>Purtătorii principali injectați de emitor sunt golurile.</p>
+      </article>
+    </div>
+
+    <div class="lesson-card">
+      <h3>Cele trei terminale</h3>
+      <ul class="lesson-list">
+        <li><strong>Emitorul \(E\)</strong> injectează purtători în bază;</li>
+        <li><strong>Baza \(B\)</strong> este foarte subțire și slab dopată;</li>
+        <li><strong>Colectorul \(C\)</strong> colectează majoritatea purtătorilor trecuți prin bază.</li>
+      </ul>
+    </div>
+
+    <figure class="lesson-figure">
+      <svg viewBox="0 0 1000 580" role="img" aria-labelledby="structure-title structure-desc">
+        <title id="structure-title">Structura tranzistoarelor npn și pnp</title>
+        <desc id="structure-desc">
+          Două structuri cu trei regiuni: npn și pnp. Regiunea centrală, baza,
+          este mult mai subțire decât emitorul și colectorul.
+        </desc>
+
+        <rect x="60" y="100" width="880" height="160" rx="28"
+              fill="#ffffff" stroke="#475569" stroke-width="6"></rect>
+        <rect x="60" y="340" width="880" height="160" rx="28"
+              fill="#ffffff" stroke="#475569" stroke-width="6"></rect>
+
+        <rect x="75" y="115" width="355" height="130" rx="20"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"></rect>
+        <rect x="430" y="115" width="140" height="130"
+              fill="#dcfce7" stroke="#15803d" stroke-width="5"></rect>
+        <rect x="570" y="115" width="355" height="130" rx="20"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"></rect>
+
+        <rect x="75" y="355" width="355" height="130" rx="20"
+              fill="#dcfce7" stroke="#15803d" stroke-width="5"></rect>
+        <rect x="430" y="355" width="140" height="130"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"></rect>
+        <rect x="570" y="355" width="355" height="130" rx="20"
+              fill="#dcfce7" stroke="#15803d" stroke-width="5"></rect>
+
+        <g font-size="45" font-weight="700" text-anchor="middle">
+          <text x="250" y="195" fill="#1d4ed8">n</text>
+          <text x="500" y="195" fill="#15803d">p</text>
+          <text x="750" y="195" fill="#1d4ed8">n</text>
+
+          <text x="250" y="435" fill="#15803d">p</text>
+          <text x="500" y="435" fill="#1d4ed8">n</text>
+          <text x="750" y="435" fill="#15803d">p</text>
+        </g>
+
+        <g font-size="28" font-weight="700" text-anchor="middle" fill="#0f172a">
+          <text x="250" y="85">E</text>
+          <text x="500" y="85">B</text>
+          <text x="750" y="85">C</text>
+          <text x="250" y="325">E</text>
+          <text x="500" y="325">B</text>
+          <text x="750" y="325">C</text>
+        </g>
+
+        <text x="500" y="300" text-anchor="middle"
+              font-size="30" font-weight="700" fill="#dc2626">
+          baza este foarte subțire
+        </text>
+
+        <text x="500" y="555" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#0f172a">
+          tranzistorul conține două joncțiuni p-n
+        </text>
+      </svg>
+    </figure>
+
+    <div class="warning-card lesson-card">
+      <h3>Nu este echivalent cu două diode independente</h3>
+      <p>
+        Deși tranzistorul conține două joncțiuni, funcționarea sa depinde de faptul
+        că baza este foarte subțire, astfel încât purtătorii injectați prin prima
+        joncțiune pot ajunge la a doua.
+      </p>
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-1">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-3">Polarizarea în regim activ →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-3" data-page="3" hidden>
+    <span class="lesson-page-label">Pagina 3 din 8</span>
+    <h2>Polarizarea tranzistorului \(npn\)</h2>
+
+    <p>
+      Pentru funcționarea în regim activ, cele două joncțiuni sunt polarizate diferit:
+    </p>
+
+    <div class="formula-card">
+      <p>
+        \[
+          \boxed{
+            \text{emitor–bază: direct},
+            \qquad
+            \text{bază–colector: invers}
+          }.
+        \]
+      </p>
+    </div>
+
+    <div class="lesson-card">
+      <p>
+        <span class="step-label">1</span>
+        Emitorul \(n\) este conectat la un potențial mai mic decât baza \(p\).
+      </p>
+      <p>
+        <span class="step-label">2</span>
+        Joncțiunea emitor–bază conduce și injectează electroni în bază.
+      </p>
+      <p>
+        <span class="step-label">3</span>
+        Colectorul \(n\) este la un potențial mai mare decât baza.
+      </p>
+      <p>
+        <span class="step-label">4</span>
+        Câmpul joncțiunii bază–colector atrage electronii spre colector.
+      </p>
+    </div>
+
+    <figure class="lesson-figure">
+      <svg viewBox="0 0 1000 600" role="img" aria-labelledby="bias-title bias-desc">
+        <title id="bias-title">Polarizarea unui tranzistor npn în regim activ</title>
+        <desc id="bias-desc">
+          Joncțiunea emitor-bază este polarizată direct, iar joncțiunea bază-colector
+          invers. Electronii trec din emitor prin baza subțire spre colector.
+        </desc>
+
+        <defs>
+          <marker id="electron-injection-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#1d4ed8"></path>
+          </marker>
+          <marker id="collector-field-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#dc2626"></path>
+          </marker>
+        </defs>
+
+        <rect x="75" y="180" width="330" height="230" rx="24"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="7"></rect>
+        <rect x="405" y="180" width="150" height="230"
+              fill="#dcfce7" stroke="#15803d" stroke-width="7"></rect>
+        <rect x="555" y="180" width="370" height="230" rx="24"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="7"></rect>
+
+        <text x="240" y="255" text-anchor="middle"
+              font-size="40" font-weight="700" fill="#1d4ed8">emitor n</text>
+        <text x="480" y="255" text-anchor="middle"
+              font-size="36" font-weight="700" fill="#15803d">bază p</text>
+        <text x="740" y="255" text-anchor="middle"
+              font-size="40" font-weight="700" fill="#1d4ed8">colector n</text>
+
+        <line x1="250" y1="335" x2="445" y2="335"
+              stroke="#1d4ed8" stroke-width="10"
+              marker-end="url(#electron-injection-arrow)"></line>
+        <line x1="505" y1="335" x2="735" y2="335"
+              stroke="#1d4ed8" stroke-width="10"
+              marker-end="url(#electron-injection-arrow)"></line>
+
+        <text x="495" y="375" text-anchor="middle"
+              font-size="27" font-weight="700" fill="#1d4ed8">
+          electronii traversează baza
+        </text>
+
+        <line x1="820" y1="130" x2="620" y2="130"
+              stroke="#dc2626" stroke-width="9"
+              marker-end="url(#collector-field-arrow)"></line>
+        <text x="720" y="100" text-anchor="middle"
+              font-size="27" font-weight="700" fill="#dc2626">
+          câmpul joncțiunii B–C
+        </text>
+
+        <rect x="100" y="455" width="110" height="70" rx="18"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="6"></rect>
+        <rect x="430" y="455" width="110" height="70" rx="18"
+              fill="#fee2e2" stroke="#dc2626" stroke-width="6"></rect>
+        <rect x="790" y="455" width="110" height="70" rx="18"
+              fill="#fee2e2" stroke="#dc2626" stroke-width="6"></rect>
+
+        <text x="155" y="502" text-anchor="middle"
+              font-size="34" font-weight="700" fill="#1d4ed8">−</text>
+        <text x="485" y="502" text-anchor="middle"
+              font-size="34" font-weight="700" fill="#dc2626">+</text>
+        <text x="845" y="502" text-anchor="middle"
+              font-size="34" font-weight="700" fill="#dc2626">++</text>
+
+        <text x="500" y="575" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#0f172a">
+          E–B direct • B–C invers
+        </text>
+      </svg>
+    </figure>
+
+    <div class="lesson-highlight">
+      Pentru un tranzistor \(pnp\), polaritățile și sensurile curenților sunt
+      inversate, iar purtătorii injectați de emitor sunt golurile.
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-2">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-4">Mecanismul curenților →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-4" data-page="4" hidden>
+    <span class="lesson-page-label">Pagina 4 din 8</span>
+    <h2>Cum apar curenții în tranzistor?</h2>
+
+    <p>
+      Electronii injectați de emitor pătrund în baza foarte subțire. O mică parte
+      se recombină cu golurile bazei și formează curentul de bază \(I_B\).
+    </p>
+
+    <p>
+      Majoritatea electronilor traversează baza și sunt atrași în colector,
+      formând curentul de colector \(I_C\).
+    </p>
+
+    <div class="formula-card">
+      <p>
+        Din conservarea sarcinii:
+        \[
+          \boxed{I_E=I_B+I_C}.
+        \]
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <article class="mini-card formula-choice">
+        <h3>Curent de emitor</h3>
+        <strong>\(I_E\)</strong>
+        <p>Curentul total injectat de emitor.</p>
+      </article>
+
+      <article class="mini-card formula-choice">
+        <h3>Curent de bază</h3>
+        <strong>\(I_B\)</strong>
+        <p>Curent mic, asociat recombinărilor din bază.</p>
+      </article>
+
+      <article class="mini-card formula-choice">
+        <h3>Curent de colector</h3>
+        <strong>\(I_C\)</strong>
+        <p>Curent mare, produs de purtătorii colectați.</p>
+      </article>
+
+      <article class="mini-card formula-choice">
+        <h3>Relație aproximativă</h3>
+        <strong>\(I_C\approx I_E\)</strong>
+        <p>Valabilă deoarece \(I_B\ll I_C\).</p>
+      </article>
+    </div>
+
+    <figure class="lesson-figure">
+      <svg viewBox="0 0 1000 600" role="img" aria-labelledby="currents-title currents-desc">
+        <title id="currents-title">Distribuția curenților într-un tranzistor npn</title>
+        <desc id="currents-desc">
+          Curentul de emitor se împarte într-un curent mic de bază și un curent
+          mare de colector.
+        </desc>
+
+        <defs>
+          <marker id="emitter-current-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#1d4ed8"></path>
+          </marker>
+          <marker id="base-current-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#15803d"></path>
+          </marker>
+          <marker id="collector-current-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#dc2626"></path>
+          </marker>
+        </defs>
+
+        <rect x="110" y="190" width="300" height="220" rx="24"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="7"></rect>
+        <rect x="410" y="190" width="150" height="220"
+              fill="#dcfce7" stroke="#15803d" stroke-width="7"></rect>
+        <rect x="560" y="190" width="330" height="220" rx="24"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="7"></rect>
+
+        <text x="260" y="255" text-anchor="middle"
+              font-size="38" font-weight="700" fill="#1d4ed8">E</text>
+        <text x="485" y="255" text-anchor="middle"
+              font-size="38" font-weight="700" fill="#15803d">B</text>
+        <text x="725" y="255" text-anchor="middle"
+              font-size="38" font-weight="700" fill="#1d4ed8">C</text>
+
+        <line x1="145" y1="325" x2="430" y2="325"
+              stroke="#1d4ed8" stroke-width="12"
+              marker-end="url(#emitter-current-arrow)"></line>
+        <text x="280" y="300" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#1d4ed8">IE</text>
+
+        <line x1="485" y1="345" x2="485" y2="515"
+              stroke="#15803d" stroke-width="7"
+              marker-end="url(#base-current-arrow)"></line>
+        <text x="525" y="475" text-anchor="middle"
+              font-size="28" font-weight="700" fill="#15803d">IB mic</text>
+
+        <line x1="540" y1="325" x2="850" y2="325"
+              stroke="#dc2626" stroke-width="12"
+              marker-end="url(#collector-current-arrow)"></line>
+        <text x="700" y="300" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#dc2626">IC mare</text>
+
+        <text x="500" y="95" text-anchor="middle"
+              font-size="34" font-weight="700" fill="#0f172a">
+          IE = IB + IC
+        </text>
+        <text x="500" y="575" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#0f172a">
+          baza subțire menține recombinarea redusă
+        </text>
+      </svg>
+    </figure>
+
+    <div class="lesson-card">
+      <h3>Factorul de amplificare în curent</h3>
+      <p>
+        În conexiunea cu emitor comun se folosește aproximativ:
+        \[
+          \boxed{\beta=\frac{I_C}{I_B}}.
+        \]
+      </p>
+      <p>
+        Prin urmare:
+        \[
+          \boxed{I_C\approx\beta I_B}.
+        \]
+      </p>
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-3">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-5">Amplificarea →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-5" data-page="5" hidden>
+    <span class="lesson-page-label">Pagina 5 din 8</span>
+    <h2>Tranzistorul ca amplificator</h2>
+
+    <p>
+      Un semnal mic aplicat circuitului de intrare modifică ușor curentul de bază
+      sau tensiunea emitor–bază. Această variație controlează o variație mult mai
+      mare a curentului de colector.
+    </p>
+
+    <div class="lesson-card">
+      <p>
+        <span class="step-label">1</span>
+        Semnalul de intrare modifică \(I_B\).
+      </p>
+      <p>
+        <span class="step-label">2</span>
+        Curentul de colector se modifică aproximativ cu:
+        \[
+          \Delta I_C\approx\beta\Delta I_B.
+        \]
+      </p>
+      <p>
+        <span class="step-label">3</span>
+        Pe rezistorul de colector \(R_C\) apare variația:
+        \[
+          \Delta U_{R_C}=R_C\Delta I_C.
+        \]
+      </p>
+      <p>
+        <span class="step-label">4</span>
+        La ieșire se obține un semnal de aceeași formă, dar cu amplitudine mai mare.
+      </p>
+    </div>
+
+    <figure class="lesson-figure">
+      <svg viewBox="0 0 1000 610" role="img" aria-labelledby="amplifier-title amplifier-desc">
+        <title id="amplifier-title">Principiul amplificării cu tranzistor</title>
+        <desc id="amplifier-desc">
+          Un semnal mic la intrare controlează prin tranzistor un semnal mai mare
+          în circuitul colectorului.
+        </desc>
+
+        <defs>
+          <marker id="signal-control-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#1d4ed8"></path>
+          </marker>
+          <marker id="amplified-signal-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#dc2626"></path>
+          </marker>
+        </defs>
+
+        <rect x="60" y="110" width="270" height="380" rx="30"
+              fill="#eff6ff" stroke="#60a5fa" stroke-width="7"></rect>
+        <rect x="380" y="110" width="240" height="380" rx="30"
+              fill="#fef3c7" stroke="#f59e0b" stroke-width="7"></rect>
+        <rect x="670" y="110" width="270" height="380" rx="30"
+              fill="#fff1f2" stroke="#fb7185" stroke-width="7"></rect>
+
+        <text x="195" y="165" text-anchor="middle"
+              font-size="32" font-weight="700" fill="#1d4ed8">intrare</text>
+        <text x="500" y="165" text-anchor="middle"
+              font-size="32" font-weight="700" fill="#92400e">tranzistor</text>
+        <text x="805" y="165" text-anchor="middle"
+              font-size="32" font-weight="700" fill="#dc2626">ieșire</text>
+
+        <path d="M90,330 C120,285 145,285 175,330 C205,375 230,375 260,330 C285,290 305,290 325,330"
+              fill="none" stroke="#1d4ed8" stroke-width="8"></path>
+
+        <circle cx="500" cy="310" r="90"
+                fill="#fff" stroke="#92400e" stroke-width="8"></circle>
+        <text x="500" y="325" text-anchor="middle"
+              font-size="56" font-weight="700" fill="#92400e">T</text>
+
+        <path d="M700,330 C730,220 770,220 800,330 C830,440 870,440 910,330"
+              fill="none" stroke="#dc2626" stroke-width="10"></path>
+
+        <line x1="330" y1="300" x2="375" y2="300"
+              stroke="#1d4ed8" stroke-width="9"
+              marker-end="url(#signal-control-arrow)"></line>
+        <line x1="625" y1="300" x2="665" y2="300"
+              stroke="#dc2626" stroke-width="9"
+              marker-end="url(#amplified-signal-arrow)"></line>
+
+        <text x="195" y="440" text-anchor="middle"
+              font-size="27" font-weight="700" fill="#1d4ed8">
+          semnal mic
+        </text>
+        <text x="805" y="440" text-anchor="middle"
+              font-size="27" font-weight="700" fill="#dc2626">
+          semnal amplificat
+        </text>
+
+        <text x="500" y="560" text-anchor="middle"
+              font-size="29" font-weight="700" fill="#0f172a">
+          energia semnalului de ieșire este furnizată de sursa circuitului colectorului
+        </text>
+      </svg>
+    </figure>
+
+    <div class="warning-card lesson-card">
+      <h3>Tranzistorul nu creează energie</h3>
+      <p>
+        Semnalul de intrare doar controlează energia furnizată de sursa circuitului
+        de ieșire. Amplificarea respectă conservarea energiei.
+      </p>
+    </div>
+
+    <div class="lesson-highlight">
+      Tranzistorul reproduce variațiile semnalului de intrare, dar cu o putere
+      mai mare, atât timp cât funcționează în domeniul activ și nu este suprasolicitat.
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-4">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-6">Tranzistorul ca întrerupător →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-6" data-page="6" hidden>
+    <span class="lesson-page-label">Pagina 6 din 8</span>
+    <h2>Tranzistorul ca întrerupător electronic</h2>
+
+    <p>
+      În circuitele digitale și de comandă, tranzistorul este folosit în două
+      stări extreme:
+    </p>
+
+    <div class="concept-grid">
+      <article class="mini-card formula-choice">
+        <h3>Blocare</h3>
+        <strong>\(I_B\approx0\)</strong>
+        <p>
+          Joncțiunea emitor–bază nu este polarizată direct. Curentul de colector
+          este aproape nul. Întrerupător deschis.
+        </p>
+      </article>
+
+      <article class="mini-card formula-choice">
+        <h3>Saturație</h3>
+        <strong>\(I_B\) suficient</strong>
+        <p>
+          Tranzistorul conduce puternic. Tensiunea colector–emitor devine mică.
+          Întrerupător închis.
+        </p>
+      </article>
+    </div>
+
+    <figure class="lesson-figure">
+      <svg viewBox="0 0 1000 590" role="img" aria-labelledby="switch-title switch-desc">
+        <title id="switch-title">Tranzistorul comandă aprinderea unui bec</title>
+        <desc id="switch-desc">
+          Un curent mic de bază comandă un curent mai mare prin bec și colector.
+          Fără curent de bază becul este stins; cu curent de bază suficient este aprins.
+        </desc>
+
+        <defs>
+          <marker id="base-control-current-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#1d4ed8"></path>
+          </marker>
+          <marker id="load-current-arrow" markerWidth="12" markerHeight="12"
+                  refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L12,6 L0,12 Z" fill="#dc2626"></path>
+          </marker>
+        </defs>
+
+        <rect x="110" y="80" width="130" height="90" rx="20"
+              fill="#fee2e2" stroke="#dc2626" stroke-width="6"></rect>
+        <text x="175" y="137" text-anchor="middle"
+              font-size="34" font-weight="700" fill="#dc2626">+E</text>
+
+        <circle cx="500" cy="190" r="75"
+                fill="#fff7ed" stroke="#f59e0b" stroke-width="8"></circle>
+        <path d="M465,190 C480,145 520,145 535,190 C520,235 480,235 465,190"
+              fill="none" stroke="#f59e0b" stroke-width="7"></path>
+        <text x="500" y="300" text-anchor="middle"
+              font-size="30" font-weight="700" fill="#b45309">bec</text>
+
+        <circle cx="500" cy="425" r="85"
+                fill="#fff" stroke="#92400e" stroke-width="8"></circle>
+        <text x="500" y="440" text-anchor="middle"
+              font-size="55" font-weight="700" fill="#92400e">T</text>
+
+        <line x1="175" y1="170" x2="175" y2="190"
+              stroke="#475569" stroke-width="8"></line>
+        <line x1="175" y1="190" x2="425" y2="190"
+              stroke="#475569" stroke-width="8"></line>
+        <line x1="575" y1="190" x2="500" y2="340"
+              stroke="#475569" stroke-width="8"></line>
+        <line x1="500" y1="510" x2="500" y2="555"
+              stroke="#475569" stroke-width="8"></line>
+
+        <rect x="100" y="375" width="170" height="90" rx="20"
+              fill="#dbeafe" stroke="#1d4ed8" stroke-width="6"></rect>
+        <text x="185" y="430" text-anchor="middle"
+              font-size="30" font-weight="700" fill="#1d4ed8">comandă</text>
+
+        <line x1="270" y1="420" x2="400" y2="420"
+              stroke="#1d4ed8" stroke-width="9"
+              marker-end="url(#base-control-current-arrow)"></line>
+        <text x="335" y="395" text-anchor="middle"
+              font-size="27" font-weight="700" fill="#1d4ed8">IB mic</text>
+
+        <line x1="625" y1="165" x2="625" y2="390"
+              stroke="#dc2626" stroke-width="9"
+              marker-end="url(#load-current-arrow)"></line>
+        <text x="690" y="285" text-anchor="middle"
+              font-size="28" font-weight="700" fill="#dc2626">IC mare</text>
+
+        <text x="500" y="580" text-anchor="middle"
+              font-size="28" font-weight="700" fill="#0f172a">
+          semnal mic de comandă → curent mare prin consumator
+        </text>
+      </svg>
+    </figure>
+
+    <div class="lesson-card">
+      <h3>Aplicații</h3>
+      <ul class="lesson-list">
+        <li>comanda releelor, motoarelor și lămpilor;</li>
+        <li>porți logice și circuite digitale;</li>
+        <li>senzori și sisteme automate;</li>
+        <li>circuite integrate și procesoare.</li>
+      </ul>
+    </div>
+
+    <div class="warning-card lesson-card danger-card">
+      <h3>Protecția bazei</h3>
+      <p>
+        Baza trebuie conectată printr-un rezistor care limitează curentul.
+        Fără rezistor, joncțiunea emitor–bază poate fi distrusă.
+      </p>
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-5">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-7">Probleme rezolvate →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page" id="pagina-7" data-page="7" hidden>
+    <span class="lesson-page-label">Pagina 7 din 8</span>
+    <h2>Probleme rezolvate pas cu pas</h2>
+
+    <div class="problem-card">
+      <h3>Problema 1 — curenții tranzistorului</h3>
+      <p>
+        Un tranzistor are factorul de amplificare
+        \(\beta=120\) și curentul de bază
+        \(I_B=25\,\mu\mathrm{A}\).
+        Determină \(I_C\) și \(I_E\).
+      </p>
+    </div>
+
+    <div class="lesson-card">
+      <p><span class="step-label">Pasul 1</span>Transformăm curentul de bază:</p>
+      <p>
+        \[
+          I_B=25\,\mu\mathrm{A}
+          =25\cdot10^{-6}\,\mathrm{A}.
+        \]
+      </p>
+
+      <p><span class="step-label">Pasul 2</span>Calculăm curentul de colector:</p>
+      <p>
+        \[
+          I_C=\beta I_B
+          =120\cdot25\,\mu\mathrm{A}
+          =3000\,\mu\mathrm{A}
+          =3{,}0\,\mathrm{mA}.
+        \]
+      </p>
+
+      <p><span class="step-label">Pasul 3</span>Aplicăm conservarea curentului:</p>
+      <p>
+        \[
+          I_E=I_B+I_C.
+        \]
+      </p>
+
+      <p><span class="step-label">Pasul 4</span>Calculăm:</p>
+      <p>
+        \[
+          I_E=0{,}025\,\mathrm{mA}+3{,}0\,\mathrm{mA}
+          =3{,}025\,\mathrm{mA}.
+        \]
+      </p>
+    </div>
+
+    <div class="answer-card">
+      <p>
+        \[
+          \boxed{I_C=3{,}0\,\mathrm{mA}},
+          \qquad
+          \boxed{I_E=3{,}025\,\mathrm{mA}}.
+        \]
+      </p>
+    </div>
+
+    <div class="problem-card">
+      <h3>Problema 2 — rezistorul de bază</h3>
+      <p>
+        Un tranzistor \(npn\) este comandat de o tensiune
+        \(U_{\text{in}}=5{,}0\,\mathrm{V}\).
+        Considerăm \(U_{BE}=0{,}7\,\mathrm{V}\) și dorim
+        \(I_B=0{,}50\,\mathrm{mA}\).
+        Determină rezistorul de bază \(R_B\).
+      </p>
+    </div>
+
+    <div class="lesson-card">
+      <p><span class="step-label">Pasul 1</span>Tensiunea pe rezistor:</p>
+      <p>
+        \[
+          U_{R_B}=U_{\text{in}}-U_{BE}
+          =5{,}0-0{,}7
+          =4{,}3\,\mathrm{V}.
+        \]
+      </p>
+
+      <p><span class="step-label">Pasul 2</span>Aplicăm legea lui Ohm:</p>
+      <p>
+        \[
+          R_B=\frac{U_{R_B}}{I_B}.
+        \]
+      </p>
+
+      <p><span class="step-label">Pasul 3</span>Înlocuim:</p>
+      <p>
+        \[
+          R_B=\frac{4{,}3}{0{,}50\cdot10^{-3}}
+          =8{,}6\cdot10^3\,\Omega.
+        \]
+      </p>
+    </div>
+
+    <div class="answer-card">
+      <p>
+        \[
+          \boxed{R_B=8{,}6\,\mathrm{k}\Omega}.
+        \]
+      </p>
+      <p>
+        Într-un montaj real se alege o valoare standard apropiată și se verifică
+        limitele tranzistorului.
+      </p>
+    </div>
+
+    <div class="lesson-highlight">
+      Verificarea unităților este esențială:
+      \[
+        \frac{\mathrm{V}}{\mathrm{A}}=\Omega.
+      \]
+    </div>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-6">← Înapoi</a>
+      <a class="lesson-button" href="#pagina-8">Recapitulare →</a>
+    </nav>
+  </section>
+
+  <section class="lesson-page lesson-last-page" id="pagina-8" data-page="8" hidden>
+    <span class="lesson-page-label">Pagina 8 din 8</span>
+    <h2>Greșeli frecvente și verificare rapidă</h2>
+
+    <div class="warning-card lesson-card">
+      <h3>Greșeli frecvente</h3>
+      <ul class="lesson-list">
+        <li>a considera tranzistorul echivalent cu două diode independente;</li>
+        <li>a confunda emitorul cu colectorul;</li>
+        <li>a polariza direct ambele joncțiuni în regimul activ;</li>
+        <li>a scrie \(I_C=I_B+I_E\) în loc de \(I_E=I_B+I_C\);</li>
+        <li>a presupune că amplificarea creează energie;</li>
+        <li>a conecta baza direct la sursă fără rezistor de limitare.</li>
+      </ul>
+    </div>
+
+    <div class="check-grid" aria-label="Verificare rapidă">
+      <details class="quick-check">
+        <summary>1. Care sunt terminalele?</summary>
+        <p>Emitorul \(E\), baza \(B\) și colectorul \(C\).</p>
+      </details>
+
+      <details class="quick-check">
+        <summary>2. De ce este baza subțire?</summary>
+        <p>Pentru ca majoritatea purtătorilor injectați să traverseze baza și să ajungă în colector.</p>
+      </details>
+
+      <details class="quick-check">
+        <summary>3. Care este relația curenților?</summary>
+        <p>\(I_E=I_B+I_C\).</p>
+      </details>
+
+      <details class="quick-check">
+        <summary>4. Care sunt cele două utilizări majore?</summary>
+        <p>Amplificator de semnal și întrerupător electronic.</p>
+      </details>
+    </div>
+
+    <div class="formula-card">
+      <p>
+        Sinteză:
+        \[
+          \boxed{
+            \begin{array}{c}
+              I_E=I_B+I_C,\\[4pt]
+              \beta=\dfrac{I_C}{I_B},
+              \qquad
+              I_C\approx\beta I_B,\\[4pt]
+              \text{E–B direct,\quad B–C invers}
+            \end{array}
+          }.
+        \]
+      </p>
+    </div>
+
+    <footer class="lesson-footer">
+      <p><strong>Prof. Dănuț Andronie</strong></p>
+      <p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+
+      <div class="lesson-actions">
+        <a class="lesson-button secondary" href="index.html">Înapoi la capitol</a>
+        <a class="lesson-button" href="lectia-29-curentul-electric-in-electroliti.html">
+          Mergi la următoarea lecție
+        </a>
+      </div>
+    </footer>
+
+    <nav class="lesson-page-nav" aria-label="Navigare în lecție">
+      <a class="lesson-button secondary" href="#pagina-7">← Pagina anterioară</a>
+      <a class="lesson-button" href="#pagina-1">Reia lecția</a>
+    </nav>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const pages = Array.from(document.querySelectorAll('.lesson-page'));
+  const pageIds = new Set(pages.map(page => page.id));
+
+  function showPageFromHash() {
+    let targetId = window.location.hash.slice(1);
+
+    if (!pageIds.has(targetId)) {
+      targetId = 'pagina-1';
+      history.replaceState(null, '', '#pagina-1');
+    }
+
+    pages.forEach(page => {
+      const active = page.id === targetId;
+      page.hidden = !active;
+      page.setAttribute('aria-hidden', String(!active));
+    });
+
+    const activePage = document.getElementById(targetId);
+    if (activePage) {
+      activePage.setAttribute('tabindex', '-1');
+      activePage.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('hashchange', showPageFromHash);
+  window.addEventListener('DOMContentLoaded', showPageFromHash);
+
+  window.addEventListener('keydown', function (event) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+    const currentId = window.location.hash.slice(1) || 'pagina-1';
+    const currentIndex = pages.findIndex(page => page.id === currentId);
+
+    if (event.key === 'ArrowRight' && currentIndex < pages.length - 1) {
+      window.location.hash = pages[currentIndex + 1].id;
+    }
+
+    if (event.key === 'ArrowLeft' && currentIndex > 0) {
+      window.location.hash = pages[currentIndex - 1].id;
+    }
+  });
+}());
+</script>
+</body>
+</html>
