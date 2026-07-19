@@ -1,1 +1,324 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fișa {{NUMAR_FISA}}: {{TITLU_FISA}} | Fizică {{CLASA}}</title>
+  <meta name="description" content="Fișa {{NUMAR_FISA}} pentru capitolul {{CAPITOL}}, {{CLASA}}.">
 
+  <!-- CSS comun pentru toate paginile proiectului -->
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+  <!-- MathJax pentru formule -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <!-- Stiluri fallback pentru previzualizare locală.
+       În repository, mută acest bloc în assets/css/main.css dacă vrei CSS strict comun.
+       Paleta respectă identitatea vizuală stabilită în template-lectie.html. -->
+  <style id="worksheet-fallback">
+    :root{
+      --bg:#f4f7fb; --panel:#ffffff; --ink:#172033; --muted:#5f6b7a;
+      --brand:#2563eb; --brand-2:#0f766e; --accent:#f59e0b;
+      --soft:#eaf2ff; --ok:#15803d; --danger:#dc2626;
+      --radius:22px; --shadow:0 18px 45px rgba(15,23,42,.12); --maxw:920px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height:1.6}
+    .wrapper{max-width:var(--maxw);margin:0 auto;padding:20px}
+
+    .top-banner{
+      display:flex;gap:16px;align-items:center;justify-content:space-between;
+      padding:18px 20px;border-radius:24px;
+      background:linear-gradient(135deg, #2563eb, #0f766e);color:#fff;
+      margin-bottom:18px;box-shadow:0 16px 35px rgba(37,99,235,.22);
+    }
+    .top-banner strong{font-size:1.15rem}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;
+      background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.24);
+      font-weight:700;font-size:.9rem}
+
+    .crumbs{margin:0 0 14px;color:var(--muted);font-size:.95rem;font-weight:650}
+
+    .card{background:var(--panel);border:1px solid #dbeafe;border-radius:var(--radius);
+      padding:22px;margin:16px 0;box-shadow:var(--shadow)}
+    h1,h2,h3{margin-top:0}
+    h1{font-size:clamp(1.6rem,4vw,2.3rem)}
+    h2{font-size:clamp(1.25rem,3vw,1.6rem);color:var(--brand)}
+
+    .quote{margin-top:12px;padding:12px 14px;border-left:4px solid var(--brand);
+      background:var(--soft);border-radius:10px;color:#1e3a5f;font-style:italic}
+
+    .notice{padding:14px 16px;border-radius:14px;border:1px solid rgba(21,128,61,.28);
+      background:rgba(21,128,61,.08);color:#14532d;margin-top:12px}
+    .notice.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10);color:#92400e}
+
+    .question{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-top:14px}
+    .question h3{margin-bottom:10px;font-size:1.05rem}
+    .question p{margin:8px 0}
+
+    .inline-input,.full-input{
+      background:#ffffff;color:var(--ink);border:1px solid #94a3b8;border-radius:10px;
+      padding:10px 12px;font-size:1rem
+    }
+    .inline-input{width:130px;display:inline-block}
+    .full-input{width:100%;margin-top:8px}
+
+    .option-table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:8px}
+    .option-table td{padding:0;border:none}
+    .option-row{background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:14px 16px;
+      display:flex;align-items:center;gap:12px;cursor:pointer}
+    .option-row:hover{border-color:var(--brand);background:#eff6ff}
+    .option-row input[type="radio"]{width:22px;height:22px;accent-color:var(--brand);margin:0}
+
+    .formula-box{
+      display:block;padding:14px 16px;border-radius:14px;background:#0f172a;border:1px solid #334155;
+      color:#bae6fd;text-align:center;overflow-x:auto;margin:10px 0
+    }
+
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .button{
+      display:inline-block;text-decoration:none;text-align:center;padding:12px 18px;border-radius:999px;
+      font-weight:800;min-width:180px;border:0;cursor:pointer;
+      background:linear-gradient(135deg, #2563eb, #1d4ed8);color:#fff;
+    }
+    .button.secondary{background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1}
+
+    .feedback{margin-top:10px;font-weight:700}
+    .ok{color:var(--ok)}
+    .bad{color:var(--danger)}
+
+    .score-box{
+      display:none;margin-top:14px;padding:16px;border-radius:16px;
+      background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(13,148,136,.10));
+      border:1px solid rgba(37,99,235,.25);color:#0f172a
+    }
+
+    .final-signature{margin-top:22px;padding:16px 20px;border-radius:16px;background:#1e293b;color:#fff;
+      text-align:center;font-size:.95rem}
+    .final-signature a{color:#93c5fd}
+
+    ul{padding-left:22px}
+
+    @media (max-width:760px){
+      .top-banner{flex-direction:column;align-items:flex-start}
+      .actions .button{width:100%}
+      .option-row{align-items:flex-start}
+      .option-row input[type="radio"]{margin-top:2px}
+      .inline-input{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper">
+
+    <div class="top-banner">
+      <strong>Fizică • {{CLASA}} • {{CAPITOL}}</strong>
+      <span class="chip">Fișa {{NUMAR_FISA}}</span>
+    </div>
+
+    <p class="crumbs">{{CAPITOL}} › {{SUBTEMA}}</p>
+
+    <section class="card">
+      <h1>Fișa {{NUMAR_FISA}} – {{TITLU_FISA}}</h1>
+      <p class="quote">„{{CITAT_MOTIVATIONAL}}”</p>
+      <p>Completează cerințele și apoi apasă pe <strong>Verifică fișa</strong>.</p>
+      <div class="notice warn">
+        {{INSTRUCTIUNE_SPECIALA}}
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Secțiunea I — Formule esențiale (răspuns scurt, text liber)
+         ============================================================ -->
+    <section class="card">
+      <h2>I. {{TITLU_SECTIUNE_1}}</h2>
+
+      <div class="question">
+        <h3>1. {{ENUNT_INTREBARE_1}}</h3>
+        <p>{{TEXT_1A}} <input id="q1a" class="inline-input" type="text" placeholder="{{PLACEHOLDER_1A}}"></p>
+        <div id="fb-q1a" class="feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Secțiunea II — Alegerea variantei corecte (grilă)
+         value="1" = răspuns corect, value="0" = răspuns greșit
+         ============================================================ -->
+    <section class="card">
+      <h2>II. {{TITLU_SECTIUNE_2}}</h2>
+
+      <div class="question">
+        <h3>2. {{ENUNT_INTREBARE_2}}</h3>
+        <table class="option-table" role="presentation">
+          <tr><td><label class="option-row"><input type="radio" name="q2" value="0"><span>{{OPTIUNE_2A}}</span></label></td></tr>
+          <tr><td><label class="option-row"><input type="radio" name="q2" value="1"><span>{{OPTIUNE_2B}}</span></label></td></tr>
+          <tr><td><label class="option-row"><input type="radio" name="q2" value="0"><span>{{OPTIUNE_2C}}</span></label></td></tr>
+        </table>
+        <div id="fb-q2" class="feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Secțiunea III — Calcule simple (formulă + valoare numerică)
+         ============================================================ -->
+    <section class="card">
+      <h2>III. {{TITLU_SECTIUNE_3}}</h2>
+
+      <div class="question">
+        <h3>3. {{ENUNT_INTREBARE_3}}</h3>
+        <p>{{DATE_PROBLEMA_3}}</p>
+        <div class="formula-box">$$ {{FORMULA_3}} $$</div>
+        <input id="q3" class="full-input" type="text" placeholder="Scrie doar valoarea numerică, ex.: {{EXEMPLU_VALOARE_3}}">
+        <div id="fb-q3" class="feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Secțiunea IV — Probleme (formulă + valoare numerică)
+         ============================================================ -->
+    <section class="card">
+      <h2>IV. {{TITLU_SECTIUNE_4}}</h2>
+
+      <div class="question">
+        <h3>4. {{ENUNT_INTREBARE_4}}</h3>
+        <p>{{DATE_PROBLEMA_4}}</p>
+        <div class="formula-box">$$ {{FORMULA_4}} $$</div>
+        <input id="q4" class="full-input" type="text" placeholder="Scrie doar valoarea numerică">
+        <div id="fb-q4" class="feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Secțiunea V — Răspuns scurt (completare propoziție)
+         ============================================================ -->
+    <section class="card">
+      <h2>V. {{TITLU_SECTIUNE_5}}</h2>
+
+      <div class="question">
+        <h3>5. {{ENUNT_INTREBARE_5}}</h3>
+        <p>{{TEXT_PROPOZITIE_INAINTE}} <input id="q5" class="inline-input" type="text" placeholder="{{PLACEHOLDER_5}}"> {{TEXT_PROPOZITIE_DUPA}}</p>
+        <div id="fb-q5" class="feedback"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="actions">
+        <button class="button" onclick="verificaFisa()">Verifică fișa</button>
+        <button class="button secondary" onclick="reseteazaFisa()">Resetează</button>
+        <a class="button secondary" href="./index.html">Înapoi la capitol</a>
+      </div>
+      <div id="scoreBox" class="score-box"></div>
+    </section>
+
+    <div class="final-signature">
+      Prof. Dănuț Andronie · <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a>
+    </div>
+
+  </main>
+
+  <script>
+    // ---------------------------------------------------------------
+    // Normalizare pentru compararea răspunsurilor-formulă introduse
+    // liber de elev (elimină spații, uniformizează notația uzuală).
+    // Adaptează lista de .replaceAll(...) după simbolurile folosite
+    // efectiv în fișa curentă (ex. E_c, E_pg, Δv etc.).
+    // ---------------------------------------------------------------
+    function normFormula(v){
+      return v.toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('*', '')
+        .replaceAll('·', '')
+        .replaceAll('^2', '²');
+    }
+
+    function setFb(id, ok, msg){
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = 'feedback ' + (ok ? 'ok' : 'bad');
+    }
+
+    function checkText(inputId, fbId, accepted, success, fail){
+      const v = document.getElementById(inputId).value.trim();
+      const n = normFormula(v);
+      const ok = accepted.includes(n);
+      setFb(fbId, ok, ok ? success : fail);
+      return ok ? 1 : 0;
+    }
+
+    function checkNumber(inputId, fbId, accepted, success, fail){
+      const raw = document.getElementById(inputId).value.trim().replace(',', '.');
+      const num = Number(raw);
+      const ok = accepted.some(x => Math.abs(num - x) < 1e-9);
+      setFb(fbId, ok, ok ? success : fail);
+      return ok ? 1 : 0;
+    }
+
+    function checkRadio(name, fbId, success, fail){
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      const ok = selected && selected.value === '1';
+      setFb(fbId, ok, ok ? success : fail);
+      return ok ? 1 : 0;
+    }
+
+    // -----------------------------------------------------------------
+    // Completează aici răspunsurile acceptate pentru fiecare item.
+    // Fiecare check* întoarce 1 (corect) sau 0 (greșit) — suma dă scorul.
+    // maxScor trebuie actualizat manual dacă adaugi/scoți întrebări.
+    // -----------------------------------------------------------------
+    function verificaFisa(){
+      let scor = 0;
+      const maxScor = 5;
+
+      scor += checkText('q1a', 'fb-q1a',
+        [{{RASPUNSURI_ACCEPTATE_1A}}],
+        '{{MESAJ_CORECT_1A}}',
+        '{{MESAJ_GRESIT_1A}}');
+
+      scor += checkRadio('q2', 'fb-q2',
+        '{{MESAJ_CORECT_2}}',
+        '{{MESAJ_GRESIT_2}}');
+
+      scor += checkNumber('q3', 'fb-q3',
+        [{{RASPUNS_NUMERIC_3}}],
+        '{{MESAJ_CORECT_3}}',
+        '{{MESAJ_GRESIT_3}}');
+
+      scor += checkNumber('q4', 'fb-q4',
+        [{{RASPUNS_NUMERIC_4}}],
+        '{{MESAJ_CORECT_4}}',
+        '{{MESAJ_GRESIT_4}}');
+
+      scor += checkText('q5', 'fb-q5',
+        [{{RASPUNSURI_ACCEPTATE_5}}],
+        '{{MESAJ_CORECT_5}}',
+        '{{MESAJ_GRESIT_5}}');
+
+      const procent = Math.round((scor / maxScor) * 100);
+      const box = document.getElementById('scoreBox');
+      box.style.display = 'block';
+      box.innerHTML = `<strong>Scor: ${scor} / ${maxScor}</strong><br>Procent: ${procent}%`;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise();
+    }
+
+    function reseteazaFisa(){
+      document.querySelectorAll('input[type="text"]').forEach(el => el.value = '');
+      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      document.querySelectorAll('.feedback').forEach(el => { el.textContent = ''; el.className = 'feedback'; });
+      const box = document.getElementById('scoreBox');
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
+  </script>
+</body>
+</html>
