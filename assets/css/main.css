@@ -357,4 +357,271 @@
   .lesson-last-page {
     page-break-after: auto;
   }
+  /* =================================================================
+   Reguli pentru componentele generate dinamic de assets/js/app.js
+   (navigare, breadcrumb, bare de progres, marcaje "în curând")
+
+   Paleta și convențiile respectă exact main.css existent:
+     - fundal general:      #0f172a (navy)
+     - fundal header/cards: #1e293b
+     - accent principal:    #2563eb / #1d4ed8 (albastru)
+     - succes/complet:      #16a34a (verde)
+     - avertisment/stub:    #ea580c / #f97316 (portocaliu)
+     - card deschis:        #f8fafc, text #0f172a, bordură #dbeafe
+
+   Adaugă acest bloc la finalul assets/css/main.css.
+   ================================================================= */
+
+:root {
+  --fl-bg: #1e293b;
+  --fl-bg-hover: #273449;
+  --fl-border: #334155;
+  --fl-text: #ffffff;
+  --fl-text-dim: #94a3b8;
+  --fl-accent: #2563eb;
+  --fl-accent-dark: #1d4ed8;
+  --fl-succes: #16a34a;
+  --fl-stub: #ea580c;
+  --fl-radius: 14px;
+}
+
+/* -----------------------------------------------------------------
+   1. Navigare — .fl-nav (injectată în #app-nav)
+   ----------------------------------------------------------------- */
+
+#app-nav {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.fl-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--fl-bg);
+  border: 1px solid var(--fl-border);
+  border-radius: var(--fl-radius);
+  padding: 14px;
+}
+
+.fl-nav__clasa {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.fl-nav__clasa summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--fl-bg-hover);
+  color: var(--fl-text);
+  font-weight: bold;
+  font-size: 17px;
+  transition: background 0.15s ease;
+}
+
+.fl-nav__clasa summary::-webkit-details-marker {
+  display: none;
+}
+
+.fl-nav__clasa summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--fl-accent);
+  transition: transform 0.15s ease;
+}
+
+.fl-nav__clasa[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.fl-nav__clasa summary:hover {
+  background: #2f3d54;
+}
+
+.fl-nav__capitole {
+  list-style: none;
+  margin: 6px 0 4px;
+  padding: 0 0 0 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fl-nav__capitole li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 8px;
+}
+
+.fl-nav__capitole li:hover {
+  background: var(--fl-bg-hover);
+}
+
+.fl-nav a {
+  color: var(--fl-text);
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.fl-nav a:hover {
+  text-decoration: underline;
+}
+
+.fl-link--activ {
+  color: #93c5fd;
+  font-weight: bold;
+}
+
+.fl-link--stub {
+  color: var(--fl-text-dim);
+  cursor: default;
+  pointer-events: none;
+}
+
+.fl-nav__progres {
+  color: var(--fl-text-dim);
+  font-size: 13px;
+}
+
+/* -----------------------------------------------------------------
+   2. Insignă "în curând" — .fl-badge-stub
+   ----------------------------------------------------------------- */
+
+.fl-badge-stub {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--fl-stub);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* -----------------------------------------------------------------
+   3. Breadcrumb — #breadcrumb
+   ----------------------------------------------------------------- */
+
+#breadcrumb {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: var(--fl-text-dim);
+  padding: 10px 4px 18px;
+}
+
+#breadcrumb a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+#breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+#breadcrumb span[aria-current="page"] {
+  color: var(--fl-text);
+  font-weight: bold;
+}
+
+/* -----------------------------------------------------------------
+   4. Bare de progres — .fl-progress (injectate în [data-progress])
+   ----------------------------------------------------------------- */
+
+.fl-progress {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+}
+
+.fl-progress__track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #334155;
+  overflow: hidden;
+}
+
+.fl-progress__bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--fl-succes), #22c55e);
+  transition: width 0.3s ease;
+}
+
+.fl-progress__text {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--fl-text-dim);
+}
+
+/* Variantă pentru progres redus (sub 40%) — accent portocaliu în loc de verde */
+.fl-progress[data-progress-scazut] .fl-progress__bar {
+  background: linear-gradient(90deg, var(--fl-stub), #fb923c);
+}
+
+/* -----------------------------------------------------------------
+   5. Adaptare pentru pagini deschise ("lesson-page", fundal deschis)
+      — dacă #app-nav sau [data-progress] apar pe o pagină de lecție
+      cu fundal alb (.lesson-page), inversăm nuanțele pentru contrast.
+   ----------------------------------------------------------------- */
+
+.lesson-page #app-nav .fl-nav,
+.lesson-page .fl-progress__track {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.lesson-page .fl-nav {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.lesson-page .fl-nav__clasa summary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.lesson-page .fl-nav__clasa summary:hover {
+  background: #dbeafe;
+}
+
+.lesson-page .fl-nav a {
+  color: #0f172a;
+}
+
+.lesson-page .fl-link--activ {
+  color: var(--fl-accent-dark);
+}
+
+.lesson-page .fl-nav__progres,
+.lesson-page .fl-progress__text {
+  color: #64748b;
+}
+
+/* -----------------------------------------------------------------
+   6. Responsive — telefoane
+   ----------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .fl-nav__clasa summary {
+    font-size: 15px;
+    padding: 9px 10px;
+  }
+  .fl-nav a {
+    font-size: 15px;
+  }
+  #breadcrumb {
+    font-size: 13px;
+  }
+}
 }
