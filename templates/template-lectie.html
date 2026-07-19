@@ -1,1 +1,804 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Lecția {{NUMAR_LECTIE}}: {{TITLU_LECTIE}}</title>
 
+  <!-- CSS comun pentru toate paginile proiectului -->
+  <link rel="stylesheet" href="../../../assets/css/main.css" />
+
+  <!-- MathJax pentru formule -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <!-- Stiluri fallback pentru previzualizare locală.
+       În repository, mută acest bloc în assets/css/main.css dacă vrei CSS strict comun. -->
+  <style id="lesson-fallback">
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --ink:#172033;
+      --muted:#5f6b7a;
+      --brand:#2563eb;
+      --brand-2:#0f766e;
+      --accent:#f59e0b;
+      --soft:#eaf2ff;
+      --soft-2:#ecfdf5;
+      --danger:#dc2626;
+      --ok:#15803d;
+      --radius:26px;
+      --shadow:0 18px 45px rgba(15,23,42,.12);
+      --maxw:1120px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html, body{
+      margin:0;
+      min-height:100%;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(20,184,166,.14), transparent 32rem),
+        var(--bg);
+      color:var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height:1.55;
+    }
+
+    body{ overflow-x:hidden; }
+
+    .app{
+      width:min(var(--maxw), calc(100vw - 28px));
+      min-height:100vh;
+      margin:0 auto;
+      padding:clamp(14px, 2vw, 24px) 0 96px;
+      display:flex;
+      align-items:stretch;
+    }
+
+    .page{
+      display:none;
+      width:100%;
+      min-height:calc(100vh - 128px);
+      margin:auto 0;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(148,163,184,.28);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:clamp(20px, 4vw, 52px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .page.active{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      animation:fadeIn .22s ease-out;
+    }
+
+    @keyframes fadeIn{
+      from{ opacity:.25; transform:translateY(8px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .top-banner{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 20px;
+      border-radius:24px;
+      background:linear-gradient(135deg, #2563eb, #0f766e);
+      color:#fff;
+      margin-bottom:clamp(18px, 3vw, 34px);
+      box-shadow:0 16px 35px rgba(37,99,235,.22);
+    }
+
+    .top-banner strong{
+      font-size:clamp(1.05rem, 1.8vw, 1.35rem);
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(37,99,235,.10);
+      color:#1e40af;
+      font-weight:700;
+      font-size:clamp(.82rem, 1.5vw, .95rem);
+    }
+
+    .chip.light{
+      background:rgba(255,255,255,.18);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.24);
+    }
+
+    .crumbs{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:clamp(.86rem, 1.5vw, 1rem);
+      font-weight:650;
+    }
+
+    h1{
+      margin:0 0 18px;
+      font-size:clamp(2rem, 6vw, 4.7rem);
+      line-height:1.03;
+      letter-spacing:-.04em;
+    }
+
+    h2{
+      margin:0 0 18px;
+      font-size:clamp(1.65rem, 4.2vw, 3.2rem);
+      line-height:1.08;
+      letter-spacing:-.035em;
+    }
+
+    h3{
+      margin:0 0 10px;
+      font-size:clamp(1.2rem, 2.4vw, 1.65rem);
+      line-height:1.18;
+    }
+
+    p, li, td, th{
+      font-size:clamp(1.02rem, 2.25vw, 1.45rem);
+    }
+
+    p{ margin:0 0 16px; }
+
+    ul, ol{
+      margin:0;
+      padding-left:1.25em;
+    }
+
+    li{ margin:.35em 0; }
+
+    .lead{
+      font-size:clamp(1.18rem, 2.65vw, 1.7rem);
+      color:#26354f;
+      max-width:900px;
+    }
+
+    .idea{
+      margin-top:clamp(14px, 2vw, 24px);
+      padding:clamp(16px, 2.2vw, 22px);
+      border-radius:22px;
+      background:var(--soft);
+      border-left:8px solid var(--brand);
+      font-size:clamp(1.08rem, 2.35vw, 1.52rem);
+    }
+
+    .callout{
+      padding:clamp(16px, 2.5vw, 26px);
+      border-radius:24px;
+      background:linear-gradient(180deg, #ffffff, #f8fafc);
+      border:1px solid rgba(148,163,184,.35);
+      box-shadow:0 12px 24px rgba(15,23,42,.06);
+    }
+
+    .callout.green{
+      background:linear-gradient(180deg, #f0fdf4, #ffffff);
+      border-color:rgba(22,163,74,.25);
+    }
+
+    .callout.yellow{
+      background:linear-gradient(180deg, #fffbeb, #ffffff);
+      border-color:rgba(245,158,11,.28);
+    }
+
+    .callout.blue{
+      background:linear-gradient(180deg, #eff6ff, #ffffff);
+      border-color:rgba(37,99,235,.28);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:clamp(14px, 2vw, 24px);
+      align-items:stretch;
+    }
+
+    .grid.three{
+      grid-template-columns:repeat(3, minmax(0,1fr));
+    }
+
+    .formula{
+      display:block;
+      width:max-content;
+      max-width:100%;
+      margin:12px 0 0;
+      padding:12px 16px;
+      border-radius:18px;
+      background:#0f172a;
+      color:#fff;
+      font-size:clamp(1.05rem, 2.4vw, 1.55rem);
+      overflow-x:auto;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:minmax(0, 1.1fr) minmax(260px, .9fr);
+      gap:clamp(18px, 3vw, 34px);
+      align-items:center;
+    }
+
+    .mini-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,.28);
+      background:#fff;
+    }
+
+    .mini-table th,
+    .mini-table td{
+      padding:14px 16px;
+      text-align:left;
+      border-bottom:1px solid rgba(148,163,184,.22);
+      vertical-align:top;
+    }
+
+    .mini-table tr:last-child td{ border-bottom:0; }
+    .mini-table th{
+      background:#eff6ff;
+      color:#1e3a8a;
+      font-size:clamp(.95rem, 1.9vw, 1.2rem);
+    }
+
+    .svg-card{
+      width:100%;
+      min-height:240px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+      border-radius:24px;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(135deg, rgba(37,99,235,.45), rgba(20,184,166,.35)) border-box;
+      border:1px solid transparent;
+      box-shadow:0 12px 28px rgba(15,23,42,.08);
+    }
+
+    svg{
+      max-width:100%;
+      height:auto;
+      font-family:inherit;
+    }
+
+    .steps{
+      counter-reset: step;
+      list-style:none;
+      padding:0;
+      display:grid;
+      gap:12px;
+    }
+
+    .steps li{
+      counter-increment: step;
+      position:relative;
+      padding:14px 16px 14px 58px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid rgba(148,163,184,.24);
+    }
+
+    .steps li::before{
+      content:counter(step);
+      position:absolute;
+      left:14px;
+      top:14px;
+      width:30px;
+      height:30px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:var(--brand);
+      color:#fff;
+      font-weight:800;
+    }
+
+    .quiz{
+      display:grid;
+      gap:14px;
+    }
+
+    .q{
+      padding:16px;
+      border:1px solid rgba(148,163,184,.3);
+      border-radius:20px;
+      background:#fff;
+    }
+
+    .q p{
+      font-weight:750;
+      margin-bottom:10px;
+    }
+
+    .q label{
+      display:block;
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-size:clamp(1rem, 2.1vw, 1.3rem);
+    }
+
+    .q label:hover{
+      background:#f1f5f9;
+    }
+
+    .feedback{
+      margin-top:10px;
+      font-weight:700;
+      min-height:1.6em;
+      font-size:clamp(.98rem, 1.9vw, 1.2rem);
+    }
+
+    .feedback.ok{ color:var(--ok); }
+    .feedback.bad{ color:var(--danger); }
+
+    .quiz-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    button, .btn{
+      border:0;
+      border-radius:999px;
+      padding:12px 18px;
+      font-weight:800;
+      font-size:clamp(.96rem, 1.8vw, 1.12rem);
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      background:#e2e8f0;
+      color:#172033;
+    }
+
+    .primary{
+      background:linear-gradient(135deg, #2563eb, #1d4ed8);
+      color:#fff;
+    }
+
+    .secondary{
+      background:#f1f5f9;
+      color:#0f172a;
+      border:1px solid rgba(148,163,184,.4);
+    }
+
+    .final-banner{
+      margin-top:22px;
+      padding:clamp(18px, 3vw, 28px);
+      border-radius:26px;
+      background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(13,148,136,.13));
+      border:1px solid rgba(37,99,235,.22);
+    }
+
+    .final-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      z-index:20;
+      left:50%;
+      bottom:calc(14px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      width:min(var(--maxw), calc(100vw - 28px));
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      backdrop-filter: blur(14px);
+      border:1px solid rgba(148,163,184,.34);
+      box-shadow:0 16px 38px rgba(15,23,42,.18);
+    }
+
+    .bottom-nav button{
+      padding:12px 18px;
+      white-space:nowrap;
+    }
+
+    .bottom-nav button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .counter{
+      text-align:center;
+      color:var(--muted);
+      font-weight:800;
+      font-size:clamp(.94rem, 1.8vw, 1.1rem);
+    }
+
+    @media (max-width: 860px){
+      .app{
+        width:min(100vw - 18px, var(--maxw));
+        padding-top:10px;
+        padding-bottom:92px;
+      }
+      .page{
+        min-height:calc(100vh - 112px);
+        border-radius:22px;
+      }
+      .split,
+      .grid,
+      .grid.three{
+        grid-template-columns:1fr;
+      }
+      .top-banner{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .svg-card{ min-height:190px; }
+    }
+
+    @media (max-width: 540px){
+      .page{
+        padding:20px;
+        justify-content:flex-start;
+      }
+      .bottom-nav{
+        grid-template-columns:1fr 1fr;
+        border-radius:24px;
+      }
+      .counter{
+        grid-column:1 / -1;
+        grid-row:1;
+      }
+      #prevBtn{ grid-column:1; grid-row:2; }
+      #nextBtn{ grid-column:2; grid-row:2; }
+      .bottom-nav button{
+        width:100%;
+        padding:12px 10px;
+      }
+      .mini-table th,
+      .mini-table td{
+        padding:11px 12px;
+      }
+      .final-actions .btn{
+        width:100%;
+      }
+    }
+
+    @media (min-width: 1180px){
+      .page{
+        min-height:760px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app" id="app">
+
+    <!-- ============================================================
+         Pagina 1 — Start / prezentare
+         Tipar: banner de sus + fir de context + titlu + idee centrală
+         ============================================================ -->
+    <section class="page active" data-title="Start">
+      <div class="top-banner">
+        <strong>Fizică • {{CLASA}} • {{CAPITOL}}</strong>
+        <span class="chip light">Lecția {{NUMAR_LECTIE}}</span>
+      </div>
+
+      <p class="crumbs">{{CAPITOL}} › {{SUBTEMA}}</p>
+      <h1>{{TITLU_LECTIE}}</h1>
+
+      <p class="lead">
+        {{TEXT_INTRODUCTIV}}
+      </p>
+
+      <div class="idea">
+        <strong>Ideea lecției:</strong> {{IDEEA_CENTRALA}}
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pagina 2 — Observăm / context din viața de zi cu zi
+         Tipar: grilă cu 2 exemple (callout blue + callout green)
+         ============================================================ -->
+    <section class="page" data-title="Observăm">
+      <h2>1. {{TITLU_SECTIUNE_OBSERVAM}}</h2>
+
+      <div class="grid">
+        <div class="callout blue">
+          <h3>{{TITLU_EXEMPLU_1}}</h3>
+          <p>{{TEXT_EXEMPLU_1}}</p>
+        </div>
+
+        <div class="callout green">
+          <h3>{{TITLU_EXEMPLU_2}}</h3>
+          <p>{{TEXT_EXEMPLU_2}}</p>
+        </div>
+      </div>
+
+      <div class="idea">
+        <strong>Întrebare de gândire:</strong> {{INTREBARE_DE_GANDIRE}}
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pagina 3 — Principiul / definiția fizică
+         Tipar: text pe stânga + formulă + schemă SVG pe dreapta
+         (elimină .split / .svg-card dacă lecția nu are nevoie de schemă)
+         ============================================================ -->
+    <section class="page" data-title="Principiul">
+      <div class="split">
+        <div>
+          <h2>2. {{TITLU_SECTIUNE_PRINCIPIU}}</h2>
+          <p>{{DEFINITIE}}</p>
+          <span class="formula">$ {{FORMULA_PRINCIPALA}} $</span>
+          <p style="margin-top:18px">{{TEXT_SUPLIMENTAR}}</p>
+        </div>
+
+        <div class="svg-card" aria-label="{{DESCRIERE_SCHEMA}}">
+          <!-- Opțional: schemă SVG proprie. Elimină tot blocul .svg-card
+               dacă lecția nu are nevoie de o ilustrație grafică. -->
+          <svg viewBox="0 0 420 260" role="img">
+            <rect x="25" y="30" width="370" height="200" rx="24" fill="#eff6ff" stroke="#bfdbfe" />
+            <text x="210" y="140" text-anchor="middle" font-size="22" font-weight="800" fill="#172033">
+              {{ETICHETA_SCHEMA}}
+            </text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pagina 4 — Detaliu / clasificare
+         Tipar: text + tabel comparativ (mini-table)
+         ============================================================ -->
+    <section class="page" data-title="Detaliu">
+      <h2>3. {{TITLU_SECTIUNE_DETALIU}}</h2>
+
+      <p>{{TEXT_DETALIU}}</p>
+
+      <span class="formula">$ {{FORMULA_SECUNDARA}} $</span>
+
+      <div class="callout yellow" style="margin-top:18px">
+        <h3>{{TITLU_TABEL}}</h3>
+        <table class="mini-table">
+          <thead>
+            <tr>
+              <th>{{COLOANA_1}}</th>
+              <th>{{COLOANA_2}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{RAND_1_COL_1}}</td>
+              <td>{{RAND_1_COL_2}}</td>
+            </tr>
+            <tr>
+              <td>{{RAND_2_COL_1}}</td>
+              <td>{{RAND_2_COL_2}}</td>
+            </tr>
+            <tr>
+              <td>{{RAND_3_COL_1}}</td>
+              <td>{{RAND_3_COL_2}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pagina 5 — Exemplu rezolvat pas cu pas
+         Tipar: listă .steps numerotată automat prin CSS counter
+         ============================================================ -->
+    <section class="page" data-title="Exemplu rezolvat">
+      <h2>4. {{TITLU_EXEMPLU_REZOLVAT}}</h2>
+
+      <p>{{ENUNT_PROBLEMA}}</p>
+
+      <ol class="steps">
+        <li>{{PAS_1}}</li>
+        <li>{{PAS_2}}</li>
+        <li>{{PAS_3}}</li>
+      </ol>
+
+      <span class="formula">$ {{REZULTAT_FINAL}} $</span>
+    </section>
+
+    <!-- ============================================================
+         Pagina 6 — Verifică rapid (quiz interactiv)
+         IMPORTANT: fiecare grup de radio (name="qN") trebuie să fie
+         unic în întreaga pagină — continuă numerotarea dacă adaugi
+         mai multe pagini de quiz (q1, q2, q3, ...).
+         ============================================================ -->
+    <section class="page" data-title="Verificare">
+      <h2>5. Verifică rapid</h2>
+
+      <div class="quiz" data-quiz>
+        <div class="q" data-answer="b">
+          <p>1. {{INTREBARE_1}}</p>
+          <label><input type="radio" name="q1" value="a"> {{RASPUNS_1A}}</label>
+          <label><input type="radio" name="q1" value="b"> {{RASPUNS_1B}}</label>
+          <label><input type="radio" name="q1" value="c"> {{RASPUNS_1C}}</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-answer="a">
+          <p>2. {{INTREBARE_2}}</p>
+          <label><input type="radio" name="q2" value="a"> {{RASPUNS_2A}}</label>
+          <label><input type="radio" name="q2" value="b"> {{RASPUNS_2B}}</label>
+          <label><input type="radio" name="q2" value="c"> {{RASPUNS_2C}}</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-actions">
+          <button class="primary" type="button" data-check>Verifică răspunsurile</button>
+          <button class="secondary" type="button" data-reset>Reia</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pagina 7 — Sinteză finală + semnătură + link către capitol
+         Tipar fix — păstrează structura, schimbă doar lista de puncte
+         ============================================================ -->
+    <section class="page" data-title="Sinteză">
+      <h2>6. Reține esențialul</h2>
+
+      <div class="callout green">
+        <ul>
+          <li>{{PUNCT_CHEIE_1}}</li>
+          <li>{{PUNCT_CHEIE_2}}</li>
+          <li>{{PUNCT_CHEIE_3}}</li>
+          <li>{{PUNCT_CHEIE_4}}</li>
+        </ul>
+      </div>
+
+      <div class="final-banner">
+        <h3>Ai terminat lecția.</h3>
+        <p>
+          Prof. Dănuț Andronie<br>
+          e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a>
+        </p>
+
+        <div class="final-actions">
+          <a class="btn secondary" href="./index.html">Înapoi la capitol</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navigare pagini lecție">
+    <button id="prevBtn" class="secondary" type="button">‹ Înapoi</button>
+    <div class="counter" id="counter">Pagina 1 / 7</div>
+    <button id="nextBtn" class="primary" type="button">Înainte ›</button>
+  </nav>
+
+  <script>
+    (function(){
+      const pages = Array.from(document.querySelectorAll('.page'));
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const counter = document.getElementById('counter');
+      // Actualizează cu calea reală către lecția următoare (sau './index.html'
+      // dacă e ultima lecție a capitolului).
+      const nextLessonHref = '{{HREF_LECTIA_URMATOARE}}';
+      let current = 0;
+
+      function showPage(index){
+        if(index < 0 || index >= pages.length) return;
+        pages[current].classList.remove('active');
+        current = index;
+        pages[current].classList.add('active');
+
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === pages.length - 1 ? 'Următoarea lecție ›' : 'Înainte ›';
+        counter.textContent = `Pagina ${current + 1} / ${pages.length}`;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if(window.MathJax && MathJax.typesetPromise){
+          MathJax.typesetPromise([pages[current]]).catch(() => {});
+        }
+      }
+
+      prevBtn.addEventListener('click', () => showPage(current - 1));
+      nextBtn.addEventListener('click', () => {
+        if(current === pages.length - 1){
+          window.location.href = nextLessonHref;
+        } else {
+          showPage(current + 1);
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if(event.key === 'ArrowLeft') showPage(current - 1);
+        if(event.key === 'ArrowRight'){
+          if(current < pages.length - 1) showPage(current + 1);
+        }
+      });
+
+      let startX = null;
+      document.addEventListener('touchstart', (event) => {
+        startX = event.changedTouches[0].screenX;
+      }, { passive: true });
+
+      document.addEventListener('touchend', (event) => {
+        if(startX === null) return;
+        const endX = event.changedTouches[0].screenX;
+        const diff = endX - startX;
+        if(Math.abs(diff) > 70){
+          if(diff > 0) showPage(current - 1);
+          else if(current < pages.length - 1) showPage(current + 1);
+        }
+        startX = null;
+      }, { passive: true });
+
+      document.querySelectorAll('[data-check]').forEach(button => {
+        button.addEventListener('click', () => {
+          const quiz = button.closest('[data-quiz]');
+          quiz.querySelectorAll('.q').forEach((question) => {
+            const answer = question.dataset.answer;
+            const checked = question.querySelector('input[type="radio"]:checked');
+            const feedback = question.querySelector('.feedback');
+
+            feedback.classList.remove('ok', 'bad');
+
+            if(!checked){
+              feedback.textContent = 'Alege un răspuns.';
+              feedback.classList.add('bad');
+              return;
+            }
+
+            if(checked.value === answer){
+              feedback.textContent = 'Corect!';
+              feedback.classList.add('ok');
+            } else {
+              feedback.textContent = '{{MESAJ_RASPUNS_GRESIT}}';
+              feedback.classList.add('bad');
+            }
+          });
+        });
+      });
+
+      document.querySelectorAll('[data-reset]').forEach(button => {
+        button.addEventListener('click', () => {
+          const quiz = button.closest('[data-quiz]');
+          quiz.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+          quiz.querySelectorAll('.feedback').forEach(feedback => {
+            feedback.textContent = '';
+            feedback.classList.remove('ok', 'bad');
+          });
+        });
+      });
+
+      showPage(0);
+    })();
+  </script>
+</body>
+</html>
