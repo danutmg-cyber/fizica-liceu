@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Problema 3 — Mișcare uniformă | fizica-liceu</title>
+
+<style>
+  :root{
+    --bg:#f4f7fb; --panel:#ffffff; --ink:#172033; --muted:#5f6b7a;
+    --brand:#2563eb; --brand-2:#0f766e; --accent:#f59e0b;
+    --soft:#eaf2ff; --soft-2:#ecfdf5; --danger:#dc2626; --ok:#15803d;
+    --radius:26px; --shadow:0 18px 45px rgba(15,23,42,.12); --maxw:1120px;
+  }
+  *{ box-sizing:border-box; }
+  html, body{
+    margin:0; min-height:100%;
+    background:
+      radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34rem),
+      radial-gradient(circle at bottom right, rgba(20,184,166,.14), transparent 32rem),
+      var(--bg);
+    color:var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, Helvetica, sans-serif;
+    line-height:1.55;
+  }
+  body{ overflow-x:hidden; }
+  .app{ width:min(var(--maxw), calc(100vw - 28px)); min-height:100vh; margin:0 auto; padding:clamp(14px, 2vw, 24px) 0 96px; display:flex; align-items:stretch; }
+  .page{ display:none; width:100%; min-height:calc(100vh - 128px); margin:auto 0; background:rgba(255,255,255,.92); border:1px solid rgba(148,163,184,.28); border-radius:var(--radius); box-shadow:var(--shadow); padding:clamp(20px, 4vw, 52px); position:relative; overflow:hidden; }
+  .page.active{ display:flex; flex-direction:column; justify-content:center; animation:fadeIn .22s ease-out; }
+  @keyframes fadeIn{ from{ opacity:.25; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .top-banner{ display:flex; gap:16px; align-items:center; justify-content:space-between; padding:18px 20px; border-radius:24px; background:linear-gradient(135deg, #2563eb, #0f766e); color:#fff; margin-bottom:clamp(18px, 3vw, 34px); box-shadow:0 16px 35px rgba(37,99,235,.22); }
+  .top-banner strong{ font-size:clamp(1.05rem, 1.8vw, 1.35rem); }
+  .chip{ display:inline-flex; align-items:center; gap:8px; width:max-content; padding:7px 12px; border-radius:999px; background:rgba(37,99,235,.10); color:#1e40af; font-weight:700; font-size:clamp(.82rem, 1.5vw, .95rem); }
+  .chip.light{ background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.24); }
+  .crumbs{ margin:0 0 12px; color:var(--muted); font-size:clamp(.86rem, 1.5vw, 1rem); font-weight:650; }
+  h1{ margin:0 0 18px; font-size:clamp(2rem, 6vw, 4.7rem); line-height:1.03; letter-spacing:-.04em; }
+  h2{ margin:0 0 18px; color:var(--brand); font-size:clamp(1.65rem, 4.2vw, 3.2rem); line-height:1.08; letter-spacing:-.035em; }
+  h3{ margin:0 0 10px; font-size:clamp(1.2rem, 2.4vw, 1.65rem); line-height:1.18; }
+  p, li, td, th{ font-size:clamp(1.02rem, 2.25vw, 1.45rem); }
+  p{ margin:0 0 16px; }
+  ul, ol{ margin:0; padding-left:1.25em; }
+  li{ margin:.35em 0; }
+  .lead{ font-size:clamp(1.18rem, 2.65vw, 1.7rem); color:#26354f; max-width:900px; }
+  .idea{ margin-top:clamp(14px, 2vw, 24px); padding:clamp(16px, 2.2vw, 22px); border-radius:22px; background:var(--soft); border-left:8px solid var(--brand); font-size:clamp(1.08rem, 2.35vw, 1.52rem); }
+  .callout{ padding:clamp(16px, 2.5vw, 26px); border-radius:24px; background:linear-gradient(180deg, #ffffff, #f8fafc); border:1px solid rgba(148,163,184,.35); box-shadow:0 12px 24px rgba(15,23,42,.06); }
+  .callout.green{ background:linear-gradient(180deg, #f0fdf4, #ffffff); border-color:rgba(22,163,74,.25); }
+  .callout.blue{ background:linear-gradient(180deg, #eff6ff, #ffffff); border-color:rgba(37,99,235,.28); }
+  .split{ display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(260px, .9fr); gap:clamp(18px, 3vw, 34px); align-items:center; }
+  .formula{ display:block; width:max-content; max-width:100%; margin:12px 0 0; padding:12px 16px; border-radius:18px; background:#0f172a; color:#fff; font-family:"Cambria Math", Cambria, Georgia, serif; font-size:clamp(1.05rem, 2.4vw, 1.55rem); overflow-x:auto; }
+  .svg-card{ width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:12px; border-radius:24px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, rgba(37,99,235,.45), rgba(20,184,166,.35)) border-box; border:1px solid transparent; box-shadow:0 12px 28px rgba(15,23,42,.08); margin-bottom:16px; }
+  svg{ max-width:100%; height:auto; font-family:inherit; }
+  .steps{ counter-reset: step; list-style:none; padding:0; display:grid; gap:12px; }
+  .steps li{ counter-increment: step; position:relative; padding:14px 16px 14px 58px; border-radius:18px; background:#f8fafc; border:1px solid rgba(148,163,184,.24); }
+  .steps li::before{ content:counter(step); position:absolute; left:14px; top:14px; width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:var(--brand); color:#fff; font-weight:800; }
+  .verify-box{ margin-top:16px; padding:14px 16px; border-radius:18px; background:var(--soft-2); border-left:8px solid var(--ok); color:#0f3d24; font-size:clamp(.98rem, 2vw, 1.2rem); }
+  .verify-box b{ color:var(--ok); }
+  .result-chip{ display:inline-flex; align-items:center; gap:10px; margin-top:14px; padding:12px 20px; border-radius:999px; background:linear-gradient(135deg, #16a34a, #15803d); color:#fff; font-weight:800; font-size:clamp(1.1rem, 2.4vw, 1.5rem); box-shadow:0 12px 24px rgba(21,128,61,.28); }
+  .result-chip + .result-chip{ margin-left:10px; }
+  button, .btn{ border:0; border-radius:999px; padding:12px 18px; font-weight:800; font-size:clamp(.96rem, 1.8vw, 1.12rem); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e2e8f0; color:#172033; }
+  .primary{ background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; }
+  .secondary{ background:#f1f5f9; color:#0f172a; border:1px solid rgba(148,163,184,.4); }
+  .final-banner{ margin-top:22px; padding:clamp(18px, 3vw, 28px); border-radius:26px; background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(13,148,136,.13)); border:1px solid rgba(37,99,235,.22); }
+  .final-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+  .bottom-nav{ position:fixed; z-index:20; left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(var(--maxw), calc(100vw - 28px)); display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px; border-radius:999px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.34); box-shadow:0 16px 38px rgba(15,23,42,.18); }
+  .bottom-nav button{ padding:12px 18px; white-space:nowrap; }
+  .bottom-nav button:disabled{ opacity:.45; cursor:not-allowed; }
+  .counter{ text-align:center; color:var(--muted); font-weight:800; font-size:clamp(.94rem, 1.8vw, 1.1rem); }
+  @media (max-width: 860px){ .app{ width:min(100vw - 18px, var(--maxw)); padding-top:10px; padding-bottom:92px; } .page{ min-height:calc(100vh - 112px); border-radius:22px; } .split{ grid-template-columns:1fr; } .top-banner{ flex-direction:column; align-items:flex-start; } .svg-card{ min-height:170px; } }
+  @media (max-width: 540px){ .page{ padding:20px; justify-content:flex-start; } .bottom-nav{ grid-template-columns:1fr 1fr; border-radius:24px; } .counter{ grid-column:1 / -1; grid-row:1; } #prevBtn{ grid-column:1; grid-row:2; } #nextBtn{ grid-column:2; grid-row:2; } .bottom-nav button{ width:100%; padding:12px 10px; } .final-actions .btn{ width:100%; } .result-chip + .result-chip{ margin-left:0; margin-top:8px; } }
+  @media (min-width: 1180px){ .page{ min-height:760px; } }
+  @media print{ .bottom-nav{ display:none; } .page{ display:flex !important; box-shadow:none; page-break-after:always; } }
+</style>
+</head>
+<body>
+  <main class="app" id="app">
+
+    <section class="page active" data-title="Start">
+      <div class="top-banner">
+        <strong>Fizică • Exerciții suplimentare • Mișcare uniformă</strong>
+        <span class="chip light">Institutul de construcții — București, 1957</span>
+      </div>
+      <p class="crumbs">Mișcare uniformă și uniform variată › Problema 3</p>
+      <h1>Problema 3</h1>
+      <p class="lead">Două automobile pleacă simultan din orașele A și B, mergând unul spre celălalt, se întâlnesc, apoi își continuă drumul fără oprire, fiecare cu viteza avută înainte.</p>
+      <div class="idea"><strong>Ideea lecției:</strong> la întâlnire, ceea ce parcursese fiecare mobil devine exact distanța pe care celălalt o mai are de străbătut. De aici rezultă o relație elegantă între timpii suplimentari și timpul de întâlnire.</div>
+    </section>
+
+    <section class="page" data-title="Enunț">
+      <h2>1. Enunțul problemei</h2>
+      <div class="callout blue">
+        <p style="margin-bottom:0">Două automobile pleacă simultan din orașele A și B, mergând unul spre celălalt. Automobilele se întâlnesc după o oră și, fără a se opri, își continuă drumul, fiecare cu viteza anterioară. Primul automobil ajunge în orașul B cu 27 minute mai târziu decât ajunge al doilea în A. Ce viteze au avut cele două automobile, dacă distanța AB este de 90 km?</p>
+      </div>
+      <div class="idea" style="margin-top:22px"><strong>Date:</strong> AB = 90 km &nbsp;·&nbsp; t<sub>întâlnire</sub> = 1 h &nbsp;·&nbsp; întârziere primul față de al doilea = 27 min</div>
+    </section>
+
+    <section class="page" data-title="Schiță">
+      <h2>2. Schiță grafică</h2>
+      <div class="split">
+        <div>
+          <p>La întâlnire (după 1 h), notăm cu <b>d₁</b> distanța parcursă de primul automobil (din A) și cu <b>d₂</b> distanța parcursă de al doilea (din B). Ce mai are de mers fiecare mai departe este exact cât parcursese celălalt până la întâlnire.</p>
+          <span class="formula">d₁ = v₁·1 &nbsp;;&nbsp; d₂ = v₂·1</span>
+          <span class="formula" style="margin-top:8px">d₁ + d₂ = 90</span>
+        </div>
+        <div class="svg-card" aria-label="Schemă: două automobile plecând din A și B, întâlnindu-se, apoi continuând spre celălalt oraș">
+          <svg viewBox="0 0 420 220" role="img">
+            <rect x="20" y="120" width="380" height="20" rx="6" fill="#172033"></rect>
+            <line x1="20" y1="130" x2="400" y2="130" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 7"></line>
+
+            <line x1="40" y1="105" x2="40" y2="155" stroke="#94a3b8" stroke-width="1.5"></line>
+            <text x="22" y="98" font-size="13" font-weight="700" fill="#172033">A</text>
+
+            <line x1="380" y1="105" x2="380" y2="155" stroke="#94a3b8" stroke-width="1.5"></line>
+            <text x="368" y="98" font-size="13" font-weight="700" fill="#172033">B</text>
+
+            <line x1="200" y1="90" x2="200" y2="170" stroke="#2563eb" stroke-width="2.5"></line>
+            <circle cx="200" cy="83" r="14" fill="#2563eb"></circle>
+            <text x="200" y="88" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">M</text>
+
+            <path d="M42 145 Q120 160 198 145" stroke="#0f766e" fill="none" stroke-width="1.5"></path>
+            <text x="120" y="178" text-anchor="middle" font-size="12" fill="#0f766e" font-weight="800">d₁</text>
+
+            <path d="M202 145 Q290 160 378 145" stroke="#dc2626" fill="none" stroke-width="1.5"></path>
+            <text x="290" y="178" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="800">d₂</text>
+
+            <g transform="translate(110,105) rotate(0)">
+              <polygon points="0,-8 26,0 0,8 6,0" fill="#0f766e"></polygon>
+            </g>
+            <text x="110" y="200" text-anchor="middle" font-size="11" fill="#5f6b7a">auto 1 (v₁), pornit din A</text>
+
+            <g transform="translate(300,105) rotate(180)">
+              <polygon points="0,-8 26,0 0,8 6,0" fill="#dc2626"></polygon>
+            </g>
+            <text x="300" y="200" text-anchor="middle" font-size="11" fill="#5f6b7a">auto 2 (v₂), pornit din B</text>
+
+            <path d="M100 55 Q200 30 300 55" stroke="#f59e0b" fill="none" stroke-width="1.5"></path>
+            <text x="200" y="34" text-anchor="middle" font-size="11" fill="#b45309" font-weight="700">se întâlnesc după 1 h</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" data-title="Rezolvare 1">
+      <h2>3. Rezolvare — sistemul de ecuații</h2>
+      <ol class="steps">
+        <li>Notăm distanțele parcurse până la întâlnire: d₁ (de primul, din A) și d₂ (de al doilea, din B). Din condiția de întâlnire după 1 h: <span class="formula" style="margin-top:8px">d₁ = v₁·1 &nbsp;;&nbsp; d₂ = v₂·1 &nbsp;→&nbsp; d₁ + d₂ = 90</span></li>
+        <li>Ce mai are de parcurs fiecare după întâlnire este distanța făcută de celălalt (d₂ pentru primul, d₁ pentru al doilea): <span class="formula" style="margin-top:8px">t₁' = d₂ / v₁ &nbsp;;&nbsp; t₂' = d₁ / v₂ &nbsp;→&nbsp; t₁'·t₂' = (d₁·d₂)/(v₁·v₂) = 1</span></li>
+        <li>Condiția din enunț: primul ajunge cu 27 min mai târziu: <span class="formula" style="margin-top:8px">t₁' − t₂' = 0,45 h</span></li>
+      </ol>
+    </section>
+
+    <section class="page" data-title="Rezolvare 2">
+      <h2>4. Rezolvare — timpii suplimentari</h2>
+      <p>Notăm y = t₂'. Din t₁'·t₂' = 1 rezultă t₁' = y + 0,45, deci:</p>
+      <div class="formula">y·(y + 0,45) = 1 &nbsp;→&nbsp; y² + 0,45y − 1 = 0</div>
+      <div class="formula">y = (−0,45 + √4,2025) / 2 = (−0,45 + 2,05) / 2 = 0,8</div>
+      <div class="result-chip">t₂' = 0,8 h = 48 min</div>
+      <div class="result-chip">t₁' = 1,25 h = 1h 15 min</div>
+    </section>
+
+    <section class="page" data-title="Rezolvare 3">
+      <h2>5. Rezolvare — vitezele</h2>
+      <ol class="steps">
+        <li>Distanța rămasă pentru primul este d₂, parcursă în t₁': <span class="formula" style="margin-top:8px">v₁·t₁' = d₂ = v₂·1 &nbsp;→&nbsp; v₁·1,25 = v₂ &nbsp;→&nbsp; v₂ = 1,25·v₁</span></li>
+        <li>Înlocuim în v₁ + v₂ = 90: <span class="formula" style="margin-top:8px">v₁ + 1,25·v₁ = 90 &nbsp;→&nbsp; 2,25·v₁ = 90</span></li>
+      </ol>
+      <div class="result-chip">v₁ = 40 km/h (din A)</div>
+      <div class="result-chip">v₂ = 50 km/h (din B)</div>
+      <div class="verify-box"><b>Verificare:</b> primul ajunge în B după 1 + 1,25 = 2,25 h = 2h15min; al doilea ajunge în A după 1 + 0,8 = 1,8 h = 1h48min. Diferența: 2h15min − 1h48min = <b>27 min</b> ✓</div>
+    </section>
+
+    <section class="page" data-title="Sinteză">
+      <h2>6. Reține esențialul</h2>
+      <div class="callout green">
+        <ul>
+          <li>La întâlnire, notăm distanțele parcurse cu d₁ și d₂ (nu confundăm viteza v cu distanța d) — distanța rămasă pentru fiecare mobil este cea parcursă de celălalt.</li>
+          <li>Relația elegantă: t₁' · t₂' = t<sub>întâlnire</sub>² — produsul timpilor suplimentari este pătratul timpului de întâlnire.</li>
+          <li>Rezolvând sistemul {d₁+d₂=90, t₁'−t₂'=0,45}, obținem v₁ = 40 km/h și v₂ = 50 km/h.</li>
+        </ul>
+      </div>
+      <div class="final-banner">
+        <h3>Ai terminat problema.</h3>
+        <p>Prof. Dănuț Andronie<br>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
+        <div class="final-actions">
+          <a class="btn secondary" href="./problema-2.html">‹ Problema anterioară</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navigare pagini">
+    <button id="prevBtn" class="secondary" type="button">‹ Înapoi</button>
+    <div class="counter" id="counter">Pagina 1 / 7</div>
+    <button id="nextBtn" class="primary" type="button">Înainte ›</button>
+  </nav>
+
+  <script>
+    (function(){
+      const pages = Array.from(document.querySelectorAll('.page'));
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const counter = document.getElementById('counter');
+      let current = 0;
+      function showPage(index){
+        if(index < 0 || index >= pages.length) return;
+        pages[current].classList.remove('active');
+        current = index;
+        pages[current].classList.add('active');
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === pages.length - 1;
+        counter.textContent = `Pagina ${current + 1} / ${pages.length}`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      prevBtn.addEventListener('click', () => showPage(current - 1));
+      nextBtn.addEventListener('click', () => showPage(current + 1));
+      document.addEventListener('keydown', (event) => {
+        if(event.key === 'ArrowLeft') showPage(current - 1);
+        if(event.key === 'ArrowRight') showPage(current + 1);
+      });
+      let startX = null;
+      document.addEventListener('touchstart', (event) => { startX = event.changedTouches[0].screenX; }, { passive: true });
+      document.addEventListener('touchend', (event) => {
+        if(startX === null) return;
+        const diff = event.changedTouches[0].screenX - startX;
+        if(Math.abs(diff) > 70){ if(diff > 0) showPage(current - 1); else showPage(current + 1); }
+        startX = null;
+      }, { passive: true });
+      showPage(0);
+    })();
+  </script>
+</body>
+</html>
