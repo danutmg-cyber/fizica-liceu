@@ -1,232 +1,996 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Problema 3 — Mișcare uniformă | fizica-liceu</title>
-
-<style>
-  :root{
-    --bg:#f4f7fb; --panel:#ffffff; --ink:#172033; --muted:#5f6b7a;
-    --brand:#2563eb; --brand-2:#0f766e; --accent:#f59e0b;
-    --soft:#eaf2ff; --soft-2:#ecfdf5; --danger:#dc2626; --ok:#15803d;
-    --radius:26px; --shadow:0 18px 45px rgba(15,23,42,.12); --maxw:1120px;
-  }
-  *{ box-sizing:border-box; }
-  html, body{
-    margin:0; min-height:100%;
-    background:
-      radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34rem),
-      radial-gradient(circle at bottom right, rgba(20,184,166,.14), transparent 32rem),
-      var(--bg);
-    color:var(--ink);
-    font-family: system-ui, -apple-system, "Segoe UI", Arial, Helvetica, sans-serif;
-    line-height:1.55;
-  }
-  body{ overflow-x:hidden; }
-  .app{ width:min(var(--maxw), calc(100vw - 28px)); min-height:100vh; margin:0 auto; padding:clamp(14px, 2vw, 24px) 0 96px; display:flex; align-items:stretch; }
-  .page{ display:none; width:100%; min-height:calc(100vh - 128px); margin:auto 0; background:rgba(255,255,255,.92); border:1px solid rgba(148,163,184,.28); border-radius:var(--radius); box-shadow:var(--shadow); padding:clamp(20px, 4vw, 52px); position:relative; overflow:hidden; }
-  .page.active{ display:flex; flex-direction:column; justify-content:center; animation:fadeIn .22s ease-out; }
-  @keyframes fadeIn{ from{ opacity:.25; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-  .top-banner{ display:flex; gap:16px; align-items:center; justify-content:space-between; padding:18px 20px; border-radius:24px; background:linear-gradient(135deg, #2563eb, #0f766e); color:#fff; margin-bottom:clamp(18px, 3vw, 34px); box-shadow:0 16px 35px rgba(37,99,235,.22); }
-  .top-banner strong{ font-size:clamp(1.05rem, 1.8vw, 1.35rem); }
-  .chip{ display:inline-flex; align-items:center; gap:8px; width:max-content; padding:7px 12px; border-radius:999px; background:rgba(37,99,235,.10); color:#1e40af; font-weight:700; font-size:clamp(.82rem, 1.5vw, .95rem); }
-  .chip.light{ background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.24); }
-  .crumbs{ margin:0 0 12px; color:var(--muted); font-size:clamp(.86rem, 1.5vw, 1rem); font-weight:650; }
-  h1{ margin:0 0 18px; font-size:clamp(2rem, 6vw, 4.7rem); line-height:1.03; letter-spacing:-.04em; }
-  h2{ margin:0 0 18px; color:var(--brand); font-size:clamp(1.65rem, 4.2vw, 3.2rem); line-height:1.08; letter-spacing:-.035em; }
-  h3{ margin:0 0 10px; font-size:clamp(1.2rem, 2.4vw, 1.65rem); line-height:1.18; }
-  p, li, td, th{ font-size:clamp(1.02rem, 2.25vw, 1.45rem); }
-  p{ margin:0 0 16px; }
-  ul, ol{ margin:0; padding-left:1.25em; }
-  li{ margin:.35em 0; }
-  .lead{ font-size:clamp(1.18rem, 2.65vw, 1.7rem); color:#26354f; max-width:900px; }
-  .idea{ margin-top:clamp(14px, 2vw, 24px); padding:clamp(16px, 2.2vw, 22px); border-radius:22px; background:var(--soft); border-left:8px solid var(--brand); font-size:clamp(1.08rem, 2.35vw, 1.52rem); }
-  .callout{ padding:clamp(16px, 2.5vw, 26px); border-radius:24px; background:linear-gradient(180deg, #ffffff, #f8fafc); border:1px solid rgba(148,163,184,.35); box-shadow:0 12px 24px rgba(15,23,42,.06); }
-  .callout.green{ background:linear-gradient(180deg, #f0fdf4, #ffffff); border-color:rgba(22,163,74,.25); }
-  .callout.blue{ background:linear-gradient(180deg, #eff6ff, #ffffff); border-color:rgba(37,99,235,.28); }
-  .split{ display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(260px, .9fr); gap:clamp(18px, 3vw, 34px); align-items:center; }
-  .formula{ display:block; width:max-content; max-width:100%; margin:12px 0 0; padding:12px 16px; border-radius:18px; background:#0f172a; color:#fff; font-family:"Cambria Math", Cambria, Georgia, serif; font-size:clamp(1.05rem, 2.4vw, 1.55rem); overflow-x:auto; }
-  .svg-card{ width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:12px; border-radius:24px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, rgba(37,99,235,.45), rgba(20,184,166,.35)) border-box; border:1px solid transparent; box-shadow:0 12px 28px rgba(15,23,42,.08); margin-bottom:16px; }
-  svg{ max-width:100%; height:auto; font-family:inherit; }
-  .steps{ counter-reset: step; list-style:none; padding:0; display:grid; gap:12px; }
-  .steps li{ counter-increment: step; position:relative; padding:14px 16px 14px 58px; border-radius:18px; background:#f8fafc; border:1px solid rgba(148,163,184,.24); }
-  .steps li::before{ content:counter(step); position:absolute; left:14px; top:14px; width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:var(--brand); color:#fff; font-weight:800; }
-  .verify-box{ margin-top:16px; padding:14px 16px; border-radius:18px; background:var(--soft-2); border-left:8px solid var(--ok); color:#0f3d24; font-size:clamp(.98rem, 2vw, 1.2rem); }
-  .verify-box b{ color:var(--ok); }
-  .result-chip{ display:inline-flex; align-items:center; gap:10px; margin-top:14px; padding:12px 20px; border-radius:999px; background:linear-gradient(135deg, #16a34a, #15803d); color:#fff; font-weight:800; font-size:clamp(1.1rem, 2.4vw, 1.5rem); box-shadow:0 12px 24px rgba(21,128,61,.28); }
-  .result-chip + .result-chip{ margin-left:10px; }
-  button, .btn{ border:0; border-radius:999px; padding:12px 18px; font-weight:800; font-size:clamp(.96rem, 1.8vw, 1.12rem); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e2e8f0; color:#172033; }
-  .primary{ background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; }
-  .secondary{ background:#f1f5f9; color:#0f172a; border:1px solid rgba(148,163,184,.4); }
-  .final-banner{ margin-top:22px; padding:clamp(18px, 3vw, 28px); border-radius:26px; background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(13,148,136,.13)); border:1px solid rgba(37,99,235,.22); }
-  .final-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
-  .bottom-nav{ position:fixed; z-index:20; left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(var(--maxw), calc(100vw - 28px)); display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px; border-radius:999px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.34); box-shadow:0 16px 38px rgba(15,23,42,.18); }
-  .bottom-nav button{ padding:12px 18px; white-space:nowrap; }
-  .bottom-nav button:disabled{ opacity:.45; cursor:not-allowed; }
-  .counter{ text-align:center; color:var(--muted); font-weight:800; font-size:clamp(.94rem, 1.8vw, 1.1rem); }
-  @media (max-width: 860px){ .app{ width:min(100vw - 18px, var(--maxw)); padding-top:10px; padding-bottom:92px; } .page{ min-height:calc(100vh - 112px); border-radius:22px; } .split{ grid-template-columns:1fr; } .top-banner{ flex-direction:column; align-items:flex-start; } .svg-card{ min-height:170px; } }
-  @media (max-width: 540px){ .page{ padding:20px; justify-content:flex-start; } .bottom-nav{ grid-template-columns:1fr 1fr; border-radius:24px; } .counter{ grid-column:1 / -1; grid-row:1; } #prevBtn{ grid-column:1; grid-row:2; } #nextBtn{ grid-column:2; grid-row:2; } .bottom-nav button{ width:100%; padding:12px 10px; } .final-actions .btn{ width:100%; } .result-chip + .result-chip{ margin-left:0; margin-top:8px; } }
-  @media (min-width: 1180px){ .page{ min-height:760px; } }
-  @media print{ .bottom-nav{ display:none; } .page{ display:flex !important; box-shadow:none; page-break-after:always; } }
-</style>
-</head>
-<body>
-  <main class="app" id="app">
-
-    <section class="page active" data-title="Start">
-      <div class="top-banner">
-        <strong>Fizică • Exerciții suplimentare • Mișcare uniformă</strong>
-        <span class="chip light">Institutul de construcții — București, 1957</span>
-      </div>
-      <p class="crumbs">Mișcare uniformă și uniform variată › Problema 3</p>
-      <h1>Problema 3</h1>
-      <p class="lead">Două automobile pleacă simultan din orașele A și B, mergând unul spre celălalt, se întâlnesc, apoi își continuă drumul fără oprire, fiecare cu viteza avută înainte.</p>
-      <div class="idea"><strong>Ideea lecției:</strong> la întâlnire, ceea ce parcursese fiecare mobil devine exact distanța pe care celălalt o mai are de străbătut. De aici rezultă o relație elegantă între timpii suplimentari și timpul de întâlnire.</div>
-    </section>
-
-    <section class="page" data-title="Enunț">
-      <h2>1. Enunțul problemei</h2>
-      <div class="callout blue">
-        <p style="margin-bottom:0">Două automobile pleacă simultan din orașele A și B, mergând unul spre celălalt. Automobilele se întâlnesc după o oră și, fără a se opri, își continuă drumul, fiecare cu viteza anterioară. Primul automobil ajunge în orașul B cu 27 minute mai târziu decât ajunge al doilea în A. Ce viteze au avut cele două automobile, dacă distanța AB este de 90 km?</p>
-      </div>
-      <div class="idea" style="margin-top:22px"><strong>Date:</strong> AB = 90 km &nbsp;·&nbsp; t<sub>întâlnire</sub> = 1 h &nbsp;·&nbsp; întârziere primul față de al doilea = 27 min</div>
-    </section>
-
-    <section class="page" data-title="Schiță">
-      <h2>2. Schiță grafică</h2>
-      <div class="split">
-        <div>
-          <p>La întâlnire (după 1 h), notăm cu <b>d₁</b> distanța parcursă de primul automobil (din A) și cu <b>d₂</b> distanța parcursă de al doilea (din B). Ce mai are de mers fiecare mai departe este exact cât parcursese celălalt până la întâlnire.</p>
-          <span class="formula">d₁ = v₁·1 &nbsp;;&nbsp; d₂ = v₂·1</span>
-          <span class="formula" style="margin-top:8px">d₁ + d₂ = 90</span>
-        </div>
-        <div class="svg-card" aria-label="Schemă: două automobile plecând din A și B, întâlnindu-se, apoi continuând spre celălalt oraș">
-          <svg viewBox="0 0 420 220" role="img">
-            <rect x="20" y="120" width="380" height="20" rx="6" fill="#172033"></rect>
-            <line x1="20" y1="130" x2="400" y2="130" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 7"></line>
-
-            <line x1="40" y1="105" x2="40" y2="155" stroke="#94a3b8" stroke-width="1.5"></line>
-            <text x="22" y="98" font-size="13" font-weight="700" fill="#172033">A</text>
-
-            <line x1="380" y1="105" x2="380" y2="155" stroke="#94a3b8" stroke-width="1.5"></line>
-            <text x="368" y="98" font-size="13" font-weight="700" fill="#172033">B</text>
-
-            <line x1="200" y1="90" x2="200" y2="170" stroke="#2563eb" stroke-width="2.5"></line>
-            <circle cx="200" cy="83" r="14" fill="#2563eb"></circle>
-            <text x="200" y="88" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">M</text>
-
-            <path d="M42 145 Q120 160 198 145" stroke="#0f766e" fill="none" stroke-width="1.5"></path>
-            <text x="120" y="178" text-anchor="middle" font-size="12" fill="#0f766e" font-weight="800">d₁</text>
-
-            <path d="M202 145 Q290 160 378 145" stroke="#dc2626" fill="none" stroke-width="1.5"></path>
-            <text x="290" y="178" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="800">d₂</text>
-
-            <g transform="translate(110,105) rotate(0)">
-              <polygon points="0,-8 26,0 0,8 6,0" fill="#0f766e"></polygon>
-            </g>
-            <text x="110" y="200" text-anchor="middle" font-size="11" fill="#5f6b7a">auto 1 (v₁), pornit din A</text>
-
-            <g transform="translate(300,105) rotate(180)">
-              <polygon points="0,-8 26,0 0,8 6,0" fill="#dc2626"></polygon>
-            </g>
-            <text x="300" y="200" text-anchor="middle" font-size="11" fill="#5f6b7a">auto 2 (v₂), pornit din B</text>
-
-            <path d="M100 55 Q200 30 300 55" stroke="#f59e0b" fill="none" stroke-width="1.5"></path>
-            <text x="200" y="34" text-anchor="middle" font-size="11" fill="#b45309" font-weight="700">se întâlnesc după 1 h</text>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <section class="page" data-title="Rezolvare 1">
-      <h2>3. Rezolvare — sistemul de ecuații</h2>
-      <ol class="steps">
-        <li>Notăm distanțele parcurse până la întâlnire: d₁ (de primul, din A) și d₂ (de al doilea, din B). Din condiția de întâlnire după 1 h: <span class="formula" style="margin-top:8px">d₁ = v₁·1 &nbsp;;&nbsp; d₂ = v₂·1 &nbsp;→&nbsp; d₁ + d₂ = 90</span></li>
-        <li>Ce mai are de parcurs fiecare după întâlnire este distanța făcută de celălalt (d₂ pentru primul, d₁ pentru al doilea): <span class="formula" style="margin-top:8px">t₁' = d₂ / v₁ &nbsp;;&nbsp; t₂' = d₁ / v₂ &nbsp;→&nbsp; t₁'·t₂' = (d₁·d₂)/(v₁·v₂) = 1</span></li>
-        <li>Condiția din enunț: primul ajunge cu 27 min mai târziu: <span class="formula" style="margin-top:8px">t₁' − t₂' = 0,45 h</span></li>
-      </ol>
-    </section>
-
-    <section class="page" data-title="Rezolvare 2">
-      <h2>4. Rezolvare — timpii suplimentari</h2>
-      <p>Notăm y = t₂'. Din t₁'·t₂' = 1 rezultă t₁' = y + 0,45, deci:</p>
-      <div class="formula">y·(y + 0,45) = 1 &nbsp;→&nbsp; y² + 0,45y − 1 = 0</div>
-      <div class="formula">y = (−0,45 + √4,2025) / 2 = (−0,45 + 2,05) / 2 = 0,8</div>
-      <div class="result-chip">t₂' = 0,8 h = 48 min</div>
-      <div class="result-chip">t₁' = 1,25 h = 1h 15 min</div>
-    </section>
-
-    <section class="page" data-title="Rezolvare 3">
-      <h2>5. Rezolvare — vitezele</h2>
-      <ol class="steps">
-        <li>Distanța rămasă pentru primul este d₂, parcursă în t₁': <span class="formula" style="margin-top:8px">v₁·t₁' = d₂ = v₂·1 &nbsp;→&nbsp; v₁·1,25 = v₂ &nbsp;→&nbsp; v₂ = 1,25·v₁</span></li>
-        <li>Înlocuim în v₁ + v₂ = 90: <span class="formula" style="margin-top:8px">v₁ + 1,25·v₁ = 90 &nbsp;→&nbsp; 2,25·v₁ = 90</span></li>
-      </ol>
-      <div class="result-chip">v₁ = 40 km/h (din A)</div>
-      <div class="result-chip">v₂ = 50 km/h (din B)</div>
-      <div class="verify-box"><b>Verificare:</b> primul ajunge în B după 1 + 1,25 = 2,25 h = 2h15min; al doilea ajunge în A după 1 + 0,8 = 1,8 h = 1h48min. Diferența: 2h15min − 1h48min = <b>27 min</b> ✓</div>
-    </section>
-
-    <section class="page" data-title="Sinteză">
-      <h2>6. Reține esențialul</h2>
-      <div class="callout green">
-        <ul>
-          <li>La întâlnire, notăm distanțele parcurse cu d₁ și d₂ (nu confundăm viteza v cu distanța d) — distanța rămasă pentru fiecare mobil este cea parcursă de celălalt.</li>
-          <li>Relația elegantă: t₁' · t₂' = t<sub>întâlnire</sub>² — produsul timpilor suplimentari este pătratul timpului de întâlnire.</li>
-          <li>Rezolvând sistemul {d₁+d₂=90, t₁'−t₂'=0,45}, obținem v₁ = 40 km/h și v₂ = 50 km/h.</li>
-        </ul>
-      </div>
-      <div class="final-banner">
-        <h3>Ai terminat problema.</h3>
-        <p>Prof. Dănuț Andronie<br>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
-        <div class="final-actions">
-          <a class="btn secondary" href="./problema-2.html">‹ Problema anterioară</a>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav" aria-label="Navigare pagini">
-    <button id="prevBtn" class="secondary" type="button">‹ Înapoi</button>
-    <div class="counter" id="counter">Pagina 1 / 7</div>
-    <button id="nextBtn" class="primary" type="button">Înainte ›</button>
-  </nav>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 3 – mișcare uniformă. Două automobile se întâlnesc și își continuă drumul. Rezolvare pas cu pas.">
+  <title>Problema 3 | Mișcare uniformă</title>
 
   <script>
-    (function(){
-      const pages = Array.from(document.querySelectorAll('.page'));
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const counter = document.getElementById('counter');
-      let current = 0;
-      function showPage(index){
-        if(index < 0 || index >= pages.length) return;
-        pages[current].classList.remove('active');
-        current = index;
-        pages[current].classList.add('active');
-        prevBtn.disabled = current === 0;
-        nextBtn.disabled = current === pages.length - 1;
-        counter.textContent = `Pagina ${current + 1} / ${pages.length}`;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      prevBtn.addEventListener('click', () => showPage(current - 1));
-      nextBtn.addEventListener('click', () => showPage(current + 1));
-      document.addEventListener('keydown', (event) => {
-        if(event.key === 'ArrowLeft') showPage(current - 1);
-        if(event.key === 'ArrowRight') showPage(current + 1);
-      });
-      let startX = null;
-      document.addEventListener('touchstart', (event) => { startX = event.changedTouches[0].screenX; }, { passive: true });
-      document.addEventListener('touchend', (event) => {
-        if(startX === null) return;
-        const diff = event.changedTouches[0].screenX - startX;
-        if(Math.abs(diff) > 70){ if(diff > 0) showPage(current - 1); else showPage(current + 1); }
-        startX = null;
-      }, { passive: true });
-      showPage(0);
-    })();
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
   </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --line:#334155;
+      --text:#f8fafc;
+      --muted:#cbd5e1;
+      --soft:#94a3b8;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#fb7185;
+      --shadow:0 18px 46px rgba(2,6,23,.34);
+      --max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);
+      backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,
+    .progress-row,
+    main,
+    .footer-inner{
+      width:min(var(--max),calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      color:var(--text);
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:-.02em;
+      white-space:nowrap;
+    }
+
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 11px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#1e293b;
+      color:#fff;
+      text-decoration:none;
+      font-size:.9rem;
+      font-weight:800;
+    }
+
+    .index-link:hover,
+    .index-link:focus-visible{
+      border-color:var(--cyan);
+      outline:none;
+    }
+
+    .progress-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:9px 0 11px;
+    }
+
+    .progress-track{
+      height:7px;
+      overflow:hidden;
+      border:1px solid #334155;
+      border-radius:999px;
+      background:#111827;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:14.285%;
+      background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+
+    .progress-text{
+      color:var(--muted);
+      font-size:.84rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    main{padding:22px 0 104px}
+
+    .page{
+      display:none;
+      min-height:calc(100vh - 175px);
+    }
+
+    .page.active{
+      display:block;
+      animation:fade .2s ease;
+    }
+
+    @keyframes fade{
+      from{opacity:.35;transform:translateY(5px)}
+      to{opacity:1;transform:none}
+    }
+
+    .card{
+      padding:clamp(20px,4vw,34px);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;
+      color:#a5f3fc;
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+
+    h1,h2,h3{color:#fff;line-height:1.15}
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,7vw,3.8rem);
+      letter-spacing:-.04em;
+    }
+
+    h2{
+      margin:0;
+      font-size:clamp(1.55rem,5vw,2.45rem);
+      letter-spacing:-.03em;
+    }
+
+    h3{
+      margin:0 0 8px;
+      font-size:1.08rem;
+    }
+
+    p,li{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:clamp(.98rem,2vw,1.08rem);
+    }
+
+    .lead{
+      margin:16px 0 0;
+      color:#e2e8f0;
+      font-size:clamp(1.04rem,2.3vw,1.22rem);
+      line-height:1.65;
+    }
+
+    .data-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .data-box{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#0f172a;
+      text-align:center;
+    }
+
+    .data-box small{
+      display:block;
+      margin-bottom:5px;
+      color:var(--soft);
+      font-weight:800;
+    }
+
+    .data-box strong{
+      color:#fff;
+      font-size:1.06rem;
+    }
+
+    .theory-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .theory-card{
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(15,23,42,.66);
+    }
+
+    .theory-card p{margin:5px 0 0}
+
+    .formula{
+      margin:14px 0 0;
+      padding:15px;
+      overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);
+      border-radius:14px;
+      background:rgba(8,145,178,.08);
+      color:#ecfeff;
+      text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+
+    .formula.green{
+      border-color:rgba(34,197,94,.27);
+      background:rgba(34,197,94,.08);
+    }
+
+    .formula.yellow{
+      border-color:rgba(250,204,21,.27);
+      background:rgba(250,204,21,.07);
+    }
+
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      border-left:4px solid var(--yellow);
+      border-radius:10px;
+      background:rgba(250,204,21,.07);
+      color:#fef9c3;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .diagram{
+      margin-top:18px;
+      padding:12px;
+      border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;
+      background:#f8fafc;
+      overflow:hidden;
+    }
+
+    .diagram svg{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:360px;
+      font-family:Inter,system-ui,sans-serif;
+    }
+
+    .diagram-caption{
+      margin:8px 3px 0;
+      color:#cbd5e1;
+      font-size:.9rem;
+      line-height:1.45;
+    }
+
+    .step-list{
+      display:grid;
+      gap:11px;
+      margin-top:18px;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:38px 1fr;
+      gap:11px;
+      align-items:start;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.68);
+    }
+
+    .num{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:11px;
+      background:rgba(34,211,238,.13);
+      color:#a5f3fc;
+      font-weight:900;
+    }
+
+    .step p{margin:0}
+
+    .result{
+      margin-top:17px;
+      padding:15px 17px;
+      border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;
+      background:rgba(34,197,94,.09);
+      color:#dcfce7;
+      font-weight:900;
+      line-height:1.55;
+    }
+
+    .check{
+      margin-top:14px;
+      padding:14px 16px;
+      border-left:4px solid var(--green);
+      border-radius:10px;
+      background:rgba(34,197,94,.07);
+      color:#dcfce7;
+      line-height:1.55;
+    }
+
+    .check strong{color:#86efac}
+
+    .conclusions{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .conclusion{
+      padding:15px 16px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.65);
+      color:#e2e8f0;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .answers{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .answer-card{
+      padding:17px;
+      border:1px solid rgba(34,211,238,.28);
+      border-radius:17px;
+      background:rgba(8,145,178,.08);
+    }
+
+    .answer-card small{
+      display:block;
+      margin-bottom:7px;
+      color:#a5f3fc;
+      font-weight:850;
+    }
+
+    .answer-card strong{
+      color:#fff;
+      font-size:1.18rem;
+    }
+
+    .final-actions{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .final-link{
+      min-height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 14px;
+      border-radius:13px;
+      text-decoration:none;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .final-link.primary{
+      background:var(--cyan);
+      color:#083344;
+    }
+
+    .final-link.secondary{
+      background:#334155;
+      border:1px solid #475569;
+      color:#fff;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      z-index:25;
+      left:50%;
+      bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      width:min(var(--max),calc(100% - 20px));
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:17px;
+      background:rgba(15,23,42,.96);
+      backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+
+    .nav-btn{
+      min-height:50px;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .nav-btn.prev{
+      background:#334155;
+      color:#fff;
+      border:1px solid #475569;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,var(--green),#16a34a);
+      color:#052e16;
+    }
+
+    .nav-btn:disabled{
+      opacity:.42;
+      cursor:not-allowed;
+    }
+
+    footer{
+      border-top:1px solid rgba(148,163,184,.18);
+      background:#111827;
+    }
+
+    .footer-inner{
+      padding:21px 0 95px;
+      color:var(--soft);
+      text-align:center;
+      font-size:.88rem;
+    }
+
+    @media(max-width:800px){
+      .theory-grid,
+      .answers{grid-template-columns:1fr}
+      .final-actions{grid-template-columns:1fr}
+    }
+
+    @media(max-width:620px){
+      .data-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:520px){
+      .topbar-inner{min-height:58px}
+      .brand{font-size:.93rem}
+      .index-link{
+        min-height:38px;
+        padding:7px 9px;
+        font-size:.8rem;
+      }
+      .progress-row{padding-top:7px}
+      main{padding-top:16px}
+      .card{
+        padding:20px 16px;
+        border-radius:20px;
+      }
+      .step{
+        grid-template-columns:34px 1fr;
+        padding:12px;
+      }
+      .num{
+        width:34px;
+        height:34px;
+      }
+      .bottom-nav{
+        grid-template-columns:92px 1fr;
+        padding:8px;
+      }
+      .nav-btn{
+        min-height:48px;
+        padding:9px 10px;
+        font-size:.9rem;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .page{animation:none}
+      .progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">1 / 7</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 -->
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 3 · Mișcare uniformă</p>
+      <h1>Enunț și date</h1>
+
+      <p class="lead">
+        Două automobile pleacă simultan din orașele A și B, unul spre celălalt.
+        Se întâlnesc după $1\,\text{h}$ și își continuă drumul fără oprire, cu aceleași viteze.
+        Primul ajunge în B cu $27\,\text{min}$ mai târziu decât ajunge al doilea în A.
+        Distanța este $AB=90\,\text{km}$.
+      </p>
+
+      <div class="data-grid">
+        <div class="data-box">
+          <small>Distanța</small>
+          <strong>$AB=90\,\text{km}$</strong>
+        </div>
+        <div class="data-box">
+          <small>Întâlnire</small>
+          <strong>$t=1\,\text{h}$</strong>
+        </div>
+        <div class="data-box">
+          <small>Diferență la sosire</small>
+          <strong>$27\,\text{min}=0{,}45\,\text{h}$</strong>
+        </div>
+      </div>
+
+      <div class="note">
+        Cerință: determină vitezele $v_1$ și $v_2$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Noțiuni necesare</p>
+      <h2>Ce folosim</h2>
+
+      <div class="theory-grid">
+        <div class="theory-card">
+          <h3>Mișcare uniformă</h3>
+          <div class="formula">$\displaystyle s=v\,t$</div>
+          <p>Într-o oră, distanța parcursă numeric este egală cu viteza în km/h.</p>
+        </div>
+
+        <div class="theory-card">
+          <h3>La întâlnire</h3>
+          <div class="formula green">$\displaystyle d_1+d_2=90$</div>
+          <p>Drumurile parcurse până la întâlnire acoperă întreaga distanță AB.</p>
+        </div>
+
+        <div class="theory-card">
+          <h3>După întâlnire</h3>
+          <p>Primului îi rămâne de parcurs $d_2$, iar celui de-al doilea îi rămâne $d_1$.</p>
+        </div>
+
+        <div class="theory-card">
+          <h3>Diferența de timp</h3>
+          <div class="formula yellow">$\displaystyle t'_1-t'_2=0{,}45\,\text{h}$</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Schiță</p>
+      <h2>Înainte și după întâlnire</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 840 350" role="img" aria-labelledby="s1t s1d">
+          <title id="s1t">Schița problemei 3</title>
+          <desc id="s1d">Automobilul 1 pleacă din A și automobilul 2 din B. Se întâlnesc după o oră. După întâlnire, fiecare continuă spre orașul opus.</desc>
+
+          <rect x="70" y="180" width="700" height="38" rx="9" fill="#1f2937"/>
+          <line x1="90" y1="199" x2="750" y2="199" stroke="#facc15" stroke-width="4" stroke-dasharray="18 14"/>
+
+          <line x1="95" y1="145" x2="95" y2="238" stroke="#64748b" stroke-width="4"/>
+          <text x="95" y="130" text-anchor="middle" font-size="26" font-weight="900" fill="#334155">A</text>
+
+          <line x1="745" y1="145" x2="745" y2="238" stroke="#64748b" stroke-width="4"/>
+          <text x="745" y="130" text-anchor="middle" font-size="26" font-weight="900" fill="#334155">B</text>
+
+          <line x1="390" y1="120" x2="390" y2="245" stroke="#2563eb" stroke-width="5"/>
+          <circle cx="390" cy="100" r="31" fill="#2563eb"/>
+          <text x="390" y="108" text-anchor="middle" font-size="20" font-weight="900" fill="#fff">1 h</text>
+
+          <line x1="110" y1="72" x2="375" y2="72" stroke="#0f766e" stroke-width="4"/>
+          <path d="M110 72 l16 -10 v20 z" fill="#0f766e"/>
+          <path d="M375 72 l-16 -10 v20 z" fill="#0f766e"/>
+          <text x="243" y="55" text-anchor="middle" font-size="22" font-weight="900" fill="#065f46">d₁ = v₁ · 1 h</text>
+
+          <line x1="405" y1="72" x2="730" y2="72" stroke="#dc2626" stroke-width="4"/>
+          <path d="M405 72 l16 -10 v20 z" fill="#dc2626"/>
+          <path d="M730 72 l-16 -10 v20 z" fill="#dc2626"/>
+          <text x="568" y="55" text-anchor="middle" font-size="22" font-weight="900" fill="#b91c1c">d₂ = v₂ · 1 h</text>
+
+          <g transform="translate(265,164)">
+            <rect x="-42" y="0" width="84" height="28" rx="6" fill="#0f766e"/>
+            <circle cx="-24" cy="31" r="9" fill="#111827"/>
+            <circle cx="24" cy="31" r="9" fill="#111827"/>
+          </g>
+
+          <g transform="translate(565,164)">
+            <rect x="-42" y="0" width="84" height="28" rx="6" fill="#dc2626"/>
+            <circle cx="-24" cy="31" r="9" fill="#111827"/>
+            <circle cx="24" cy="31" r="9" fill="#111827"/>
+          </g>
+
+          <line x1="405" y1="285" x2="730" y2="285" stroke="#0f766e" stroke-width="4"/>
+          <path d="M730 285 l-16 -10 v20 z" fill="#0f766e"/>
+          <text x="568" y="315" text-anchor="middle" font-size="21" font-weight="900" fill="#065f46">primului îi rămâne d₂</text>
+
+          <line x1="375" y1="285" x2="110" y2="285" stroke="#dc2626" stroke-width="4"/>
+          <path d="M110 285 l16 -10 v20 z" fill="#dc2626"/>
+          <text x="243" y="315" text-anchor="middle" font-size="21" font-weight="900" fill="#b91c1c">celui de-al doilea îi rămâne d₁</text>
+        </svg>
+      </div>
+
+      <p class="diagram-caption">
+        Schimbul de distanțe după întâlnire este cheia problemei.
+      </p>
+
+      <div class="formula">
+        $\displaystyle d_1=v_1,\qquad d_2=v_2,\qquad v_1+v_2=90$
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Relația-cheie</p>
+      <h2>Timpii de după întâlnire</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Pentru primul automobil</h3>
+            <p>După întâlnire mai are de parcurs $d_2$.</p>
+            <div class="formula">$\displaystyle t'_1=\frac{d_2}{v_1}$</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Pentru al doilea automobil</h3>
+            <p>După întâlnire mai are de parcurs $d_1$.</p>
+            <div class="formula">$\displaystyle t'_2=\frac{d_1}{v_2}$</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Folosim $d_1=v_1$ și $d_2=v_2$</h3>
+            <div class="formula green">
+              $\displaystyle
+              t'_1t'_2=
+              \frac{d_2}{v_1}\cdot\frac{d_1}{v_2}
+              =
+              \frac{v_2}{v_1}\cdot\frac{v_1}{v_2}
+              =1
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        Relația-cheie: $\boxed{t'_1t'_2=1\,\text{h}^2}$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Timpi</p>
+      <h2>Determinăm timpii suplimentari</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Diferența este 27 min</h3>
+            <div class="formula yellow">
+              $\displaystyle 27\,\text{min}=\frac{27}{60}\,\text{h}=0{,}45\,\text{h}$
+            </div>
+            <div class="formula">
+              $\displaystyle t'_1-t'_2=0{,}45$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Notăm $t'_2=y$</h3>
+            <div class="formula">
+              $\displaystyle t'_1=y+0{,}45$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Folosim produsul $t'_1t'_2=1$</h3>
+            <div class="formula">
+              $\displaystyle y(y+0{,}45)=1$
+            </div>
+            <div class="formula">
+              $\displaystyle y^2+0{,}45y-1=0$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Rădăcina pozitivă</h3>
+            <div class="formula green">
+              $\displaystyle
+              y=\frac{-0{,}45+\sqrt{4{,}2025}}{2}
+              =\frac{-0{,}45+2{,}05}{2}
+              =0{,}8\,\text{h}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        $t'_2=0{,}8\,\text{h}=48\,\text{min}$ și
+        $t'_1=1{,}25\,\text{h}=1\,\text{h}\,15\,\text{min}$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Viteze</p>
+      <h2>Determinăm $v_1$ și $v_2$</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Primul parcurge $d_2$ după întâlnire</h3>
+            <div class="formula">
+              $\displaystyle v_1t'_1=d_2$
+            </div>
+            <p>Dar $d_2=v_2\cdot1\,\text{h}$, deci:</p>
+            <div class="formula green">
+              $\displaystyle 1{,}25v_1=v_2$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>La întâlnire, după o oră</h3>
+            <div class="formula">
+              $\displaystyle v_1+v_2=90$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Înlocuim $v_2=1{,}25v_1$</h3>
+            <div class="formula yellow">
+              $\displaystyle v_1+1{,}25v_1=90$
+            </div>
+            <div class="formula">
+              $\displaystyle 2{,}25v_1=90$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Rezultatele</h3>
+            <div class="formula green">
+              $\displaystyle v_1=40\,\text{km/h},\qquad v_2=50\,\text{km/h}$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="check">
+        <strong>Verificare:</strong>
+        primul ajunge după $1+1{,}25=2{,}25\,\text{h}=2\,\text{h}\,15\,\text{min}$;
+        al doilea după $1+0{,}8=1{,}8\,\text{h}=1\,\text{h}\,48\,\text{min}$.
+        Diferența este $27\,\text{min}$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Ce trebuie reținut</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          Dacă două mobile se întâlnesc după $1\,\text{h}$, atunci
+          $d_1=v_1$ și $d_2=v_2$ când folosim km și km/h.
+        </div>
+
+        <div class="conclusion">
+          După întâlnire, distanța rămasă pentru fiecare este distanța parcursă înainte de întâlnire de celălalt.
+        </div>
+
+        <div class="conclusion">
+          În această problemă:
+          $\displaystyle t'_1t'_2=1$ și
+          $\displaystyle t'_1-t'_2=0{,}45$.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>Automobilul 1</small>
+          <strong>$v_1=40\,\text{km/h}$</strong>
+        </div>
+
+        <div class="answer-card">
+          <small>Automobilul 2</small>
+          <strong>$v_2=50\,\text{km/h}$</strong>
+        </div>
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="problema-2.html">← Problema 2</a>
+        <a class="final-link secondary" href="index.html">Lista problemelor</a>
+        <a class="final-link primary" href="problema-4.html">Problema 4 →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">
+    Fizica-liceu · Probleme rezolvate
+  </div>
+</footer>
+
+<script>
+  const pages = [...document.querySelectorAll('.page')];
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  let current = 0;
+
+  function showPage(index){
+    current = Math.max(0, Math.min(index, pages.length - 1));
+
+    pages.forEach((page, i) => {
+      page.classList.toggle('active', i === current);
+    });
+
+    prevBtn.disabled = current === 0;
+
+    if(current === pages.length - 1){
+      nextBtn.textContent = 'Reia problema ↺';
+    } else {
+      nextBtn.textContent = 'Mergi mai departe →';
+    }
+
+    progressText.textContent = `${current + 1} / ${pages.length}`;
+    progressBar.style.width = `${((current + 1) / pages.length) * 100}%`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetPromise();
+    }
+  }
+
+  prevBtn.addEventListener('click', () => showPage(current - 1));
+
+  nextBtn.addEventListener('click', () => {
+    if(current === pages.length - 1){
+      showPage(0);
+    } else {
+      showPage(current + 1);
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if(event.key === 'ArrowLeft') showPage(current - 1);
+    if(event.key === 'ArrowRight'){
+      if(current === pages.length - 1) showPage(0);
+      else showPage(current + 1);
+    }
+  });
+
+  let startX = null;
+
+  document.addEventListener('touchstart', event => {
+    startX = event.changedTouches[0].screenX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', event => {
+    if(startX === null) return;
+
+    const diff = event.changedTouches[0].screenX - startX;
+
+    if(Math.abs(diff) > 70){
+      if(diff > 0) showPage(current - 1);
+      else if(current < pages.length - 1) showPage(current + 1);
+    }
+
+    startX = null;
+  }, { passive: true });
+
+  showPage(0);
+</script>
+
 </body>
 </html>

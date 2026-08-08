@@ -1,260 +1,1024 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Problema 1 — Mișcare uniformă | fizica-liceu</title>
-
-<style>
-  :root{
-    --bg:#f4f7fb;
-    --panel:#ffffff;
-    --ink:#172033;
-    --muted:#5f6b7a;
-    --brand:#2563eb;
-    --brand-2:#0f766e;
-    --accent:#f59e0b;
-    --soft:#eaf2ff;
-    --soft-2:#ecfdf5;
-    --danger:#dc2626;
-    --ok:#15803d;
-    --radius:26px;
-    --shadow:0 18px 45px rgba(15,23,42,.12);
-    --maxw:1120px;
-  }
-  *{ box-sizing:border-box; }
-  html, body{
-    margin:0; min-height:100%;
-    background:
-      radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34rem),
-      radial-gradient(circle at bottom right, rgba(20,184,166,.14), transparent 32rem),
-      var(--bg);
-    color:var(--ink);
-    font-family: system-ui, -apple-system, "Segoe UI", Arial, Helvetica, sans-serif;
-    line-height:1.55;
-  }
-  body{ overflow-x:hidden; }
-  .app{
-    width:min(var(--maxw), calc(100vw - 28px));
-    min-height:100vh; margin:0 auto;
-    padding:clamp(14px, 2vw, 24px) 0 96px;
-    display:flex; align-items:stretch;
-  }
-  .page{
-    display:none; width:100%;
-    min-height:calc(100vh - 128px);
-    margin:auto 0;
-    background:rgba(255,255,255,.92);
-    border:1px solid rgba(148,163,184,.28);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:clamp(20px, 4vw, 52px);
-    position:relative; overflow:hidden;
-  }
-  .page.active{ display:flex; flex-direction:column; justify-content:center; animation:fadeIn .22s ease-out; }
-  @keyframes fadeIn{ from{ opacity:.25; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-  .top-banner{
-    display:flex; gap:16px; align-items:center; justify-content:space-between;
-    padding:18px 20px; border-radius:24px;
-    background:linear-gradient(135deg, #2563eb, #0f766e);
-    color:#fff; margin-bottom:clamp(18px, 3vw, 34px);
-    box-shadow:0 16px 35px rgba(37,99,235,.22);
-  }
-  .top-banner strong{ font-size:clamp(1.05rem, 1.8vw, 1.35rem); }
-  .chip{
-    display:inline-flex; align-items:center; gap:8px; width:max-content;
-    padding:7px 12px; border-radius:999px;
-    background:rgba(37,99,235,.10); color:#1e40af; font-weight:700;
-    font-size:clamp(.82rem, 1.5vw, .95rem);
-  }
-  .chip.light{ background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.24); }
-  .crumbs{ margin:0 0 12px; color:var(--muted); font-size:clamp(.86rem, 1.5vw, 1rem); font-weight:650; }
-  h1{ margin:0 0 18px; font-size:clamp(2rem, 6vw, 4.7rem); line-height:1.03; letter-spacing:-.04em; }
-  h2{ margin:0 0 18px; color:var(--brand); font-size:clamp(1.65rem, 4.2vw, 3.2rem); line-height:1.08; letter-spacing:-.035em; }
-  h3{ margin:0 0 10px; font-size:clamp(1.2rem, 2.4vw, 1.65rem); line-height:1.18; }
-  p, li, td, th{ font-size:clamp(1.02rem, 2.25vw, 1.45rem); }
-  p{ margin:0 0 16px; }
-  ul, ol{ margin:0; padding-left:1.25em; }
-  li{ margin:.35em 0; }
-  .lead{ font-size:clamp(1.18rem, 2.65vw, 1.7rem); color:#26354f; max-width:900px; }
-  .idea{ margin-top:clamp(14px, 2vw, 24px); padding:clamp(16px, 2.2vw, 22px); border-radius:22px; background:var(--soft); border-left:8px solid var(--brand); font-size:clamp(1.08rem, 2.35vw, 1.52rem); }
-  .callout{ padding:clamp(16px, 2.5vw, 26px); border-radius:24px; background:linear-gradient(180deg, #ffffff, #f8fafc); border:1px solid rgba(148,163,184,.35); box-shadow:0 12px 24px rgba(15,23,42,.06); }
-  .callout.green{ background:linear-gradient(180deg, #f0fdf4, #ffffff); border-color:rgba(22,163,74,.25); }
-  .callout.blue{ background:linear-gradient(180deg, #eff6ff, #ffffff); border-color:rgba(37,99,235,.28); }
-  .grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:clamp(14px, 2vw, 24px); align-items:stretch; }
-  .formula{ display:block; width:max-content; max-width:100%; margin:12px 0 0; padding:12px 16px; border-radius:18px; background:#0f172a; color:#fff; font-family:"Cambria Math", Cambria, Georgia, serif; font-size:clamp(1.05rem, 2.4vw, 1.55rem); overflow-x:auto; }
-  .split{ display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(260px, .9fr); gap:clamp(18px, 3vw, 34px); align-items:center; }
-  .svg-card{ width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:12px; border-radius:24px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, rgba(37,99,235,.45), rgba(20,184,166,.35)) border-box; border:1px solid transparent; box-shadow:0 12px 28px rgba(15,23,42,.08); margin-bottom:16px; }
-  svg{ max-width:100%; height:auto; font-family:inherit; }
-  .steps{ counter-reset: step; list-style:none; padding:0; display:grid; gap:12px; }
-  .steps li{ counter-increment: step; position:relative; padding:14px 16px 14px 58px; border-radius:18px; background:#f8fafc; border:1px solid rgba(148,163,184,.24); }
-  .steps li::before{ content:counter(step); position:absolute; left:14px; top:14px; width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:var(--brand); color:#fff; font-weight:800; }
-  .verify-box{ margin-top:16px; padding:14px 16px; border-radius:18px; background:var(--soft-2); border-left:8px solid var(--ok); color:#0f3d24; font-size:clamp(.98rem, 2vw, 1.2rem); }
-  .verify-box b{ color:var(--ok); }
-  .result-chip{ display:inline-flex; align-items:center; gap:10px; margin-top:14px; padding:12px 20px; border-radius:999px; background:linear-gradient(135deg, #16a34a, #15803d); color:#fff; font-weight:800; font-size:clamp(1.1rem, 2.4vw, 1.5rem); box-shadow:0 12px 24px rgba(21,128,61,.28); }
-  button, .btn{ border:0; border-radius:999px; padding:12px 18px; font-weight:800; font-size:clamp(.96rem, 1.8vw, 1.12rem); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e2e8f0; color:#172033; }
-  .primary{ background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; }
-  .secondary{ background:#f1f5f9; color:#0f172a; border:1px solid rgba(148,163,184,.4); }
-  .final-banner{ margin-top:22px; padding:clamp(18px, 3vw, 28px); border-radius:26px; background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(13,148,136,.13)); border:1px solid rgba(37,99,235,.22); }
-  .final-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
-  .bottom-nav{ position:fixed; z-index:20; left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(var(--maxw), calc(100vw - 28px)); display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px; border-radius:999px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.34); box-shadow:0 16px 38px rgba(15,23,42,.18); }
-  .bottom-nav button{ padding:12px 18px; white-space:nowrap; }
-  .bottom-nav button:disabled{ opacity:.45; cursor:not-allowed; }
-  .counter{ text-align:center; color:var(--muted); font-weight:800; font-size:clamp(.94rem, 1.8vw, 1.1rem); }
-  @media (max-width: 860px){ .app{ width:min(100vw - 18px, var(--maxw)); padding-top:10px; padding-bottom:92px; } .page{ min-height:calc(100vh - 112px); border-radius:22px; } .split, .grid{ grid-template-columns:1fr; } .top-banner{ flex-direction:column; align-items:flex-start; } .svg-card{ min-height:170px; } }
-  @media (max-width: 540px){ .page{ padding:20px; justify-content:flex-start; } .bottom-nav{ grid-template-columns:1fr 1fr; border-radius:24px; } .counter{ grid-column:1 / -1; grid-row:1; } #prevBtn{ grid-column:1; grid-row:2; } #nextBtn{ grid-column:2; grid-row:2; } .bottom-nav button{ width:100%; padding:12px 10px; } .final-actions .btn{ width:100%; } }
-  @media (min-width: 1180px){ .page{ min-height:760px; } }
-  @media print{ .bottom-nav{ display:none; } .page{ display:flex !important; box-shadow:none; page-break-after:always; } }
-</style>
-</head>
-<body>
-  <main class="app" id="app">
-
-    <section class="page active" data-title="Start">
-      <div class="top-banner">
-        <strong>Fizică • Exerciții suplimentare • Mișcare uniformă</strong>
-        <span class="chip light">Olimpiadă, 1957</span>
-      </div>
-      <p class="crumbs">Mișcare uniformă și uniform variată › Problema 1</p>
-      <h1>Problema 1</h1>
-      <p class="lead">Două autocamioane pleacă în același moment din București, din dreptul bornei kilometrice zero, pe șoseaua București–Craiova, cu viteze diferite și constante.</p>
-      <div class="idea"><strong>Ideea lecției:</strong> poziția unui mobil în mișcare uniformă se scrie x(t) = v·t. Din această relație simplă putem afla orice moment sau orice bornă cerută de problemă.</div>
-    </section>
-
-    <section class="page" data-title="Enunț">
-      <h2>1. Enunțul problemei</h2>
-      <div class="callout blue"><p style="margin-bottom:0">Un autocamion are viteza v₁ = 30 km/h, iar celălalt viteza v₂ = 25 km/h. Să se determine:</p></div>
-      <ol class="steps" style="margin-top:18px">
-        <li>după cât timp punctul unde se află borna kilometrică 66 se găsește la mijlocul distanței dintre cele două autocamioane;</li>
-        <li>care este borna kilometrică prin fața căreia al doilea autocamion trece la o oră după primul.</li>
-      </ol>
-      <div class="idea" style="margin-top:22px"><strong>Date:</strong> v₁ = 30 km/h &nbsp;·&nbsp; v₂ = 25 km/h &nbsp;·&nbsp; start comun în borna 0</div>
-    </section>
-
-    <section class="page" data-title="Schiță">
-      <h2>2. Schiță grafică</h2>
-      <div class="split">
-        <div>
-          <p>Ambele autocamioane pornesc din același punct și merg în același sens. Poziția fiecăruia, măsurată de la borna 0, este x = v·t. Mijlocul distanței dintre ele, la momentul t, este media celor două poziții.</p>
-          <span class="formula">x_mij(t) = (v₁ + v₂) · t / 2</span>
-        </div>
-        <div class="svg-card" aria-label="Schemă: două autocamioane pe șosea, borna 66 la mijlocul distanței">
-          <svg viewBox="0 0 420 220" role="img">
-            <rect x="20" y="120" width="380" height="26" rx="6" fill="#172033"></rect>
-            <line x1="20" y1="133" x2="400" y2="133" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="10 8"></line>
-            <line x1="40" y1="105" x2="40" y2="155" stroke="#94a3b8" stroke-width="1.5"></line>
-            <text x="30" y="98" font-size="12" fill="#5f6b7a">0 km</text>
-            <line x1="200" y1="95" x2="200" y2="165" stroke="#2563eb" stroke-width="2.5"></line>
-            <circle cx="200" cy="88" r="14" fill="#2563eb"></circle>
-            <text x="200" y="93" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">66</text>
-            <g transform="translate(300,115)"><rect x="-22" y="0" width="44" height="16" rx="3" fill="#0f766e"></rect><rect x="4" y="-8" width="14" height="10" rx="2" fill="#0f766e"></rect><circle cx="-12" cy="18" r="4.5" fill="#172033"></circle><circle cx="10" cy="18" r="4.5" fill="#172033"></circle></g>
-            <text x="300" y="175" text-anchor="middle" font-size="12" fill="#172033" font-weight="700">v₁ = 30 km/h</text>
-            <g transform="translate(240,115)"><rect x="-22" y="0" width="44" height="16" rx="3" fill="#dc2626"></rect><rect x="4" y="-8" width="14" height="10" rx="2" fill="#dc2626"></rect><circle cx="-12" cy="18" r="4.5" fill="#172033"></circle><circle cx="10" cy="18" r="4.5" fill="#172033"></circle></g>
-            <text x="240" y="197" text-anchor="middle" font-size="12" fill="#172033" font-weight="700">v₂ = 25 km/h</text>
-            <path d="M240 60 Q270 45 300 60" stroke="#f59e0b" fill="none" stroke-width="1.5"></path>
-            <text x="270" y="42" text-anchor="middle" font-size="11" fill="#b45309" font-weight="700">mijloc = 66</text>
-          </svg>
-        </div>
-      </div>
-      <div class="svg-card" style="margin-top:6px" aria-label="Schemă: al doilea autocamion trece prin borna x cu o oră întârziere">
-        <svg viewBox="0 0 420 200" role="img">
-          <rect x="20" y="110" width="380" height="26" rx="6" fill="#172033"></rect>
-          <line x1="20" y1="123" x2="400" y2="123" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="10 8"></line>
-          <line x1="40" y1="95" x2="40" y2="145" stroke="#94a3b8" stroke-width="1.5"></line>
-          <text x="30" y="88" font-size="12" fill="#5f6b7a">0 km</text>
-          <line x1="300" y1="82" x2="300" y2="158" stroke="#f59e0b" stroke-width="2.5"></line>
-          <circle cx="300" cy="76" r="15" fill="#f59e0b"></circle>
-          <text x="300" y="81" text-anchor="middle" font-size="13" font-weight="800" fill="#172033">x</text>
-          <g transform="translate(300,105)"><rect x="-22" y="0" width="44" height="16" rx="3" fill="#0f766e"></rect><rect x="4" y="-8" width="14" height="10" rx="2" fill="#0f766e"></rect><circle cx="-12" cy="18" r="4.5" fill="#172033"></circle><circle cx="10" cy="18" r="4.5" fill="#172033"></circle></g>
-          <text x="300" y="178" text-anchor="middle" font-size="12" fill="#172033" font-weight="700">t₁ = x / v₁</text>
-          <g transform="translate(150,105)"><rect x="-22" y="0" width="44" height="16" rx="3" fill="#dc2626"></rect><rect x="4" y="-8" width="14" height="10" rx="2" fill="#dc2626"></rect><circle cx="-12" cy="18" r="4.5" fill="#172033"></circle><circle cx="10" cy="18" r="4.5" fill="#172033"></circle></g>
-          <text x="150" y="178" text-anchor="middle" font-size="12" fill="#172033" font-weight="700">t₂ = x / v₂ = t₁ + 1h</text>
-        </svg>
-      </div>
-    </section>
-
-    <section class="page" data-title="Rezolvare 1°">
-      <h2>3. Rezolvare — cerința 1°</h2>
-      <ol class="steps">
-        <li>Poziția fiecărui autocamion la momentul t: <span class="formula" style="margin-top:8px">x₁(t) = v₁·t &nbsp;;&nbsp; x₂(t) = v₂·t</span></li>
-        <li>Mijlocul distanței dintre ele: <span class="formula" style="margin-top:8px">x_mij(t) = (x₁ + x₂) / 2 = (v₁ + v₂)·t / 2</span></li>
-        <li>Punem condiția x_mij(t) = 66: <span class="formula" style="margin-top:8px">(v₁ + v₂)·t / 2 = 66 &nbsp;→&nbsp; t = 132 / 55</span></li>
-      </ol>
-      <div class="result-chip">t = 2,4 h &nbsp;(2 h 24 min)</div>
-      <div class="verify-box"><b>Verificare:</b> la t = 2,4 h → x₁ = 30 · 2,4 = 72 km; x₂ = 25 · 2,4 = 60 km. Mijlocul: (72 + 60) / 2 = <b>66 km</b> ✓</div>
-    </section>
-
-    <section class="page" data-title="Rezolvare 2°">
-      <h2>4. Rezolvare — cerința 2°</h2>
-      <ol class="steps">
-        <li>Timpul fiecăruia până la borna x: <span class="formula" style="margin-top:8px">t₁ = x / v₁ &nbsp;;&nbsp; t₂ = x / v₂</span></li>
-        <li>Condiția din enunț: <span class="formula" style="margin-top:8px">t₂ − t₁ = 1 &nbsp;→&nbsp; x·(v₁ − v₂) / (v₁·v₂) = 1</span></li>
-        <li>Rezolvăm pentru x: <span class="formula" style="margin-top:8px">x = v₁·v₂ / (v₁ − v₂) = (30·25) / (30−25) = 750/5</span></li>
-      </ol>
-      <div class="result-chip">x = 150 km</div>
-      <div class="verify-box"><b>Verificare:</b> primul ajunge la km 150 după t₁ = 150/30 = 5 h; al doilea ajunge după t₂ = 150/25 = 6 h. Diferența: 6 − 5 = <b>1 h</b> ✓</div>
-    </section>
-
-    <section class="page" data-title="Sinteză">
-      <h2>5. Reține esențialul</h2>
-      <div class="callout green">
-        <ul>
-          <li>În mișcare uniformă, poziția este liniară în timp: x(t) = v·t.</li>
-          <li>Mijlocul distanței dintre două mobile pornite din același punct: t = 2d / (v₁ + v₂), unde d este borna-reper.</li>
-          <li>Borna la care diferența de timp de trecere este fixată: x = v₁v₂ / (v₁ − v₂).</li>
-          <li>Ambele rezultate — 2,4 h și 150 km — se verifică exact.</li>
-        </ul>
-      </div>
-      <div class="final-banner">
-        <h3>Ai terminat problema.</h3>
-        <p>Prof. Dănuț Andronie<br>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p>
-        <div class="final-actions">
-          <a class="btn secondary" href="./problema-2.html">Următoarea problemă ›</a>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav" aria-label="Navigare pagini">
-    <button id="prevBtn" class="secondary" type="button">‹ Înapoi</button>
-    <div class="counter" id="counter">Pagina 1 / 6</div>
-    <button id="nextBtn" class="primary" type="button">Înainte ›</button>
-  </nav>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 1 – mișcare uniformă. Rezolvare pas cu pas, teorie, schițe și concluzii.">
+  <title>Problema 1 | Mișcare uniformă</title>
 
   <script>
-    (function(){
-      const pages = Array.from(document.querySelectorAll('.page'));
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const counter = document.getElementById('counter');
-      let current = 0;
-      function showPage(index){
-        if(index < 0 || index >= pages.length) return;
-        pages[current].classList.remove('active');
-        current = index;
-        pages[current].classList.add('active');
-        prevBtn.disabled = current === 0;
-        nextBtn.disabled = current === pages.length - 1;
-        counter.textContent = `Pagina ${current + 1} / ${pages.length}`;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      prevBtn.addEventListener('click', () => showPage(current - 1));
-      nextBtn.addEventListener('click', () => showPage(current + 1));
-      document.addEventListener('keydown', (event) => {
-        if(event.key === 'ArrowLeft') showPage(current - 1);
-        if(event.key === 'ArrowRight') showPage(current + 1);
-      });
-      let startX = null;
-      document.addEventListener('touchstart', (event) => { startX = event.changedTouches[0].screenX; }, { passive: true });
-      document.addEventListener('touchend', (event) => {
-        if(startX === null) return;
-        const diff = event.changedTouches[0].screenX - startX;
-        if(Math.abs(diff) > 70){ if(diff > 0) showPage(current - 1); else showPage(current + 1); }
-        startX = null;
-      }, { passive: true });
-      showPage(0);
-    })();
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
   </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --panel-2:#111827;
+      --line:#334155;
+      --text:#f8fafc;
+      --muted:#cbd5e1;
+      --soft:#94a3b8;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#fb7185;
+      --violet:#a78bfa;
+      --shadow:0 18px 46px rgba(2,6,23,.34);
+      --max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow-x:hidden;
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);
+      backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,
+    .progress-row,
+    main,
+    .footer-inner{
+      width:min(var(--max),calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:-.02em;
+      white-space:nowrap;
+    }
+
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 11px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#1e293b;
+      color:#fff;
+      text-decoration:none;
+      font-size:.9rem;
+      font-weight:800;
+    }
+
+    .index-link:hover,
+    .index-link:focus-visible{
+      border-color:var(--cyan);
+      outline:none;
+    }
+
+    .progress-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:9px 0 11px;
+    }
+
+    .progress-track{
+      height:7px;
+      overflow:hidden;
+      border:1px solid #334155;
+      border-radius:999px;
+      background:#111827;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:16.666%;
+      background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+
+    .progress-text{
+      color:var(--muted);
+      font-size:.84rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    main{
+      padding:22px 0 104px;
+    }
+
+    .page{
+      display:none;
+      min-height:calc(100vh - 175px);
+    }
+
+    .page.active{
+      display:block;
+      animation:fade .2s ease;
+    }
+
+    @keyframes fade{
+      from{opacity:.35;transform:translateY(5px)}
+      to{opacity:1;transform:none}
+    }
+
+    .card{
+      padding:clamp(20px,4vw,34px);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;
+      color:#a5f3fc;
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+
+    h1,h2,h3{
+      color:#fff;
+      line-height:1.15;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,7vw,3.8rem);
+      letter-spacing:-.04em;
+    }
+
+    h2{
+      margin:0;
+      font-size:clamp(1.55rem,5vw,2.45rem);
+      letter-spacing:-.03em;
+    }
+
+    h3{
+      margin:0 0 8px;
+      font-size:1.08rem;
+    }
+
+    p,li{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:clamp(.98rem,2vw,1.08rem);
+    }
+
+    .lead{
+      margin:16px 0 0;
+      color:#e2e8f0;
+      font-size:clamp(1.04rem,2.3vw,1.22rem);
+      line-height:1.65;
+    }
+
+    .data-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .data-box{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#0f172a;
+      text-align:center;
+    }
+
+    .data-box small{
+      display:block;
+      margin-bottom:5px;
+      color:var(--soft);
+      font-weight:800;
+    }
+
+    .data-box strong{
+      color:#fff;
+      font-size:1.08rem;
+    }
+
+    .task-list,
+    .step-list{
+      display:grid;
+      gap:11px;
+      margin-top:18px;
+    }
+
+    .task,
+    .step{
+      display:grid;
+      grid-template-columns:38px 1fr;
+      gap:11px;
+      align-items:start;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.68);
+    }
+
+    .num{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:11px;
+      background:rgba(34,211,238,.13);
+      color:#a5f3fc;
+      font-weight:900;
+    }
+
+    .task p,
+    .step p{margin:0}
+
+    .theory-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .theory-card{
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(15,23,42,.66);
+    }
+
+    .theory-card p{margin:5px 0 0}
+
+    .formula{
+      margin:14px 0 0;
+      padding:15px;
+      overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);
+      border-radius:14px;
+      background:rgba(8,145,178,.08);
+      color:#ecfeff;
+      text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+
+    .formula.green{
+      border-color:rgba(34,197,94,.27);
+      background:rgba(34,197,94,.08);
+    }
+
+    .formula.yellow{
+      border-color:rgba(250,204,21,.27);
+      background:rgba(250,204,21,.07);
+    }
+
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      border-left:4px solid var(--yellow);
+      border-radius:10px;
+      background:rgba(250,204,21,.07);
+      color:#fef9c3;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .diagram{
+      margin-top:18px;
+      padding:12px;
+      border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;
+      background:#f8fafc;
+      overflow:hidden;
+    }
+
+    .diagram svg{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:340px;
+      font-family:Inter,system-ui,sans-serif;
+    }
+
+    .diagram-caption{
+      margin:8px 3px 0;
+      color:#cbd5e1;
+      font-size:.9rem;
+      line-height:1.45;
+    }
+
+    .result{
+      margin-top:17px;
+      padding:15px 17px;
+      border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;
+      background:rgba(34,197,94,.09);
+      color:#dcfce7;
+      font-weight:900;
+      line-height:1.55;
+    }
+
+    .check{
+      margin-top:14px;
+      padding:14px 16px;
+      border-left:4px solid var(--green);
+      border-radius:10px;
+      background:rgba(34,197,94,.07);
+      color:#dcfce7;
+      line-height:1.55;
+    }
+
+    .check strong{color:#86efac}
+
+    .conclusions{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .conclusion{
+      padding:15px 16px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.65);
+      color:#e2e8f0;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .answers{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .answer-card{
+      padding:17px;
+      border:1px solid rgba(34,211,238,.28);
+      border-radius:17px;
+      background:rgba(8,145,178,.08);
+    }
+
+    .answer-card small{
+      display:block;
+      margin-bottom:7px;
+      color:#a5f3fc;
+      font-weight:850;
+    }
+
+    .answer-card strong{
+      color:#fff;
+      font-size:1.18rem;
+    }
+
+    .final-actions{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .final-link{
+      min-height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 14px;
+      border-radius:13px;
+      text-decoration:none;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .final-link.primary{
+      background:var(--cyan);
+      color:#083344;
+    }
+
+    .final-link.secondary{
+      background:#334155;
+      border:1px solid #475569;
+      color:#fff;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      z-index:25;
+      left:50%;
+      bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      width:min(var(--max),calc(100% - 20px));
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:17px;
+      background:rgba(15,23,42,.96);
+      backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+
+    .nav-btn{
+      min-height:50px;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .nav-btn.prev{
+      background:#334155;
+      color:#fff;
+      border:1px solid #475569;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,var(--green),#16a34a);
+      color:#052e16;
+    }
+
+    .nav-btn:disabled{
+      opacity:.42;
+      cursor:not-allowed;
+    }
+
+    footer{
+      border-top:1px solid rgba(148,163,184,.18);
+      background:#111827;
+    }
+
+    .footer-inner{
+      padding:21px 0 95px;
+      color:var(--soft);
+      text-align:center;
+      font-size:.88rem;
+    }
+
+    @media(max-width:760px){
+      .theory-grid,
+      .answers,
+      .final-actions{
+        grid-template-columns:1fr;
+      }
+
+      .data-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .card{
+        padding:20px 16px;
+        border-radius:20px;
+      }
+    }
+
+    @media(max-width:520px){
+      .topbar-inner{
+        min-height:58px;
+      }
+
+      .brand{
+        font-size:.93rem;
+      }
+
+      .index-link{
+        min-height:38px;
+        padding:7px 9px;
+        font-size:.8rem;
+      }
+
+      .progress-row{
+        padding-top:7px;
+      }
+
+      main{
+        padding-top:16px;
+      }
+
+      .data-grid{
+        grid-template-columns:1fr;
+      }
+
+      .task,
+      .step{
+        grid-template-columns:34px 1fr;
+        padding:12px;
+      }
+
+      .num{
+        width:34px;
+        height:34px;
+      }
+
+      .bottom-nav{
+        grid-template-columns:92px 1fr;
+        padding:8px;
+      }
+
+      .nav-btn{
+        min-height:48px;
+        padding:9px 10px;
+        font-size:.9rem;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .page{animation:none}
+      .progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">1 / 6</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 -->
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 1 · Mișcare uniformă</p>
+      <h1>Enunț și date</h1>
+
+      <p class="lead">
+        Două autocamioane pleacă simultan din București, de la borna $0$, pe aceeași șosea și în același sens.
+        Vitezele lor sunt constante:
+      </p>
+
+      <div class="data-grid">
+        <div class="data-box">
+          <small>Autocamion 1</small>
+          <strong>$v_1=30\,\text{km/h}$</strong>
+        </div>
+        <div class="data-box">
+          <small>Autocamion 2</small>
+          <strong>$v_2=25\,\text{km/h}$</strong>
+        </div>
+        <div class="data-box">
+          <small>Pornire</small>
+          <strong>$x_0=0$</strong>
+        </div>
+      </div>
+
+      <div class="task-list">
+        <div class="task">
+          <div class="num">1</div>
+          <p>După cât timp borna $66$ se află la mijlocul distanței dintre autocamioane?</p>
+        </div>
+
+        <div class="task">
+          <div class="num">2</div>
+          <p>La ce bornă al doilea autocamion trece cu o oră mai târziu decât primul?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Noțiuni necesare</p>
+      <h2>Mișcarea rectilinie uniformă</h2>
+
+      <div class="theory-grid">
+        <div class="theory-card">
+          <h3>1. Poziția</h3>
+          <p>Dacă viteza este constantă:</p>
+          <div class="formula">$\displaystyle x=x_0+vt$</div>
+          <p>Aici $x_0=0$, deci:</p>
+          <div class="formula green">$\displaystyle x=vt$</div>
+        </div>
+
+        <div class="theory-card">
+          <h3>2. Timpul până la o bornă</h3>
+          <p>Din $x=vt$:</p>
+          <div class="formula">$\displaystyle t=\frac{x}{v}$</div>
+        </div>
+
+        <div class="theory-card">
+          <h3>3. Mijlocul a două poziții</h3>
+          <p>Dacă pozițiile sunt $x_1$ și $x_2$:</p>
+          <div class="formula yellow">$\displaystyle x_m=\frac{x_1+x_2}{2}$</div>
+        </div>
+
+        <div class="theory-card">
+          <h3>4. Diferența de timp</h3>
+          <p>Pentru aceeași bornă $x$:</p>
+          <div class="formula">$\displaystyle \Delta t=t_2-t_1$</div>
+        </div>
+      </div>
+
+      <div class="note">
+        Folosim kilometri și ore peste tot, deci nu este necesară nicio conversie de unități.
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Schiță · Cerința 1</p>
+      <h2>Borna 66 este la mijloc</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 760 300" role="img" aria-labelledby="d1title d1desc">
+          <title id="d1title">Schiță pentru prima cerință</title>
+          <desc id="d1desc">Autocamionul mai lent este înainte de borna 66, iar autocamionul mai rapid este după borna 66. Distanțele de la fiecare autocamion la borna 66 sunt egale.</desc>
+
+          <rect x="55" y="160" width="650" height="38" rx="9" fill="#1f2937"/>
+          <line x1="70" y1="179" x2="690" y2="179" stroke="#facc15" stroke-width="4" stroke-dasharray="18 14"/>
+
+          <line x1="80" y1="135" x2="80" y2="220" stroke="#64748b" stroke-width="3"/>
+          <text x="80" y="125" text-anchor="middle" font-size="22" font-weight="800" fill="#334155">0 km</text>
+
+          <line x1="380" y1="105" x2="380" y2="225" stroke="#2563eb" stroke-width="5"/>
+          <circle cx="380" cy="88" r="28" fill="#2563eb"/>
+          <text x="380" y="96" text-anchor="middle" font-size="22" font-weight="900" fill="white">66</text>
+
+          <g transform="translate(245,145)">
+            <rect x="-48" y="0" width="92" height="32" rx="6" fill="#ef4444"/>
+            <rect x="10" y="-18" width="30" height="22" rx="5" fill="#ef4444"/>
+            <circle cx="-26" cy="35" r="10" fill="#111827"/>
+            <circle cx="24" cy="35" r="10" fill="#111827"/>
+          </g>
+          <text x="245" y="238" text-anchor="middle" font-size="19" font-weight="850" fill="#b91c1c">v₂ = 25 km/h</text>
+
+          <g transform="translate(515,145)">
+            <rect x="-48" y="0" width="92" height="32" rx="6" fill="#0f766e"/>
+            <rect x="10" y="-18" width="30" height="22" rx="5" fill="#0f766e"/>
+            <circle cx="-26" cy="35" r="10" fill="#111827"/>
+            <circle cx="24" cy="35" r="10" fill="#111827"/>
+          </g>
+          <text x="515" y="238" text-anchor="middle" font-size="19" font-weight="850" fill="#065f46">v₁ = 30 km/h</text>
+
+          <line x1="260" y1="74" x2="364" y2="74" stroke="#7c3aed" stroke-width="4"/>
+          <line x1="396" y1="74" x2="500" y2="74" stroke="#7c3aed" stroke-width="4"/>
+          <path d="M260 74 l14 -9 v18 z" fill="#7c3aed"/>
+          <path d="M364 74 l-14 -9 v18 z" fill="#7c3aed"/>
+          <path d="M396 74 l14 -9 v18 z" fill="#7c3aed"/>
+          <path d="M500 74 l-14 -9 v18 z" fill="#7c3aed"/>
+          <text x="312" y="58" text-anchor="middle" font-size="19" font-weight="800" fill="#6d28d9">d</text>
+          <text x="448" y="58" text-anchor="middle" font-size="19" font-weight="800" fill="#6d28d9">d</text>
+        </svg>
+      </div>
+
+      <p class="diagram-caption">
+        Condiția „borna 66 este la mijloc” înseamnă că poziția ei este media pozițiilor celor două autocamioane.
+      </p>
+
+      <div class="formula">
+        $\displaystyle 66=\frac{x_1+x_2}{2}$
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Cerința 1</p>
+      <h2>Când ajunge borna 66 la mijloc?</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Scriem pozițiile</h3>
+            <div class="formula">
+              $\displaystyle x_1=30t,\qquad x_2=25t$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Aplicăm condiția de mijloc</h3>
+            <div class="formula yellow">
+              $\displaystyle \frac{x_1+x_2}{2}=66$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Înlocuim pozițiile</h3>
+            <div class="formula">
+              $\displaystyle \frac{30t+25t}{2}=66$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Calculăm timpul</h3>
+            <div class="formula green">
+              $\displaystyle \frac{55t}{2}=66
+              \Rightarrow 55t=132
+              \Rightarrow t=2{,}4\,\text{h}$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        Cerința 1: $t=2{,}4\,\text{h}=2\,\text{h}\,24\,\text{min}$.
+      </div>
+
+      <div class="check">
+        <strong>Verificare:</strong>
+        $x_1=30\cdot2{,}4=72\,\text{km}$,
+        $x_2=25\cdot2{,}4=60\,\text{km}$,
+        iar $\frac{72+60}{2}=66\,\text{km}$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Cerința 2</p>
+      <h2>Aceeași bornă, la o oră diferență</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 760 290" role="img" aria-labelledby="d2title d2desc">
+          <title id="d2title">Schiță pentru a doua cerință</title>
+          <desc id="d2desc">Ambele autocamioane parcurg aceeași distanță x până la aceeași bornă, dar autocamionul mai lent ajunge cu o oră mai târziu.</desc>
+
+          <rect x="55" y="155" width="650" height="38" rx="9" fill="#1f2937"/>
+          <line x1="70" y1="174" x2="690" y2="174" stroke="#facc15" stroke-width="4" stroke-dasharray="18 14"/>
+
+          <line x1="80" y1="130" x2="80" y2="215" stroke="#64748b" stroke-width="3"/>
+          <text x="80" y="118" text-anchor="middle" font-size="22" font-weight="800" fill="#334155">0 km</text>
+
+          <line x1="590" y1="100" x2="590" y2="220" stroke="#f59e0b" stroke-width="5"/>
+          <circle cx="590" cy="82" r="28" fill="#f59e0b"/>
+          <text x="590" y="90" text-anchor="middle" font-size="24" font-weight="900" fill="#172033">x</text>
+
+          <line x1="105" y1="72" x2="565" y2="72" stroke="#2563eb" stroke-width="4"/>
+          <path d="M105 72 l16 -10 v20 z" fill="#2563eb"/>
+          <path d="M565 72 l-16 -10 v20 z" fill="#2563eb"/>
+          <text x="335" y="55" text-anchor="middle" font-size="22" font-weight="850" fill="#1d4ed8">aceeași distanță x</text>
+
+          <g transform="translate(590,140)">
+            <rect x="-48" y="0" width="92" height="32" rx="6" fill="#0f766e"/>
+            <rect x="10" y="-18" width="30" height="22" rx="5" fill="#0f766e"/>
+            <circle cx="-26" cy="35" r="10" fill="#111827"/>
+            <circle cx="24" cy="35" r="10" fill="#111827"/>
+          </g>
+          <text x="590" y="245" text-anchor="middle" font-size="18" font-weight="850" fill="#065f46">primul: t₁ = x/30</text>
+
+          <g transform="translate(390,140)">
+            <rect x="-48" y="0" width="92" height="32" rx="6" fill="#ef4444"/>
+            <rect x="10" y="-18" width="30" height="22" rx="5" fill="#ef4444"/>
+            <circle cx="-26" cy="35" r="10" fill="#111827"/>
+            <circle cx="24" cy="35" r="10" fill="#111827"/>
+          </g>
+          <text x="390" y="245" text-anchor="middle" font-size="18" font-weight="850" fill="#b91c1c">al doilea: t₂ = t₁ + 1 h</text>
+        </svg>
+      </div>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Timpii până la borna $x$</h3>
+            <div class="formula">
+              $\displaystyle t_1=\frac{x}{30},\qquad
+              t_2=\frac{x}{25}$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Al doilea ajunge cu o oră mai târziu</h3>
+            <div class="formula yellow">
+              $\displaystyle t_2-t_1=1$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Înlocuim</h3>
+            <div class="formula">
+              $\displaystyle \frac{x}{25}-\frac{x}{30}=1$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Calculăm borna</h3>
+            <div class="formula green">
+              $\displaystyle
+              x\left(\frac{1}{25}-\frac{1}{30}\right)=1
+              \Rightarrow
+              x\cdot\frac{5}{750}=1
+              \Rightarrow x=150\,\text{km}$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        Cerința 2: borna este $150\,\text{km}$.
+      </div>
+
+      <div class="check">
+        <strong>Verificare:</strong>
+        $t_1=\frac{150}{30}=5\,\text{h}$,
+        $t_2=\frac{150}{25}=6\,\text{h}$,
+        deci diferența este exact $1\,\text{h}$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Ce trebuie reținut</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          În mișcare uniformă, dacă pornirea este din $x_0=0$, poziția se scrie simplu:
+          $x=vt$.
+        </div>
+
+        <div class="conclusion">
+          „La mijloc” se traduce matematic prin media pozițiilor:
+          $\displaystyle x_m=\frac{x_1+x_2}{2}$.
+        </div>
+
+        <div class="conclusion">
+          Pentru aceeași distanță, mobilul cu viteza mai mică are timpul de deplasare mai mare:
+          $\displaystyle t=\frac{x}{v}$.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>Răspuns 1</small>
+          <strong>$2{,}4\,\text{h}=2\,\text{h}\,24\,\text{min}$</strong>
+        </div>
+
+        <div class="answer-card">
+          <small>Răspuns 2</small>
+          <strong>borna $150\,\text{km}$</strong>
+        </div>
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="index.html">← Lista problemelor</a>
+        <a class="final-link primary" href="problema-2.html">Problema 2 →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">
+    Fizica-liceu · Probleme rezolvate
+  </div>
+</footer>
+
+<script>
+  const pages = [...document.querySelectorAll('.page')];
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  let current = 0;
+
+  function showPage(index){
+    current = Math.max(0, Math.min(index, pages.length - 1));
+
+    pages.forEach((page, i) => {
+      page.classList.toggle('active', i === current);
+    });
+
+    prevBtn.disabled = current === 0;
+
+    if(current === pages.length - 1){
+      nextBtn.textContent = 'Reia problema ↺';
+    } else {
+      nextBtn.textContent = 'Mergi mai departe →';
+    }
+
+    progressText.textContent = `${current + 1} / ${pages.length}`;
+    progressBar.style.width = `${((current + 1) / pages.length) * 100}%`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetPromise();
+    }
+  }
+
+  prevBtn.addEventListener('click', () => showPage(current - 1));
+
+  nextBtn.addEventListener('click', () => {
+    if(current === pages.length - 1){
+      showPage(0);
+    } else {
+      showPage(current + 1);
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if(event.key === 'ArrowLeft') showPage(current - 1);
+    if(event.key === 'ArrowRight') {
+      if(current === pages.length - 1) showPage(0);
+      else showPage(current + 1);
+    }
+  });
+
+  let startX = null;
+
+  document.addEventListener('touchstart', event => {
+    startX = event.changedTouches[0].screenX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', event => {
+    if(startX === null) return;
+
+    const diff = event.changedTouches[0].screenX - startX;
+
+    if(Math.abs(diff) > 70){
+      if(diff > 0) showPage(current - 1);
+      else if(current < pages.length - 1) showPage(current + 1);
+    }
+
+    startX = null;
+  }, { passive: true });
+
+  showPage(0);
+</script>
+
 </body>
 </html>
