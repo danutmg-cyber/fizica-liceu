@@ -1,1 +1,1037 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 9 – mișcare uniformă. Două trenuri și viteza relativă. Rezolvare pas cu pas.">
+  <title>Problema 9 | Mișcare uniformă</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --line:#334155;
+      --text:#f8fafc;
+      --muted:#cbd5e1;
+      --soft:#94a3b8;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#fb7185;
+      --shadow:0 18px 46px rgba(2,6,23,.34);
+      --max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);
+      backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,
+    .progress-row,
+    main,
+    .footer-inner{
+      width:min(var(--max),calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      color:var(--text);
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:-.02em;
+      white-space:nowrap;
+    }
+
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 11px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#1e293b;
+      color:#fff;
+      text-decoration:none;
+      font-size:.9rem;
+      font-weight:800;
+    }
+
+    .index-link:hover,
+    .index-link:focus-visible{
+      border-color:var(--cyan);
+      outline:none;
+    }
+
+    .progress-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:9px 0 11px;
+    }
+
+    .progress-track{
+      height:7px;
+      overflow:hidden;
+      border:1px solid #334155;
+      border-radius:999px;
+      background:#111827;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:16.666%;
+      background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+
+    .progress-text{
+      color:var(--muted);
+      font-size:.84rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    main{padding:22px 0 104px}
+
+    .page{
+      display:none;
+      min-height:calc(100vh - 175px);
+    }
+
+    .page.active{
+      display:block;
+      animation:fade .2s ease;
+    }
+
+    @keyframes fade{
+      from{opacity:.35;transform:translateY(5px)}
+      to{opacity:1;transform:none}
+    }
+
+    .card{
+      padding:clamp(20px,4vw,34px);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;
+      color:#a5f3fc;
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+
+    h1,h2,h3{color:#fff;line-height:1.15}
+    h1{
+      margin:0;
+      font-size:clamp(2rem,7vw,3.8rem);
+      letter-spacing:-.04em;
+    }
+    h2{
+      margin:0;
+      font-size:clamp(1.55rem,5vw,2.45rem);
+      letter-spacing:-.03em;
+    }
+    h3{
+      margin:0 0 8px;
+      font-size:1.08rem;
+    }
+
+    p,li{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:clamp(.98rem,2vw,1.08rem);
+    }
+
+    .lead{
+      margin:16px 0 0;
+      color:#e2e8f0;
+      font-size:clamp(1.04rem,2.3vw,1.22rem);
+      line-height:1.65;
+    }
+
+    .data-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .data-box{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#0f172a;
+      text-align:center;
+    }
+
+    .data-box small{
+      display:block;
+      margin-bottom:5px;
+      color:var(--soft);
+      font-weight:800;
+    }
+
+    .data-box strong{
+      color:#fff;
+      font-size:1.05rem;
+    }
+
+    .theory-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .theory-card{
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(15,23,42,.66);
+    }
+
+    .theory-card p{margin:5px 0 0}
+
+    .formula{
+      margin:14px 0 0;
+      padding:15px;
+      overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);
+      border-radius:14px;
+      background:rgba(8,145,178,.08);
+      color:#ecfeff;
+      text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+
+    .formula.green{
+      border-color:rgba(34,197,94,.27);
+      background:rgba(34,197,94,.08);
+    }
+
+    .formula.yellow{
+      border-color:rgba(250,204,21,.27);
+      background:rgba(250,204,21,.07);
+    }
+
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      border-left:4px solid var(--yellow);
+      border-radius:10px;
+      background:rgba(250,204,21,.07);
+      color:#fef9c3;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .diagram{
+      margin-top:18px;
+      padding:12px;
+      border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;
+      background:#f8fafc;
+      overflow:hidden;
+    }
+
+    .diagram svg{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:390px;
+      font-family:Inter,system-ui,sans-serif;
+    }
+
+    .diagram-caption{
+      margin:8px 3px 0;
+      color:#cbd5e1;
+      font-size:.9rem;
+      line-height:1.45;
+    }
+
+    .step-list{
+      display:grid;
+      gap:11px;
+      margin-top:18px;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:38px 1fr;
+      gap:11px;
+      align-items:start;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.68);
+    }
+
+    .num{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:11px;
+      background:rgba(34,211,238,.13);
+      color:#a5f3fc;
+      font-weight:900;
+    }
+
+    .step p{margin:0}
+
+    .result{
+      margin-top:17px;
+      padding:15px 17px;
+      border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;
+      background:rgba(34,197,94,.09);
+      color:#dcfce7;
+      font-weight:900;
+      line-height:1.55;
+    }
+
+    .check{
+      margin-top:14px;
+      padding:14px 16px;
+      border-left:4px solid var(--green);
+      border-radius:10px;
+      background:rgba(34,197,94,.07);
+      color:#dcfce7;
+      line-height:1.55;
+    }
+
+    .check strong{color:#86efac}
+
+    .quick-check{
+      margin-top:18px;
+      padding:16px;
+      border:1px solid rgba(167,139,250,.28);
+      border-radius:16px;
+      background:rgba(124,58,237,.08);
+    }
+
+    .quick-check h3{color:#ddd6fe}
+
+    .choices{
+      display:grid;
+      gap:9px;
+      margin-top:12px;
+    }
+
+    .choice{
+      min-height:46px;
+      padding:10px 12px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#0f172a;
+      color:#fff;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .choice.correct{
+      border-color:var(--green);
+      background:rgba(34,197,94,.12);
+    }
+
+    .choice.wrong{
+      border-color:var(--red);
+      background:rgba(251,113,133,.10);
+    }
+
+    .feedback{
+      min-height:24px;
+      margin-top:10px;
+      font-weight:800;
+    }
+
+    .conclusions{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .conclusion{
+      padding:15px 16px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.65);
+      color:#e2e8f0;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .answers{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .answer-card{
+      padding:17px;
+      border:1px solid rgba(34,211,238,.28);
+      border-radius:17px;
+      background:rgba(8,145,178,.08);
+    }
+
+    .answer-card small{
+      display:block;
+      margin-bottom:7px;
+      color:#a5f3fc;
+      font-weight:850;
+    }
+
+    .answer-card strong{
+      color:#fff;
+      font-size:1.08rem;
+    }
+
+    .final-actions{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .final-link{
+      min-height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 14px;
+      border-radius:13px;
+      text-decoration:none;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .final-link.primary{
+      background:var(--cyan);
+      color:#083344;
+    }
+
+    .final-link.secondary{
+      background:#334155;
+      border:1px solid #475569;
+      color:#fff;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      z-index:25;
+      left:50%;
+      bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      width:min(var(--max),calc(100% - 20px));
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:17px;
+      background:rgba(15,23,42,.96);
+      backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+
+    .nav-btn{
+      min-height:50px;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .nav-btn.prev{
+      background:#334155;
+      color:#fff;
+      border:1px solid #475569;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,var(--green),#16a34a);
+      color:#052e16;
+    }
+
+    .nav-btn:disabled{
+      opacity:.42;
+      cursor:not-allowed;
+    }
+
+    footer{
+      border-top:1px solid rgba(148,163,184,.18);
+      background:#111827;
+    }
+
+    .footer-inner{
+      padding:21px 0 95px;
+      color:var(--soft);
+      text-align:center;
+      font-size:.88rem;
+    }
+
+    @media(max-width:820px){
+      .data-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .theory-grid,
+      .answers{grid-template-columns:1fr}
+      .final-actions{grid-template-columns:1fr}
+    }
+
+    @media(max-width:520px){
+      .topbar-inner{min-height:58px}
+      .brand{font-size:.93rem}
+      .index-link{
+        min-height:38px;
+        padding:7px 9px;
+        font-size:.8rem;
+      }
+      .progress-row{padding-top:7px}
+      main{padding-top:16px}
+      .data-grid{grid-template-columns:1fr}
+      .card{
+        padding:20px 16px;
+        border-radius:20px;
+      }
+      .step{
+        grid-template-columns:34px 1fr;
+        padding:12px;
+      }
+      .num{
+        width:34px;
+        height:34px;
+      }
+      .bottom-nav{
+        grid-template-columns:92px 1fr;
+        padding:8px;
+      }
+      .nav-btn{
+        min-height:48px;
+        padding:9px 10px;
+        font-size:.9rem;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .page{animation:none}
+      .progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">1 / 6</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 -->
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 9 · Mișcare uniformă</p>
+      <h1>Enunț și date</h1>
+
+      <p class="lead">
+        Un pasager al unui tren care se deplasează cu viteza constantă $v_1$ observă
+        un al doilea tren, de lungime $l$.
+      </p>
+
+      <div class="data-grid">
+        <div class="data-box">
+          <small>Trenul pasagerului</small>
+          <strong>$v_1$</strong>
+        </div>
+        <div class="data-box">
+          <small>Al doilea tren</small>
+          <strong>$v_2$</strong>
+        </div>
+        <div class="data-box">
+          <small>Sensuri contrare</small>
+          <strong>timp $t_1$</strong>
+        </div>
+        <div class="data-box">
+          <small>Același sens</small>
+          <strong>timp $t_2$</strong>
+        </div>
+      </div>
+
+      <div class="note">
+        Cerință: determină viteza $v_2$ și lungimea $l$ a celui de-al doilea tren.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Noțiuni necesare</p>
+      <h2>Viteza relativă</h2>
+
+      <div class="theory-grid">
+        <div class="theory-card">
+          <h3>Sensuri contrare</h3>
+          <p>Vitezele se adună:</p>
+          <div class="formula green">
+            $\displaystyle v_{\text{rel,1}}=v_1+v_2$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Același sens</h3>
+          <p>Pentru ca trenul 2 să treacă pe lângă pasager, luăm $v_2>v_1$:</p>
+          <div class="formula yellow">
+            $\displaystyle v_{\text{rel,2}}=v_2-v_1$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Pasagerul este un punct de reper</h3>
+          <p>Pentru ca întreg trenul de lungime $l$ să treacă prin fața lui:</p>
+          <div class="formula">
+            $\displaystyle l=v_{\text{rel}}\,t$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Aceeași lungime în ambele situații</h3>
+          <p>Valoarea lui $l$ este aceeași, deci cele două expresii se pot egala.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Schiță</p>
+      <h2>Cele două situații</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 900 410" role="img" aria-labelledby="trainTitle trainDesc">
+          <title id="trainTitle">Două trenuri în sensuri contrare și în același sens</title>
+          <desc id="trainDesc">Sus, trenurile merg în sensuri contrare. Jos, merg în același sens. Pasagerul este punctul de reper.</desc>
+
+          <defs>
+            <marker id="aG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/>
+            </marker>
+            <marker id="aR" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+            </marker>
+          </defs>
+
+          <text x="80" y="42" font-size="23" font-weight="900" fill="#334155">1. Sensuri contrare</text>
+          <line x1="80" y1="125" x2="820" y2="125" stroke="#64748b" stroke-width="5"/>
+          <line x1="80" y1="160" x2="820" y2="160" stroke="#64748b" stroke-width="5"/>
+
+          <g transform="translate(250,95)">
+            <rect x="-115" y="0" width="230" height="48" rx="8" fill="#0f766e"/>
+            <rect x="78" y="-12" width="37" height="20" rx="4" fill="#0f766e"/>
+            <circle cx="-70" cy="52" r="11" fill="#111827"/>
+            <circle cx="70" cy="52" r="11" fill="#111827"/>
+          </g>
+          <text x="250" y="82" text-anchor="middle" font-size="19" font-weight="900" fill="#065f46">tren 1 · pasager</text>
+          <line x1="175" y1="70" x2="330" y2="70" stroke="#0f766e" stroke-width="5" marker-end="url(#aG)"/>
+          <text x="255" y="62" text-anchor="middle" font-size="19" font-weight="900" fill="#065f46">v₁</text>
+
+          <g transform="translate(645,95)">
+            <rect x="-135" y="0" width="270" height="48" rx="8" fill="#dc2626"/>
+            <rect x="-135" y="-12" width="37" height="20" rx="4" fill="#dc2626"/>
+            <circle cx="-85" cy="52" r="11" fill="#111827"/>
+            <circle cx="85" cy="52" r="11" fill="#111827"/>
+          </g>
+          <line x1="720" y1="70" x2="565" y2="70" stroke="#dc2626" stroke-width="5" marker-end="url(#aR)"/>
+          <text x="640" y="62" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">v₂</text>
+
+          <text x="450" y="202" text-anchor="middle" font-size="22" font-weight="900" fill="#1d4ed8">
+            vrel = v₁ + v₂
+          </text>
+
+          <text x="80" y="250" font-size="23" font-weight="900" fill="#334155">2. Același sens</text>
+          <line x1="80" y1="332" x2="820" y2="332" stroke="#64748b" stroke-width="5"/>
+          <line x1="80" y1="367" x2="820" y2="367" stroke="#64748b" stroke-width="5"/>
+
+          <g transform="translate(280,302)">
+            <rect x="-115" y="0" width="230" height="48" rx="8" fill="#0f766e"/>
+            <circle cx="-70" cy="52" r="11" fill="#111827"/>
+            <circle cx="70" cy="52" r="11" fill="#111827"/>
+          </g>
+          <line x1="205" y1="280" x2="360" y2="280" stroke="#0f766e" stroke-width="5" marker-end="url(#aG)"/>
+          <text x="285" y="272" text-anchor="middle" font-size="19" font-weight="900" fill="#065f46">v₁</text>
+
+          <g transform="translate(625,302)">
+            <rect x="-135" y="0" width="270" height="48" rx="8" fill="#dc2626"/>
+            <circle cx="-85" cy="52" r="11" fill="#111827"/>
+            <circle cx="85" cy="52" r="11" fill="#111827"/>
+          </g>
+          <line x1="520" y1="280" x2="710" y2="280" stroke="#dc2626" stroke-width="5" marker-end="url(#aR)"/>
+          <text x="615" y="272" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">v₂</text>
+
+          <text x="450" y="405" text-anchor="middle" font-size="22" font-weight="900" fill="#1d4ed8">
+            vrel = v₂ − v₁
+          </text>
+        </svg>
+      </div>
+
+      <div class="quick-check">
+        <h3>Verificare rapidă</h3>
+        <p>În sensuri contrare, viteza relativă este:</p>
+        <div class="choices">
+          <button class="choice" data-correct="true">A. $v_1+v_2$</button>
+          <button class="choice" data-correct="false">B. $v_2-v_1$</button>
+          <button class="choice" data-correct="false">C. $v_1v_2$</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare</p>
+      <h2>Scriem lungimea trenului în ambele cazuri</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Sensuri contrare</h3>
+            <div class="formula">
+              $\displaystyle
+              l=(v_1+v_2)t_1
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Același sens</h3>
+            <div class="formula yellow">
+              $\displaystyle
+              l=(v_2-v_1)t_2
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Egalăm expresiile</h3>
+            <div class="formula">
+              $\displaystyle
+              (v_1+v_2)t_1=(v_2-v_1)t_2
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Grupăm termenii cu $v_2$</h3>
+            <div class="formula green">
+              $\displaystyle
+              v_2(t_2-t_1)=v_1(t_1+t_2)
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezultate</p>
+      <h2>Viteza și lungimea trenului</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Viteza trenului 2</h3>
+            <div class="formula green">
+              $\displaystyle
+              v_2=
+              v_1\frac{t_1+t_2}{t_2-t_1}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Înlocuim în $l=(v_1+v_2)t_1$</h3>
+            <div class="formula">
+              $\displaystyle
+              l=
+              \left(
+              v_1+
+              v_1\frac{t_1+t_2}{t_2-t_1}
+              \right)t_1
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Simplificăm</h3>
+            <div class="formula green">
+              $\displaystyle
+              l=
+              \frac{2v_1t_1t_2}{t_2-t_1}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        $\boxed{\displaystyle
+        v_2=v_1\frac{t_1+t_2}{t_2-t_1}}
+      </div>
+
+      <div class="result">
+        $\boxed{\displaystyle
+        l=\frac{2v_1t_1t_2}{t_2-t_1}}
+      </div>
+
+      <div class="check">
+        <strong>Condiție fizică:</strong>
+        pentru această interpretare, trebuie să fie $t_2>t_1$,
+        ceea ce corespunde faptului că depășirea în același sens durează mai mult decât trecerea în sensuri contrare.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Ce trebuie reținut</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          Pentru două mobile în sensuri contrare:
+          $\displaystyle v_{\text{rel}}=v_1+v_2$.
+        </div>
+
+        <div class="conclusion">
+          Pentru două mobile în același sens:
+          $\displaystyle v_{\text{rel}}=v_2-v_1$.
+        </div>
+
+        <div class="conclusion">
+          Când un tren trece pe lângă un observator punctual,
+          distanța relativă parcursă este chiar lungimea trenului $l$.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>Viteza trenului 2</small>
+          <strong>$\displaystyle v_2=v_1\frac{t_1+t_2}{t_2-t_1}$</strong>
+        </div>
+
+        <div class="answer-card">
+          <small>Lungimea trenului</small>
+          <strong>$\displaystyle l=\frac{2v_1t_1t_2}{t_2-t_1}$</strong>
+        </div>
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="problema-8.html">← Problema 8</a>
+        <a class="final-link secondary" href="index.html">Lista problemelor</a>
+        <a class="final-link primary" href="problema-10.html">Problema 10 →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">
+    Fizica-liceu · Probleme rezolvate
+  </div>
+</footer>
+
+<script>
+  const pages = [...document.querySelectorAll('.page')];
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  let current = 0;
+
+  function showPage(index){
+    current = Math.max(0, Math.min(index, pages.length - 1));
+
+    pages.forEach((page, i) => {
+      page.classList.toggle('active', i === current);
+    });
+
+    prevBtn.disabled = current === 0;
+
+    if(current === pages.length - 1){
+      nextBtn.textContent = 'Reia problema ↺';
+    } else {
+      nextBtn.textContent = 'Mergi mai departe →';
+    }
+
+    progressText.textContent = `${current + 1} / ${pages.length}`;
+    progressBar.style.width = `${((current + 1) / pages.length) * 100}%`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetPromise();
+    }
+  }
+
+  prevBtn.addEventListener('click', () => showPage(current - 1));
+
+  nextBtn.addEventListener('click', () => {
+    if(current === pages.length - 1){
+      showPage(0);
+    } else {
+      showPage(current + 1);
+    }
+  });
+
+  document.querySelectorAll('.quick-check').forEach(box => {
+    const choices = [...box.querySelectorAll('.choice')];
+    const feedback = box.querySelector('.feedback');
+
+    choices.forEach(choice => {
+      choice.addEventListener('click', () => {
+        choices.forEach(c => c.classList.remove('correct','wrong'));
+        const ok = choice.dataset.correct === 'true';
+
+        if(ok){
+          choice.classList.add('correct');
+          feedback.textContent = 'Corect. ✓';
+          feedback.style.color = '#86efac';
+        } else {
+          choice.classList.add('wrong');
+          const right = choices.find(c => c.dataset.correct === 'true');
+          if(right) right.classList.add('correct');
+          feedback.textContent = 'Varianta corectă este evidențiată.';
+          feedback.style.color = '#fecdd3';
+        }
+      });
+    });
+  });
+
+  document.addEventListener('keydown', event => {
+    if(event.key === 'ArrowLeft') showPage(current - 1);
+    if(event.key === 'ArrowRight'){
+      if(current === pages.length - 1) showPage(0);
+      else showPage(current + 1);
+    }
+  });
+
+  let startX = null;
+
+  document.addEventListener('touchstart', event => {
+    startX = event.changedTouches[0].screenX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', event => {
+    if(startX === null) return;
+
+    const diff = event.changedTouches[0].screenX - startX;
+
+    if(Math.abs(diff) > 70){
+      if(diff > 0) showPage(current - 1);
+      else if(current < pages.length - 1) showPage(current + 1);
+    }
+
+    startX = null;
+  }, { passive: true });
+
+  showPage(0);
+</script>
+
+</body>
+</html>

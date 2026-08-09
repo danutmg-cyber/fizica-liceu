@@ -1,1 +1,603 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 17 – interpretarea constantelor din ecuația S=a+bt+ct²+dt³.">
+  <title>Problema 17 | Mișcare uniformă și variată</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;--panel:#1e293b;--line:#334155;--text:#f8fafc;
+      --muted:#cbd5e1;--soft:#94a3b8;--cyan:#22d3ee;--blue:#3b82f6;
+      --green:#22c55e;--yellow:#facc15;--red:#fb7185;--violet:#a78bfa;
+      --shadow:0 18px 46px rgba(2,6,23,.34);--max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;min-height:100vh;overflow-x:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,.progress-row,main,.footer-inner{
+      width:min(var(--max),calc(100% - 28px));margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+
+    .brand{
+      color:var(--text);text-decoration:none;font-weight:900;letter-spacing:-.02em;white-space:nowrap;
+    }
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;display:inline-flex;align-items:center;justify-content:center;
+      padding:8px 11px;border:1px solid #475569;border-radius:11px;
+      background:#1e293b;color:#fff;text-decoration:none;font-size:.9rem;font-weight:800;
+    }
+
+    .progress-row{
+      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:9px 0 11px;
+    }
+    .progress-track{
+      height:7px;overflow:hidden;border:1px solid #334155;border-radius:999px;background:#111827;
+    }
+    .progress-bar{
+      height:100%;width:16.666%;background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+    .progress-text{color:var(--muted);font-size:.84rem;font-weight:850;white-space:nowrap}
+
+    main{padding:22px 0 104px}
+    .page{display:none;min-height:calc(100vh - 175px)}
+    .page.active{display:block;animation:fade .2s ease}
+    @keyframes fade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+    .card{
+      padding:clamp(20px,4vw,34px);border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;color:#a5f3fc;font-size:.78rem;font-weight:900;
+      text-transform:uppercase;letter-spacing:.09em;
+    }
+
+    h1,h2,h3{color:#fff;line-height:1.15}
+    h1{margin:0;font-size:clamp(2rem,7vw,3.8rem);letter-spacing:-.04em}
+    h2{margin:0;font-size:clamp(1.55rem,5vw,2.45rem);letter-spacing:-.03em}
+    h3{margin:0 0 8px;font-size:1.08rem}
+
+    p,li{color:var(--muted);line-height:1.6;font-size:clamp(.98rem,2vw,1.08rem)}
+    .lead{
+      margin:16px 0 0;color:#e2e8f0;font-size:clamp(1.04rem,2.3vw,1.22rem);line-height:1.65;
+    }
+
+    .formula{
+      margin:14px 0 0;padding:15px;overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);border-radius:14px;
+      background:rgba(8,145,178,.08);color:#ecfeff;text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+    .formula.green{border-color:rgba(34,197,94,.27);background:rgba(34,197,94,.08)}
+    .formula.yellow{border-color:rgba(250,204,21,.27);background:rgba(250,204,21,.07)}
+    .formula.violet{border-color:rgba(167,139,250,.30);background:rgba(124,58,237,.08)}
+
+    .note{
+      margin-top:18px;padding:14px 16px;border-left:4px solid var(--yellow);
+      border-radius:10px;background:rgba(250,204,21,.07);color:#fef9c3;
+      line-height:1.55;font-weight:750;
+    }
+
+    .theory-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px;
+    }
+    .theory-card{
+      padding:17px;border:1px solid var(--line);border-radius:17px;background:rgba(15,23,42,.66);
+    }
+
+    .step-list{display:grid;gap:11px;margin-top:18px}
+    .step{
+      display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:start;
+      padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(15,23,42,.68);
+    }
+    .num{
+      width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
+      background:rgba(34,211,238,.13);color:#a5f3fc;font-weight:900;
+    }
+
+    .diagram{
+      margin-top:18px;padding:12px;border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;background:#f8fafc;overflow:hidden;
+    }
+    .diagram svg{
+      display:block;width:100%;height:auto;max-height:400px;font-family:Inter,system-ui,sans-serif;
+    }
+    .diagram-caption{margin:8px 3px 0;color:#cbd5e1;font-size:.9rem;line-height:1.45}
+
+    .units{
+      margin-top:18px;overflow-x:auto;border:1px solid var(--line);
+      border-radius:15px;background:#0f172a;
+    }
+    table{
+      width:100%;min-width:620px;border-collapse:collapse;color:#e2e8f0;
+    }
+    th,td{
+      padding:13px 11px;border-bottom:1px solid #334155;border-right:1px solid #334155;
+      text-align:center;vertical-align:middle;
+    }
+    th{color:#a5f3fc;background:#172033}
+    tr:last-child td{border-bottom:0}
+    th:last-child,td:last-child{border-right:0}
+
+    .quick-check{
+      margin-top:18px;padding:16px;border:1px solid rgba(167,139,250,.28);
+      border-radius:16px;background:rgba(124,58,237,.08);
+    }
+    .choices{display:grid;gap:9px;margin-top:12px}
+    .choice{
+      min-height:46px;padding:10px 12px;border:1px solid #475569;border-radius:11px;
+      background:#0f172a;color:#fff;text-align:left;cursor:pointer;
+    }
+    .choice.correct{border-color:var(--green);background:rgba(34,197,94,.12)}
+    .choice.wrong{border-color:var(--red);background:rgba(251,113,133,.10)}
+    .feedback{min-height:24px;margin-top:10px;font-weight:800}
+
+    .result{
+      margin-top:17px;padding:15px 17px;border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;background:rgba(34,197,94,.09);color:#dcfce7;font-weight:900;line-height:1.55;
+    }
+
+    .conclusions{display:grid;gap:12px;margin-top:18px}
+    .conclusion{
+      padding:15px 16px;border:1px solid var(--line);border-radius:15px;
+      background:rgba(15,23,42,.65);color:#e2e8f0;line-height:1.55;font-weight:750;
+    }
+
+    .answers{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px;
+    }
+    .answer-card{
+      padding:17px;border:1px solid rgba(34,211,238,.28);border-radius:17px;background:rgba(8,145,178,.08);
+    }
+    .answer-card small{display:block;margin-bottom:7px;color:#a5f3fc;font-weight:850}
+    .answer-card strong{color:#fff;font-size:1.08rem}
+
+    .final-actions{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px;
+    }
+    .final-link{
+      min-height:50px;display:flex;align-items:center;justify-content:center;padding:11px 14px;
+      border-radius:13px;text-decoration:none;text-align:center;font-weight:900;
+    }
+    .final-link.primary{background:var(--cyan);color:#083344}
+    .final-link.secondary{background:#334155;border:1px solid #475569;color:#fff}
+
+    .bottom-nav{
+      position:fixed;z-index:25;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);width:min(var(--max),calc(100% - 20px));
+      display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px;
+      border:1px solid rgba(148,163,184,.22);border-radius:17px;
+      background:rgba(15,23,42,.96);backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+    .nav-btn{
+      min-height:50px;border:0;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:900;
+    }
+    .nav-btn.prev{background:#334155;color:#fff;border:1px solid #475569}
+    .nav-btn.next{background:linear-gradient(135deg,var(--green),#16a34a);color:#052e16}
+    .nav-btn:disabled{opacity:.42;cursor:not-allowed}
+
+    footer{border-top:1px solid rgba(148,163,184,.18);background:#111827}
+    .footer-inner{padding:21px 0 95px;color:var(--soft);text-align:center;font-size:.88rem}
+
+    @media(max-width:820px){
+      .theory-grid,.answers{grid-template-columns:1fr}
+      .final-actions{grid-template-columns:1fr}
+    }
+    @media(max-width:520px){
+      .topbar-inner{min-height:58px}.brand{font-size:.93rem}
+      .index-link{min-height:38px;padding:7px 9px;font-size:.8rem}
+      .progress-row{padding-top:7px}main{padding-top:16px}
+      .card{padding:20px 16px;border-radius:20px}
+      .step{grid-template-columns:34px 1fr;padding:12px}
+      .num{width:34px;height:34px}
+      .bottom-nav{grid-template-columns:92px 1fr;padding:8px}
+      .nav-btn{min-height:48px;padding:9px 10px;font-size:.9rem}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}.page{animation:none}.progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">1 / 6</div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 17 · Bacalaureat, Franța</p>
+      <h1>Enunț</h1>
+
+      <p class="lead">
+        Când ecuația unei mișcări este de forma
+      </p>
+
+      <div class="formula">
+        $\displaystyle S=a+bt+ct^2+dt^3$
+      </div>
+
+      <p class="lead">
+        ce reprezintă constantele $a$, $b$, $c$, $d$?
+      </p>
+
+      <div class="note">
+        Ideea-cheie: derivăm ecuația poziției în raport cu timpul și analizăm valorile la $t=0$.
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Pasul 1</p>
+      <h2>Poziția și viteza</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Poziția inițială</h3>
+            <p>Punem $t=0$ în ecuația mișcării:</p>
+            <div class="formula green">
+              $\displaystyle S(0)=a$
+            </div>
+            <p>Deci $a$ este poziția inițială.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Viteza</h3>
+            <p>Derivăm poziția:</p>
+            <div class="formula">
+              $\displaystyle
+              v(t)=\frac{dS}{dt}=b+2ct+3dt^2
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Viteza inițială</h3>
+            <div class="formula green">
+              $\displaystyle v(0)=b$
+            </div>
+            <p>Deci $b$ este viteza inițială.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Pasul 2</p>
+      <h2>Accelerația și variația ei</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Accelerația</h3>
+            <div class="formula">
+              $\displaystyle
+              a_{\!m}(t)=\frac{dv}{dt}=2c+6dt
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Accelerația inițială</h3>
+            <div class="formula yellow">
+              $\displaystyle a_{\!m}(0)=2c
+              \quad\Rightarrow\quad
+              c=\frac{a_{\!m}(0)}{2}
+              $
+            </div>
+            <p>Coeficientul $c$ este jumătate din accelerația inițială.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Variația accelerației</h3>
+            <div class="formula violet">
+              $\displaystyle
+              j=\frac{da_{\!m}}{dt}=6d
+              \quad\Rightarrow\quad
+              d=\frac{j}{6}
+              $
+            </div>
+            <p>$j$ este rata constantă de variație a accelerației.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        Am notat accelerația cu $a_m(t)$ pentru a nu o confunda cu constanta $a$ din ecuația dată.
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Imagine de ansamblu</p>
+      <h2>Lanțul derivatelor</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 900 360" role="img" aria-labelledby="chainTitle chainDesc">
+          <title id="chainTitle">Poziție, viteză, accelerație și variația accelerației</title>
+          <desc id="chainDesc">Ecuația poziției este derivată pentru a obține viteza, apoi accelerația și apoi rata variației accelerației.</desc>
+
+          <defs>
+            <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
+            </marker>
+          </defs>
+
+          <rect x="40" y="125" width="175" height="105" rx="18" fill="#cffafe" stroke="#0891b2" stroke-width="4"/>
+          <text x="128" y="160" text-anchor="middle" font-size="23" font-weight="900" fill="#0e7490">Poziție</text>
+          <text x="128" y="195" text-anchor="middle" font-size="19" font-weight="800" fill="#155e75">S(t)</text>
+
+          <rect x="265" y="125" width="175" height="105" rx="18" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>
+          <text x="353" y="160" text-anchor="middle" font-size="23" font-weight="900" fill="#15803d">Viteză</text>
+          <text x="353" y="195" text-anchor="middle" font-size="19" font-weight="800" fill="#166534">v(t)</text>
+
+          <rect x="490" y="125" width="175" height="105" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>
+          <text x="578" y="160" text-anchor="middle" font-size="23" font-weight="900" fill="#b45309">Accelerație</text>
+          <text x="578" y="195" text-anchor="middle" font-size="19" font-weight="800" fill="#92400e">aₘ(t)</text>
+
+          <rect x="715" y="125" width="145" height="105" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="4"/>
+          <text x="788" y="160" text-anchor="middle" font-size="23" font-weight="900" fill="#6d28d9">Rată</text>
+          <text x="788" y="195" text-anchor="middle" font-size="19" font-weight="800" fill="#5b21b6">j</text>
+
+          <line x1="215" y1="178" x2="255" y2="178" stroke="#2563eb" stroke-width="5" marker-end="url(#arr)"/>
+          <line x1="440" y1="178" x2="480" y2="178" stroke="#2563eb" stroke-width="5" marker-end="url(#arr)"/>
+          <line x1="665" y1="178" x2="705" y2="178" stroke="#2563eb" stroke-width="5" marker-end="url(#arr)"/>
+
+          <text x="238" y="150" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">d/dt</text>
+          <text x="463" y="150" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">d/dt</text>
+          <text x="688" y="150" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">d/dt</text>
+
+          <text x="450" y="300" text-anchor="middle" font-size="22" font-weight="900" fill="#334155">
+            a → poziție inițială · b → viteză inițială · 2c → accelerație inițială · 6d → rata accelerației
+          </text>
+        </svg>
+      </div>
+
+      <div class="quick-check">
+        <h3>Verificare rapidă</h3>
+        <p>Dacă $S=a+bt+ct^2+dt^3$, care este viteza inițială?</p>
+        <div class="choices">
+          <button class="choice" data-correct="false">A. $a$</button>
+          <button class="choice" data-correct="true">B. $b$</button>
+          <button class="choice" data-correct="false">C. $2c$</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Unități și exemplu</p>
+      <h2>Ce unități au constantele?</h2>
+
+      <div class="units">
+        <table>
+          <thead>
+            <tr>
+              <th>Constantă</th>
+              <th>Semnificație</th>
+              <th>Unitate SI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$a$</td>
+              <td>poziție inițială</td>
+              <td>$\text{m}$</td>
+            </tr>
+            <tr>
+              <td>$b$</td>
+              <td>viteză inițială</td>
+              <td>$\text{m/s}$</td>
+            </tr>
+            <tr>
+              <td>$c$</td>
+              <td>$\frac12$ din accelerația inițială</td>
+              <td>$\text{m/s}^2$</td>
+            </tr>
+            <tr>
+              <td>$d$</td>
+              <td>$\frac16$ din rata variației accelerației</td>
+              <td>$\text{m/s}^3$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        Exemplu numeric: dacă accelerația inițială este
+        $a_m(0)=6\,\text{m/s}^2$, atunci
+        $\displaystyle c=\frac{6}{2}=3\,\text{m/s}^2$.
+        Dacă $j=12\,\text{m/s}^3$, atunci
+        $\displaystyle d=\frac{12}{6}=2\,\text{m/s}^3$.
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Răspunsul final</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          $\boxed{a=S_0}$ — poziția la momentul inițial.
+        </div>
+        <div class="conclusion">
+          $\boxed{b=v_0}$ — viteza inițială.
+        </div>
+        <div class="conclusion">
+          $\boxed{c=\frac{a_m(0)}{2}}$ — jumătate din accelerația inițială.
+        </div>
+        <div class="conclusion">
+          $\boxed{d=\frac{j}{6}}$ — o șesime din rata constantă de variație a accelerației.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>Derivate</small>
+          <strong>$v=b+2ct+3dt^2$</strong>
+        </div>
+        <div class="answer-card">
+          <small>Accelerație</small>
+          <strong>$a_m=2c+6dt$</strong>
+        </div>
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="problema-16.html">← Problema 16</a>
+        <a class="final-link secondary" href="index.html">Lista problemelor</a>
+        <a class="final-link primary" href="problema-18.html">Problema 18 →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">Fizica-liceu · Probleme rezolvate</div>
+</footer>
+
+<script>
+  const pages=[...document.querySelectorAll('.page')];
+  const prevBtn=document.getElementById('prevBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const progressBar=document.getElementById('progressBar');
+  const progressText=document.getElementById('progressText');
+  let current=0;
+
+  function showPage(index){
+    current=Math.max(0,Math.min(index,pages.length-1));
+    pages.forEach((p,i)=>p.classList.toggle('active',i===current));
+    prevBtn.disabled=current===0;
+    nextBtn.textContent=current===pages.length-1?'Reia problema ↺':'Mergi mai departe →';
+    progressText.textContent=`${current+1} / ${pages.length}`;
+    progressBar.style.width=`${((current+1)/pages.length)*100}%`;
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise();
+  }
+
+  prevBtn.addEventListener('click',()=>showPage(current-1));
+  nextBtn.addEventListener('click',()=>current===pages.length-1?showPage(0):showPage(current+1));
+
+  document.querySelectorAll('.quick-check').forEach(box=>{
+    const choices=[...box.querySelectorAll('.choice')];
+    const feedback=box.querySelector('.feedback');
+    choices.forEach(choice=>{
+      choice.addEventListener('click',()=>{
+        choices.forEach(c=>c.classList.remove('correct','wrong'));
+        const ok=choice.dataset.correct==='true';
+        if(ok){
+          choice.classList.add('correct');
+          feedback.textContent='Corect. ✓';
+          feedback.style.color='#86efac';
+        }else{
+          choice.classList.add('wrong');
+          const right=choices.find(c=>c.dataset.correct==='true');
+          if(right) right.classList.add('correct');
+          feedback.textContent='Varianta corectă este evidențiată.';
+          feedback.style.color='#fecdd3';
+        }
+      });
+    });
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft') showPage(current-1);
+    if(e.key==='ArrowRight') current===pages.length-1?showPage(0):showPage(current+1);
+  });
+
+  let startX=null;
+  document.addEventListener('touchstart',e=>startX=e.changedTouches[0].screenX,{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(startX===null) return;
+    const diff=e.changedTouches[0].screenX-startX;
+    if(Math.abs(diff)>70){
+      if(diff>0) showPage(current-1);
+      else if(current<pages.length-1) showPage(current+1);
+    }
+    startX=null;
+  },{passive:true});
+
+  showPage(0);
+</script>
+</body>
+</html>

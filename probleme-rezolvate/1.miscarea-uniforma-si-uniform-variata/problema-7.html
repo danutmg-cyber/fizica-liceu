@@ -1,1 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 7 – mișcare uniformă. Motociclist, ecou și zid. Rezolvare pas cu pas.">
+  <title>Problema 7 | Mișcare uniformă</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --line:#334155;
+      --text:#f8fafc;
+      --muted:#cbd5e1;
+      --soft:#94a3b8;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#fb7185;
+      --shadow:0 18px 46px rgba(2,6,23,.34);
+      --max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);
+      backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,
+    .progress-row,
+    main,
+    .footer-inner{
+      width:min(var(--max),calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      color:var(--text);
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:-.02em;
+      white-space:nowrap;
+    }
+
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 11px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#1e293b;
+      color:#fff;
+      text-decoration:none;
+      font-size:.9rem;
+      font-weight:800;
+    }
+
+    .index-link:hover,
+    .index-link:focus-visible{
+      border-color:var(--cyan);
+      outline:none;
+    }
+
+    .progress-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:9px 0 11px;
+    }
+
+    .progress-track{
+      height:7px;
+      overflow:hidden;
+      border:1px solid #334155;
+      border-radius:999px;
+      background:#111827;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:16.666%;
+      background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+
+    .progress-text{
+      color:var(--muted);
+      font-size:.84rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    main{padding:22px 0 104px}
+
+    .page{
+      display:none;
+      min-height:calc(100vh - 175px);
+    }
+
+    .page.active{
+      display:block;
+      animation:fade .2s ease;
+    }
+
+    @keyframes fade{
+      from{opacity:.35;transform:translateY(5px)}
+      to{opacity:1;transform:none}
+    }
+
+    .card{
+      padding:clamp(20px,4vw,34px);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;
+      color:#a5f3fc;
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+
+    h1,h2,h3{color:#fff;line-height:1.15}
+    h1{
+      margin:0;
+      font-size:clamp(2rem,7vw,3.8rem);
+      letter-spacing:-.04em;
+    }
+    h2{
+      margin:0;
+      font-size:clamp(1.55rem,5vw,2.45rem);
+      letter-spacing:-.03em;
+    }
+    h3{
+      margin:0 0 8px;
+      font-size:1.08rem;
+    }
+
+    p,li{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:clamp(.98rem,2vw,1.08rem);
+    }
+
+    .lead{
+      margin:16px 0 0;
+      color:#e2e8f0;
+      font-size:clamp(1.04rem,2.3vw,1.22rem);
+      line-height:1.65;
+    }
+
+    .data-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .data-box{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#0f172a;
+      text-align:center;
+    }
+
+    .data-box small{
+      display:block;
+      margin-bottom:5px;
+      color:var(--soft);
+      font-weight:800;
+    }
+
+    .data-box strong{
+      color:#fff;
+      font-size:1.05rem;
+    }
+
+    .theory-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .theory-card{
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(15,23,42,.66);
+    }
+
+    .theory-card p{margin:5px 0 0}
+
+    .formula{
+      margin:14px 0 0;
+      padding:15px;
+      overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);
+      border-radius:14px;
+      background:rgba(8,145,178,.08);
+      color:#ecfeff;
+      text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+
+    .formula.green{
+      border-color:rgba(34,197,94,.27);
+      background:rgba(34,197,94,.08);
+    }
+
+    .formula.yellow{
+      border-color:rgba(250,204,21,.27);
+      background:rgba(250,204,21,.07);
+    }
+
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      border-left:4px solid var(--yellow);
+      border-radius:10px;
+      background:rgba(250,204,21,.07);
+      color:#fef9c3;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .diagram{
+      margin-top:18px;
+      padding:12px;
+      border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;
+      background:#f8fafc;
+      overflow:hidden;
+    }
+
+    .diagram svg{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:370px;
+      font-family:Inter,system-ui,sans-serif;
+    }
+
+    .diagram-caption{
+      margin:8px 3px 0;
+      color:#cbd5e1;
+      font-size:.9rem;
+      line-height:1.45;
+    }
+
+    .step-list{
+      display:grid;
+      gap:11px;
+      margin-top:18px;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:38px 1fr;
+      gap:11px;
+      align-items:start;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.68);
+    }
+
+    .num{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:11px;
+      background:rgba(34,211,238,.13);
+      color:#a5f3fc;
+      font-weight:900;
+    }
+
+    .step p{margin:0}
+
+    .result{
+      margin-top:17px;
+      padding:15px 17px;
+      border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;
+      background:rgba(34,197,94,.09);
+      color:#dcfce7;
+      font-weight:900;
+      line-height:1.55;
+    }
+
+    .check{
+      margin-top:14px;
+      padding:14px 16px;
+      border-left:4px solid var(--green);
+      border-radius:10px;
+      background:rgba(34,197,94,.07);
+      color:#dcfce7;
+      line-height:1.55;
+    }
+
+    .check strong{color:#86efac}
+
+    .quick-check{
+      margin-top:18px;
+      padding:16px;
+      border:1px solid rgba(167,139,250,.28);
+      border-radius:16px;
+      background:rgba(124,58,237,.08);
+    }
+
+    .quick-check h3{color:#ddd6fe}
+
+    .choices{
+      display:grid;
+      gap:9px;
+      margin-top:12px;
+    }
+
+    .choice{
+      min-height:46px;
+      padding:10px 12px;
+      border:1px solid #475569;
+      border-radius:11px;
+      background:#0f172a;
+      color:#fff;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .choice.correct{
+      border-color:var(--green);
+      background:rgba(34,197,94,.12);
+    }
+
+    .choice.wrong{
+      border-color:var(--red);
+      background:rgba(251,113,133,.10);
+    }
+
+    .feedback{
+      min-height:24px;
+      margin-top:10px;
+      font-weight:800;
+    }
+
+    .conclusions{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .conclusion{
+      padding:15px 16px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:rgba(15,23,42,.65);
+      color:#e2e8f0;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .answers{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .answer-card{
+      padding:17px;
+      border:1px solid rgba(34,211,238,.28);
+      border-radius:17px;
+      background:rgba(8,145,178,.08);
+    }
+
+    .answer-card small{
+      display:block;
+      margin-bottom:7px;
+      color:#a5f3fc;
+      font-weight:850;
+    }
+
+    .answer-card strong{
+      color:#fff;
+      font-size:1.14rem;
+    }
+
+    .final-actions{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .final-link{
+      min-height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 14px;
+      border-radius:13px;
+      text-decoration:none;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .final-link.primary{
+      background:var(--cyan);
+      color:#083344;
+    }
+
+    .final-link.secondary{
+      background:#334155;
+      border:1px solid #475569;
+      color:#fff;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      z-index:25;
+      left:50%;
+      bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      width:min(var(--max),calc(100% - 20px));
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:17px;
+      background:rgba(15,23,42,.96);
+      backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+
+    .nav-btn{
+      min-height:50px;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .nav-btn.prev{
+      background:#334155;
+      color:#fff;
+      border:1px solid #475569;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,var(--green),#16a34a);
+      color:#052e16;
+    }
+
+    .nav-btn:disabled{
+      opacity:.42;
+      cursor:not-allowed;
+    }
+
+    footer{
+      border-top:1px solid rgba(148,163,184,.18);
+      background:#111827;
+    }
+
+    .footer-inner{
+      padding:21px 0 95px;
+      color:var(--soft);
+      text-align:center;
+      font-size:.88rem;
+    }
+
+    @media(max-width:820px){
+      .theory-grid,
+      .answers{grid-template-columns:1fr}
+      .final-actions{grid-template-columns:1fr}
+    }
+
+    @media(max-width:620px){
+      .data-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:520px){
+      .topbar-inner{min-height:58px}
+      .brand{font-size:.93rem}
+      .index-link{
+        min-height:38px;
+        padding:7px 9px;
+        font-size:.8rem;
+      }
+      .progress-row{padding-top:7px}
+      main{padding-top:16px}
+      .card{
+        padding:20px 16px;
+        border-radius:20px;
+      }
+      .step{
+        grid-template-columns:34px 1fr;
+        padding:12px;
+      }
+      .num{
+        width:34px;
+        height:34px;
+      }
+      .bottom-nav{
+        grid-template-columns:92px 1fr;
+        padding:8px;
+      }
+      .nav-btn{
+        min-height:48px;
+        padding:9px 10px;
+        font-size:.9rem;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .page{animation:none}
+      .progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">1 / 6</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 -->
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 7 · Mișcare uniformă</p>
+      <h1>Enunț și date</h1>
+
+      <p class="lead">
+        Un motociclist se apropie cu viteză constantă, pe direcție perpendiculară pe un zid.
+        El emite un semnal sonor scurt. Ecoul este recepționat după ce motociclistul a parcurs
+        $\frac{1}{9}$ din distanța care îl separa inițial de zid.
+      </p>
+
+      <div class="data-grid">
+        <div class="data-box">
+          <small>Viteza sunetului</small>
+          <strong>$v_s=340\,\text{m/s}$</strong>
+        </div>
+        <div class="data-box">
+          <small>Distanța inițială</small>
+          <strong>$d$</strong>
+        </div>
+        <div class="data-box">
+          <small>Drumul motociclistului</small>
+          <strong>$\frac{d}{9}$</strong>
+        </div>
+      </div>
+
+      <div class="note">
+        Cerință: determină viteza motociclistului $v$.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Noțiuni necesare</p>
+      <h2>Ecou + mișcare relativă</h2>
+
+      <div class="theory-grid">
+        <div class="theory-card">
+          <h3>Drumul sunetului până la zid</h3>
+          <div class="formula">
+            $\displaystyle t_1=\frac{d}{v_s}$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Motociclistul se mișcă între timp</h3>
+          <div class="formula green">
+            $\displaystyle x_1=v\,t_1$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>La întoarcerea ecoului</h3>
+          <p>Sunetul și motociclistul se apropie unul de celălalt.</p>
+          <div class="formula yellow">
+            $\displaystyle v_{\text{rel}}=v_s+v$
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Condiția din enunț</h3>
+          <div class="formula">
+            $\displaystyle v(t_1+t_2)=\frac{d}{9}$
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Schiță</p>
+      <h2>Drumul semnalului și al motociclistului</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 860 360" role="img" aria-labelledby="echoTitle echoDesc">
+          <title id="echoTitle">Motociclist, zid și ecou</title>
+          <desc id="echoDesc">Motociclistul pornește la distanța d de zid. Sunetul merge până la zid și se reflectă. Între timp motociclistul se apropie de zid.</desc>
+
+          <rect x="90" y="240" width="640" height="34" rx="8" fill="#1f2937"/>
+          <line x1="110" y1="257" x2="710" y2="257" stroke="#facc15" stroke-width="4" stroke-dasharray="18 14"/>
+
+          <rect x="720" y="60" width="45" height="250" fill="#64748b"/>
+          <line x1="720" y1="60" x2="720" y2="310" stroke="#334155" stroke-width="6"/>
+          <text x="743" y="45" text-anchor="middle" font-size="24" font-weight="900" fill="#334155">ZID</text>
+
+          <g transform="translate(175,220)">
+            <circle cx="-24" cy="31" r="25" fill="none" stroke="#0f766e" stroke-width="7"/>
+            <circle cx="39" cy="31" r="25" fill="none" stroke="#0f766e" stroke-width="7"/>
+            <path d="M-24 31 L8 -4 L39 31 L15 31 Z" fill="none" stroke="#0f766e" stroke-width="6"/>
+          </g>
+
+          <g transform="translate(330,220)">
+            <circle cx="-24" cy="31" r="25" fill="none" stroke="#dc2626" stroke-width="7" opacity=".85"/>
+            <circle cx="39" cy="31" r="25" fill="none" stroke="#dc2626" stroke-width="7" opacity=".85"/>
+            <path d="M-24 31 L8 -4 L39 31 L15 31 Z" fill="none" stroke="#dc2626" stroke-width="6" opacity=".85"/>
+          </g>
+
+          <text x="175" y="310" text-anchor="middle" font-size="20" font-weight="900" fill="#065f46">la emitere</text>
+          <text x="330" y="310" text-anchor="middle" font-size="20" font-weight="900" fill="#b91c1c">la recepție</text>
+
+          <line x1="205" y1="85" x2="705" y2="85" stroke="#2563eb" stroke-width="5"/>
+          <path d="M705 85 l-18 -11 v22 z" fill="#2563eb"/>
+          <text x="455" y="65" text-anchor="middle" font-size="22" font-weight="900" fill="#1d4ed8">
+            sunet → zid
+          </text>
+
+          <line x1="705" y1="135" x2="355" y2="135" stroke="#7c3aed" stroke-width="5"/>
+          <path d="M355 135 l18 -11 v22 z" fill="#7c3aed"/>
+          <text x="530" y="118" text-anchor="middle" font-size="22" font-weight="900" fill="#6d28d9">
+            ecou → motociclist
+          </text>
+
+          <line x1="205" y1="180" x2="700" y2="180" stroke="#0f766e" stroke-width="4"/>
+          <path d="M205 180 l16 -10 v20 z" fill="#0f766e"/>
+          <path d="M700 180 l-16 -10 v20 z" fill="#0f766e"/>
+          <text x="452" y="165" text-anchor="middle" font-size="22" font-weight="900" fill="#065f46">d</text>
+
+          <line x1="205" y1="215" x2="305" y2="215" stroke="#dc2626" stroke-width="4"/>
+          <path d="M205 215 l16 -10 v20 z" fill="#dc2626"/>
+          <path d="M305 215 l-16 -10 v20 z" fill="#dc2626"/>
+          <text x="255" y="202" text-anchor="middle" font-size="21" font-weight="900" fill="#b91c1c">d/9</text>
+        </svg>
+      </div>
+
+      <p class="diagram-caption">
+        Semnalul parcurge dusul până la zid, apoi se întoarce spre un receptor care se apropie.
+      </p>
+
+      <div class="quick-check">
+        <h3>Verificare rapidă</h3>
+        <p>La întoarcerea ecoului, viteza de apropiere dintre sunet și motociclist este:</p>
+        <div class="choices">
+          <button class="choice" data-correct="false">A. $v_s-v$</button>
+          <button class="choice" data-correct="true">B. $v_s+v$</button>
+          <button class="choice" data-correct="false">C. $v_s$</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Timpii sunetului</p>
+      <h2>Dusul și întoarcerea</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Timpul până la zid</h3>
+            <div class="formula">
+              $\displaystyle
+              t_1=\frac{d}{v_s}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Distanța rămasă la momentul reflexiei</h3>
+            <p>În timpul $t_1$, motociclistul înaintează cu $vt_1$.</p>
+            <div class="formula">
+              $\displaystyle
+              d_1=d-vt_1
+              =d-\frac{vd}{v_s}
+              =d\left(1-\frac{v}{v_s}\right)
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Timpul ecoului până la motociclist</h3>
+            <div class="formula yellow">
+              $\displaystyle
+              t_2=
+              \frac{d_1}{v_s+v}
+              =
+              \frac{d(v_s-v)}{v_s(v_s+v)}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Timpul total</h3>
+            <div class="formula green">
+              $\displaystyle
+              t=t_1+t_2
+              =
+              \frac{2d}{v_s+v}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Rezolvare · Viteza motociclistului</p>
+      <h2>Folosim condiția $\frac{d}{9}$</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Drumul motociclistului până la recepția ecoului</h3>
+            <div class="formula">
+              $\displaystyle
+              x=v\,t
+              =
+              v\frac{2d}{v_s+v}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Din enunț</h3>
+            <div class="formula yellow">
+              $\displaystyle
+              \frac{2vd}{v_s+v}=\frac{d}{9}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Simplificăm distanța $d$</h3>
+            <div class="formula">
+              $\displaystyle
+              \frac{2v}{v_s+v}=\frac{1}{9}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Rezolvăm</h3>
+            <div class="formula green">
+              $\displaystyle
+              18v=v_s+v
+              \Rightarrow
+              17v=v_s
+              $
+            </div>
+            <div class="formula green">
+              $\displaystyle
+              v=\frac{340}{17}=20\,\text{m/s}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        $\boxed{v=20\,\text{m/s}}$
+      </div>
+
+      <div class="formula">
+        $\displaystyle
+        20\,\text{m/s}\cdot3{,}6=72\,\text{km/h}
+        $
+      </div>
+
+      <div class="check">
+        <strong>Verificare:</strong>
+        $\frac{2v}{v_s+v}=\frac{40}{360}=\frac{1}{9}$,
+        exact condiția din enunț.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Ce trebuie reținut</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          Sunetul merge până la zid cu viteza $v_s$, dar la întoarcere receptorul se mișcă spre undă.
+        </div>
+
+        <div class="conclusion">
+          Pentru ecoul care se întoarce, viteza de apropiere este
+          $\displaystyle v_s+v$.
+        </div>
+
+        <div class="conclusion">
+          Distanța inițială $d$ se simplifică; rezultatul nu depinde de cât de departe era zidul.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>Viteza</small>
+          <strong>$v=20\,\text{m/s}$</strong>
+        </div>
+
+        <div class="answer-card">
+          <small>În km/h</small>
+          <strong>$v=72\,\text{km/h}$</strong>
+        </div>
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="problema-6.html">← Problema 6</a>
+        <a class="final-link secondary" href="index.html">Lista problemelor</a>
+        <a class="final-link primary" href="problema-8.html">Problema 8 →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">
+    Fizica-liceu · Probleme rezolvate
+  </div>
+</footer>
+
+<script>
+  const pages = [...document.querySelectorAll('.page')];
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  let current = 0;
+
+  function showPage(index){
+    current = Math.max(0, Math.min(index, pages.length - 1));
+
+    pages.forEach((page, i) => {
+      page.classList.toggle('active', i === current);
+    });
+
+    prevBtn.disabled = current === 0;
+
+    if(current === pages.length - 1){
+      nextBtn.textContent = 'Reia problema ↺';
+    } else {
+      nextBtn.textContent = 'Mergi mai departe →';
+    }
+
+    progressText.textContent = `${current + 1} / ${pages.length}`;
+    progressBar.style.width = `${((current + 1) / pages.length) * 100}%`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetPromise();
+    }
+  }
+
+  prevBtn.addEventListener('click', () => showPage(current - 1));
+
+  nextBtn.addEventListener('click', () => {
+    if(current === pages.length - 1){
+      showPage(0);
+    } else {
+      showPage(current + 1);
+    }
+  });
+
+  document.querySelectorAll('.quick-check').forEach(box => {
+    const choices = [...box.querySelectorAll('.choice')];
+    const feedback = box.querySelector('.feedback');
+
+    choices.forEach(choice => {
+      choice.addEventListener('click', () => {
+        choices.forEach(c => c.classList.remove('correct','wrong'));
+        const ok = choice.dataset.correct === 'true';
+
+        if(ok){
+          choice.classList.add('correct');
+          feedback.textContent = 'Corect. ✓';
+          feedback.style.color = '#86efac';
+        } else {
+          choice.classList.add('wrong');
+          const right = choices.find(c => c.dataset.correct === 'true');
+          if(right) right.classList.add('correct');
+          feedback.textContent = 'Varianta corectă este evidențiată.';
+          feedback.style.color = '#fecdd3';
+        }
+      });
+    });
+  });
+
+  document.addEventListener('keydown', event => {
+    if(event.key === 'ArrowLeft') showPage(current - 1);
+    if(event.key === 'ArrowRight'){
+      if(current === pages.length - 1) showPage(0);
+      else showPage(current + 1);
+    }
+  });
+
+  let startX = null;
+
+  document.addEventListener('touchstart', event => {
+    startX = event.changedTouches[0].screenX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', event => {
+    if(startX === null) return;
+    const diff = event.changedTouches[0].screenX - startX;
+
+    if(Math.abs(diff) > 70){
+      if(diff > 0) showPage(current - 1);
+      else if(current < pages.length - 1) showPage(current + 1);
+    }
+
+    startX = null;
+  }, { passive: true });
+
+  showPage(0);
+</script>
+
+</body>
+</html>
