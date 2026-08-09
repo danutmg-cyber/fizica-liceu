@@ -1,1 +1,841 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Problema 23 – mișcare în trei etape: accelerare, mișcare uniformă și încetinire.">
+  <title>Problema 23 | Mișcare uniformă și uniform variată</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f172a;--panel:#1e293b;--line:#334155;--text:#f8fafc;
+      --muted:#cbd5e1;--soft:#94a3b8;--cyan:#22d3ee;--blue:#3b82f6;
+      --green:#22c55e;--yellow:#facc15;--red:#fb7185;--violet:#a78bfa;
+      --shadow:0 18px 46px rgba(2,6,23,.34);--max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;min-height:100vh;overflow-x:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 7%,rgba(34,211,238,.10),transparent 25rem),
+        radial-gradient(circle at 88% 12%,rgba(59,130,246,.10),transparent 27rem),
+        var(--bg);
+    }
+
+    a{color:inherit}
+    button{font:inherit}
+
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.95);backdrop-filter:blur(12px);
+    }
+
+    .topbar-inner,.progress-row,main,.footer-inner{
+      width:min(var(--max),calc(100% - 28px));margin:0 auto;
+    }
+
+    .topbar-inner{
+      min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+
+    .brand{
+      color:#fff;text-decoration:none;font-weight:900;letter-spacing:-.02em;white-space:nowrap;
+    }
+    .brand span{color:var(--cyan)}
+
+    .index-link{
+      min-height:40px;display:inline-flex;align-items:center;justify-content:center;
+      padding:8px 11px;border:1px solid #475569;border-radius:11px;
+      background:#1e293b;color:#fff;text-decoration:none;font-size:.9rem;font-weight:800;
+    }
+
+    .progress-row{
+      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:9px 0 11px;
+    }
+    .progress-track{
+      height:7px;overflow:hidden;border:1px solid #334155;border-radius:999px;background:#111827;
+    }
+    .progress-bar{
+      height:100%;width:14.285%;background:linear-gradient(90deg,var(--cyan),var(--blue));
+      transition:width .2s ease;
+    }
+    .progress-text{color:var(--muted);font-size:.84rem;font-weight:850;white-space:nowrap}
+
+    main{padding:22px 0 104px}
+    .page{display:none;min-height:calc(100vh - 175px)}
+    .page.active{display:block;animation:fade .2s ease}
+    @keyframes fade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+    .card{
+      padding:clamp(20px,4vw,34px);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(23,32,51,.98));
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      margin:0 0 8px;color:#a5f3fc;font-size:.78rem;font-weight:900;
+      text-transform:uppercase;letter-spacing:.09em;
+    }
+
+    h1,h2,h3{color:#fff;line-height:1.15}
+    h1{margin:0;font-size:clamp(2rem,7vw,3.8rem);letter-spacing:-.04em}
+    h2{margin:0;font-size:clamp(1.55rem,5vw,2.45rem);letter-spacing:-.03em}
+    h3{margin:0 0 8px;font-size:1.08rem}
+
+    p,li{color:var(--muted);line-height:1.6;font-size:clamp(.98rem,2vw,1.08rem)}
+    .lead{margin:16px 0 0;color:#e2e8f0;font-size:clamp(1.04rem,2.3vw,1.22rem);line-height:1.65}
+
+    .data-grid{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px;
+    }
+    .data-box{
+      padding:14px;border:1px solid var(--line);border-radius:15px;background:#0f172a;text-align:center;
+    }
+    .data-box small{display:block;margin-bottom:5px;color:var(--soft);font-weight:800}
+    .data-box strong{color:#fff;font-size:1.05rem}
+
+    .formula{
+      margin:14px 0 0;padding:15px;overflow-x:auto;
+      border:1px solid rgba(34,211,238,.25);border-radius:14px;
+      background:rgba(8,145,178,.08);color:#ecfeff;text-align:center;
+      font-size:clamp(1.05rem,3vw,1.35rem);
+    }
+    .formula.green{border-color:rgba(34,197,94,.27);background:rgba(34,197,94,.08)}
+    .formula.yellow{border-color:rgba(250,204,21,.27);background:rgba(250,204,21,.07)}
+
+    .note{
+      margin-top:18px;padding:14px 16px;border-left:4px solid var(--yellow);
+      border-radius:10px;background:rgba(250,204,21,.07);color:#fef9c3;
+      line-height:1.55;font-weight:750;
+    }
+
+    .theory-grid{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px;
+    }
+    .theory-card{
+      padding:17px;border:1px solid var(--line);border-radius:17px;background:rgba(15,23,42,.66);
+    }
+
+    .diagram{
+      margin-top:18px;padding:12px;border:1px solid rgba(34,211,238,.24);
+      border-radius:18px;background:#f8fafc;overflow:hidden;
+    }
+    .diagram svg{
+      display:block;width:100%;height:auto;font-family:Inter,system-ui,sans-serif;
+    }
+
+    .step-list{display:grid;gap:11px;margin-top:18px}
+    .step{
+      display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:start;
+      padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(15,23,42,.68);
+    }
+    .num{
+      width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
+      background:rgba(34,211,238,.13);color:#a5f3fc;font-weight:900;
+    }
+
+    .result{
+      margin-top:17px;padding:15px 17px;border:1px solid rgba(34,197,94,.32);
+      border-radius:15px;background:rgba(34,197,94,.09);color:#dcfce7;font-weight:900;line-height:1.55;
+    }
+
+    .check{
+      margin-top:14px;padding:14px 16px;border-left:4px solid var(--green);
+      border-radius:10px;background:rgba(34,197,94,.07);color:#dcfce7;line-height:1.55;
+    }
+
+    .quick-check{
+      margin-top:18px;padding:16px;border:1px solid rgba(167,139,250,.28);
+      border-radius:16px;background:rgba(124,58,237,.08);
+    }
+    .choices{display:grid;gap:9px;margin-top:12px}
+    .choice{
+      min-height:46px;padding:10px 12px;border:1px solid #475569;border-radius:11px;
+      background:#0f172a;color:#fff;text-align:left;cursor:pointer;
+    }
+    .choice.correct{border-color:var(--green);background:rgba(34,197,94,.12)}
+    .choice.wrong{border-color:var(--red);background:rgba(251,113,133,.10)}
+    .feedback{min-height:24px;margin-top:10px;font-weight:800}
+
+    .conclusions{display:grid;gap:12px;margin-top:18px}
+    .conclusion{
+      padding:15px 16px;border:1px solid var(--line);border-radius:15px;
+      background:rgba(15,23,42,.65);color:#e2e8f0;line-height:1.55;font-weight:750;
+    }
+
+    .answers{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px;
+    }
+    .answer-card{
+      padding:17px;border:1px solid rgba(34,211,238,.28);
+      border-radius:17px;background:rgba(8,145,178,.08);
+    }
+    .answer-card small{display:block;margin-bottom:7px;color:#a5f3fc;font-weight:850}
+    .answer-card strong{color:#fff;font-size:1.08rem}
+
+    .final-actions{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px;
+    }
+    .final-link{
+      min-height:50px;display:flex;align-items:center;justify-content:center;
+      padding:11px 14px;border-radius:13px;text-decoration:none;text-align:center;font-weight:900;
+    }
+    .final-link.primary{background:var(--cyan);color:#083344}
+    .final-link.secondary{background:#334155;border:1px solid #475569;color:#fff}
+
+    .bottom-nav{
+      position:fixed;z-index:25;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);width:min(var(--max),calc(100% - 20px));
+      display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px;
+      border:1px solid rgba(148,163,184,.22);border-radius:17px;
+      background:rgba(15,23,42,.96);backdrop-filter:blur(12px);
+      box-shadow:0 -12px 32px rgba(2,6,23,.28);
+    }
+    .nav-btn{
+      min-height:50px;border:0;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:900;
+    }
+    .nav-btn.prev{background:#334155;color:#fff;border:1px solid #475569}
+    .nav-btn.next{background:linear-gradient(135deg,var(--green),#16a34a);color:#052e16}
+    .nav-btn:disabled{opacity:.42;cursor:not-allowed}
+
+    footer{border-top:1px solid rgba(148,163,184,.18);background:#111827}
+    .footer-inner{padding:21px 0 95px;color:var(--soft);text-align:center;font-size:.88rem}
+
+    @media(max-width:820px){
+      .data-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .theory-grid,.answers{grid-template-columns:1fr}
+      .final-actions{grid-template-columns:1fr}
+    }
+    @media(max-width:520px){
+      .topbar-inner{min-height:58px}
+      .brand{font-size:.93rem}
+      .index-link{min-height:38px;padding:7px 9px;font-size:.8rem}
+      .progress-row{padding-top:7px}
+      main{padding-top:16px}
+      .data-grid{grid-template-columns:1fr}
+      .card{padding:20px 16px;border-radius:20px}
+      .step{grid-template-columns:34px 1fr;padding:12px}
+      .num{width:34px;height:34px}
+      .bottom-nav{grid-template-columns:92px 1fr;padding:8px}
+      .nav-btn{min-height:48px;padding:9px 10px;font-size:.9rem}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}.page{animation:none}.progress-bar{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../../index.html">Fizica<span>-liceu</span></a>
+    <a class="index-link" href="index.html">← Cele 23 probleme</a>
+  </div>
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">1 / 7</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 -->
+  <section class="page active">
+    <div class="card">
+      <p class="eyebrow">Problema 23 · Olimpiada, 1959</p>
+      <h1>Enunț și date</h1>
+
+      <p class="lead">
+        Un mobil pleacă din repaus din punctul $A$, în linie dreaptă, trece prin $B$ și $C$
+        și ajunge în $D$ astfel:
+      </p>
+
+      <div class="theory-grid">
+        <div class="theory-card">
+          <h3>$A\rightarrow B$</h3>
+          <p>Mișcare uniform accelerată cu</p>
+          <div class="formula">$\displaystyle a=0{,}1\,\text{m/s}^2$</div>
+        </div>
+        <div class="theory-card">
+          <h3>$B\rightarrow C$</h3>
+          <p>Mișcare uniformă cu viteza atinsă în $B$.</p>
+        </div>
+        <div class="theory-card">
+          <h3>$C\rightarrow D$</h3>
+          <p>Mișcare uniform încetinită, cu accelerația de modul</p>
+          <div class="formula">$\displaystyle 0{,}1\,\text{m/s}^2$</div>
+        </div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-box"><small>Distanța totală</small><strong>$AD=14{,}25\,\text{km}$</strong></div>
+        <div class="data-box"><small>Timp pe $BC$</small><strong>$13\frac13\,\text{min}$</strong></div>
+        <div class="data-box"><small>La $A$</small><strong>$v_A=0$</strong></div>
+        <div class="data-box"><small>La $D$</small><strong>$v_D=0$</strong></div>
+      </div>
+
+      <div class="note">
+        Se cer: 1° viteza maximă; 2° timpul total; 3° distanțele $AB$, $BC$, $CD$;
+        4° diagramele accelerației, vitezei și spațiului în funcție de timp.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Pregătirea rezolvării</p>
+      <h2>Cele trei etape</h2>
+
+      <div class="formula">
+        $\displaystyle
+        13\frac13\,\text{min}
+        =
+        \frac{40}{3}\cdot60
+        =
+        800\,\text{s}
+        $
+      </div>
+
+      <div class="formula green">
+        $\displaystyle
+        AD=14{,}25\,\text{km}=14250\,\text{m}
+        $
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 900 330" role="img" aria-labelledby="routeTitle routeDesc">
+          <title id="routeTitle">Cele trei etape ale mișcării</title>
+          <desc id="routeDesc">Mobilul accelerează de la A la B, se deplasează uniform de la B la C și încetinește până la oprire de la C la D.</desc>
+
+          <defs>
+            <marker id="axis23" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+            </marker>
+          </defs>
+
+          <line x1="70" y1="205" x2="830" y2="205" stroke="#334155" stroke-width="5" marker-end="url(#axis23)"/>
+
+          <circle cx="120" cy="205" r="10" fill="#0f766e"/>
+          <circle cx="310" cy="205" r="10" fill="#2563eb"/>
+          <circle cx="655" cy="205" r="10" fill="#d97706"/>
+          <circle cx="790" cy="205" r="10" fill="#dc2626"/>
+
+          <text x="120" y="245" text-anchor="middle" font-size="24" font-weight="900" fill="#065f46">A</text>
+          <text x="310" y="245" text-anchor="middle" font-size="24" font-weight="900" fill="#1d4ed8">B</text>
+          <text x="655" y="245" text-anchor="middle" font-size="24" font-weight="900" fill="#b45309">C</text>
+          <text x="790" y="245" text-anchor="middle" font-size="24" font-weight="900" fill="#b91c1c">D</text>
+
+          <rect x="125" y="115" width="180" height="55" rx="14" fill="#cffafe" stroke="#0891b2" stroke-width="3"/>
+          <text x="215" y="148" text-anchor="middle" font-size="20" font-weight="900" fill="#0e7490">a = +0,1 m/s²</text>
+
+          <rect x="330" y="115" width="305" height="55" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+          <text x="482" y="148" text-anchor="middle" font-size="20" font-weight="900" fill="#15803d">v = constantă · 800 s</text>
+
+          <rect x="665" y="115" width="120" height="55" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+          <text x="725" y="140" text-anchor="middle" font-size="17" font-weight="900" fill="#b91c1c">a = −0,1</text>
+          <text x="725" y="160" text-anchor="middle" font-size="17" font-weight="900" fill="#b91c1c">m/s²</text>
+
+          <text x="450" y="305" text-anchor="middle" font-size="21" font-weight="900" fill="#334155">
+            aceeași valoare a accelerației la pornire și la oprire
+          </text>
+        </svg>
+      </div>
+
+      <div class="note">
+        Deoarece mobilul pornește și se oprește la viteza zero, iar modulele accelerațiilor sunt egale,
+        porțiunile accelerate $AB$ și $CD$ au aceeași durată și aceeași lungime.
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Cerința 1</p>
+      <h2>Viteza maximă</h2>
+
+      <p class="lead">Notăm viteza maximă cu $v$. Ea este atinsă în $B$ și se păstrează până în $C$.</p>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Distanțele accelerate</h3>
+            <div class="formula">
+              $\displaystyle
+              AB=CD=\frac{v^2}{2a}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Distanța uniformă</h3>
+            <div class="formula">
+              $\displaystyle
+              BC=v\cdot800
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Folosim distanța totală</h3>
+            <div class="formula yellow">
+              $\displaystyle
+              14250=
+              \frac{v^2}{2\cdot0{,}1}
+              +800v+
+              \frac{v^2}{2\cdot0{,}1}
+              $
+            </div>
+            <div class="formula">
+              $\displaystyle
+              10v^2+800v-14250=0
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Rezolvăm ecuația</h3>
+            <div class="formula green">
+              $\displaystyle
+              v^2+80v-1425=0
+              $
+            </div>
+            <div class="formula green">
+              $\displaystyle
+              v=
+              \frac{-80+\sqrt{80^2+4\cdot1425}}{2}
+              =
+              \frac{-80+110}{2}
+              =
+              15\,\text{m/s}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        $\boxed{v_{\max}=15\,\text{m/s}=54\,\text{km/h}}$
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Cerința 2</p>
+      <h2>Timpul total</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>Accelerarea $A\rightarrow B$</h3>
+            <div class="formula">
+              $\displaystyle
+              t_{AB}=\frac{v}{a}
+              =
+              \frac{15}{0{,}1}
+              =
+              150\,\text{s}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>Mișcarea uniformă $B\rightarrow C$</h3>
+            <div class="formula green">
+              $\displaystyle t_{BC}=800\,\text{s}$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>Încetinirea $C\rightarrow D$</h3>
+            <div class="formula">
+              $\displaystyle t_{CD}=150\,\text{s}$
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <h3>Timpul total</h3>
+            <div class="formula green">
+              $\displaystyle
+              T=150+800+150
+              =
+              1100\,\text{s}
+              =
+              18\,\text{min}\ 20\,\text{s}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        $\boxed{T=1100\,\text{s}=18\,\text{min}\ 20\,\text{s}}$
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Cerința 3</p>
+      <h2>Distanțele $AB$, $BC$ și $CD$</h2>
+
+      <div class="step-list">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <h3>$AB$</h3>
+            <div class="formula">
+              $\displaystyle
+              AB=
+              \frac{15^2}{2\cdot0{,}1}
+              =
+              1125\,\text{m}
+              =
+              1{,}125\,\text{km}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <h3>$BC$</h3>
+            <div class="formula green">
+              $\displaystyle
+              BC=15\cdot800
+              =
+              12000\,\text{m}
+              =
+              12\,\text{km}
+              $
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <h3>$CD$</h3>
+            <div class="formula">
+              $\displaystyle
+              CD=
+              \frac{15^2}{2\cdot0{,}1}
+              =
+              1125\,\text{m}
+              =
+              1{,}125\,\text{km}
+              $
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="check">
+        Verificare:
+        $\displaystyle 1{,}125+12+1{,}125=14{,}25\,\text{km}$,
+        exact distanța $AD$ din enunț.
+      </div>
+
+      <div class="quick-check">
+        <h3>Verificare rapidă</h3>
+        <p>Care este viteza maximă a mobilului?</p>
+        <div class="choices">
+          <button class="choice" data-correct="true">A. $15\,\text{m/s}=54\,\text{km/h}$</button>
+          <button class="choice" data-correct="false">B. $30\,\text{m/s}$</button>
+          <button class="choice" data-correct="false">C. $45\,\text{m/s}$</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Cerința 4</p>
+      <h2>Diagramele $a(t)$, $v(t)$ și $s(t)$</h2>
+
+      <div class="diagram">
+        <svg viewBox="0 0 920 930" role="img" aria-labelledby="graphsTitle graphsDesc">
+          <title id="graphsTitle">Graficele accelerației, vitezei și spațiului în funcție de timp</title>
+          <desc id="graphsDesc">Accelerația este 0,1 până la 150 secunde, zero până la 950 secunde și minus 0,1 până la 1100 secunde. Viteza urcă la 15 metri pe secundă, rămâne constantă și apoi scade la zero. Spațiul crește parabolic, apoi liniar, apoi parabolic până la 14250 metri.</desc>
+
+          <defs>
+            <marker id="gax" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+            </marker>
+          </defs>
+
+          <!-- a(t) -->
+          <text x="35" y="45" font-size="25" font-weight="900" fill="#0f172a">a(t)</text>
+          <line x1="90" y1="180" x2="850" y2="180" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+          <line x1="90" y1="240" x2="90" y2="65" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+          <text x="855" y="195" font-size="18" font-weight="900" fill="#334155">t</text>
+          <text x="100" y="82" font-size="17" font-weight="900" fill="#334155">m/s²</text>
+
+          <line x1="90" y1="105" x2="195" y2="105" stroke="#16a34a" stroke-width="7"/>
+          <line x1="195" y1="105" x2="195" y2="180" stroke="#16a34a" stroke-width="4"/>
+          <line x1="195" y1="180" x2="755" y2="180" stroke="#2563eb" stroke-width="7"/>
+          <line x1="755" y1="180" x2="755" y2="230" stroke="#dc2626" stroke-width="4"/>
+          <line x1="755" y1="230" x2="860" y2="230" stroke="#dc2626" stroke-width="7"/>
+
+          <text x="120" y="95" font-size="17" font-weight="900" fill="#15803d">+0,1</text>
+          <text x="785" y="255" font-size="17" font-weight="900" fill="#b91c1c">−0,1</text>
+          <text x="195" y="205" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">150</text>
+          <text x="755" y="205" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">950</text>
+          <text x="850" y="205" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">1100 s</text>
+
+          <!-- v(t) -->
+          <text x="35" y="340" font-size="25" font-weight="900" fill="#0f172a">v(t)</text>
+          <line x1="90" y1="525" x2="850" y2="525" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+          <line x1="90" y1="545" x2="90" y2="350" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+
+          <polyline points="90,525 195,385 755,385 850,525"
+                    fill="none" stroke="#2563eb" stroke-width="7" stroke-linejoin="round"/>
+          <line x1="90" y1="385" x2="195" y2="385" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 7"/>
+          <text x="55" y="391" font-size="17" font-weight="900" fill="#334155">15</text>
+          <text x="195" y="550" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">150</text>
+          <text x="755" y="550" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">950</text>
+          <text x="850" y="550" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">1100 s</text>
+          <text x="100" y="370" font-size="17" font-weight="900" fill="#334155">m/s</text>
+
+          <!-- s(t) -->
+          <text x="35" y="640" font-size="25" font-weight="900" fill="#0f172a">s(t)</text>
+          <line x1="90" y1="865" x2="850" y2="865" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+          <line x1="90" y1="885" x2="90" y2="625" stroke="#334155" stroke-width="3" marker-end="url(#gax)"/>
+
+          <!-- approximate quadratic/linear/quadratic curve -->
+          <path d="M90 865
+                   C120 855,160 835,195 805
+                   L755 680
+                   C790 665,825 650,850 650"
+                fill="none" stroke="#0f766e" stroke-width="7"/>
+
+          <circle cx="195" cy="805" r="7" fill="#2563eb"/>
+          <circle cx="755" cy="680" r="7" fill="#d97706"/>
+          <circle cx="850" cy="650" r="7" fill="#dc2626"/>
+
+          <text x="205" y="790" font-size="16" font-weight="900" fill="#1d4ed8">1125 m</text>
+          <text x="615" y="665" font-size="16" font-weight="900" fill="#b45309">13125 m</text>
+          <text x="730" y="625" font-size="16" font-weight="900" fill="#b91c1c">14250 m</text>
+
+          <text x="195" y="890" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">150</text>
+          <text x="755" y="890" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">950</text>
+          <text x="850" y="890" text-anchor="middle" font-size="16" font-weight="900" fill="#334155">1100 s</text>
+          <text x="100" y="645" font-size="17" font-weight="900" fill="#334155">m</text>
+        </svg>
+      </div>
+
+      <div class="formula">
+        $\displaystyle
+        a(t)=
+        \begin{cases}
+        0{,}1,&0\le t<150\\
+        0,&150\le t<950\\
+        -0{,}1,&950\le t\le1100
+        \end{cases}
+        $
+      </div>
+
+      <div class="formula">
+        $\displaystyle
+        v(t)=
+        \begin{cases}
+        0{,}1t,&0\le t\le150\\
+        15,&150\le t\le950\\
+        15-0{,}1(t-950),&950\le t\le1100
+        \end{cases}
+        $
+      </div>
+
+      <div class="formula">
+        $\displaystyle
+        s(t)=
+        \begin{cases}
+        0{,}05t^2,&0\le t\le150\\
+        1125+15(t-150),&150\le t\le950\\
+        13125+15(t-950)-0{,}05(t-950)^2,&950\le t\le1100
+        \end{cases}
+        $
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="page">
+    <div class="card">
+      <p class="eyebrow">Concluzii</p>
+      <h2>Rezultatele problemei 23</h2>
+
+      <div class="conclusions">
+        <div class="conclusion">
+          Viteza maximă se atinge în $B$ și rămâne constantă până în $C$:
+          $\displaystyle v_{\max}=15\,\text{m/s}=54\,\text{km/h}$.
+        </div>
+
+        <div class="conclusion">
+          Timpii etapelor sunt:
+          $\displaystyle 150\,\text{s}$, $800\,\text{s}$ și $150\,\text{s}$.
+        </div>
+
+        <div class="conclusion">
+          Distanțele sunt:
+          $\displaystyle AB=CD=1125\,\text{m}$ și
+          $\displaystyle BC=12000\,\text{m}$.
+        </div>
+      </div>
+
+      <div class="answers">
+        <div class="answer-card">
+          <small>1° Viteza maximă</small>
+          <strong>$15\,\text{m/s}=54\,\text{km/h}$</strong>
+        </div>
+        <div class="answer-card">
+          <small>2° Timp total</small>
+          <strong>$1100\,\text{s}=18\,\text{min}\ 20\,\text{s}$</strong>
+        </div>
+        <div class="answer-card">
+          <small>3° Distanțe</small>
+          <strong>$1{,}125\,\text{km}$ · $12\,\text{km}$ · $1{,}125\,\text{km}$</strong>
+        </div>
+      </div>
+
+      <div class="check">
+        Verificarea finală este exactă:
+        $\displaystyle 1125+12000+1125=14250\,\text{m}=14{,}25\,\text{km}$.
+      </div>
+
+      <div class="final-actions">
+        <a class="final-link secondary" href="problema-22.html">← Problema 22</a>
+        <a class="final-link secondary" href="index.html">Cele 23 probleme</a>
+        <a class="final-link primary" href="index.html">Încheie capitolul ✓</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Navigare între pagini">
+  <button id="prevBtn" class="nav-btn prev" type="button">← Înapoi</button>
+  <button id="nextBtn" class="nav-btn next" type="button">Mergi mai departe →</button>
+</nav>
+
+<footer>
+  <div class="footer-inner">Fizica-liceu · Probleme rezolvate · Mișcare uniformă și uniform variată</div>
+</footer>
+
+<script>
+  const pages=[...document.querySelectorAll('.page')];
+  const prevBtn=document.getElementById('prevBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const progressBar=document.getElementById('progressBar');
+  const progressText=document.getElementById('progressText');
+  let current=0;
+
+  function showPage(index){
+    current=Math.max(0,Math.min(index,pages.length-1));
+    pages.forEach((p,i)=>p.classList.toggle('active',i===current));
+    prevBtn.disabled=current===0;
+    nextBtn.textContent=current===pages.length-1?'Reia problema ↺':'Mergi mai departe →';
+    progressText.textContent=`${current+1} / ${pages.length}`;
+    progressBar.style.width=`${((current+1)/pages.length)*100}%`;
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise();
+  }
+
+  prevBtn.addEventListener('click',()=>showPage(current-1));
+  nextBtn.addEventListener('click',()=>current===pages.length-1?showPage(0):showPage(current+1));
+
+  document.querySelectorAll('.quick-check').forEach(box=>{
+    const choices=[...box.querySelectorAll('.choice')];
+    const feedback=box.querySelector('.feedback');
+
+    choices.forEach(choice=>{
+      choice.addEventListener('click',()=>{
+        choices.forEach(c=>c.classList.remove('correct','wrong'));
+        const ok=choice.dataset.correct==='true';
+
+        if(ok){
+          choice.classList.add('correct');
+          feedback.textContent='Corect. ✓';
+          feedback.style.color='#86efac';
+        }else{
+          choice.classList.add('wrong');
+          const right=choices.find(c=>c.dataset.correct==='true');
+          if(right) right.classList.add('correct');
+          feedback.textContent='Varianta corectă este evidențiată.';
+          feedback.style.color='#fecdd3';
+        }
+      });
+    });
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft') showPage(current-1);
+    if(e.key==='ArrowRight') current===pages.length-1?showPage(0):showPage(current+1);
+  });
+
+  let startX=null;
+  document.addEventListener('touchstart',e=>startX=e.changedTouches[0].screenX,{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(startX===null) return;
+    const diff=e.changedTouches[0].screenX-startX;
+
+    if(Math.abs(diff)>70){
+      if(diff>0) showPage(current-1);
+      else if(current<pages.length-1) showPage(current+1);
+    }
+
+    startX=null;
+  },{passive:true});
+
+  showPage(0);
+</script>
+
+</body>
+</html>
