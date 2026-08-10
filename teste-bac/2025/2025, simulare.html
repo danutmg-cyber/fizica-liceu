@@ -1,1 +1,729 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="BAC Fizică 2025 – simulare națională, rezolvare completă pas cu pas.">
+<title>BAC Fizică 2025 – simulare</title>
+<link rel="stylesheet" href="../../assets/css/main.css">
 
+<style>
+[hidden] { display: none !important; }
+
+.lesson-page,.intro-container{width:min(calc(100% - 28px),1180px);margin-left:auto;margin-right:auto}
+.lesson-page{min-height:calc(100vh - 32px);margin:16px auto;text-align:left}
+.lesson-page.card{padding:clamp(24px,3.8vw,46px)}
+.lesson-page h1{margin-top:6px;font-size:clamp(2rem,4.2vw,3rem);line-height:1.16}
+.lesson-page h2,#pagina-1 h2{font-size:clamp(1.65rem,3.3vw,2.25rem);line-height:1.22}
+.lesson-page h3,#pagina-1 h3{font-size:clamp(1.42rem,2.5vw,1.78rem);line-height:1.28}
+.lesson-page p,.lesson-page li,#pagina-1 p,#pagina-1 li{font-size:clamp(1.22rem,1.8vw,1.42rem);line-height:1.72}
+
+.eyebrow{color:#bfdbfe;font-size:1rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.lesson-box{background:#111c2f;color:#f8fafc;border:1px solid #52637a;border-radius:16px;padding:clamp(20px,3vw,30px);margin:24px 0}
+.lesson-box p,.lesson-box li,.lesson-box h3,.lesson-box strong,.lesson-box span{color:#f8fafc}
+.principle{border-left:6px solid #60a5fa}.statement{border-left:6px solid #f59e0b}.warning{border-left:6px solid #fb7185}.check{border-left:6px solid #22c55e}
+.answer{background:#133324;border:1px solid rgba(74,222,128,.45);border-radius:12px;padding:15px 17px;color:#fff}
+
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:16px}
+.choices>div{background:#26364d;color:#fff;border:1px solid #52637a;border-radius:12px;padding:15px;font-size:clamp(1.18rem,1.7vw,1.36rem);line-height:1.55}
+
+.pager{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:34px}
+.nav-btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:13px 18px;border-radius:11px;background:#2563eb;color:#fff!important;text-decoration:none;font-size:1.08rem;font-weight:800}
+.nav-btn[aria-disabled="true"]{opacity:.4;pointer-events:none}.page-counter{color:#e2e8f0;font-size:1.08rem;font-weight:800}
+
+.domain-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:26px 0}
+.domain-link{text-align:center}.domain-link span{display:block;font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:800}.domain-link small{display:block;margin-top:6px;font-size:1rem}
+
+.pdf-tools iframe{width:100%;height:min(78vh,900px);border:0;border-radius:12px;margin-top:14px;background:#fff}
+details summary{cursor:pointer;font-size:1.2rem;font-weight:800;padding:10px 0}
+.source-note{color:#e2e8f0;font-size:1.08rem!important}.source-note a,.author-box a{color:#bfdbfe}
+
+.diagram-wrap{overflow-x:auto;margin:24px 0;padding:15px;background:#0b1220;border:1px solid #334155;border-radius:16px}
+.diagram-wrap svg{display:block;width:min(100%,900px);min-width:560px;height:auto;margin:0 auto}
+
+.author-box{margin-top:32px;text-align:center;padding:25px;border-top:1px solid #52637a;border-bottom:1px solid #52637a}
+.author-box p{color:#fff}.final-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin:28px 0}
+
+@media (min-width:701px) and (max-width:1100px){
+ .lesson-page,.intro-container{width:calc(100% - 22px)}
+ .lesson-page.card{padding:30px 28px}
+ .lesson-page h1{font-size:clamp(2.35rem,4.7vw,3.05rem)}
+ .lesson-page h3,#pagina-1 h3{font-size:clamp(1.58rem,2.8vw,1.9rem)}
+ .lesson-page p,.lesson-page li,#pagina-1 p,#pagina-1 li{font-size:clamp(1.38rem,2.35vw,1.58rem);line-height:1.70}
+ .choices>div{font-size:clamp(1.3rem,2.1vw,1.5rem)}
+ .nav-btn{min-height:58px;font-size:1.2rem}
+}
+
+@media (max-width:700px){
+ .lesson-page,.intro-container{width:calc(100% - 12px)}
+ .lesson-page{margin-top:6px;margin-bottom:8px}.lesson-page.card{padding:18px 13px}
+ .lesson-page h1{font-size:clamp(2rem,8vw,2.45rem)}
+ .lesson-page h2,#pagina-1 h2{font-size:clamp(1.6rem,6.5vw,2rem)}
+ .lesson-page h3,#pagina-1 h3{font-size:clamp(1.42rem,5.6vw,1.7rem)}
+ .lesson-page p,.lesson-page li,#pagina-1 p,#pagina-1 li{font-size:clamp(1.23rem,4.7vw,1.42rem);line-height:1.72}
+ .lesson-box{padding:18px 14px;margin:18px 0}.choices,.domain-grid{grid-template-columns:1fr}
+ .choices>div{padding:14px;font-size:clamp(1.19rem,4.5vw,1.38rem)}
+ .pager{justify-content:center}.page-counter{order:-1;width:100%;text-align:center;font-size:1.12rem}
+ .nav-btn{flex:1 1 145px;min-height:56px;text-align:center;font-size:1.08rem}
+ body .lesson-page.card.gray,body .lesson-page.card.gray h1,body .lesson-page.card.gray h2,body .lesson-page.card.gray h3,
+ body .lesson-page.card.gray p,body .lesson-page.card.gray li,body .lesson-page.card.gray strong,body .lesson-page.card.gray span,
+ body .lesson-page.card.gray summary,body .lesson-page.card.gray .lesson-box,body .lesson-page.card.gray .lesson-box *,
+ body .lesson-page.card.gray .choices>div,body .lesson-page.card.gray .answer,body .lesson-page.card.gray .page-counter{color:#fff!important}
+ body .lesson-page.card.gray .lesson-box{background:#0f1a2c!important;border-color:#5c708c!important}
+ body .lesson-page.card.gray .choices>div{background:#26364d!important}
+ body .lesson-page.card.gray .answer{background:#133324!important}
+ body .lesson-page.card.gray a:not(.nav-btn):not(.card){color:#bfdbfe!important}
+ body .lesson-page.card.gray mjx-container,body .lesson-page.card.gray mjx-container *{color:#fff!important}
+}
+</style>
+
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+</head>
+<body><main id="app">
+<section id="pagina-1" data-page="1">
+<header class="site-header"><h1>BAC Fizică 2025 – simulare</h1>
+<p>Simulare națională • rezolvare completă, pas cu pas</p></header>
+<div class="container intro-container">
+<div class="intro"><h2>Rezolvarea completă a simulării 2025</h2>
+<p>Text mare, pagini aerisite și navigare optimizată pentru telefon, tabletă și PC.</p></div>
+
+<div class="lesson-box principle"><h3>Metoda recomandată</h3><ol>
+<li><strong>Identifică principiul fizic</strong> înainte de calcule.</li>
+<li><strong>Transformă datele în S.I.</strong></li>
+<li><strong>Rezolvă simbolic</strong>, apoi numeric.</li>
+<li><strong>Verifică</strong> unitatea, semnul și sensul fizic.</li>
+</ol></div>
+
+<div class="domain-grid">
+<a class="card blue domain-link" href="#pagina-2"><span>A. Mecanică</span><small>5 itemi + 2 probleme</small></a>
+<a class="card green domain-link" href="#pagina-9"><span>B. Termodinamică</span><small>5 itemi + 2 probleme</small></a>
+<a class="card orange domain-link" href="#pagina-16"><span>C. Curent continuu</span><small>5 itemi + 2 probleme</small></a>
+<a class="card purple domain-link" href="#pagina-23"><span>D. Optică</span><small>5 itemi + 2 probleme</small></a>
+</div>
+
+<div class="lesson-box pdf-tools"><h3>Subiectul original în format PDF</h3><details>
+<summary>Vizualizează PDF-ul direct în pagină</summary>
+<iframe title="BAC Fizică 2025 – simulare" src="./2025,%20simulare.pdf"></iframe>
+</details></div>
+
+<p class="source-note">Enunțurile sunt reformulate pedagogic, păstrând datele și cerințele simulării.
+<a href="https://cdn.edupedu.ro/wp-content/uploads/2025/03/E_d_fizica_teoretic_vocational_2025_var_simulare_LRO.pdf" target="_blank" rel="noopener">Subiect</a> ·
+<a href="https://cdn.edupedu.ro/wp-content/uploads/2025/03/E_d_fizica_teoretic_vocational_2025_bar_simulare_LRO.pdf" target="_blank" rel="noopener">Barem</a></p>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></div></section><section class="container lesson-page card gray" id="pagina-2" data-page="2" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul I • Itemul 1</div><h1>Unitatea forței</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Care expresie este echivalentă cu unitatea S.I. a forței?</p><div class="choices"><div>a) \(J/m\)</div><div>b) \(J/(m\cdot kg)\)</div><div>c) \(J/kg\)</div><div>d) \(J\cdot kg/m\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Lucrul mecanic este \(L=Fd\), deci \(F=L/d\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[1N=\frac{1J}{1m}.\]</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Joule este \(N\cdot m\), nu newton.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>J/m = N.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-3" data-page="3" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul I • Itemul 2</div><h1>Principiul acțiunii și reacțiunii</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Corpul A acționează asupra lui B cu \(\overrightarrow F_{AB}\). Care este forța lui B asupra lui A?</p><div class="choices"><div>a) \(\overrightarrow F_{BA}=\overrightarrow F_{AB}\)</div><div>b) \(\overrightarrow F_{BA}=-\overrightarrow F_{AB}\)</div><div>c) \(\overrightarrow F_{BA}=2\overrightarrow F_{AB}\)</div><div>d) \(\overrightarrow F_{BA}=-2\overrightarrow F_{AB}\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Principiul al III-lea al dinamicii: forțele de acțiune și reacțiune au module egale și sensuri opuse.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[\overrightarrow F_{BA}=-\overrightarrow F_{AB}.\]</p><p class="answer"><strong>Răspuns corect: b.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Masele diferite ale corpurilor nu schimbă egalitatea modulelor celor două forțe.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Forțele acționează pe corpuri diferite.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-4" data-page="4" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul I • Itemul 3</div><h1>Alungirea unui fir elastic</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Conform legii lui Hooke, cum depinde alungirea \(\Delta\ell\) de forța \(F\) și aria secțiunii \(S\)?</p><div class="choices"><div>a) direct de F și invers de S</div><div>b) invers de F și direct de S</div><div>c) direct de F și direct de S</div><div>d) invers de F și invers de S</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru întindere: \(F/S=E\,\Delta\ell/\ell_0\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[\Delta\ell=\frac{F\ell_0}{ES}.\]</p><p>Deci alungirea este direct proporțională cu F și invers proporțională cu S.</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Un fir mai gros se alungește mai puțin la aceeași forță.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Dublarea secțiunii înjumătățește alungirea.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-5" data-page="5" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul I • Itemul 4</div><h1>Masa din graficul \(p(v)\)</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Graficul impulsului arată \(p=16N\,s\) la \(v=8m/s\). Masa corpului este:</p><div class="choices"><div>a) 128 kg</div><div>b) 8 kg</div><div>c) 4 kg</div><div>d) 2 kg</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Impulsul mecanic este \(p=mv\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[m=\frac pv=\frac{16}{8}=2kg.\]</p><p class="answer"><strong>Răspuns corect: d.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Nu înmulțim p cu v; masa este raportul lor.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>2 kg × 8 m/s = 16 kg·m/s.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-6" data-page="6" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul I • Itemul 5</div><h1>Viteza medie pe două jumătăți de drum</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Jumătate din distanță este parcursă cu \(70cm/s\), iar cealaltă jumătate cu \(30cm/s\).</p><div class="choices"><div>a) 100 cm/s</div><div>b) 50 cm/s</div><div>c) 42 cm/s</div><div>d) 37 cm/s</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru distanțe egale, viteza medie este media armonică.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[v_m=\frac{2v_1v_2}{v_1+v_2}=\frac{2\cdot70\cdot30}{100}=42cm/s.\]</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Media aritmetică se folosește pentru intervale de timp egale, nu pentru distanțe egale.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Rezultatul trebuie să fie între 30 și 70 cm/s.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-7" data-page="7" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul al II-lea</div><h1>Corp împins pe plafon</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>\(m=0{,}5kg\), \(F=100N\), \(\alpha\simeq53^\circ\), \(\sin\alpha=0{,}8\), \(\cos\alpha=0{,}6\). Corpul se deplasează uniform pe plafon.</p></div>
+
+<div class="diagram-wrap"><svg viewBox="0 0 800 390" role="img" aria-label="Corp apăsat pe tavan de o forță oblică">
+<defs><marker id="arrAIISim25" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3z" fill="#fff"/></marker></defs>
+<line x1="90" y1="90" x2="710" y2="90" stroke="#94a3b8" stroke-width="10"/>
+<rect x="330" y="90" width="125" height="95" rx="8" fill="#1d4ed8"/>
+<line x1="395" y1="145" x2="505" y2="30" stroke="#f59e0b" stroke-width="6" marker-end="url(#arrAIISim25)"/>
+<line x1="395" y1="140" x2="530" y2="140" stroke="#22c55e" stroke-width="5" marker-end="url(#arrAIISim25)"/>
+<text x="476" y="45" fill="#fff" font-size="22">F</text><text x="500" y="132" fill="#fff" font-size="22">v</text>
+</svg></div>
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>La viteză constantă, \(\sum\overrightarrow F=\overrightarrow0\). Reacțiunea plafonului și greutatea sunt orientate în jos, iar componenta verticală a forței F este în sus.</p></div>
+
+<div class="lesson-box">
+<h3>a) Forțele</h3>
+<p>Acționează \(\overrightarrow G\), \(\overrightarrow N\), \(\overrightarrow F\) și \(\overrightarrow F_f\).</p>
+
+<h3>b) Reacțiunea normală</h3>
+<p>\[F_y=F\sin\alpha=100\cdot0{,}8=80N.\]</p>
+<p>\[F_y-G-N=0,\qquad G=mg=5N.\]</p>
+<p>\[N=80-5=75N.\]</p>
+<p class="answer"><strong>\(N=75N\).</strong></p>
+
+<h3>c) Coeficientul de frecare</h3>
+<p>\[F_x=F\cos\alpha=60N.\]</p>
+<p>Mișcare uniformă:</p><p>\[F_x-F_f=0,\qquad F_f=\mu N.\]</p>
+<p>\[\mu=\frac{60}{75}=0{,}8.\]</p>
+<p class="answer"><strong>\(\mu=0{,}8\).</strong></p>
+
+<h3>d) Forța devine \(F'=90N\)</h3>
+<p>\[N'=F'\sin\alpha-mg=90\cdot0{,}8-5=67N.\]</p>
+<p>\[F'_x=90\cdot0{,}6=54N,\qquad F'_f=0{,}8\cdot67=53{,}6N.\]</p>
+<p>\[ma'=54-53{,}6=0{,}4N.\]</p>
+<p class="answer"><strong>\(a'=0{,}8m/s^2\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Pe plafon, reacțiunea normală este orientată în jos, nu în sus.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>La \(F=100N\), 60 N orizontal sunt echilibrați de 60 N frecare.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-8" data-page="8" hidden>
+<div class="eyebrow">A. MECANICĂ • Subiectul al III-lea</div><h1>Automobil pe pantă</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>\(m=1{,}6t=1600kg\), \(\sin\alpha=0{,}1\), \(v_1=18km/h=5m/s\), \(v_2=72km/h=20m/s\), \(\Delta t=5s\), \(P_m=50kW\).</p></div>
+
+<div class="lesson-box principle"><h3>Principii</h3><p>Lucrul tracțiunii este \(L_{tr}=P_m\Delta t\), iar teorema energiei cinetice dă \(\Delta E_c=L_{tr}+L_G+L_r\).</p></div>
+
+<div class="lesson-box">
+<h3>a) Lucrul tracțiunii</h3>
+<p>\[L_{tr}=50\,000\cdot5=250\,000J=250kJ.\]</p>
+<p class="answer"><strong>\(L_{tr}=250kJ\).</strong></p>
+
+<h3>b) Variația energiei cinetice</h3>
+<p>\[\Delta E_c=\frac m2(v_2^2-v_1^2)
+=800(400-25)=300\,000J.\]</p>
+<p class="answer"><strong>\(\Delta E_c=300kJ\).</strong></p>
+
+<h3>c) Lucrul greutății</h3>
+<p>\[a=\frac{20-5}{5}=3m/s^2.\]</p>
+<p>Drumul pe pantă:</p><p>\[s=\frac{v_1+v_2}{2}\Delta t=12{,}5\cdot5=62{,}5m.\]</p>
+<p>\[h=s\sin\alpha=6{,}25m.\]</p>
+<p>\[L_G=mgh=1600\cdot10\cdot6{,}25=100kJ.\]</p>
+<p class="answer"><strong>\(L_G=100kJ\).</strong></p>
+
+<h3>d) Lucrul rezistenței la înaintare</h3>
+<p>\[\Delta E_c=L_{tr}+L_G+L_r.\]</p>
+<p>\[300=250+100+L_r\quad(kJ).\]</p>
+<p class="answer"><strong>\(L_r=-50kJ\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Automobilul coboară, deci greutatea efectuează lucru pozitiv.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>250+100−50=300 kJ, exact variația energiei cinetice.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-9" data-page="9" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul I • Itemul 1</div><h1>Unitatea constantei \(a\)</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Presiunea variază după legea \(p=aV^{-2}\). Unitatea S.I. a lui \(a\) este:</p><div class="choices"><div>a) \(N\,m^{-2}\)</div><div>b) \(N\,m^{-3}\)</div><div>c) \(N\,m^4\)</div><div>d) \(N\,m^3\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Din \(a=pV^2\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[[a]=Pa\cdot m^6=(N/m^2)m^6=N\,m^4.\]</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Volumul are unitatea \(m^3\), iar pătratul său \(m^6\).</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>N/m² × m⁶ = N·m⁴.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-10" data-page="10" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul I • Itemul 2</div><h1>Echilibru termic într-un sistem izolat</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Două corpuri au \(c_2=0{,}5c_1\), temperaturile inițiale \(T_1\) și \(4T_1\), iar temperatura finală este \(2T_1\). Relația maselor este:</p><div class="choices"><div>a) \(m_2=m_1\)</div><div>b) \(m_2=2m_1\)</div><div>c) \(m_2=0{,}5m_1\)</div><div>d) \(m_2=4m_1\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>În sistem izolat, căldura primită de corpul rece este egală cu modulul căldurii cedate de corpul cald.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[m_1c_1(2T_1-T_1)=m_2(0{,}5c_1)(4T_1-2T_1).\]</p><p>\[m_1=m_2.\]</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Factorul 0,5 din căldura specifică se compensează cu variația dublă de temperatură.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Ambele părți devin \(m c_1T_1\).</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-11" data-page="11" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul I • Itemul 3</div><h1>Încălzire izobară</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Gazul este încălzit cu \(145^\circ C\) până la \(162^\circ C\), la presiune constantă. Raportul \(V_2/V_1\) este:</p><div class="choices"><div>a) 1,5</div><div>b) 1,4</div><div>c) 1,3</div><div>d) 1,25</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>La presiune constantă, \(V/T=\) constant, cu temperaturile în kelvini.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[T_2=162+273=435K,\qquad T_1=435-145=290K.\]</p><p>\[\frac{V_2}{V_1}=\frac{435}{290}=1{,}5.\]</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Variația în °C este egală numeric cu variația în K, dar temperaturile absolute trebuie convertite.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>435/290=1,5.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-12" data-page="12" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul I • Itemul 4</div><h1>Energia internă a gazului ideal</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Care afirmație este corectă?</p><div class="choices"><div>a) energia internă este nulă într-un ciclu</div><div>b) energia internă este constantă într-o izotermă</div><div>c) scade dacă gazul primește izocor căldură</div><div>d) crește într-o destindere adiabatică</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru un gaz ideal, energia internă depinde numai de temperatură.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>Într-o transformare izotermă \(T=\) constant, deci \(U=\) constant.</p><p class="answer"><strong>Răspuns corect: b.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Într-un ciclu este zero variația energiei interne, nu energia internă însăși.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Destinderea adiabatică răcește gazul, deci U scade.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-13" data-page="13" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul I • Itemul 5</div><h1>Densitatea în diagrama \(p-T\)</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>În diagrama \(p-T\) a ciclului dreptunghiular, starea în care densitatea este maximă este:</p><div class="choices"><div>a) 1</div><div>b) 2</div><div>c) 3</div><div>d) 4</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru același gaz ideal, \(\rho=p\mu/(RT)\), deci \(\rho\propto p/T\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>Din coordonatele punctelor, raportul \(p/T\) este maxim în starea 3.</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Nu comparăm doar presiunile; trebuie ținut cont și de temperatură.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Densitatea este proporțională cu p/T.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-14" data-page="14" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul al II-lea</div><h1>Heliu și azot separate de piston</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>Cilindru de \(L=60cm\); piston inițial la mijloc. Heliu: \(\mu_1=4g/mol\), presiune \(p_1\). Azot: \(\mu_2=28g/mol\), presiune \(p_2=2p_1\). Temperatura T este aceeași.</p></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Folosim \(pV=\nu RT\). Când cilindrul este orizontal, greutatea pistonului nu mai contribuie pe direcția deplasării, deci la echilibru presiunile celor două gaze sunt egale.</p></div>
+
+<div class="lesson-box">
+<h3>a) Raportul cantităților</h3>
+<p>Inițial volumele sunt egale:</p>
+<p>\[\frac{\nu_2}{\nu_1}=\frac{p_2}{p_1}=2.\]</p>
+<p class="answer"><strong>\(\nu_2/\nu_1=2\).</strong></p>
+
+<h3>b) Noua poziție de echilibru</h3>
+<p>Notăm cu x deplasarea spre compartimentul cu heliu:</p>
+<p>\[\frac{\nu_1RT}{S(L/2-x)}=\frac{\nu_2RT}{S(L/2+x)}.\]</p>
+<p>Cu \(\nu_2=2\nu_1\):</p>
+<p>\[30+x=2(30-x)\Rightarrow x=10cm.\]</p>
+<p class="answer"><strong>\(x=10cm\).</strong></p>
+
+<h3>c) Heliu suplimentar pentru revenirea la mijloc</h3>
+<p>La volume egale și presiuni egale trebuie:</p>
+<p>\[\nu_1+\Delta\nu=\nu_2=2\nu_1.\]</p>
+<p>\[\Delta\nu=\nu_1,\qquad \frac{\nu_2}{\Delta\nu}=2.\]</p>
+<p class="answer"><strong>\(\nu_2/\Delta\nu=2\).</strong></p>
+
+<h3>d) Masa molară a amestecului</h3>
+<p>După introducere avem cantități egale: heliu \(2\nu_1\) și azot \(2\nu_1\):</p>
+<p>\[\mu_{am}=\frac{2\nu_1\cdot4+2\nu_1\cdot28}{4\nu_1}=16g/mol.\]</p>
+<p class="answer"><strong>\(\mu_{am}=16g/mol\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>La poziționarea orizontală, presiunile de echilibru devin egale chiar dacă inițial erau diferite.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>La x=10 cm, volumele sunt proporționale 20:40 = 1:2, exact ca numărul de moli.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-15" data-page="15" hidden>
+<div class="eyebrow">B. TERMODINAMICĂ • Subiectul al III-lea</div><h1>Ciclu cu izocoră, \(p\propto V\), izotermă și izobară</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>Gaz ideal monoatomic, \(C_V=1{,}5R\), \(p_0=10^5Pa\), \(V_0=2dm^3\), \(\ln2\simeq0{,}7\). Stările: \(1(V_0,p_0)\), \(2(V_0,2p_0)\), \(3(2V_0,4p_0)\); 3→4 este izotermă, iar 4→1 izobară la \(p_0\).</p></div>
+
+<div class="diagram-wrap"><svg viewBox="0 0 780 430" role="img" aria-label="Ciclu termodinamic p-V">
+<defs><marker id="arrBIIISim25" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3z" fill="#fff"/></marker></defs>
+<line x1="90" y1="345" x2="675" y2="345" stroke="#fff" stroke-width="3" marker-end="url(#arrBIIISim25)"/>
+<line x1="90" y1="345" x2="90" y2="55" stroke="#fff" stroke-width="3" marker-end="url(#arrBIIISim25)"/>
+<line x1="220" y1="290" x2="220" y2="225" stroke="#60a5fa" stroke-width="6"/>
+<line x1="220" y1="225" x2="370" y2="95" stroke="#60a5fa" stroke-width="6"/>
+<path d="M370,95 C460,120 535,170 610,290" fill="none" stroke="#f59e0b" stroke-width="6"/>
+<line x1="610" y1="290" x2="220" y2="290" stroke="#22c55e" stroke-width="6"/>
+<text x="195" y="315" fill="#fff" font-size="22">1</text><text x="195" y="220" fill="#fff" font-size="22">2</text>
+<text x="375" y="90" fill="#fff" font-size="22">3</text><text x="615" y="315" fill="#fff" font-size="22">4</text>
+</svg></div>
+<div class="lesson-box principle"><h3>Principii</h3><p>\(p_0V_0=\nu RT_1=200J\). Energia internă depinde numai de temperatură.</p></div>
+
+<div class="lesson-box">
+<h3>a) Căldura 1→2</h3>
+<p>\[T_2=2T_1,\qquad Q_{12}=\Delta U_{12}=\nu C_V(T_2-T_1).\]</p>
+<p>\[Q_{12}=1{,}5\nu RT_1=1{,}5\cdot200=300J.\]</p>
+<p class="answer"><strong>\(Q_{12}=0{,}3kJ\).</strong></p>
+
+<h3>b) Variația energiei interne 2→3</h3>
+<p>\[T_3/T_1=(p_3V_3)/(p_1V_1)=4\cdot2=8.\]</p>
+<p>\[\Delta U_{23}=1{,}5\nu R(8T_1-2T_1)=1{,}5\cdot6\cdot200=1800J.\]</p>
+<p class="answer"><strong>\(\Delta U_{23}=1{,}8kJ\).</strong></p>
+
+<h3>c) Lucrul 3→4</h3>
+<p>Izoterm: \(p_3V_3=p_4V_4\), cu \(p_4=p_0\), deci \(V_4=8V_0\).</p>
+<p>\[\nu RT_3=8p_0V_0=1600J.\]</p>
+<p>\[L_{34}=\nu RT_3\ln\frac{V_4}{V_3}=1600\ln4\approx1600\cdot1{,}4=2240J.\]</p>
+<p class="answer"><strong>\(L_{34}\approx2{,}2kJ\).</strong></p>
+
+<h3>d) Căldura 4→1</h3>
+<p>\[C_P=C_V+R=2{,}5R,\qquad T_4=T_3=8T_1.\]</p>
+<p>\[Q_{41}=\nu C_P(T_1-T_4)=2{,}5\nu R(-7T_1).\]</p>
+<p>\[Q_{41}=2{,}5(-7)\cdot200=-3500J.\]</p>
+<p class="answer"><strong>\(Q_{41}=-3{,}5kJ\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Pe 3→4 temperatura este constantă, nu presiunea.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Pe 4→1 gazul se răcește puternic, deci căldura trebuie să fie negativă.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-16" data-page="16" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul I • Itemul 1</div><h1>Rezistența unui conductor</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Rezistența unui conductor metalic filiform este direct proporțională cu:</p><div class="choices"><div>a) aria secțiunii</div><div>b) lungimea conductorului</div><div>c) tensiunea de la borne</div><div>d) inversul rezistivității</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Relația este \(R=\rho\ell/S\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>Rezistența crește direct proporțional cu lungimea \(\ell\).</p><p class="answer"><strong>Răspuns corect: b.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Secțiunea mai mare micșorează rezistența.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Dublarea lungimii dublează R.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-17" data-page="17" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul I • Itemul 2</div><h1>Rezistivitatea și temperatura</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Pentru un conductor metalic, dependența liniară de temperatură este:</p><div class="choices"><div>a) \(\rho=\rho_0/(1-\alpha t)\)</div><div>b) \(\rho=\rho_0/(1+\alpha t)\)</div><div>c) \(\rho=\rho_0(1-\alpha t)\)</div><div>d) \(\rho=\rho_0(1+\alpha t)\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru metale, coeficientul termic este pozitiv.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[\rho=\rho_0(1+\alpha t).\]</p><p class="answer"><strong>Răspuns corect: d.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>La creșterea temperaturii, rezistivitatea metalelor crește.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>La t=0 rezultă \(\rho=\rho_0\).</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-18" data-page="18" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul I • Itemul 3</div><h1>Definiția intensității curentului</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Unitatea raportului dintre sarcina electrică și timpul corespunzător este:</p><div class="choices"><div>a) Ω</div><div>b) V</div><div>c) A</div><div>d) W</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Intensitatea curentului este \(I=\Delta q/\Delta t\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[1A=1C/s.\]</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Raportul sarcină/timp nu este tensiune.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>C/s = A.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-19" data-page="19" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul I • Itemul 4</div><h1>Rezistența internă din graficul \(E/U\)</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Din grafic, pentru \(R=4\Omega\) se citește \(E/U=2\). Rezistența internă este:</p><div class="choices"><div>a) 2 Ω</div><div>b) 4 Ω</div><div>c) 6 Ω</div><div>d) 8 Ω</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru sarcină R: \(U=ER/(R+r)\), deci \(E/U=1+r/R\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[2=1+\frac r4\Rightarrow r=4\Omega.\]</p><p class="answer"><strong>Răspuns corect: b.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Raportul \(E/U\) nu este randamentul, ci inversul lui.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Cu R=r, tensiunea la borne este E/2.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-20" data-page="20" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul I • Itemul 5</div><h1>Aceeași putere pentru două sarcini</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>O baterie debitează aceeași putere pentru \(R_1=3{,}6\Omega\) și \(R_2=6{,}4\Omega\). Rezistența internă este:</p><div class="choices"><div>a) 2,8 Ω</div><div>b) 4,8 Ω</div><div>c) 7 Ω</div><div>d) 10 Ω</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Pentru două sarcini diferite cu aceeași putere, \(R_1R_2=r^2\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[r=\sqrt{3{,}6\cdot6{,}4}=\sqrt{23{,}04}=4{,}8\Omega.\]</p><p class="answer"><strong>Răspuns corect: b.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Nu folosim media aritmetică a celor două rezistențe.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>4,8² = 23,04.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-21" data-page="21" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul al II-lea</div><h1>Două generatoare și întrerupător</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>\(R_1=4\Omega\), \(R_2=7\Omega\), \(R_A=2\Omega\), \(E_1=42V\), \(r_1=1\Omega\), \(r_2=2\Omega\). Cu K deschis, ampermetrul indică \(I=2A\).</p></div>
+
+<div class="diagram-wrap"><svg viewBox="0 0 850 430" role="img" aria-label="Circuit cu două generatoare, ampermetru și întrerupător">
+<defs><marker id="arrCIISim25" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3z" fill="#fff"/></marker></defs>
+<rect x="145" y="95" width="560" height="255" fill="none" stroke="#fff" stroke-width="4"/>
+<rect x="270" y="85" width="110" height="45" fill="#1d4ed8"/><text x="305" y="115" fill="#fff" font-size="22">R₂</text>
+<rect x="160" y="205" width="55" height="105" fill="#166534"/><text x="175" y="265" fill="#fff" font-size="20">R₁</text>
+<text x="430" y="205" fill="#fbbf24" font-size="22">K</text><line x1="390" y1="160" x2="500" y2="255" stroke="#fbbf24" stroke-width="5"/>
+</svg></div>
+<div class="lesson-box principle"><h3>Principii</h3><p>Aplicăm legea lui Ohm pentru generator și legea a II-a a lui Kirchhoff. La închiderea lui K, ramurile se redistribuie.</p></div>
+
+<div class="lesson-box">
+<h3>a) Tensiunea indicată de voltmetru, K deschis</h3>
+<p>\[U=E_1-Ir_1=42-2\cdot1=40V.\]</p>
+<p class="answer"><strong>\(U=40V\).</strong></p>
+
+<h3>b) T.e.m. \(E_2\)</h3>
+<p>În bucla serie:</p>
+<p>\[E_1-E_2=I(R_1+R_2+R_A+r_1+r_2).\]</p>
+<p>\[42-E_2=2(4+7+2+1+2)=32.\]</p>
+<p class="answer"><strong>\(E_2=10V\).</strong></p>
+
+<h3>c) Tensiunea voltmetrului după închiderea lui K</h3>
+<p>Pentru ramura cu \(E_1\):</p>
+<p>\[I_1=\frac{E_1}{R_1+R_A+r_1}=\frac{42}{7}=6A.\]</p>
+<p>\[U_1=E_1-I_1r_1=42-6=36V.\]</p>
+<p class="answer"><strong>\(U_1=36V\).</strong></p>
+
+<h3>d) Curentul prin K</h3>
+<p>Pentru ramura cu \(E_2\):</p>
+<p>\[I_2=\frac{E_2}{R_2+r_2}=\frac{10}{9}\approx1{,}11A.\]</p>
+<p>\[I_K=I_1+I_2\approx6+1{,}11=7{,}11A.\]</p>
+<p class="answer"><strong>\(I_K\approx7{,}1A\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>După închiderea lui K, curenții din cele două ramuri nu mai sunt cei din circuitul serie inițial.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>În ramura 1, \(6A\cdot7\Omega=42V\).</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-22" data-page="22" hidden>
+<div class="eyebrow">C. CURENT CONTINUU • Subiectul al III-lea</div><h1>Bec, rezistor și reostat în paralel</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>\(R=48\Omega\), reostat \(R_{AB}=20\Omega\), \(\ell_{AB}=3m\), bec \(I_n=0{,}5A\), \(P_n=8W\), rezistența internă a sursei \(r=1{,}5\Omega\), ampermetrul indică \(I_A=2A\).</p></div>
+
+<div class="lesson-box principle"><h3>Principii</h3><p>Becul funcționează nominal, deci tensiunea comună a ramurilor superioare se deduce din \(P_n\) și \(I_n\). Firul reostatului este uniform, deci \(R\propto\ell\).</p></div>
+
+<div class="lesson-box">
+<h3>a) Rezistența becului</h3>
+<p>\[R_B=\frac{P_n}{I_n^2}=\frac8{0{,}25}=32\Omega.\]</p>
+<p class="answer"><strong>\(R_B=32\Omega\).</strong></p>
+
+<h3>b) Energia consumată de rezistorul R în 9 min</h3>
+<p>Tensiunea nominală a becului:</p><p>\[U_B=R_BI_n=32\cdot0{,}5=16V.\]</p>
+<p>Rezistorul R este la aceeași tensiune:</p><p>\[I_R=\frac{16}{48}=\frac13A.\]</p>
+<p>\[W_R=I_R^2R\Delta t=\frac19\cdot48\cdot540=2880J.\]</p>
+<p class="answer"><strong>\(W_R=2{,}88kJ\).</strong></p>
+
+<h3>c) Lungimea AC a reostatului</h3>
+<p>Ampermetrul măsoară suma curenților prin bec și reostat:</p>
+<p>\[I_{AC}=I_A-I_n=2-0{,}5=1{,}5A.\]</p>
+<p>\[R_{AC}I_{AC}=R_BI_n=16V\Rightarrow R_{AC}=\frac{16}{1{,}5}\Omega.\]</p>
+<p>\[\ell_{AC}=\frac{R_{AC}}{R_{AB}}\ell_{AB}
+=\frac{16/1{,}5}{20}\cdot3=1{,}6m.\]</p>
+<p class="answer"><strong>\(\ell_{AC}=1{,}6m\).</strong></p>
+
+<h3>d) Puterea totală furnizată</h3>
+<p>Curentul total prin sursă este:</p><p>\[I=I_A+I_R=2+\frac13=\frac73A.\]</p>
+<p>\[E=Ir+U= \frac73\cdot1{,}5+16=19{,}5V.\]</p>
+<p>\[P_{tot}=EI=19{,}5\cdot\frac73=45{,}5W.\]</p>
+<p class="answer"><strong>\(P_{tot}=45{,}5W\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Ampermetrul de 2 A nu include curentul prin rezistorul de 48 Ω; acesta se adaugă la curentul sursei.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Tensiunea de 16 V este comună becului, rezistorului R și porțiunii active a reostatului.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-23" data-page="23" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul I • Itemul 1</div><h1>Unitatea produsului \(fn\)</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Produsul dintre distanța focală \(f\) și indicele de refracție \(n\) are aceeași unitate cu:</p><div class="choices"><div>a) lungimea de undă</div><div>b) viteza luminii</div><div>c) frecvența</div><div>d) mărirea liniară</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Indicele de refracție este adimensional.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[[fn]=[f]=m.\]</p><p>Lungimea de undă se măsoară tot în metri.</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Mărirea liniară este adimensională.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>f·n are unitate de lungime.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-24" data-page="24" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul I • Itemul 2</div><h1>Indicele de refracție relativ</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Graficul arată \(\sin r=0{,}4\) atunci când \(\sin i=0{,}5\). Indicele relativ \(n_{21}\) este:</p><div class="choices"><div>a) 2,5</div><div>b) 2,0</div><div>c) 1,25</div><div>d) 0,8</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Legea lui Snell: \(n_1\sin i=n_2\sin r\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[n_{21}=\frac{n_2}{n_1}=\frac{\sin i}{\sin r}=\frac{0{,}5}{0{,}4}=1{,}25.\]</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Panta graficului \(\sin r(\sin i)\) este inversul indicelui relativ.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>1/0,8 = 1,25.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-25" data-page="25" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul I • Itemul 3</div><h1>Planul de incidență</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>În refracție, care afirmație este întotdeauna corectă?</p><div class="choices"><div>a) raza incidentă și refractată sunt perpendiculare</div><div>b) raza incidentă, normala și refractata sunt coliniare</div><div>c) cele două raze sunt în același mediu</div><div>d) raza incidentă, normala și raza refractată sunt coplanare</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Legea refracției presupune același plan de incidență pentru raza incidentă, normală și raza refractată.</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>Cele trei direcții sunt coplanare.</p><p class="answer"><strong>Răspuns corect: d.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Raza incidentă și refractată se află în medii diferite.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Coplanaritatea este una dintre legile refracției.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-26" data-page="26" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul I • Itemul 4</div><h1>Semnele coordonatelor la lentilă</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Axa Ox este pozitivă în sensul propagării luminii. Pentru obiect real și imagine virtuală, semnele sunt:</p><div class="choices"><div>a) \(x_1>0,x_2>0\)</div><div>b) \(x_1<0,x_2>0\)</div><div>c) \(x_1<0,x_2<0\)</div><div>d) \(x_1>0,x_2<0\)</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Obiectul real este înaintea lentilei, deci \(x_1<0\). Imaginea virtuală este pe aceeași parte, deci \(x_2<0\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[x_1<0,\qquad x_2<0.\]</p><p class="answer"><strong>Răspuns corect: c.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Imaginea reală, nu cea virtuală, are coordonată pozitivă în această convenție.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>Ambele sunt pe partea obiectului.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-27" data-page="27" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul I • Itemul 5</div><h1>Efect fotoelectric</h1>
+<div class="lesson-box statement"><h3>Enunț adaptat</h3><p>Fotonii au energia \(2{,}50eV\), iar lucrul de extracție este \(2{,}10eV\). Energia cinetică maximă este:</p><div class="choices"><div>a) 0,40 eV</div><div>b) 2,10 eV</div><div>c) 2,50 eV</div><div>d) 4,60 eV</div></div></div>
+
+<div class="lesson-box principle"><h3>Principiul fizic</h3><p>Ecuația fotoelectrică: \(E_{c,max}=\varepsilon-L\).</p></div>
+<div class="lesson-box"><h3>Rezolvare pas cu pas</h3><p>\[E_{c,max}=2{,}50-2{,}10=0{,}40eV.\]</p><p class="answer"><strong>Răspuns corect: a.</strong></p></div>
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Nu adunăm energia fotonului cu lucrul de extracție.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>0,40 + 2,10 = 2,50 eV.</p></div><nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-28" data-page="28" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul al II-lea</div><h1>Lentilă – două poziții pentru imagine clară</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>Obiectul are \(y_1=10mm\), imaginea pe ecran \(y_2=20mm\), iar distanța obiect–ecran este \(D=90cm\).</p></div>
+
+<div class="diagram-wrap"><svg viewBox="0 0 900 400" role="img" aria-label="Lentilă convergentă între obiect și ecran">
+<defs><marker id="arrDIISim25" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3z" fill="#fff"/></marker></defs>
+<line x1="70" y1="230" x2="830" y2="230" stroke="#94a3b8" stroke-width="3"/>
+<line x1="390" y1="55" x2="390" y2="355" stroke="#60a5fa" stroke-width="6"/>
+<line x1="240" y1="230" x2="240" y2="155" stroke="#22c55e" stroke-width="6" marker-end="url(#arrDIISim25)"/>
+<line x1="690" y1="230" x2="690" y2="340" stroke="#fb7185" stroke-width="6"/>
+<line x1="240" y1="155" x2="390" y2="155" stroke="#fff" stroke-width="4"/>
+<line x1="390" y1="155" x2="690" y2="340" stroke="#fff" stroke-width="4"/>
+</svg></div>
+<div class="lesson-box principle"><h3>Principii</h3><p>Imaginea reală este răsturnată, deci \(\beta=y_2/y_1=-2\). Folosim \(\beta=x_2/x_1\) și \(-x_1+x_2=D\).</p></div>
+
+<div class="lesson-box">
+<h3>a) Distanța lentilă–ecran</h3>
+<p>\[\beta=-2=\frac{x_2}{x_1}\Rightarrow x_2=-2x_1.\]</p>
+<p>\[-x_1+x_2=90cm.\]</p>
+<p>\[-x_1-2x_1=90\Rightarrow x_1=-30cm,\quad x_2=60cm.\]</p>
+<p class="answer"><strong>\(x_2=60cm\).</strong></p>
+
+<h3>b) Convergența</h3>
+<p>\[\frac1f=\frac1{x_2}-\frac1{x_1}
+=\frac1{60}+\frac1{30}=\frac1{20}cm^{-1}.\]</p>
+<p>\[f=20cm=0{,}20m,\qquad C=\frac1f=5m^{-1}.\]</p>
+<p class="answer"><strong>\(C=5m^{-1}\).</strong></p>
+
+<h3>c) Construcția imaginii</h3>
+<p>Raza paralelă cu axa trece prin focarul imagine; raza prin centrul optic nu se deviază. Intersecția lor pe ecran dă imaginea reală și răsturnată.</p>
+
+<h3>d) A doua poziție clară a lentilei</h3>
+<p>Pentru obiect și ecran fixe, cele două poziții conjugate schimbă între ele distanțele 30 cm și 60 cm.</p>
+<p>Deplasarea lentilei este:</p><p>\[d=60-30=30cm.\]</p>
+<p class="answer"><strong>\(d=30cm\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>Distanța de 90 cm este obiect–ecran, nu lentilă–ecran.</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>30 cm + 60 cm = 90 cm.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray" id="pagina-29" data-page="29" hidden>
+<div class="eyebrow">D. OPTICĂ • Subiectul al III-lea</div><h1>Dispozitiv Young – tabel experimental</h1>
+<div class="lesson-box statement"><h3>Date</h3>
+<p>Pentru \(\lambda_1=400nm\): \(D_1=1{,}5m\), \(i_1=1{,}0mm\). Pentru \(\lambda_2=550nm\): \(i_2=1{,}1mm\). Pentru \(\lambda_3=600nm\): \(D_3=1{,}8m\).</p></div>
+
+<div class="lesson-box principle"><h3>Principii</h3><p>Interfranja este \(i=\lambda D/(2\ell)\). Maximele sunt la \(x_k=ki\), iar a treia franjă întunecoasă la \(x=\frac52i\).</p></div>
+
+<div class="lesson-box">
+<h3>a) Distanța dintre fante</h3>
+<p>\[2\ell=\frac{\lambda_1D_1}{i_1}
+=\frac{400\cdot10^{-9}\cdot1{,}5}{10^{-3}}
+=6\cdot10^{-4}m.\]</p>
+<p class="answer"><strong>\(2\ell=0{,}6mm\).</strong></p>
+
+<h3>b) Apropierea ecranului</h3>
+<p>\[D_2=\frac{i_2(2\ell)}{\lambda_2}
+=\frac{1{,}1\cdot10^{-3}\cdot0{,}6\cdot10^{-3}}{550\cdot10^{-9}}
+=1{,}2m.\]</p>
+<p>\[|\Delta D|=1{,}5-1{,}2=0{,}3m.\]</p>
+<p class="answer"><strong>\(|\Delta D|=0{,}3m\).</strong></p>
+
+<h3>c) Distanța între maximul 2 și a treia franjă întunecoasă</h3>
+<p>\[i_3=\frac{600\cdot10^{-9}\cdot1{,}8}{0{,}6\cdot10^{-3}}=1{,}8mm.\]</p>
+<p>Pentru franje aflate de părți opuse:</p>
+<p>\[d=2i_3+\frac52i_3=\frac92i_3=4{,}5\cdot1{,}8=8{,}1mm.\]</p>
+<p class="answer"><strong>\(d=8{,}1mm\).</strong></p>
+
+<h3>d) Prima suprapunere nenulă pentru 400 nm și 600 nm</h3>
+<p>Condiția maximelor:</p><p>\[k_1\lambda_1=k_3\lambda_3.\]</p>
+<p>\[400k_1=600k_3\Rightarrow 2k_1=3k_3.\]</p>
+<p>Minimul întreg: \(k_1=3,\ k_3=2\).</p>
+<p>La \(D=2m\), pentru 400 nm:</p>
+<p>\[i'_1=\frac{400\cdot10^{-9}\cdot2}{0{,}6\cdot10^{-3}}
+=\frac43mm.\]</p>
+<p>\[x_{min}=3i'_1=4mm.\]</p>
+<p class="answer"><strong>\(x_{min}=4mm\).</strong></p>
+</div>
+
+<div class="lesson-box warning"><h3>Greșeală frecventă</h3><p>A treia franjă întunecoasă este la \(5i/2\), nu la \(3i\).</p></div>
+<div class="lesson-box check"><h3>Verificare rapidă</h3><p>3·400 nm = 2·600 nm, deci maximele se suprapun.</p></div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section><section class="container lesson-page card gray final-page" id="pagina-30" data-page="30" hidden>
+<div class="eyebrow">FINAL</div><h1>Recapitulare – BAC Fizică 2025, simulare</h1>
+
+<div class="lesson-box check"><h3>Rezultate-cheie</h3><ul>
+<li><strong>Mecanică:</strong> \(N=75N\), \(\mu=0{,}8\), \(a'=0{,}8m/s^2\), \(L_{tr}=250kJ\), \(\Delta E_c=300kJ\), \(L_G=100kJ\), \(L_r=-50kJ\).</li>
+<li><strong>Termodinamică:</strong> \(\nu_2/\nu_1=2\), \(x=10cm\), \(\nu_2/\Delta\nu=2\), \(\mu_{am}=16g/mol\), \(Q_{12}=0{,}3kJ\), \(\Delta U_{23}=1{,}8kJ\), \(L_{34}\approx2{,}2kJ\), \(Q_{41}=-3{,}5kJ\).</li>
+<li><strong>Curent continuu:</strong> \(U=40V\), \(E_2=10V\), \(U_1=36V\), \(I_K\approx7{,}1A\), \(R_B=32\Omega\), \(W_R=2{,}88kJ\), \(\ell_{AC}=1{,}6m\), \(P_{tot}=45{,}5W\).</li>
+<li><strong>Optică:</strong> \(x_2=60cm\), \(C=5m^{-1}\), \(d=30cm\), \(2\ell=0{,}6mm\), \(|\Delta D|=0{,}3m\), \(d_{franje}=8{,}1mm\), \(x_{min}=4mm\).</li>
+</ul></div>
+
+<div class="lesson-box principle"><h3>Verificare înainte de examen</h3><ol>
+<li>În mecanică, stabilește corect orientarea reacțiunii și a frecării.</li>
+<li>În termodinamică, citește \(pV\) pentru raporturile temperaturilor.</li>
+<li>În circuite, redesenează schema după închiderea întrerupătorului.</li>
+<li>În optică, diferențiază pozițiile maximelor de cele ale franjelor întunecoase.</li>
+</ol></div>
+
+<div class="author-box"><p><strong>Prof. Dănuț Andronie</strong></p>
+<p>e-Mail: <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p></div>
+
+<div class="final-actions">
+<a class="nav-btn" href="index.html">Înapoi la capitol</a>
+<a class="nav-btn" href="./2025,%20subiect%20model.html">Mergi la următoarea lecție</a>
+</div>
+<nav class="pager" aria-label="Navigare între exerciții">
+<a class="nav-btn" data-prev href="#">← Exercițiul anterior</a>
+<span class="page-counter" data-counter></span>
+<a class="nav-btn" data-next href="#">Exercițiul următor →</a>
+</nav></section>
+</main>
+<script>
+(function(){
+ const sections=[...document.querySelectorAll('[data-page]')], total=sections.length;
+ function current(){const m=location.hash.match(/^#pagina-(\d+)$/);return Math.min(total,Math.max(1,m?Number(m[1]):1));}
+ function show(){
+   const c=current();
+   sections.forEach(s=>{
+     const n=Number(s.dataset.page);s.hidden=n!==c;
+     const p=s.querySelector('[data-prev]'),q=s.querySelector('[data-next]'),k=s.querySelector('[data-counter]');
+     if(k)k.textContent=`Pagina ${n} / ${total}`;
+     if(p){p.href=n>1?`#pagina-${n-1}`:'#pagina-1';n>1?p.removeAttribute('aria-disabled'):p.setAttribute('aria-disabled','true');}
+     if(q){q.href=n<total?`#pagina-${n+1}`:`#pagina-${total}`;n<total?q.removeAttribute('aria-disabled'):q.setAttribute('aria-disabled','true');}
+   });
+   window.scrollTo({top:0,behavior:'instant'});
+   document.title=`BAC Fizică 2025 – simulare · pagina ${c}/${total}`;
+ }
+ addEventListener('hashchange',show);
+ if(!location.hash)history.replaceState(null,'','#pagina-1');
+ show();
+})();
+</script>
+
+</body></html>
