@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+  name="theme-color"
+  content="#0f172a"
+>
+
+<meta
+  name="description"
+  content="Problema 4 – distanța parcursă în ultima secundă de cădere liberă. Rezolvare pas cu pas."
+>
+
+<title>
+  Problema 4 | Distanța parcursă în ultima secundă
+</title>
+
+
+<!-- =========================================================
+     MATHJAX
+     ========================================================= -->
+
+<script>
+
+window.MathJax = {
+
+  tex: {
+
+    inlineMath:
+      [['$', '$'], ['\\(', '\\)']],
+
+    displayMath:
+      [['$$', '$$'], ['\\[', '\\]']]
+
+  },
+
+  svg: {
+    fontCache: 'global'
+  }
+
+};
+
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+
+
+<style>
+
+/* =========================================================
+   CULORI
+   ========================================================= */
+
+:root {
+
+  --bg:#0f172a;
+
+  --panel:#1e293b;
+  --panel-2:#111827;
+
+  --line:#334155;
+
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --soft:#94a3b8;
+
+  --cyan:#22d3ee;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --yellow:#facc15;
+  --red:#fb7185;
+  --violet:#a78bfa;
+
+  --shadow:
+    0 18px 46px
+    rgba(2,6,23,.34);
+
+  --max:980px;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+
+  margin:0;
+
+  min-height:100vh;
+
+  background:
+    radial-gradient(
+      circle at 12% 7%,
+      rgba(34,211,238,.10),
+      transparent 25rem
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(59,130,246,.10),
+      transparent 27rem
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x:hidden;
+
+}
+
+
+a {
+  color:inherit;
+}
+
+button {
+  font:inherit;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+
+  position:sticky;
+
+  top:0;
+
+  z-index:30;
+
+  border-bottom:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:
+    rgba(15,23,42,.95);
+
+  backdrop-filter:
+    blur(12px);
+
+}
+
+
+.topbar-inner,
+.progress-row,
+main,
+.footer-inner {
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 28px)
+    );
+
+  margin:0 auto;
+
+}
+
+
+.topbar-inner {
+
+  min-height:62px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:12px;
+
+}
+
+
+.brand {
+
+  text-decoration:none;
+
+  font-weight:900;
+
+  letter-spacing:-.02em;
+
+  white-space:nowrap;
+
+}
+
+
+.brand span {
+  color:var(--cyan);
+}
+
+
+.index-link {
+
+  min-height:40px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:8px 11px;
+
+  border:
+    1px solid #475569;
+
+  border-radius:11px;
+
+  background:#1e293b;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+
+.index-link:hover,
+.index-link:focus-visible {
+
+  border-color:var(--cyan);
+
+  outline:none;
+
+}
+
+
+/* =========================================================
+   PROGRES
+   ========================================================= */
+
+.progress-row {
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap:12px;
+
+  align-items:center;
+
+  padding:9px 0 11px;
+
+}
+
+
+.progress-track {
+
+  height:7px;
+
+  overflow:hidden;
+
+  border:
+    1px solid #334155;
+
+  border-radius:999px;
+
+  background:#111827;
+
+}
+
+
+.progress-bar {
+
+  height:100%;
+
+  width:16.666%;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--cyan),
+      var(--blue)
+    );
+
+  transition:
+    width .2s ease;
+
+}
+
+
+.progress-text {
+
+  color:var(--muted);
+
+  font-size:.84rem;
+  font-weight:850;
+
+  white-space:nowrap;
+
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+
+  padding:
+    22px 0 104px;
+
+}
+
+
+/* =========================================================
+   PAGINI
+   ========================================================= */
+
+.page {
+
+  display:none;
+
+  min-height:
+    calc(100vh - 175px);
+
+}
+
+
+.page.active {
+
+  display:block;
+
+  animation:
+    fade .2s ease;
+
+}
+
+
+@keyframes fade {
+
+  from {
+    opacity:.35;
+    transform:translateY(5px);
+  }
+
+  to {
+    opacity:1;
+    transform:none;
+  }
+
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  border:
+    1px solid
+    rgba(148,163,184,.18);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,.98),
+      rgba(23,32,51,.98)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.eyebrow {
+
+  margin:0 0 8px;
+
+  color:#a5f3fc;
+
+  font-size:.78rem;
+  font-weight:900;
+
+  text-transform:uppercase;
+
+  letter-spacing:.09em;
+
+}
+
+
+h1,
+h2,
+h3 {
+
+  color:#fff;
+
+  line-height:1.15;
+
+}
+
+
+h1 {
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,7vw,3.8rem);
+
+  letter-spacing:-.04em;
+
+}
+
+
+h2 {
+
+  margin:0;
+
+  font-size:
+    clamp(1.55rem,5vw,2.45rem);
+
+  letter-spacing:-.03em;
+
+}
+
+
+h3 {
+
+  margin:0 0 8px;
+
+  font-size:1.08rem;
+
+}
+
+
+p,
+li {
+
+  color:var(--muted);
+
+  line-height:1.6;
+
+  font-size:
+    clamp(.98rem,2vw,1.08rem);
+
+}
+
+
+.lead {
+
+  margin:16px 0 0;
+
+  color:#e2e8f0;
+
+  font-size:
+    clamp(1.04rem,2.3vw,1.22rem);
+
+  line-height:1.65;
+
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.data-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+
+.data-box {
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:#0f172a;
+
+  text-align:center;
+
+}
+
+
+.data-box small {
+
+  display:block;
+
+  margin-bottom:5px;
+
+  color:var(--soft);
+
+  font-weight:800;
+
+}
+
+
+.data-box strong {
+
+  color:#fff;
+
+  font-size:1.08rem;
+
+}
+
+
+/* =========================================================
+   SARCINI / PAȘI
+   ========================================================= */
+
+.task-list,
+.step-list {
+
+  display:grid;
+
+  gap:11px;
+
+  margin-top:18px;
+
+}
+
+
+.task,
+.step {
+
+  display:grid;
+
+  grid-template-columns:
+    38px 1fr;
+
+  gap:11px;
+
+  align-items:start;
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.68);
+
+}
+
+
+.num {
+
+  width:38px;
+  height:38px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:11px;
+
+  background:
+    rgba(34,211,238,.13);
+
+  color:#a5f3fc;
+
+  font-weight:900;
+
+}
+
+
+.task p,
+.step p {
+  margin:0;
+}
+
+
+/* =========================================================
+   TEORIE
+   ========================================================= */
+
+.theory-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:14px;
+
+  margin-top:18px;
+
+}
+
+
+.theory-card {
+
+  padding:17px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.66);
+
+}
+
+
+.theory-card p {
+  margin:5px 0 0;
+}
+
+
+/* =========================================================
+   FORMULE
+   ========================================================= */
+
+.formula {
+
+  margin:14px 0 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  border:
+    1px solid
+    rgba(34,211,238,.25);
+
+  border-radius:14px;
+
+  background:
+    rgba(8,145,178,.08);
+
+  color:#ecfeff;
+
+  text-align:center;
+
+  font-size:
+    clamp(1.05rem,3vw,1.35rem);
+
+}
+
+
+.formula.green {
+
+  border-color:
+    rgba(34,197,94,.27);
+
+  background:
+    rgba(34,197,94,.08);
+
+}
+
+
+.formula.yellow {
+
+  border-color:
+    rgba(250,204,21,.27);
+
+  background:
+    rgba(250,204,21,.07);
+
+}
+
+
+.formula.red {
+
+  border-color:
+    rgba(251,113,133,.30);
+
+  background:
+    rgba(251,113,133,.07);
+
+}
+
+
+/* =========================================================
+   NOTĂ
+   ========================================================= */
+
+.note {
+
+  margin-top:18px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--yellow);
+
+  border-radius:10px;
+
+  background:
+    rgba(250,204,21,.07);
+
+  color:#fef9c3;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+.warning {
+
+  margin-top:18px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--red);
+
+  border-radius:10px;
+
+  background:
+    rgba(251,113,133,.07);
+
+  color:#ffe4e6;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   SCHIȚĂ
+   ========================================================= */
+
+.diagram {
+
+  margin-top:18px;
+
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.24);
+
+  border-radius:18px;
+
+  background:#f8fafc;
+
+  overflow:hidden;
+
+}
+
+
+.diagram svg {
+
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:470px;
+
+  font-family:
+    Inter,
+    system-ui,
+    sans-serif;
+
+}
+
+
+.diagram-caption {
+
+  margin:8px 3px 0;
+
+  color:#cbd5e1;
+
+  font-size:.9rem;
+
+  line-height:1.45;
+
+}
+
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.timeline {
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:20px;
+
+}
+
+
+.time-card {
+
+  padding:14px 10px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:14px;
+
+  background:#0f172a;
+
+  text-align:center;
+
+}
+
+
+.time-card strong {
+
+  display:block;
+
+  color:#fff;
+
+  font-size:1.06rem;
+
+}
+
+
+.time-card small {
+
+  display:block;
+
+  margin-top:5px;
+
+  color:var(--soft);
+
+}
+
+
+.time-arrow {
+
+  color:var(--cyan);
+
+  font-size:1.4rem;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   REZULTATE
+   ========================================================= */
+
+.result {
+
+  margin-top:17px;
+
+  padding:15px 17px;
+
+  border:
+    1px solid
+    rgba(34,197,94,.32);
+
+  border-radius:15px;
+
+  background:
+    rgba(34,197,94,.09);
+
+  color:#dcfce7;
+
+  font-weight:900;
+
+  line-height:1.55;
+
+}
+
+
+.check {
+
+  margin-top:14px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--green);
+
+  border-radius:10px;
+
+  background:
+    rgba(34,197,94,.07);
+
+  color:#dcfce7;
+
+  line-height:1.55;
+
+}
+
+
+.check strong {
+  color:#86efac;
+}
+
+
+/* =========================================================
+   CONCLUZII
+   ========================================================= */
+
+.conclusions {
+
+  display:grid;
+
+  gap:12px;
+
+  margin-top:18px;
+
+}
+
+
+.conclusion {
+
+  padding:15px 16px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.65);
+
+  color:#e2e8f0;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+.answers {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-top:20px;
+
+}
+
+
+.answer-card {
+
+  padding:17px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.28);
+
+  border-radius:17px;
+
+  background:
+    rgba(8,145,178,.08);
+
+}
+
+
+.answer-card small {
+
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#a5f3fc;
+
+  font-weight:850;
+
+}
+
+
+.answer-card strong {
+
+  color:#fff;
+
+  font-size:1.18rem;
+
+}
+
+
+/* =========================================================
+   ACȚIUNI FINALE
+   ========================================================= */
+
+.final-actions {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+.final-link {
+
+  min-height:50px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:11px 14px;
+
+  border-radius:13px;
+
+  text-decoration:none;
+
+  text-align:center;
+
+  font-weight:900;
+
+}
+
+
+.final-link.primary {
+
+  background:var(--cyan);
+
+  color:#083344;
+
+}
+
+
+.final-link.secondary {
+
+  background:#334155;
+
+  border:
+    1px solid #475569;
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   NAVIGARE INFERIOARĂ
+   ========================================================= */
+
+.bottom-nav {
+
+  position:fixed;
+
+  z-index:25;
+
+  left:50%;
+
+  bottom:
+    calc(
+      10px +
+      env(safe-area-inset-bottom)
+    );
+
+  transform:
+    translateX(-50%);
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 20px)
+    );
+
+  display:grid;
+
+  grid-template-columns:
+    120px 1fr;
+
+  gap:10px;
+
+  padding:10px;
+
+  border:
+    1px solid
+    rgba(148,163,184,.22);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.96);
+
+  backdrop-filter:
+    blur(12px);
+
+  box-shadow:
+    0 -12px 32px
+    rgba(2,6,23,.28);
+
+}
+
+
+.nav-btn {
+
+  min-height:50px;
+
+  border:0;
+
+  border-radius:12px;
+
+  padding:10px 14px;
+
+  cursor:pointer;
+
+  font-weight:900;
+
+}
+
+
+.nav-btn.prev {
+
+  background:#334155;
+
+  color:#fff;
+
+  border:
+    1px solid #475569;
+
+}
+
+
+.nav-btn.next {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--green),
+      #16a34a
+    );
+
+  color:#052e16;
+
+}
+
+
+.nav-btn:disabled {
+
+  opacity:.42;
+
+  cursor:not-allowed;
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+
+  border-top:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:#111827;
+
+}
+
+
+.footer-inner {
+
+  padding:21px 0 95px;
+
+  color:var(--soft);
+
+  text-align:center;
+
+  font-size:.88rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:760px) {
+
+  .theory-grid,
+  .answers,
+  .final-actions {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .data-grid {
+
+    grid-template-columns:
+      1fr 1fr;
+
+  }
+
+
+  .card {
+
+    padding:20px 16px;
+
+    border-radius:20px;
+
+  }
+
+
+  .timeline {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .time-arrow {
+
+    text-align:center;
+    transform:rotate(90deg);
+
+  }
+
+}
+
+
+@media(max-width:520px) {
+
+  .topbar-inner {
+    min-height:58px;
+  }
+
+
+  .brand {
+    font-size:.93rem;
+  }
+
+
+  .index-link {
+
+    min-height:38px;
+
+    padding:7px 9px;
+
+    font-size:.8rem;
+
+  }
+
+
+  .progress-row {
+    padding-top:7px;
+  }
+
+
+  main {
+    padding-top:16px;
+  }
+
+
+  .data-grid {
+    grid-template-columns:1fr;
+  }
+
+
+  .task,
+  .step {
+
+    grid-template-columns:
+      34px 1fr;
+
+    padding:12px;
+
+  }
+
+
+  .num {
+
+    width:34px;
+    height:34px;
+
+  }
+
+
+  .bottom-nav {
+
+    grid-template-columns:
+      92px 1fr;
+
+    padding:8px;
+
+  }
+
+
+  .nav-btn {
+
+    min-height:48px;
+
+    padding:9px 10px;
+
+    font-size:.9rem;
+
+  }
+
+}
+
+
+@media(prefers-reduced-motion:reduce) {
+
+  html {
+    scroll-behavior:auto;
+  }
+
+  .page {
+    animation:none;
+  }
+
+  .progress-bar {
+    transition:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <a
+      class="brand"
+      href="../../index.html"
+    >
+      Fizica<span>-liceu</span>
+    </a>
+
+
+    <a
+      class="index-link"
+      href="index.html"
+    >
+      ← Mișcare în câmp gravitațional
+    </a>
+
+  </div>
+
+
+  <div class="progress-row">
+
+    <div
+      class="progress-track"
+      aria-hidden="true"
+    >
+
+      <div
+        class="progress-bar"
+        id="progressBar"
+      ></div>
+
+    </div>
+
+
+    <div
+      class="progress-text"
+      id="progressText"
+    >
+      1 / 6
+    </div>
+
+  </div>
+
+</header>
+
+
+<main>
+
+
+  <!-- =======================================================
+       PAGINA 1 — ENUNȚ
+       ======================================================= -->
+
+  <section class="page active">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Problema 4 · Cădere liberă
+      </p>
+
+
+      <h1>
+        Distanța parcursă în ultima secundă
+      </h1>
+
+
+      <p class="lead">
+
+        Un corp este lăsat
+        să cadă liber
+        de la o anumită înălțime.
+
+        <br><br>
+
+        Corpul ajunge la sol
+        după
+
+        $t=5\,\text{s}$.
+
+        <br><br>
+
+        Se neglijează
+        rezistența aerului
+        și se consideră
+
+        $g=10\,\text{m/s}^2$.
+
+      </p>
+
+
+      <div class="data-grid">
+
+
+        <div class="data-box">
+
+          <small>
+            Timp total
+          </small>
+
+          <strong>
+            $t=5\,\text{s}$
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Viteza inițială
+          </small>
+
+          <strong>
+            $v_0=0$
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Accelerația
+          </small>
+
+          <strong>
+            $g=10\,\text{m/s}^2$
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="task-list">
+
+
+        <div class="task">
+
+          <div class="num">
+            ?
+          </div>
+
+          <p>
+            Determină
+            distanța parcursă
+            de corp
+            în
+            <strong>
+              ultima secundă
+              de mișcare.
+            </strong>
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="warning">
+
+        <strong>
+          Atenție la formulare.
+        </strong>
+
+        <br><br>
+
+        Corpul cade în total
+        timp de $5\,\text{s}$.
+
+        <br><br>
+
+        Ultima secundă
+        nu este intervalul
+        $0\rightarrow1\,\text{s}$.
+
+        <br><br>
+
+        Este intervalul:
+
+        $\boxed{
+        4\,\text{s}
+        \rightarrow
+        5\,\text{s}
+        }$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 2 — IDEEA CHEIE
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Analiza fizică
+      </p>
+
+
+      <h2>
+        Ce înseamnă „în ultima secundă”?
+      </h2>
+
+
+      <p class="lead">
+
+        Mișcarea este accelerată.
+
+        <br><br>
+
+        Prin urmare,
+        corpul nu parcurge
+        distanțe egale
+        în secunde egale.
+
+      </p>
+
+
+      <div class="timeline">
+
+
+        <div class="time-card">
+
+          <strong>
+            $t=0$
+          </strong>
+
+          <small>
+            corpul este eliberat
+          </small>
+
+        </div>
+
+
+        <div class="time-arrow">
+          →
+        </div>
+
+
+        <div class="time-card">
+
+          <strong>
+            $t=4\,\text{s}$
+          </strong>
+
+          <small>
+            începe ultima secundă
+          </small>
+
+        </div>
+
+
+        <div class="time-arrow">
+          →
+        </div>
+
+
+        <div class="time-card">
+
+          <strong>
+            $t=5\,\text{s}$
+          </strong>
+
+          <small>
+            corpul ajunge la sol
+          </small>
+
+        </div>
+
+
+      </div>
+
+
+      <p>
+        Notăm:
+      </p>
+
+
+      <div class="formula">
+
+        $s_5=s(5\,\text{s})$
+
+      </div>
+
+
+      <p>
+        distanța totală
+        parcursă în primele
+        $5\,\text{s}$,
+        iar:
+      </p>
+
+
+      <div class="formula">
+
+        $s_4=s(4\,\text{s})$
+
+      </div>
+
+
+      <p>
+        distanța parcursă
+        în primele
+        $4\,\text{s}$.
+      </p>
+
+
+      <p>
+        Distanța din
+        ultima secundă
+        este diferența:
+      </p>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        \Delta s=s_5-s_4
+        }$
+
+      </div>
+
+
+      <div class="warning">
+
+        Nu folosim
+
+        $\displaystyle
+        \frac{g\cdot1^2}{2}$
+
+        pentru ultima secundă.
+
+        <br><br>
+
+        Această expresie
+        ar calcula distanța
+        parcursă în
+        <strong>prima secundă</strong>
+        a căderii din repaus.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 3 — MODEL ȘI CALCUL SIMBOLIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Model și calcul simbolic
+      </p>
+
+
+      <h2>
+        Calculăm două poziții
+      </h2>
+
+
+      <div class="diagram">
+
+        <svg
+          viewBox="0 0 760 500"
+          role="img"
+          aria-labelledby="lastSecondTitle lastSecondDesc"
+        >
+
+          <title id="lastSecondTitle">
+            Distanța parcursă în ultima secundă de cădere
+          </title>
+
+          <desc id="lastSecondDesc">
+            Corpul cade timp de cinci secunde. Este evidențiată distanța parcursă între secunda a patra și secunda a cincea.
+          </desc>
+
+
+          <!-- FUNDAL -->
+
+          <rect
+            x="0"
+            y="0"
+            width="760"
+            height="420"
+            fill="#e0f2fe"
+          />
+
+
+          <rect
+            x="0"
+            y="420"
+            width="760"
+            height="80"
+            fill="#86a76b"
+          />
+
+
+          <line
+            x1="0"
+            y1="420"
+            x2="760"
+            y2="420"
+            stroke="#4d7c0f"
+            stroke-width="5"
+          />
+
+
+          <!-- CORP t=0 -->
+
+          <circle
+            cx="380"
+            cy="60"
+            r="22"
+            fill="#ef4444"
+          />
+
+
+          <text
+            x="420"
+            y="66"
+            font-size="20"
+            font-weight="850"
+            fill="#991b1b"
+          >
+            t = 0
+          </text>
+
+
+          <!-- TRAIECTORIE -->
+
+          <line
+            x1="380"
+            y1="90"
+            x2="380"
+            y2="395"
+            stroke="#2563eb"
+            stroke-width="5"
+            stroke-dasharray="12 9"
+          />
+
+
+          <!-- POZIȚIA t=4 -->
+
+          <circle
+            cx="380"
+            cy="260"
+            r="18"
+            fill="#f59e0b"
+          />
+
+
+          <line
+            x1="280"
+            y1="260"
+            x2="480"
+            y2="260"
+            stroke="#f59e0b"
+            stroke-width="3"
+            stroke-dasharray="8 7"
+          />
+
+
+          <text
+            x="495"
+            y="267"
+            font-size="20"
+            font-weight="900"
+            fill="#92400e"
+          >
+            t = 4 s
+          </text>
+
+
+          <!-- POZIȚIA t=5 -->
+
+          <circle
+            cx="380"
+            cy="400"
+            r="18"
+            fill="#22c55e"
+          />
+
+
+          <text
+            x="495"
+            y="406"
+            font-size="20"
+            font-weight="900"
+            fill="#166534"
+          >
+            t = 5 s
+          </text>
+
+
+          <!-- ULTIMA SECUNDĂ -->
+
+          <line
+            x1="245"
+            y1="260"
+            x2="245"
+            y2="400"
+            stroke="#7c3aed"
+            stroke-width="5"
+          />
+
+
+          <path
+            d="M245 260 L233 282 L257 282 Z"
+            fill="#7c3aed"
+          />
+
+
+          <path
+            d="M245 400 L233 378 L257 378 Z"
+            fill="#7c3aed"
+          />
+
+
+          <text
+            x="80"
+            y="325"
+            font-size="20"
+            font-weight="900"
+            fill="#6d28d9"
+          >
+            ultima secundă
+          </text>
+
+
+          <text
+            x="110"
+            y="350"
+            font-size="21"
+            font-weight="900"
+            fill="#6d28d9"
+          >
+            Δs = ?
+          </text>
+
+
+          <!-- SOL -->
+
+          <text
+            x="380"
+            y="465"
+            text-anchor="middle"
+            font-size="22"
+            font-weight="900"
+            fill="#365314"
+          >
+            SOL
+          </text>
+
+        </svg>
+
+      </div>
+
+
+      <p class="diagram-caption">
+
+        Distanța cerută
+        este numai segmentul
+        parcurs între
+        $t=4\,\text{s}$
+        și
+        $t=5\,\text{s}$.
+
+      </p>
+
+
+      <h3 style="margin-top:24px;">
+        Legea deplasării
+      </h3>
+
+
+      <p>
+        Corpul este lăsat
+        să cadă din repaus:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        s(t)=
+        \frac{gt^2}{2}$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Poziția după 5 secunde
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        s_5=
+        \frac{
+          g\cdot5^2
+        }{2}$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Poziția după 4 secunde
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        s_4=
+        \frac{
+          g\cdot4^2
+        }{2}$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Distanța din ultima secundă
+      </h3>
+
+
+      <div class="formula yellow">
+
+        $\displaystyle
+        \Delta s
+        =
+        s_5-s_4$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        \Delta s
+        =
+        \frac{g}{2}
+        \left(
+          5^2-4^2
+        \right)$
+
+      </div>
+
+
+      <div class="note">
+
+        Aceasta este
+        forma simbolică
+        a rezolvării.
+
+        <br><br>
+
+        Abia acum
+        introducem valoarea numerică
+        a lui $g$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 4 — CALCUL NUMERIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare numerică
+      </p>
+
+
+      <h2>
+        Calculăm distanța
+        din ultima secundă
+      </h2>
+
+
+      <div class="step-list">
+
+
+        <div class="step">
+
+          <div class="num">
+            1
+          </div>
+
+          <div>
+
+            <h3>
+              Distanța în primele 5 secunde
+            </h3>
+
+
+            <div class="formula">
+
+              $\displaystyle
+              s_5=
+              \frac{
+                10\cdot5^2
+              }{2}$
+
+            </div>
+
+
+            <div class="formula">
+
+              $\displaystyle
+              s_5=
+              \frac{
+                10\cdot25
+              }{2}$
+
+            </div>
+
+
+            <div class="formula green">
+
+              $\boxed{
+              s_5=125\,\text{m}
+              }$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="num">
+            2
+          </div>
+
+          <div>
+
+            <h3>
+              Distanța în primele 4 secunde
+            </h3>
+
+
+            <div class="formula">
+
+              $\displaystyle
+              s_4=
+              \frac{
+                10\cdot4^2
+              }{2}$
+
+            </div>
+
+
+            <div class="formula">
+
+              $\displaystyle
+              s_4=
+              \frac{
+                10\cdot16
+              }{2}$
+
+            </div>
+
+
+            <div class="formula green">
+
+              $\boxed{
+              s_4=80\,\text{m}
+              }$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="num">
+            3
+          </div>
+
+          <div>
+
+            <h3>
+              Facem diferența
+            </h3>
+
+
+            <div class="formula yellow">
+
+              $\displaystyle
+              \Delta s
+              =
+              s_5-s_4$
+
+            </div>
+
+
+            <div class="formula">
+
+              $\displaystyle
+              \Delta s
+              =
+              125-80$
+
+            </div>
+
+
+            <div class="formula green">
+
+              $\boxed{
+              \Delta s
+              =
+              45\,\text{m}
+              }$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="result">
+
+        În ultima secundă
+        de cădere,
+        corpul parcurge:
+
+        $\boxed{
+        \Delta s=45\,\text{m}
+        }$
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          Verificare de sens fizic:
+        </strong>
+
+        <br><br>
+
+        în prima secundă
+        corpul parcurge numai
+
+        $\displaystyle
+        \frac{10\cdot1^2}{2}
+        =
+        5\,\text{m}$,
+
+        <br><br>
+
+        iar în ultima secundă
+        parcurge
+
+        $45\,\text{m}$.
+
+        <br><br>
+
+        Este firesc:
+        viteza crește continuu
+        în timpul căderii.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 5 — METODA A DOUA
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Verificare prin altă metodă
+      </p>
+
+
+      <h2>
+        Folosim viteza medie
+        în ultima secundă
+      </h2>
+
+
+      <p class="lead">
+
+        Într-o mișcare
+        rectilinie uniform accelerată,
+        viteza medie
+        pe un interval
+        este media aritmetică
+        a vitezelor
+        de la capetele intervalului.
+
+      </p>
+
+
+      <h3 style="margin-top:24px;">
+        Viteza la $t=4\,\text{s}$
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_4=gt_4$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_4=
+        10\cdot4$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v_4=
+        40\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Viteza la $t=5\,\text{s}$
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_5=
+        10\cdot5$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v_5=
+        50\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Viteza medie
+        între 4 s și 5 s
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{\text{med}}
+        =
+        \frac{
+          v_4+v_5
+        }{2}$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{\text{med}}
+        =
+        \frac{
+          40+50
+        }{2}$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v_{\text{med}}
+        =
+        45\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <p>
+        Intervalul are durata:
+      </p>
+
+
+      <div class="formula">
+
+        $\Delta t=1\,\text{s}$
+
+      </div>
+
+
+      <p>
+        Distanța parcursă este:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        \Delta s
+        =
+        v_{\text{med}}\Delta t$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        \Delta s
+        =
+        45\cdot1$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        \Delta s=
+        45\,\text{m}
+        }$
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          Cele două metode
+          dau același rezultat.
+        </strong>
+
+        <br><br>
+
+        Metoda 1:
+
+        $\Delta s=s_5-s_4$.
+
+        <br><br>
+
+        Metoda 2:
+
+        $\Delta s=
+        v_{\text{med}}\Delta t$.
+
+      </div>
+
+
+      <div class="warning">
+
+        <strong>
+          Nu utiliza
+          $v_5\cdot1\,\text{s}$.
+        </strong>
+
+        <br><br>
+
+        Viteza nu este constantă
+        în ultima secundă.
+
+        <br><br>
+
+        Ea crește
+        de la
+        $40\,\text{m/s}$
+        la
+        $50\,\text{m/s}$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 6 — CONCLUZII
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Concluzii
+      </p>
+
+
+      <h2>
+        Ce trebuie reținut
+      </h2>
+
+
+      <div class="conclusions">
+
+
+        <div class="conclusion">
+
+          „Ultima secundă”
+          dintr-o mișcare
+          care durează
+          $5\,\text{s}$
+          este intervalul:
+
+          $4\,\text{s}
+          \rightarrow
+          5\,\text{s}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Distanța parcursă
+          într-un interval
+          se determină
+          ca diferență
+          între pozițiile
+          de la capetele intervalului:
+
+          $\Delta s=s_2-s_1$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Pentru cădere liberă
+          din repaus:
+
+          $\displaystyle
+          s(t)=
+          \frac{gt^2}{2}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          În această problemă:
+
+          $\displaystyle
+          s_5=125\,\text{m}$
+
+          și
+
+          $\displaystyle
+          s_4=80\,\text{m}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Prin urmare:
+
+          $\displaystyle
+          \Delta s
+          =
+          125-80
+          =
+          45\,\text{m}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Putem verifica
+          prin viteza medie:
+
+          $\displaystyle
+          v_{\text{med}}
+          =
+          \frac{
+            40+50
+          }{2}
+          =
+          45\,\text{m/s}$.
+
+        </div>
+
+
+      </div>
+
+
+      <div class="answers">
+
+
+        <div class="answer-card">
+
+          <small>
+            Distanța totală în 5 s
+          </small>
+
+          <strong>
+            $125\,\text{m}$
+          </strong>
+
+        </div>
+
+
+        <div class="answer-card">
+
+          <small>
+            Distanța în ultima secundă
+          </small>
+
+          <strong>
+            $45\,\text{m}$
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        <strong>
+          Generalizare utilă
+        </strong>
+
+        <br><br>
+
+        Pentru un corp
+        lăsat să cadă
+        din repaus,
+        distanța parcursă
+        în secunda cu numărul $n$
+        este:
+
+        $\displaystyle
+        \Delta s_n
+        =
+        s(n)-s(n-1)$.
+
+        <br><br>
+
+        Deoarece:
+
+        $\displaystyle
+        s(t)=
+        \frac{gt^2}{2}$,
+
+        rezultă:
+
+        $\displaystyle
+        \Delta s_n
+        =
+        \frac{g}{2}
+        \left[
+          n^2-(n-1)^2
+        \right]$.
+
+        <br><br>
+
+        Deci:
+
+        $\boxed{
+        \Delta s_n
+        =
+        \frac{g}{2}
+        (2n-1)
+        }$.
+
+      </div>
+
+
+      <div class="note">
+
+        Pentru $n=5$:
+
+        $\displaystyle
+        \Delta s_5
+        =
+        \frac{10}{2}
+        (2\cdot5-1)$
+
+        <br><br>
+
+        $\displaystyle
+        \Delta s_5
+        =
+        5\cdot9$
+
+        <br><br>
+
+        $\boxed{
+        \Delta s_5=
+        45\,\text{m}
+        }$.
+
+      </div>
+
+
+      <div class="warning">
+
+        <strong>
+          Capcana principală:
+        </strong>
+
+        <br><br>
+
+        nu confundăm
+        „distanța parcursă
+        în ultima secundă”
+        cu
+
+        „distanța parcursă
+        într-o secundă
+        pornind din repaus”.
+
+      </div>
+
+
+      <div class="final-actions">
+
+        <a
+          class="final-link secondary"
+          href="3-determinarea-inaltimii-din-viteza-finala.html"
+        >
+          ← Problema 3
+        </a>
+
+
+        <a
+          class="final-link secondary"
+          href="index.html"
+        >
+          Lista problemelor
+        </a>
+
+
+        <a
+          class="final-link primary"
+          href="5-doua-corpuri-lasate-cu-intarziere.html"
+        >
+          Problema 5 →
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     NAVIGARE
+     ========================================================= -->
+
+<nav
+  class="bottom-nav"
+  aria-label="Navigare între etapele rezolvării"
+>
+
+  <button
+    id="prevBtn"
+    class="nav-btn prev"
+    type="button"
+  >
+    ← Înapoi
+  </button>
+
+
+  <button
+    id="nextBtn"
+    class="nav-btn next"
+    type="button"
+  >
+    Mergi mai departe →
+  </button>
+
+</nav>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+  <div class="footer-inner">
+
+    Fizica-liceu ·
+    Probleme rezolvate ·
+    Mișcare în câmp gravitațional
+
+  </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+const pages =
+  [...document.querySelectorAll(".page")];
+
+const prevBtn =
+  document.getElementById("prevBtn");
+
+const nextBtn =
+  document.getElementById("nextBtn");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+
+let current = 0;
+
+
+/* =========================================================
+   PROGRESUL CAPITOLULUI
+   ========================================================= */
+
+const CHAPTER_PROGRESS_KEY =
+  "fizica-liceu:progres:2-miscare-in-camp-gravitational";
+
+
+function markProblemDone() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          CHAPTER_PROGRESS_KEY
+        )
+      );
+
+
+    const progress =
+      new Set(
+        Array.isArray(saved)
+          ? saved.map(Number)
+          : []
+      );
+
+
+    /*
+     * Problema curentă:
+     * numărul 4
+     */
+    progress.add(4);
+
+
+    localStorage.setItem(
+      CHAPTER_PROGRESS_KEY,
+      JSON.stringify(
+        [...progress]
+          .sort((a,b) => a-b)
+      )
+    );
+
+  }
+
+  catch(error) {
+
+    /*
+     * Pagina rămâne funcțională
+     * și dacă localStorage
+     * nu este disponibil.
+     */
+
+  }
+
+}
+
+
+/* =========================================================
+   AFIȘARE PAGINĂ
+   ========================================================= */
+
+function showPage(index) {
+
+  current =
+    Math.max(
+      0,
+      Math.min(
+        index,
+        pages.length - 1
+      )
+    );
+
+
+  pages.forEach(
+    (page,i) => {
+
+      page.classList.toggle(
+        "active",
+        i === current
+      );
+
+    }
+  );
+
+
+  prevBtn.disabled =
+    current === 0;
+
+
+  if(
+    current ===
+    pages.length - 1
+  ) {
+
+    nextBtn.textContent =
+      "Reia problema ↺";
+
+
+    /*
+     * Marcăm problema drept parcursă
+     * numai când utilizatorul
+     * ajunge la concluzii.
+     */
+    markProblemDone();
+
+  }
+
+  else {
+
+    nextBtn.textContent =
+      "Mergi mai departe →";
+
+  }
+
+
+  progressText.textContent =
+    `${current + 1} / ${pages.length}`;
+
+
+  progressBar.style.width =
+    `${
+      (
+        (current + 1) /
+        pages.length
+      ) * 100
+    }%`;
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+
+  if(
+    window.MathJax &&
+    MathJax.typesetPromise
+  ) {
+
+    MathJax.typesetPromise();
+
+  }
+
+}
+
+
+/* =========================================================
+   BUTOANE
+   ========================================================= */
+
+prevBtn.addEventListener(
+  "click",
+  () => showPage(current - 1)
+);
+
+
+nextBtn.addEventListener(
+  "click",
+  () => {
+
+    if(
+      current ===
+      pages.length - 1
+    ) {
+
+      showPage(0);
+
+    }
+
+    else {
+
+      showPage(current + 1);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TASTATURĂ
+   ========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "ArrowLeft") {
+
+      showPage(
+        current - 1
+      );
+
+    }
+
+
+    if(event.key === "ArrowRight") {
+
+      if(
+        current ===
+        pages.length - 1
+      ) {
+
+        showPage(0);
+
+      }
+
+      else {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SWIPE PE MOBIL
+   ========================================================= */
+
+let startX = null;
+
+
+document.addEventListener(
+  "touchstart",
+  event => {
+
+    startX =
+      event.changedTouches[0]
+        .screenX;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+document.addEventListener(
+  "touchend",
+  event => {
+
+    if(startX === null) {
+      return;
+    }
+
+
+    const diff =
+      event.changedTouches[0]
+        .screenX -
+      startX;
+
+
+    if(
+      Math.abs(diff) > 70
+    ) {
+
+      if(diff > 0) {
+
+        showPage(
+          current - 1
+        );
+
+      }
+
+      else if(
+        current <
+        pages.length - 1
+      ) {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+
+    startX = null;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+showPage(0);
+
+</script>
+
+
+</body>
+
+</html>
