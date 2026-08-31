@@ -1,0 +1,3333 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+  name="theme-color"
+  content="#0f172a"
+>
+
+<meta
+  name="description"
+  content="Problema 10 – două corpuri aruncate unul spre celălalt pe verticală. Determinarea timpului, locului și vitezelor în momentul întâlnirii."
+>
+
+<title>
+  Problema 10 | Două corpuri aruncate unul spre celălalt
+</title>
+
+
+<!-- =========================================================
+     MATHJAX
+     ========================================================= -->
+
+<script>
+
+window.MathJax = {
+
+  tex: {
+
+    inlineMath:
+      [['$', '$'], ['\\(', '\\)']],
+
+    displayMath:
+      [['$$', '$$'], ['\\[', '\\]']]
+
+  },
+
+  svg: {
+    fontCache: 'global'
+  }
+
+};
+
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+
+
+<style>
+
+/* =========================================================
+   CULORI
+   ========================================================= */
+
+:root {
+
+  --bg:#0f172a;
+
+  --panel:#1e293b;
+  --panel-2:#111827;
+
+  --line:#334155;
+
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --soft:#94a3b8;
+
+  --cyan:#22d3ee;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --yellow:#facc15;
+  --red:#fb7185;
+  --violet:#a78bfa;
+  --orange:#f59e0b;
+
+  --shadow:
+    0 18px 46px
+    rgba(2,6,23,.34);
+
+  --max:980px;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+
+  margin:0;
+
+  min-height:100vh;
+
+  background:
+    radial-gradient(
+      circle at 12% 7%,
+      rgba(34,211,238,.10),
+      transparent 25rem
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(59,130,246,.10),
+      transparent 27rem
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x:hidden;
+
+}
+
+
+a {
+  color:inherit;
+}
+
+button {
+  font:inherit;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+
+  position:sticky;
+
+  top:0;
+
+  z-index:30;
+
+  border-bottom:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:
+    rgba(15,23,42,.95);
+
+  backdrop-filter:
+    blur(12px);
+
+}
+
+
+.topbar-inner,
+.progress-row,
+main,
+.footer-inner {
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 28px)
+    );
+
+  margin:0 auto;
+
+}
+
+
+.topbar-inner {
+
+  min-height:62px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:12px;
+
+}
+
+
+.brand {
+
+  text-decoration:none;
+
+  font-weight:900;
+
+  letter-spacing:-.02em;
+
+  white-space:nowrap;
+
+}
+
+
+.brand span {
+  color:var(--cyan);
+}
+
+
+.index-link {
+
+  min-height:40px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:8px 11px;
+
+  border:
+    1px solid #475569;
+
+  border-radius:11px;
+
+  background:#1e293b;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+
+.index-link:hover,
+.index-link:focus-visible {
+
+  border-color:var(--cyan);
+
+  outline:none;
+
+}
+
+
+/* =========================================================
+   PROGRES
+   ========================================================= */
+
+.progress-row {
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap:12px;
+
+  align-items:center;
+
+  padding:9px 0 11px;
+
+}
+
+
+.progress-track {
+
+  height:7px;
+
+  overflow:hidden;
+
+  border:
+    1px solid #334155;
+
+  border-radius:999px;
+
+  background:#111827;
+
+}
+
+
+.progress-bar {
+
+  height:100%;
+
+  width:16.666%;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--cyan),
+      var(--blue)
+    );
+
+  transition:
+    width .2s ease;
+
+}
+
+
+.progress-text {
+
+  color:var(--muted);
+
+  font-size:.84rem;
+  font-weight:850;
+
+  white-space:nowrap;
+
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+
+  padding:
+    22px 0 104px;
+
+}
+
+
+/* =========================================================
+   PAGINI
+   ========================================================= */
+
+.page {
+
+  display:none;
+
+  min-height:
+    calc(100vh - 175px);
+
+}
+
+
+.page.active {
+
+  display:block;
+
+  animation:
+    fade .2s ease;
+
+}
+
+
+@keyframes fade {
+
+  from {
+    opacity:.35;
+    transform:translateY(5px);
+  }
+
+  to {
+    opacity:1;
+    transform:none;
+  }
+
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  border:
+    1px solid
+    rgba(148,163,184,.18);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,.98),
+      rgba(23,32,51,.98)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.eyebrow {
+
+  margin:0 0 8px;
+
+  color:#a5f3fc;
+
+  font-size:.78rem;
+  font-weight:900;
+
+  text-transform:uppercase;
+
+  letter-spacing:.09em;
+
+}
+
+
+h1,
+h2,
+h3 {
+
+  color:#fff;
+
+  line-height:1.15;
+
+}
+
+
+h1 {
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,7vw,3.8rem);
+
+  letter-spacing:-.04em;
+
+}
+
+
+h2 {
+
+  margin:0;
+
+  font-size:
+    clamp(1.55rem,5vw,2.45rem);
+
+  letter-spacing:-.03em;
+
+}
+
+
+h3 {
+
+  margin:0 0 8px;
+
+  font-size:1.08rem;
+
+}
+
+
+p,
+li {
+
+  color:var(--muted);
+
+  line-height:1.6;
+
+  font-size:
+    clamp(.98rem,2vw,1.08rem);
+
+}
+
+
+.lead {
+
+  margin:16px 0 0;
+
+  color:#e2e8f0;
+
+  font-size:
+    clamp(1.04rem,2.3vw,1.22rem);
+
+  line-height:1.65;
+
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.data-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+
+.data-box {
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:#0f172a;
+
+  text-align:center;
+
+}
+
+
+.data-box small {
+
+  display:block;
+
+  margin-bottom:5px;
+
+  color:var(--soft);
+
+  font-weight:800;
+
+}
+
+
+.data-box strong {
+
+  color:#fff;
+
+  font-size:1.08rem;
+
+}
+
+
+/* =========================================================
+   SARCINI / PAȘI
+   ========================================================= */
+
+.task-list,
+.step-list {
+
+  display:grid;
+
+  gap:11px;
+
+  margin-top:18px;
+
+}
+
+
+.task,
+.step {
+
+  display:grid;
+
+  grid-template-columns:
+    38px 1fr;
+
+  gap:11px;
+
+  align-items:start;
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.68);
+
+}
+
+
+.num {
+
+  width:38px;
+  height:38px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:11px;
+
+  background:
+    rgba(34,211,238,.13);
+
+  color:#a5f3fc;
+
+  font-weight:900;
+
+}
+
+
+.task p,
+.step p {
+  margin:0;
+}
+
+
+/* =========================================================
+   TEORIE
+   ========================================================= */
+
+.theory-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:14px;
+
+  margin-top:18px;
+
+}
+
+
+.theory-card {
+
+  padding:17px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.66);
+
+}
+
+
+.theory-card p {
+  margin:5px 0 0;
+}
+
+
+/* =========================================================
+   FORMULE
+   ========================================================= */
+
+.formula {
+
+  margin:14px 0 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  border:
+    1px solid
+    rgba(34,211,238,.25);
+
+  border-radius:14px;
+
+  background:
+    rgba(8,145,178,.08);
+
+  color:#ecfeff;
+
+  text-align:center;
+
+  font-size:
+    clamp(1.05rem,3vw,1.35rem);
+
+}
+
+
+.formula.green {
+
+  border-color:
+    rgba(34,197,94,.27);
+
+  background:
+    rgba(34,197,94,.08);
+
+}
+
+
+.formula.yellow {
+
+  border-color:
+    rgba(250,204,21,.27);
+
+  background:
+    rgba(250,204,21,.07);
+
+}
+
+
+.formula.red {
+
+  border-color:
+    rgba(251,113,133,.30);
+
+  background:
+    rgba(251,113,133,.07);
+
+}
+
+
+.formula.violet {
+
+  border-color:
+    rgba(167,139,250,.30);
+
+  background:
+    rgba(167,139,250,.08);
+
+}
+
+
+/* =========================================================
+   NOTE
+   ========================================================= */
+
+.note {
+
+  margin-top:18px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--yellow);
+
+  border-radius:10px;
+
+  background:
+    rgba(250,204,21,.07);
+
+  color:#fef9c3;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+.warning {
+
+  margin-top:18px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--red);
+
+  border-radius:10px;
+
+  background:
+    rgba(251,113,133,.07);
+
+  color:#ffe4e6;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   DIAGRAMĂ
+   ========================================================= */
+
+.diagram {
+
+  margin-top:18px;
+
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.24);
+
+  border-radius:18px;
+
+  background:#f8fafc;
+
+  overflow:hidden;
+
+}
+
+
+.diagram svg {
+
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:540px;
+
+  font-family:
+    Inter,
+    system-ui,
+    sans-serif;
+
+}
+
+
+.diagram-caption {
+
+  margin:8px 3px 0;
+
+  color:#cbd5e1;
+
+  font-size:.9rem;
+
+  line-height:1.45;
+
+}
+
+
+/* =========================================================
+   CORPURI
+   ========================================================= */
+
+.body-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-top:18px;
+
+}
+
+
+.body-card {
+
+  padding:16px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:16px;
+
+  background:#0f172a;
+
+}
+
+
+.body-card.a {
+  border-top:4px solid var(--cyan);
+}
+
+
+.body-card.b {
+  border-top:4px solid var(--orange);
+}
+
+
+.body-card strong {
+
+  display:block;
+
+  margin-bottom:8px;
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   REZULTATE
+   ========================================================= */
+
+.result {
+
+  margin-top:17px;
+
+  padding:15px 17px;
+
+  border:
+    1px solid
+    rgba(34,197,94,.32);
+
+  border-radius:15px;
+
+  background:
+    rgba(34,197,94,.09);
+
+  color:#dcfce7;
+
+  font-weight:900;
+
+  line-height:1.55;
+
+}
+
+
+.check {
+
+  margin-top:14px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--green);
+
+  border-radius:10px;
+
+  background:
+    rgba(34,197,94,.07);
+
+  color:#dcfce7;
+
+  line-height:1.55;
+
+}
+
+
+.check strong {
+  color:#86efac;
+}
+
+
+/* =========================================================
+   CONCLUZII
+   ========================================================= */
+
+.conclusions {
+
+  display:grid;
+
+  gap:12px;
+
+  margin-top:18px;
+
+}
+
+
+.conclusion {
+
+  padding:15px 16px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.65);
+
+  color:#e2e8f0;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+.answers {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-top:20px;
+
+}
+
+
+.answer-card {
+
+  padding:17px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.28);
+
+  border-radius:17px;
+
+  background:
+    rgba(8,145,178,.08);
+
+}
+
+
+.answer-card small {
+
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#a5f3fc;
+
+  font-weight:850;
+
+}
+
+
+.answer-card strong {
+
+  color:#fff;
+
+  font-size:1.18rem;
+
+}
+
+
+/* =========================================================
+   ACȚIUNI FINALE
+   ========================================================= */
+
+.final-actions {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+.final-link {
+
+  min-height:50px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:11px 14px;
+
+  border-radius:13px;
+
+  text-decoration:none;
+
+  text-align:center;
+
+  font-weight:900;
+
+}
+
+
+.final-link.primary {
+
+  background:var(--cyan);
+
+  color:#083344;
+
+}
+
+
+.final-link.secondary {
+
+  background:#334155;
+
+  border:
+    1px solid #475569;
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+   ========================================================= */
+
+.bottom-nav {
+
+  position:fixed;
+
+  z-index:25;
+
+  left:50%;
+
+  bottom:
+    calc(
+      10px +
+      env(safe-area-inset-bottom)
+    );
+
+  transform:
+    translateX(-50%);
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 20px)
+    );
+
+  display:grid;
+
+  grid-template-columns:
+    120px 1fr;
+
+  gap:10px;
+
+  padding:10px;
+
+  border:
+    1px solid
+    rgba(148,163,184,.22);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.96);
+
+  backdrop-filter:
+    blur(12px);
+
+  box-shadow:
+    0 -12px 32px
+    rgba(2,6,23,.28);
+
+}
+
+
+.nav-btn {
+
+  min-height:50px;
+
+  border:0;
+
+  border-radius:12px;
+
+  padding:10px 14px;
+
+  cursor:pointer;
+
+  font-weight:900;
+
+}
+
+
+.nav-btn.prev {
+
+  background:#334155;
+
+  color:#fff;
+
+  border:
+    1px solid #475569;
+
+}
+
+
+.nav-btn.next {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--green),
+      #16a34a
+    );
+
+  color:#052e16;
+
+}
+
+
+.nav-btn:disabled {
+
+  opacity:.42;
+
+  cursor:not-allowed;
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+
+  border-top:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:#111827;
+
+}
+
+
+.footer-inner {
+
+  padding:21px 0 95px;
+
+  color:var(--soft);
+
+  text-align:center;
+
+  font-size:.88rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:760px) {
+
+  .theory-grid,
+  .body-grid,
+  .answers,
+  .final-actions {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .data-grid {
+
+    grid-template-columns:
+      1fr 1fr;
+
+  }
+
+
+  .card {
+
+    padding:20px 16px;
+
+    border-radius:20px;
+
+  }
+
+}
+
+
+@media(max-width:520px) {
+
+  .topbar-inner {
+    min-height:58px;
+  }
+
+
+  .brand {
+    font-size:.93rem;
+  }
+
+
+  .index-link {
+
+    min-height:38px;
+
+    padding:7px 9px;
+
+    font-size:.8rem;
+
+  }
+
+
+  .progress-row {
+    padding-top:7px;
+  }
+
+
+  main {
+    padding-top:16px;
+  }
+
+
+  .data-grid {
+    grid-template-columns:1fr;
+  }
+
+
+  .task,
+  .step {
+
+    grid-template-columns:
+      34px 1fr;
+
+    padding:12px;
+
+  }
+
+
+  .num {
+
+    width:34px;
+    height:34px;
+
+  }
+
+
+  .bottom-nav {
+
+    grid-template-columns:
+      92px 1fr;
+
+    padding:8px;
+
+  }
+
+
+  .nav-btn {
+
+    min-height:48px;
+
+    padding:9px 10px;
+
+    font-size:.9rem;
+
+  }
+
+}
+
+
+@media(prefers-reduced-motion:reduce) {
+
+  html {
+    scroll-behavior:auto;
+  }
+
+  .page {
+    animation:none;
+  }
+
+  .progress-bar {
+    transition:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <a
+      class="brand"
+      href="../../index.html"
+    >
+      Fizica<span>-liceu</span>
+    </a>
+
+
+    <a
+      class="index-link"
+      href="index.html"
+    >
+      ← Mișcare în câmp gravitațional
+    </a>
+
+  </div>
+
+
+  <div class="progress-row">
+
+    <div
+      class="progress-track"
+      aria-hidden="true"
+    >
+
+      <div
+        class="progress-bar"
+        id="progressBar"
+      ></div>
+
+    </div>
+
+
+    <div
+      class="progress-text"
+      id="progressText"
+    >
+      1 / 6
+    </div>
+
+  </div>
+
+</header>
+
+
+<main>
+
+
+  <!-- =======================================================
+       PAGINA 1 — ENUNȚ
+       ======================================================= -->
+
+  <section class="page active">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Problema 10 · Mișcarea a două corpuri
+      </p>
+
+
+      <h1>
+        Două corpuri aruncate unul spre celălalt
+      </h1>
+
+
+      <p class="lead">
+
+        De la nivelul solului,
+        corpul A este aruncat
+        vertical în sus
+        cu viteza inițială
+
+        $v_{A0}=30\,\text{m/s}$.
+
+        <br><br>
+
+        Simultan,
+        de la înălțimea
+
+        $h=60\,\text{m}$,
+
+        corpul B este aruncat
+        vertical în jos
+        cu viteza inițială
+        de modul
+
+        $v_{B0}=10\,\text{m/s}$.
+
+        <br><br>
+
+        Se neglijează
+        rezistența aerului
+        și se consideră:
+
+        $g=10\,\text{m/s}^2$.
+
+      </p>
+
+
+      <div class="data-grid">
+
+
+        <div class="data-box">
+
+          <small>
+            Viteza inițială A
+          </small>
+
+          <strong>
+            $30\,\text{m/s}$
+            în sus
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Viteza inițială B
+          </small>
+
+          <strong>
+            $10\,\text{m/s}$
+            în jos
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Distanța inițială
+          </small>
+
+          <strong>
+            $h=60\,\text{m}$
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="task-list">
+
+
+        <div class="task">
+
+          <div class="num">
+            1
+          </div>
+
+          <p>
+            Determină
+            timpul după care
+            cele două corpuri
+            se întâlnesc.
+          </p>
+
+        </div>
+
+
+        <div class="task">
+
+          <div class="num">
+            2
+          </div>
+
+          <p>
+            Determină
+            înălțimea față de sol
+            la care are loc
+            întâlnirea.
+          </p>
+
+        </div>
+
+
+        <div class="task">
+
+          <div class="num">
+            3
+          </div>
+
+          <p>
+            Determină
+            viteza fiecărui corp
+            imediat înainte
+            de întâlnire.
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        Cele două corpuri
+        sunt supuse
+        aceleiași accelerații
+        gravitaționale.
+
+        <br><br>
+
+        Acest fapt va simplifica
+        radical calculul
+        timpului de întâlnire.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 2 — MODEL FIZIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Analiza fizică
+      </p>
+
+
+      <h2>
+        Un singur sistem de coordonate
+      </h2>
+
+
+      <p class="lead">
+
+        Alegem originea
+        la sol
+        și sensul pozitiv
+        vertical în sus.
+
+      </p>
+
+
+      <div class="body-grid">
+
+
+        <div class="body-card a">
+
+          <strong>
+            Corpul A
+          </strong>
+
+          Poziție inițială:
+
+          <div class="formula">
+
+            $y_{A0}=0$
+
+          </div>
+
+          Viteza inițială:
+
+          <div class="formula green">
+
+            $v_{A0}=+30\,\text{m/s}$
+
+          </div>
+
+          Accelerație:
+
+          <div class="formula red">
+
+            $a_A=-g$
+
+          </div>
+
+        </div>
+
+
+        <div class="body-card b">
+
+          <strong>
+            Corpul B
+          </strong>
+
+          Poziție inițială:
+
+          <div class="formula">
+
+            $y_{B0}=60\,\text{m}$
+
+          </div>
+
+          Viteza inițială:
+
+          <div class="formula yellow">
+
+            $v_{B0}=-10\,\text{m/s}$
+
+          </div>
+
+          Accelerație:
+
+          <div class="formula red">
+
+            $a_B=-g$
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <h3 style="margin-top:28px;">
+        Ecuația corpului A
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_A(t)=
+        30t-
+        5t^2$
+
+      </div>
+
+
+      <h3 style="margin-top:26px;">
+        Ecuația corpului B
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_B(t)=
+        60-
+        10t-
+        5t^2$
+
+      </div>
+
+
+      <div class="warning">
+
+        Pentru corpul B,
+        viteza inițială
+        apare cu semnul minus:
+
+        <br><br>
+
+        $\boxed{
+        v_{B0}=-10\,\text{m/s}
+        }$
+
+        <br><br>
+
+        deoarece corpul
+        este aruncat în jos,
+        opus sensului pozitiv
+        ales pentru axă.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 3 — TIMPUL DE ÎNTÂLNIRE
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare · Cerința 1
+      </p>
+
+
+      <h2>
+        Când se întâlnesc?
+      </h2>
+
+
+      <div class="diagram">
+
+        <svg
+          viewBox="0 0 760 540"
+          role="img"
+          aria-labelledby="meetingTitle meetingDesc"
+        >
+
+          <title id="meetingTitle">
+            Două corpuri aruncate unul spre celălalt pe verticală
+          </title>
+
+          <desc id="meetingDesc">
+            Corpul A pornește de la sol în sus, iar corpul B de la înălțimea de 60 de metri în jos. Corpurile se întâlnesc la înălțimea de 33,75 metri.
+          </desc>
+
+
+          <!-- CER -->
+
+          <rect
+            x="0"
+            y="0"
+            width="760"
+            height="460"
+            fill="#e0f2fe"
+          />
+
+
+          <!-- SOL -->
+
+          <rect
+            x="0"
+            y="460"
+            width="760"
+            height="80"
+            fill="#86a76b"
+          />
+
+
+          <line
+            x1="0"
+            y1="460"
+            x2="760"
+            y2="460"
+            stroke="#4d7c0f"
+            stroke-width="5"
+          />
+
+
+          <!-- PLATFORMĂ SUS -->
+
+          <rect
+            x="245"
+            y="70"
+            width="270"
+            height="18"
+            fill="#64748b"
+          />
+
+
+          <text
+            x="530"
+            y="85"
+            font-size="19"
+            font-weight="900"
+            fill="#475569"
+          >
+            h = 60 m
+          </text>
+
+
+          <!-- TRAIECTORIE -->
+
+          <line
+            x1="350"
+            y1="430"
+            x2="350"
+            y2="110"
+            stroke="#2563eb"
+            stroke-width="4"
+            stroke-dasharray="11 8"
+          />
+
+
+          <line
+            x1="410"
+            y1="110"
+            x2="410"
+            y2="430"
+            stroke="#f59e0b"
+            stroke-width="4"
+            stroke-dasharray="11 8"
+          />
+
+
+          <!-- CORP A -->
+
+          <circle
+            cx="350"
+            cy="425"
+            r="22"
+            fill="#2563eb"
+          />
+
+
+          <line
+            x1="305"
+            y1="410"
+            x2="305"
+            y2="340"
+            stroke="#16a34a"
+            stroke-width="5"
+          />
+
+
+          <path
+            d="M305 330 L292 355 L318 355 Z"
+            fill="#16a34a"
+          />
+
+
+          <text
+            x="175"
+            y="380"
+            font-size="19"
+            font-weight="900"
+            fill="#166534"
+          >
+            A: 30 m/s
+          </text>
+
+
+          <!-- CORP B -->
+
+          <circle
+            cx="410"
+            cy="115"
+            r="22"
+            fill="#f59e0b"
+          />
+
+
+          <line
+            x1="465"
+            y1="120"
+            x2="465"
+            y2="190"
+            stroke="#dc2626"
+            stroke-width="5"
+          />
+
+
+          <path
+            d="M465 200 L452 175 L478 175 Z"
+            fill="#dc2626"
+          />
+
+
+          <text
+            x="490"
+            y="165"
+            font-size="19"
+            font-weight="900"
+            fill="#991b1b"
+          >
+            B: 10 m/s
+          </text>
+
+
+          <!-- ÎNTÂLNIRE -->
+
+          <circle
+            cx="380"
+            cy="270"
+            r="28"
+            fill="#7c3aed"
+            opacity=".92"
+          />
+
+
+          <line
+            x1="145"
+            y1="270"
+            x2="615"
+            y2="270"
+            stroke="#7c3aed"
+            stroke-width="3"
+            stroke-dasharray="10 8"
+          />
+
+
+          <text
+            x="470"
+            y="255"
+            font-size="21"
+            font-weight="900"
+            fill="#6d28d9"
+          >
+            întâlnire
+          </text>
+
+
+          <text
+            x="470"
+            y="283"
+            font-size="19"
+            font-weight="900"
+            fill="#6d28d9"
+          >
+            y = 33,75 m
+          </text>
+
+
+          <!-- g -->
+
+          <line
+            x1="680"
+            y1="110"
+            x2="680"
+            y2="190"
+            stroke="#dc2626"
+            stroke-width="5"
+          />
+
+
+          <path
+            d="M680 200 L667 175 L693 175 Z"
+            fill="#dc2626"
+          />
+
+
+          <text
+            x="705"
+            y="165"
+            font-size="21"
+            font-weight="900"
+            fill="#991b1b"
+          >
+            g
+          </text>
+
+
+          <text
+            x="380"
+            y="505"
+            text-anchor="middle"
+            font-size="22"
+            font-weight="900"
+            fill="#365314"
+          >
+            sol
+          </text>
+
+        </svg>
+
+      </div>
+
+
+      <p>
+        Corpurile se întâlnesc
+        atunci când au
+        aceeași coordonată:
+      </p>
+
+
+      <div class="formula yellow">
+
+        $\boxed{
+        y_A=y_B
+        }$
+
+      </div>
+
+
+      <p>
+        Înlocuim ecuațiile:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        30t-5t^2
+        =
+        60-10t-5t^2$
+
+      </div>
+
+
+      <p>
+        Observăm că termenii
+        gravitaționali
+        sunt identici
+        în cele două membre:
+      </p>
+
+
+      <div class="formula violet">
+
+        $-5t^2$
+
+        apare de ambele părți.
+
+      </div>
+
+
+      <p>
+        Ei se reduc:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        30t=
+        60-10t$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        40t=60$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        t_{\text{înt}}
+        =
+        1{,}5\,\text{s}
+        }$
+
+      </div>
+
+
+      <div class="result">
+
+        Cele două corpuri
+        se întâlnesc după:
+
+        $\boxed{
+        1{,}5\,\text{s}
+        }$.
+
+      </div>
+
+
+      <div class="note">
+
+        Gravitația
+        nu a dispărut
+        din mișcarea fiecărui corp.
+
+        <br><br>
+
+        Ea se elimină numai
+        din ecuația
+        <strong>
+          mișcării relative,
+        </strong>
+
+        deoarece ambele corpuri
+        au aceeași accelerație.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 4 — LOCUL ÎNTÂLNIRII
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare · Cerința 2
+      </p>
+
+
+      <h2>
+        Unde se întâlnesc?
+      </h2>
+
+
+      <p class="lead">
+
+        După ce am determinat
+        timpul întâlnirii,
+        îl introducem
+        în ecuația poziției
+        unuia dintre corpuri.
+
+      </p>
+
+
+      <h3 style="margin-top:26px;">
+        Folosim corpul A
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_A=
+        30t-
+        5t^2$
+
+      </div>
+
+
+      <p>
+        Pentru
+        $t=1{,}5\,\text{s}$:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_A=
+        30\cdot1{,}5
+        -
+        5\cdot(1{,}5)^2$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_A=
+        45-
+        5\cdot2{,}25$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_A=
+        45-
+        11{,}25$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        y_{\text{înt}}
+        =
+        33{,}75\,\text{m}
+        }$
+
+      </div>
+
+
+      <div class="result">
+
+        Corpurile se întâlnesc
+        la înălțimea:
+
+        $\boxed{
+        33{,}75\,\text{m}
+        }$
+
+        față de sol.
+
+      </div>
+
+
+      <h3 style="margin-top:30px;">
+        Verificăm cu corpul B
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_B=
+        60-
+        10t-
+        5t^2$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_B=
+        60-
+        10\cdot1{,}5
+        -
+        5\cdot(1{,}5)^2$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        y_B=
+        60-
+        15-
+        11{,}25$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        y_B=
+        33{,}75\,\text{m}
+        }$
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          Verificare reușită.
+        </strong>
+
+        <br><br>
+
+        Ambele ecuații
+        dau aceeași poziție
+        la momentul
+        $t=1{,}5\,\text{s}$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 5 — VITEZE + MIȘCARE RELATIVĂ
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare · Cerința 3
+      </p>
+
+
+      <h2>
+        Vitezele în momentul întâlnirii
+      </h2>
+
+
+      <h3 style="margin-top:24px;">
+        Corpul A
+      </h3>
+
+
+      <p>
+        Ecuația vitezei este:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_A=
+        v_{A0}-gt$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_A=
+        30-
+        10\cdot1{,}5$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v_A=
+        +15\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <p>
+        Corpul A
+        încă se deplasează
+        <strong>în sus</strong>.
+      </p>
+
+
+      <h3 style="margin-top:28px;">
+        Corpul B
+      </h3>
+
+
+      <p>
+        Pentru corpul B:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_B=
+        v_{B0}-gt$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_B=
+        -10-
+        10\cdot1{,}5$
+
+      </div>
+
+
+      <div class="formula red">
+
+        $\boxed{
+        v_B=
+        -25\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <p>
+        Corpul B
+        se deplasează
+        <strong>în jos</strong>.
+      </p>
+
+
+      <h3 style="margin-top:30px;">
+        Viteza relativă
+      </h3>
+
+
+      <p>
+        Diferența vitezelor este:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{A/B}
+        =
+        v_A-v_B$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{A/B}
+        =
+        15-(-25)$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        |v_{\text{rel}}|
+        =
+        40\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <p>
+        Observăm ceva important:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        30+
+        10=
+        40\,\text{m/s}$
+
+      </div>
+
+
+      <p>
+        Aceasta era
+        chiar viteza relativă
+        inițială.
+
+      </p>
+
+
+      <h3 style="margin-top:28px;">
+        Accelerația relativă
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        a_{\text{rel}}
+        =
+        a_A-a_B$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        a_{\text{rel}}
+        =
+        (-g)-(-g)$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        a_{\text{rel}}=0
+        }$
+
+      </div>
+
+
+      <div class="note">
+
+        Deoarece
+        accelerația relativă
+        este zero,
+        viteza relativă
+        rămâne constantă:
+
+        <br><br>
+
+        $\boxed{
+        |v_{\text{rel}}|
+        =
+        40\,\text{m/s}
+        }$.
+
+        <br><br>
+
+        Distanța inițială
+        era $60\,\text{m}$,
+        deci putem obține
+        imediat:
+
+        <br><br>
+
+        $\displaystyle
+        t=
+        \frac{60}{40}
+        =
+        1{,}5\,\text{s}$.
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          A doua metodă
+          confirmă timpul întâlnirii.
+        </strong>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 6 — CONCLUZII
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Concluzii
+      </p>
+
+
+      <h2>
+        Ce trebuie reținut
+      </h2>
+
+
+      <div class="conclusions">
+
+
+        <div class="conclusion">
+
+          Pentru ambele corpuri
+          folosim
+          <strong>
+            același sistem de coordonate.
+          </strong>
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Cu sensul pozitiv
+          orientat în sus:
+
+          <br><br>
+
+          $v_{A0}=+30\,\text{m/s}$,
+
+          <br><br>
+
+          $v_{B0}=-10\,\text{m/s}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Ambele corpuri au:
+
+          $\displaystyle
+          a_A=a_B=-g$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Ecuațiile pozițiilor sunt:
+
+          <br><br>
+
+          $\displaystyle
+          y_A=
+          30t-5t^2$,
+
+          <br><br>
+
+          $\displaystyle
+          y_B=
+          60-10t-5t^2$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          La întâlnire:
+
+          $\displaystyle
+          y_A=y_B$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Termenii gravitaționali
+          se reduc,
+          iar timpul întâlnirii este:
+
+          $\displaystyle
+          t=
+          1{,}5\,\text{s}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Înălțimea întâlnirii este:
+
+          $\displaystyle
+          y=
+          33{,}75\,\text{m}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          În momentul întâlnirii:
+
+          <br><br>
+
+          $\displaystyle
+          v_A=
+          +15\,\text{m/s}$,
+
+          <br><br>
+
+          $\displaystyle
+          v_B=
+          -25\,\text{m/s}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Accelerația relativă este:
+
+          $\displaystyle
+          a_{\text{rel}}=0$,
+
+          deci viteza relativă
+          rămâne constantă.
+
+        </div>
+
+
+      </div>
+
+
+      <div class="answers">
+
+
+        <div class="answer-card">
+
+          <small>
+            Timpul întâlnirii
+          </small>
+
+          <strong>
+            $1{,}5\,\text{s}$
+          </strong>
+
+        </div>
+
+
+        <div class="answer-card">
+
+          <small>
+            Înălțimea întâlnirii
+          </small>
+
+          <strong>
+            $33{,}75\,\text{m}$
+          </strong>
+
+        </div>
+
+
+        <div class="answer-card">
+
+          <small>
+            Viteze la întâlnire
+          </small>
+
+          <strong>
+            $v_A=+15$,
+            $v_B=-25\,\text{m/s}$
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        <strong>
+          Metoda rapidă
+          prin mișcare relativă
+        </strong>
+
+        <br><br>
+
+        Dacă două corpuri
+        aflate în același câmp
+        gravitațional
+        sunt aruncate simultan
+        unul spre celălalt,
+        atunci:
+
+        <br><br>
+
+        $\displaystyle
+        a_{\text{rel}}
+        =
+        a_A-a_B
+        =
+        0$.
+
+        <br><br>
+
+        În această problemă,
+        viteza cu care
+        se micșorează distanța
+        dintre corpuri este:
+
+        $\displaystyle
+        v_{\text{închidere}}
+        =
+        30+10
+        =
+        40\,\text{m/s}$.
+
+        <br><br>
+
+        Prin urmare:
+
+        $\displaystyle
+        t_{\text{înt}}
+        =
+        \frac{
+          60
+        }{
+          40
+        }
+        =
+        1{,}5\,\text{s}$.
+
+      </div>
+
+
+      <div class="note">
+
+        <strong>
+          Forma generală
+        </strong>
+
+        <br><br>
+
+        Corpul A pornește
+        de jos cu viteza
+        $v_A$ în sus,
+
+        iar corpul B
+        de la înălțimea $h$
+        cu viteza de modul
+        $v_B$ în jos.
+
+        <br><br>
+
+        Dacă pornesc simultan,
+        atunci:
+
+        $\displaystyle
+        t_{\text{înt}}
+        =
+        \frac{
+          h
+        }{
+          v_A+v_B
+        }$.
+
+        <br><br>
+
+        Relația este valabilă
+        în modelul în care
+        ambele corpuri
+        au aceeași accelerație
+        gravitațională.
+
+      </div>
+
+
+      <div class="warning">
+
+        <strong>
+          Capcana principală:
+        </strong>
+
+        <br><br>
+
+        nu scriem
+        pentru corpul B
+
+        $v_{B0}=+10\,\text{m/s}$
+
+        dacă axa pozitivă
+        este orientată în sus.
+
+        <br><br>
+
+        Corect este:
+
+        $\boxed{
+        v_{B0}=-10\,\text{m/s}
+        }$.
+
+      </div>
+
+
+      <div class="note">
+
+        Corpul A
+        ar ajunge la înălțimea maximă
+        după:
+
+        $\displaystyle
+        t_{\max,A}
+        =
+        \frac{30}{10}
+        =
+        3\,\text{s}$.
+
+        <br><br>
+
+        Întâlnirea are loc la:
+
+        $1{,}5\,\text{s}$,
+
+        deci corpul A
+        este încă în urcare
+        în momentul întâlnirii.
+
+      </div>
+
+
+      <div class="final-actions">
+
+        <a
+          class="final-link secondary"
+          href="9-aruncare-verticala-in-jos.html"
+        >
+          ← Problema 9
+        </a>
+
+
+        <a
+          class="final-link secondary"
+          href="index.html"
+        >
+          Lista problemelor
+        </a>
+
+
+        <a
+          class="final-link primary"
+          href="11-determinarea-acceleratiei-gravitationale.html"
+        >
+          Problema 11 →
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     NAVIGARE
+     ========================================================= -->
+
+<nav
+  class="bottom-nav"
+  aria-label="Navigare între etapele rezolvării"
+>
+
+  <button
+    id="prevBtn"
+    class="nav-btn prev"
+    type="button"
+  >
+    ← Înapoi
+  </button>
+
+
+  <button
+    id="nextBtn"
+    class="nav-btn next"
+    type="button"
+  >
+    Mergi mai departe →
+  </button>
+
+</nav>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+  <div class="footer-inner">
+
+    Fizica-liceu ·
+    Probleme rezolvate ·
+    Mișcare în câmp gravitațional
+
+  </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+const pages =
+  [...document.querySelectorAll(".page")];
+
+const prevBtn =
+  document.getElementById("prevBtn");
+
+const nextBtn =
+  document.getElementById("nextBtn");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+
+let current = 0;
+
+
+/* =========================================================
+   PROGRESUL CAPITOLULUI
+   ========================================================= */
+
+const CHAPTER_PROGRESS_KEY =
+  "fizica-liceu:progres:2-miscare-in-camp-gravitational";
+
+
+function markProblemDone() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          CHAPTER_PROGRESS_KEY
+        )
+      );
+
+
+    const progress =
+      new Set(
+        Array.isArray(saved)
+          ? saved.map(Number)
+          : []
+      );
+
+
+    /*
+     * Problema curentă:
+     * numărul 10
+     */
+    progress.add(10);
+
+
+    localStorage.setItem(
+      CHAPTER_PROGRESS_KEY,
+      JSON.stringify(
+        [...progress]
+          .sort((a,b) => a-b)
+      )
+    );
+
+  }
+
+  catch(error) {
+
+    /*
+     * Pagina rămâne funcțională
+     * și fără localStorage.
+     */
+
+  }
+
+}
+
+
+/* =========================================================
+   AFIȘARE PAGINĂ
+   ========================================================= */
+
+function showPage(index) {
+
+  current =
+    Math.max(
+      0,
+      Math.min(
+        index,
+        pages.length - 1
+      )
+    );
+
+
+  pages.forEach(
+    (page,i) => {
+
+      page.classList.toggle(
+        "active",
+        i === current
+      );
+
+    }
+  );
+
+
+  prevBtn.disabled =
+    current === 0;
+
+
+  if(
+    current ===
+    pages.length - 1
+  ) {
+
+    nextBtn.textContent =
+      "Reia problema ↺";
+
+
+    /*
+     * Problema este marcată
+     * drept parcursă
+     * numai pe ultima pagină.
+     */
+    markProblemDone();
+
+  }
+
+  else {
+
+    nextBtn.textContent =
+      "Mergi mai departe →";
+
+  }
+
+
+  progressText.textContent =
+    `${current + 1} / ${pages.length}`;
+
+
+  progressBar.style.width =
+    `${
+      (
+        (current + 1) /
+        pages.length
+      ) * 100
+    }%`;
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+
+  if(
+    window.MathJax &&
+    MathJax.typesetPromise
+  ) {
+
+    MathJax.typesetPromise();
+
+  }
+
+}
+
+
+/* =========================================================
+   BUTOANE
+   ========================================================= */
+
+prevBtn.addEventListener(
+  "click",
+  () => showPage(current - 1)
+);
+
+
+nextBtn.addEventListener(
+  "click",
+  () => {
+
+    if(
+      current ===
+      pages.length - 1
+    ) {
+
+      showPage(0);
+
+    }
+
+    else {
+
+      showPage(current + 1);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TASTATURĂ
+   ========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "ArrowLeft") {
+
+      showPage(
+        current - 1
+      );
+
+    }
+
+
+    if(event.key === "ArrowRight") {
+
+      if(
+        current ===
+        pages.length - 1
+      ) {
+
+        showPage(0);
+
+      }
+
+      else {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SWIPE PE MOBIL
+   ========================================================= */
+
+let startX = null;
+
+
+document.addEventListener(
+  "touchstart",
+  event => {
+
+    startX =
+      event.changedTouches[0]
+        .screenX;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+document.addEventListener(
+  "touchend",
+  event => {
+
+    if(startX === null) {
+      return;
+    }
+
+
+    const diff =
+      event.changedTouches[0]
+        .screenX -
+      startX;
+
+
+    if(
+      Math.abs(diff) > 70
+    ) {
+
+      if(diff > 0) {
+
+        showPage(
+          current - 1
+        );
+
+      }
+
+      else if(
+        current <
+        pages.length - 1
+      ) {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+
+    startX = null;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+showPage(0);
+
+</script>
+
+
+</body>
+
+</html>
