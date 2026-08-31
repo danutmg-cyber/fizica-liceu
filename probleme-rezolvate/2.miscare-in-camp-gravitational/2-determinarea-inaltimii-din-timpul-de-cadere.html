@@ -1,0 +1,2910 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+  name="theme-color"
+  content="#0f172a"
+>
+
+<meta
+  name="description"
+  content="Problema 2 – determinarea înălțimii din timpul de cădere. Cădere liberă. Rezolvare pas cu pas."
+>
+
+<title>
+  Problema 2 | Determinarea înălțimii din timpul de cădere
+</title>
+
+
+<!-- =========================================================
+     MATHJAX
+     ========================================================= -->
+
+<script>
+
+window.MathJax = {
+
+  tex: {
+
+    inlineMath:
+      [['$', '$'], ['\\(', '\\)']],
+
+    displayMath:
+      [['$$', '$$'], ['\\[', '\\]']]
+
+  },
+
+  svg: {
+    fontCache: 'global'
+  }
+
+};
+
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+
+
+<style>
+
+/* =========================================================
+   CULORI
+   ========================================================= */
+
+:root {
+
+  --bg:#0f172a;
+
+  --panel:#1e293b;
+  --panel-2:#111827;
+
+  --line:#334155;
+
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --soft:#94a3b8;
+
+  --cyan:#22d3ee;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --yellow:#facc15;
+  --red:#fb7185;
+  --violet:#a78bfa;
+
+  --shadow:
+    0 18px 46px
+    rgba(2,6,23,.34);
+
+  --max:980px;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+
+  margin:0;
+
+  min-height:100vh;
+
+  background:
+    radial-gradient(
+      circle at 12% 7%,
+      rgba(34,211,238,.10),
+      transparent 25rem
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(59,130,246,.10),
+      transparent 27rem
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x:hidden;
+
+}
+
+
+a {
+  color:inherit;
+}
+
+button {
+  font:inherit;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+
+  position:sticky;
+
+  top:0;
+
+  z-index:30;
+
+  border-bottom:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:
+    rgba(15,23,42,.95);
+
+  backdrop-filter:
+    blur(12px);
+
+}
+
+
+.topbar-inner,
+.progress-row,
+main,
+.footer-inner {
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 28px)
+    );
+
+  margin:0 auto;
+
+}
+
+
+.topbar-inner {
+
+  min-height:62px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:12px;
+
+}
+
+
+.brand {
+
+  text-decoration:none;
+
+  font-weight:900;
+
+  letter-spacing:-.02em;
+
+  white-space:nowrap;
+
+}
+
+
+.brand span {
+  color:var(--cyan);
+}
+
+
+.index-link {
+
+  min-height:40px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:8px 11px;
+
+  border:
+    1px solid #475569;
+
+  border-radius:11px;
+
+  background:#1e293b;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+
+.index-link:hover,
+.index-link:focus-visible {
+
+  border-color:var(--cyan);
+
+  outline:none;
+
+}
+
+
+/* =========================================================
+   PROGRES
+   ========================================================= */
+
+.progress-row {
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap:12px;
+
+  align-items:center;
+
+  padding:9px 0 11px;
+
+}
+
+
+.progress-track {
+
+  height:7px;
+
+  overflow:hidden;
+
+  border:
+    1px solid #334155;
+
+  border-radius:999px;
+
+  background:#111827;
+
+}
+
+
+.progress-bar {
+
+  height:100%;
+
+  width:16.666%;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--cyan),
+      var(--blue)
+    );
+
+  transition:
+    width .2s ease;
+
+}
+
+
+.progress-text {
+
+  color:var(--muted);
+
+  font-size:.84rem;
+  font-weight:850;
+
+  white-space:nowrap;
+
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+
+  padding:
+    22px 0 104px;
+
+}
+
+
+/* =========================================================
+   PAGINI
+   ========================================================= */
+
+.page {
+
+  display:none;
+
+  min-height:
+    calc(100vh - 175px);
+
+}
+
+
+.page.active {
+
+  display:block;
+
+  animation:
+    fade .2s ease;
+
+}
+
+
+@keyframes fade {
+
+  from {
+    opacity:.35;
+    transform:translateY(5px);
+  }
+
+  to {
+    opacity:1;
+    transform:none;
+  }
+
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  border:
+    1px solid
+    rgba(148,163,184,.18);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,.98),
+      rgba(23,32,51,.98)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.eyebrow {
+
+  margin:0 0 8px;
+
+  color:#a5f3fc;
+
+  font-size:.78rem;
+  font-weight:900;
+
+  text-transform:uppercase;
+
+  letter-spacing:.09em;
+
+}
+
+
+h1,
+h2,
+h3 {
+
+  color:#fff;
+
+  line-height:1.15;
+
+}
+
+
+h1 {
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,7vw,3.8rem);
+
+  letter-spacing:-.04em;
+
+}
+
+
+h2 {
+
+  margin:0;
+
+  font-size:
+    clamp(1.55rem,5vw,2.45rem);
+
+  letter-spacing:-.03em;
+
+}
+
+
+h3 {
+
+  margin:0 0 8px;
+
+  font-size:1.08rem;
+
+}
+
+
+p,
+li {
+
+  color:var(--muted);
+
+  line-height:1.6;
+
+  font-size:
+    clamp(.98rem,2vw,1.08rem);
+
+}
+
+
+.lead {
+
+  margin:16px 0 0;
+
+  color:#e2e8f0;
+
+  font-size:
+    clamp(1.04rem,2.3vw,1.22rem);
+
+  line-height:1.65;
+
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.data-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+
+.data-box {
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:#0f172a;
+
+  text-align:center;
+
+}
+
+
+.data-box small {
+
+  display:block;
+
+  margin-bottom:5px;
+
+  color:var(--soft);
+
+  font-weight:800;
+
+}
+
+
+.data-box strong {
+
+  color:#fff;
+
+  font-size:1.08rem;
+
+}
+
+
+/* =========================================================
+   SARCINI / PAȘI
+   ========================================================= */
+
+.task-list,
+.step-list {
+
+  display:grid;
+
+  gap:11px;
+
+  margin-top:18px;
+
+}
+
+
+.task,
+.step {
+
+  display:grid;
+
+  grid-template-columns:
+    38px 1fr;
+
+  gap:11px;
+
+  align-items:start;
+
+  padding:14px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.68);
+
+}
+
+
+.num {
+
+  width:38px;
+  height:38px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:11px;
+
+  background:
+    rgba(34,211,238,.13);
+
+  color:#a5f3fc;
+
+  font-weight:900;
+
+}
+
+
+.task p,
+.step p {
+  margin:0;
+}
+
+
+/* =========================================================
+   TEORIE
+   ========================================================= */
+
+.theory-grid {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:14px;
+
+  margin-top:18px;
+
+}
+
+
+.theory-card {
+
+  padding:17px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.66);
+
+}
+
+
+.theory-card p {
+  margin:5px 0 0;
+}
+
+
+/* =========================================================
+   FORMULE
+   ========================================================= */
+
+.formula {
+
+  margin:14px 0 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  border:
+    1px solid
+    rgba(34,211,238,.25);
+
+  border-radius:14px;
+
+  background:
+    rgba(8,145,178,.08);
+
+  color:#ecfeff;
+
+  text-align:center;
+
+  font-size:
+    clamp(1.05rem,3vw,1.35rem);
+
+}
+
+
+.formula.green {
+
+  border-color:
+    rgba(34,197,94,.27);
+
+  background:
+    rgba(34,197,94,.08);
+
+}
+
+
+.formula.yellow {
+
+  border-color:
+    rgba(250,204,21,.27);
+
+  background:
+    rgba(250,204,21,.07);
+
+}
+
+
+/* =========================================================
+   NOTĂ
+   ========================================================= */
+
+.note {
+
+  margin-top:18px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--yellow);
+
+  border-radius:10px;
+
+  background:
+    rgba(250,204,21,.07);
+
+  color:#fef9c3;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   SCHIȚĂ
+   ========================================================= */
+
+.diagram {
+
+  margin-top:18px;
+
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.24);
+
+  border-radius:18px;
+
+  background:#f8fafc;
+
+  overflow:hidden;
+
+}
+
+
+.diagram svg {
+
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:440px;
+
+  font-family:
+    Inter,
+    system-ui,
+    sans-serif;
+
+}
+
+
+.diagram-caption {
+
+  margin:8px 3px 0;
+
+  color:#cbd5e1;
+
+  font-size:.9rem;
+
+  line-height:1.45;
+
+}
+
+
+/* =========================================================
+   REZULTATE
+   ========================================================= */
+
+.result {
+
+  margin-top:17px;
+
+  padding:15px 17px;
+
+  border:
+    1px solid
+    rgba(34,197,94,.32);
+
+  border-radius:15px;
+
+  background:
+    rgba(34,197,94,.09);
+
+  color:#dcfce7;
+
+  font-weight:900;
+
+  line-height:1.55;
+
+}
+
+
+.check {
+
+  margin-top:14px;
+
+  padding:14px 16px;
+
+  border-left:
+    4px solid var(--green);
+
+  border-radius:10px;
+
+  background:
+    rgba(34,197,94,.07);
+
+  color:#dcfce7;
+
+  line-height:1.55;
+
+}
+
+
+.check strong {
+  color:#86efac;
+}
+
+
+/* =========================================================
+   CONCLUZII
+   ========================================================= */
+
+.conclusions {
+
+  display:grid;
+
+  gap:12px;
+
+  margin-top:18px;
+
+}
+
+
+.conclusion {
+
+  padding:15px 16px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(15,23,42,.65);
+
+  color:#e2e8f0;
+
+  line-height:1.55;
+
+  font-weight:750;
+
+}
+
+
+.answers {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-top:20px;
+
+}
+
+
+.answer-card {
+
+  padding:17px;
+
+  border:
+    1px solid
+    rgba(34,211,238,.28);
+
+  border-radius:17px;
+
+  background:
+    rgba(8,145,178,.08);
+
+}
+
+
+.answer-card small {
+
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#a5f3fc;
+
+  font-weight:850;
+
+}
+
+
+.answer-card strong {
+
+  color:#fff;
+
+  font-size:1.18rem;
+
+}
+
+
+/* =========================================================
+   ACȚIUNI FINALE
+   ========================================================= */
+
+.final-actions {
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+.final-link {
+
+  min-height:50px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:11px 14px;
+
+  border-radius:13px;
+
+  text-decoration:none;
+
+  text-align:center;
+
+  font-weight:900;
+
+}
+
+
+.final-link.primary {
+
+  background:var(--cyan);
+
+  color:#083344;
+
+}
+
+
+.final-link.secondary {
+
+  background:#334155;
+
+  border:
+    1px solid #475569;
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+   ========================================================= */
+
+.bottom-nav {
+
+  position:fixed;
+
+  z-index:25;
+
+  left:50%;
+
+  bottom:
+    calc(
+      10px +
+      env(safe-area-inset-bottom)
+    );
+
+  transform:
+    translateX(-50%);
+
+  width:
+    min(
+      var(--max),
+      calc(100% - 20px)
+    );
+
+  display:grid;
+
+  grid-template-columns:
+    120px 1fr;
+
+  gap:10px;
+
+  padding:10px;
+
+  border:
+    1px solid
+    rgba(148,163,184,.22);
+
+  border-radius:17px;
+
+  background:
+    rgba(15,23,42,.96);
+
+  backdrop-filter:
+    blur(12px);
+
+  box-shadow:
+    0 -12px 32px
+    rgba(2,6,23,.28);
+
+}
+
+
+.nav-btn {
+
+  min-height:50px;
+
+  border:0;
+
+  border-radius:12px;
+
+  padding:10px 14px;
+
+  cursor:pointer;
+
+  font-weight:900;
+
+}
+
+
+.nav-btn.prev {
+
+  background:#334155;
+
+  color:#fff;
+
+  border:
+    1px solid #475569;
+
+}
+
+
+.nav-btn.next {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--green),
+      #16a34a
+    );
+
+  color:#052e16;
+
+}
+
+
+.nav-btn:disabled {
+
+  opacity:.42;
+
+  cursor:not-allowed;
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+
+  border-top:
+    1px solid
+    rgba(148,163,184,.18);
+
+  background:#111827;
+
+}
+
+
+.footer-inner {
+
+  padding:21px 0 95px;
+
+  color:var(--soft);
+
+  text-align:center;
+
+  font-size:.88rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:760px) {
+
+  .theory-grid,
+  .answers,
+  .final-actions {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .data-grid {
+
+    grid-template-columns:
+      1fr 1fr;
+
+  }
+
+
+  .card {
+
+    padding:20px 16px;
+
+    border-radius:20px;
+
+  }
+
+}
+
+
+@media(max-width:520px) {
+
+  .topbar-inner {
+    min-height:58px;
+  }
+
+
+  .brand {
+    font-size:.93rem;
+  }
+
+
+  .index-link {
+
+    min-height:38px;
+
+    padding:7px 9px;
+
+    font-size:.8rem;
+
+  }
+
+
+  .progress-row {
+    padding-top:7px;
+  }
+
+
+  main {
+    padding-top:16px;
+  }
+
+
+  .data-grid {
+    grid-template-columns:1fr;
+  }
+
+
+  .task,
+  .step {
+
+    grid-template-columns:
+      34px 1fr;
+
+    padding:12px;
+
+  }
+
+
+  .num {
+
+    width:34px;
+    height:34px;
+
+  }
+
+
+  .bottom-nav {
+
+    grid-template-columns:
+      92px 1fr;
+
+    padding:8px;
+
+  }
+
+
+  .nav-btn {
+
+    min-height:48px;
+
+    padding:9px 10px;
+
+    font-size:.9rem;
+
+  }
+
+}
+
+
+@media(prefers-reduced-motion:reduce) {
+
+  html {
+    scroll-behavior:auto;
+  }
+
+  .page {
+    animation:none;
+  }
+
+  .progress-bar {
+    transition:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <a
+      class="brand"
+      href="../../index.html"
+    >
+      Fizica<span>-liceu</span>
+    </a>
+
+
+    <a
+      class="index-link"
+      href="index.html"
+    >
+      ← Mișcare în câmp gravitațional
+    </a>
+
+  </div>
+
+
+  <div class="progress-row">
+
+    <div
+      class="progress-track"
+      aria-hidden="true"
+    >
+
+      <div
+        class="progress-bar"
+        id="progressBar"
+      ></div>
+
+    </div>
+
+
+    <div
+      class="progress-text"
+      id="progressText"
+    >
+      1 / 6
+    </div>
+
+  </div>
+
+</header>
+
+
+<main>
+
+
+  <!-- =======================================================
+       PAGINA 1 — ENUNȚ
+       ======================================================= -->
+
+  <section class="page active">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Problema 2 · Cădere liberă
+      </p>
+
+
+      <h1>
+        Determinarea înălțimii din timpul de cădere
+      </h1>
+
+
+      <p class="lead">
+
+        O piatră este lăsată
+        să cadă liber
+        de la o anumită înălțime.
+
+        <br><br>
+
+        Piatra ajunge la sol
+        după
+
+        $t=4\,\text{s}$.
+
+        <br><br>
+
+        Se neglijează
+        rezistența aerului
+        și se consideră
+
+        $g=10\,\text{m/s}^2$.
+
+      </p>
+
+
+      <div class="data-grid">
+
+
+        <div class="data-box">
+
+          <small>
+            Timp de cădere
+          </small>
+
+          <strong>
+            $t=4\,\text{s}$
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Viteza inițială
+          </small>
+
+          <strong>
+            $v_0=0$
+          </strong>
+
+        </div>
+
+
+        <div class="data-box">
+
+          <small>
+            Accelerație
+          </small>
+
+          <strong>
+            $g=10\,\text{m/s}^2$
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="task-list">
+
+
+        <div class="task">
+
+          <div class="num">
+            1
+          </div>
+
+          <p>
+            Determină
+            înălțimea
+            de la care
+            a fost lăsată piatra.
+          </p>
+
+        </div>
+
+
+        <div class="task">
+
+          <div class="num">
+            2
+          </div>
+
+          <p>
+            Determină
+            viteza cu care
+            piatra ajunge
+            la sol.
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        Cuvintele
+        <strong>
+          „este lăsată să cadă”
+        </strong>
+        arată că piatra
+        nu este aruncată.
+
+        <br><br>
+
+        Prin urmare:
+
+        $v_0=0$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 2 — MODEL FIZIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Analiza fizică
+      </p>
+
+
+      <h2>
+        Ce tip de mișcare avem?
+      </h2>
+
+
+      <p class="lead">
+
+        Neglijăm
+        rezistența aerului.
+
+        <br><br>
+
+        Piatra se află
+        în cădere liberă
+        sub acțiunea
+        gravitației.
+
+      </p>
+
+
+      <div class="theory-grid">
+
+
+        <div class="theory-card">
+
+          <h3>
+            Sistem
+          </h3>
+
+          <p>
+            Piatra.
+          </p>
+
+        </div>
+
+
+        <div class="theory-card">
+
+          <h3>
+            Condiție inițială
+          </h3>
+
+          <div class="formula green">
+            $v_0=0$
+          </div>
+
+        </div>
+
+
+        <div class="theory-card">
+
+          <h3>
+            Mișcare
+          </h3>
+
+          <p>
+            Rectilinie
+            uniform accelerată.
+          </p>
+
+        </div>
+
+
+        <div class="theory-card">
+
+          <h3>
+            Accelerație
+          </h3>
+
+          <div class="formula">
+            $a=g$
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Alegerea axei
+      </h3>
+
+
+      <p>
+
+        Alegem axa verticală
+        orientată în jos,
+        cu originea
+        în punctul
+        din care este
+        eliberată piatra.
+
+      </p>
+
+
+      <div class="formula">
+
+        $s=h$
+
+      </div>
+
+
+      <p>
+        Pentru o mișcare
+        uniform accelerată:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        s=
+        v_0t+
+        \frac{at^2}{2}$
+
+      </div>
+
+
+      <p>
+        În cazul nostru:
+      </p>
+
+
+      <div class="formula green">
+
+        $\displaystyle
+        h=
+        \frac{gt^2}{2}$
+
+      </div>
+
+
+      <div class="note">
+
+        De această dată,
+        timpul este cunoscut
+        și înălțimea
+        este necunoscută.
+
+        <br><br>
+
+        Folosim aceeași lege
+        ca în problema precedentă,
+        dar izolăm
+        o altă mărime fizică.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 3 — SCHIȚĂ ȘI CALCUL SIMBOLIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Model și calcul simbolic
+      </p>
+
+
+      <h2>
+        Exprimăm înălțimea
+      </h2>
+
+
+      <div class="diagram">
+
+        <svg
+          viewBox="0 0 760 450"
+          role="img"
+          aria-labelledby="fall2Title fall2Desc"
+        >
+
+          <title id="fall2Title">
+            Determinarea înălțimii din timpul de cădere
+          </title>
+
+          <desc id="fall2Desc">
+            O piatră este lăsată să cadă de la o înălțime necunoscută și ajunge la sol după patru secunde.
+          </desc>
+
+
+          <rect
+            x="0"
+            y="0"
+            width="760"
+            height="365"
+            fill="#e0f2fe"
+          />
+
+
+          <rect
+            x="0"
+            y="365"
+            width="760"
+            height="85"
+            fill="#86a76b"
+          />
+
+
+          <line
+            x1="0"
+            y1="365"
+            x2="760"
+            y2="365"
+            stroke="#4d7c0f"
+            stroke-width="5"
+          />
+
+
+          <!-- PIATRĂ -->
+
+          <circle
+            cx="380"
+            cy="80"
+            r="25"
+            fill="#ef4444"
+          />
+
+
+          <text
+            x="420"
+            y="75"
+            font-size="20"
+            font-weight="850"
+            fill="#991b1b"
+          >
+            v₀ = 0
+          </text>
+
+
+          <!-- TRAIECTORIE -->
+
+          <line
+            x1="380"
+            y1="115"
+            x2="380"
+            y2="335"
+            stroke="#2563eb"
+            stroke-width="5"
+            stroke-dasharray="14 10"
+          />
+
+
+          <path
+            d="M380 345 L365 320 L395 320 Z"
+            fill="#2563eb"
+          />
+
+
+          <text
+            x="410"
+            y="220"
+            font-size="22"
+            font-weight="850"
+            fill="#1d4ed8"
+          >
+            g
+          </text>
+
+
+          <!-- H NECUNOSCUT -->
+
+          <line
+            x1="235"
+            y1="80"
+            x2="235"
+            y2="365"
+            stroke="#7c3aed"
+            stroke-width="4"
+          />
+
+
+          <path
+            d="M235 80 L225 102 L245 102 Z"
+            fill="#7c3aed"
+          />
+
+
+          <path
+            d="M235 365 L225 343 L245 343 Z"
+            fill="#7c3aed"
+          />
+
+
+          <text
+            x="175"
+            y="220"
+            font-size="26"
+            font-weight="900"
+            fill="#6d28d9"
+          >
+            h = ?
+          </text>
+
+
+          <!-- TIMP -->
+
+          <text
+            x="455"
+            y="280"
+            font-size="23"
+            font-weight="900"
+            fill="#0f172a"
+          >
+            t = 4 s
+          </text>
+
+
+          <!-- SOL -->
+
+          <text
+            x="380"
+            y="410"
+            text-anchor="middle"
+            font-size="22"
+            font-weight="900"
+            fill="#365314"
+          >
+            SOL
+          </text>
+
+        </svg>
+
+      </div>
+
+
+      <p class="diagram-caption">
+
+        Piatra pornește
+        din repaus
+        și se deplasează
+        vertical în jos
+        timp de
+        $4\,\text{s}$.
+
+      </p>
+
+
+      <h3 style="margin-top:24px;">
+        Relația de pornire
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        h=
+        v_0t+
+        \frac{gt^2}{2}$
+
+      </div>
+
+
+      <p>
+        Deoarece:
+      </p>
+
+
+      <div class="formula green">
+
+        $v_0=0$
+
+      </div>
+
+
+      <p>
+        rezultă direct:
+      </p>
+
+
+      <div class="formula yellow">
+
+        $\boxed{
+        h=
+        \frac{gt^2}{2}
+        }$
+
+      </div>
+
+
+      <div class="note">
+
+        Observă că
+        de această dată
+        nu trebuie
+        să izolăm timpul.
+
+        <br><br>
+
+        Formula ne oferă
+        direct înălțimea
+        deoarece $g$
+        și $t$
+        sunt cunoscute.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 4 — CALCUL NUMERIC
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare · Cerința 1
+      </p>
+
+
+      <h2>
+        Calculăm înălțimea
+      </h2>
+
+
+      <div class="step-list">
+
+
+        <div class="step">
+
+          <div class="num">
+            1
+          </div>
+
+          <div>
+
+            <h3>
+              Datele sunt deja în SI
+            </h3>
+
+            <p>
+              Avem:
+            </p>
+
+            <div class="formula">
+
+              $\displaystyle
+              g=10\,\text{m/s}^2$
+
+            </div>
+
+            <div class="formula">
+
+              $\displaystyle
+              t=4\,\text{s}$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="num">
+            2
+          </div>
+
+          <div>
+
+            <h3>
+              Scriem formula
+            </h3>
+
+            <div class="formula yellow">
+
+              $\displaystyle
+              h=
+              \frac{gt^2}{2}$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="num">
+            3
+          </div>
+
+          <div>
+
+            <h3>
+              Înlocuim valorile
+            </h3>
+
+            <div class="formula">
+
+              $\displaystyle
+              h=
+              \frac{
+                10\cdot4^2
+              }{2}$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="num">
+            4
+          </div>
+
+          <div>
+
+            <h3>
+              Efectuăm calculul
+            </h3>
+
+            <div class="formula">
+
+              $\displaystyle
+              h=
+              \frac{
+                10\cdot16
+              }{2}$
+
+            </div>
+
+            <div class="formula">
+
+              $\displaystyle
+              h=
+              \frac{160}{2}$
+
+            </div>
+
+            <div class="formula green">
+
+              $\boxed{
+              h=80\,\text{m}
+              }$
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="result">
+
+        Piatra a fost
+        lăsată să cadă
+        de la înălțimea:
+
+        $\boxed{
+        h=80\,\text{m}
+        }$
+
+      </div>
+
+
+      <h3 style="margin-top:24px;">
+        Verificarea dimensională
+      </h3>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        [h]
+        =
+        \frac{
+          \text{m}/\text{s}^2
+          \cdot
+          \text{s}^2
+        }{1}
+        =
+        \text{m}$
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          Unitatea obținută este metrul,
+        </strong>
+
+        deci relația este
+        dimensional corectă.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 5 — VITEZA ȘI VERIFICAREA
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Rezolvare · Cerința 2
+      </p>
+
+
+      <h2>
+        Viteza cu care ajunge la sol
+      </h2>
+
+
+      <p class="lead">
+
+        Pentru mișcarea
+        uniform accelerată:
+
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v=v_0+gt$
+
+      </div>
+
+
+      <p>
+        Deoarece
+        $v_0=0$:
+      </p>
+
+
+      <div class="formula yellow">
+
+        $\displaystyle
+        v=gt$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v=
+        10\cdot4$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v=40\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <div class="result">
+
+        Viteza de impact are modulul
+
+        $\boxed{
+        v=40\,\text{m/s}
+        }$
+
+        și este orientată
+        vertical în jos.
+
+      </div>
+
+
+      <h3 style="margin-top:28px;">
+        Verificare independentă
+      </h3>
+
+
+      <p>
+        Putem verifica rezultatul
+        folosind relația
+        care nu conține timpul:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v^2=
+        v_0^2+
+        2gh$
+
+      </div>
+
+
+      <p>
+        Pentru $v_0=0$:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v=
+        \sqrt{2gh}$
+
+      </div>
+
+
+      <p>
+        Înlocuim
+        $h=80\,\text{m}$:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v=
+        \sqrt{
+          2\cdot10\cdot80
+        }$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v=
+        \sqrt{1600}$
+
+      </div>
+
+
+      <div class="formula green">
+
+        $\boxed{
+        v=40\,\text{m/s}
+        }$
+
+      </div>
+
+
+      <div class="check">
+
+        <strong>
+          Cele două metode
+          conduc la același rezultat.
+        </strong>
+
+        <br><br>
+
+        Verificarea confirmă
+        rezolvarea.
+
+      </div>
+
+
+      <h3 style="margin-top:28px;">
+        Verificare suplimentară
+      </h3>
+
+
+      <p>
+        Pentru o mișcare
+        uniform accelerată
+        pornită din repaus,
+        viteza medie este:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{\text{med}}
+        =
+        \frac{
+          v_0+v
+        }{2}$
+
+      </div>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        v_{\text{med}}
+        =
+        \frac{
+          0+40
+        }{2}
+        =
+        20\,\text{m/s}$
+
+      </div>
+
+
+      <p>
+        Atunci:
+      </p>
+
+
+      <div class="formula">
+
+        $\displaystyle
+        h=
+        v_{\text{med}}t
+        =
+        20\cdot4
+        =
+        80\,\text{m}$
+
+      </div>
+
+
+      <div class="check">
+
+        Obținem din nou:
+
+        $\boxed{
+        h=80\,\text{m}
+        }$.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       PAGINA 6 — CONCLUZII
+       ======================================================= -->
+
+  <section class="page">
+
+    <div class="card">
+
+      <p class="eyebrow">
+        Concluzii
+      </p>
+
+
+      <h2>
+        Ce trebuie reținut
+      </h2>
+
+
+      <div class="conclusions">
+
+
+        <div class="conclusion">
+
+          Dacă un corp
+          este
+          <strong>lăsat să cadă</strong>,
+          atunci:
+
+          $v_0=0$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Pentru cădere liberă
+          din repaus:
+
+          $\displaystyle
+          h=
+          \frac{gt^2}{2}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Dacă este cunoscut
+          timpul de cădere,
+          înălțimea se obține direct:
+
+          $\displaystyle
+          h=
+          \frac{gt^2}{2}$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Viteza după timpul $t$ este:
+
+          $\displaystyle
+          v=gt$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Viteza poate fi verificată
+          și din relația:
+
+          $\displaystyle
+          v^2=2gh$.
+
+        </div>
+
+
+        <div class="conclusion">
+
+          Pentru această problemă:
+
+          $t=4\,\text{s}$,
+
+          $h=80\,\text{m}$,
+
+          $v=40\,\text{m/s}$.
+
+        </div>
+
+
+      </div>
+
+
+      <div class="answers">
+
+
+        <div class="answer-card">
+
+          <small>
+            Înălțimea
+          </small>
+
+          <strong>
+            $h=80\,\text{m}$
+          </strong>
+
+        </div>
+
+
+        <div class="answer-card">
+
+          <small>
+            Viteza la impact
+          </small>
+
+          <strong>
+            $v=40\,\text{m/s}$
+            în jos
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        <strong>
+          Ideea-cheie a problemei:
+        </strong>
+
+        <br><br>
+
+        În prima problemă
+        cunoșteam înălțimea
+        și căutam timpul.
+
+        <br><br>
+
+        Aici cunoaștem timpul
+        și determinăm înălțimea.
+
+        <br><br>
+
+        Relația fizică
+        este aceeași:
+
+        $\displaystyle
+        h=
+        \frac{gt^2}{2}$.
+
+      </div>
+
+
+      <div class="final-actions">
+
+        <a
+          class="final-link secondary"
+          href="1-cadere-libera-de-la-inaltime-h.html"
+        >
+          ← Problema 1
+        </a>
+
+
+        <a
+          class="final-link secondary"
+          href="index.html"
+        >
+          Lista problemelor
+        </a>
+
+
+        <a
+          class="final-link primary"
+          href="3-determinarea-inaltimii-din-viteza-finala.html"
+        >
+          Problema 3 →
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     NAVIGARE
+     ========================================================= -->
+
+<nav
+  class="bottom-nav"
+  aria-label="Navigare între etapele rezolvării"
+>
+
+  <button
+    id="prevBtn"
+    class="nav-btn prev"
+    type="button"
+  >
+    ← Înapoi
+  </button>
+
+
+  <button
+    id="nextBtn"
+    class="nav-btn next"
+    type="button"
+  >
+    Mergi mai departe →
+  </button>
+
+</nav>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+  <div class="footer-inner">
+
+    Fizica-liceu ·
+    Probleme rezolvate ·
+    Mișcare în câmp gravitațional
+
+  </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+const pages =
+  [...document.querySelectorAll(".page")];
+
+const prevBtn =
+  document.getElementById("prevBtn");
+
+const nextBtn =
+  document.getElementById("nextBtn");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+
+let current = 0;
+
+
+/* =========================================================
+   PROGRESUL CAPITOLULUI
+
+   Trebuie să fie aceeași cheie
+   cu cea utilizată de index.html
+   și de celelalte probleme.
+   ========================================================= */
+
+const CHAPTER_PROGRESS_KEY =
+  "fizica-liceu:progres:2-miscare-in-camp-gravitational";
+
+
+function markProblemDone() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          CHAPTER_PROGRESS_KEY
+        )
+      );
+
+
+    const progress =
+      new Set(
+        Array.isArray(saved)
+          ? saved.map(Number)
+          : []
+      );
+
+
+    /*
+     * Problema curentă:
+     * numărul 2
+     */
+    progress.add(2);
+
+
+    localStorage.setItem(
+      CHAPTER_PROGRESS_KEY,
+      JSON.stringify(
+        [...progress]
+          .sort((a,b) => a-b)
+      )
+    );
+
+  }
+
+  catch(error) {
+
+    /*
+     * Pagina rămâne funcțională
+     * dacă localStorage
+     * nu este disponibil.
+     */
+
+  }
+
+}
+
+
+/* =========================================================
+   AFIȘARE PAGINĂ
+   ========================================================= */
+
+function showPage(index) {
+
+  current =
+    Math.max(
+      0,
+      Math.min(
+        index,
+        pages.length - 1
+      )
+    );
+
+
+  pages.forEach(
+    (page,i) => {
+
+      page.classList.toggle(
+        "active",
+        i === current
+      );
+
+    }
+  );
+
+
+  prevBtn.disabled =
+    current === 0;
+
+
+  if(
+    current ===
+    pages.length - 1
+  ) {
+
+    nextBtn.textContent =
+      "Reia problema ↺";
+
+
+    /*
+     * Problema este marcată
+     * ca parcursă doar când
+     * utilizatorul ajunge
+     * la ultima etapă.
+     */
+    markProblemDone();
+
+  }
+
+  else {
+
+    nextBtn.textContent =
+      "Mergi mai departe →";
+
+  }
+
+
+  progressText.textContent =
+    `${current + 1} / ${pages.length}`;
+
+
+  progressBar.style.width =
+    `${
+      (
+        (current + 1) /
+        pages.length
+      ) * 100
+    }%`;
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+
+  if(
+    window.MathJax &&
+    MathJax.typesetPromise
+  ) {
+
+    MathJax.typesetPromise();
+
+  }
+
+}
+
+
+/* =========================================================
+   BUTOANE
+   ========================================================= */
+
+prevBtn.addEventListener(
+  "click",
+  () => showPage(current - 1)
+);
+
+
+nextBtn.addEventListener(
+  "click",
+  () => {
+
+    if(
+      current ===
+      pages.length - 1
+    ) {
+
+      showPage(0);
+
+    }
+
+    else {
+
+      showPage(current + 1);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TASTATURĂ
+   ========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "ArrowLeft") {
+
+      showPage(
+        current - 1
+      );
+
+    }
+
+
+    if(event.key === "ArrowRight") {
+
+      if(
+        current ===
+        pages.length - 1
+      ) {
+
+        showPage(0);
+
+      }
+
+      else {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SWIPE PE MOBIL
+   ========================================================= */
+
+let startX = null;
+
+
+document.addEventListener(
+  "touchstart",
+  event => {
+
+    startX =
+      event.changedTouches[0]
+        .screenX;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+document.addEventListener(
+  "touchend",
+  event => {
+
+    if(startX === null) {
+      return;
+    }
+
+
+    const diff =
+      event.changedTouches[0]
+        .screenX -
+      startX;
+
+
+    if(
+      Math.abs(diff) > 70
+    ) {
+
+      if(diff > 0) {
+
+        showPage(
+          current - 1
+        );
+
+      }
+
+      else if(
+        current <
+        pages.length - 1
+      ) {
+
+        showPage(
+          current + 1
+        );
+
+      }
+
+    }
+
+
+    startX = null;
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+showPage(0);
+
+</script>
+
+
+</body>
+
+</html>
