@@ -651,7 +651,7 @@
 </main>
 
 <script>
-  (function () {
+    (function () {
     const pages = Array.from(document.querySelectorAll('.lesson-page'));
     const totalPages = pages.length;
 
@@ -722,22 +722,54 @@
     });
 
     showPage(numberFromHash(), false);
- 
-  // --- Adaugă codul pentru butonul de printare aici ---
-document.addEventListener("DOMContentLoaded", function() {
-    const pages = document.querySelectorAll('.page');
-    pages.forEach(page => {
-        if (!page.querySelector('.btn-print')) {
-            const printButton = document.createElement('button');
-            printButton.innerHTML = '🖨️ Printează / Salvează PDF';
-            printButton.className = 'btn-print';
-            printButton.onclick = function() {
-                window.print();
-            };
-            page.insertBefore(printButton, page.firstChild);
-        }
+  })();
+
+  // --- Corectare inserare buton print și ajustare chenar titlu ---
+  document.addEventListener("DOMContentLoaded", function() {
+    // Injectăm stiluri suplimentare pentru butonul de print și optimizarea chenarului
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = `
+      .btn-print {
+        background: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid rgba(148,163,184,.4);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        align-self: flex-start;
+      }
+      .btn-print:hover {
+        background: #e2e8f0;
+      }
+      /* Reducere spațiu/chenar titlu pe prima pagină dacă e prea încărcat */
+      .lesson-header {
+        padding: clamp(14px, 2vw, 24px) !important;
+        margin-bottom: 14px !important;
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    // Adăugăm butonul de print la începutul fiecărei pagini de lecție (.lesson-page)
+    const lessonPages = document.querySelectorAll('.lesson-page');
+    lessonPages.forEach(page => {
+      if (!page.querySelector('.btn-print')) {
+        const printButton = document.createElement('button');
+        printButton.innerHTML = '🖨️ Printează / Salvează PDF';
+        printButton.className = 'btn-print';
+        printButton.type = 'button';
+        printButton.onclick = function() {
+          window.print();
+        };
+        page.insertBefore(printButton, page.firstChild);
+      }
     });
-});
+  });
 </script>
 </body>
 </html>
