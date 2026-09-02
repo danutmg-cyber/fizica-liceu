@@ -1083,9 +1083,10 @@ body .lesson-page.card.gray .author-box {
    CONFIGURARE CURATĂ PENTRU PRINT / PDF
    ========================================== */
 @media print {
-    /* 1. Resetăm elementele de interfață și fundalul */
+    /* 1. Ascundem elementele de interfață și fundalul nenecesar */
     .btn-print, 
-    .bottom-nav, 
+    .lesson-page-nav, 
+    .lesson-actions,
     .top-banner,
     nav, footer, header {
         display: none !important;
@@ -1097,21 +1098,25 @@ body .lesson-page.card.gray .author-box {
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
-    /* 2. Anulăm constrângerile containerului principal */
-    .app {
+    /* 2. Anulăm constrângerile containerelor principale */
+    .lesson-shell, .app, .container {
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 10mm !important;
+        padding: 0 !important;
         display: block !important;
     }
 
-    /* 3. Transformăm fiecare slide într-o pagină curată, lată și aerisită */
-    .page {
+    /* 3. Transformăm fiecare pagină (.page sau .lesson-page) într-o pagină curată și vizibilă în PDF */
+    .page, .lesson-page {
         display: block !important;
-        position: relative !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: static !important;
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
@@ -1119,28 +1124,33 @@ body .lesson-page.card.gray .author-box {
         margin: 0 0 20mm 0 !important;
         padding: 15mm !important;
         background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
+        color: #000000 !important;
+        border: 1px solid #cbd5e1 !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        opacity: 1 !important;
         transform: none !important;
         
-        /* Forțăm paginarea corectă în PDF */
+        /* Forțăm paginarea corectă în PDF (câte o pagină de lecție per pagină fizică) */
         page-break-after: always !important;
         break-after: page !important;
     }
 
-    /* 4. Forțăm elementele interne să se întindă pe toată lățimea paginii, eliminând coloanele comprimate */
-    .grid, .split, .callout, .idea, .svg-card {
+    /* Asigurăm vizibilitatea conținutului ascuns prin atributele de paginare ale scriptului */
+    .lesson-page[hidden] {
+        display: block !important;
+    }
+
+    /* 4. Forțăm elementele interne să se întindă corect pe lățime */
+    .grid, .split, .callout, .idea, .svg-card, .lesson-two-columns {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
         margin-bottom: 15px !important;
     }
 
-    p, li, h1, h2, h3 {
+    p, li, h1, h2, h3, td, th {
+        color: #000000 !important;
         max-width: 100% !important;
         word-break: normal !important;
     }
-}
 }
