@@ -66,7 +66,6 @@
     }
 
     .page{
-      display:none;
       width:100%;
       min-height:calc(100vh - 128px);
       margin:auto 0;
@@ -80,11 +79,17 @@
       overflow:hidden;
     }
 
-    .page.active{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      animation:fadeIn .22s ease-out;
+    @media screen{
+      .page{
+        display:none;
+      }
+
+      .page.active{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        animation:fadeIn .22s ease-out;
+      }
     }
 
     @keyframes fadeIn{
@@ -1181,5 +1186,21 @@
     })();
   </script>
   <script src="../../../assets/js/print-helper.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.page').forEach(function (page) {
+        if (page.querySelector('.btn-print')) return;
+
+        const printButton = document.createElement('button');
+        printButton.innerHTML = '🖨️ Printează / Salvează PDF';
+        printButton.className = 'lesson-button secondary btn-print';
+        printButton.addEventListener('click', function () {
+          window.print();
+        });
+
+        page.insertBefore(printButton, page.firstChild);
+      });
+    });
+  </script>
 </body>
 </html>
