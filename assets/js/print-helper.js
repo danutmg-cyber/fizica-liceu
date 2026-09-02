@@ -6,8 +6,11 @@ document.addEventListener("DOMContentLoaded", function() {
             printButton.innerHTML = '🖨️ Printează / Salvează PDF';
             printButton.className = 'lesson-button secondary btn-print';
             printButton.onclick = function() {
-                // Forțează afișarea tuturor paginilor înainte de printare
-                pages.forEach(p => p.removeAttribute('hidden'));
+                // Forțează eliminarea oricărui atribut hidden sau stil de ascunzire de pe pagini
+                pages.forEach(p => {
+                    p.removeAttribute('hidden');
+                    p.style.display = 'block';
+                });
                 window.print();
             };
             page.insertBefore(printButton, page.firstChild);
