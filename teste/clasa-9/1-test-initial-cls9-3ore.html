@@ -445,26 +445,26 @@
 
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQopqYahbD6vbLzK731f-uFAk8WIwRd3sw-EZdMcvG-CTSY5hf37soPZqE4FlLo1uE/exec";
   
-  // 2. Imediat sub el, lipești funcția care folosește acea constantă:
-function trimiteRezultatele(numeElev, clasaElev, punctajObținut, detaliiSuplimentare) {
-  const urlParams = new URLSearchParams();
-  urlParams.append("nume", numeElev);
-  urlParams.append("clasa", clasaElev);
-  urlParams.append("punctaj", punctajObținut);
-  urlParams.append("detalii", detaliiSuplimentare);
+  // Funcția de trimitere prin URLSearchParams
+  function trimiteRezultatele(numeElev, clasaElev, punctajObținut, detaliiSuplimentare) {
+    const urlParams = new URLSearchParams();
+    urlParams.append("nume", numeElev);
+    urlParams.append("clasa", clasaElev);
+    urlParams.append("punctaj", punctajObținut);
+    urlParams.append("detalii", detaliiSuplimentare);
 
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: urlParams
-  })
-  .then(() => {
-    console.log("Rezultatul a fost trimis spre Google Sheet.");
-  })
-  .catch((error) => {
-    console.error("Erore la trimitere:", error);
-  });
-}
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: urlParams
+    })
+    .then(() => {
+      console.log("Rezultatul a fost trimis spre Google Sheet.");
+    })
+    .catch((error) => {
+      console.error("Erore la trimitere:", error);
+    });
+  }
 
   const QUESTION_COUNT = 20;
   const OFFICIAL_POINTS = 1;
@@ -1052,12 +1052,19 @@ function trimiteRezultatele(numeElev, clasaElev, punctajObținut, detaliiSuplime
     const grade = Math.max(1, OFFICIAL_POINTS + percentage * TEST_POINTS);
     const roundedGrade = Math.round(grade * 100) / 100;
 
+    const numeElev = document.getElementById("studentName").value.trim();
+    const clasaElev = document.getElementById("studentClass").value.trim();
+    const detaliiRapoarte = `Ieșiri din ecran: ${integrityLog.exitCount}`;
+
+    // Apelează funcția de trimitere direct către Google Sheets
+    trimiteRezultatele(numeElev, clasaElev, roundedGrade, detaliiRapoarte);
+
     const payload = {
       timestamp: new Date().toISOString(),
       test: "Evaluare inițială – Fizică – Clasa a IX-a (Profil real)",
       variantId,
-      studentName: document.getElementById("studentName").value.trim(),
-      studentClass: document.getElementById("studentClass").value.trim(),
+      studentName: numeElev,
+      studentClass: clasaElev,
       correct,
       total: currentQuestions.length,
       officialPoints: OFFICIAL_POINTS,
@@ -1073,7 +1080,6 @@ function trimiteRezultatele(numeElev, clasaElev, punctajObținut, detaliiSuplime
 
     document.getElementById("testArea").classList.add("hidden");
     showResult(payload);
-    sendToGoogleSheet(payload);
   }
 
   function showResult(payload) {
@@ -1365,126 +1371,6 @@ function trimiteRezultatele(numeElev, clasaElev, punctajObținut, detaliiSuplime
           alert("Nu s-a putut genera raportul PDF. Încearcă din nou.");
         });
     }, 300);
-  }
-
-  function setResultButtonsEnabled(enabled) {
-    const downloadBtn = document.getElementById("downloadPdfBtn");
-    const newTestBtn = document.getElementById("newTestBtn");
-
-    if (downloadBtn) downloadBtn.disabled = !enabled;
-    if (newTestBtn) newTestBtn.disabled = !enabled;
-  }
-
-  function updateSavePanel(state, title, message) {
-    const panel = document.getElementById("savePanel");
-    const saveTitle = document.getElementById("saveTitle");
-    const saveMessage = document.getElementById("saveMessage");
-
-    if (!panel || !saveTitle || !saveMessage) return;
-
-    panel.classList.remove("hidden", "error", "done");
-
-    if (state === "error") panel.classList.add("error");
-    if (state === "done") panel.classList.add("done");
-
-    saveTitle.innerText = title;
-    saveMessage.innerText = message;
-  }
-
-  function sendPayloadAttempt(payload, attemptNumber) {
-    try {
-      const iframeName = `googleSheetHiddenFrame_${attemptNumber}_${Date.now()}`;
-
-      const iframe = document.createElement("iframe");
-      iframe.name = iframeName;
-      iframe.id = iframeName;
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = GOOGLE_SCRIPT_URL;
-      form.target = iframeName;
-      form.style.display = "none";
-
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "payload";
-      input.value = JSON.stringify(payload);
-
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-
-      setTimeout(() => {
-        form.remove();
-        iframe.remove();
-      }, 30000);
-
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  }
-
-  function scheduleSaveAttempts(payload) {
-    SAVE_RETRY_DELAYS_MS.forEach((delay, index) => {
-      setTimeout(() => {
-        updateSavePanel(
-          "saving",
-          `Se salvează rezultatul... încercarea ${index + 1}/${SAVE_RETRY_DELAYS_MS.length}`,
-          "Nu închide pagina. Nu descărca raportul încă."
-        );
-
-        sendPayloadAttempt(payload, index + 1);
-      }, delay);
-    });
-  }
-
-  function sendToGoogleSheet(payload) {
-    const status = document.getElementById("sheetStatus");
-
-    setResultButtonsEnabled(false);
-
-    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_GOOGLE")) {
-      updateSavePanel(
-        "error",
-        "Rezultatul nu a fost transmis profesorului.",
-        "Lipsește URL-ul Google Apps Script din cod."
-      );
-      if (status) {
-        status.innerHTML = "Rezultatul a fost calculat local, dar <b>nu a fost trimis în Google Sheet</b>, deoarece nu ai completat URL-ul Google Apps Script în cod.";
-      }
-      setResultButtonsEnabled(true);
-      return;
-    }
-
-    updateSavePanel(
-      "saving",
-      "Se salvează rezultatul. Nu închide pagina.",
-      `Așteaptă ${SAVE_WAIT_SECONDS} secunde. Raportul PDF va putea fi descărcat după finalizarea salvării.`
-    );
-
-    if (status) {
-      status.innerText = "Se salvează rezultatul. Nu închide pagina.";
-    }
-
-    scheduleSaveAttempts(payload);
-
-    setTimeout(() => {
-      updateSavePanel(
-        "done",
-        "Rezultatul a fost transmis profesorului.",
-        "Acum poți descărca raportul PDF."
-      );
-
-      if (status) {
-        status.innerText = "Testul a fost finalizat. Rezultatul a fost transmis profesorului. Poți descărca raportul PDF.";
-      }
-
-      setResultButtonsEnabled(true);
-    }, SAVE_WAIT_SECONDS * 1000);
   }
 
   function scrollToTop() {
