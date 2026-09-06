@@ -373,12 +373,13 @@
     <div class="warning">
       <b>Notare:</b> nota este de la 1 la 10, cu <b>1 punct din oficiu</b>. Partea de test valorează 9 puncte.<br /><br />
       <b>Timp de lucru recomandat:</b> 45 de minute.<br /><br />
-      <b>Regulă pentru reluarea testului:</b> testul se susține o singură dată. Dacă ai avut o problemă tehnică, anunță profesorul. O nouă încercare se poate face doar cu acordul profesorului. Nota finală o va decide profesorul.<br /><br />
+      <b>Regulă pentru reluarea testului:</b> testul se susține o singură dată. La apăsarea „Începe testul", pagina verifică automat, pe baza numelui și clasei, dacă ai mai trimis deja un rezultat — dacă da, nu vei putea începe din nou. Dacă ai avut o problemă tehnică, anunță profesorul; o nouă încercare se poate face doar cu acordul lui.<br /><br />
       <b>Atenție la răspunsurile numerice:</b> scrie doar numărul cerut (fără unitatea de măsură), folosind punct sau virgulă pentru zecimale — de exemplu <b>2.5</b> sau <b>2,5</b>.<br /><br />
       <b>Atenție anti-copiere:</b> testul detectează părăsirea ecranului (schimbarea tab-ului/aplicației), blochează copiere/lipire și click dreapta. Aceste evenimente sunt înregistrate și transmise profesorului.
     </div>
 
-    <button class="success" onclick="startTest()">Începe testul</button>
+    <button class="success" id="startTestBtn" onclick="startTest()">Începe testul</button>
+    <p id="startCheckMessage" class="small hidden"></p>
   </section>
 
   <section id="testArea" class="hidden">
@@ -442,7 +443,7 @@
        întrebării la care s-a produs fiecare ieșire).
   ===================================================== */
 
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIUYZdnTqqh7IU-PCUhSghgCu8TAOdkU8FjgGQV09VRDnpxVNekr-XnqOFdLxKSlKs/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQopqYahbD6vbLzK731f-uFAk8WIwRd3sw-EZdMcvG-CTSY5hf37soPZqE4FlLo1uE/exec";
 
   const QUESTION_COUNT = 20;
   const OFFICIAL_POINTS = 1;
@@ -681,7 +682,7 @@
       options: ["forța deformatoare (greutatea agățată)", "alungirea resortului", "culoarea resortului", "timpul de așteptare"],
       answer: ["forța deformatoare (greutatea agățată)"] },
     { type: "choice", category: "investigatie", subtype: "variabila_dependenta",
-      prompt: "În aceeași investigație, mărimea fizică pe care elevul o măsoară (variabila dependentă) este:",
+      prompt: "Într-o investigație a relației dintre forța deformatoare și alungirea unui resort, mărimea fizică pe care elevul o măsoară (variabila dependentă) este:",
       options: ["alungirea resortului", "forța deformatoare", "masa resortului", "temperatura camerei"],
       answer: ["alungirea resortului"] },
     { type: "choice", category: "investigatie", subtype: "instrument_alungire",
@@ -1093,13 +1094,86 @@
     alert("Lipirea textului nu este permisă în timpul testului.");
   });
 
-  function startTest() {
+  const PRIOR_ATTEMPT_CHECK_TIMEOUT_MS = 8000;
+
+  /* Interoghează Code.gs (doGet?action=check) ca să vadă dacă acest
+     elev (nume + clasă) are deja un rezultat înregistrat în Sheet.
+     Returnează { found: true|false, ... }. Dacă verificarea nu poate
+     fi făcută (rețea, script indisponibil), NU blocăm elevul — dar
+     afișăm un avertisment, ca profesorul să poată verifica manual. */
+  async function checkPriorAttempt(name, cls) {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_GOOGLE")) {
+      return { found: false, checked: false };
+    }
+
+    const url = `${GOOGLE_SCRIPT_URL}?action=check&nume=${encodeURIComponent(name)}&clasa=${encodeURIComponent(cls)}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), PRIOR_ATTEMPT_CHECK_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, { method: "GET", signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) return { found: false, checked: false };
+
+      const data = await response.json();
+      return { found: Boolean(data.found), timestamp: data.timestamp, nota: data.nota, checked: true };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      console.error(error);
+      return { found: false, checked: false };
+    }
+  }
+
+  function setStartCheckMessage(text, isError) {
+    const el = document.getElementById("startCheckMessage");
+    if (!el) return;
+
+    if (!text) {
+      el.classList.add("hidden");
+      el.innerText = "";
+      return;
+    }
+
+    el.classList.remove("hidden");
+    el.style.color = isError ? "var(--red)" : "var(--muted)";
+    el.innerText = text;
+  }
+
+  async function startTest() {
     const name = document.getElementById("studentName").value.trim();
     const cls = document.getElementById("studentClass").value.trim();
 
     if (!name || !cls) {
       alert("Completează numele, prenumele și clasa înainte de a începe testul.");
       return;
+    }
+
+    const startBtn = document.getElementById("startTestBtn");
+    startBtn.disabled = true;
+    startBtn.innerText = "Se verifică...";
+    setStartCheckMessage("Se verifică dacă ai mai susținut acest test...", false);
+
+    const priorAttempt = await checkPriorAttempt(name, cls);
+
+    if (priorAttempt.found) {
+      startBtn.disabled = false;
+      startBtn.innerText = "Începe testul";
+      const notaText = priorAttempt.nota !== undefined ? ` (nota ${priorAttempt.nota})` : "";
+      setStartCheckMessage(
+        `Ai susținut deja acest test${notaText}. Testul se dă o singură dată. Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.`,
+        true
+      );
+      return;
+    }
+
+    if (!priorAttempt.checked) {
+      setStartCheckMessage(
+        "Nu s-a putut verifica automat dacă ai mai susținut testul (conexiune). Continuăm testul, dar reține că orice reluare fără acordul profesorului este considerată fraudă.",
+        true
+      );
+    } else {
+      setStartCheckMessage("", false);
     }
 
     submitted = false;
