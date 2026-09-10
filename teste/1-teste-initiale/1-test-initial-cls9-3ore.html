@@ -2,135 +2,29 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Test final – Statica fluidelor</title>
+<title>Test – Statica fluidelor</title>
 <style>
 body { font-family: Arial; margin: 20px; }
-table { border-collapse: collapse; margin-top: 10px; }
-td, th { border: 1px solid black; padding: 6px; }
-.question { margin-bottom: 25px; }
+button { padding: 10px 20px; margin-top: 20px; }
 </style>
 </head>
 
 <body>
-<h2>Test final – Statica fluidelor</h2>
-<p>Fiecare elev are valori diferite și ordinea întrebărilor este aleatorie.</p>
 
-<div id="test"></div>
+<h2>Test – Statica fluidelor</h2>
+<div id="question"></div>
+<button onclick="nextQuestion()">Următoarea întrebare</button>
 
 <script>
 // -----------------------------
-// 1. GENERARE VALORI ALEATORII
+// Funcție random
 // -----------------------------
 function rnd(a, b) {
   return Math.floor(Math.random() * (b - a + 1)) + a;
 }
 
 // -----------------------------
-// 2. ÎNTREBĂRI (30 total)
-// -----------------------------
-function generateQuestions() {
-
-  const q = [];
-
-  // 1. Presiune hidrostatică
-  for (let i = 0; i < 5; i++) {
-    let h = rnd(1, 10);   // m
-    let rho = rnd(900, 1100); // kg/m3
-    let g = 9.8;
-    let P = rho * g * h;
-
-    q.push({
-      text: `Calculează presiunea hidrostatică la adâncimea de ${h} m într-un lichid cu densitatea ${rho} kg/m³.`,
-      correct: P.toFixed(0) + " Pa",
-      choices: shuffle([
-        P.toFixed(0) + " Pa",
-        (P * 0.9).toFixed(0) + " Pa",
-        (P * 1.1).toFixed(0) + " Pa",
-        (P + 500).toFixed(0) + " Pa"
-      ])
-    });
-  }
-
-  // 2. Forța presiunii pe o suprafață
-  for (let i = 0; i < 5; i++) {
-    let P = rnd(10000, 50000);
-    let A = rnd(2, 10);
-    let F = P * A;
-
-    q.push({
-      text: `Un lichid exercită presiunea de ${P} Pa pe o suprafață de ${A} m². Determină forța.`,
-      correct: F + " N",
-      choices: shuffle([
-        F + " N",
-        (F * 0.8).toFixed(0) + " N",
-        (F * 1.2).toFixed(0) + " N",
-        (F + 1000) + " N"
-      ])
-    });
-  }
-
-  // 3. Legea lui Pascal
-  for (let i = 0; i < 5; i++) {
-    let F1 = rnd(100, 500);
-    let A1 = rnd(2, 10);
-    let A2 = rnd(20, 50);
-    let F2 = F1 * (A2 / A1);
-
-    q.push({
-      text: `Într-o presă hidraulică, F₁ = ${F1} N, A₁ = ${A1} cm², A₂ = ${A2} cm². Determină F₂.`,
-      correct: F2.toFixed(0) + " N",
-      choices: shuffle([
-        F2.toFixed(0) + " N",
-        (F2 * 0.85).toFixed(0) + " N",
-        (F2 * 1.15).toFixed(0) + " N",
-        (F2 + 200).toFixed(0) + " N"
-      ])
-    });
-  }
-
-  // 4. Probleme cu tabel (x și t)
-  for (let i = 0; i < 5; i++) {
-    let x = rnd(10, 50);
-    let t = rnd(2, 10);
-    let v = x / t;
-
-    q.push({
-      text: `Completează tabelul și determină viteza.`,
-      table: { x: x, t: t, v: v.toFixed(2) },
-      correct: v.toFixed(2) + " m/s",
-      choices: shuffle([
-        v.toFixed(2) + " m/s",
-        (v * 0.9).toFixed(2) + " m/s",
-        (v * 1.1).toFixed(2) + " m/s",
-        (v + 1).toFixed(2) + " m/s"
-      ])
-    });
-  }
-
-  // 5. Arhimede
-  for (let i = 0; i < 5; i++) {
-    let rho = rnd(800, 1200);
-    let V = rnd(1, 5);
-    let g = 9.8;
-    let Fa = rho * V * g;
-
-    q.push({
-      text: `Un corp este scufundat într-un lichid cu densitatea ${rho} kg/m³ și volumul ${V} m³. Determină forța arhimedică.`,
-      correct: Fa.toFixed(0) + " N",
-      choices: shuffle([
-        Fa.toFixed(0) + " N",
-        (Fa * 0.85).toFixed(0) + " N",
-        (Fa * 1.15).toFixed(0) + " N",
-        (Fa + 500).toFixed(0) + " N"
-      ])
-    });
-  }
-
-  return shuffle(q).slice(0, 30);
-}
-
-// -----------------------------
-// 3. SHUFFLE
+// SHUFFLE răspunsuri
 // -----------------------------
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -141,44 +35,143 @@ function shuffle(array) {
 }
 
 // -----------------------------
-// 4. AFIȘARE ÎNTREBĂRI
+// SETURI DE ÎNTREBĂRI
 // -----------------------------
-const testDiv = document.getElementById("test");
-const questions = generateQuestions();
 
-questions.forEach((q, i) => {
-  let html = `<div class="question"><b>${i+1}. ${q.text}</b><br>`;
+// 1. Presiune hidrostatică
+function generatePresiune() {
+  let h = rnd(1, 10);
+  let rho = rnd(900, 1100);
+  let g = 9.8;
+  let P = rho * g * h;
+
+  return {
+    text: `Calculează presiunea hidrostatică la adâncimea de ${h} m într-un lichid cu densitatea ${rho} kg/m³.`,
+    correct: P.toFixed(0) + " Pa",
+    choices: shuffle([
+      P.toFixed(0) + " Pa",
+      (P * 0.9).toFixed(0) + " Pa",
+      (P * 1.1).toFixed(0) + " Pa",
+      (P + 500).toFixed(0) + " Pa"
+    ])
+  };
+}
+
+// 2. Forța presiunii
+function generateForta() {
+  let P = rnd(10000, 50000);
+  let A = rnd(2, 10);
+  let F = P * A;
+
+  return {
+    text: `Un lichid exercită presiunea de ${P} Pa pe o suprafață de ${A} m². Determină forța.`,
+    correct: F + " N",
+    choices: shuffle([
+      F + " N",
+      (F * 0.8).toFixed(0) + " N",
+      (F * 1.2).toFixed(0) + " N",
+      (F + 1000) + " N"
+    ])
+  };
+}
+
+// 3. Pascal
+function generatePascal() {
+  let F1 = rnd(100, 500);
+  let A1 = rnd(2, 10);
+  let A2 = rnd(20, 50);
+  let F2 = F1 * (A2 / A1);
+
+  return {
+    text: `Într-o presă hidraulică, F₁ = ${F1} N, A₁ = ${A1} cm², A₂ = ${A2} cm². Determină F₂.`,
+    correct: F2.toFixed(0) + " N",
+    choices: shuffle([
+      F2.toFixed(0) + " N",
+      (F2 * 0.85).toFixed(0) + " N",
+      (F2 * 1.15).toFixed(0) + " N",
+      (F2 + 200).toFixed(0) + " N"
+    ])
+  };
+}
+
+// 4. Probleme cu tabel (x și t)
+function generateTabel() {
+  let x = rnd(10, 50);
+  let t = rnd(2, 10);
+  let v = x / t;
+
+  return {
+    text: `Completează tabelul și determină viteza.`,
+    table: { x: x, t: t, v: v.toFixed(2) },
+    correct: v.toFixed(2) + " m/s",
+    choices: shuffle([
+      v.toFixed(2) + " m/s",
+      (v * 0.9).toFixed(2) + " m/s",
+      (v * 1.1).toFixed(2) + " m/s",
+      (v + 1).toFixed(2) + " m/s"
+    ])
+  };
+}
+
+// 5. Arhimede
+function generateArhimede() {
+  let rho = rnd(800, 1200);
+  let V = rnd(1, 5);
+  let g = 9.8;
+  let Fa = rho * V * g;
+
+  return {
+    text: `Un corp este scufundat într-un lichid cu densitatea ${rho} kg/m³ și volumul ${V} m³. Determină forța arhimedică.`,
+    correct: Fa.toFixed(0) + " N",
+    choices: shuffle([
+      Fa.toFixed(0) + " N",
+      (Fa * 0.85).toFixed(0) + " N",
+      (Fa * 1.15).toFixed(0) + " N",
+      (Fa + 500).toFixed(0) + " N"
+    ])
+  };
+}
+
+// -----------------------------
+// LISTA DE SETURI
+// -----------------------------
+const sets = [
+  generatePresiune,
+  generateForta,
+  generatePascal,
+  generateTabel,
+  generateArhimede
+];
+
+// -----------------------------
+// AFIȘARE ÎNTREBARE
+// -----------------------------
+function nextQuestion() {
+  let index = rnd(0, sets.length - 1);
+  let q = sets[index]();
+
+  let html = `<b>${q.text}</b><br><br>`;
 
   if (q.table) {
     html += `
       <table>
         <tr><th>x (m)</th><th>t (s)</th><th>v (m/s)</th></tr>
         <tr><td>${q.table.x}</td><td>${q.table.t}</td><td>${q.table.v}</td></tr>
-      </table>
+      </table><br>
     `;
   }
 
   q.choices.forEach(choice => {
-    html += `<label><input type="radio" name="q${i}" value="${choice}"> ${choice}</label><br>`;
+    html += `<label><input type="radio" name="q" value="${choice}"> ${choice}</label><br>`;
   });
 
-  html += `</div>`;
-  testDiv.innerHTML += html;
-});
-
-// -----------------------------
-// 5. VERIFICARE AUTOMATĂ
-// -----------------------------
-function verify() {
-  let score = 0;
-  questions.forEach((q, i) => {
-    let selected = document.querySelector(`input[name="q${i}"]:checked`);
-    if (selected && selected.value === q.correct) score++;
-  });
-  alert("Ai obținut " + score + " / " + questions.length);
+  document.getElementById("question").innerHTML = html;
 }
 
-document.body.innerHTML += `<button onclick="verify()">Verifică răspunsurile</button>`;
+// -----------------------------
+// PORNEȘTE TESTUL
+// -----------------------------
+nextQuestion();
 
 </script>
 </body>
