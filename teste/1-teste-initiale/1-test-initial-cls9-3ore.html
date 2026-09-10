@@ -455,7 +455,7 @@
 
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQopqYahbD6vbLzK731f-uFAk8WIwRd3sw-EZdMcvG-CTSY5hf37soPZqE4FlLo1uE/exec";
 
-  const QUESTION_COUNT = 30;
+  const QUESTION_COUNT = 20;
   const OFFICIAL_POINTS = 1;
   const TEST_POINTS = 9;
   const SAVE_WAIT_SECONDS = 15;
@@ -525,7 +525,7 @@
       answer: ["30"] },
 
     { type: "input", category: "miscare", subtype: "deplasare", numeric: true, tolerance: 0.5,
-      prompt: "Un mobil are tabelul:<br><table class='data-table'><tr><th>t (s)</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr><tr><th>x (m)</th><td>0</td><td>4</td><td>8</td><td>12</td><td>16</td></tr></table>Calculează deplasarea mobilului în primele 3 s (scrie doar numărul, în metri).",
+      prompt: "Un alt mobil are tabelul:<br><table class='data-table'><tr><th>t (s)</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr><tr><th>x (m)</th><td>0</td><td>4</td><td>8</td><td>12</td><td>16</td></tr></table>Calculează deplasarea mobilului în primele 3 s (scrie doar numărul, în metri).",
       answer: ["12"] },
     { type: "input", category: "miscare", subtype: "viteza_medie", numeric: true, tolerance: 0.1,
       prompt: "Folosind tabelul t: 0,1,2,3,4 s / x: 0,4,8,12,16 m, calculează viteza medie a mobilului în intervalul 0–4 s (scrie doar numărul, în m/s).",
@@ -1120,74 +1120,19 @@
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), PRIOR_ATTEMPT_CHECK_TIMEOUT_MS);
 
-    // 1. Găsim butonul și mesajul de status
-  const btnFinalizeaza = document.getElementById('btn-finalizeaza') || document.querySelector('button');
-  let mesajContainer = document.getElementById('mesaj-status');
-  
-  if (!mesajContainer && btnFinalizeaza) {
-      mesajContainer = document.createElement('div');
-      mesajContainer.id = 'mesaj-status';
-      mesajContainer.style.cssText = 'margin-top: 15px; font-weight: bold; text-align: center; font-size: 1.1em;';
-      btnFinalizeaza.parentNode.appendChild(mesajContainer);
-  }
-
-  // 2. BLOCĂM BUTONUL Imediat (oprește cele 3 trimiteri la click-uri rapide sau re-trimitere)
-  if (btnFinalizeaza) {
-      btnFinalizeaza.disabled = true;
-      btnFinalizeaza.style.opacity = '0.5';
-      btnFinalizeaza.style.cursor = 'not-allowed';
-  }
-
-  // 3. Afișăm cronometrul de așteptare pentru elev
-  let secunde = 4;
-  if (mesajContainer) {
-      mesajContainer.style.color = '#d97706'; // Portocaliu
-      mesajContainer.innerText = `Se trimit rezultatele... Vă rugăm așteptați ${secunde} secunde.`;
-  }
-
-  const timer = setInterval(() => {
-      secunde--;
-      if (secunde > 0 && mesajContainer) {
-          mesajContainer.innerText = `Se trimit rezultatele... Vă rugăm așteptați ${secunde} secunde.`;
-      } else {
-          clearInterval(timer);
-      }
-  }, 1000);
-
-  // 4. Trimitere securizată prin POST (fără GET în URL)
-  try {
-      const response = await fetch(url, { 
-          method: "POST", 
-          mode: "no-cors",
-          signal: controller.signal 
-      });
+    try {
+      const response = await fetch(url, { method: "GET", signal: controller.signal });
       clearTimeout(timeoutId);
 
-      // Confirmare de succes
-      setTimeout(() => {
-          clearInterval(timer);
-          if (mesajContainer) {
-              mesajContainer.style.color = '#16a34a'; // Verde
-              mesajContainer.innerText = '✅ Rezultatele testului au fost trimise cu succes! Mulțumim.';
-          }
-          if (btnFinalizeaza) btnFinalizeaza.style.display = 'none'; // Ascunde butonul
-      }, 1000);
+      if (!response.ok) return { found: false, checked: false };
 
-  } catch (error) {
+      const data = await response.json();
+      return { found: Boolean(data.found), timestamp: data.timestamp, nota: data.nota, checked: true };
+    } catch (error) {
       clearTimeout(timeoutId);
-      clearInterval(timer);
-      console.error("Eroare la trimitere:", error);
-      
-      if (mesajContainer) {
-          mesajContainer.style.color = '#dc2626'; // Roșu
-          mesajContainer.innerText = '❌ A apărut o eroare la trimitere. Vă rugăm să reîncercați.';
-      }
-      
-      if (btnFinalizeaza) {
-          btnFinalizeaza.disabled = false;
-          btnFinalizeaza.style.opacity = '1';
-          btnFinalizeaza.style.cursor = 'pointer';
-      }
+      console.error(error);
+      return { found: false, checked: false };
+    }
   }
 
   function setStartCheckMessage(text, isError) {
