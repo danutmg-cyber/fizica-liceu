@@ -2,177 +2,204 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Test – Statica fluidelor</title>
+<title>Test Fizică – Anti-copiere</title>
+
 <style>
 body { font-family: Arial; margin: 20px; }
+input, select { padding: 8px; margin: 5px 0; width: 250px; }
 button { padding: 10px 20px; margin-top: 20px; }
+#questionBox { margin-top: 30px; }
 </style>
-</head>
 
+</head>
 <body>
 
-<h2>Test – Statica fluidelor</h2>
-<div id="question"></div>
-<button onclick="nextQuestion()">Următoarea întrebare</button>
+<h2>Test Fizică – Anti-copiere</h2>
+
+<!-- FORMULAR ELEV -->
+<div id="studentForm">
+  <label>Nume și prenume:</label><br>
+  <input id="nume" type="text"><br>
+
+  <label>Clasa:</label><br>
+  <select id="clasa">
+    <option value="9A">9A</option>
+    <option value="9B">9B</option>
+    <option value="9C">9C</option>
+    <option value="9D">9D</option>
+  </select><br>
+
+  <button onclick="startTest()">Începe testul</button>
+</div>
+
+<!-- ÎNTREBARE -->
+<div id="questionBox" style="display:none;"></div>
+
+<!-- BUTON URMĂTOAREA -->
+<button id="nextBtn" style="display:none;" onclick="nextQuestion()">Următoarea întrebare</button>
+
+<!-- REZULTATE -->
+<div id="results" style="display:none;"></div>
 
 <script>
-// -----------------------------
-// Funcție random
-// -----------------------------
-function rnd(a, b) {
-  return Math.floor(Math.random() * (b - a + 1)) + a;
-}
+// --------------------------------------------------
+// ANTI-COPIERE
+// --------------------------------------------------
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('copy', event => event.preventDefault());
+document.addEventListener('cut', event => event.preventDefault());
+document.addEventListener('paste', event => event.preventDefault());
+document.addEventListener('selectstart', event => event.preventDefault());
 
-// -----------------------------
-// SHUFFLE răspunsuri
-// -----------------------------
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+document.addEventListener('keydown', function(e){
+  if (e.key === "PrintScreen" || e.key === "F12" || e.ctrlKey || e.metaKey) {
+    e.preventDefault();
   }
-  return array;
-}
+});
 
-// -----------------------------
+// --------------------------------------------------
+// RANDOM
+// --------------------------------------------------
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+// --------------------------------------------------
 // SETURI DE ÎNTREBĂRI
-// -----------------------------
-
-// 1. Presiune hidrostatică
-function generatePresiune() {
-  let h = rnd(1, 10);
-  let rho = rnd(900, 1100);
-  let g = 9.8;
-  let P = rho * g * h;
-
+// --------------------------------------------------
+function qPresiune(){
+  let h=rnd(1,10), rho=rnd(900,1100), g=9.8, P=rho*g*h;
   return {
-    text: `Calculează presiunea hidrostatică la adâncimea de ${h} m într-un lichid cu densitatea ${rho} kg/m³.`,
-    correct: P.toFixed(0) + " Pa",
-    choices: shuffle([
-      P.toFixed(0) + " Pa",
-      (P * 0.9).toFixed(0) + " Pa",
-      (P * 1.1).toFixed(0) + " Pa",
-      (P + 500).toFixed(0) + " Pa"
+    text:`Calculează presiunea hidrostatică la adâncimea de ${h} m într-un lichid cu densitatea ${rho} kg/m³.`,
+    correct:P.toFixed(0)+" Pa",
+    choices:shuffle([
+      P.toFixed(0)+" Pa",
+      (P*0.9).toFixed(0)+" Pa",
+      (P*1.1).toFixed(0)+" Pa",
+      (P+500).toFixed(0)+" Pa"
     ])
   };
 }
 
-// 2. Forța presiunii
-function generateForta() {
-  let P = rnd(10000, 50000);
-  let A = rnd(2, 10);
-  let F = P * A;
-
+function qForta(){
+  let P=rnd(10000,50000), A=rnd(2,10), F=P*A;
   return {
-    text: `Un lichid exercită presiunea de ${P} Pa pe o suprafață de ${A} m². Determină forța.`,
-    correct: F + " N",
-    choices: shuffle([
-      F + " N",
-      (F * 0.8).toFixed(0) + " N",
-      (F * 1.2).toFixed(0) + " N",
-      (F + 1000) + " N"
+    text:`Un lichid exercită presiunea de ${P} Pa pe o suprafață de ${A} m². Determină forța.`,
+    correct:F+" N",
+    choices:shuffle([
+      F+" N",
+      (F*0.8).toFixed(0)+" N",
+      (F*1.2).toFixed(0)+" N",
+      (F+1000)+" N"
     ])
   };
 }
 
-// 3. Pascal
-function generatePascal() {
-  let F1 = rnd(100, 500);
-  let A1 = rnd(2, 10);
-  let A2 = rnd(20, 50);
-  let F2 = F1 * (A2 / A1);
-
+function qTabel(){
+  let x=rnd(10,50), t=rnd(2,10), v=x/t;
   return {
-    text: `Într-o presă hidraulică, F₁ = ${F1} N, A₁ = ${A1} cm², A₂ = ${A2} cm². Determină F₂.`,
-    correct: F2.toFixed(0) + " N",
-    choices: shuffle([
-      F2.toFixed(0) + " N",
-      (F2 * 0.85).toFixed(0) + " N",
-      (F2 * 1.15).toFixed(0) + " N",
-      (F2 + 200).toFixed(0) + " N"
+    text:`Completează tabelul și determină viteza.`,
+    table:{x,t,v:v.toFixed(2)},
+    correct:v.toFixed(2)+" m/s",
+    choices:shuffle([
+      v.toFixed(2)+" m/s",
+      (v*0.9).toFixed(2)+" m/s",
+      (v*1.1).toFixed(2)+" m/s",
+      (v+1).toFixed(2)+" m/s"
     ])
   };
 }
 
-// 4. Probleme cu tabel (x și t)
-function generateTabel() {
-  let x = rnd(10, 50);
-  let t = rnd(2, 10);
-  let v = x / t;
+const sets=[qPresiune,qForta,qTabel];
 
-  return {
-    text: `Completează tabelul și determină viteza.`,
-    table: { x: x, t: t, v: v.toFixed(2) },
-    correct: v.toFixed(2) + " m/s",
-    choices: shuffle([
-      v.toFixed(2) + " m/s",
-      (v * 0.9).toFixed(2) + " m/s",
-      (v * 1.1).toFixed(2) + " m/s",
-      (v + 1).toFixed(2) + " m/s"
-    ])
-  };
+// --------------------------------------------------
+// LOGICĂ TEST
+// --------------------------------------------------
+let score=0, total=10, current=0;
+
+function startTest(){
+  document.getElementById("studentForm").style.display="none";
+  document.getElementById("questionBox").style.display="block";
+  document.getElementById("nextBtn").style.display="inline-block";
+  nextQuestion();
 }
 
-// 5. Arhimede
-function generateArhimede() {
-  let rho = rnd(800, 1200);
-  let V = rnd(1, 5);
-  let g = 9.8;
-  let Fa = rho * V * g;
+function nextQuestion(){
+  if(current>=total){ finishTest(); return; }
 
-  return {
-    text: `Un corp este scufundat într-un lichid cu densitatea ${rho} kg/m³ și volumul ${V} m³. Determină forța arhimedică.`,
-    correct: Fa.toFixed(0) + " N",
-    choices: shuffle([
-      Fa.toFixed(0) + " N",
-      (Fa * 0.85).toFixed(0) + " N",
-      (Fa * 1.15).toFixed(0) + " N",
-      (Fa + 500).toFixed(0) + " N"
-    ])
-  };
-}
+  let q=sets[rnd(0,sets.length-1)]();
+  current++;
 
-// -----------------------------
-// LISTA DE SETURI
-// -----------------------------
-const sets = [
-  generatePresiune,
-  generateForta,
-  generatePascal,
-  generateTabel,
-  generateArhimede
-];
+  let html=`<b>${current}. ${q.text}</b><br><br>`;
 
-// -----------------------------
-// AFIȘARE ÎNTREBARE
-// -----------------------------
-function nextQuestion() {
-  let index = rnd(0, sets.length - 1);
-  let q = sets[index]();
-
-  let html = `<b>${q.text}</b><br><br>`;
-
-  if (q.table) {
-    html += `
-      <table>
+  if(q.table){
+    html+=`
+      <table border="1" cellpadding="5">
         <tr><th>x (m)</th><th>t (s)</th><th>v (m/s)</th></tr>
         <tr><td>${q.table.x}</td><td>${q.table.t}</td><td>${q.table.v}</td></tr>
       </table><br>
     `;
   }
 
-  q.choices.forEach(choice => {
-    html += `<label><input type="radio" name="q" value="${choice}"> ${choice}</label><br>`;
+  q.choices.forEach(c=>{
+    html+=`<label><input type="radio" name="q" value="${c}"> ${c}</label><br>`;
   });
 
-  document.getElementById("question").innerHTML = html;
+  html+=`<button onclick="checkAnswer('${q.correct}')">Verifică</button>`;
+
+  document.getElementById("questionBox").innerHTML=html;
 }
 
-// -----------------------------
-// PORNEȘTE TESTUL
-// -----------------------------
-nextQuestion();
+function checkAnswer(correct){
+  let selected=document.querySelector('input[name="q"]:checked');
+  if(selected && selected.value===correct) score++;
+  nextQuestion();
+}
+
+function finishTest(){
+  document.getElementById("questionBox").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  let nume=document.getElementById("nume").value;
+  let clasa=document.getElementById("clasa").value;
+
+  let html=`<h3>Rezultate finale</h3>`;
+  html+=`<p>Nume: <b>${nume}</b></p>`;
+  html+=`<p>Clasa: <b>${clasa}</b></p>`;
+  html+=`<p>Scor: <b>${score}/${total}</b></p>`;
+  html+=`<button onclick="downloadResult()">Descarcă rezultatul</button>`;
+
+  document.getElementById("results").innerHTML=html;
+  document.getElementById("results").style.display="block";
+
+  sendToSheets(nume,clasa,score,total);
+}
+
+// --------------------------------------------------
+// DESCĂRCARE REZULTAT
+// --------------------------------------------------
+function downloadResult(){
+  let text=document.getElementById("results").innerText;
+  let blob=new Blob([text],{type:"text/plain"});
+  let url=URL.createObjectURL(blob);
+  let a=document.createElement("a");
+  a.href=url;
+  a.download="rezultat.txt";
+  a.click();
+}
+
+// --------------------------------------------------
+// TRIMITERE LA GOOGLE SHEETS
+// --------------------------------------------------
+function sendToSheets(nume,clasa,score,total){
+  fetch("YOUR_WEB_APP_URL",{
+    method:"POST",
+    mode:"no-cors",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({nume,clasa,score,total})
+  });
+}
 
 </script>
+
 </body>
 </html>
