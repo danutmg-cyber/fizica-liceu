@@ -77,38 +77,21 @@
   }
 
   table.data-table {
-  border-collapse: collapse;
-  margin: 14px 0;
-  font-size: 0.98rem;
-  width: auto;
-  max-width: 100%;
-  background: white;
-}
-
-table.data-table th,
-table.data-table td {
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  text-align: center;
-  min-width: 52px;
-}
-
-table.data-table th {
-  background: #edf6ff;
-  font-weight: bold;
-}
-
-@media (max-width: 700px) {
-  table.data-table {
-    font-size: 0.9rem;
+    border-collapse: collapse;
+    margin: 10px 0 4px;
+    font-size: 0.95rem;
   }
 
   table.data-table th,
   table.data-table td {
-    padding: 7px 8px;
-    min-width: 42px;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    text-align: center;
   }
-}
+
+  table.data-table th {
+    background: #edf6ff;
+  }
 
   button {
     border: none;
@@ -472,7 +455,7 @@ table.data-table th {
 
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQopqYahbD6vbLzK731f-uFAk8WIwRd3sw-EZdMcvG-CTSY5hf37soPZqE4FlLo1uE/exec";
 
-  const QUESTION_COUNT = 30;
+  const QUESTION_COUNT = 20;
   const OFFICIAL_POINTS = 1;
   const TEST_POINTS = 9;
   const SAVE_WAIT_SECONDS = 15;
@@ -937,117 +920,54 @@ table.data-table th {
   /* Selectează întrebările pentru un test nou, respectând distribuția pe
      categorii și garantând că niciun subtype nu apare de două ori. */
   function selectBalancedQuestions() {
-  /*
-    Generează câte o variantă aleatorie pentru fiecare elev.
+    let selected = [];
+    let usedSubtypes = new Set();
 
-    Principii:
-    - întrebările sunt extrase aleatoriu;
-    - se încearcă acoperirea tuturor categoriilor;
-    - se evită repetarea aceluiași subtype cât timp există
-      alte tipuri de itemi disponibile;
-    - ordinea finală este aleatorie;
-    - variantele de răspuns sunt amestecate separat
-      pentru fiecare întrebare.
-  */
-
-  const categories = shuffle([
-    ...new Set(questionBank.map(q => q.category))
-  ]);
-
-  const pools = {};
-
-  categories.forEach(category => {
-    pools[category] = shuffle(
-      questionBank.filter(q => q.category === category)
-    );
-  });
-
-  const selected = [];
-  const usedQuestions = new Set();
-  const usedSubtypes = new Set();
-
-  /*
-    Prima trecere:
-    alegem succesiv din categorii diferite și evităm
-    repetarea aceluiași subtype.
-  */
-  let canContinue = true;
-
-  while (selected.length < QUESTION_COUNT && canContinue) {
-    canContinue = false;
-
-    const categoryOrder = shuffle([...categories]);
-
-    for (const category of categoryOrder) {
-      if (selected.length >= QUESTION_COUNT) break;
-
-      const pool = pools[category];
-
-      const candidateIndex = pool.findIndex((q, index) => {
-        const questionKey =
-          `${category}|${q.subtype || ""}|${q.prompt}|${index}`;
-
-        const subtypeKey =
-          `${category}|${q.subtype || q.prompt}`;
-
-        return (
-          !usedQuestions.has(questionKey) &&
-          !usedSubtypes.has(subtypeKey)
-        );
-      });
-
-      if (candidateIndex !== -1) {
-        const q = pool.splice(candidateIndex, 1)[0];
-
-        selected.push(q);
-
-        usedSubtypes.add(
-          `${q.category}|${q.subtype || q.prompt}`
-        );
-
-        canContinue = true;
-      }
+    function subtypeKey(q) {
+      return q.subtype || q.prompt;
     }
-  }
 
-  /*
-    Dacă nu s-au obținut încă 30 de itemi,
-    completăm aleatoriu cu itemii rămași.
-  */
-  if (selected.length < QUESTION_COUNT) {
-    const remaining = shuffle(
-      questionBank.filter(q => !selected.includes(q))
-    );
+    QUESTION_DISTRIBUTION.forEach(rule => {
+      const pool = shuffle(questionBank.filter(q => q.category === rule.category));
+      let count = 0;
 
-    selected.push(
-      ...remaining.slice(
-        0,
-        QUESTION_COUNT - selected.length
-      )
-    );
-  }
+      // Pas 1: preferă întrebări cu un subtype încă nefolosit.
+      for (const q of pool) {
+        if (count >= rule.count) break;
+        const key = subtypeKey(q);
+        if (usedSubtypes.has(key)) continue;
+        selected.push(q);
+        usedSubtypes.add(key);
+        count++;
+      }
 
-  /*
-    Amestecăm întreaga variantă și, separat,
-    opțiunile fiecărui item grilă.
-  */
-  return shuffle(selected)
-    .slice(0, QUESTION_COUNT)
-    .map((q, index) => ({
+      // Pas 2 (rezervă): dacă banca nu are destule subtype-uri distincte
+      // pentru numărul cerut, completează cu orice întrebare neselectată
+      // încă din aceeași categorie, ca testul să nu rămână incomplet.
+      if (count < rule.count) {
+        for (const q of pool) {
+          if (count >= rule.count) break;
+          if (selected.includes(q)) continue;
+          selected.push(q);
+          count++;
+        }
+      }
+    });
+
+    if (selected.length < QUESTION_COUNT) {
+      const remaining = shuffle(questionBank.filter(q => !selected.includes(q)));
+      selected.push(...remaining.slice(0, QUESTION_COUNT - selected.length));
+    }
+
+    return shuffle(selected).slice(0, QUESTION_COUNT).map((q, index) => ({
       ...q,
       id: `q${index + 1}`,
-
-      // IMPORTANT:
-      // fiecare elev primește opțiunile în altă ordine
-      options: q.options
-        ? shuffle([...q.options])
-        : undefined,
-
+      options: q.options ? shuffle(q.options) : undefined,
       studentAnswer: "",
       checked: false,
       correct: false
     }));
-}
+  }
 
   function resetIntegrityLog() {
     integrityLog = {
@@ -1230,303 +1150,101 @@ table.data-table th {
     el.innerText = text;
   }
 
-  /* =====================================================
-   AFIȘAREA TABELELOR t - x
-===================================================== */
+  async function startTest() {
+    const name = document.getElementById("studentName").value.trim();
+    const cls = document.getElementById("studentClass").value.trim();
 
-function makeMotionTable(tValues, xValues) {
-  const tCells = tValues
-    .map(value => `<td>${escapeHtml(value)}</td>`)
-    .join("");
-
-  const xCells = xValues
-    .map(value => `<td>${escapeHtml(value)}</td>`)
-    .join("");
-
-  return `
-    <div style="overflow-x:auto; margin:12px 0;">
-      <table class="data-table">
-        <tr>
-          <th>t (s)</th>
-          ${tCells}
-        </tr>
-        <tr>
-          <th>x (m)</th>
-          ${xCells}
-        </tr>
-      </table>
-    </div>
-  `;
-}
-
-
-/*
-  Transformă automat texte de forma:
-
-  t: 0,2,4,6,8 s / x: 0,5,10,15,20 m
-
-  în tabel cu t și x pe două rânduri.
-
-  Dacă promptul conține deja un tabel HTML,
-  acesta este păstrat.
-*/
-function formatQuestionPrompt(prompt) {
-  let text = String(prompt);
-
-  const motionPattern =
-    /t:\s*([0-9.,\s-]+)\s*s\s*\/\s*x:\s*([0-9.,\s-]+)\s*m/gi;
-
-  text = text.replace(
-    motionPattern,
-    function(match, tText, xText) {
-      const tValues = tText
-        .split(",")
-        .map(v => v.trim())
-        .filter(Boolean);
-
-      const xValues = xText
-        .split(",")
-        .map(v => v.trim())
-        .filter(Boolean);
-
-      return makeMotionTable(tValues, xValues);
+    if (!name || !cls) {
+      alert("Completează numele, prenumele și clasa înainte de a începe testul.");
+      return;
     }
-  );
 
-  /*
-    NU folosim escapeHtml aici pentru întregul prompt,
-    deoarece unele întrebări conțin intenționat
-    <table>, <tr>, <td>, <br> etc.
-  */
-  return text;
-}
+    const startBtn = document.getElementById("startTestBtn");
+    startBtn.disabled = true;
+    startBtn.innerText = "Se verifică...";
+    setStartCheckMessage("Se verifică dacă ai mai susținut acest test...", false);
 
+    const priorAttempt = await checkPriorAttempt(name, cls);
 
-/* =====================================================
-   PORNIREA TESTULUI
-===================================================== */
+    if (priorAttempt.found) {
+      startBtn.disabled = false;
+      startBtn.innerText = "Începe testul";
+      const notaText = priorAttempt.nota !== undefined ? ` (nota ${priorAttempt.nota})` : "";
+      setStartCheckMessage(
+        `Ai susținut deja acest test${notaText}. Testul se dă o singură dată. Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.`,
+        true
+      );
+      return;
+    }
 
-async function startTest() {
-  const name = document.getElementById("studentName").value.trim();
-  const cls = document.getElementById("studentClass").value.trim();
+    if (!priorAttempt.checked) {
+      setStartCheckMessage(
+        "Nu s-a putut verifica automat dacă ai mai susținut testul (conexiune). Continuăm testul, dar reține că orice reluare fără acordul profesorului este considerată fraudă.",
+        true
+      );
+    } else {
+      setStartCheckMessage("", false);
+    }
 
-  if (!name || !cls) {
-    alert("Completează numele, prenumele și clasa înainte de a începe testul.");
-    return;
+    submitted = false;
+    variantId = generateVariantId();
+    currentQuestions = selectBalancedQuestions();
+    currentQuestionIndex = 0;
+    resetIntegrityLog();
+
+    document.getElementById("startCard").classList.add("hidden");
+    document.getElementById("testArea").classList.remove("hidden");
+    document.getElementById("studentInfo").innerText = `${name} – ${cls}`;
+    document.getElementById("variantIdLabel").innerText = variantId;
+    document.getElementById("totalCount").innerText = currentQuestions.length;
+
+    renderCurrentQuestion();
+    updateProgress();
+    scrollToTop();
   }
 
-  const startBtn = document.getElementById("startTestBtn");
+  function renderCurrentQuestion() {
+    const container = document.getElementById("questionsContainer");
+    const q = currentQuestions[currentQuestionIndex];
+    container.innerHTML = "";
 
-  startBtn.disabled = true;
-  startBtn.innerText = "Se verifică...";
+    const card = document.createElement("div");
+    card.className = "question-card";
+    card.id = `card-${q.id}`;
 
-  setStartCheckMessage(
-    "Se verifică dacă ai mai susținut acest test...",
-    false
-  );
+    let answerHtml = "";
 
-  const priorAttempt = await checkPriorAttempt(name, cls);
+    if (q.type === "choice") {
+      answerHtml = `<div class="answer-options">${q.options.map(opt => `
+        <label>
+          <input type="radio" name="${q.id}" value="${escapeHtml(opt)}" ${q.studentAnswer === opt ? "checked" : ""} ${q.checked ? "disabled" : ""} />
+          ${escapeHtml(opt)}
+        </label>
+      `).join("")}</div>`;
+    } else {
+      const placeholder = q.numeric ? "Scrie doar numărul (ex: 2.5 sau 2,5)" : "Scrie răspunsul aici";
+      answerHtml = `<input id="${q.id}" type="text" inputmode="${q.numeric ? "decimal" : "text"}" placeholder="${placeholder}" value="${escapeHtml(q.studentAnswer)}" ${q.checked ? "disabled" : ""} />`;
+    }
 
-  if (priorAttempt.found) {
-    startBtn.disabled = false;
-    startBtn.innerText = "Începe testul";
+    let feedbackHtml = "";
+    if (q.checked) {
+      feedbackHtml = q.correct
+        ? `<div class="question-status status-correct">Corect.</div>`
+        : `<div class="question-status status-wrong">Greșit.</div>`;
+    }
 
-    const notaText =
-      priorAttempt.nota !== undefined
-        ? ` (nota ${priorAttempt.nota})`
-        : "";
-
-    setStartCheckMessage(
-      `Ai susținut deja acest test${notaText}. Testul se dă o singură dată. Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.`,
-      true
-    );
-
-    return;
-  }
-
-  if (!priorAttempt.checked) {
-    setStartCheckMessage(
-      "Nu s-a putut verifica automat dacă ai mai susținut testul (conexiune). Continuăm testul, dar reține că orice reluare fără acordul profesorului este considerată fraudă.",
-      true
-    );
-  } else {
-    setStartCheckMessage("", false);
-  }
-
-  submitted = false;
-
-  variantId = generateVariantId();
-
-  currentQuestions = selectBalancedQuestions();
-
-  currentQuestionIndex = 0;
-
-  resetIntegrityLog();
-
-  document
-    .getElementById("startCard")
-    .classList.add("hidden");
-
-  document
-    .getElementById("testArea")
-    .classList.remove("hidden");
-
-  document.getElementById("studentInfo").innerText =
-    `${name} – ${cls}`;
-
-  document.getElementById("variantIdLabel").innerText =
-    variantId;
-
-  document.getElementById("totalCount").innerText =
-    currentQuestions.length;
-
-  renderCurrentQuestion();
-
-  updateProgress();
-
-  scrollToTop();
-}
-
-
-/* =====================================================
-   AFIȘAREA ÎNTREBĂRII CURENTE
-===================================================== */
-
-function renderCurrentQuestion() {
-  const container =
-    document.getElementById("questionsContainer");
-
-  const q =
-    currentQuestions[currentQuestionIndex];
-
-  /*
-    Protecție suplimentară:
-    dacă nu există întrebare, afișăm eroarea
-    în loc să rămână pagina goală.
-  */
-  if (!q) {
-    container.innerHTML = `
-      <div class="question-card">
-        <div class="warning">
-          Nu s-a putut genera întrebarea.
-          Reîncarcă pagina și încearcă din nou.
-        </div>
-      </div>
+    card.innerHTML = `
+      <div class="question-title">${currentQuestionIndex + 1}. ${q.prompt}</div>
+      ${answerHtml}
+      <div id="feedback-${q.id}" class="feedback">${feedbackHtml}</div>
     `;
 
-    console.error(
-      "Nu există întrebarea curentă.",
-      currentQuestionIndex,
-      currentQuestions
-    );
+    container.appendChild(card);
 
-    return;
+    document.getElementById("currentQuestionLabel").innerText = currentQuestionIndex + 1;
+    updateButtons();
+    updateProgress();
   }
-
-  container.innerHTML = "";
-
-  const card =
-    document.createElement("div");
-
-  card.className = "question-card";
-
-  card.id = `card-${q.id}`;
-
-  let answerHtml = "";
-
-  /*
-    ÎNTREBARE CU ALEGERE MULTIPLĂ
-  */
-  if (q.type === "choice") {
-    answerHtml = `
-      <div class="answer-options">
-        ${q.options.map((opt, optionIndex) => `
-          <label>
-            <input
-              type="radio"
-              name="${q.id}"
-              value="${escapeHtml(opt)}"
-              ${q.studentAnswer === opt ? "checked" : ""}
-              ${q.checked ? "disabled" : ""}
-            />
-
-            <b>${String.fromCharCode(97 + optionIndex)})</b>
-            ${escapeHtml(opt)}
-          </label>
-        `).join("")}
-      </div>
-    `;
-  }
-
-  /*
-    ÎNTREBARE CU RĂSPUNS INTRODUS DE ELEV
-  */
-  else {
-    const placeholder = q.numeric
-      ? "Scrie doar numărul (ex: 2.5 sau 2,5)"
-      : "Scrie răspunsul aici";
-
-    answerHtml = `
-      <input
-        id="${q.id}"
-        type="text"
-        inputmode="${q.numeric ? "decimal" : "text"}"
-        placeholder="${placeholder}"
-        value="${escapeHtml(q.studentAnswer || "")}"
-        ${q.checked ? "disabled" : ""}
-      />
-    `;
-  }
-
-  /*
-    FEEDBACK DUPĂ VERIFICAREA RĂSPUNSULUI
-  */
-  let feedbackHtml = "";
-
-  if (q.checked) {
-    feedbackHtml = q.correct
-      ? `
-        <div class="question-status status-correct">
-          Corect.
-        </div>
-      `
-      : `
-        <div class="question-status status-wrong">
-          Greșit.
-        </div>
-      `;
-  }
-
-  /*
-    CONSTRUIREA CARDULUI
-  */
-  card.innerHTML = `
-    <div class="question-title">
-      ${currentQuestionIndex + 1}.
-      ${formatQuestionPrompt(q.prompt)}
-    </div>
-
-    ${answerHtml}
-
-    <div
-      id="feedback-${q.id}"
-      class="feedback"
-    >
-      ${feedbackHtml}
-    </div>
-  `;
-
-  container.appendChild(card);
-
-  document.getElementById(
-    "currentQuestionLabel"
-  ).innerText =
-    currentQuestionIndex + 1;
-
-  updateButtons();
-
-  updateProgress();
-}
 
   function getCurrentAnswer() {
     const q = currentQuestions[currentQuestionIndex];
@@ -1622,7 +1340,7 @@ function renderCurrentQuestion() {
     const correct = currentQuestions.filter(q => q.correct).length;
     const answerRows = currentQuestions.map((q, index) => ({
       nr: index + 1,
-      prompt: q.prompt,
+      prompt: q.prompt.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
       category: q.category,
       studentAnswer: q.studentAnswer,
       correct: q.correct
@@ -1708,7 +1426,7 @@ function renderCurrentQuestion() {
       return `
         <tr>
           <td>${item.nr}</td>
-          <td>${formatQuestionPrompt(item.prompt)}</td>
+          <td>${escapeHtml(item.prompt)}</td>
           <td>${escapeHtml(item.studentAnswer)}</td>
           <td class="${resultClass}">${resultText}</td>
         </tr>
@@ -1782,7 +1500,7 @@ function renderCurrentQuestion() {
       return `
         <tr>
           <td style="border:1px solid #d8e1ec; padding:7px; text-align:center;">${item.nr}</td>
-          <td style="border:1px solid #d8e1ec; padding:7px;">${formatQuestionPrompt(item.prompt)}</td>
+          <td style="border:1px solid #d8e1ec; padding:7px;">${escapeHtml(item.prompt)}</td>
           <td style="border:1px solid #d8e1ec; padding:7px; font-weight:bold; color:${resultColor}; text-align:center;">${resultText}</td>
         </tr>
       `;
