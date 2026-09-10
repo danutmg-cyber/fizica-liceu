@@ -77,21 +77,38 @@
   }
 
   table.data-table {
-    border-collapse: collapse;
-    margin: 10px 0 4px;
-    font-size: 0.95rem;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.98rem;
+  width: auto;
+  max-width: 100%;
+  background: white;
+}
+
+table.data-table th,
+table.data-table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: center;
+  min-width: 52px;
+}
+
+table.data-table th {
+  background: #edf6ff;
+  font-weight: bold;
+}
+
+@media (max-width: 700px) {
+  table.data-table {
+    font-size: 0.9rem;
   }
 
   table.data-table th,
   table.data-table td {
-    border: 1px solid var(--border);
-    padding: 6px 12px;
-    text-align: center;
+    padding: 7px 8px;
+    min-width: 42px;
   }
-
-  table.data-table th {
-    background: #edf6ff;
-  }
+}
 
   button {
     border: none;
@@ -455,7 +472,7 @@
 
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQopqYahbD6vbLzK731f-uFAk8WIwRd3sw-EZdMcvG-CTSY5hf37soPZqE4FlLo1uE/exec";
 
-  const QUESTION_COUNT = 20;
+  const QUESTION_COUNT = 30;
   const OFFICIAL_POINTS = 1;
   const TEST_POINTS = 9;
   const SAVE_WAIT_SECONDS = 15;
@@ -920,54 +937,117 @@
   /* Selectează întrebările pentru un test nou, respectând distribuția pe
      categorii și garantând că niciun subtype nu apare de două ori. */
   function selectBalancedQuestions() {
-    let selected = [];
-    let usedSubtypes = new Set();
+  /*
+    Generează câte o variantă aleatorie pentru fiecare elev.
 
-    function subtypeKey(q) {
-      return q.subtype || q.prompt;
-    }
+    Principii:
+    - întrebările sunt extrase aleatoriu;
+    - se încearcă acoperirea tuturor categoriilor;
+    - se evită repetarea aceluiași subtype cât timp există
+      alte tipuri de itemi disponibile;
+    - ordinea finală este aleatorie;
+    - variantele de răspuns sunt amestecate separat
+      pentru fiecare întrebare.
+  */
 
-    QUESTION_DISTRIBUTION.forEach(rule => {
-      const pool = shuffle(questionBank.filter(q => q.category === rule.category));
-      let count = 0;
+  const categories = shuffle([
+    ...new Set(questionBank.map(q => q.category))
+  ]);
 
-      // Pas 1: preferă întrebări cu un subtype încă nefolosit.
-      for (const q of pool) {
-        if (count >= rule.count) break;
-        const key = subtypeKey(q);
-        if (usedSubtypes.has(key)) continue;
+  const pools = {};
+
+  categories.forEach(category => {
+    pools[category] = shuffle(
+      questionBank.filter(q => q.category === category)
+    );
+  });
+
+  const selected = [];
+  const usedQuestions = new Set();
+  const usedSubtypes = new Set();
+
+  /*
+    Prima trecere:
+    alegem succesiv din categorii diferite și evităm
+    repetarea aceluiași subtype.
+  */
+  let canContinue = true;
+
+  while (selected.length < QUESTION_COUNT && canContinue) {
+    canContinue = false;
+
+    const categoryOrder = shuffle([...categories]);
+
+    for (const category of categoryOrder) {
+      if (selected.length >= QUESTION_COUNT) break;
+
+      const pool = pools[category];
+
+      const candidateIndex = pool.findIndex((q, index) => {
+        const questionKey =
+          `${category}|${q.subtype || ""}|${q.prompt}|${index}`;
+
+        const subtypeKey =
+          `${category}|${q.subtype || q.prompt}`;
+
+        return (
+          !usedQuestions.has(questionKey) &&
+          !usedSubtypes.has(subtypeKey)
+        );
+      });
+
+      if (candidateIndex !== -1) {
+        const q = pool.splice(candidateIndex, 1)[0];
+
         selected.push(q);
-        usedSubtypes.add(key);
-        count++;
-      }
 
-      // Pas 2 (rezervă): dacă banca nu are destule subtype-uri distincte
-      // pentru numărul cerut, completează cu orice întrebare neselectată
-      // încă din aceeași categorie, ca testul să nu rămână incomplet.
-      if (count < rule.count) {
-        for (const q of pool) {
-          if (count >= rule.count) break;
-          if (selected.includes(q)) continue;
-          selected.push(q);
-          count++;
-        }
-      }
-    });
+        usedSubtypes.add(
+          `${q.category}|${q.subtype || q.prompt}`
+        );
 
-    if (selected.length < QUESTION_COUNT) {
-      const remaining = shuffle(questionBank.filter(q => !selected.includes(q)));
-      selected.push(...remaining.slice(0, QUESTION_COUNT - selected.length));
+        canContinue = true;
+      }
     }
+  }
 
-    return shuffle(selected).slice(0, QUESTION_COUNT).map((q, index) => ({
+  /*
+    Dacă nu s-au obținut încă 30 de itemi,
+    completăm aleatoriu cu itemii rămași.
+  */
+  if (selected.length < QUESTION_COUNT) {
+    const remaining = shuffle(
+      questionBank.filter(q => !selected.includes(q))
+    );
+
+    selected.push(
+      ...remaining.slice(
+        0,
+        QUESTION_COUNT - selected.length
+      )
+    );
+  }
+
+  /*
+    Amestecăm întreaga variantă și, separat,
+    opțiunile fiecărui item grilă.
+  */
+  return shuffle(selected)
+    .slice(0, QUESTION_COUNT)
+    .map((q, index) => ({
       ...q,
       id: `q${index + 1}`,
-      options: q.options ? shuffle(q.options) : undefined,
+
+      // IMPORTANT:
+      // fiecare elev primește opțiunile în altă ordine
+      options: q.options
+        ? shuffle([...q.options])
+        : undefined,
+
       studentAnswer: "",
       checked: false,
       correct: false
     }));
-  }
+}
 
   function resetIntegrityLog() {
     integrityLog = {
@@ -1198,6 +1278,69 @@
     document.getElementById("variantIdLabel").innerText = variantId;
     document.getElementById("totalCount").innerText = currentQuestions.length;
 
+function makeMotionTable(tValues, xValues) {
+  const tCells = tValues
+    .map(value => `<td>${escapeHtml(value)}</td>`)
+    .join("");
+
+  const xCells = xValues
+    .map(value => `<td>${escapeHtml(value)}</td>`)
+    .join("");
+
+  return `
+    <table class="data-table">
+      <tr>
+        <th>t (s)</th>
+        ${tCells}
+      </tr>
+      <tr>
+        <th>x (m)</th>
+        ${xCells}
+      </tr>
+    </table>
+  `;
+}
+
+
+function formatQuestionPrompt(prompt) {
+  let text = String(prompt);
+
+  /*
+    Transformă automat texte de forma:
+
+    t: 0,2,4,6,8 s / x: 0,5,10,15,20 m
+
+    într-un tabel cu t și x pe două rânduri.
+  */
+  const motionPattern =
+    /t:\s*([0-9.,\s-]+)\s*s\s*\/\s*x:\s*([0-9.,\s-]+)\s*m/gi;
+
+  text = text.replace(
+    motionPattern,
+    function(match, tText, xText) {
+
+      const tValues = tText
+        .split(",")
+        .map(v => v.trim())
+        .filter(Boolean);
+
+      const xValues = xText
+        .split(",")
+        .map(v => v.trim())
+        .filter(Boolean);
+
+      return makeMotionTable(tValues, xValues);
+    }
+  );
+
+  /*
+    Prompturile provin exclusiv din banca internă a testului,
+    nu din text introdus de elev, de aceea putem păstra
+    elementele HTML ale tabelului.
+  */
+  return prettyFormula(text);
+}
+    
     renderCurrentQuestion();
     updateProgress();
     scrollToTop();
@@ -1234,7 +1377,9 @@
     }
 
     card.innerHTML = `
-      <div class="question-title">${currentQuestionIndex + 1}. ${q.prompt}</div>
+      <div class="question-title">
+  ${currentQuestionIndex + 1}. ${formatQuestionPrompt(q.prompt)}
+</div>
       ${answerHtml}
       <div id="feedback-${q.id}" class="feedback">${feedbackHtml}</div>
     `;
@@ -1340,7 +1485,7 @@
     const correct = currentQuestions.filter(q => q.correct).length;
     const answerRows = currentQuestions.map((q, index) => ({
       nr: index + 1,
-      prompt: q.prompt.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
+      prompt: q.prompt,
       category: q.category,
       studentAnswer: q.studentAnswer,
       correct: q.correct
@@ -1426,7 +1571,7 @@
       return `
         <tr>
           <td>${item.nr}</td>
-          <td>${escapeHtml(item.prompt)}</td>
+          <td>${formatQuestionPrompt(item.prompt)}</td>
           <td>${escapeHtml(item.studentAnswer)}</td>
           <td class="${resultClass}">${resultText}</td>
         </tr>
@@ -1500,7 +1645,7 @@
       return `
         <tr>
           <td style="border:1px solid #d8e1ec; padding:7px; text-align:center;">${item.nr}</td>
-          <td style="border:1px solid #d8e1ec; padding:7px;">${escapeHtml(item.prompt)}</td>
+          <td style="border:1px solid #d8e1ec; padding:7px;">${formatQuestionPrompt(item.prompt)}</td>
           <td style="border:1px solid #d8e1ec; padding:7px; font-weight:bold; color:${resultColor}; text-align:center;">${resultText}</td>
         </tr>
       `;
