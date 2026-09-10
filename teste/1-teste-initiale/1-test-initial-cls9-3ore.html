@@ -1230,53 +1230,9 @@ table.data-table th {
     el.innerText = text;
   }
 
-  async function startTest() {
-    const name = document.getElementById("studentName").value.trim();
-    const cls = document.getElementById("studentClass").value.trim();
-
-    if (!name || !cls) {
-      alert("Completează numele, prenumele și clasa înainte de a începe testul.");
-      return;
-    }
-
-    const startBtn = document.getElementById("startTestBtn");
-    startBtn.disabled = true;
-    startBtn.innerText = "Se verifică...";
-    setStartCheckMessage("Se verifică dacă ai mai susținut acest test...", false);
-
-    const priorAttempt = await checkPriorAttempt(name, cls);
-
-    if (priorAttempt.found) {
-      startBtn.disabled = false;
-      startBtn.innerText = "Începe testul";
-      const notaText = priorAttempt.nota !== undefined ? ` (nota ${priorAttempt.nota})` : "";
-      setStartCheckMessage(
-        `Ai susținut deja acest test${notaText}. Testul se dă o singură dată. Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.`,
-        true
-      );
-      return;
-    }
-
-    if (!priorAttempt.checked) {
-      setStartCheckMessage(
-        "Nu s-a putut verifica automat dacă ai mai susținut testul (conexiune). Continuăm testul, dar reține că orice reluare fără acordul profesorului este considerată fraudă.",
-        true
-      );
-    } else {
-      setStartCheckMessage("", false);
-    }
-
-    submitted = false;
-    variantId = generateVariantId();
-    currentQuestions = selectBalancedQuestions();
-    currentQuestionIndex = 0;
-    resetIntegrityLog();
-
-    document.getElementById("startCard").classList.add("hidden");
-    document.getElementById("testArea").classList.remove("hidden");
-    document.getElementById("studentInfo").innerText = `${name} – ${cls}`;
-    document.getElementById("variantIdLabel").innerText = variantId;
-    document.getElementById("totalCount").innerText = currentQuestions.length;
+  /* =====================================================
+   AFIȘAREA TABELELOR t - x
+===================================================== */
 
 function makeMotionTable(tValues, xValues) {
   const tCells = tValues
@@ -1288,37 +1244,41 @@ function makeMotionTable(tValues, xValues) {
     .join("");
 
   return `
-    <table class="data-table">
-      <tr>
-        <th>t (s)</th>
-        ${tCells}
-      </tr>
-      <tr>
-        <th>x (m)</th>
-        ${xCells}
-      </tr>
-    </table>
+    <div style="overflow-x:auto; margin:12px 0;">
+      <table class="data-table">
+        <tr>
+          <th>t (s)</th>
+          ${tCells}
+        </tr>
+        <tr>
+          <th>x (m)</th>
+          ${xCells}
+        </tr>
+      </table>
+    </div>
   `;
 }
 
 
+/*
+  Transformă automat texte de forma:
+
+  t: 0,2,4,6,8 s / x: 0,5,10,15,20 m
+
+  în tabel cu t și x pe două rânduri.
+
+  Dacă promptul conține deja un tabel HTML,
+  acesta este păstrat.
+*/
 function formatQuestionPrompt(prompt) {
   let text = String(prompt);
 
-  /*
-    Transformă automat texte de forma:
-
-    t: 0,2,4,6,8 s / x: 0,5,10,15,20 m
-
-    într-un tabel cu t și x pe două rânduri.
-  */
   const motionPattern =
     /t:\s*([0-9.,\s-]+)\s*s\s*\/\s*x:\s*([0-9.,\s-]+)\s*m/gi;
 
   text = text.replace(
     motionPattern,
     function(match, tText, xText) {
-
       const tValues = tText
         .split(",")
         .map(v => v.trim())
@@ -1334,62 +1294,239 @@ function formatQuestionPrompt(prompt) {
   );
 
   /*
-    Prompturile provin exclusiv din banca internă a testului,
-    nu din text introdus de elev, de aceea putem păstra
-    elementele HTML ale tabelului.
+    NU folosim escapeHtml aici pentru întregul prompt,
+    deoarece unele întrebări conțin intenționat
+    <table>, <tr>, <td>, <br> etc.
   */
-  return prettyFormula(text);
+  return text;
 }
-    
-    renderCurrentQuestion();
-    updateProgress();
-    scrollToTop();
+
+
+/* =====================================================
+   PORNIREA TESTULUI
+===================================================== */
+
+async function startTest() {
+  const name = document.getElementById("studentName").value.trim();
+  const cls = document.getElementById("studentClass").value.trim();
+
+  if (!name || !cls) {
+    alert("Completează numele, prenumele și clasa înainte de a începe testul.");
+    return;
   }
 
-  function renderCurrentQuestion() {
-    const container = document.getElementById("questionsContainer");
-    const q = currentQuestions[currentQuestionIndex];
-    container.innerHTML = "";
+  const startBtn = document.getElementById("startTestBtn");
 
-    const card = document.createElement("div");
-    card.className = "question-card";
-    card.id = `card-${q.id}`;
+  startBtn.disabled = true;
+  startBtn.innerText = "Se verifică...";
 
-    let answerHtml = "";
+  setStartCheckMessage(
+    "Se verifică dacă ai mai susținut acest test...",
+    false
+  );
 
-    if (q.type === "choice") {
-      answerHtml = `<div class="answer-options">${q.options.map(opt => `
-        <label>
-          <input type="radio" name="${q.id}" value="${escapeHtml(opt)}" ${q.studentAnswer === opt ? "checked" : ""} ${q.checked ? "disabled" : ""} />
-          ${escapeHtml(opt)}
-        </label>
-      `).join("")}</div>`;
-    } else {
-      const placeholder = q.numeric ? "Scrie doar numărul (ex: 2.5 sau 2,5)" : "Scrie răspunsul aici";
-      answerHtml = `<input id="${q.id}" type="text" inputmode="${q.numeric ? "decimal" : "text"}" placeholder="${placeholder}" value="${escapeHtml(q.studentAnswer)}" ${q.checked ? "disabled" : ""} />`;
-    }
+  const priorAttempt = await checkPriorAttempt(name, cls);
 
-    let feedbackHtml = "";
-    if (q.checked) {
-      feedbackHtml = q.correct
-        ? `<div class="question-status status-correct">Corect.</div>`
-        : `<div class="question-status status-wrong">Greșit.</div>`;
-    }
+  if (priorAttempt.found) {
+    startBtn.disabled = false;
+    startBtn.innerText = "Începe testul";
 
-    card.innerHTML = `
-      <div class="question-title">
-  ${currentQuestionIndex + 1}. ${formatQuestionPrompt(q.prompt)}
-</div>
-      ${answerHtml}
-      <div id="feedback-${q.id}" class="feedback">${feedbackHtml}</div>
+    const notaText =
+      priorAttempt.nota !== undefined
+        ? ` (nota ${priorAttempt.nota})`
+        : "";
+
+    setStartCheckMessage(
+      `Ai susținut deja acest test${notaText}. Testul se dă o singură dată. Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.`,
+      true
+    );
+
+    return;
+  }
+
+  if (!priorAttempt.checked) {
+    setStartCheckMessage(
+      "Nu s-a putut verifica automat dacă ai mai susținut testul (conexiune). Continuăm testul, dar reține că orice reluare fără acordul profesorului este considerată fraudă.",
+      true
+    );
+  } else {
+    setStartCheckMessage("", false);
+  }
+
+  submitted = false;
+
+  variantId = generateVariantId();
+
+  currentQuestions = selectBalancedQuestions();
+
+  currentQuestionIndex = 0;
+
+  resetIntegrityLog();
+
+  document
+    .getElementById("startCard")
+    .classList.add("hidden");
+
+  document
+    .getElementById("testArea")
+    .classList.remove("hidden");
+
+  document.getElementById("studentInfo").innerText =
+    `${name} – ${cls}`;
+
+  document.getElementById("variantIdLabel").innerText =
+    variantId;
+
+  document.getElementById("totalCount").innerText =
+    currentQuestions.length;
+
+  renderCurrentQuestion();
+
+  updateProgress();
+
+  scrollToTop();
+}
+
+
+/* =====================================================
+   AFIȘAREA ÎNTREBĂRII CURENTE
+===================================================== */
+
+function renderCurrentQuestion() {
+  const container =
+    document.getElementById("questionsContainer");
+
+  const q =
+    currentQuestions[currentQuestionIndex];
+
+  /*
+    Protecție suplimentară:
+    dacă nu există întrebare, afișăm eroarea
+    în loc să rămână pagina goală.
+  */
+  if (!q) {
+    container.innerHTML = `
+      <div class="question-card">
+        <div class="warning">
+          Nu s-a putut genera întrebarea.
+          Reîncarcă pagina și încearcă din nou.
+        </div>
+      </div>
     `;
 
-    container.appendChild(card);
+    console.error(
+      "Nu există întrebarea curentă.",
+      currentQuestionIndex,
+      currentQuestions
+    );
 
-    document.getElementById("currentQuestionLabel").innerText = currentQuestionIndex + 1;
-    updateButtons();
-    updateProgress();
+    return;
   }
+
+  container.innerHTML = "";
+
+  const card =
+    document.createElement("div");
+
+  card.className = "question-card";
+
+  card.id = `card-${q.id}`;
+
+  let answerHtml = "";
+
+  /*
+    ÎNTREBARE CU ALEGERE MULTIPLĂ
+  */
+  if (q.type === "choice") {
+    answerHtml = `
+      <div class="answer-options">
+        ${q.options.map((opt, optionIndex) => `
+          <label>
+            <input
+              type="radio"
+              name="${q.id}"
+              value="${escapeHtml(opt)}"
+              ${q.studentAnswer === opt ? "checked" : ""}
+              ${q.checked ? "disabled" : ""}
+            />
+
+            <b>${String.fromCharCode(97 + optionIndex)})</b>
+            ${escapeHtml(opt)}
+          </label>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  /*
+    ÎNTREBARE CU RĂSPUNS INTRODUS DE ELEV
+  */
+  else {
+    const placeholder = q.numeric
+      ? "Scrie doar numărul (ex: 2.5 sau 2,5)"
+      : "Scrie răspunsul aici";
+
+    answerHtml = `
+      <input
+        id="${q.id}"
+        type="text"
+        inputmode="${q.numeric ? "decimal" : "text"}"
+        placeholder="${placeholder}"
+        value="${escapeHtml(q.studentAnswer || "")}"
+        ${q.checked ? "disabled" : ""}
+      />
+    `;
+  }
+
+  /*
+    FEEDBACK DUPĂ VERIFICAREA RĂSPUNSULUI
+  */
+  let feedbackHtml = "";
+
+  if (q.checked) {
+    feedbackHtml = q.correct
+      ? `
+        <div class="question-status status-correct">
+          Corect.
+        </div>
+      `
+      : `
+        <div class="question-status status-wrong">
+          Greșit.
+        </div>
+      `;
+  }
+
+  /*
+    CONSTRUIREA CARDULUI
+  */
+  card.innerHTML = `
+    <div class="question-title">
+      ${currentQuestionIndex + 1}.
+      ${formatQuestionPrompt(q.prompt)}
+    </div>
+
+    ${answerHtml}
+
+    <div
+      id="feedback-${q.id}"
+      class="feedback"
+    >
+      ${feedbackHtml}
+    </div>
+  `;
+
+  container.appendChild(card);
+
+  document.getElementById(
+    "currentQuestionLabel"
+  ).innerText =
+    currentQuestionIndex + 1;
+
+  updateButtons();
+
+  updateProgress();
+}
 
   function getCurrentAnswer() {
     const q = currentQuestions[currentQuestionIndex];
