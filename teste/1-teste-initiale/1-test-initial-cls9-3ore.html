@@ -1104,15 +1104,16 @@
     alert("Lipirea textului nu este permisă în timpul testului.");
   });
 
-  const PRIOR_ATTEMPT_CHECK_TIMEOUT_MS = 8000;
+ const PRIOR_ATTEMPT_CHECK_TIMEOUT_MS = 8000;
 
-  /* Interoghează Code.gs (doGet?action=check) ca să vadă dacă acest
-     elev (nume + clasă) are deja un rezultat înregistrat în Sheet.
-     Returnează { found: true|false, ... }. Dacă verificarea nu poate
-     fi făcută (rețea, script indisponibil), NU blocăm elevul — dar
-     afișăm un avertisment, ca profesorul să poată verifica manual. */
+  /* Interoghează Code.gs (doGet?action=check) pentru a verifica dacă elevul a mai trimis testul. */
   async function checkPriorAttempt(name, cls) {
     if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_GOOGLE")) {
+      return { found: false, checked: false };
+    }
+
+    // Oprim verificarea prin GET dacă datele sunt incomplete (Anonim sau necompletat)
+    if (!name || name.trim().toLowerCase() === "anonim" || !cls || cls.trim() === "-") {
       return { found: false, checked: false };
     }
 
