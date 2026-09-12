@@ -12,7 +12,6 @@
       --ok: #16855b; --warn: #b85c00; --bg: #edf6fb;
     }
     * { box-sizing: border-box; }
-    [hidden] { display: none !important; }
     body { margin: 0; color: var(--ink); background: linear-gradient(150deg,#e7f5ff,#f8fbfd 45%,#e8f7f1); font: 16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
     button,input { font: inherit; }
     button { cursor: pointer; }
@@ -68,47 +67,18 @@
     canvas { width: 100%; height: 280px; border: 1px solid var(--line); border-radius: 12px; background: white; }
     .choice { display: block; margin: 9px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
     .score { font-size: 2.2rem; color: var(--blue); font-weight: 850; }
-    .gate { position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:18px; background:#0b2239e8; }
-    .gate-box { width:min(620px,100%); max-height:95vh; overflow:auto; background:white; border-radius:20px; padding:26px; box-shadow:0 24px 70px #0006; }
-    .field { display:grid; gap:6px; margin:14px 0; }
-    .field input,.field select { width:100%; padding:10px 12px; border:1px solid #9eb4c7; border-radius:9px; }
-    .monitor { display:flex; gap:12px; align-items:flex-start; padding:12px; border:1px solid #f3d69e; border-radius:12px; background:#fff7e8; }
-    .session { display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:18px; padding:10px 14px; color:#35556f; background:#edf5fb; border-radius:12px; }
-    .status { padding:10px 12px; border-radius:10px; background:#e8f7f1; color:var(--ok); font-weight:700; }
     .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
     @media(max-width:760px){ .grid{grid-template-columns:1fr}.lab-scene{gap:12px;min-height:330px}.beaker{width:90px;height:145px}.calorimeter{width:130px;height:190px}.step-dot{font-size:.86rem}.actions{position:sticky;bottom:8px;background:#fffc;padding:8px;border-radius:12px} }
     @media print { header,.steps,.actions,.lab-scene,.no-print { display:none!important; } .panel { display:block!important; } body{background:white}.card{box-shadow:none;border:0;padding:0} }
   </style>
 </head>
 <body>
-<div class="gate" id="gate">
-  <form class="gate-box" id="identityForm">
-    <h2>Identificarea elevului</h2>
-    <p>Completează datele înainte de începerea experimentului. Data și ora se înregistrează automat.</p>
-    <label class="field">Numele și prenumele
-      <input id="studentName" maxlength="80" autocomplete="name" required placeholder="Ex.: Popescu Andrei">
-    </label>
-    <label class="field">Clasa
-      <input id="studentClass" maxlength="15" required placeholder="Ex.: a X-a B">
-    </label>
-    <label class="field">Data experimentului
-      <input id="experimentDate" readonly>
-    </label>
-    <label class="monitor"><input id="monitorConsent" type="checkbox" required>
-      <span>Am înțeles că, pe durata activității, pagina înregistrează schimbarea filei sau a ferestrei, minimizarea paginii, ieșirea din modul ecran complet și încercările de copiere. Nu se înregistrează conținutul altor pagini și nu se activează camera sau microfonul.</span>
-    </label>
-    <p class="note"><strong>Notă:</strong> aceste evenimente reprezintă indicatori tehnici și trebuie interpretați de profesor în context; nu constituie singuri dovada copierii.</p>
-    <button class="btn" type="submit">Începe în ecran complet</button>
-    <p class="feedback bad" id="gateFeedback"></p>
-  </form>
-</div>
 <header><div>
   <h1>Studiul amestecului a două lichide cu temperaturi diferite</h1>
   <p class="subtitle">Laborator virtual · Calorimetrie · Clasa a X-a</p>
   <div class="progress-wrap"><div class="progress" aria-label="Progres"><span id="progressBar"></span></div><strong id="progressText">Pasul 1 din 6</strong></div>
 </div></header>
 <main>
-  <div class="session"><span><strong>Elev:</strong> <span id="displayName">—</span></span><span><strong>Clasa:</strong> <span id="displayClass">—</span></span><span><strong>Data:</strong> <span id="displayDate">—</span></span><span><strong>Schimbări de ecran:</strong> <span id="displaySwitches">0</span></span></div>
   <nav class="steps" aria-label="Etapele laboratorului" id="steps"></nav>
   <section class="card">
     <article class="panel active" data-step="0">
@@ -184,7 +154,7 @@
         </fieldset>
         <button type="button" class="btn" id="gradeBtn">Afișează rezultatul</button>
       </form>
-      <div id="result" hidden><p class="score" id="score"></p><p id="conclusion"></p><p class="status" id="sendStatus">Rezultatul nu a fost încă transmis.</p><button class="btn secondary no-print" onclick="window.print()">Tipărește fișa</button></div>
+      <div id="result" hidden><p class="score" id="score"></p><p id="conclusion"></p><button class="btn secondary no-print" onclick="window.print()">Tipărește fișa</button></div>
     </article>
 
     <div class="actions"><button class="btn secondary" id="prevBtn" disabled>Înapoi</button><button class="btn" id="nextBtn">Continuă</button></div>
@@ -193,31 +163,9 @@
 <script>
 (() => {
   'use strict';
-  // Înlocuiește valoarea cu adresa /exec obținută după publicarea scriptului Google Apps Script.
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbylgezt8y5G8GbsvGlYqrLkydYpIXhuIc4ua8NayZTf_wUZ-gTdDWyhKdfTYyk15q_MXA/exec';
   const labels = ['Scop','Pregătire','Experiment','Calcule','Grafic','Evaluare'];
   const $ = id => document.getElementById(id);
   let step = 0, completedExperiment = false, correctCalculation = false, measured = null;
-  let sessionStarted = null, student = null, graded = false;
-  const monitoring = { tabSwitches:0, fullscreenExits:0, copyAttempts:0, pasteAttempts:0, contextMenuAttempts:0, events:[] };
-  const nowIso = () => new Date().toISOString();
-  const logEvent = type => { if(!sessionStarted) return; monitoring.events.push({type, time:nowIso()}); };
-  const localDate = new Intl.DateTimeFormat('ro-RO',{dateStyle:'full',timeStyle:'short'}).format(new Date());
-  $('experimentDate').value = localDate;
-  $('identityForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    student={name:$('studentName').value.trim(), className:$('studentClass').value.trim(), date:localDate};
-    if(student.name.length<3 || student.className.length<2){$('gateFeedback').textContent='Completează corect numele și clasa.';return;}
-    sessionStarted=nowIso(); $('displayName').textContent=student.name; $('displayClass').textContent=student.className; $('displayDate').textContent=student.date;
-    try { await document.documentElement.requestFullscreen(); } catch (_) { logEvent('fullscreen_refuzat_sau_indisponibil'); }
-    $('gate').hidden=true;
-  });
-  document.addEventListener('visibilitychange',()=>{ if(document.hidden && sessionStarted){monitoring.tabSwitches++;logEvent('pagina_ascunsa');$('displaySwitches').textContent=monitoring.tabSwitches;} });
-  document.addEventListener('fullscreenchange',()=>{ if(sessionStarted && !document.fullscreenElement){monitoring.fullscreenExits++;logEvent('iesire_ecran_complet');} });
-  document.addEventListener('copy',e=>{ if(sessionStarted){e.preventDefault();monitoring.copyAttempts++;logEvent('incercare_copiere');} });
-  document.addEventListener('paste',e=>{ if(sessionStarted){e.preventDefault();monitoring.pasteAttempts++;logEvent('incercare_lipire');} });
-  document.addEventListener('contextmenu',e=>{ if(sessionStarted){e.preventDefault();monitoring.contextMenuAttempts++;logEvent('meniu_contextual');} });
-  document.addEventListener('keydown',e=>{if(sessionStarted && (e.ctrlKey||e.metaKey) && ['c','v','x','u'].includes(e.key.toLowerCase())) e.preventDefault();});
   const steps = $('steps');
   labels.forEach((label,i) => { const b=document.createElement('button'); b.className='step-dot'; b.textContent=`${i+1}. ${label}`; b.type='button'; b.addEventListener('click',()=>{ if(i<=step) show(i); }); steps.appendChild(b); });
   const val = id => Number($(id).value);
@@ -259,23 +207,7 @@
     Object.entries(answers).forEach(([q,a])=>{const chosen=document.querySelector(`input[name=${q}]:checked`);if(!chosen)missing=true;else if(chosen.value===a)points++;});
     if(missing){alert('Răspunde la toate cele trei întrebări.');return;}
     $('result').hidden=false;$('score').textContent=`${points}/3 răspunsuri corecte`;$('conclusion').textContent=points===3?'Foarte bine! Ai explicat corect echilibrul termic și bilanțul de căldură.':points===2?'Bine! Recitește observația despre schimbul de căldură și sursele de eroare.':'Reia etapele laboratorului și urmărește relația dintre temperaturi.';
-    if(!graded){ graded=true; submitResult(points); }
   });
-  async function submitResult(points){
-    const status=$('sendStatus');
-    if(!GOOGLE_SCRIPT_URL.startsWith('https://script.google.com/')){status.style.background='#fff7e8';status.style.color='#b85c00';status.textContent='Google Sheets nu este configurat încă. Profesorul trebuie să introducă adresa aplicației web în fișier.';return;}
-    const selected=q=>document.querySelector(`input[name=${q}]:checked`)?.value||'';
-    const payload={
-      submittedAt:nowIso(), sessionStarted, durationSeconds:Math.round((Date.now()-Date.parse(sessionStarted))/1000),
-      studentName:student.name, studentClass:student.className, experimentDate:student.date,
-      m1:val('m1'), t1:val('t1'), m2:val('m2'), t2:val('t2'), measuredTemperature:measured?.toFixed(1), theoreticalTemperature:theoretical().toFixed(1), studentCalculation:$('answer').value,
-      quizScore:points, q1:selected('q1'), q2:selected('q2'), q3:selected('q3'),
-      tabSwitches:monitoring.tabSwitches, fullscreenExits:monitoring.fullscreenExits, copyAttempts:monitoring.copyAttempts, pasteAttempts:monitoring.pasteAttempts, contextMenuAttempts:monitoring.contextMenuAttempts, eventLog:monitoring.events
-    };
-    status.textContent='Se transmite rezultatul…';
-    try { await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}); status.textContent='Rezultatul a fost trimis către registrul clasei.'; }
-    catch(_){ status.style.background='#fdecec';status.style.color='#b42318';status.textContent='Rezultatul nu a putut fi transmis. Verifică internetul și încearcă din nou.'; graded=false; }
-  }
   show(0);
 })();
 </script>
