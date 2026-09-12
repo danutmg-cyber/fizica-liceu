@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Experimente, simulări și lucrări practice de fizică pentru clasele a IX-a–a XII-a.">
+  <title>Laborator de fizică | Fizica-liceu</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .lab-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f2741,#075985 58%,#0f766e); }
+    .lab-header::after { content:"⚛"; position:absolute; right:clamp(18px,7vw,90px); top:50%; transform:translateY(-50%); font-size:clamp(5rem,14vw,10rem); opacity:.1; }
+    .breadcrumb { width:min(100%,1100px); margin:0 auto; padding:14px 24px 0; text-align:left; }
+    .breadcrumb a { font-weight:700; text-decoration:none; }
+    .lab-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:760px; margin:24px auto 0; }
+    .stat { padding:12px; border:1px solid #ffffff35; border-radius:12px; background:#ffffff12; }
+    .stat strong { display:block; font-size:1.45rem; }
+    .toolbar { display:grid; grid-template-columns:1fr auto; gap:14px; margin-bottom:26px; padding:18px; background:#172033; border:1px solid #334155; border-radius:16px; }
+    .search { width:100%; padding:12px 15px; color:#0f172a; background:white; border:2px solid transparent; border-radius:10px; font:inherit; }
+    .search:focus { outline:3px solid #facc15; outline-offset:2px; }
+    .filters { display:flex; flex-wrap:wrap; gap:8px; }
+    .filter { padding:10px 13px; border:1px solid #64748b; border-radius:10px; color:#f8fafc; background:#26364d; font:inherit; font-weight:750; cursor:pointer; }
+    .filter[aria-pressed="true"] { color:#111827; background:#facc15; border-color:#facc15; }
+    .class-section { margin:0 0 36px; scroll-margin-top:20px; }
+    .class-heading { display:flex; align-items:center; gap:12px; margin:0 0 16px; }
+    .class-heading h2 { margin:0; color:white; font-size:clamp(1.5rem,3vw,2rem); }
+    .badge { padding:4px 10px; border-radius:999px; color:#dbeafe; background:#1e3a5f; font-size:.9rem; font-weight:700; }
+    .lab-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
+    .lab-item { display:flex; gap:15px; align-items:flex-start; min-height:122px; padding:18px; border:1px solid #475569; border-radius:14px; color:#f8fafc; background:#172033; text-decoration:none; transition:transform .18s,border-color .18s,background .18s; }
+    a.lab-item:hover { transform:translateY(-2px); border-color:#60a5fa; background:#1e293b; color:white; }
+    .lab-item.pending { opacity:.68; cursor:not-allowed; }
+    .icon { display:grid; flex:0 0 44px; width:44px; height:44px; place-items:center; border-radius:12px; background:#075985; font-size:1.35rem; }
+    .lab-item h3 { margin:0 0 7px; color:white; font-size:1.08rem; line-height:1.35; }
+    .lab-item p { margin:0; color:#cbd5e1; font-size:.95rem; line-height:1.45; }
+    .state { display:inline-block; margin-top:9px; padding:3px 8px; border-radius:999px; color:#a7f3d0; background:#064e3b; font-size:.82rem; font-weight:800; }
+    .state.soon { color:#e2e8f0; background:#334155; }
+    .empty { display:none; padding:30px; text-align:center; color:#cbd5e1; background:#172033; border-radius:14px; }
+    .info-box { margin-top:38px; padding:20px; border-left:5px solid #38bdf8; border-radius:12px; color:#dbeafe; background:#172033; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media(max-width:760px){ .toolbar{grid-template-columns:1fr}.lab-grid{grid-template-columns:1fr}.lab-stats{grid-template-columns:1fr}.lab-header::after{display:none}.breadcrumb{padding-inline:16px} }
+  </style>
+</head>
+<body>
+  <header class="site-header lab-header">
+    <div class="breadcrumb"><a href="../index.html">← Înapoi la pagina principală</a></div>
+    <h1>Laborator de fizică</h1>
+    <p>Experimente și simulări interactive pentru observarea, măsurarea și explicarea fenomenelor fizice.</p>
+    <div class="lab-stats" aria-label="Conținutul laboratorului">
+      <div class="stat"><strong>4</strong>clase</div>
+      <div class="stat"><strong>22</strong>lucrări planificate</div>
+      <div class="stat"><strong>1</strong>laborator interactiv disponibil</div>
+    </div>
+  </header>
 
+  <main class="container">
+    <section class="intro">
+      <h2>Alege lucrarea de laborator</h2>
+      <p>Folosește filtrele sau caută după titlu. Lucrările marcate „în pregătire” vor fi activate pe măsură ce sunt completate.</p>
+    </section>
+
+    <div class="toolbar" role="search">
+      <label><span class="sr-only">Caută un experiment</span><input class="search" id="search" type="search" placeholder="Caută: calorimetrie, lentilă, frecare…" autocomplete="off"></label>
+      <div class="filters" aria-label="Filtrare după clasă">
+        <button class="filter" type="button" data-class="all" aria-pressed="true">Toate</button>
+        <button class="filter" type="button" data-class="9" aria-pressed="false">Clasa IX</button>
+        <button class="filter" type="button" data-class="10" aria-pressed="false">Clasa X</button>
+        <button class="filter" type="button" data-class="11" aria-pressed="false">Clasa XI</button>
+        <button class="filter" type="button" data-class="12" aria-pressed="false">Clasa XII</button>
+      </div>
+    </div>
+
+    <div id="catalog">
+      <section class="class-section" data-class="9">
+        <div class="class-heading"><h2>Clasa a IX-a</h2><span class="badge">11 lucrări planificate</span></div>
+        <div class="lab-grid">
+          <article class="lab-item pending" data-title="studiul miscarii rectilinii uniforme"><span class="icon">⏱</span><div><h3>Studiul mișcării rectilinii uniforme</h3><p>Măsurarea distanței și timpului; determinarea vitezei.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="determinarea constantei elastice resort"><span class="icon">↕</span><div><h3>Determinarea constantei elastice a unui resort</h3><p>Verificarea legii lui Hooke prin măsurători.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="determinarea coeficientului de frecare la alunecare"><span class="icon">▰</span><div><h3>Determinarea coeficientului de frecare la alunecare</h3><p>Studiul forței de frecare pe plan orizontal.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="echilibrul de translatie punct material"><span class="icon">⚖</span><div><h3>Echilibrul de translație al punctului material</h3><p>Compunerea și echilibrarea forțelor concurente.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="echilibrul de rotatie solid rigid"><span class="icon">⟳</span><div><h3>Echilibrul de rotație al solidului rigid</h3><p>Verificarea condiției de echilibru a momentelor.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="randamentul unui plan inclinat"><span class="icon">◢</span><div><h3>Determinarea randamentului unui plan înclinat</h3><p>Lucru mecanic util, consumat și randament.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="distanta focala lentila subtire optica"><span class="icon">◉</span><div><h3>Determinarea distanței focale a unei lentile subțiri</h3><p>Formarea imaginilor reale cu lentila convergentă.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="indicele de refractie mediu optica"><span class="icon">↘</span><div><h3>Determinarea indicelui de refracție</h3><p>Măsurarea unghiurilor de incidență și refracție.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="dispersia luminii prisma spectru"><span class="icon">🌈</span><div><h3>Dispersia luminii</h3><p>Descompunerea luminii albe și observarea spectrului.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="propagarea luminii prisma optica"><span class="icon">△</span><div><h3>Propagarea luminii prin prisma optică</h3><p>Urmărirea mersului razelor prin prismă.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="studiul experimental microscopului optica"><span class="icon">🔬</span><div><h3>Studiul experimental al microscopului</h3><p>Identificarea componentelor și formarea imaginii.</p><span class="state soon">În pregătire</span></div></article>
+        </div>
+      </section>
+
+      <section class="class-section" data-class="10">
+        <div class="class-heading"><h2>Clasa a X-a</h2><span class="badge">1 lucrare disponibilă</span></div>
+        <div class="lab-grid">
+          <a class="lab-item" data-title="amestecul a doua lichide temperaturi diferite calorimetrie" href="clasa10/lucrarea-5-studiul-amestecului-a-doua-lichide-cu-temperaturi-diferite.html"><span class="icon">🌡</span><div><h3>Studiul amestecului a două lichide cu temperaturi diferite</h3><p>Simulare ghidată, temperatură de echilibru, calcul, grafic și evaluare.</p><span class="state">Laborator interactiv</span></div></a>
+          <article class="lab-item pending" data-title="notiuni elementare calculul erorilor"><span class="icon">±</span><div><h3>Noțiuni elementare despre calculul erorilor</h3><p>Erori absolute, relative și exprimarea rezultatului.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="miscarea rectilinie uniform accelerata"><span class="icon">🏎</span><div><h3>Studiul mișcării rectilinii uniform accelerate</h3><p>Determinarea accelerației din date experimentale.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="constanta elasticitate optional real"><span class="icon">↕</span><div><h3>Determinarea constantei de elasticitate</h3><p>Lucrare opțională pentru profilul real.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="coeficient frecare alunecare"><span class="icon">▰</span><div><h3>Determinarea coeficientului de frecare la alunecare</h3><p>Analiza forțelor și prelucrarea măsurătorilor.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="pendul elastic oscilatii"><span class="icon">〰</span><div><h3>Studiul pendulului elastic</h3><p>Perioada oscilațiilor și dependența de masă.</p><span class="state soon">În pregătire</span></div></article>
+        </div>
+      </section>
+
+      <section class="class-section" data-class="11">
+        <div class="class-heading"><h2>Clasa a XI-a</h2><span class="badge">5 lucrări planificate</span></div>
+        <div class="lab-grid">
+          <article class="lab-item pending" data-title="legea boyle mariotte gaze"><span class="icon">▱</span><div><h3>Verificarea experimentală a legii Boyle–Mariotte</h3><p>Relația dintre presiunea și volumul unui gaz.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="rezistivitatea unui conductor electricitate"><span class="icon">Ω</span><div><h3>Determinarea rezistivității unui conductor</h3><p>Lucrare opțională pentru profilul real.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="rezistenta interna tensiunea electromotoare"><span class="icon">🔋</span><div><h3>Determinarea rezistenței interne și a tensiunii electromotoare</h3><p>Studiul unei surse electrice reale.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="caldura latenta topire gheata"><span class="icon">❄</span><div><h3>Determinarea căldurii latente specifice de topire a gheții</h3><p>Lucrare calorimetrică opțională.</p><span class="state soon">În pregătire</span></div></article>
+          <article class="lab-item pending" data-title="fenomene superficiale tensiune superficiala"><span class="icon">💧</span><div><h3>Studiul fenomenelor superficiale</h3><p>Lucrare opțională pentru profilul real.</p><span class="state soon">În pregătire</span></div></article>
+        </div>
+      </section>
+
+      <section class="class-section" data-class="12">
+        <div class="class-heading"><h2>Clasa a XII-a</h2><span class="badge">În curs de organizare</span></div>
+        <div class="info-box">Lucrările de laborator pentru clasa a XII-a vor fi adăugate în această secțiune.</div>
+      </section>
+    </div>
+    <p class="empty" id="empty">Nu a fost găsită nicio lucrare pentru căutarea introdusă.</p>
+  </main>
+
+  <footer><p><strong>Fizica-liceu</strong> · Laborator virtual</p><p>Prof. Dănuț Andronie · <a href="mailto:danutmg@gmail.com">danutmg@gmail.com</a></p></footer>
+  <script>
+    (() => {
+      const search = document.getElementById('search');
+      const filters = [...document.querySelectorAll('.filter')];
+      const sections = [...document.querySelectorAll('.class-section')];
+      const normalize = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      let activeClass = 'all';
+      function applyFilters() {
+        const query = normalize(search.value.trim());
+        let totalVisible = 0;
+        sections.forEach(section => {
+          const classMatch = activeClass === 'all' || section.dataset.class === activeClass;
+          let visibleItems = 0;
+          section.querySelectorAll('.lab-item').forEach(item => {
+            const matches = classMatch && normalize(item.dataset.title + ' ' + item.textContent).includes(query);
+            item.hidden = !matches;
+            if (matches) visibleItems++;
+          });
+          const special = section.dataset.class === '12' && classMatch && !query;
+          section.hidden = !(visibleItems || special);
+          totalVisible += visibleItems + (special ? 1 : 0);
+        });
+        document.getElementById('empty').style.display = totalVisible ? 'none' : 'block';
+      }
+      filters.forEach(button => button.addEventListener('click', () => {
+        activeClass = button.dataset.class;
+        filters.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        applyFilters();
+      }));
+      search.addEventListener('input', applyFilters);
+    })();
+  </script>
+</body>
+</html>
