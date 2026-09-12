@@ -1,1 +1,477 @@
+<!--
+  Componenta reutilizabila: raport-final.html
 
+  Biblioteca JavaScript comuna completeaza elementele data-report-* dupa
+  finalizarea experimentului. Componenta nu calculeaza rezultate si nu trimite
+  singura date catre Google Sheets.
+
+  Sectiunile fara date pot fi ascunse prin atributul hidden. Pentru tiparire se
+  foloseste assets/css/print.css.
+-->
+
+<section
+  class="lab-card lab-final-report"
+  id="raport-final"
+  data-lab-component="raport-final"
+  aria-labelledby="raport-final-titlu"
+  hidden
+>
+  <header class="lab-section lab-avoid-break">
+    <span class="lab-kicker">Fișa experimentului</span>
+    <h2 id="raport-final-titlu">Raport final de laborator</h2>
+    <p>
+      Raportul reunește datele înregistrate pe parcursul activității. Verifică
+      informațiile înainte de trimitere și păstrează o copie tipărită sau PDF.
+    </p>
+  </header>
+
+  <div
+    class="lab-status is-sending lab-print-hide"
+    data-report-generation-status
+    role="status"
+    aria-live="polite"
+  >
+    Raportul se generează…
+  </div>
+
+  <!-- 1. Identificarea elevului si a sesiunii -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-identificare-titlu">
+    <h3 id="raport-identificare-titlu">1. Identificarea activității</h3>
+
+    <div class="lab-session">
+      <span class="lab-session-item">
+        Elev:
+        <strong class="lab-session-value" data-report-student-name>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Clasa:
+        <strong class="lab-session-value" data-report-student-class>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Experiment:
+        <strong class="lab-session-value" data-report-experiment-title>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Data:
+        <strong class="lab-session-value" data-report-experiment-date>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Ora începerii:
+        <strong class="lab-session-value" data-report-start-time>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Ora finalizării:
+        <strong class="lab-session-value" data-report-finish-time>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Durata:
+        <strong class="lab-session-value" data-report-duration>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Cod sesiune:
+        <strong class="lab-session-value" data-report-session-id>—</strong>
+      </span>
+      <span class="lab-session-item">
+        Set de date:
+        <strong class="lab-session-value" data-report-dataset-id>—</strong>
+      </span>
+    </div>
+  </section>
+
+  <!-- 2. Securitate si echipare -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-securitate-titlu">
+    <h3 id="raport-securitate-titlu">2. Securitate și echipare</h3>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Instructaj acceptat</span>
+        <strong data-report-safety-accepted>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Data și ora acceptării</span>
+        <strong data-report-safety-accepted-at>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Verificarea regulilor</span>
+        <strong data-report-safety-score>—</strong>
+      </div>
+    </div>
+
+    <h4>Riscuri declarate pentru experiment</h4>
+    <ul data-report-risk-list>
+      <li data-empty-row>Nu au fost încărcate informații despre riscuri.</li>
+    </ul>
+
+    <h4>Echipament individual și materiale selectate</h4>
+    <div class="lab-table-wrap">
+      <table class="lab-table">
+        <caption class="lab-sr-only">Echipamentul selectat de elev</caption>
+        <thead>
+          <tr>
+            <th scope="col">Element</th>
+            <th scope="col">Categorie</th>
+            <th scope="col">Necesar</th>
+            <th scope="col">Selectat</th>
+          </tr>
+        </thead>
+        <tbody data-report-equipment>
+          <tr data-empty-row>
+            <td colspan="4">Echipamentul nu a fost încă înregistrat.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. Date initiale -->
+  <section class="lab-section" aria-labelledby="raport-date-initiale-titlu">
+    <h3 id="raport-date-initiale-titlu">3. Date inițiale</h3>
+
+    <div class="lab-table-wrap">
+      <table class="lab-table">
+        <caption class="lab-sr-only">Datele inițiale alocate experimentului</caption>
+        <thead>
+          <tr>
+            <th scope="col">Mărime fizică</th>
+            <th scope="col">Simbol</th>
+            <th scope="col">Valoare</th>
+            <th scope="col">Unitate</th>
+          </tr>
+        </thead>
+        <tbody data-report-initial-data>
+          <tr data-empty-row>
+            <td colspan="4">Datele inițiale nu au fost încă încărcate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. Masurari si observatii -->
+  <section class="lab-section" aria-labelledby="raport-masurari-titlu">
+    <h3 id="raport-masurari-titlu">4. Măsurări și observații</h3>
+
+    <div class="lab-table-wrap">
+      <table class="lab-table">
+        <caption class="lab-sr-only">Valorile măsurate în timpul experimentului</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nr.</th>
+            <th scope="col">Mărime măsurată</th>
+            <th scope="col">Valoare</th>
+            <th scope="col">Unitate</th>
+            <th scope="col">Observații</th>
+          </tr>
+        </thead>
+        <tbody data-report-measurements>
+          <tr data-empty-row>
+            <td colspan="5">Măsurările nu au fost încă încărcate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lab-notebook lab-avoid-break">
+      <h4 class="lab-notebook-title">Observațiile elevului</h4>
+      <p data-report-experimental-observations>—</p>
+    </div>
+  </section>
+
+  <!-- 5. Calcule -->
+  <section class="lab-section" aria-labelledby="raport-calcule-titlu">
+    <h3 id="raport-calcule-titlu">5. Prelucrarea datelor</h3>
+
+    <div class="lab-formula" data-report-formula>
+      Formula experimentului nu a fost încă încărcată.
+    </div>
+
+    <div class="lab-notebook">
+      <h4 class="lab-notebook-title">Etapele calculului</h4>
+      <p data-report-calculation-steps>—</p>
+    </div>
+
+    <div class="lab-result-grid lab-avoid-break">
+      <div class="lab-result-item">
+        <span>Rezultatul introdus de elev</span>
+        <strong data-report-student-calculated-result>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Rezultatul teoretic/de referință</span>
+        <strong data-report-reference-result>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Verificarea calculului</span>
+        <strong data-report-calculation-status>—</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Compararea valorilor -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-comparare-titlu">
+    <h3 id="raport-comparare-titlu">6. Compararea rezultatelor</h3>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Valoare măsurată</span>
+        <strong data-report-measured-result>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Valoare calculată</span>
+        <strong data-report-calculated-result>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Diferență absolută</span>
+        <strong data-report-absolute-difference>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Diferență relativă</span>
+        <strong data-report-relative-difference>—</strong>
+      </div>
+    </div>
+
+    <div class="lab-notebook">
+      <h4 class="lab-notebook-title">Interpretarea comparației</h4>
+      <p data-report-comparison-interpretation>—</p>
+    </div>
+  </section>
+
+  <!-- 7. Concluzia -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-concluzie-titlu">
+    <h3 id="raport-concluzie-titlu">7. Concluzia experimentului</h3>
+
+    <div class="lab-notebook">
+      <p data-report-student-conclusion>—</p>
+    </div>
+
+    <h4>Surse de eroare identificate</h4>
+    <ul data-report-error-sources>
+      <li data-empty-row>Nu au fost indicate surse de eroare.</li>
+    </ul>
+  </section>
+
+  <!-- 8. Evaluarea finala -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-evaluare-titlu">
+    <h3 id="raport-evaluare-titlu">8. Evaluarea finală</h3>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Scor</span>
+        <strong data-report-evaluation-score>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Răspunsuri corecte</span>
+        <strong data-report-correct-answers>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Total întrebări</span>
+        <strong data-report-total-questions>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Fișa din caiet confirmată</span>
+        <strong data-report-notebook-confirmed>—</strong>
+      </div>
+    </div>
+
+    <div class="lab-table-wrap" data-report-answer-section>
+      <table class="lab-table">
+        <caption class="lab-sr-only">Răspunsurile elevului la evaluarea finală</caption>
+        <thead>
+          <tr>
+            <th scope="col">Întrebarea</th>
+            <th scope="col">Răspunsul elevului</th>
+            <th scope="col">Rezultat</th>
+          </tr>
+        </thead>
+        <tbody data-report-evaluation-answers>
+          <tr data-empty-row>
+            <td colspan="3">Răspunsurile nu au fost încă încărcate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9. Evenimente de activitate -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-activitate-titlu">
+    <h3 id="raport-activitate-titlu">9. Rezumatul activității în pagină</h3>
+
+    <p class="lab-info">
+      Aceste valori indică evenimente tehnice produse în timpul sesiunii. Ele
+      oferă context profesorului și nu reprezintă singure dovada copierii sau a
+      unei abateri.
+    </p>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Schimbări de filă/fereastră</span>
+        <strong data-report-tab-switches>0</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Ieșiri din ecran complet</span>
+        <strong data-report-fullscreen-exits>0</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Tentative de copiere</span>
+        <strong data-report-copy-attempts>0</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Tentative de lipire</span>
+        <strong data-report-paste-attempts>0</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Meniu contextual</span>
+        <strong data-report-context-menu-attempts>0</strong>
+      </div>
+    </div>
+
+    <details class="lab-print-hide" data-report-event-log-section>
+      <summary>Vezi jurnalul cronologic al evenimentelor</summary>
+      <div class="lab-table-wrap">
+        <table class="lab-table">
+          <thead>
+            <tr>
+              <th scope="col">Nr.</th>
+              <th scope="col">Data și ora</th>
+              <th scope="col">Tip eveniment</th>
+            </tr>
+          </thead>
+          <tbody data-report-event-log>
+            <tr data-empty-row>
+              <td colspan="3">Nu au fost înregistrate evenimente.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- 10. Confirmarea si transmiterea -->
+  <section class="lab-section lab-avoid-break" aria-labelledby="raport-transmitere-titlu">
+    <h3 id="raport-transmitere-titlu">10. Înregistrarea raportului</h3>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Data generării</span>
+        <strong data-report-generated-at>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Identificator raport</span>
+        <strong data-report-id>—</strong>
+      </div>
+      <div class="lab-result-item">
+        <span>Starea raportului</span>
+        <strong data-report-state>În pregătire</strong>
+      </div>
+    </div>
+
+    <label class="lab-commitment lab-print-hide">
+      <input
+        type="checkbox"
+        name="finalReportConfirmed"
+        data-report-confirmation
+        required
+      >
+      <span>
+        Am verificat raportul și confirm că valorile, observațiile, calculele și
+        concluzia afișate corespund activității pe care am realizat-o.
+      </span>
+    </label>
+
+    <p
+      class="lab-status"
+      data-report-submission-status
+      role="status"
+      aria-live="polite"
+    >
+      Raportul nu a fost încă trimis.
+    </p>
+
+    <p
+      class="lab-feedback"
+      data-report-feedback
+      role="status"
+      aria-live="polite"
+    ></p>
+
+    <div class="lab-actions lab-print-hide">
+      <button
+        class="lab-btn lab-btn-secondary"
+        type="button"
+        data-action="print-final-report"
+      >
+        Tipărește / Salvează PDF
+      </button>
+      <button
+        class="lab-btn lab-btn-success"
+        type="button"
+        data-action="submit-final-report"
+      >
+        Trimite raportul profesorului
+      </button>
+      <button
+        class="lab-btn"
+        type="button"
+        data-action="retry-final-report"
+        hidden
+      >
+        Retrimite raportul
+      </button>
+    </div>
+  </section>
+
+  <footer class="lab-section lab-text-muted lab-avoid-break">
+    <p>
+      Raport generat de laboratorul virtual de fizică. Păstrează codul sesiunii
+      pentru identificarea rezultatului transmis.
+    </p>
+    <p>
+      Semnătura elevului: ________________________________
+      &nbsp;&nbsp;&nbsp; Data: __________________
+    </p>
+  </footer>
+
+  <!-- Sabloane pentru randurile generate de biblioteca JavaScript. -->
+  <template data-report-template="equipment-row">
+    <tr>
+      <th scope="row" data-cell="name"></th>
+      <td data-cell="category"></td>
+      <td data-cell="required"></td>
+      <td data-cell="selected"></td>
+    </tr>
+  </template>
+
+  <template data-report-template="initial-data-row">
+    <tr>
+      <th scope="row" data-cell="label"></th>
+      <td data-cell="symbol"></td>
+      <td data-cell="value"></td>
+      <td data-cell="unit"></td>
+    </tr>
+  </template>
+
+  <template data-report-template="measurement-row">
+    <tr>
+      <th scope="row" data-cell="index"></th>
+      <td data-cell="label"></td>
+      <td data-cell="value"></td>
+      <td data-cell="unit"></td>
+      <td data-cell="note"></td>
+    </tr>
+  </template>
+
+  <template data-report-template="answer-row">
+    <tr>
+      <th scope="row" data-cell="question"></th>
+      <td data-cell="studentAnswer"></td>
+      <td data-cell="status"></td>
+    </tr>
+  </template>
+
+  <template data-report-template="event-row">
+    <tr>
+      <th scope="row" data-cell="index"></th>
+      <td data-cell="timestamp"></td>
+      <td data-cell="type"></td>
+    </tr>
+  </template>
+</section>

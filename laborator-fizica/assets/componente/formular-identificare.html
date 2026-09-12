@@ -1,1 +1,262 @@
+<!--
+  Componenta reutilizabila: formular-identificare.html
 
+  Se afiseaza la inceputul fiecarui laborator. Biblioteca JavaScript comuna:
+  - completeaza titlul, data, ora si codul sesiunii;
+  - valideaza numele si clasa;
+  - memoreaza momentul inceperii;
+  - initializeaza monitorizarea activitatii dupa acordul elevului;
+  - inchide fereastra si permite continuarea la normele de securitate.
+
+  Componenta nu contine GOOGLE_SCRIPT_URL si nu trimite singura date.
+-->
+
+<div
+  class="lab-modal"
+  id="identificare-laborator"
+  data-lab-component="formular-identificare"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="identificare-titlu"
+  aria-describedby="identificare-descriere"
+>
+  <div class="lab-modal-dialog" data-identification-dialog>
+    <header class="lab-section">
+      <span class="lab-kicker">Laborator virtual de fizică</span>
+      <h2 id="identificare-titlu">Identificarea elevului</h2>
+      <p id="identificare-descriere">
+        Completează datele de mai jos pentru a începe activitatea. Data și ora
+        sunt înregistrate automat la pornirea experimentului.
+      </p>
+    </header>
+
+    <div class="lab-info lab-avoid-break" role="note">
+      <strong>Experiment:</strong>
+      <span data-identification-experiment-title>Titlul se încarcă…</span>
+    </div>
+
+    <form id="formular-identificare" data-identification-form novalidate>
+      <label class="lab-field" for="identificare-nume">
+        Numele și prenumele elevului
+        <input
+          class="lab-input"
+          id="identificare-nume"
+          name="studentName"
+          data-student-name
+          type="text"
+          autocomplete="name"
+          minlength="3"
+          maxlength="80"
+          pattern=".*\S.*"
+          placeholder="Exemplu: Popescu Andrei"
+          aria-describedby="identificare-nume-ajutor identificare-nume-eroare"
+          required
+          autofocus
+        >
+        <small class="lab-help" id="identificare-nume-ajutor">
+          Introdu numele complet, așa cum apare în catalog.
+        </small>
+        <small
+          class="lab-feedback is-error"
+          id="identificare-nume-eroare"
+          data-error-for="studentName"
+          aria-live="polite"
+        ></small>
+      </label>
+
+      <label class="lab-field" for="identificare-clasa">
+        Clasa
+        <input
+          class="lab-input"
+          id="identificare-clasa"
+          name="studentClass"
+          data-student-class
+          type="text"
+          list="lista-clase-liceu"
+          autocomplete="off"
+          minlength="2"
+          maxlength="12"
+          placeholder="Exemplu: X A"
+          aria-describedby="identificare-clasa-ajutor identificare-clasa-eroare"
+          required
+        >
+        <small class="lab-help" id="identificare-clasa-ajutor">
+          Selectează o variantă sau introdu denumirea exactă a clasei tale.
+        </small>
+        <small
+          class="lab-feedback is-error"
+          id="identificare-clasa-eroare"
+          data-error-for="studentClass"
+          aria-live="polite"
+        ></small>
+      </label>
+
+      <datalist id="lista-clase-liceu">
+        <option value="IX A"></option>
+        <option value="IX B"></option>
+        <option value="IX C"></option>
+        <option value="IX D"></option>
+        <option value="X A"></option>
+        <option value="X B"></option>
+        <option value="X C"></option>
+        <option value="X D"></option>
+        <option value="XI A"></option>
+        <option value="XI B"></option>
+        <option value="XI C"></option>
+        <option value="XI D"></option>
+        <option value="XII A"></option>
+        <option value="XII B"></option>
+        <option value="XII C"></option>
+        <option value="XII D"></option>
+      </datalist>
+
+      <div class="lab-field-row">
+        <label class="lab-field" for="identificare-data">
+          Data experimentului
+          <input
+            class="lab-input"
+            id="identificare-data"
+            name="experimentDate"
+            data-experiment-date
+            type="text"
+            value="Se completează automat"
+            readonly
+            aria-readonly="true"
+          >
+        </label>
+
+        <label class="lab-field" for="identificare-ora">
+          Ora începerii
+          <input
+            class="lab-input"
+            id="identificare-ora"
+            name="experimentStartTime"
+            data-experiment-start-time
+            type="text"
+            value="Se completează automat"
+            readonly
+            aria-readonly="true"
+          >
+        </label>
+      </div>
+
+      <div class="lab-field-row">
+        <label class="lab-field" for="identificare-cod-sesiune">
+          Codul sesiunii
+          <input
+            class="lab-input"
+            id="identificare-cod-sesiune"
+            name="sessionId"
+            data-session-id
+            type="text"
+            value="Se generează automat"
+            readonly
+            aria-readonly="true"
+          >
+          <small class="lab-help">
+            Cod tehnic asociat acestei încercări.
+          </small>
+        </label>
+
+        <label class="lab-field" for="identificare-set-date">
+          Setul de date
+          <input
+            class="lab-input"
+            id="identificare-set-date"
+            name="dataSetId"
+            data-dataset-id
+            type="text"
+            value="Se alocă la începere"
+            readonly
+            aria-readonly="true"
+          >
+          <small class="lab-help">
+            Valorile experimentale sunt alocate automat.
+          </small>
+        </label>
+      </div>
+
+      <section
+        class="lab-warning lab-avoid-break"
+        aria-labelledby="monitorizare-activitate-titlu"
+      >
+        <h3 id="monitorizare-activitate-titlu">Monitorizarea activității</h3>
+        <p>
+          Pe durata laboratorului pot fi înregistrate schimbarea filei sau a
+          ferestrei, ieșirea din modul ecran complet și tentativele de copiere,
+          lipire ori deschidere a meniului contextual. Nu se realizează
+          înregistrări video sau audio și nu este citit conținutul altor file.
+        </p>
+      </section>
+
+      <label class="lab-consent">
+        <input
+          type="checkbox"
+          name="activityMonitoringAcknowledged"
+          data-monitoring-consent
+          aria-describedby="monitorizare-acord-eroare"
+          required
+        >
+        <span>
+          Am înțeles ce evenimente de activitate sunt înregistrate și voi
+          desfășura experimentul individual, fără alte preocupări.
+        </span>
+      </label>
+      <small
+        class="lab-feedback is-error"
+        id="monitorizare-acord-eroare"
+        data-error-for="activityMonitoringAcknowledged"
+        aria-live="polite"
+      ></small>
+
+      <label class="lab-commitment">
+        <input
+          type="checkbox"
+          name="identityConfirmed"
+          data-identity-confirmation
+          aria-describedby="identificare-confirmare-eroare"
+          required
+        >
+        <span>
+          Confirm că numele și clasa introduse sunt corecte și că îmi aparțin.
+        </span>
+      </label>
+      <small
+        class="lab-feedback is-error"
+        id="identificare-confirmare-eroare"
+        data-error-for="identityConfirmed"
+        aria-live="polite"
+      ></small>
+
+      <p class="lab-help">
+        Datele sunt folosite pentru identificarea rezultatului transmis
+        profesorului și pentru verificarea desfășurării activității.
+      </p>
+
+      <p
+        class="lab-feedback"
+        id="identificare-feedback"
+        data-identification-feedback
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <div class="lab-actions lab-actions-center">
+        <button
+          class="lab-btn lab-btn-success"
+          type="submit"
+          data-action="start-laboratory"
+        >
+          Începe laboratorul
+        </button>
+      </div>
+    </form>
+
+    <noscript>
+      <p class="lab-danger">
+        Acest laborator necesită JavaScript pentru alocarea datelor și
+        înregistrarea rezultatelor. Activează JavaScript și reîncarcă pagina.
+      </p>
+    </noscript>
+  </div>
+</div>

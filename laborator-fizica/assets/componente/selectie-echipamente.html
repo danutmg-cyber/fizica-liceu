@@ -1,1 +1,401 @@
+<!--
+  Componenta reutilizabila: selectie-echipamente.html
 
+  Flux recomandat:
+  1. biblioteca JS citeste configuratia experimentului;
+  2. marcheaza echipamentul individual necesar;
+  3. genereaza aparatele si materialele din sablonul equipment-card;
+  4. elevul selecteaza elementele;
+  5. JS compara selectia cu lista requiredEquipment si permite continuarea.
+
+  Categoriile acceptate sunt: protection, mechanics, thermal, optics,
+  electricity, measurement, glassware si consumables.
+-->
+
+<section
+  class="lab-card lab-equipment-selection"
+  id="selectie-echipamente"
+  data-lab-component="selectie-echipamente"
+  aria-labelledby="selectie-echipamente-titlu"
+>
+  <header class="lab-section">
+    <span class="lab-kicker">Pregătirea laboratorului</span>
+    <h2 id="selectie-echipamente-titlu">Selectarea echipamentelor și materialelor</h2>
+    <p>
+      Analizează descrierea experimentului și riscurile identificate. Selectează
+      mai întâi echipamentul individual de protecție, apoi aparatele,
+      instrumentele, recipientele și materialele necesare.
+    </p>
+  </header>
+
+  <div class="lab-warning" role="note">
+    Selectează numai elementele necesare. Un echipament disponibil în laborator
+    nu trebuie folosit automat la fiecare experiment.
+  </div>
+
+  <div class="lab-session lab-avoid-break">
+    <span class="lab-session-item">
+      Experiment:
+      <strong class="lab-session-value" data-equipment-experiment-title>—</strong>
+    </span>
+    <span class="lab-session-item">
+      Domeniu:
+      <strong class="lab-session-value" data-equipment-experiment-domain>—</strong>
+    </span>
+    <span class="lab-session-item">
+      Riscuri:
+      <strong class="lab-session-value" data-equipment-risk-summary>—</strong>
+    </span>
+  </div>
+
+  <form id="formular-selectie-echipamente" data-equipment-form novalidate>
+    <!-- Etapa 1: echipamentul individual de protectie. -->
+    <fieldset
+      class="lab-section"
+      data-equipment-stage="protection"
+      aria-describedby="protectie-instructiune"
+    >
+      <legend>
+        <strong>1. Echipamentul individual de protecție</strong>
+      </legend>
+      <p id="protectie-instructiune">
+        Selectează echipamentul indicat de natura experimentului și de
+        instrucțiunile profesorului.
+      </p>
+
+      <div class="lab-grid-3" data-protection-equipment-list>
+        <label class="lab-choice" data-equipment-card data-equipment-id="lab-coat">
+          <input
+            type="checkbox"
+            name="selectedEquipment"
+            value="lab-coat"
+            data-equipment-checkbox
+          >
+          <span>
+            <strong aria-hidden="true">🥼</strong>
+            <strong>Halat de laborator</strong><br>
+            <small class="lab-help">
+              Protejează îmbrăcămintea și ajută la menținerea unei ținute adecvate.
+            </small>
+            <small class="lab-kicker" data-required-badge hidden>Necesar</small>
+          </span>
+        </label>
+
+        <label class="lab-choice" data-equipment-card data-equipment-id="safety-glasses">
+          <input
+            type="checkbox"
+            name="selectedEquipment"
+            value="safety-glasses"
+            data-equipment-checkbox
+          >
+          <span>
+            <strong aria-hidden="true">🥽</strong>
+            <strong>Ochelari de protecție</strong><br>
+            <small class="lab-help">
+              Protejează ochii la lucrări cu sticlă, lichide, corpuri lansate sau alte riscuri indicate.
+            </small>
+            <small class="lab-kicker" data-required-badge hidden>Necesar</small>
+          </span>
+        </label>
+
+        <label class="lab-choice" data-equipment-card data-equipment-id="protective-gloves">
+          <input
+            type="checkbox"
+            name="selectedEquipment"
+            value="protective-gloves"
+            data-equipment-checkbox
+          >
+          <span>
+            <strong aria-hidden="true">🧤</strong>
+            <strong>Mănuși de protecție</strong><br>
+            <small class="lab-help">
+              Se folosesc numai când sunt cerute pentru materialele și riscurile lucrării.
+            </small>
+            <small class="lab-kicker" data-required-badge hidden>Necesar</small>
+          </span>
+        </label>
+
+        <label class="lab-choice" data-equipment-card data-equipment-id="thermal-gloves">
+          <input
+            type="checkbox"
+            name="selectedEquipment"
+            value="thermal-gloves"
+            data-equipment-checkbox
+          >
+          <span>
+            <strong aria-hidden="true">♨</strong>
+            <strong>Mănuși termoizolante</strong><br>
+            <small class="lab-help">
+              Pentru manipularea recipientelor încălzite, numai conform indicațiilor profesorului.
+            </small>
+            <small class="lab-kicker" data-required-badge hidden>Necesar</small>
+          </span>
+        </label>
+      </div>
+
+      <p class="lab-info">
+        Mănușile nu înlocuiesc cleștii sau suporturile pentru recipiente și nu se
+        folosesc lângă piese în mișcare dacă profesorul nu le indică explicit.
+      </p>
+
+      <p
+        class="lab-feedback"
+        data-equipment-feedback="protection"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <div class="lab-actions lab-print-hide">
+        <button
+          class="lab-btn lab-btn-secondary"
+          type="button"
+          data-action="verify-protection-equipment"
+        >
+          Verifică echipamentul de protecție
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- Etapa 2: materialele specifice experimentului. -->
+    <fieldset
+      class="lab-section"
+      data-equipment-stage="apparatus"
+      aria-describedby="aparatura-instructiune"
+    >
+      <legend>
+        <strong>2. Aparate, instrumente și materiale</strong>
+      </legend>
+      <p id="aparatura-instructiune">
+        Selectează elementele necesare pentru realizarea montajului și efectuarea
+        măsurărilor. Pot exista și elemente care nu sunt folosite în această lucrare.
+      </p>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="measurement"
+        aria-labelledby="categorie-masurare-titlu"
+        hidden
+      >
+        <h3 id="categorie-masurare-titlu">Instrumente de măsură</h3>
+        <div class="lab-grid-3" data-equipment-category="measurement"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="mechanics"
+        aria-labelledby="categorie-mecanica-titlu"
+        hidden
+      >
+        <h3 id="categorie-mecanica-titlu">Mecanică</h3>
+        <div class="lab-grid-3" data-equipment-category="mechanics"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="thermal"
+        aria-labelledby="categorie-termodinamica-titlu"
+        hidden
+      >
+        <h3 id="categorie-termodinamica-titlu">Termodinamică</h3>
+        <div class="lab-grid-3" data-equipment-category="thermal"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="optics"
+        aria-labelledby="categorie-optica-titlu"
+        hidden
+      >
+        <h3 id="categorie-optica-titlu">Optică</h3>
+        <div class="lab-grid-3" data-equipment-category="optics"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="electricity"
+        aria-labelledby="categorie-electricitate-titlu"
+        hidden
+      >
+        <h3 id="categorie-electricitate-titlu">Electricitate</h3>
+        <div class="lab-grid-3" data-equipment-category="electricity"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="glassware"
+        aria-labelledby="categorie-recipiente-titlu"
+        hidden
+      >
+        <h3 id="categorie-recipiente-titlu">Recipiente și obiecte din sticlă</h3>
+        <div class="lab-grid-3" data-equipment-category="glassware"></div>
+      </section>
+
+      <section
+        class="lab-section"
+        data-equipment-category-section="consumables"
+        aria-labelledby="categorie-materiale-titlu"
+        hidden
+      >
+        <h3 id="categorie-materiale-titlu">Materiale consumabile</h3>
+        <div class="lab-grid-3" data-equipment-category="consumables"></div>
+      </section>
+
+      <div class="lab-info" data-equipment-loading-status role="status" aria-live="polite">
+        Lista aparatelor și materialelor se încarcă din configurația experimentului.
+      </div>
+
+      <p
+        class="lab-feedback"
+        data-equipment-feedback="apparatus"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <div class="lab-actions lab-print-hide">
+        <button
+          class="lab-btn lab-btn-secondary"
+          type="button"
+          data-action="clear-equipment-selection"
+        >
+          Șterge selecția
+        </button>
+        <button
+          class="lab-btn"
+          type="button"
+          data-action="verify-apparatus-selection"
+        >
+          Verifică aparatele și materialele
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- Etapa 3: verificarea starii aparaturii. -->
+    <fieldset
+      class="lab-section lab-avoid-break"
+      data-equipment-stage="inspection"
+      aria-labelledby="verificare-echipamente-titlu"
+    >
+      <legend id="verificare-echipamente-titlu">
+        <strong>3. Verificarea înainte de utilizare</strong>
+      </legend>
+
+      <label class="lab-choice">
+        <input type="checkbox" name="workAreaClear" required>
+        <span>Masa de lucru este liberă de obiecte inutile, alimente și băuturi.</span>
+      </label>
+      <label class="lab-choice">
+        <input type="checkbox" name="equipmentVisuallyChecked" required>
+        <span>Am verificat vizual aparatele, cablurile, suporturile și recipientele selectate.</span>
+      </label>
+      <label class="lab-choice">
+        <input type="checkbox" name="equipmentUndamaged" required>
+        <span>Nu am observat fisuri, izolații deteriorate, prinderi slabe sau alte defecte.</span>
+      </label>
+      <label class="lab-choice">
+        <input type="checkbox" name="procedureUnderstood" required>
+        <span>Înțeleg rolul fiecărui element și ordinea în care va fi utilizat.</span>
+      </label>
+
+      <label class="lab-field" for="problema-echipament">
+        Problemă observată la echipament
+        <textarea
+          class="lab-textarea"
+          id="problema-echipament"
+          name="equipmentIssue"
+          data-equipment-issue
+          maxlength="400"
+          rows="3"
+          placeholder="Completează numai dacă ai observat o problemă și anunță profesorul."
+        ></textarea>
+      </label>
+
+      <div class="lab-danger" data-equipment-issue-warning hidden role="alert">
+        Nu utiliza echipamentul semnalat. Oprește pregătirea și anunță profesorul.
+      </div>
+
+      <label class="lab-commitment">
+        <input
+          type="checkbox"
+          name="equipmentSelectionConfirmed"
+          data-equipment-confirmation
+          required
+        >
+        <span>
+          Confirm că am selectat echipamentele cerute, le-am verificat vizual și
+          nu voi începe montajul fără acordul profesorului.
+        </span>
+      </label>
+    </fieldset>
+
+    <section class="lab-section lab-avoid-break" aria-labelledby="rezumat-selectie-titlu">
+      <h3 id="rezumat-selectie-titlu">Rezumatul selecției</h3>
+
+      <div class="lab-result-grid">
+        <div class="lab-result-item">
+          <span>Elemente necesare</span>
+          <strong data-equipment-required-count>0</strong>
+        </div>
+        <div class="lab-result-item">
+          <span>Elemente selectate</span>
+          <strong data-equipment-selected-count>0</strong>
+        </div>
+        <div class="lab-result-item">
+          <span>Elemente corect selectate</span>
+          <strong data-equipment-correct-count>0</strong>
+        </div>
+        <div class="lab-result-item">
+          <span>Starea trusei</span>
+          <strong data-equipment-kit-status>Neconfigurată</strong>
+        </div>
+      </div>
+
+      <p
+        class="lab-feedback"
+        id="selectie-echipamente-feedback"
+        data-equipment-feedback="final"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <div class="lab-actions lab-actions-center lab-print-hide">
+        <button
+          class="lab-btn lab-btn-success"
+          type="submit"
+          data-action="confirm-equipment-selection"
+        >
+          Confirm selecția și continui
+        </button>
+      </div>
+    </section>
+  </form>
+
+  <!--
+    Sablon pentru fiecare aparat sau material. Biblioteca JS cloneaza acest
+    continut si completeaza atributele data-equipment-*.
+  -->
+  <template data-template="equipment-card">
+    <label class="lab-choice" data-equipment-card>
+      <input
+        type="checkbox"
+        name="selectedEquipment"
+        data-equipment-checkbox
+      >
+      <span>
+        <strong data-equipment-icon aria-hidden="true">◻</strong>
+        <strong data-equipment-name></strong><br>
+        <small class="lab-help" data-equipment-description></small>
+        <small class="lab-kicker" data-required-badge hidden>Necesar</small>
+      </span>
+    </label>
+  </template>
+
+  <!-- Rand folosit de raport-final.html. -->
+  <template data-template="selected-equipment-summary-row">
+    <tr>
+      <th scope="row" data-equipment-name></th>
+      <td data-equipment-category-label></td>
+      <td data-equipment-required-status></td>
+      <td data-equipment-selected-status></td>
+    </tr>
+  </template>
+</section>
