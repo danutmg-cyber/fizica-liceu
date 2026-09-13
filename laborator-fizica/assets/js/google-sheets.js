@@ -541,54 +541,84 @@
     });
   }
 
-  async function postPayload(payload) {
-    const configuration = state.submissionConfig;
+  function postPayload(payload) {
+  return new Promise((resolve, reject) => {
+    const frameName =
+      `google-sheets-response-${Date.now()}`;
 
-    const controller =
-      typeof AbortController === "function"
-        ? new AbortController()
-        : null;
+    const iframe = document.createElement("iframe");
+    iframe.name = frameName;
+    iframe.hidden = true;
+    iframe.setAttribute("aria-hidden", "true");
 
-    const timeout = Number(
-      configuration.timeoutMilliseconds || 15000
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = state.endpoint;
+    form.target = frameName;
+    form.hidden = true;
+    form.acceptCharset = "UTF-8";
+
+    const payloadInput = document.createElement("input");
+    payloadInput.type = "hidden";
+    payloadInput.name = "payload";
+    payloadInput.value = JSON.stringify(payload);
+
+    form.appendChild(payloadInput);
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+
+    let completed = false;
+
+    const cleanup = () => {
+      globalThis.setTimeout(() => {
+        form.remove();
+        iframe.remove();
+      }, 1000);
+    };
+
+    iframe.addEventListener(
+      "load",
+      () => {
+        if (completed) {
+          return;
+        }
+
+        completed = true;
+        cleanup();
+
+        resolve({
+          ok: true,
+          type: "form-submit"
+        });
+      },
+      {
+        once: true
+      }
     );
 
-    const timeoutId = controller
-      ? globalThis.setTimeout(
-          () => controller.abort(),
-          timeout
-        )
-      : null;
+    globalThis.setTimeout(() => {
+      if (completed) {
+        return;
+      }
+
+      completed = true;
+      cleanup();
+
+      resolve({
+        ok: true,
+        type: "form-submit-timeout"
+      });
+    }, 5000);
 
     try {
-      return await fetch(state.endpoint, {
-        method:
-          configuration.method ||
-          "POST",
-
-        mode:
-          configuration.mode ||
-          "no-cors",
-
-        cache: "no-store",
-        redirect: "follow",
-        keepalive: true,
-
-        headers: {
-          "Content-Type":
-            configuration.contentType ||
-            "text/plain;charset=UTF-8"
-        },
-
-        body: JSON.stringify(payload),
-        signal: controller?.signal
-      });
-    } finally {
-      if (timeoutId !== null) {
-        globalThis.clearTimeout(timeoutId);
-      }
+      form.submit();
+    } catch (error) {
+      completed = true;
+      cleanup();
+      reject(error);
     }
-  }
+  });
+}
 
   async function sendWithRetries(payload) {
     const maximumRetries = Math.max(
