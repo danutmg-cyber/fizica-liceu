@@ -1,1 +1,653 @@
-
+{
+  "schemaVersion": "1.0.0",
+  "application": {
+    "name": "Laborator virtual de fizică",
+    "shortName": "Laborator Fizică",
+    "language": "ro",
+    "locale": "ro-RO",
+    "timeZone": "Europe/Bucharest",
+    "repository": "https://github.com/danutmg-cyber/fizica-liceu",
+    "laboratoryRoot": "/fizica-liceu/laborator-fizica/"
+  },
+  "assets": {
+    "styles": {
+      "core": "../assets/css/laborator-core.css",
+      "simulation2d": "../assets/css/laborator-2d.css",
+      "print": "../assets/css/print.css"
+    },
+    "components": {
+      "identification": "../assets/componente/formular-identificare.html",
+      "safety": "../assets/componente/instructaj-securitate.html",
+      "equipmentSelection": "../assets/componente/selectie-echipamente.html",
+      "notebookForm": "../assets/componente/formular-caiet.html",
+      "finalEvaluation": "../assets/componente/evaluare-finala.html",
+      "finalReport": "../assets/componente/raport-final.html"
+    }
+  },
+  "submission": {
+    "enabled": true,
+    "googleScriptUrl": "https://script.google.com/macros/s/AKfycbylgezt8y5G8GbsvGlYqrLkydYpIXhuIc4ua8NayZTf_wUZ-gTdDWyhKdfTYyk15q_MXA/exec",
+    "method": "POST",
+    "mode": "no-cors",
+    "contentType": "text/plain;charset=UTF-8",
+    "timeoutMilliseconds": 15000,
+    "maximumRetries": 2,
+    "retryDelayMilliseconds": 1500,
+    "saveLocalBackup": true,
+    "localBackupKey": "fizica-laborator-rezultate-netrimise",
+    "messages": {
+      "sending": "Rezultatul se transmite către registrul clasei…",
+      "success": "Rezultatul a fost trimis către registrul clasei.",
+      "failure": "Rezultatul nu a putut fi transmis. Verifică internetul și încearcă din nou.",
+      "notConfigured": "Adresa Google Apps Script nu este configurată. Anunță profesorul."
+    }
+  },
+  "session": {
+    "idPrefix": "FIZ",
+    "storagePrefix": "fizica-laborator",
+    "restoreInterruptedSession": true,
+    "allowMultipleSubmissions": false,
+    "recordStartTime": true,
+    "recordFinishTime": true,
+    "dateFormat": {
+      "dateStyle": "long",
+      "timeStyle": "medium"
+    },
+    "dataSet": {
+      "selectionMethod": "cryptographic-random",
+      "persistForSession": true,
+      "minimumSetCount": 50,
+      "preventRegenerationOnRefresh": true
+    }
+  },
+  "studentIdentification": {
+    "required": true,
+    "minimumNameLength": 3,
+    "maximumNameLength": 80,
+    "minimumClassLength": 2,
+    "maximumClassLength": 12,
+    "normalizeWhitespace": true,
+    "allowedClassPattern": "^[0-9IVXivx]{1,4}[ -]?[A-Za-zĂÂÎȘȚăâîșț0-9]{0,4}$",
+    "classSuggestions": [
+      "IX A",
+      "IX B",
+      "IX C",
+      "IX D",
+      "X A",
+      "X B",
+      "X C",
+      "X D",
+      "XI A",
+      "XI B",
+      "XI C",
+      "XI D",
+      "XII A",
+      "XII B",
+      "XII C",
+      "XII D"
+    ]
+  },
+  "monitoring": {
+    "enabled": true,
+    "requiresAcknowledgement": true,
+    "startAfterIdentification": true,
+    "stopAfterSubmission": true,
+    "requestFullscreen": true,
+    "fullscreenIsMandatory": false,
+    "recordTimestamps": true,
+    "maximumStoredEvents": 200,
+    "events": {
+      "visibilityChange": true,
+      "windowBlur": true,
+      "fullscreenExit": true,
+      "copy": true,
+      "cut": true,
+      "paste": true,
+      "contextMenu": true,
+      "keyboardShortcuts": true
+    },
+    "prevention": {
+      "copy": true,
+      "cut": true,
+      "paste": true,
+      "contextMenu": true,
+      "selectionOutsideInputs": true,
+      "developerTools": false
+    },
+    "ignoredElements": [
+      "input",
+      "textarea",
+      "select",
+      "[contenteditable='true']"
+    ],
+    "disclosure": "Se înregistrează numai evenimentele produse în pagina laboratorului: schimbarea filei sau ferestrei, ieșirea din ecran complet și tentativele de copiere, tăiere, lipire ori deschidere a meniului contextual. Nu se înregistrează audio sau video și nu se citește conținutul altor file.",
+    "interpretationNotice": "Evenimentele tehnice oferă context profesorului și nu reprezintă singure dovada copierii sau a unei abateri."
+  },
+  "workflow": {
+    "requireStepsInOrder": true,
+    "allowBackNavigation": true,
+    "saveProgressLocally": true,
+    "steps": [
+      {
+        "id": "identification",
+        "label": "Identificare",
+        "required": true
+      },
+      {
+        "id": "safety",
+        "label": "Securitate",
+        "required": true
+      },
+      {
+        "id": "equipment",
+        "label": "Echipare",
+        "required": true
+      },
+      {
+        "id": "description",
+        "label": "Descriere",
+        "required": true
+      },
+      {
+        "id": "initial-data",
+        "label": "Date inițiale",
+        "required": true
+      },
+      {
+        "id": "experiment",
+        "label": "Experiment",
+        "required": true
+      },
+      {
+        "id": "calculations",
+        "label": "Calcule",
+        "required": true
+      },
+      {
+        "id": "comparison",
+        "label": "Comparare",
+        "required": true
+      },
+      {
+        "id": "evaluation",
+        "label": "Evaluare",
+        "required": true
+      },
+      {
+        "id": "report",
+        "label": "Raport",
+        "required": true
+      }
+    ]
+  },
+  "safety": {
+    "instructionRequired": true,
+    "commitmentRequired": true,
+    "minimumQuizScorePercent": 100,
+    "quizAnswers": {
+      "safety-1": "b",
+      "safety-2": "a",
+      "safety-3": "c"
+    },
+    "availableDomains": [
+      "general",
+      "electric",
+      "thermal",
+      "mechanical",
+      "optical",
+      "glass",
+      "fire"
+    ],
+    "domainLabels": {
+      "general": "Reguli generale",
+      "electric": "Risc electric",
+      "thermal": "Risc termic",
+      "mechanical": "Risc mecanic",
+      "optical": "Risc optic",
+      "glass": "Obiecte din sticlă",
+      "fire": "Risc de incendiu"
+    }
+  },
+  "equipmentSelection": {
+    "required": true,
+    "exactSelectionRequired": true,
+    "showRequiredBadgesBeforeValidation": false,
+    "randomizeOptions": true,
+    "maximumDistractorsPerExperiment": 6,
+    "defaultProtectiveEquipment": [
+      "lab-coat"
+    ],
+    "categoryOrder": [
+      "protection",
+      "measurement",
+      "mechanics",
+      "thermal",
+      "optics",
+      "electricity",
+      "glassware",
+      "consumables"
+    ],
+    "categoryLabels": {
+      "protection": "Echipament individual de protecție",
+      "measurement": "Instrumente de măsură",
+      "mechanics": "Mecanică",
+      "thermal": "Termodinamică",
+      "optics": "Optică",
+      "electricity": "Electricitate",
+      "glassware": "Recipiente și obiecte din sticlă",
+      "consumables": "Materiale consumabile"
+    }
+  },
+  "equipmentCatalog": [
+    {
+      "id": "lab-coat",
+      "name": "Halat de laborator",
+      "category": "protection",
+      "icon": "🥼",
+      "description": "Protejează îmbrăcămintea și asigură o ținută adecvată în laborator."
+    },
+    {
+      "id": "safety-glasses",
+      "name": "Ochelari de protecție",
+      "category": "protection",
+      "icon": "🥽",
+      "description": "Protejează ochii la lucrări cu sticlă, lichide, corpuri lansate sau alte riscuri indicate."
+    },
+    {
+      "id": "protective-gloves",
+      "name": "Mănuși de protecție",
+      "category": "protection",
+      "icon": "🧤",
+      "description": "Se utilizează numai pentru materialele și riscurile indicate de profesor."
+    },
+    {
+      "id": "thermal-gloves",
+      "name": "Mănuși termoizolante",
+      "category": "protection",
+      "icon": "♨",
+      "description": "Permit manipularea controlată a recipientelor încălzite."
+    },
+    {
+      "id": "ruler",
+      "name": "Riglă gradată",
+      "category": "measurement",
+      "icon": "📏",
+      "description": "Măsoară lungimi și deplasări."
+    },
+    {
+      "id": "measuring-tape",
+      "name": "Ruletă",
+      "category": "measurement",
+      "icon": "📐",
+      "description": "Măsoară distanțe mai mari."
+    },
+    {
+      "id": "vernier-caliper",
+      "name": "Șubler",
+      "category": "measurement",
+      "icon": "📐",
+      "description": "Măsoară dimensiuni exterioare, interioare și adâncimi."
+    },
+    {
+      "id": "stopwatch",
+      "name": "Cronometru",
+      "category": "measurement",
+      "icon": "⏱",
+      "description": "Măsoară intervale de timp."
+    },
+    {
+      "id": "laboratory-balance",
+      "name": "Balanță de laborator",
+      "category": "measurement",
+      "icon": "⚖",
+      "description": "Măsoară masa corpurilor și a lichidelor."
+    },
+    {
+      "id": "thermometer",
+      "name": "Termometru",
+      "category": "measurement",
+      "icon": "🌡",
+      "description": "Măsoară temperatura unui corp sau a unui lichid."
+    },
+    {
+      "id": "dynamometer",
+      "name": "Dinamometru",
+      "category": "measurement",
+      "icon": "↕",
+      "description": "Măsoară forțe."
+    },
+    {
+      "id": "multimeter",
+      "name": "Multimetru",
+      "category": "measurement",
+      "icon": "📟",
+      "description": "Măsoară mărimi electrice în domeniul selectat."
+    },
+    {
+      "id": "laboratory-stand",
+      "name": "Stativ de laborator",
+      "category": "mechanics",
+      "icon": "🔩",
+      "description": "Susține și fixează elementele montajului."
+    },
+    {
+      "id": "clamp-and-bosshead",
+      "name": "Clemă și mufă",
+      "category": "mechanics",
+      "icon": "🔧",
+      "description": "Fixează aparatele și corpurile pe stativ."
+    },
+    {
+      "id": "spring",
+      "name": "Resort elastic",
+      "category": "mechanics",
+      "icon": "〰",
+      "description": "Este folosit în studiul deformării și oscilațiilor elastice."
+    },
+    {
+      "id": "slotted-masses",
+      "name": "Mase marcate",
+      "category": "mechanics",
+      "icon": "⚫",
+      "description": "Asigură sarcini de masă cunoscută."
+    },
+    {
+      "id": "laboratory-cart",
+      "name": "Cărucior experimental",
+      "category": "mechanics",
+      "icon": "▣",
+      "description": "Este folosit la studiul mișcării și al interacțiunilor."
+    },
+    {
+      "id": "inclined-plane",
+      "name": "Plan înclinat",
+      "category": "mechanics",
+      "icon": "◢",
+      "description": "Permite studiul forțelor și al mișcării pe o suprafață înclinată."
+    },
+    {
+      "id": "pendulum",
+      "name": "Pendul",
+      "category": "mechanics",
+      "icon": "◉",
+      "description": "Este utilizat pentru studiul oscilațiilor."
+    },
+    {
+      "id": "pulley",
+      "name": "Scripete",
+      "category": "mechanics",
+      "icon": "⊙",
+      "description": "Schimbă direcția unei forțe și intră în montaje mecanice."
+    },
+    {
+      "id": "calorimeter",
+      "name": "Calorimetru",
+      "category": "thermal",
+      "icon": "♨",
+      "description": "Reduce schimbul de căldură cu mediul și permite studii calorimetrice."
+    },
+    {
+      "id": "heat-source",
+      "name": "Sursă de încălzire",
+      "category": "thermal",
+      "icon": "🔥",
+      "description": "Încălzește controlat corpurile sau lichidele."
+    },
+    {
+      "id": "tripod-and-mesh",
+      "name": "Trepied și sită",
+      "category": "thermal",
+      "icon": "△",
+      "description": "Susține recipientul deasupra sursei de încălzire."
+    },
+    {
+      "id": "laboratory-tongs",
+      "name": "Clește de laborator",
+      "category": "thermal",
+      "icon": "⌁",
+      "description": "Permite manipularea recipientelor încălzite."
+    },
+    {
+      "id": "optical-bench",
+      "name": "Banc optic",
+      "category": "optics",
+      "icon": "↔",
+      "description": "Asigură alinierea componentelor optice."
+    },
+    {
+      "id": "ray-box",
+      "name": "Cutie cu raze",
+      "category": "optics",
+      "icon": "🔦",
+      "description": "Produce fascicule luminoase pentru experimente de optică."
+    },
+    {
+      "id": "low-power-laser",
+      "name": "Laser didactic",
+      "category": "optics",
+      "icon": "🔴",
+      "description": "Sursă direcțională utilizată numai conform instrucțiunilor profesorului."
+    },
+    {
+      "id": "converging-lens",
+      "name": "Lentilă convergentă",
+      "category": "optics",
+      "icon": "◯",
+      "description": "Formează imagini și concentrează fascicule luminoase."
+    },
+    {
+      "id": "diverging-lens",
+      "name": "Lentilă divergentă",
+      "category": "optics",
+      "icon": "◯",
+      "description": "Produce divergența fasciculelor luminoase."
+    },
+    {
+      "id": "optical-prism",
+      "name": "Prismă optică",
+      "category": "optics",
+      "icon": "△",
+      "description": "Este folosită la studiul refracției și dispersiei luminii."
+    },
+    {
+      "id": "plane-mirror",
+      "name": "Oglindă plană",
+      "category": "optics",
+      "icon": "▯",
+      "description": "Este utilizată la studiul reflexiei luminii."
+    },
+    {
+      "id": "optical-screen",
+      "name": "Ecran optic",
+      "category": "optics",
+      "icon": "▤",
+      "description": "Permite observarea imaginilor reale și a fasciculelor."
+    },
+    {
+      "id": "protractor",
+      "name": "Raportor",
+      "category": "optics",
+      "icon": "◒",
+      "description": "Măsoară unghiuri de incidență, reflexie sau refracție."
+    },
+    {
+      "id": "dc-power-supply",
+      "name": "Sursă de tensiune continuă",
+      "category": "electricity",
+      "icon": "🔋",
+      "description": "Alimentează controlat circuitul electric."
+    },
+    {
+      "id": "battery",
+      "name": "Baterie",
+      "category": "electricity",
+      "icon": "🔋",
+      "description": "Sursă de energie electrică pentru circuite de joasă tensiune."
+    },
+    {
+      "id": "switch",
+      "name": "Întrerupător",
+      "category": "electricity",
+      "icon": "⏻",
+      "description": "Închide sau deschide circuitul."
+    },
+    {
+      "id": "connecting-wires",
+      "name": "Conductoare de legătură",
+      "category": "electricity",
+      "icon": "➰",
+      "description": "Realizează conexiunile dintre elementele circuitului."
+    },
+    {
+      "id": "resistor",
+      "name": "Rezistor",
+      "category": "electricity",
+      "icon": "▰",
+      "description": "Element de circuit cu rezistență electrică determinată."
+    },
+    {
+      "id": "rheostat",
+      "name": "Reostat",
+      "category": "electricity",
+      "icon": "↗",
+      "description": "Permite modificarea rezistenței și reglarea curentului."
+    },
+    {
+      "id": "ammeter",
+      "name": "Ampermetru",
+      "category": "electricity",
+      "icon": "Ⓐ",
+      "description": "Măsoară intensitatea curentului și se conectează în serie."
+    },
+    {
+      "id": "voltmeter",
+      "name": "Voltmetru",
+      "category": "electricity",
+      "icon": "Ⓥ",
+      "description": "Măsoară tensiunea și se conectează în paralel."
+    },
+    {
+      "id": "beaker",
+      "name": "Pahar Berzelius",
+      "category": "glassware",
+      "icon": "🥛",
+      "description": "Recipient pentru lichide și amestecuri."
+    },
+    {
+      "id": "graduated-cylinder",
+      "name": "Cilindru gradat",
+      "category": "glassware",
+      "icon": "🧪",
+      "description": "Măsoară volumul lichidelor."
+    },
+    {
+      "id": "test-tube",
+      "name": "Eprubetă",
+      "category": "glassware",
+      "icon": "🧪",
+      "description": "Recipient pentru cantități mici de substanță."
+    },
+    {
+      "id": "glass-stirring-rod",
+      "name": "Baghetă de sticlă",
+      "category": "glassware",
+      "icon": "╱",
+      "description": "Este utilizată pentru amestecarea controlată a lichidelor."
+    },
+    {
+      "id": "water",
+      "name": "Apă",
+      "category": "consumables",
+      "icon": "💧",
+      "description": "Lichid de lucru pentru experimentele indicate."
+    },
+    {
+      "id": "paper-towels",
+      "name": "Material absorbant",
+      "category": "consumables",
+      "icon": "▧",
+      "description": "Este folosit conform indicațiilor pentru menținerea curățeniei mesei."
+    },
+    {
+      "id": "graph-paper",
+      "name": "Hârtie milimetrică",
+      "category": "consumables",
+      "icon": "▦",
+      "description": "Permite reprezentarea grafică manuală a datelor."
+    }
+  ],
+  "notebook": {
+    "required": true,
+    "minimumConclusionLength": 30,
+    "maximumConclusionLength": 800,
+    "minimumInterpretationLength": 20,
+    "requireInitialDataConfirmation": true,
+    "requireMeasurementConfirmation": true,
+    "requireFormula": true,
+    "requireUnits": true,
+    "requireComparison": true,
+    "defaultNumericTolerance": 0.1,
+    "relativeTolerancePercent": 1
+  },
+  "evaluation": {
+    "required": true,
+    "randomizeAnswerOrder": true,
+    "allowRetry": false,
+    "showCorrectAnswersAfterSubmission": true,
+    "generalQuestionAnswers": {
+      "metoda-1": "b",
+      "metoda-2": "c",
+      "metoda-3": "c"
+    },
+    "score": {
+      "maximum": 10,
+      "passingPercent": 50,
+      "roundToDecimals": 2
+    },
+    "feedbackThresholds": [
+      {
+        "minimumPercent": 90,
+        "message": "Foarte bine! Ai realizat și interpretat corect experimentul."
+      },
+      {
+        "minimumPercent": 70,
+        "message": "Bine! Verifică observațiile și sursele de eroare identificate."
+      },
+      {
+        "minimumPercent": 50,
+        "message": "Rezultat suficient. Recitește etapele de calcul și interpretare."
+      },
+      {
+        "minimumPercent": 0,
+        "message": "Reia etapele laboratorului și solicită sprijinul profesorului."
+      }
+    ]
+  },
+  "report": {
+    "enabled": true,
+    "showActivitySummaryToStudent": true,
+    "includeEventLogInSubmission": true,
+    "includeEventLogInPrint": false,
+    "requireFinalConfirmation": true,
+    "allowPrintBeforeSubmission": true,
+    "allowPrintAfterSubmission": true,
+    "filenamePattern": "raport-{class}-{student}-{experiment}-{date}.pdf"
+  },
+  "accessibility": {
+    "announceStepChanges": true,
+    "focusFirstHeadingOnStepChange": true,
+    "respectReducedMotion": true,
+    "minimumTouchTargetPixels": 42,
+    "useRomanianDiacritics": true
+  },
+  "messages": {
+    "loading": "Laboratorul se încarcă…",
+    "componentLoadError": "O componentă a laboratorului nu a putut fi încărcată. Reîncarcă pagina.",
+    "configurationError": "Configurația experimentului este incompletă. Anunță profesorul.",
+    "requiredFields": "Completează toate câmpurile obligatorii înainte de a continua.",
+    "stepLocked": "Finalizează etapa curentă înainte de a continua.",
+    "sessionRestored": "Sesiunea anterioară a fost restaurată.",
+    "offline": "Conexiunea la internet este indisponibilă. Progresul este păstrat local.",
+    "online": "Conexiunea la internet a fost restabilită."
+  }
+}
