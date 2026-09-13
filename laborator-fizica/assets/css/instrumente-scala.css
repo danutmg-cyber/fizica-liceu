@@ -1,1 +1,528 @@
+/* ======================================================================
+   FIZICA-LICEU - INSTRUMENTE CU SCALA
+   Stiluri pentru assets/js/instrumente-scala.js
+   ====================================================================== */
+
+:root {
+  --scale-ink: #17324d;
+  --scale-muted: #526b80;
+  --scale-border: #b8c9d7;
+  --scale-surface: #ffffff;
+  --scale-surface-soft: #f3f8fb;
+  --scale-primary: #126e9c;
+  --scale-primary-dark: #0b4f73;
+  --scale-focus: #ffb000;
+  --scale-success: #16794b;
+  --scale-success-bg: #eaf8f1;
+  --scale-error: #b42318;
+  --scale-error-bg: #fff0ee;
+  --scale-shadow: 0 12px 34px rgb(23 50 77 / 14%);
+  --scale-radius: 16px;
+}
+
+.lab-scale-instrument {
+  width: 100%;
+  max-width: 920px;
+  margin: 1.25rem auto;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  color: var(--scale-ink);
+  background: var(--scale-surface);
+  border: 1px solid var(--scale-border);
+  border-radius: var(--scale-radius);
+  box-shadow: var(--scale-shadow);
+  box-sizing: border-box;
+}
+
+.lab-scale-title {
+  margin: 0 0 0.55rem;
+  color: var(--scale-ink);
+  font-size: clamp(1.2rem, 2.7vw, 1.65rem);
+  line-height: 1.25;
+}
+
+.lab-scale-instruction {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.lab-scale-metadata {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.55rem 0.8rem;
+  color: var(--scale-primary-dark);
+  background: #e9f5fb;
+  border-left: 4px solid var(--scale-primary);
+  border-radius: 6px;
+  font-size: 0.94rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.lab-scale-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 270px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background:
+    linear-gradient(rgb(255 255 255 / 94%), rgb(255 255 255 / 94%)),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 19px,
+      rgb(23 50 77 / 4%) 20px
+    );
+  border: 2px solid var(--scale-border);
+  border-radius: 12px;
+  box-sizing: border-box;
+  touch-action: pan-x pan-y;
+}
+
+.lab-scale-viewport::before {
+  content: "Fereastră de citire";
+  position: absolute;
+  z-index: 2;
+  top: 0.55rem;
+  left: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  color: var(--scale-muted);
+  background: rgb(255 255 255 / 88%);
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.lab-scale-svg {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  min-height: 270px;
+  margin: 0 auto;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.lab-scale-svg:focus-visible {
+  outline: 4px solid var(--scale-focus);
+  outline-offset: -4px;
+}
+
+.lab-scale-viewport.is-zoomed {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  min-height: 100dvh;
+  padding: max(1rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+  background: #f7fbfd;
+  border: 0;
+  border-radius: 0;
+}
+
+.lab-scale-viewport.is-zoomed::before {
+  content: "Scală mărită — glisează pentru a examina gradațiile";
+  position: sticky;
+  display: block;
+  width: max-content;
+  top: 0;
+  left: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.lab-scale-viewport.is-zoomed .lab-scale-svg {
+  width: max(100%, 1050px);
+  min-height: calc(100dvh - 3rem);
+}
+
+.lab-scale-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 148px;
+  min-height: 44px;
+  margin-top: 0.85rem;
+  padding: 0.65rem 1rem;
+  color: var(--scale-primary-dark);
+  background: #ffffff;
+  border: 2px solid var(--scale-primary);
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.lab-scale-zoom:hover {
+  color: #ffffff;
+  background: var(--scale-primary);
+}
+
+.lab-scale-zoom:focus-visible {
+  outline: 3px solid var(--scale-focus);
+  outline-offset: 3px;
+}
+
+.lab-scale-zoom[aria-pressed="true"] {
+  position: fixed;
+  z-index: 10001;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  color: #ffffff;
+  background: var(--scale-primary-dark);
+  border-color: #ffffff;
+  box-shadow: 0 7px 24px rgb(0 0 0 / 28%);
+}
+
+/* Controalele pentru introducerea citirii */
+
+.lab-scale-answer,
+[data-scale-answer-group] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: end;
+  max-width: 620px;
+  margin: 1rem auto;
+}
+
+.lab-scale-answer label,
+[data-scale-answer-group] label {
+  grid-column: 1 / -1;
+  color: var(--scale-ink);
+  font-weight: 700;
+}
+
+.lab-scale-answer input,
+[data-scale-answer],
+[data-scale-answer-group] input[type="number"],
+[data-scale-answer-group] input[type="text"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.65rem 0.8rem;
+  color: var(--scale-ink);
+  background: #ffffff;
+  border: 2px solid #7892a6;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 1.08rem;
+}
+
+.lab-scale-answer input:focus,
+[data-scale-answer]:focus,
+[data-scale-answer-group] input:focus {
+  border-color: var(--scale-primary);
+  outline: 3px solid rgb(18 110 156 / 22%);
+}
+
+.lab-scale-answer-unit,
+[data-scale-answer-unit] {
+  min-width: 3rem;
+  padding: 0.7rem 0.3rem;
+  color: var(--scale-ink);
+  font-weight: 750;
+  text-align: left;
+}
+
+.lab-scale-notebook-confirmation,
+[data-scale-notebook-confirmation] {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  max-width: 620px;
+  margin: 0.85rem auto;
+  padding: 0.8rem;
+  background: var(--scale-surface-soft);
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+.lab-scale-notebook-confirmation input,
+[data-scale-notebook-confirmation] input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.1rem;
+  accent-color: var(--scale-primary);
+}
+
+.lab-scale-feedback,
+[data-scale-feedback] {
+  min-height: 1.5rem;
+  max-width: 620px;
+  margin: 0.85rem auto 0;
+  padding: 0.75rem 0.9rem;
+  border-left: 4px solid var(--scale-border);
+  border-radius: 7px;
+  line-height: 1.45;
+}
+
+.lab-scale-feedback:empty,
+[data-scale-feedback]:empty {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+
+.lab-scale-feedback.is-success,
+[data-scale-feedback].is-success,
+[data-scale-feedback][data-status="correct"] {
+  color: #0c5534;
+  background: var(--scale-success-bg);
+  border-color: var(--scale-success);
+}
+
+.lab-scale-feedback.is-error,
+[data-scale-feedback].is-error,
+[data-scale-feedback][data-status="incorrect"],
+[data-scale-feedback][data-status="invalid"] {
+  color: #7e1710;
+  background: var(--scale-error-bg);
+  border-color: var(--scale-error);
+}
+
+/* Ajustări specifice instrumentelor */
+
+.lab-scale-thermometer,
+.lab-scale-graduated-cylinder,
+.lab-scale-dynamometer {
+  max-height: 600px;
+}
+
+.lab-scale-ruler,
+.lab-scale-tape-measure,
+.lab-scale-caliper,
+.lab-scale-micrometer {
+  min-width: 700px;
+}
+
+.lab-scale-analog-meter {
+  max-height: 520px;
+}
+
+/* Mișcare discretă la stabilizarea coloanei termometrului */
+
+.lab-thermometer-liquid {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: lab-scale-stabilize 900ms ease-out both;
+}
+
+.lab-meter-needle {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: lab-scale-needle-settle 700ms ease-out both;
+}
+
+@keyframes lab-scale-stabilize {
+  from {
+    transform: scaleY(0.12);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes lab-scale-needle-settle {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Tabletă și telefon */
+
+@media (max-width: 760px) {
+  .lab-scale-instrument {
+    margin: 0.8rem auto;
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+
+  .lab-scale-viewport {
+    min-height: 330px;
+  }
+
+  .lab-scale-svg {
+    width: 760px;
+    min-width: 760px;
+    min-height: 330px;
+  }
+
+  .lab-scale-thermometer,
+  .lab-scale-graduated-cylinder,
+  .lab-scale-dynamometer,
+  .lab-scale-analog-meter {
+    width: 620px;
+    min-width: 620px;
+  }
+
+  .lab-scale-answer,
+  [data-scale-answer-group] {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .lab-scale-title {
+    font-size: 1.18rem;
+  }
+
+  .lab-scale-instruction,
+  .lab-scale-metadata {
+    font-size: 0.9rem;
+  }
+
+  .lab-scale-viewport {
+    min-height: 390px;
+  }
+
+  .lab-scale-svg {
+    width: 820px;
+    min-width: 820px;
+    min-height: 390px;
+  }
+
+  .lab-scale-thermometer,
+  .lab-scale-graduated-cylinder,
+  .lab-scale-dynamometer,
+  .lab-scale-analog-meter {
+    width: 660px;
+    min-width: 660px;
+  }
+
+  .lab-scale-zoom {
+    width: 100%;
+  }
+
+  .lab-scale-zoom[aria-pressed="true"] {
+    width: auto;
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Contrast ridicat */
+
+@media (prefers-contrast: more) {
+  .lab-scale-instrument,
+  .lab-scale-viewport {
+    border-color: #000000;
+  }
+
+  .lab-scale-metadata {
+    color: #000000;
+    background: #ffffff;
+    border-color: #000000;
+  }
+
+  .lab-scale-feedback.is-success,
+  [data-scale-feedback][data-status="correct"] {
+    color: #003c20;
+    background: #ffffff;
+    border-color: #003c20;
+  }
+
+  .lab-scale-feedback.is-error,
+  [data-scale-feedback][data-status="incorrect"],
+  [data-scale-feedback][data-status="invalid"] {
+    color: #720000;
+    background: #ffffff;
+    border-color: #720000;
+  }
+}
+
+/* Respectă opțiunea de reducere a animațiilor */
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-thermometer-liquid,
+  .lab-meter-needle {
+    animation: none;
+  }
+
+  .lab-scale-viewport,
+  .lab-scale-svg {
+    scroll-behavior: auto;
+  }
+}
+
+/* Temă întunecată opțională */
+
+[data-theme="dark"] .lab-scale-instrument {
+  color: #e7f2f8;
+  background: #142735;
+  border-color: #537184;
+}
+
+[data-theme="dark"] .lab-scale-title {
+  color: #f1f8fc;
+}
+
+[data-theme="dark"] .lab-scale-metadata {
+  color: #d9f1ff;
+  background: #173e54;
+}
+
+[data-theme="dark"] .lab-scale-viewport {
+  background: #eef5f8;
+  border-color: #7893a4;
+}
+
+/* Tipărire */
+
+@media print {
+  .lab-scale-instrument {
+    max-width: none;
+    margin: 0.6cm 0;
+    padding: 0.35cm;
+    border: 1px solid #555555;
+    border-radius: 0;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .lab-scale-viewport {
+    min-height: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #777777;
+  }
+
+  .lab-scale-viewport::before,
+  .lab-scale-zoom {
+    display: none !important;
+  }
+
+  .lab-scale-svg,
+  .lab-scale-thermometer,
+  .lab-scale-graduated-cylinder,
+  .lab-scale-dynamometer,
+  .lab-scale-analog-meter,
+  .lab-scale-ruler,
+  .lab-scale-tape-measure,
+  .lab-scale-caliper,
+  .lab-scale-micrometer {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-height: 12cm;
+  }
+
+  .lab-scale-feedback {
+    color: #000000 !important;
+    background: #ffffff !important;
+    border-color: #555555 !important;
+  }
+}
 
