@@ -1,25 +1,220 @@
-Măsurare experimentală
+<!-- =====================================================================
+     FIZICA-LICEU - COMPONENTA REUTILIZABILA PENTRU CITIREA INSTRUMENTULUI
 
-Citirea instrumentului de măsură
-În așteptarea citirii
-Important: valoarea nu este afișată numeric. Privește poziția indicatorului față de gradații și ține cont de valoarea unei diviziuni.
-Identifică domeniul scalei și unitatea de măsură.
-Determină valoarea celei mai mici diviziuni.
-Citește poziția indicatorului sau a meniscului.
-Notează în caiet valoarea citită și unitatea de măsură.
-Introdu citirea mai jos și verific-o.
-Instrumentul se încarcă…
+     Fișiere necesare:
+       assets/css/instrumente-scala.css
+       assets/js/instrumente-scala.js
 
-Recomandări pentru o citire corectă
-Citește scala perpendicular, nu dintr-o poziție laterală.
-La termometru, urmărește capătul superior al coloanei de lichid.
-Citirea realizată de elev
-Valoarea citită pe instrument * 
-Ex.: 46,5
- —
-Poți folosi virgula sau punctul ca separator zecimal. Nu scrie unitatea în câmp.
+     Componenta nu afișează valoarea numerică simulată. Elevul trebuie să
+     citească scala, să noteze rezultatul în caiet și apoi să îl introducă.
 
- Confirm că am notat în caiet valoarea citită, unitatea de măsură și rezoluția instrumentului.
-Verifică citirea Șterge răspunsul
-Cum determin valoarea unei diviziuni?
-Activitatea presupune interpretarea vizuală a unei scale. Dacă nu poți distinge gradațiile, solicită profesorului varianta accesibilă a exercițiului.
+     Pentru mai multe instrumente în aceeași pagină, duplică elementul
+     [data-scale-reading-component]. Nu sunt utilizați identificatori HTML
+     ficși, pentru a evita dublarea atributelor id.
+     ===================================================================== -->
+
+<section
+  class="lab-section lab-instrument-reading"
+  data-scale-reading-component
+  data-instrument-type="thermometer"
+  aria-label="Citirea instrumentului de măsură"
+>
+  <header class="lab-section-header">
+    <div>
+      <p class="lab-eyebrow">Măsurare experimentală</p>
+      <h2 data-scale-component-title>
+        Citirea instrumentului de măsură
+      </h2>
+    </div>
+
+    <span class="lab-status-badge" data-scale-reading-status data-status="waiting">
+      În așteptarea citirii
+    </span>
+  </header>
+
+  <div class="lab-info" role="note">
+    <strong>Important:</strong>
+    valoarea nu este afișată numeric. Privește poziția indicatorului față de
+    gradații și ține cont de valoarea unei diviziuni.
+  </div>
+
+  <ol class="lab-reading-steps" aria-label="Pașii citirii instrumentului">
+    <li data-scale-reading-step="observe">
+      Identifică domeniul scalei și unitatea de măsură.
+    </li>
+    <li data-scale-reading-step="resolution">
+      Determină valoarea celei mai mici diviziuni.
+    </li>
+    <li data-scale-reading-step="read">
+      Citește poziția indicatorului sau a meniscului.
+    </li>
+    <li data-scale-reading-step="notebook">
+      Notează în caiet valoarea citită și unitatea de măsură.
+    </li>
+    <li data-scale-reading-step="submit">
+      Introdu citirea mai jos și verific-o.
+    </li>
+  </ol>
+
+  <!-- instrumente-scala.js introduce aici desenul SVG -->
+  <div
+    class="lab-scale-render-target"
+    data-scale-render-target
+    aria-live="polite"
+  >
+    <p class="lab-loading-message" data-scale-loading-message>
+      Instrumentul se încarcă…
+    </p>
+  </div>
+
+  <aside class="lab-reading-help" data-scale-reading-help>
+    <h3>Recomandări pentru o citire corectă</h3>
+    <ul>
+      <li data-scale-general-help>
+        Citește scala perpendicular, nu dintr-o poziție laterală.
+      </li>
+      <li data-scale-thermometer-help>
+        La termometru, urmărește capătul superior al coloanei de lichid.
+      </li>
+      <li data-scale-meniscus-help hidden>
+        Pentru apă, citirea se face la baza meniscului.
+      </li>
+      <li data-scale-caliper-help hidden>
+        La șubler, citește scala principală și apoi diviziunea coincidentă a noniusului.
+      </li>
+      <li data-scale-micrometer-help hidden>
+        La micrometru, adună citirea de pe manșon cu citirea de pe tambur.
+      </li>
+    </ul>
+  </aside>
+
+  <form class="lab-form lab-scale-reading-form" data-scale-reading-form novalidate>
+    <fieldset>
+      <legend>Citirea realizată de elev</legend>
+
+      <div class="lab-scale-answer" data-scale-answer-group>
+        <label data-scale-answer-label>
+          Valoarea citită pe instrument
+          <span class="lab-required-mark" aria-hidden="true">*</span>
+        </label>
+
+        <input
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="20"
+          required
+          data-scale-answer
+          aria-label="Valoarea citită pe instrument"
+          placeholder="Ex.: 46,5"
+        >
+
+        <span class="lab-scale-answer-unit" data-scale-answer-unit aria-label="Unitatea de măsură">
+          —
+        </span>
+      </div>
+
+      <p class="lab-field-hint" data-scale-format-hint>
+        Poți folosi virgula sau punctul ca separator zecimal. Nu scrie unitatea în câmp.
+      </p>
+
+      <label class="lab-scale-notebook-confirmation" data-scale-notebook-confirmation>
+        <input
+          type="checkbox"
+          name="readingRecordedInNotebook"
+          required
+          data-scale-notebook-checkbox
+        >
+        <span>
+          Confirm că am notat în caiet valoarea citită, unitatea de măsură și
+          rezoluția instrumentului.
+        </span>
+      </label>
+
+      <div class="lab-form-actions">
+        <button
+          type="button"
+          class="lab-button lab-button-primary"
+          data-action="verify-scale-reading"
+        >
+          Verifică citirea
+        </button>
+
+        <button
+          type="button"
+          class="lab-button lab-button-secondary"
+          data-action="clear-scale-reading"
+        >
+          Șterge răspunsul
+        </button>
+      </div>
+
+      <p
+        class="lab-scale-feedback"
+        data-scale-feedback
+        aria-live="polite"
+        aria-atomic="true"
+      ></p>
+    </fieldset>
+  </form>
+
+  <section class="lab-reading-result" data-scale-reading-result hidden>
+    <h3>Rezultatul citirii</h3>
+
+    <div class="lab-result-grid">
+      <div class="lab-result-item">
+        <span>Instrument</span>
+        <strong data-scale-result-instrument>—</strong>
+      </div>
+
+      <div class="lab-result-item">
+        <span>Citirea elevului</span>
+        <strong data-scale-result-student-reading>—</strong>
+      </div>
+
+      <div class="lab-result-item">
+        <span>Rezoluția instrumentului</span>
+        <strong data-scale-result-resolution>—</strong>
+      </div>
+
+      <div class="lab-result-item">
+        <span>Număr de încercări</span>
+        <strong data-scale-result-attempts>0</strong>
+      </div>
+    </div>
+
+    <p class="lab-success-message" data-scale-reading-success hidden>
+      Citirea a fost acceptată și poate fi inclusă în raportul experimentului.
+    </p>
+  </section>
+
+  <details class="lab-reading-theory">
+    <summary>Cum determin valoarea unei diviziuni?</summary>
+
+    <div class="lab-formula-box">
+      <p>
+        Alege două valori numerotate consecutive de pe scală și numără
+        intervalele dintre ele.
+      </p>
+
+      <p class="lab-formula">
+        valoarea unei diviziuni =
+        <span class="lab-fraction">
+          <span>diferența dintre valorile numerotate</span>
+          <span>numărul de intervale</span>
+        </span>
+      </p>
+
+      <p>
+        Exemplu: între 40 °C și 50 °C sunt zece intervale, deci o diviziune
+        valorează 1 °C.
+      </p>
+    </div>
+  </details>
+
+  <p class="lab-sr-only" data-scale-screen-reader-notice>
+    Activitatea presupune interpretarea vizuală a unei scale. Dacă nu poți
+    distinge gradațiile, solicită profesorului varianta accesibilă a exercițiului.
+  </p>
+</section>
