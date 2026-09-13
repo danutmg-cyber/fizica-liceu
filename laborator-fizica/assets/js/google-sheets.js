@@ -304,8 +304,8 @@
       removeFromQueue(payload.reportId);
       const noCors = state.submissionConfig.mode === "no-cors";
       const message = noCors
-        ? "Cererea a fost trimisÄƒ cÄƒtre Google Apps Script. Verificarea salvÄƒrii se face Ã®n foaia Google Sheets."
-        : state.submissionConfig.messages?.success || "Rezultatul a fost Ã®nregistrat.";
+  ? "Cererea a fost trimis\u0103 c\u0103tre Google Apps Script. Verificarea salv\u0103rii se face \u00een foaia Google Sheets."
+  : state.submissionConfig.messages?.success || "Rezultatul a fost \u00eenregistrat.";
       updateStatus(message);
       dispatch("laborator:submission-sent", { reportId: payload.reportId, noCors, attempts: result.attempt });
       return { status: "sent", reportId: payload.reportId, noCors, attempts: result.attempt };
