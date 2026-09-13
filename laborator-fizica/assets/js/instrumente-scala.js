@@ -73,11 +73,11 @@
     ampermetru: "analog-meter",
     voltmetru: "analog-meter",
     "analog-meter": "analog-meter",
-    subler: "caliper",
-    È™ubler: "caliper",
-    caliper: "caliper",
-    micrometru: "micrometer",
-    micrometer: "micrometer"
+   subler: "caliper",
+   "\u0219ubler": "caliper",
+   caliper: "caliper",
+   micrometru: "micrometer",
+   micrometer: "micrometer"
   });
 
   function clone(value) {
