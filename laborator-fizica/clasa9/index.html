@@ -1,175 +1,244 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laborator de Fizică - Clasa a IX-a</title>
-    <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #2563eb;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1f2937;
-            --border-color: #e5e7eb;
-            --warning-color: #92400e;
-            --warning-bg: #fef3c7;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Experimente și simulări interactive de fizică pentru clasa a IX-a.">
+  <title>Laborator de fizică – Clasa a IX-a</title>
+  <style>
+    :root {
+      --navy: #17324d;
+      --blue: #126e82;
+      --green: #16794b;
+      --gold: #f2b705;
+      --line: #c4d5df;
+      --pale: #eef7fa;
+      --white: #fff;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
+    * { box-sizing: border-box; }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    body {
+      margin: 0;
+      color: var(--navy);
+      background: #f4f8fa;
+      font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
 
-        header {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-        }
+    a { color: inherit; }
 
-        header h1 {
-            margin: 0 0 0.4rem 0;
-            font-size: 1.8rem;
-        }
+    .shell {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1rem 0 3rem;
+    }
 
-        header p {
-            margin: 0;
-            opacity: 0.9;
-        }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      margin-bottom: .8rem;
+      color: var(--blue);
+      font-weight: 750;
+      text-decoration: none;
+    }
 
-        .instructions {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+    .back:hover { text-decoration: underline; }
 
-        .instructions h2 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 0.3rem;
-        }
+    .hero {
+      padding: clamp(1.4rem, 4vw, 2.6rem);
+      border-radius: 20px;
+      color: var(--white);
+      background: linear-gradient(135deg, #314f7d, #117c87);
+      box-shadow: 0 12px 34px #17324d20;
+    }
 
-        .instructions ul {
-            margin: 0;
-            padding-left: 1.2rem;
-        }
+    .hero p:first-child {
+      margin: 0;
+      font-weight: 750;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
 
-        .instructions li {
-            margin-bottom: 0.4rem;
-        }
+    .hero h1 {
+      margin: .35rem 0;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1.15;
+    }
 
-        .warning-box {
-            background-color: var(--warning-bg);
-            color: var(--warning-color);
-            border-left: 4px solid #f59e0b;
-            padding: 0.8rem 1rem;
-            border-radius: 0 6px 6px 0;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
+    .hero p:last-child {
+      max-width: 760px;
+      margin: .5rem 0 0;
+      font-size: 1.05rem;
+    }
 
-        .experiments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
+    .notice {
+      margin: 1rem 0;
+      padding: .9rem 1rem;
+      border-left: 5px solid var(--gold);
+      border-radius: 10px;
+      background: #fff8da;
+    }
 
-        .btn-experiment {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: var(--card-bg);
-            color: var(--primary-color);
-            text-decoration: none;
-            padding: 1rem 1.2rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
+    .section-title { margin: 2rem 0 .3rem; }
+    .section-intro { margin: 0 0 1rem; color: #526b80; }
 
-        .btn-experiment:hover {
-            background-color: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
-            transform: translateX(4px);
-        }
+    .experiments {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
 
-        .btn-experiment .arrow {
-            font-size: 1.2rem;
-        }
+    .experiment {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .9rem;
+      min-height: 165px;
+      padding: 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: 0 7px 22px #17324d0f;
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
 
-        footer {
-            text-align: center;
-            margin-top: 2.5rem;
-            font-size: 0.85rem;
-            color: #6b7280;
-        }
-    </style>
+    a.experiment:hover,
+    a.experiment:focus-visible {
+      border-color: var(--blue);
+      box-shadow: 0 11px 28px #17324d20;
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .number {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      color: var(--white);
+      background: var(--blue);
+      font-size: 1.2rem;
+      font-weight: 850;
+    }
+
+    .experiment h2 {
+      margin: 0;
+      font-size: 1.18rem;
+      line-height: 1.3;
+    }
+
+    .experiment p { margin: .5rem 0 .75rem; color: #526b80; }
+
+    .tag {
+      display: inline-block;
+      padding: .25rem .65rem;
+      border-radius: 999px;
+      color: #0b5937;
+      background: #e7f7ef;
+      font-size: .86rem;
+      font-weight: 750;
+    }
+
+    .experiment.pending {
+      color: #607283;
+      background: #eef2f4;
+      box-shadow: none;
+    }
+
+    .pending .number { background: #85939e; }
+    .pending .tag { color: #5e4b08; background: #fff3c2; }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: #526b80;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 1rem, 1120px); }
+      .experiments { grid-template-columns: 1fr; }
+      .experiment { min-height: 0; padding: 1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .experiment { transition: none; }
+    }
+  </style>
 </head>
 <body>
+  <main class="shell">
+    <a class="back" href="../index.html" aria-label="Înapoi la selectarea clasei">← Înapoi la clase</a>
 
-    <div class="container">
-        <header>
-            <h1>Laborator Virtual de Fizică</h1>
-            <p>Clasa a IX-a — Mecanică și Măsurători Fizice</p>
-        </header>
+    <header class="hero">
+      <p>Laborator virtual de fizică</p>
+      <h1>Clasa a IX-a</h1>
+      <p>Alege lucrarea experimentală. În interior vei fi ghidat pas cu pas pentru pregătire, măsurare, calcule, evaluare și transmiterea raportului.</p>
+    </header>
 
-        <!-- Instructiuni initiale -->
-        <section class="instructions">
-            <h2>Instrucțiuni Înainte de Intrarea în Laborator</h2>
-            <ul>
-                <li><strong>Pregătirea teoretică:</strong> Parcurgeți breviarul teoretic al lucrării înainte de începerea experimentului.</li>
-                <li><strong>Verificarea fișei:</strong> Asigurați-vă că aveți caietul de laborator sau fișa digitală pregătită pentru înregistrarea datelor.</li>
-                <li><strong>Precizia măsurătorilor:</strong> Înregistrați valorile brute fără rotunjiri premature și notați unitățile de măsură în Sistemul Internațional (SI).</li>
-                <li><strong>Protecția echipamentelor:</strong> Manevrați cu atenție componentele de laborator (rigle, cronometre, corpuri de probă).</li>
-            </ul>
+    <aside class="notice">
+      <strong>Înainte de începere:</strong> pregătește caietul de laborator. Notează datele de intrare, citirile efectuate pe instrumente, calculele și concluzia.
+    </aside>
 
-            <div class="warning-box">
-                <strong>Notă:</strong> Orice măsurătoare fizică este afectată de erori. Efectuați minimum 5 determinări pentru fiecare mărime pentru a putea calcula erorile aleatoare!
-            </div>
-        </section>
+    <h2 class="section-title">Experimente</h2>
+    <p class="section-intro">Sunt disponibile 8 dintre cele 10 lucrări planificate.</p>
 
-        <!-- Lista simplificata de experimente -->
-        <main class="experiments-list">
-            <a href="./experimentul-1-Erori-sistematice-si-aleatoare-erori-grosiere-incertitudinea-masurarii.html" class="btn-experiment">
-                <span>Experimentul 1: Erori sistematice și aleatoare. Incertitudinea măsurării</span>
-                <span class="arrow">&rarr;</span>
-            </a>
+    <section class="experiments" aria-label="Lista experimentelor pentru clasa a IX-a">
+      <a class="experiment" href="experimentul-1-Erori-sistematice-si-aleatoare-erori-grosiere-incertitudinea-masurarii.html">
+        <span class="number">1</span>
+        <span><h2>Erori sistematice și aleatoare. Erori grosiere. Incertitudinea măsurării</h2><p>Repetarea măsurărilor, identificarea erorilor și exprimarea rezultatului.</p><span class="tag">Disponibil</span></span>
+      </a>
 
-            <a href="./experimentul-2-studiul-miscarii-rectilinii-uniforme.html" class="btn-experiment">
-                <span>Experimentul 2: Studiul mișcării rectilinii uniforme</span>
-                <span class="arrow">&rarr;</span>
-            </a>
+      <a class="experiment" href="experimentul-2-determinarea-vitezei-medii-a-unui-corp-aflat-in-miscare-rectilinie.html">
+        <span class="number">2</span>
+        <span><h2>Determinarea vitezei medii a unui corp aflat în mișcare rectilinie</h2><p>Măsurarea distanței și timpului și calcularea vitezei medii.</p><span class="tag">Disponibil</span></span>
+      </a>
 
-            <a href="./experimentul-3-verificarea-legii-lui-hooke.html" class="btn-experiment">
-                <span>Experimentul 3: Verificarea legii lui Hooke și determinarea constantei elastice</span>
-                <span class="arrow">&rarr;</span>
-            </a>
-        </main>
+      <a class="experiment" href="experimentul-3-studiul-miscarii-circulare-uniforme.html">
+        <span class="number">3</span>
+        <span><h2>Studiul mișcării circulare uniforme</h2><p>Determinarea perioadei, frecvenței și vitezei unui punct material.</p><span class="tag">Disponibil</span></span>
+      </a>
 
-        <footer>
-            <p>&copy; Liceul Teoretic „Callatis” Mangalia — Resurse Didactice Fizică</p>
-        </footer>
-    </div>
+      <article class="experiment pending" aria-disabled="true">
+        <span class="number">4</span>
+        <span><h2>Determinarea coeficientului de frecare la alunecare</h2><p>Studiul forței de frecare la deplasarea unui corp pe o suprafață.</p><span class="tag">În pregătire</span></span>
+      </article>
 
+      <article class="experiment pending" aria-disabled="true">
+        <span class="number">5</span>
+        <span><h2>Determinarea constantei elastice a unui resort</h2><p>Verificarea legii lui Hooke prin măsurarea forței și alungirii.</p><span class="tag">În pregătire</span></span>
+      </article>
+
+      <a class="experiment" href="experimentul-6-verificarea-teoremei-variatiei-energiei-cinetice-si-mecanice-a-unui-corp.html">
+        <span class="number">6</span>
+        <span><h2>Verificarea teoremei variației energiei cinetice și mecanice</h2><p>Compararea lucrului mecanic, energiei cinetice și energiei mecanice.</p><span class="tag">Disponibil</span></span>
+      </a>
+
+      <a class="experiment" href="experimentul-7-determinarea-randamentului-unui-plan-inclinat.html">
+        <span class="number">7</span>
+        <span><h2>Determinarea randamentului unui plan înclinat</h2><p>Compararea lucrului mecanic util cu lucrul mecanic consumat.</p><span class="tag">Disponibil</span></span>
+      </a>
+
+      <a class="experiment" href="experimentul-8-determinarea-debitului-masic-si-volumic-pentru-un-fluid.html">
+        <span class="number">8</span>
+        <span><h2>Determinarea debitului masic și volumic pentru un fluid</h2><p>Măsurarea masei, volumului și timpului de curgere.</p><span class="tag">Disponibil</span></span>
+      </a>
+
+      <a class="experiment" href="experimentul-9-studiul-echilibrului-de-rotatie-al-solidului-rigid.html">
+        <span class="number">9</span>
+        <span><h2>Studiul echilibrului de rotație al solidului rigid</h2><p>Verificarea legii momentelor forțelor față de axa de rotație.</p><span class="tag">Disponibil</span></span>
+      </a>
+
+      <a class="experiment" href="experimentul-10-studiul-echilibrului-de-translatie-al-punctului-material.html">
+        <span class="number">10</span>
+        <span><h2>Studiul echilibrului de translație al punctului material</h2><p>Verificarea condiției vectoriale de echilibru pentru trei forțe concurente.</p><span class="tag">Disponibil</span></span>
+      </a>
+    </section>
+
+    <footer>Laborator de fizică • Clasa a IX-a</footer>
+  </main>
 </body>
 </html>
