@@ -1,1 +1,2218 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
 
+    <title>Determinarea constantei elastice a unui resort</title>
+
+    <link rel="stylesheet" href="../assets/css/laborator-core.css">
+    <link rel="stylesheet" href="../assets/css/laborator-2d.css">
+    <link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+    <link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+    <style>
+        :root {
+            --primary: #14798b;
+            --primary-dark: #164761;
+            --success: #16835b;
+            --danger: #bd3428;
+            --warning: #f1c84b;
+            --background: #edf5f1;
+            --border: #b9d0dc;
+            --text: #182938;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .laborator {
+            width: min(1180px, calc(100% - 24px));
+            margin: 20px auto;
+        }
+
+        .antet {
+            padding: 26px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(135deg, #174665, #168587);
+            box-shadow: 0 12px 28px rgba(20, 70, 95, 0.17);
+        }
+
+        .antet h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+        }
+
+        .antet p {
+            margin: 5px 0;
+        }
+
+        .progres {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(115px, 1fr));
+            gap: 8px;
+            margin: 18px 0;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .pas-progres {
+            min-height: 55px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--primary-dark);
+            background: white;
+            font-weight: 700;
+        }
+
+        .pas-progres.activ {
+            color: white;
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .pas-progres.finalizat {
+            color: white;
+            border-color: var(--success);
+            background: var(--success);
+        }
+
+        .etapa {
+            display: none;
+            padding: clamp(18px, 4vw, 38px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 9px 25px rgba(20, 68, 94, 0.08);
+        }
+
+        .etapa.activ {
+            display: block;
+        }
+
+        .etapa h2 {
+            margin-top: 0;
+            color: var(--primary-dark);
+        }
+
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .camp {
+            display: grid;
+            gap: 6px;
+        }
+
+        .camp label {
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #89a3b4;
+            border-radius: 11px;
+            color: var(--text);
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 3px solid rgba(20, 121, 139, 0.18);
+            border-color: var(--primary);
+        }
+
+        input[readonly] {
+            background: #edf3f6;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .bifa {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            margin: 12px 0;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f4f9fb;
+        }
+
+        .bifa input {
+            flex: 0 0 auto;
+            width: 22px;
+            height: 22px;
+            margin-top: 2px;
+        }
+
+        .card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #f7fbfd;
+        }
+
+        .formula {
+            margin: 15px 0;
+            padding: 16px;
+            border-left: 5px solid var(--primary);
+            background: #e9f5f8;
+            font-size: 1.17rem;
+        }
+
+        .regula {
+            margin: 9px 0;
+            padding: 12px;
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            background: #fff9df;
+        }
+
+        .mesaj {
+            display: none;
+            margin: 16px 0;
+            padding: 13px 16px;
+            border-left: 5px solid var(--primary);
+            border-radius: 10px;
+            background: #e9f5f8;
+        }
+
+        .mesaj.vizibil {
+            display: block;
+        }
+
+        .mesaj.eroare {
+            color: #7d2119;
+            border-color: var(--danger);
+            background: #fff0ee;
+        }
+
+        .mesaj.succes {
+            color: #0f5d3e;
+            border-color: var(--success);
+            background: #e9f8f0;
+        }
+
+        .actiuni {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .buton {
+            min-height: 48px;
+            padding: 11px 21px;
+            border: 0;
+            border-radius: 12px;
+            color: white;
+            background: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .buton.secundar {
+            color: var(--primary-dark);
+            background: #e4edf2;
+        }
+
+        .buton.succes {
+            background: var(--success);
+        }
+
+        .echipamente {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+            gap: 12px;
+        }
+
+        .echipament {
+            display: grid;
+            place-items: center;
+            min-height: 140px;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            text-align: center;
+            background: white;
+            user-select: none;
+        }
+
+        .echipament input {
+            width: 21px;
+            height: 21px;
+        }
+
+        .echipament .icon {
+            font-size: 2.3rem;
+        }
+
+        .echipament:has(input:checked) {
+            border-color: var(--success);
+            background: #e9f8f0;
+        }
+
+        .set-date {
+            margin: 17px 0;
+            padding: 16px;
+            border: 2px dashed #88a9ba;
+            border-radius: 14px;
+            background: #f3fafc;
+        }
+
+        /* Simularea resortului */
+        .simulare {
+            position: relative;
+            min-height: 550px;
+            margin: 18px auto;
+            overflow: hidden;
+            border: 2px solid #8da8b7;
+            border-radius: 18px;
+            background:
+                linear-gradient(#e8f7ff 0 88%, #b28556 88%);
+            touch-action: none;
+            user-select: none;
+        }
+
+        .suport-orizontal {
+            position: absolute;
+            top: 40px;
+            left: 15%;
+            width: 48%;
+            height: 18px;
+            border-radius: 5px;
+            background: #344c5b;
+        }
+
+        .suport-vertical {
+            position: absolute;
+            top: 40px;
+            left: 15%;
+            width: 18px;
+            height: 445px;
+            background: #344c5b;
+        }
+
+        .baza-suport {
+            position: absolute;
+            bottom: 10%;
+            left: 7%;
+            width: 31%;
+            height: 20px;
+            border-radius: 7px;
+            background: #344c5b;
+        }
+
+        .resort {
+            position: absolute;
+            top: 57px;
+            left: calc(54% - 24px);
+            width: 48px;
+            height: 235px;
+            transition: height 0.45s ease;
+        }
+
+        .resort svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .carlig {
+            position: absolute;
+            left: calc(54% - 9px);
+            top: 286px;
+            width: 18px;
+            height: 25px;
+            border-right: 4px solid #555;
+            border-bottom: 4px solid #555;
+            border-radius: 0 0 12px 0;
+            transition: top 0.45s ease;
+        }
+
+        .masa-agatata {
+            position: absolute;
+            left: calc(54% - 42px);
+            top: 312px;
+            width: 84px;
+            height: 65px;
+            display: none;
+            place-items: center;
+            border: 3px solid #4e5e68;
+            border-radius: 8px;
+            color: white;
+            background: linear-gradient(135deg, #788b96, #3e505c);
+            transition: top 0.45s ease;
+            font-weight: 700;
+            z-index: 4;
+        }
+
+        .masa-agatata.vizibil {
+            display: grid;
+        }
+
+        .rigla {
+            position: absolute;
+            top: 58px;
+            left: 68%;
+            width: 95px;
+            height: 410px;
+            border: 3px solid #b48635;
+            border-radius: 7px;
+            background: #f7d67b;
+        }
+
+        .rigla-gr {
+            position: absolute;
+            left: 0;
+            height: 2px;
+            background: #49371d;
+        }
+
+        .rigla-gr.mica {
+            width: 22px;
+        }
+
+        .rigla-gr.medie {
+            width: 34px;
+        }
+
+        .rigla-gr.mare {
+            width: 48px;
+            height: 3px;
+        }
+
+        .rigla-numar {
+            position: absolute;
+            left: 53px;
+            transform: translateY(-50%);
+            font-size: 0.73rem;
+            font-weight: 700;
+        }
+
+        .reper-mobil {
+            position: absolute;
+            left: calc(54% + 48px);
+            width: 14%;
+            height: 4px;
+            background: #d32d27;
+            transition: top 0.45s ease;
+            z-index: 5;
+        }
+
+        .instructiune {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: min(94%, 720px);
+            transform: translateX(-50%);
+            padding: 10px;
+            border-radius: 11px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            font-weight: 700;
+            z-index: 8;
+        }
+
+        .tava-mase {
+            position: absolute;
+            right: 16px;
+            bottom: 22px;
+            left: 41%;
+            min-height: 84px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            border: 2px dashed #6d8897;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .masa-mobila {
+            width: 70px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            border: 3px solid #4c5e69;
+            border-radius: 8px;
+            color: white;
+            background: #607d8b;
+            cursor: grab;
+            font-weight: 700;
+            touch-action: none;
+            z-index: 10;
+        }
+
+        .masa-mobila:active {
+            cursor: grabbing;
+        }
+
+        .zona-agatare {
+            position: absolute;
+            top: 265px;
+            left: calc(54% - 60px);
+            width: 120px;
+            height: 130px;
+            border: 3px dashed rgba(22, 131, 91, 0.75);
+            border-radius: 13px;
+            background: rgba(22, 131, 91, 0.08);
+            z-index: 2;
+        }
+
+        .zona-agatare span {
+            position: absolute;
+            bottom: -30px;
+            width: 100%;
+            text-align: center;
+            color: #126344;
+            font-weight: 700;
+        }
+
+        .scala-marita {
+            position: relative;
+            width: min(100%, 720px);
+            height: 470px;
+            margin: 18px auto;
+            border: 3px solid #b48635;
+            border-radius: 10px;
+            background: #f7d67b;
+        }
+
+        .scala-marita .reper-citire {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #d62923;
+            box-shadow: 0 0 0 2px white;
+            z-index: 5;
+        }
+
+        table {
+            width: 100%;
+            margin: 16px 0;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #9db7c5;
+            text-align: center;
+        }
+
+        th {
+            color: white;
+            background: var(--primary-dark);
+        }
+
+        td input {
+            min-width: 95px;
+            padding: 8px;
+        }
+
+        .raport-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .raport-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #f5f9fb;
+        }
+
+        .raport-card span {
+            display: block;
+            color: #526b7a;
+        }
+
+        .raport-card strong {
+            font-size: 1.12rem;
+        }
+
+        @media (max-width: 760px) {
+            .laborator {
+                width: calc(100% - 10px);
+                margin: 5px auto;
+            }
+
+            .antet,
+            .etapa {
+                border-radius: 13px;
+            }
+
+            .grid-2,
+            .grid-3,
+            .raport-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .simulare {
+                min-height: 570px;
+            }
+
+            .suport-vertical {
+                left: 6%;
+            }
+
+            .suport-orizontal {
+                left: 6%;
+                width: 50%;
+            }
+
+            .baza-suport {
+                left: 1%;
+                width: 29%;
+            }
+
+            .resort {
+                left: calc(48% - 22px);
+            }
+
+            .carlig {
+                left: calc(48% - 8px);
+            }
+
+            .masa-agatata {
+                left: calc(48% - 39px);
+            }
+
+            .zona-agatare {
+                left: calc(48% - 55px);
+                width: 110px;
+            }
+
+            .reper-mobil {
+                left: calc(48% + 43px);
+                width: 12%;
+            }
+
+            .rigla {
+                left: 64%;
+            }
+
+            .tava-mase {
+                left: 5%;
+            }
+
+            .actiuni .buton {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .antet,
+            .progres,
+            .actiuni,
+            .simulare,
+            #mesaj-trimitere {
+                display: none !important;
+            }
+
+            .etapa {
+                display: none !important;
+                border: 0;
+                box-shadow: none;
+            }
+
+            #etapa-8 {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="laborator">
+    <header class="antet">
+        <h1>Determinarea constantei elastice a unui resort</h1>
+        <p><strong>Clasa a IX-a · Mecanică · Lucrare experimentală</strong></p>
+        <p>
+            Vei agăța manual mase de un resort, vei citi lungimea pe o
+            riglă gradată și vei verifica legea lui Hooke.
+        </p>
+    </header>
+
+    <nav class="progres" aria-label="Etapele laboratorului">
+        <button class="pas-progres activ" data-indicator="1">1. Identificare</button>
+        <button class="pas-progres" data-indicator="2">2. Siguranță</button>
+        <button class="pas-progres" data-indicator="3">3. Echipamente</button>
+        <button class="pas-progres" data-indicator="4">4. Pregătire</button>
+        <button class="pas-progres" data-indicator="5">5. Experiment</button>
+        <button class="pas-progres" data-indicator="6">6. Citirea scalei</button>
+        <button class="pas-progres" data-indicator="7">7. Calcule</button>
+        <button class="pas-progres" data-indicator="8">8. Raport</button>
+    </nav>
+
+    <!-- ETAPA 1 -->
+    <section class="etapa activ" id="etapa-1">
+        <h2>1. Identificarea elevului</h2>
+
+        <div class="grid-2">
+            <div class="camp">
+                <label for="nume">Numele și prenumele</label>
+                <input
+                    id="nume"
+                    type="text"
+                    maxlength="80"
+                    autocomplete="name"
+                    placeholder="Exemplu: Popescu Maria"
+                >
+            </div>
+
+            <div class="camp">
+                <label for="clasa">Clasa</label>
+                <select id="clasa">
+                    <option value="">Selectează clasa</option>
+                    <option value="IX A">IX A</option>
+                    <option value="IX B">IX B</option>
+                    <option value="IX C">IX C</option>
+                    <option value="IX D">IX D</option>
+                </select>
+            </div>
+
+            <div class="camp">
+                <label for="data-ora">Data și ora începerii</label>
+                <input id="data-ora" type="text" readonly>
+            </div>
+
+            <div class="camp">
+                <label for="tema">Tema experimentului</label>
+                <input
+                    id="tema"
+                    type="text"
+                    value="Determinarea constantei elastice a unui resort"
+                    readonly
+                >
+            </div>
+        </div>
+
+        <div class="bifa">
+            <input id="acord-monitorizare" type="checkbox">
+            <label for="acord-monitorizare">
+                Am înțeles că pagina înregistrează schimbările de
+                filă/aplicație și timpul total petrecut în afara paginii.
+                Nu se înregistrează conținutul altor aplicații, sunetul
+                sau imaginea.
+            </label>
+        </div>
+
+        <div class="bifa">
+            <input id="declaratie" type="checkbox">
+            <label for="declaratie">
+                Confirm că datele introduse îmi aparțin și că voi realiza
+                individual citirile și calculele.
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-identificare"></div>
+
+        <div class="actiuni">
+            <a class="buton secundar" href="index.html">Înapoi</a>
+            <button class="buton" id="continua-identificare">
+                Începe laboratorul
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 2 -->
+    <section class="etapa" id="etapa-2">
+        <h2>2. Reguli de siguranță</h2>
+
+        <div class="regula">
+            Verifică stabilitatea suportului înainte de agățarea maselor.
+        </div>
+
+        <div class="regula">
+            Nu depăși sarcina maximă admisă a resortului.
+        </div>
+
+        <div class="regula">
+            Adaugă și îndepărtează masele pe rând, fără mișcări bruște.
+        </div>
+
+        <div class="regula">
+            Nu ține mâinile sau picioarele sub masele suspendate.
+        </div>
+
+        <div class="regula">
+            Așteaptă încetarea oscilațiilor înainte de fiecare citire.
+        </div>
+
+        <div class="bifa">
+            <input id="acord-securitate" type="checkbox">
+            <label for="acord-securitate">
+                Am citit regulile de siguranță și mă angajez să le respect.
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-securitate"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="1">Înapoi</button>
+            <button class="buton" id="continua-securitate">Continuă</button>
+        </div>
+    </section>
+
+    <!-- ETAPA 3 -->
+    <section class="etapa" id="etapa-3">
+        <h2>3. Selectarea echipamentelor</h2>
+
+        <p>
+            Selectează numai echipamentele necesare. Două dintre obiecte
+            sunt distractori.
+        </p>
+
+        <div class="echipamente">
+            <label class="echipament">
+                <span class="icon">🥼</span>
+                <strong>Halat</strong>
+                <input class="echipament-check" type="checkbox" value="halat">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">🗜️</span>
+                <strong>Suport universal</strong>
+                <input class="echipament-check" type="checkbox" value="suport">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">➰</span>
+                <strong>Resort elastic</strong>
+                <input class="echipament-check" type="checkbox" value="resort">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">⚖️</span>
+                <strong>Mase marcate</strong>
+                <input class="echipament-check" type="checkbox" value="mase">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">📏</span>
+                <strong>Riglă gradată</strong>
+                <input class="echipament-check" type="checkbox" value="rigla">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">🌡️</span>
+                <strong>Termometru</strong>
+                <input class="echipament-check" type="checkbox" value="termometru">
+            </label>
+
+            <label class="echipament">
+                <span class="icon">🔋</span>
+                <strong>Ampermetru</strong>
+                <input class="echipament-check" type="checkbox" value="ampermetru">
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-echipamente"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="2">Înapoi</button>
+            <button class="buton" id="verifica-echipamente">
+                Verifică echipamentele
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 4 -->
+    <section class="etapa" id="etapa-4">
+        <h2>4. Pregătirea experimentului</h2>
+
+        <div class="card">
+            <h3>Scopul lucrării</h3>
+            <p>
+                Determinarea constantei elastice a unui resort și
+                verificarea legii lui Hooke.
+            </p>
+
+            <h3>Relațiile folosite</h3>
+
+            <div class="formula">
+                F = mg
+                &nbsp;&nbsp;&nbsp;
+                Δl = l − l<sub>0</sub>
+                &nbsp;&nbsp;&nbsp;
+                k = F/Δl
+            </div>
+
+            <p>
+                În calcule, alungirea trebuie exprimată în metri, iar
+                constanta elastică se exprimă în N/m.
+            </p>
+        </div>
+
+        <div class="set-date">
+            <h3>Datele setului experimental</h3>
+
+            <div class="grid-3">
+                <p>
+                    Lungimea inițială:
+                    <strong id="afisare-l0">—</strong>
+                </p>
+
+                <p>
+                    Diviziunea riglei:
+                    <strong>1 mm</strong>
+                </p>
+
+                <p>
+                    Accelerația gravitațională:
+                    <strong>g = 9,8 N/kg</strong>
+                </p>
+            </div>
+
+            <p>
+                Sunt disponibile patru mase. Pentru fiecare determinare
+                trebuie să agăți masa, să citești lungimea resortului și
+                să notezi datele în caiet.
+            </p>
+        </div>
+
+        <div class="camp">
+            <label for="date-caiet">
+                Transcrie datele și formulele pe care le-ai notat în caiet
+            </label>
+            <textarea
+                id="date-caiet"
+                placeholder="l₀ = ... cm; F = mg; Δl = l − l₀; k = F/Δl..."
+            ></textarea>
+        </div>
+
+        <div class="bifa">
+            <input id="confirmare-date" type="checkbox">
+            <label for="confirmare-date">
+                Confirm că am notat în caiet scopul, datele inițiale,
+                formulele și unitățile de măsură.
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-pregatire"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="3">Înapoi</button>
+            <button class="buton" id="continua-pregatire">
+                Continuă la experiment
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 5 -->
+    <section class="etapa" id="etapa-5">
+        <h2>5. Agățarea masei de resort</h2>
+
+        <p>
+            Mută masa cu mouse-ul sau cu degetul în zona verde de sub
+            resort. După agățare, așteaptă stabilizarea resortului.
+        </p>
+
+        <div class="card">
+            <strong>
+                Determinarea <span id="numar-determinare">1</span> din 4
+            </strong>
+            <p>
+                Masa utilizată:
+                <strong id="masa-curenta">—</strong>
+            </p>
+        </div>
+
+        <div class="simulare" id="simulare">
+            <div class="instructiune" id="instructiune">
+                Trage masa indicată până în zona verde.
+            </div>
+
+            <div class="suport-orizontal"></div>
+            <div class="suport-vertical"></div>
+            <div class="baza-suport"></div>
+
+            <div class="resort" id="resort">
+                <svg viewBox="0 0 50 240" preserveAspectRatio="none">
+                    <polyline
+                        points="25,0 25,12 7,25 43,40 7,55 43,70
+                                7,85 43,100 7,115 43,130 7,145
+                                43,160 7,175 43,190 7,205 25,220 25,240"
+                        fill="none"
+                        stroke="#56636b"
+                        stroke-width="5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="carlig" id="carlig"></div>
+            <div class="zona-agatare" id="zona-agatare">
+                <span>ZONA DE AGĂȚARE</span>
+            </div>
+
+            <div class="masa-agatata" id="masa-agatata"></div>
+            <div class="reper-mobil" id="reper-mobil"></div>
+
+            <div class="rigla" id="rigla-simulare"></div>
+
+            <div class="tava-mase">
+                <div
+                    class="masa-mobila"
+                    id="masa-mobila"
+                    role="button"
+                    tabindex="0"
+                >
+                    MASĂ
+                </div>
+            </div>
+        </div>
+
+        <div class="mesaj" id="mesaj-agatare"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="4">Înapoi</button>
+            <button class="buton" id="continua-citire" disabled>
+                Continuă la citirea riglei
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 6 -->
+    <section class="etapa" id="etapa-6">
+        <h2>6. Citirea riglei gradate</h2>
+
+        <p>
+            Citește lungimea resortului la nivelul reperului roșu.
+            Diviziunea minimă a riglei este de 1 mm, adică 0,1 cm.
+        </p>
+
+        <div class="card">
+            <p>
+                Determinarea:
+                <strong id="citire-determinare">1</strong>
+            </p>
+
+            <p>
+                Masa agățată:
+                <strong id="citire-masa">—</strong>
+            </p>
+        </div>
+
+        <div class="scala-marita" id="scala-marita">
+            <div class="reper-citire" id="reper-citire"></div>
+        </div>
+
+        <div class="camp">
+            <label for="lungime-citita">
+                Lungimea resortului citită pe riglă, l (cm)
+            </label>
+            <input
+                id="lungime-citita"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                placeholder="Exemplu: 18,4"
+            >
+        </div>
+
+        <div class="bifa">
+            <input id="confirmare-citire" type="checkbox">
+            <label for="confirmare-citire">
+                Confirm că am notat în caiet masa și lungimea citită.
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-citire"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="5">Înapoi</button>
+
+            <button class="buton" id="verifica-citire">
+                Verifică citirea
+            </button>
+
+            <button class="buton succes" id="urmatoarea-determinare" disabled>
+                Următoarea determinare
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 7 -->
+    <section class="etapa" id="etapa-7">
+        <h2>7. Prelucrarea datelor</h2>
+
+        <p>
+            Completează tabelul. Transformă alungirea din centimetri în
+            metri înainte de calcularea constantei elastice.
+        </p>
+
+        <div class="formula">
+            F = mg
+            &nbsp;&nbsp;&nbsp;
+            Δl = l − l<sub>0</sub>
+            &nbsp;&nbsp;&nbsp;
+            k = F/Δl
+        </div>
+
+        <div style="overflow-x:auto">
+            <table>
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>m (kg)</th>
+                    <th>l₀ (cm)</th>
+                    <th>l citită (cm)</th>
+                    <th>F (N)</th>
+                    <th>Δl (m)</th>
+                    <th>k (N/m)</th>
+                </tr>
+                </thead>
+                <tbody id="tabel-calcule"></tbody>
+            </table>
+        </div>
+
+        <div class="grid-2">
+            <div class="camp">
+                <label for="k-mediu">Constanta elastică medie, k̄ (N/m)</label>
+                <input
+                    id="k-mediu"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Rotunjește la o zecimală"
+                >
+            </div>
+
+            <div class="camp">
+                <label for="incertitudine">
+                    Incertitudinea Δk = (kmax − kmin)/2 (N/m)
+                </label>
+                <input
+                    id="incertitudine"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Rotunjește la o zecimală"
+                >
+            </div>
+        </div>
+
+        <div class="camp">
+            <label for="concluzie">Concluzia experimentului</label>
+            <textarea
+                id="concluzie"
+                placeholder="Arată dacă alungirea a crescut proporțional cu forța și menționează posibile surse de eroare."
+            ></textarea>
+        </div>
+
+        <div class="bifa">
+            <input id="confirmare-calcule" type="checkbox">
+            <label for="confirmare-calcule">
+                Confirm că am efectuat și am notat în caiet calculele,
+                rezultatul final și concluzia.
+            </label>
+        </div>
+
+        <div class="mesaj" id="mesaj-calcule"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="6">Înapoi</button>
+            <button class="buton" id="verifica-calcule">
+                Verifică rezultatele
+            </button>
+            <button class="buton succes" id="continua-raport" disabled>
+                Continuă la raport
+            </button>
+        </div>
+    </section>
+
+    <!-- ETAPA 8 -->
+    <section class="etapa" id="etapa-8">
+        <h2>8. Raportul final</h2>
+
+        <div class="raport-grid">
+            <div class="raport-card">
+                <span>Elev</span>
+                <strong id="raport-nume">—</strong>
+            </div>
+
+            <div class="raport-card">
+                <span>Clasa</span>
+                <strong id="raport-clasa">—</strong>
+            </div>
+
+            <div class="raport-card">
+                <span>Constanta elastică medie</span>
+                <strong id="raport-k">—</strong>
+            </div>
+
+            <div class="raport-card">
+                <span>Incertitudine</span>
+                <strong id="raport-incertitudine">—</strong>
+            </div>
+
+            <div class="raport-card">
+                <span>Schimbări de ecran</span>
+                <strong id="raport-schimbari">0</strong>
+            </div>
+
+            <div class="raport-card">
+                <span>Timp în afara paginii</span>
+                <strong id="raport-absenta">0 s</strong>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+            <h3>Rezultate obținute experimental</h3>
+            <p id="raport-experimental"></p>
+
+            <h3>Rezultate obținute prin calcul</h3>
+            <p id="raport-calcul"></p>
+
+            <h3>Concluzie</h3>
+            <p id="raport-concluzie"></p>
+        </div>
+
+        <div class="mesaj" id="mesaj-trimitere"></div>
+
+        <div class="actiuni">
+            <button class="buton secundar" data-inapoi="7">Înapoi</button>
+            <button class="buton secundar" onclick="window.print()">
+                Tipărește
+            </button>
+            <button class="buton succes" id="trimite-rezultate">
+                Trimite în Google Sheets
+            </button>
+        </div>
+    </section>
+</main>
+
+<script src="../assets/js/monitorizare.js?v=14" defer></script>
+<script src="../assets/js/google-sheets.js?v=14" defer></script>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+    const TITLU = "Determinarea constantei elastice a unui resort";
+    const CONFIG_URL = "../assets/data/configurare-generala.json";
+    const G = 9.8;
+    const NUMAR_DETERMINARI = 4;
+
+    const stare = {
+        etapa: 1,
+        inceput: new Date(),
+        finalizare: null,
+        setId: 0,
+        set: null,
+        determinare: 0,
+        masaAgatata: false,
+        citiri: [],
+        schimbariEcran: 0,
+        absentaStart: null,
+        timpAbsentaMs: 0,
+        absentaMaximaMs: 0,
+        raportId: genereazaId(),
+        trimis: false
+    };
+
+    function el(id) {
+        return document.getElementById(id);
+    }
+
+    function genereazaId() {
+        return "RAP-" +
+            Date.now().toString(36).toUpperCase() +
+            "-" +
+            Math.random().toString(36).slice(2, 7).toUpperCase();
+    }
+
+    function parseNumar(value) {
+        return Number(
+            String(value || "")
+                .trim()
+                .replace(/\s/g, "")
+                .replace(",", ".")
+        );
+    }
+
+    function rotunjeste(value, zecimale) {
+        const factor = Math.pow(10, zecimale);
+        return Math.round((value + Number.EPSILON) * factor) / factor;
+    }
+
+    function format(value, zecimale) {
+        return Number(value).toFixed(zecimale).replace(".", ",");
+    }
+
+    function afiseazaMesaj(id, text, tip) {
+        const zona = el(id);
+        zona.textContent = text;
+        zona.className = "mesaj vizibil " + (tip || "");
+    }
+
+    function ascundeMesaj(id) {
+        const zona = el(id);
+        zona.textContent = "";
+        zona.className = "mesaj";
+    }
+
+    function mergiLaEtapa(numar) {
+        stare.etapa = numar;
+
+        document.querySelectorAll(".etapa").forEach(function (etapa) {
+            etapa.classList.remove("activ");
+        });
+
+        document.querySelectorAll(".pas-progres").forEach(function (pas) {
+            const nr = Number(pas.dataset.indicator);
+            pas.classList.toggle("activ", nr === numar);
+            pas.classList.toggle("finalizat", nr < numar);
+        });
+
+        el("etapa-" + numar).classList.add("activ");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function genereazaSet() {
+        /*
+         * 50 de seturi:
+         * 10 valori pentru constanta elastică × 5 lungimi inițiale.
+         */
+        const index = Math.floor(Math.random() * 50);
+        const variantaK = index % 10;
+        const variantaL0 = Math.floor(index / 10);
+
+        const kReal = 18 + variantaK * 2;
+        const l0 = 12 + variantaL0 * 1.5;
+        const masaInitiala = 0.04 + (variantaK % 3) * 0.01;
+
+        const mase = [0, 1, 2, 3].map(function (i) {
+            return rotunjeste(masaInitiala + i * 0.04, 3);
+        });
+
+        const abateriCm = [-0.08, 0.05, -0.03, 0.07];
+
+        const determinari = mase.map(function (masa, i) {
+            const forta = masa * G;
+            const alungireM = forta / kReal;
+
+            const lungimeIdealaCm = l0 + alungireM * 100;
+            const lungimeCititaCm = Math.round(
+                (lungimeIdealaCm +
+                    abateriCm[(i + variantaK) % abateriCm.length]) * 10
+            ) / 10;
+
+            return {
+                masa: masa,
+                forta: forta,
+                lungime: lungimeCititaCm
+            };
+        });
+
+        stare.setId = index + 1;
+        stare.set = {
+            l0: l0,
+            kReal: kReal,
+            determinari: determinari
+        };
+    }
+
+    function configureazaNavigare() {
+        document.querySelectorAll("[data-inapoi]").forEach(function (buton) {
+            buton.addEventListener("click", function () {
+                mergiLaEtapa(Number(buton.dataset.inapoi));
+            });
+        });
+    }
+
+    function configureazaMonitorizare() {
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                incepeAbsenta();
+            } else {
+                terminaAbsenta();
+            }
+        });
+
+        window.addEventListener("blur", incepeAbsenta);
+        window.addEventListener("focus", terminaAbsenta);
+    }
+
+    function incepeAbsenta() {
+        if (stare.absentaStart !== null) {
+            return;
+        }
+
+        stare.schimbariEcran += 1;
+        stare.absentaStart = Date.now();
+    }
+
+    function terminaAbsenta() {
+        if (stare.absentaStart === null) {
+            return;
+        }
+
+        const durata = Date.now() - stare.absentaStart;
+        stare.timpAbsentaMs += durata;
+        stare.absentaMaximaMs = Math.max(stare.absentaMaximaMs, durata);
+        stare.absentaStart = null;
+    }
+
+    function configureazaFormulare() {
+        el("continua-identificare").addEventListener("click", function () {
+            const nume = el("nume").value.trim();
+
+            if (nume.length < 5 || !nume.includes(" ")) {
+                afiseazaMesaj(
+                    "mesaj-identificare",
+                    "Introdu numele și prenumele.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!el("clasa").value) {
+                afiseazaMesaj(
+                    "mesaj-identificare",
+                    "Selectează clasa.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!el("acord-monitorizare").checked || !el("declaratie").checked) {
+                afiseazaMesaj(
+                    "mesaj-identificare",
+                    "Bifează ambele confirmări pentru a continua.",
+                    "eroare"
+                );
+                return;
+            }
+
+            ascundeMesaj("mesaj-identificare");
+            mergiLaEtapa(2);
+        });
+
+        el("continua-securitate").addEventListener("click", function () {
+            if (!el("acord-securitate").checked) {
+                afiseazaMesaj(
+                    "mesaj-securitate",
+                    "Confirmă că ai citit regulile de siguranță.",
+                    "eroare"
+                );
+                return;
+            }
+
+            ascundeMesaj("mesaj-securitate");
+            mergiLaEtapa(3);
+        });
+
+        el("verifica-echipamente").addEventListener("click", function () {
+            const selectate = Array.from(
+                document.querySelectorAll(".echipament-check:checked")
+            ).map(function (input) {
+                return input.value;
+            });
+
+            const necesare = ["halat", "suport", "resort", "mase", "rigla"];
+
+            const lipsesc = necesare.some(function (valoare) {
+                return !selectate.includes(valoare);
+            });
+
+            const distractori =
+                selectate.includes("termometru") ||
+                selectate.includes("ampermetru");
+
+            if (lipsesc || distractori) {
+                afiseazaMesaj(
+                    "mesaj-echipamente",
+                    "Selecția nu este corectă. Sunt necesare halatul, " +
+                    "suportul universal, resortul, masele marcate și rigla.",
+                    "eroare"
+                );
+                return;
+            }
+
+            ascundeMesaj("mesaj-echipamente");
+            mergiLaEtapa(4);
+        });
+
+        el("continua-pregatire").addEventListener("click", function () {
+            if (el("date-caiet").value.trim().length < 20) {
+                afiseazaMesaj(
+                    "mesaj-pregatire",
+                    "Transcrie datele și formulele notate în caiet.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!el("confirmare-date").checked) {
+                afiseazaMesaj(
+                    "mesaj-pregatire",
+                    "Confirmă notarea datelor în caiet.",
+                    "eroare"
+                );
+                return;
+            }
+
+            pregatesteDeterminare();
+            mergiLaEtapa(5);
+        });
+    }
+
+    function deseneazaRigla(container) {
+        container.querySelectorAll(
+            ".rigla-gr, .rigla-numar"
+        ).forEach(function (nod) {
+            nod.remove();
+        });
+
+        const maxCm = 40;
+        const pasi = 400;
+
+        for (let i = 0; i <= pasi; i++) {
+            const procent = (i / pasi) * 100;
+            const gradatie = document.createElement("span");
+
+            if (i % 10 === 0) {
+                gradatie.className = "rigla-gr mare";
+            } else if (i % 5 === 0) {
+                gradatie.className = "rigla-gr medie";
+            } else {
+                gradatie.className = "rigla-gr mica";
+            }
+
+            gradatie.style.top = procent + "%";
+            container.appendChild(gradatie);
+
+            if (i % 50 === 0) {
+                const eticheta = document.createElement("span");
+                eticheta.className = "rigla-numar";
+                eticheta.style.top = procent + "%";
+                eticheta.textContent = String((i / 10).toFixed(0));
+                container.appendChild(eticheta);
+            }
+        }
+    }
+
+    function pregatesteDeterminare() {
+        const det = stare.set.determinari[stare.determinare];
+
+        stare.masaAgatata = false;
+
+        el("numar-determinare").textContent = stare.determinare + 1;
+        el("masa-curenta").textContent = format(det.masa, 3) + " kg";
+        el("masa-mobila").textContent = format(det.masa * 1000, 0) + " g";
+        el("masa-mobila").style.position = "";
+        el("masa-mobila").style.left = "";
+        el("masa-mobila").style.top = "";
+        el("masa-mobila").style.visibility = "visible";
+
+        el("masa-agatata").classList.remove("vizibil");
+        el("continua-citire").disabled = true;
+
+        el("resort").style.height = "235px";
+        el("carlig").style.top = "286px";
+        el("masa-agatata").style.top = "312px";
+        el("reper-mobil").style.top = "292px";
+
+        el("instructiune").textContent =
+            "Trage masa indicată până în zona verde.";
+
+        ascundeMesaj("mesaj-agatare");
+    }
+
+    function configureazaSimulare() {
+        const masa = el("masa-mobila");
+        const simulare = el("simulare");
+        const zona = el("zona-agatare");
+
+        let activ = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        masa.addEventListener("pointerdown", function (event) {
+            if (stare.masaAgatata) {
+                return;
+            }
+
+            activ = true;
+            masa.setPointerCapture(event.pointerId);
+
+            const rect = masa.getBoundingClientRect();
+            const containerRect = simulare.getBoundingClientRect();
+
+            masa.style.position = "absolute";
+            masa.style.left = rect.left - containerRect.left + "px";
+            masa.style.top = rect.top - containerRect.top + "px";
+
+            offsetX = event.clientX - rect.left;
+            offsetY = event.clientY - rect.top;
+            event.preventDefault();
+        });
+
+        masa.addEventListener("pointermove", function (event) {
+            if (!activ || stare.masaAgatata) {
+                return;
+            }
+
+            const rect = simulare.getBoundingClientRect();
+            let x = event.clientX - rect.left - offsetX;
+            let y = event.clientY - rect.top - offsetY;
+
+            x = Math.max(0, Math.min(x, rect.width - masa.offsetWidth));
+            y = Math.max(0, Math.min(y, rect.height - masa.offsetHeight));
+
+            masa.style.left = x + "px";
+            masa.style.top = y + "px";
+
+            if (intersecteaza(masa, zona)) {
+                agataMasa();
+                activ = false;
+            }
+        });
+
+        masa.addEventListener("pointerup", function () {
+            activ = false;
+        });
+
+        masa.addEventListener("pointercancel", function () {
+            activ = false;
+        });
+
+        el("continua-citire").addEventListener("click", function () {
+            if (!stare.masaAgatata) {
+                return;
+            }
+
+            pregatesteScalaMarita();
+            mergiLaEtapa(6);
+        });
+    }
+
+    function intersecteaza(a, b) {
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+
+        return !(
+            ra.right < rb.left ||
+            ra.left > rb.right ||
+            ra.bottom < rb.top ||
+            ra.top > rb.bottom
+        );
+    }
+
+    function agataMasa() {
+        const det = stare.set.determinari[stare.determinare];
+        const alungireCm = det.lungime - stare.set.l0;
+        const extinderePixeli = Math.min(135, alungireCm * 7);
+
+        stare.masaAgatata = true;
+        el("masa-mobila").style.visibility = "hidden";
+
+        el("masa-agatata").textContent =
+            format(det.masa * 1000, 0) + " g";
+        el("masa-agatata").classList.add("vizibil");
+
+        el("instructiune").textContent =
+            "Masa a fost agățată. Așteaptă stabilizarea resortului...";
+
+        setTimeout(function () {
+            el("resort").style.height = 235 + extinderePixeli + "px";
+            el("carlig").style.top = 286 + extinderePixeli + "px";
+            el("masa-agatata").style.top = 312 + extinderePixeli + "px";
+            el("reper-mobil").style.top = 292 + extinderePixeli + "px";
+        }, 250);
+
+        setTimeout(function () {
+            el("instructiune").textContent =
+                "Resortul s-a stabilizat. Continuă la citirea riglei.";
+
+            el("continua-citire").disabled = false;
+
+            afiseazaMesaj(
+                "mesaj-agatare",
+                "Masa a fost agățată corect, iar oscilațiile s-au oprit.",
+                "succes"
+            );
+        }, 1100);
+    }
+
+    function pregatesteScalaMarita() {
+        const det = stare.set.determinari[stare.determinare];
+        const scala = el("scala-marita");
+
+        deseneazaRigla(scala);
+
+        const pozitie = (det.lungime / 40) * 100;
+        el("reper-citire").style.top = pozitie + "%";
+
+        el("citire-determinare").textContent = stare.determinare + 1;
+        el("citire-masa").textContent = format(det.masa, 3) + " kg";
+        el("lungime-citita").value = "";
+        el("confirmare-citire").checked = false;
+        el("urmatoarea-determinare").disabled = true;
+
+        el("urmatoarea-determinare").textContent =
+            stare.determinare === NUMAR_DETERMINARI - 1
+                ? "Continuă la calcule"
+                : "Următoarea determinare";
+
+        ascundeMesaj("mesaj-citire");
+    }
+
+    function configureazaCitire() {
+        el("verifica-citire").addEventListener("click", function () {
+            const citire = parseNumar(el("lungime-citita").value);
+            const valoareCorecta =
+                stare.set.determinari[stare.determinare].lungime;
+
+            if (!Number.isFinite(citire)) {
+                afiseazaMesaj(
+                    "mesaj-citire",
+                    "Introdu lungimea citită pe riglă.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!el("confirmare-citire").checked) {
+                afiseazaMesaj(
+                    "mesaj-citire",
+                    "Confirmă că ai notat citirea în caiet.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (Math.abs(citire - valoareCorecta) > 0.051) {
+                afiseazaMesaj(
+                    "mesaj-citire",
+                    "Citirea nu corespunde reperului roșu. Numără din nou " +
+                    "diviziunile; o diviziune reprezintă 0,1 cm.",
+                    "eroare"
+                );
+                return;
+            }
+
+            stare.citiri[stare.determinare] = rotunjeste(citire, 1);
+
+            afiseazaMesaj(
+                "mesaj-citire",
+                "Citire corectă: " + format(citire, 1) + " cm.",
+                "succes"
+            );
+
+            el("urmatoarea-determinare").disabled = false;
+        });
+
+        el("urmatoarea-determinare").addEventListener("click", function () {
+            if (stare.determinare < NUMAR_DETERMINARI - 1) {
+                stare.determinare += 1;
+                pregatesteDeterminare();
+                mergiLaEtapa(5);
+                return;
+            }
+
+            construiesteTabel();
+            mergiLaEtapa(7);
+        });
+    }
+
+    function construiesteTabel() {
+        const tbody = el("tabel-calcule");
+        tbody.innerHTML = "";
+
+        stare.set.determinari.forEach(function (det, index) {
+            const rand = document.createElement("tr");
+
+            rand.innerHTML =
+                "<td>" + (index + 1) + "</td>" +
+                "<td>" + format(det.masa, 3) + "</td>" +
+                "<td>" + format(stare.set.l0, 1) + "</td>" +
+                "<td>" + format(stare.citiri[index], 1) + "</td>" +
+                "<td><input id=\"forta-" + index +
+                    "\" inputmode=\"decimal\" type=\"text\"></td>" +
+                "<td><input id=\"alungire-" + index +
+                    "\" inputmode=\"decimal\" type=\"text\"></td>" +
+                "<td><input id=\"k-" + index +
+                    "\" inputmode=\"decimal\" type=\"text\"></td>";
+
+            tbody.appendChild(rand);
+        });
+    }
+
+    function calculeCorecte() {
+        const rezultate = stare.set.determinari.map(function (det, index) {
+            const forta = det.masa * G;
+            const alungire =
+                (stare.citiri[index] - stare.set.l0) / 100;
+            const k = forta / alungire;
+
+            return {
+                forta: forta,
+                alungire: alungire,
+                k: k
+            };
+        });
+
+        const valoriK = rezultate.map(function (rezultat) {
+            return rezultat.k;
+        });
+
+        const medie = valoriK.reduce(function (suma, valoare) {
+            return suma + valoare;
+        }, 0) / valoriK.length;
+
+        const incertitudine =
+            (Math.max.apply(null, valoriK) -
+                Math.min.apply(null, valoriK)) / 2;
+
+        return {
+            rezultate: rezultate,
+            medie: medie,
+            incertitudine: incertitudine
+        };
+    }
+
+    function configureazaCalcule() {
+        el("verifica-calcule").addEventListener("click", function () {
+            const corect = calculeCorecte();
+            let valid = true;
+
+            corect.rezultate.forEach(function (rezultat, index) {
+                const fortaElev = parseNumar(el("forta-" + index).value);
+                const alungireElev =
+                    parseNumar(el("alungire-" + index).value);
+                const kElev = parseNumar(el("k-" + index).value);
+
+                if (
+                    !Number.isFinite(fortaElev) ||
+                    Math.abs(fortaElev -
+                        rotunjeste(rezultat.forta, 2)) > 0.011
+                ) {
+                    valid = false;
+                }
+
+                if (
+                    !Number.isFinite(alungireElev) ||
+                    Math.abs(alungireElev -
+                        rotunjeste(rezultat.alungire, 3)) > 0.00051
+                ) {
+                    valid = false;
+                }
+
+                if (
+                    !Number.isFinite(kElev) ||
+                    Math.abs(kElev -
+                        rotunjeste(rezultat.k, 1)) > 0.051
+                ) {
+                    valid = false;
+                }
+            });
+
+            const medieElev = parseNumar(el("k-mediu").value);
+            const incertitudineElev =
+                parseNumar(el("incertitudine").value);
+
+            if (
+                !Number.isFinite(medieElev) ||
+                Math.abs(medieElev -
+                    rotunjeste(corect.medie, 1)) > 0.051
+            ) {
+                valid = false;
+            }
+
+            if (
+                !Number.isFinite(incertitudineElev) ||
+                Math.abs(incertitudineElev -
+                    rotunjeste(corect.incertitudine, 1)) > 0.051
+            ) {
+                valid = false;
+            }
+
+            if (el("concluzie").value.trim().length < 30) {
+                afiseazaMesaj(
+                    "mesaj-calcule",
+                    "Scrie o concluzie și menționează cel puțin o sursă " +
+                    "de eroare experimentală.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!el("confirmare-calcule").checked) {
+                afiseazaMesaj(
+                    "mesaj-calcule",
+                    "Confirmă că ai notat calculele și concluzia în caiet.",
+                    "eroare"
+                );
+                return;
+            }
+
+            if (!valid) {
+                afiseazaMesaj(
+                    "mesaj-calcule",
+                    "Unele rezultate nu sunt corecte. Verifică F = mg, " +
+                    "transformarea alungirii din centimetri în metri și " +
+                    "relația k = F/Δl.",
+                    "eroare"
+                );
+                return;
+            }
+
+            afiseazaMesaj(
+                "mesaj-calcule",
+                "Calculele sunt corecte. Poți genera raportul final.",
+                "succes"
+            );
+
+            el("continua-raport").disabled = false;
+        });
+
+        el("continua-raport").addEventListener("click", function () {
+            stare.finalizare = new Date();
+            terminaAbsenta();
+            completeazaRaport();
+            mergiLaEtapa(8);
+        });
+    }
+
+    function completeazaRaport() {
+        const corect = calculeCorecte();
+
+        el("raport-nume").textContent = el("nume").value.trim();
+        el("raport-clasa").textContent = el("clasa").value;
+        el("raport-k").textContent =
+            format(corect.medie, 1) + " N/m";
+        el("raport-incertitudine").textContent =
+            format(corect.incertitudine, 1) + " N/m";
+        el("raport-schimbari").textContent =
+            String(stare.schimbariEcran);
+        el("raport-absenta").textContent =
+            formatDurata(stare.timpAbsentaMs);
+
+        el("raport-experimental").textContent =
+            stare.set.determinari.map(function (det, index) {
+                return "m" + (index + 1) + " = " +
+                    format(det.masa, 3) + " kg; l" +
+                    (index + 1) + " = " +
+                    format(stare.citiri[index], 1) + " cm";
+            }).join(" | ");
+
+        el("raport-calcul").textContent =
+            "k = (" + format(corect.medie, 1) +
+            " ± " + format(corect.incertitudine, 1) + ") N/m";
+
+        el("raport-concluzie").textContent =
+            el("concluzie").value.trim();
+    }
+
+    function formatDurata(ms) {
+        const totalSecunde = Math.round(ms / 1000);
+        const minute = Math.floor(totalSecunde / 60);
+        const secunde = totalSecunde % 60;
+
+        return minute > 0
+            ? minute + " min " + secunde + " s"
+            : secunde + " s";
+    }
+
+    function construiestePayload() {
+        terminaAbsenta();
+
+        const corect = calculeCorecte();
+        const finalizare = stare.finalizare || new Date();
+
+        const experimental = stare.set.determinari.map(
+            function (det, index) {
+                return {
+                    determinare: index + 1,
+                    masaKg: det.masa,
+                    lungimeInitialaCm: stare.set.l0,
+                    lungimeMasurataCm: stare.citiri[index]
+                };
+            }
+        );
+
+        const calcule = corect.rezultate.map(function (rezultat, index) {
+            return {
+                determinare: index + 1,
+                fortaN: rotunjeste(rezultat.forta, 2),
+                alungireM: rotunjeste(rezultat.alungire, 3),
+                constantaElasticaNm: rotunjeste(rezultat.k, 1)
+            };
+        });
+
+        return {
+            tip: "rezultat_laborator",
+            action: "saveExperiment",
+
+            idRaport: stare.raportId,
+            reportId: stare.raportId,
+
+            numePrenume: el("nume").value.trim(),
+            nume: el("nume").value.trim(),
+            studentName: el("nume").value.trim(),
+
+            clasa: el("clasa").value,
+            className: el("clasa").value,
+            nivelClasa: 9,
+
+            dataExperimentului:
+                stare.inceput.toLocaleDateString("ro-RO"),
+            oraInceperii:
+                stare.inceput.toLocaleTimeString("ro-RO"),
+            oraFinalizarii:
+                finalizare.toLocaleTimeString("ro-RO"),
+            startedAt: stare.inceput.toISOString(),
+            completedAt: finalizare.toISOString(),
+
+            temaExperimentului: TITLU,
+            titluExperiment: TITLU,
+            experimentTitle: TITLU,
+
+            setExperimental: stare.setId,
+            setId: stare.setId,
+            lungimeInitialaCm: stare.set.l0,
+
+            rezultateExperimentale: experimental,
+            experimentalResults: experimental,
+
+            rezultatePrinCalcul: calcule,
+            calculatedResults: calcule,
+
+            constantaElasticaMedieNm:
+                rotunjeste(corect.medie, 1),
+            incertitudineNm:
+                rotunjeste(corect.incertitudine, 1),
+
+            concluzie: el("concluzie").value.trim(),
+            observatiiCaiet: el("date-caiet").value.trim(),
+
+            schimbariEcran: stare.schimbariEcran,
+            screenChanges: stare.schimbariEcran,
+
+            timpAbsentaSecunde:
+                Math.round(stare.timpAbsentaMs / 1000),
+            awayTimeSeconds:
+                Math.round(stare.timpAbsentaMs / 1000),
+
+            ceaMaiLungaAbsentaSecunde:
+                Math.round(stare.absentaMaximaMs / 1000),
+
+            monitorizare: {
+                schimbariEcran: stare.schimbariEcran,
+                timpAbsentaSecunde:
+                    Math.round(stare.timpAbsentaMs / 1000),
+                ceaMaiLungaAbsentaSecunde:
+                    Math.round(stare.absentaMaximaMs / 1000)
+            },
+
+            pagina: window.location.href,
+            userAgent: navigator.userAgent
+        };
+    }
+
+    async function obtineUrlScript() {
+        const raspuns = await fetch(CONFIG_URL, {
+            cache: "no-store"
+        });
+
+        if (!raspuns.ok) {
+            throw new Error(
+                "Nu s-a putut încărca configurare-generala.json."
+            );
+        }
+
+        const configurare = await raspuns.json();
+
+        const url =
+            configurare?.submission?.googleScriptUrl ||
+            configurare?.googleScriptUrl ||
+            configurare?.googleSheets?.googleScriptUrl ||
+            configurare?.googleSheets?.url ||
+            "";
+
+        if (!url.startsWith("https://script.google.com/macros/s/")) {
+            throw new Error(
+                "Adresa Google Apps Script nu este configurată corect."
+            );
+        }
+
+        return url;
+    }
+
+    function configureazaTrimitere() {
+        el("trimite-rezultate").addEventListener(
+            "click",
+            async function () {
+                if (stare.trimis) {
+                    return;
+                }
+
+                const buton = el("trimite-rezultate");
+                buton.disabled = true;
+                buton.textContent = "Se trimite...";
+
+                afiseazaMesaj(
+                    "mesaj-trimitere",
+                    "Rezultatele sunt transmise către registrul clasei.",
+                    ""
+                );
+
+                try {
+                    const url = await obtineUrlScript();
+                    const payload = construiestePayload();
+
+                    await fetch(url, {
+                        method: "POST",
+                        mode: "no-cors",
+                        cache: "no-store",
+                        headers: {
+                            "Content-Type": "text/plain;charset=UTF-8"
+                        },
+                        body: JSON.stringify(payload),
+                        keepalive: true
+                    });
+
+                    stare.trimis = true;
+                    buton.textContent = "Rezultate trimise";
+
+                    afiseazaMesaj(
+                        "mesaj-trimitere",
+                        "Cererea a fost trimisă către Google Apps Script. " +
+                        "ID raport: " + stare.raportId +
+                        ". Verifică înregistrarea în foaia clasei a IX-a.",
+                        "succes"
+                    );
+
+                    salveazaLocal(payload, true);
+                } catch (eroare) {
+                    console.error(eroare);
+
+                    buton.disabled = false;
+                    buton.textContent = "Reîncearcă trimiterea";
+
+                    afiseazaMesaj(
+                        "mesaj-trimitere",
+                        "Rezultatele nu au putut fi transmise. " +
+                        eroare.message,
+                        "eroare"
+                    );
+
+                    salveazaLocal(construiestePayload(), false);
+                }
+            }
+        );
+    }
+
+    function salveazaLocal(payload, transmis) {
+        try {
+            localStorage.setItem(
+                transmis
+                    ? "fizica-laborator-ultimul-raport"
+                    : "fizica-laborator-rezultate-netrimise",
+                JSON.stringify({
+                    transmis: transmis,
+                    salvatLa: new Date().toISOString(),
+                    payload: payload
+                })
+            );
+        } catch (eroare) {
+            console.warn("Copia locală nu a putut fi salvată.", eroare);
+        }
+    }
+
+    function initializare() {
+        genereazaSet();
+
+        el("data-ora").value =
+            stare.inceput.toLocaleString("ro-RO", {
+                dateStyle: "long",
+                timeStyle: "medium"
+            });
+
+        el("afisare-l0").textContent =
+            format(stare.set.l0, 1) + " cm";
+
+        deseneazaRigla(el("rigla-simulare"));
+        el("reper-mobil").style.top =
+            (58 + stare.set.l0 / 40 * 410) + "px";
+
+        configureazaNavigare();
+        configureazaMonitorizare();
+        configureazaFormulare();
+        configureazaSimulare();
+        configureazaCitire();
+        configureazaCalcule();
+        configureazaTrimitere();
+    }
+
+    initializare();
+});
+</script>
+</body>
+</html>
