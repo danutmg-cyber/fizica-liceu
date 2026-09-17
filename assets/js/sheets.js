@@ -1,26 +1,31 @@
 /* =========================================================
-   GOOGLE SHEETS – FUNCȚII COMUNE PENTRU TESTELE DE FIZICĂ
+   GOOGLE SHEETS – MODUL COMUN PENTRU TESTELE DE FIZICĂ
    assets/js/sheets.js
+
+   Necesită Code.gs nou, cu endpoint-urile:
+
+   GET:
+   ?action=check&nume=...&clasa=...&test=...
+   ?action=status&variantId=...
+
+   POST:
+   payload=<JSON>
+
+   Principii:
+   - UN SINGUR POST automat la finalizarea testului;
+   - confirmare reală prin variantId;
+   - fără cele 3 retrimiteri automate;
+   - buton "Trimite din nou";
+   - retrimiterea manuală face UN SINGUR POST;
+   - duplicatele sunt eliminate de Code.gs prin variantId.
 
    Funcții publice:
    - checkPriorAttempt(name, cls, testId)
    - setStartCheckMessage(text, isError)
    - sendToGoogleSheet(payload)
+   - resendLastResult()
+   - checkSubmissionStatus(variantId)
    - setResultButtonsEnabled(enabled)
-
-   Compatibil cu:
-   - GOOGLE_SCRIPT_URL definit în pagina testului
-   - SAVE_WAIT_SECONDS
-   - SAVE_RETRY_DELAYS_MS
-
-   Pentru testele viitoare se poate folosi și:
-   window.PHYSICS_SHEETS_CONFIG = {
-     url: "...",
-     testId: "...",
-     saveWaitSeconds: 15,
-     retryDelaysMs: [0, 5000, 10000],
-     checkTimeoutMs: 8000
-   };
    ========================================================= */
 
 (function () {
@@ -28,168 +33,259 @@
 
 
   /* =========================================================
-     VALORI IMPLICITE
+     CONFIGURARE IMPLICITĂ
      ========================================================= */
 
-  const DEFAULT_SAVE_WAIT_SECONDS = 15;
+  const DEFAULT_CONFIG = {
 
-  const DEFAULT_RETRY_DELAYS_MS = [
-    0,
-    5000,
-    10000
-  ];
+    /* verificarea dacă elevul a mai dat testul */
+    checkTimeoutMs: 8000,
 
-  const DEFAULT_CHECK_TIMEOUT_MS = 8000;
+    /* verificarea rezultatului după POST */
+    statusRequestTimeoutMs: 7000,
 
-  const HIDDEN_FRAME_LIFETIME_MS = 30000;
+    /*
+      Nu verificăm instantaneu.
+      Dăm timp Apps Script să scrie în Sheet.
+
+      Se adaugă și un mic interval aleatoriu pentru ca
+      30 de elevi să nu întrebe serverul exact simultan.
+    */
+    statusInitialDelayMs: 1800,
+    statusInitialJitterMs: 1200,
+
+    /*
+      Dacă prima verificare nu găsește rezultatul,
+      mai verificăm de câteva ori.
+
+      Acestea sunt GET-uri, NU noi trimiteri POST.
+    */
+    statusPollIntervalMs: 2500,
+    statusMaxChecks: 5,
+
+    /* iframe-ul folosit pentru POST */
+    hiddenFrameLifetimeMs: 30000
+  };
+
+
+  /* =========================================================
+     STARE INTERNĂ
+     ========================================================= */
+
+  let lastPayload = null;
+
+  let sending = false;
+
+  let verificationGeneration = 0;
+
+
+  /* =========================================================
+     UTILITARE
+     ========================================================= */
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+
+  function sleep(ms) {
+    return new Promise(function (resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
 
 
   /* =========================================================
      CONFIGURARE
      ========================================================= */
 
-  function getSheetsConfig() {
-    const customConfig =
+  function getConfig() {
+
+    const custom =
       window.PHYSICS_SHEETS_CONFIG || {};
 
-    let url = "";
+
+    /* ---------------------------------------------------------
+       URL GOOGLE APPS SCRIPT
+       --------------------------------------------------------- */
+
+    let url =
+      String(
+        custom.url || ""
+      ).trim();
+
 
     /*
-      1. Preferă configurația comună modernă.
-      2. Dacă nu există, folosește GOOGLE_SCRIPT_URL
-         din testele mai vechi.
+      Compatibilitate cu testul actual:
+
+      const GOOGLE_SCRIPT_URL = "...";
     */
 
-    if (customConfig.url) {
-      url = String(customConfig.url).trim();
-    } else {
+    if (!url) {
+
       try {
+
         if (
           typeof GOOGLE_SCRIPT_URL !== "undefined" &&
           GOOGLE_SCRIPT_URL
         ) {
-          url = String(GOOGLE_SCRIPT_URL).trim();
+
+          url =
+            String(
+              GOOGLE_SCRIPT_URL
+            ).trim();
         }
+
       } catch (error) {
+
         url = "";
       }
     }
 
 
-    /* Timp de așteptare după salvare */
+    /* ---------------------------------------------------------
+       TEST ID
+       --------------------------------------------------------- */
 
-    let saveWaitSeconds =
-      Number(customConfig.saveWaitSeconds);
-
-    if (
-      !Number.isFinite(saveWaitSeconds) ||
-      saveWaitSeconds < 0
-    ) {
-      try {
-        if (
-          typeof SAVE_WAIT_SECONDS !== "undefined" &&
-          Number.isFinite(Number(SAVE_WAIT_SECONDS))
-        ) {
-          saveWaitSeconds =
-            Number(SAVE_WAIT_SECONDS);
-        } else {
-          saveWaitSeconds =
-            DEFAULT_SAVE_WAIT_SECONDS;
-        }
-      } catch (error) {
-        saveWaitSeconds =
-          DEFAULT_SAVE_WAIT_SECONDS;
-      }
-    }
+    let testId =
+      String(
+        custom.testId || ""
+      ).trim();
 
 
-    /* Încercări de salvare */
-
-    let retryDelaysMs =
-      Array.isArray(customConfig.retryDelaysMs)
-        ? customConfig.retryDelaysMs
-        : null;
-
-    if (!retryDelaysMs) {
-      try {
-        if (
-          typeof SAVE_RETRY_DELAYS_MS !== "undefined" &&
-          Array.isArray(SAVE_RETRY_DELAYS_MS)
-        ) {
-          retryDelaysMs =
-            SAVE_RETRY_DELAYS_MS;
-        }
-      } catch (error) {
-        retryDelaysMs = null;
-      }
-    }
-
-    if (!retryDelaysMs) {
-      retryDelaysMs =
-        DEFAULT_RETRY_DELAYS_MS;
-    }
-
-    retryDelaysMs = retryDelaysMs
-      .map(value => Number(value))
-      .filter(
-        value =>
-          Number.isFinite(value) &&
-          value >= 0
-      );
-
-
-    if (!retryDelaysMs.length) {
-      retryDelaysMs = [0];
-    }
-
-
-    /* Timeout verificare încercare anterioară */
-
-    let checkTimeoutMs =
-      Number(customConfig.checkTimeoutMs);
+    /*
+      Dacă test-core.js este configurat,
+      preluăm automat testId de acolo.
+    */
 
     if (
-      !Number.isFinite(checkTimeoutMs) ||
-      checkTimeoutMs <= 0
+      !testId &&
+      window.PHYSICS_TEST_CONFIG &&
+      window.PHYSICS_TEST_CONFIG.testId
     ) {
-      checkTimeoutMs =
-        DEFAULT_CHECK_TIMEOUT_MS;
+
+      testId =
+        String(
+          window.PHYSICS_TEST_CONFIG.testId
+        ).trim();
     }
 
 
-    /* Identificator opțional al testului */
+    /* ---------------------------------------------------------
+       TIMPI
+       --------------------------------------------------------- */
 
-    const testId =
-      customConfig.testId
-        ? String(customConfig.testId).trim()
-        : "";
+    function positiveNumber(
+      value,
+      fallback
+    ) {
+
+      const number =
+        Number(value);
+
+
+      return (
+        Number.isFinite(number) &&
+        number > 0
+      )
+        ? number
+        : fallback;
+    }
+
+
+    function nonNegativeNumber(
+      value,
+      fallback
+    ) {
+
+      const number =
+        Number(value);
+
+
+      return (
+        Number.isFinite(number) &&
+        number >= 0
+      )
+        ? number
+        : fallback;
+    }
 
 
     return {
+
       url,
-      saveWaitSeconds,
-      retryDelaysMs,
-      checkTimeoutMs,
-      testId
+
+      testId,
+
+      checkTimeoutMs:
+        positiveNumber(
+          custom.checkTimeoutMs,
+          DEFAULT_CONFIG.checkTimeoutMs
+        ),
+
+      statusRequestTimeoutMs:
+        positiveNumber(
+          custom.statusRequestTimeoutMs,
+          DEFAULT_CONFIG.statusRequestTimeoutMs
+        ),
+
+      statusInitialDelayMs:
+        nonNegativeNumber(
+          custom.statusInitialDelayMs,
+          DEFAULT_CONFIG.statusInitialDelayMs
+        ),
+
+      statusInitialJitterMs:
+        nonNegativeNumber(
+          custom.statusInitialJitterMs,
+          DEFAULT_CONFIG.statusInitialJitterMs
+        ),
+
+      statusPollIntervalMs:
+        positiveNumber(
+          custom.statusPollIntervalMs,
+          DEFAULT_CONFIG.statusPollIntervalMs
+        ),
+
+      statusMaxChecks:
+        Math.max(
+          1,
+          Math.round(
+            positiveNumber(
+              custom.statusMaxChecks,
+              DEFAULT_CONFIG.statusMaxChecks
+            )
+          )
+        ),
+
+      hiddenFrameLifetimeMs:
+        positiveNumber(
+          custom.hiddenFrameLifetimeMs,
+          DEFAULT_CONFIG.hiddenFrameLifetimeMs
+        )
     };
   }
 
 
   /* =========================================================
-     VERIFICARE URL GOOGLE APPS SCRIPT
+     VERIFICARE URL
      ========================================================= */
 
   function hasValidGoogleScriptUrl(url) {
+
     if (!url) {
       return false;
     }
+
 
     if (
       url.includes("PASTE_GOOGLE") ||
       url.includes("YOUR_GOOGLE_SCRIPT")
     ) {
+
       return false;
     }
+
 
     return /^https:\/\/script\.google\.com\/macros\/s\//i
       .test(url);
@@ -197,233 +293,172 @@
 
 
   /* =========================================================
-     MESAJ VERIFICARE ÎNAINTE DE TEST
+     BUTON "TRIMITE DIN NOU"
+
+     Dacă nu există deja în HTML, îl creăm automat.
      ========================================================= */
 
-  function setStartCheckMessage(text, isError) {
-    const element =
-      document.getElementById(
-        "startCheckMessage"
-      );
+  function ensureResendButton() {
 
-    if (!element) {
-      return;
-    }
-
-    if (!text) {
-      element.classList.add("hidden");
-      element.innerText = "";
-      return;
-    }
-
-    element.classList.remove("hidden");
-
-    element.style.color =
-      isError
-        ? "var(--red, #c0392b)"
-        : "var(--muted, #667085)";
-
-    element.innerText = text;
-  }
+    let button =
+      byId("resendBtn");
 
 
-  /* =========================================================
-     VERIFICĂ DACĂ ELEVUL A MAI SUSȚINUT TESTUL
-     ========================================================= */
+    if (!button) {
 
-  async function checkPriorAttempt(
-    name,
-    cls,
-    testId = ""
-  ) {
-    const config = getSheetsConfig();
-
-    if (
-      !hasValidGoogleScriptUrl(config.url)
-    ) {
-      return {
-        found: false,
-        checked: false
-      };
-    }
-
-
-    const studentName =
-      String(name || "").trim();
-
-    const studentClass =
-      String(cls || "").trim();
-
-
-    /*
-      Dacă funcția este apelată fără al treilea argument,
-      putem utiliza identificatorul din configurație.
-    */
-
-    const currentTestId =
-      String(
-        testId ||
-        config.testId ||
-        ""
-      ).trim();
-
-
-    const params =
-      new URLSearchParams();
-
-    params.set("action", "check");
-    params.set("nume", studentName);
-    params.set("clasa", studentClass);
-
-
-    /*
-      Parametrul "test" permite ca același Google Sheet
-      să fie folosit pentru mai multe teste.
-
-      Dacă versiunea actuală de Code.gs nu îl folosește,
-      parametrul suplimentar nu afectează funcționarea.
-    */
-
-    if (currentTestId) {
-      params.set(
-        "test",
-        currentTestId
-      );
-    }
-
-
-    const url =
-      `${config.url}?${params.toString()}`;
-
-
-    const controller =
-      typeof AbortController !== "undefined"
-        ? new AbortController()
-        : null;
-
-
-    let timeoutId = null;
-
-
-    if (controller) {
-      timeoutId = setTimeout(
-        () => controller.abort(),
-        config.checkTimeoutMs
-      );
-    }
-
-
-    try {
-      const fetchOptions = {
-        method: "GET",
-        cache: "no-store"
-      };
-
-
-      if (controller) {
-        fetchOptions.signal =
-          controller.signal;
-      }
-
-
-      const response =
-        await fetch(
-          url,
-          fetchOptions
+      button =
+        document.createElement(
+          "button"
         );
 
 
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      button.id =
+        "resendBtn";
 
+      button.type =
+        "button";
 
-      if (!response.ok) {
-        return {
-          found: false,
-          checked: false
-        };
-      }
+      button.className =
+        "secondary";
 
+      button.innerText =
+        "Trimite din nou";
 
-      const data =
-        await response.json();
-
-
-      return {
-        found: Boolean(data.found),
-
-        timestamp:
-          data.timestamp,
-
-        nota:
-          data.nota,
-
-        checked: true
-      };
-
-    } catch (error) {
-
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-
-
-      if (
-        error &&
-        error.name === "AbortError"
-      ) {
-        console.warn(
-          "Verificarea încercării anterioare a expirat."
-        );
-      } else {
-        console.error(
-          "Eroare la verificarea încercării anterioare:",
-          error
-        );
-      }
+      button.disabled =
+        true;
 
 
       /*
-        La fel ca în testul actual:
-        dacă verificarea nu poate fi făcută,
-        elevul nu este blocat.
+        Îl introducem înainte de butonul
+        "Test nou".
       */
 
-      return {
-        found: false,
-        checked: false
-      };
+      const newTestButton =
+        byId("newTestBtn");
+
+
+      if (
+        newTestButton &&
+        newTestButton.parentNode
+      ) {
+
+        newTestButton.parentNode
+          .insertBefore(
+            button,
+            newTestButton
+          );
+
+      } else {
+
+        const resultArea =
+          byId("resultArea");
+
+
+        if (resultArea) {
+          resultArea.appendChild(
+            button
+          );
+        }
+      }
     }
+
+
+    /*
+      Evităm instalarea repetată
+      a aceluiași listener.
+    */
+
+    if (
+      !button.dataset
+        .resendListenerInstalled
+    ) {
+
+      button.addEventListener(
+        "click",
+        function () {
+          resendLastResult();
+        }
+      );
+
+
+      button.dataset
+        .resendListenerInstalled =
+        "true";
+    }
+
+
+    button.title =
+      "Folosește acest buton dacă profesorul îți cere să retrimiți rezultatul.";
+
+
+    return button;
   }
 
 
   /* =========================================================
-     ACTIVARE / DEZACTIVARE BUTOANE REZULTAT
+     STARE BUTOANE
      ========================================================= */
 
-  function setResultButtonsEnabled(enabled) {
+  function setButtonsState(options) {
+
+    const settings = {
+      download: false,
+      resend: false,
+      newTest: false,
+      ...options
+    };
+
+
     const downloadButton =
-      document.getElementById(
-        "downloadPdfBtn"
-      );
+      byId("downloadPdfBtn");
+
+    const resendButton =
+      ensureResendButton();
 
     const newTestButton =
-      document.getElementById(
-        "newTestBtn"
-      );
+      byId("newTestBtn");
 
 
     if (downloadButton) {
       downloadButton.disabled =
-        !enabled;
+        !settings.download;
+    }
+
+
+    if (resendButton) {
+      resendButton.disabled =
+        !settings.resend;
     }
 
 
     if (newTestButton) {
       newTestButton.disabled =
-        !enabled;
+        !settings.newTest;
     }
+  }
+
+
+  /*
+    Funcție păstrată pentru compatibilitate
+    cu test-core.js.
+  */
+
+  function setResultButtonsEnabled(
+    enabled
+  ) {
+
+    setButtonsState({
+
+      download:
+        Boolean(enabled),
+
+      resend:
+        Boolean(enabled),
+
+      newTest:
+        Boolean(enabled)
+
+    });
   }
 
 
@@ -436,27 +471,18 @@
     title,
     message
   ) {
+
     const panel =
-      document.getElementById(
-        "savePanel"
-      );
+      byId("savePanel");
 
     const saveTitle =
-      document.getElementById(
-        "saveTitle"
-      );
+      byId("saveTitle");
 
     const saveMessage =
-      document.getElementById(
-        "saveMessage"
-      );
+      byId("saveMessage");
 
 
-    if (
-      !panel ||
-      !saveTitle ||
-      !saveMessage
-    ) {
+    if (!panel) {
       return;
     }
 
@@ -469,57 +495,384 @@
 
 
     if (state === "error") {
-      panel.classList.add("error");
+      panel.classList.add(
+        "error"
+      );
     }
 
 
     if (state === "done") {
-      panel.classList.add("done");
+      panel.classList.add(
+        "done"
+      );
     }
 
 
-    saveTitle.innerText =
-      title || "";
+    if (saveTitle) {
+      saveTitle.innerText =
+        title || "";
+    }
 
-    saveMessage.innerText =
-      message || "";
+
+    if (saveMessage) {
+      saveMessage.innerText =
+        message || "";
+    }
   }
 
 
   /* =========================================================
-     TRIMITEREA UNEI ÎNCERCĂRI
+     STATUS TEXT
+     ========================================================= */
 
-     Folosim formular + iframe ascuns deoarece este metoda
-     folosită deja de test și evită problemele CORS la POST.
+  function setSheetStatus(text) {
+
+    const status =
+      byId("sheetStatus");
+
+
+    if (status) {
+      status.innerText =
+        text || "";
+    }
+  }
+
+
+  /* =========================================================
+     MESAJ LA PORNIRE
+     ========================================================= */
+
+  function setStartCheckMessage(
+    text,
+    isError
+  ) {
+
+    const element =
+      byId("startCheckMessage");
+
+
+    if (!element) {
+      return;
+    }
+
+
+    if (!text) {
+
+      element.classList.add(
+        "hidden"
+      );
+
+      element.innerText =
+        "";
+
+      return;
+    }
+
+
+    element.classList.remove(
+      "hidden"
+    );
+
+
+    element.style.color =
+      isError
+        ? "var(--red, #c0392b)"
+        : "var(--muted, #667085)";
+
+
+    element.innerText =
+      text;
+  }
+
+
+  /* =========================================================
+     FETCH JSON CU TIMEOUT
+     ========================================================= */
+
+  async function fetchJsonWithTimeout(
+    url,
+    timeoutMs
+  ) {
+
+    const controller =
+      typeof AbortController !==
+      "undefined"
+        ? new AbortController()
+        : null;
+
+
+    let timeoutId =
+      null;
+
+
+    if (controller) {
+
+      timeoutId =
+        setTimeout(
+          function () {
+            controller.abort();
+          },
+          timeoutMs
+        );
+    }
+
+
+    try {
+
+      const options = {
+        method: "GET",
+        cache: "no-store"
+      };
+
+
+      if (controller) {
+        options.signal =
+          controller.signal;
+      }
+
+
+      const response =
+        await fetch(
+          url,
+          options
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "HTTP " +
+          response.status
+        );
+      }
+
+
+      return await response.json();
+
+
+    } finally {
+
+      if (timeoutId) {
+        clearTimeout(
+          timeoutId
+        );
+      }
+    }
+  }
+
+
+  /* =========================================================
+     VERIFICARE ÎNCERCARE ANTERIOARĂ
+     ========================================================= */
+
+  async function checkPriorAttempt(
+    name,
+    cls,
+    testId = ""
+  ) {
+
+    const config =
+      getConfig();
+
+
+    if (
+      !hasValidGoogleScriptUrl(
+        config.url
+      )
+    ) {
+
+      return {
+        found: false,
+        checked: false
+      };
+    }
+
+
+    const studentName =
+      String(name || "")
+        .trim();
+
+    const studentClass =
+      String(cls || "")
+        .trim();
+
+
+    const effectiveTestId =
+      String(
+        testId ||
+        config.testId ||
+        ""
+      ).trim();
+
+
+    const params =
+      new URLSearchParams();
+
+
+    params.set(
+      "action",
+      "check"
+    );
+
+    params.set(
+      "nume",
+      studentName
+    );
+
+    params.set(
+      "clasa",
+      studentClass
+    );
+
+
+    /*
+      Pentru testul actual, dacă nu este
+      configurat testId, nu trimitem nimic.
+
+      Astfel păstrăm compatibilitatea cu
+      rezultatele mai vechi.
+    */
+
+    if (effectiveTestId) {
+
+      params.set(
+        "test",
+        effectiveTestId
+      );
+    }
+
+
+    /*
+      Evită răspunsurile din cache.
+    */
+
+    params.set(
+      "_",
+      Date.now().toString()
+    );
+
+
+    const url =
+      config.url +
+      "?" +
+      params.toString();
+
+
+    try {
+
+      const data =
+        await fetchJsonWithTimeout(
+          url,
+          config.checkTimeoutMs
+        );
+
+
+      return {
+
+        found:
+          Boolean(
+            data &&
+            data.found
+          ),
+
+        timestamp:
+          data
+            ? data.timestamp
+            : undefined,
+
+        nota:
+          data
+            ? data.nota
+            : undefined,
+
+        variantId:
+          data
+            ? data.variantId
+            : undefined,
+
+        checked:
+          true
+
+      };
+
+
+    } catch (error) {
+
+      console.error(
+        "Nu s-a putut verifica încercarea anterioară:",
+        error
+      );
+
+
+      return {
+        found: false,
+        checked: false
+      };
+    }
+  }
+
+
+  /* =========================================================
+     TRIMITERE POST
+
+     Formular + iframe ascuns.
+
+     Motiv:
+     - foarte compatibil cu Google Apps Script;
+     - evită problemele CORS la POST;
+     - confirmarea NU este dedusă din iframe;
+       confirmarea se face separat prin GET status.
      ========================================================= */
 
   function sendPayloadAttempt(
     payload,
-    attemptNumber,
-    googleScriptUrl
+    label = "auto"
   ) {
+
+    const config =
+      getConfig();
+
+
+    if (
+      !hasValidGoogleScriptUrl(
+        config.url
+      )
+    ) {
+
+      return false;
+    }
+
+
     try {
 
-      const iframeName =
-        "googleSheetHiddenFrame_" +
-        attemptNumber +
-        "_" +
+      const uniqueId =
         Date.now() +
         "_" +
         Math.random()
           .toString(36)
-          .slice(2, 8);
+          .slice(2, 9);
 
 
-      /* IFRAME ASCUNS */
+      const frameName =
+        "physicsSheetFrame_" +
+        label +
+        "_" +
+        uniqueId;
+
+
+      /* IFRAME */
 
       const iframe =
         document.createElement(
           "iframe"
         );
 
-      iframe.name = iframeName;
-      iframe.id = iframeName;
+
+      iframe.name =
+        frameName;
+
+      iframe.id =
+        frameName;
 
       iframe.style.display =
         "none";
@@ -529,25 +882,28 @@
         "true"
       );
 
+
       document.body.appendChild(
         iframe
       );
 
 
-      /* FORMULAR ASCUNS */
+      /* FORMULAR */
 
       const form =
         document.createElement(
           "form"
         );
 
-      form.method = "POST";
+
+      form.method =
+        "POST";
 
       form.action =
-        googleScriptUrl;
+        config.url;
 
       form.target =
-        iframeName;
+        frameName;
 
       form.style.display =
         "none";
@@ -556,57 +912,85 @@
         "UTF-8";
 
 
-      /* PAYLOAD JSON */
+      /* PAYLOAD */
 
       const input =
         document.createElement(
           "input"
         );
 
-      input.type = "hidden";
-      input.name = "payload";
+
+      input.type =
+        "hidden";
+
+      input.name =
+        "payload";
 
       input.value =
-        JSON.stringify(payload);
+        JSON.stringify(
+          payload
+        );
 
 
-      form.appendChild(input);
+      form.appendChild(
+        input
+      );
+
 
       document.body.appendChild(
         form
       );
 
 
-      /* TRIMITERE */
+      /*
+        AICI ARE LOC SINGURUL POST.
+      */
 
       form.submit();
 
 
       /*
-        Formularul nu mai este necesar după submit.
-        iframe-ul este păstrat suficient timp pentru
-        finalizarea cererii.
+        Formularul poate fi eliminat imediat
+        după inițierea cererii.
+
+        Iframe-ul rămâne o perioadă pentru ca
+        request-ul să poată fi finalizat.
       */
 
-      setTimeout(() => {
-        if (form.isConnected) {
-          form.remove();
-        }
+      setTimeout(
+        function () {
 
-        if (iframe.isConnected) {
-          iframe.remove();
-        }
-      }, HIDDEN_FRAME_LIFETIME_MS);
+          if (form.isConnected) {
+            form.remove();
+          }
+
+        },
+        1000
+      );
+
+
+      setTimeout(
+        function () {
+
+          if (iframe.isConnected) {
+            iframe.remove();
+          }
+
+        },
+        config.hiddenFrameLifetimeMs
+      );
 
 
       return true;
 
+
     } catch (error) {
 
       console.error(
-        "Eroare la trimiterea rezultatului:",
+        "Eroare la pornirea trimiterii rezultatului:",
         error
       );
+
 
       return false;
     }
@@ -614,64 +998,393 @@
 
 
   /* =========================================================
-     PROGRAMAREA ÎNCERCĂRILOR DE SALVARE
+     VERIFICARE STATUS DUPĂ variantId
+
+     Code.gs:
+     ?action=status&variantId=...
      ========================================================= */
 
-  function scheduleSaveAttempts(
-    payload,
-    config
+  async function checkSubmissionStatus(
+    variantId
   ) {
-    config.retryDelaysMs.forEach(
-      (delay, index) => {
 
-        setTimeout(() => {
-
-          updateSavePanel(
-            "saving",
-
-            `Se salvează rezultatul... încercarea ${
-              index + 1
-            }/${
-              config.retryDelaysMs.length
-            }`,
-
-            "Nu închide pagina. Nu descărca raportul încă."
-          );
+    const config =
+      getConfig();
 
 
-          sendPayloadAttempt(
-            payload,
-            index + 1,
-            config.url
-          );
+    const id =
+      String(
+        variantId || ""
+      ).trim();
 
-        }, delay);
 
-      }
+    if (
+      !id ||
+      !hasValidGoogleScriptUrl(
+        config.url
+      )
+    ) {
+
+      return {
+        found: false,
+        checked: false
+      };
+    }
+
+
+    const params =
+      new URLSearchParams();
+
+
+    params.set(
+      "action",
+      "status"
     );
+
+    params.set(
+      "variantId",
+      id
+    );
+
+    params.set(
+      "_",
+      Date.now().toString()
+    );
+
+
+    const url =
+      config.url +
+      "?" +
+      params.toString();
+
+
+    try {
+
+      const data =
+        await fetchJsonWithTimeout(
+          url,
+          config.statusRequestTimeoutMs
+        );
+
+
+      return {
+
+        found:
+          Boolean(
+            data &&
+            data.found
+          ),
+
+        checked:
+          true,
+
+        data:
+          data || null
+
+      };
+
+
+    } catch (error) {
+
+      console.error(
+        "Nu s-a putut verifica salvarea rezultatului:",
+        error
+      );
+
+
+      return {
+        found: false,
+        checked: false,
+        error
+      };
+    }
   }
 
 
   /* =========================================================
-     TRIMITERE PRINCIPALĂ CĂTRE GOOGLE SHEETS
+     AȘTEAPTĂ CONFIRMAREA GOOGLE SHEET
+
+     IMPORTANT:
+     aici NU retrimitem rezultatul.
+
+     Facem doar verificări GET.
      ========================================================= */
 
-  function sendToGoogleSheet(payload) {
-    const config =
-      getSheetsConfig();
+  async function waitForConfirmation(
+    payload,
+    generation
+  ) {
 
-    const status =
-      document.getElementById(
-        "sheetStatus"
+    const config =
+      getConfig();
+
+
+    if (
+      !payload ||
+      !payload.variantId
+    ) {
+
+      return {
+        found: false,
+        checked: false,
+        reason:
+          "missing-variant"
+      };
+    }
+
+
+    /*
+      Mic jitter pentru ca elevii să nu înceapă
+      toți verificarea în aceeași milisecundă.
+    */
+
+    const jitter =
+      Math.floor(
+        Math.random() *
+        (
+          config.statusInitialJitterMs +
+          1
+        )
       );
 
 
-    /* Blochează PDF-ul cât timp are loc salvarea */
+    await sleep(
+      config.statusInitialDelayMs +
+      jitter
+    );
 
-    setResultButtonsEnabled(false);
+
+    for (
+      let attempt = 1;
+      attempt <=
+        config.statusMaxChecks;
+      attempt++
+    ) {
+
+      /*
+        Dacă între timp a început o nouă verificare,
+        abandonăm ciclul vechi.
+      */
+
+      if (
+        generation !==
+        verificationGeneration
+      ) {
+
+        return {
+          found: false,
+          checked: false,
+          cancelled: true
+        };
+      }
 
 
-    /* Verificare configurare */
+      setSheetStatus(
+        "Se verifică în Google Sheet salvarea rezultatului" +
+        (
+          attempt > 1
+            ? ` (${attempt}/${config.statusMaxChecks})`
+            : ""
+        ) +
+        "..."
+      );
+
+
+      const status =
+        await checkSubmissionStatus(
+          payload.variantId
+        );
+
+
+      if (status.found) {
+
+        return {
+          found: true,
+          checked: true,
+          data:
+            status.data
+        };
+      }
+
+
+      if (
+        attempt <
+        config.statusMaxChecks
+      ) {
+
+        await sleep(
+          config.statusPollIntervalMs
+        );
+      }
+    }
+
+
+    return {
+      found: false,
+      checked: true
+    };
+  }
+
+
+  /* =========================================================
+     REZULTAT CONFIRMAT
+     ========================================================= */
+
+  function showConfirmedState() {
+
+    updateSavePanel(
+      "done",
+      "Rezultatul a fost confirmat în Google Sheet.",
+      "Salvarea a fost verificată. Poți descărca raportul PDF."
+    );
+
+
+    setSheetStatus(
+      "Rezultatul este confirmat în Google Sheet."
+    );
+
+
+    setButtonsState({
+      download: true,
+      resend: true,
+      newTest: true
+    });
+  }
+
+
+  /* =========================================================
+     REZULTAT NECONFIRMAT
+     ========================================================= */
+
+  function showUnconfirmedState() {
+
+    updateSavePanel(
+      "error",
+      "Rezultatul nu a putut fi confirmat.",
+      "Păstrează această pagină deschisă. Dacă profesorul nu vede rezultatul în Google Sheet, apasă „Trimite din nou”."
+    );
+
+
+    setSheetStatus(
+      "Rezultatul a fost trimis, dar nu avem încă o confirmare că a fost înregistrat în Google Sheet."
+    );
+
+
+    /*
+      PDF-ul poate fi descărcat local.
+
+      Butonul "Test nou" rămâne blocat pentru a evita
+      pierderea paginii înainte ca situația să fie clarificată.
+    */
+
+    setButtonsState({
+      download: true,
+      resend: true,
+      newTest: false
+    });
+  }
+
+
+  /* =========================================================
+     TRIMITERE AUTOMATĂ LA FINALUL TESTULUI
+
+     UN SINGUR POST.
+     ========================================================= */
+
+  async function sendToGoogleSheet(
+    payload
+  ) {
+
+    const config =
+      getConfig();
+
+
+    ensureResendButton();
+
+
+    /* Validare payload */
+
+    if (
+      !payload ||
+      typeof payload !==
+      "object"
+    ) {
+
+      updateSavePanel(
+        "error",
+        "Rezultatul nu poate fi trimis.",
+        "Datele testului nu sunt disponibile."
+      );
+
+
+      setSheetStatus(
+        "Datele rezultatului nu sunt disponibile."
+      );
+
+
+      setButtonsState({
+        download: true,
+        resend: false,
+        newTest: false
+      });
+
+
+      return false;
+    }
+
+
+    /*
+      Facem o copie proprie pentru modulul Sheets.
+    */
+
+    lastPayload = {
+      ...payload
+    };
+
+
+    /*
+      Dacă test-core.js are testId, dar payload-ul vechi
+      nu îl conține încă, îl adăugăm aici.
+    */
+
+    if (
+      !lastPayload.testId &&
+      config.testId
+    ) {
+
+      lastPayload.testId =
+        config.testId;
+    }
+
+
+    /* variantId este obligatoriu */
+
+    if (!lastPayload.variantId) {
+
+      updateSavePanel(
+        "error",
+        "Rezultatul nu poate fi confirmat.",
+        "Lipsește identificatorul unic al variantei."
+      );
+
+
+      setSheetStatus(
+        "Lipsește variantId."
+      );
+
+
+      setButtonsState({
+        download: true,
+        resend: false,
+        newTest: false
+      });
+
+
+      return false;
+    }
+
+
+    /* URL invalid */
 
     if (
       !hasValidGoogleScriptUrl(
@@ -681,120 +1394,417 @@
 
       updateSavePanel(
         "error",
-
-        "Rezultatul nu a fost transmis profesorului.",
-
-        "Lipsește URL-ul Google Apps Script din configurarea testului."
+        "Rezultatul nu a fost trimis profesorului.",
+        "URL-ul Google Apps Script nu este configurat corect."
       );
 
 
-      if (status) {
-        status.innerHTML =
-          "Rezultatul a fost calculat local, dar " +
-          "<b>nu a fost trimis în Google Sheet</b>, " +
-          "deoarece URL-ul Google Apps Script nu este configurat.";
-      }
+      setSheetStatus(
+        "Rezultatul a fost calculat local, dar Google Apps Script nu este configurat."
+      );
 
 
-      /*
-        Permitem totuși elevului accesul la raportul local.
-      */
+      setButtonsState({
+        download: true,
+        resend: false,
+        newTest: false
+      });
 
-      setResultButtonsEnabled(true);
 
       return false;
     }
 
 
-    /* Verificare payload */
+    /* prevenim două trimiteri automate simultane */
 
-    if (
-      !payload ||
-      typeof payload !== "object"
-    ) {
-
-      updateSavePanel(
-        "error",
-
-        "Rezultatul nu a fost transmis profesorului.",
-
-        "Datele rezultatului nu sunt disponibile."
-      );
-
-
-      if (status) {
-        status.innerText =
-          "Nu există date valide pentru salvare.";
-      }
-
-
-      setResultButtonsEnabled(true);
-
+    if (sending) {
       return false;
     }
 
 
-    /* Mesaj inițial */
+    sending =
+      true;
+
+
+    verificationGeneration++;
+
+    const myGeneration =
+      verificationGeneration;
+
+
+    setButtonsState({
+      download: false,
+      resend: false,
+      newTest: false
+    });
+
 
     updateSavePanel(
       "saving",
-
-      "Se salvează rezultatul. Nu închide pagina.",
-
-      `Așteaptă ${config.saveWaitSeconds} secunde. ` +
-      "Raportul PDF va putea fi descărcat după finalizarea salvării."
+      "Se trimite rezultatul...",
+      "Nu închide pagina. După trimitere vom verifica dacă rezultatul apare în Google Sheet."
     );
 
 
-    if (status) {
-      status.innerText =
-        "Se salvează rezultatul. Nu închide pagina.";
-    }
-
-
-    /* Trimitem rezultatul */
-
-    scheduleSaveAttempts(
-      payload,
-      config
+    setSheetStatus(
+      "Se trimite rezultatul profesorului..."
     );
 
 
     /*
-      Păstrăm comportamentul testului actual:
-      după perioada de siguranță, butoanele sunt activate.
+      =======================================================
+      UNICUL POST AUTOMAT
+      =======================================================
     */
 
-    setTimeout(() => {
-
-      updateSavePanel(
-        "done",
-
-        "Rezultatul a fost transmis profesorului.",
-
-        "Acum poți descărca raportul PDF."
+    const started =
+      sendPayloadAttempt(
+        lastPayload,
+        "auto"
       );
 
 
-      if (status) {
-        status.innerText =
-          "Testul a fost finalizat. " +
-          "Rezultatul a fost transmis profesorului. " +
-          "Poți descărca raportul PDF.";
-      }
+    if (!started) {
+
+      sending =
+        false;
 
 
-      setResultButtonsEnabled(true);
+      updateSavePanel(
+        "error",
+        "Trimiterea nu a putut fi pornită.",
+        "Păstrează pagina deschisă și apasă „Trimite din nou”."
+      );
 
-    }, config.saveWaitSeconds * 1000);
+
+      setSheetStatus(
+        "Trimiterea nu a putut fi pornită."
+      );
 
 
-    return true;
+      setButtonsState({
+        download: true,
+        resend: true,
+        newTest: false
+      });
+
+
+      return false;
+    }
+
+
+    updateSavePanel(
+      "saving",
+      "Rezultatul a fost trimis. Se verifică salvarea...",
+      "Nu închide pagina până la confirmarea Google Sheet."
+    );
+
+
+    /*
+      Așteptăm confirmarea prin GET.
+      NU mai facem alte POST-uri automat.
+    */
+
+    const confirmation =
+      await waitForConfirmation(
+        lastPayload,
+        myGeneration
+      );
+
+
+    sending =
+      false;
+
+
+    if (
+      confirmation.cancelled
+    ) {
+
+      return false;
+    }
+
+
+    if (
+      confirmation.found
+    ) {
+
+      showConfirmedState();
+
+      return true;
+    }
+
+
+    showUnconfirmedState();
+
+    return false;
   }
 
 
   /* =========================================================
-     EXPUNERE FUNCȚII PENTRU TESTELE HTML
+     TRIMITERE MANUALĂ
+
+     Buton:
+     "Trimite din nou"
+
+     Face UN SINGUR POST.
+     ========================================================= */
+
+  async function resendLastResult() {
+
+    const config =
+      getConfig();
+
+
+    if (sending) {
+
+      alert(
+        "O trimitere este deja în curs. Așteaptă finalizarea verificării."
+      );
+
+      return;
+    }
+
+
+    if (!lastPayload) {
+
+      /*
+        Compatibilitate cu testele în care
+        lastReportPayload este încă global.
+      */
+
+      try {
+
+        if (
+          typeof lastReportPayload !==
+            "undefined" &&
+          lastReportPayload
+        ) {
+
+          lastPayload = {
+            ...lastReportPayload
+          };
+        }
+
+      } catch (error) {
+        /* nimic */
+      }
+    }
+
+
+    if (!lastPayload) {
+
+      alert(
+        "Rezultatul testului nu mai este disponibil pentru retrimitere."
+      );
+
+      return;
+    }
+
+
+    if (!lastPayload.variantId) {
+
+      alert(
+        "Rezultatul nu are un identificator de variantă și nu poate fi retrimis în siguranță."
+      );
+
+      return;
+    }
+
+
+    if (
+      !hasValidGoogleScriptUrl(
+        config.url
+      )
+    ) {
+
+      alert(
+        "Google Apps Script nu este configurat corect."
+      );
+
+      return;
+    }
+
+
+    /*
+      Mai întâi verificăm dacă rezultatul există deja.
+
+      Dacă este deja în Sheet, nu mai facem POST inutil.
+    */
+
+    updateSavePanel(
+      "saving",
+      "Se verifică rezultatul...",
+      "Verificăm mai întâi dacă rezultatul există deja în Google Sheet."
+    );
+
+
+    setButtonsState({
+      download: false,
+      resend: false,
+      newTest: false
+    });
+
+
+    const existing =
+      await checkSubmissionStatus(
+        lastPayload.variantId
+      );
+
+
+    if (existing.found) {
+
+      showConfirmedState();
+
+      return;
+    }
+
+
+    /*
+      Nu există confirmare.
+      Facem o singură retrimitere.
+    */
+
+    sending =
+      true;
+
+
+    verificationGeneration++;
+
+    const myGeneration =
+      verificationGeneration;
+
+
+    updateSavePanel(
+      "saving",
+      "Se retrimite rezultatul...",
+      "Nu închide pagina. Se face o singură retrimitere."
+    );
+
+
+    setSheetStatus(
+      "Se retrimite rezultatul profesorului..."
+    );
+
+
+    const started =
+      sendPayloadAttempt(
+        lastPayload,
+        "manual"
+      );
+
+
+    if (!started) {
+
+      sending =
+        false;
+
+
+      updateSavePanel(
+        "error",
+        "Retrimiterea nu a putut fi pornită.",
+        "Verifică conexiunea la internet și încearcă din nou."
+      );
+
+
+      setSheetStatus(
+        "Retrimiterea nu a putut fi pornită."
+      );
+
+
+      setButtonsState({
+        download: true,
+        resend: true,
+        newTest: false
+      });
+
+
+      return;
+    }
+
+
+    updateSavePanel(
+      "saving",
+      "Rezultatul a fost retrimis. Se verifică...",
+      "Așteptăm confirmarea din Google Sheet."
+    );
+
+
+    const confirmation =
+      await waitForConfirmation(
+        lastPayload,
+        myGeneration
+      );
+
+
+    sending =
+      false;
+
+
+    if (
+      confirmation.cancelled
+    ) {
+      return;
+    }
+
+
+    if (
+      confirmation.found
+    ) {
+
+      showConfirmedState();
+
+      return;
+    }
+
+
+    updateSavePanel(
+      "error",
+      "Rezultatul nu este încă confirmat.",
+      "Nu închide pagina. Anunță profesorul; poți folosi din nou „Trimite din nou” dacă ți se cere."
+    );
+
+
+    setSheetStatus(
+      "Retrimiterea a fost efectuată, dar Google Sheet nu a confirmat încă rezultatul."
+    );
+
+
+    setButtonsState({
+      download: true,
+      resend: true,
+      newTest: false
+    });
+  }
+
+
+  /* =========================================================
+     INITIALIZARE BUTON
+     ========================================================= */
+
+  function initialize() {
+
+    ensureResendButton();
+  }
+
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      initialize
+    );
+
+  } else {
+
+    initialize();
+  }
+
+
+  /* =========================================================
+     API PUBLIC
      ========================================================= */
 
   window.checkPriorAttempt =
@@ -809,17 +1819,36 @@
   window.sendToGoogleSheet =
     sendToGoogleSheet;
 
+  window.resendLastResult =
+    resendLastResult;
 
-  /*
-    Obiect opțional pentru depanare sau dezvoltări viitoare.
-  */
+  window.checkSubmissionStatus =
+    checkSubmissionStatus;
+
 
   window.PhysicsSheets = {
-    getConfig: getSheetsConfig,
+
+    getConfig,
+
     checkPriorAttempt,
+
+    checkSubmissionStatus,
+
     sendToGoogleSheet,
+
+    resendLastResult,
+
     setResultButtonsEnabled,
-    updateSavePanel
+
+    updateSavePanel,
+
+    getLastPayload:
+      function () {
+        return lastPayload
+          ? { ...lastPayload }
+          : null;
+      }
+
   };
 
 })();
