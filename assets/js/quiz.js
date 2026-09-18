@@ -1,0 +1,3 @@
+<div class="mini-quiz" data-answer="b">
+   ...
+</div>
