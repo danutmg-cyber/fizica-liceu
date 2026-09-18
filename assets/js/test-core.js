@@ -42,21 +42,10 @@
      ========================================================= */
 
   const state = {
-    currentQuestions: [],
-    currentQuestionIndex: 0,
-    variantId: "",
-    submitted: false,
-
-    integrityAlertOpen: false,
-
-    integrityLog: {
-      exitCount: 0,
-      awayStart: null,
-      awayItem: null,
-      awayQuestion: "",
-      totalAwaySeconds: 0,
-      events: []
-    }
+  currentQuestions: [],
+  currentQuestionIndex: 0,
+  variantId: "",
+  submitted: false
   };
 
 
@@ -682,277 +671,317 @@
         })
       );
   }
+/* =========================================================
+   INTEGRARE CU test-security.js
+
+   test-core.js NU gestionează direct securitatea.
+   Toată monitorizarea anti-copiere este delegată modulului:
+
+   window.PhysicsTestSecurity
+   ========================================================= */
 
 
-  /* =========================================================
-     JURNAL ANTI-COPIERE
-     ========================================================= */
+/* =========================================================
+   OBȚINERE MODUL SECURITATE
+   ========================================================= */
 
-  function resetIntegrityLog() {
-    state.integrityLog = {
-      exitCount: 0,
-      awayStart: null,
-      awayItem: null,
-      awayQuestion: "",
-      totalAwaySeconds: 0,
-      events: []
+function getSecurityModule() {
+
+  const security =
+    window.PhysicsTestSecurity;
+
+
+  if (
+    !security ||
+    typeof security.configure !== "function" ||
+    typeof security.start !== "function" ||
+    typeof security.stop !== "function" ||
+    typeof security.getReportData !== "function"
+  ) {
+
+    return null;
+  }
+
+
+  return security;
+}
+
+
+/* =========================================================
+   RAPORT SECURITATE IMPLICIT
+
+   Folosit numai ca protecție tehnică dacă modulul nu poate
+   furniza raportul.
+   ========================================================= */
+
+function createEmptySecurityReport() {
+
+  return {
+
+    integrityExitCount: 0,
+
+    integrityTotalAwaySeconds: 0,
+
+    integrityTotalAwayFormatted:
+      "0 secunde",
+
+    integrityItemsSummary:
+      "Nu s-au înregistrat părăsiri ale ecranului.",
+
+    integrityEvents: []
+
+  };
+}
+
+
+/* =========================================================
+   CONFIGURARE ȘI PORNIRE SECURITATE
+   ========================================================= */
+
+function configureAndStartSecurity(
+  testConfig
+) {
+
+  const security =
+    getSecurityModule();
+
+
+  if (!security) {
+
+    console.error(
+      "test-security.js nu este încărcat sau API-ul PhysicsTestSecurity este incomplet."
+    );
+
+    return false;
+  }
+
+
+  try {
+
+    security.configure({
+
+      enabled: true,
+
+      monitorVisibility: true,
+
+      blockContextMenu: true,
+
+      blockCopy: true,
+
+      blockCut: true,
+
+      blockPaste: true,
+
+      locale: "ro-RO",
+
+
+      /*
+        Modulul de securitate întreabă motorul dacă testul
+        este efectiv în desfășurare.
+      */
+
+      isActive: function () {
+
+        const testArea =
+          byId("testArea");
+
+
+        return Boolean(
+
+          testArea &&
+
+          !testArea.classList.contains(
+            "hidden"
+          ) &&
+
+          state.currentQuestions.length > 0 &&
+
+          !state.submitted
+
+        );
+      },
+
+
+      /*
+        Itemul la care se află elevul în momentul
+        părăsirii ecranului.
+      */
+
+      getCurrentItem: function () {
+
+        return (
+          state.currentQuestionIndex + 1
+        );
+      },
+
+
+      /*
+        Textul întrebării curente.
+
+        test-security.js elimină singur HTML-ul din prompt.
+      */
+
+      getCurrentQuestion: function () {
+
+        const question =
+          state.currentQuestions[
+            state.currentQuestionIndex
+          ];
+
+
+        return question
+          ? question.prompt
+          : "";
+      },
+
+
+      warningMessage:
+        testConfig.integrityWarningMessage
+
+    });
+
+
+    /*
+      start() resetează automat jurnalul și pornește
+      monitorizarea pentru această sesiune.
+    */
+
+    security.start();
+
+
+    return true;
+
+
+  } catch (error) {
+
+    console.error(
+      "Nu s-a putut porni modulul de securitate:",
+      error
+    );
+
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   OPRIRE SECURITATE + RAPORT
+   ========================================================= */
+
+function stopSecurityAndGetReport() {
+
+  const emptyReport =
+    createEmptySecurityReport();
+
+
+  const security =
+    getSecurityModule();
+
+
+  if (!security) {
+
+    console.error(
+      "Raportul anti-copiere nu poate fi obținut: test-security.js nu este disponibil."
+    );
+
+    return emptyReport;
+  }
+
+
+  try {
+
+    /*
+      stop() închide inclusiv un eventual eveniment
+      de părăsire rămas deschis.
+    */
+
+    security.stop();
+
+
+    const report =
+      security.getReportData();
+
+
+    if (
+      !report ||
+      typeof report !== "object"
+    ) {
+
+      return emptyReport;
+    }
+
+
+    /*
+      Valorile implicite protejează restul testului
+      în cazul în care un câmp ar lipsi accidental.
+    */
+
+    return {
+
+      ...emptyReport,
+
+      ...report,
+
+      integrityEvents:
+        Array.isArray(
+          report.integrityEvents
+        )
+          ? report.integrityEvents
+          : []
+
     };
 
 
-    state.integrityAlertOpen =
-      false;
-  }
-
-
-  function isTestActive() {
-    const testArea =
-      byId("testArea");
-
-
-    return Boolean(
-      testArea &&
-      !testArea.classList.contains(
-        "hidden"
-      ) &&
-      state.currentQuestions.length > 0 &&
-      !state.submitted
-    );
-  }
-
-
-  function getCurrentIntegrityItem() {
-    return (
-      state.currentQuestionIndex + 1
-    );
-  }
-
-
-  function getCurrentIntegrityQuestion() {
-    const question =
-      state.currentQuestions[
-        state.currentQuestionIndex
-      ];
-
-
-    return question
-      ? stripHtml(question.prompt)
-      : "";
-  }
-
-
-  function formatDuration(seconds) {
-    const total =
-      Math.max(
-        0,
-        Math.round(
-          Number(seconds) || 0
-        )
-      );
-
-
-    const minutes =
-      Math.floor(total / 60);
-
-    const remainingSeconds =
-      total % 60;
-
-
-    if (minutes === 0) {
-      return (
-        `${remainingSeconds} secunde`
-      );
-    }
-
-
-    if (remainingSeconds === 0) {
-      return (
-        `${minutes} minut` +
-        `${minutes === 1 ? "" : "e"}`
-      );
-    }
-
-
-    return (
-      `${minutes} minut` +
-      `${minutes === 1 ? "" : "e"} ` +
-      `și ${remainingSeconds} secunde`
-    );
-  }
-
-
-  function getIntegrityExitEvents() {
-    return state.integrityLog.events
-      .filter(
-        event =>
-          event.tip ===
-          "iesire_din_ecran"
-      );
-  }
-
-
-  function getIntegrityReturnEvents() {
-    return state.integrityLog.events
-      .filter(
-        event =>
-          event.tip ===
-          "revenire_in_test"
-      );
-  }
-
-
-  function getIntegrityItemsSummary() {
-    const items =
-      getIntegrityExitEvents()
-        .map(
-          event => event.item
-        )
-        .filter(
-          item =>
-            item !== undefined &&
-            item !== null &&
-            item !== ""
-        );
-
-
-    const uniqueItems =
-      [...new Set(items)];
-
-
-    if (!uniqueItems.length) {
-      return (
-        "Nu s-au înregistrat " +
-        "părăsiri ale ecranului."
-      );
-    }
-
-
-    return uniqueItems
-      .map(
-        item => `Item ${item}`
-      )
-      .join(", ");
-  }
-
-
-  function handleScreenExit() {
-    if (
-      !isTestActive() ||
-      state.integrityAlertOpen ||
-      state.integrityLog.awayStart
-    ) {
-      return;
-    }
-
-
-    state.integrityLog.awayStart =
-      Date.now();
-
-    state.integrityLog.awayItem =
-      getCurrentIntegrityItem();
-
-    state.integrityLog.awayQuestion =
-      getCurrentIntegrityQuestion();
-
-    state.integrityLog.exitCount++;
-
-
-    state.integrityLog.events.push({
-      tip: "iesire_din_ecran",
-
-      item:
-        state.integrityLog.awayItem,
-
-      intrebare:
-        state.integrityLog
-          .awayQuestion,
-
-      ora:
-        new Date()
-          .toLocaleString("ro-RO")
-    });
-  }
-
-
-  function handleScreenReturn() {
-    if (
-      !isTestActive() ||
-      !state.integrityLog.awayStart
-    ) {
-      return;
-    }
-
-
-    const durationSeconds =
-      Math.max(
-        1,
-        Math.round(
-          (
-            Date.now() -
-            state.integrityLog.awayStart
-          ) / 1000
-        )
-      );
-
-
-    state.integrityLog
-      .totalAwaySeconds +=
-      durationSeconds;
-
-
-    state.integrityLog.events.push({
-      tip: "revenire_in_test",
-
-      item:
-        state.integrityLog.awayItem,
-
-      intrebare:
-        state.integrityLog
-          .awayQuestion,
-
-      durataSecunde:
-        durationSeconds,
-
-      oraPlecare:
-        new Date(
-          state.integrityLog.awayStart
-        ).toLocaleString(
-          "ro-RO"
-        ),
-
-      oraRevenire:
-        new Date()
-          .toLocaleString(
-            "ro-RO"
-          )
-    });
-
-
-    state.integrityLog.awayStart =
-      null;
-
-    state.integrityLog.awayItem =
-      null;
-
-    state.integrityLog.awayQuestion =
-      "";
-
-
-    state.integrityAlertOpen =
-      true;
-
-
-    alert(
-      getConfig()
-        .integrityWarningMessage
+  } catch (error) {
+
+    console.error(
+      "Eroare la obținerea raportului anti-copiere:",
+      error
     );
 
 
-    setTimeout(() => {
-      state.integrityAlertOpen =
-        false;
-    }, 500);
+    return emptyReport;
+  }
+}
+
+
+/* =========================================================
+   STARE SECURITATE PENTRU DEBUG
+   ========================================================= */
+
+function getSecurityState() {
+
+  const security =
+    getSecurityModule();
+
+
+  if (
+    !security ||
+    typeof security.getState !==
+      "function"
+  ) {
+
+    return null;
   }
 
+
+  try {
+
+    return security.getState();
+
+
+  } catch (error) {
+
+    console.error(
+      "Nu s-a putut citi starea modulului de securitate:",
+      error
+    );
+
+
+    return null;
+  }
+}
 
   /* =========================================================
      EVENIMENTE ANTI-COPIERE
@@ -1316,9 +1345,6 @@
       0;
 
 
-    resetIntegrityLog();
-
-
     if (
       !state.currentQuestions.length
     ) {
@@ -1341,7 +1367,42 @@
       return;
     }
 
+/* =====================================================
+   PORNIRE MODUL SECURITATE
+   ===================================================== */
 
+const securityStarted =
+  configureAndStartSecurity(
+    config
+  );
+
+
+if (!securityStarted) {
+
+  if (startButton) {
+
+    startButton.disabled =
+      false;
+
+    startButton.innerText =
+      "Începe testul";
+  }
+
+
+  setStartMessage(
+    "Modulul de securitate al testului nu s-a încărcat. Reîncarcă pagina și încearcă din nou.",
+    true
+  );
+
+
+  alert(
+    "Testul nu poate începe deoarece modulul de securitate nu este disponibil. Reîncarcă pagina."
+  );
+
+
+  return;
+}
+     
     hideElement(
       "startCard"
     );
@@ -2020,7 +2081,13 @@
         grade * 100
       ) / 100;
 
+/* =====================================================
+   OPRIRE MONITORIZARE ȘI PRELUARE RAPORT ANTI-COPIERE
+   ===================================================== */
 
+const securityReport =
+  stopSecurityAndGetReport();
+     
     const payload = {
 
       timestamp:
@@ -2065,25 +2132,10 @@
       answers:
         answerRows,
 
-      integrityExitCount:
-        state.integrityLog
-          .exitCount,
+    answers:
+  answerRows,
 
-      integrityTotalAwaySeconds:
-        state.integrityLog
-          .totalAwaySeconds,
-
-      integrityTotalAwayFormatted:
-        formatDuration(
-          state.integrityLog
-            .totalAwaySeconds
-        ),
-
-      integrityItemsSummary:
-        getIntegrityItemsSummary(),
-
-      integrityEvents:
-        [...state.integrityLog.events]
+...securityReport 
     };
 
 
@@ -2584,42 +2636,44 @@
 
   window.PhysicsTestCore = {
 
-    getConfig,
+  getConfig,
 
-    generateVariantId,
+  generateVariantId,
 
-    selectBalancedQuestions,
+  selectBalancedQuestions,
 
-    normalizeText,
+  normalizeText,
 
-    parseNumeric,
+  parseNumeric,
 
-    escapeHtml,
+  escapeHtml,
 
-    formatDuration,
+  isCorrect,
 
-    isCorrect,
+  getSecurityState,
 
-    getState: function () {
+  getState: function () {
 
-      return {
-        currentQuestionIndex:
-          state.currentQuestionIndex,
+    return {
 
-        variantId:
-          state.variantId,
+      currentQuestionIndex:
+        state.currentQuestionIndex,
 
-        submitted:
-          state.submitted,
+      variantId:
+        state.variantId,
 
-        questionCount:
-          state.currentQuestions.length,
+      submitted:
+        state.submitted,
 
-        integrityLog:
-          state.integrityLog
-      };
-    }
+      questionCount:
+        state.currentQuestions.length,
 
-  };
+      security:
+        getSecurityState()
+
+    };
+  }
+
+};
 
 })();
