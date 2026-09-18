@@ -12,14 +12,15 @@
    - progresul testului;
    - calculul notei;
    - raportul final din pagină;
-   - jurnalul anti-copiere;
+   - integrarea cu modulul anti-copiere;
    - pregătirea payload-ului.
 
-   NU se ocupă de:
+   NU se ocupă direct de:
+   - securitate / anti-copiere -> test-security.js
    - Google Sheets -> sheets.js
    - generarea PDF -> pdf-report.js
 
-   Configurarea fiecărui test se face prin:
+   Configurarea fiecărui test:
 
    window.PHYSICS_TEST_CONFIG = {
      testId: "...",
@@ -42,10 +43,10 @@
      ========================================================= */
 
   const state = {
-  currentQuestions: [],
-  currentQuestionIndex: 0,
-  variantId: "",
-  submitted: false
+    currentQuestions: [],
+    currentQuestionIndex: 0,
+    variantId: "",
+    submitted: false
   };
 
 
@@ -86,11 +87,14 @@
      ========================================================= */
 
   function getConfig() {
+
     const custom =
       window.PHYSICS_TEST_CONFIG || {};
 
 
-    /* BANCA DE ÎNTREBĂRI */
+    /* ---------------------------------------------------------
+       BANCA DE ÎNTREBĂRI
+       --------------------------------------------------------- */
 
     let bank =
       Array.isArray(custom.questionBank)
@@ -99,27 +103,32 @@
 
 
     /*
-      Compatibilitate temporară cu testele vechi
-      care folosesc:
+      Compatibilitate cu testele mai vechi care declară:
 
       const questionBank = [...]
     */
 
     if (!bank.length) {
+
       try {
+
         if (
           typeof questionBank !== "undefined" &&
           Array.isArray(questionBank)
         ) {
           bank = questionBank;
         }
+
       } catch (error) {
+
         bank = [];
       }
     }
 
 
-    /* DISTRIBUȚIA PE CATEGORII */
+    /* ---------------------------------------------------------
+       DISTRIBUȚIA PE CATEGORII
+       --------------------------------------------------------- */
 
     let distribution =
       Array.isArray(custom.questionDistribution)
@@ -128,7 +137,9 @@
 
 
     if (!distribution.length) {
+
       try {
+
         if (
           typeof QUESTION_DISTRIBUTION !== "undefined" &&
           Array.isArray(QUESTION_DISTRIBUTION)
@@ -136,13 +147,17 @@
           distribution =
             QUESTION_DISTRIBUTION;
         }
+
       } catch (error) {
+
         distribution = [];
       }
     }
 
 
-    /* NUMĂR ÎNTREBĂRI */
+    /* ---------------------------------------------------------
+       NUMĂR ÎNTREBĂRI
+       --------------------------------------------------------- */
 
     let questionCount =
       Number(custom.questionCount);
@@ -152,69 +167,102 @@
       !Number.isInteger(questionCount) ||
       questionCount <= 0
     ) {
+
       try {
+
         if (
           typeof QUESTION_COUNT !== "undefined" &&
-          Number.isInteger(Number(QUESTION_COUNT))
+          Number.isInteger(
+            Number(QUESTION_COUNT)
+          )
         ) {
+
           questionCount =
             Number(QUESTION_COUNT);
+
         } else {
+
           questionCount = 20;
         }
+
       } catch (error) {
+
         questionCount = 20;
       }
     }
 
 
-    /* PUNCT DIN OFICIU */
+    /* ---------------------------------------------------------
+       PUNCT DIN OFICIU
+       --------------------------------------------------------- */
 
     let officialPoints =
       Number(custom.officialPoints);
 
 
     if (!Number.isFinite(officialPoints)) {
+
       try {
+
         if (
           typeof OFFICIAL_POINTS !== "undefined" &&
-          Number.isFinite(Number(OFFICIAL_POINTS))
+          Number.isFinite(
+            Number(OFFICIAL_POINTS)
+          )
         ) {
+
           officialPoints =
             Number(OFFICIAL_POINTS);
+
         } else {
+
           officialPoints = 1;
         }
+
       } catch (error) {
+
         officialPoints = 1;
       }
     }
 
 
-    /* PUNCTAJ TEST */
+    /* ---------------------------------------------------------
+       PUNCTAJ TEST
+       --------------------------------------------------------- */
 
     let testPoints =
       Number(custom.testPoints);
 
 
     if (!Number.isFinite(testPoints)) {
+
       try {
+
         if (
           typeof TEST_POINTS !== "undefined" &&
-          Number.isFinite(Number(TEST_POINTS))
+          Number.isFinite(
+            Number(TEST_POINTS)
+          )
         ) {
+
           testPoints =
             Number(TEST_POINTS);
+
         } else {
+
           testPoints = 9;
         }
+
       } catch (error) {
+
         testPoints = 9;
       }
     }
 
 
-    /* TITLU TEST */
+    /* ---------------------------------------------------------
+       TITLU TEST
+       --------------------------------------------------------- */
 
     let testTitle =
       String(
@@ -225,19 +273,26 @@
 
 
     if (!testTitle) {
+
       testTitle =
         document.title
-          .replace(/^Test online\s*[–-]\s*/i, "")
+          .replace(
+            /^Test online\s*[–-]\s*/i,
+            ""
+          )
           .trim();
     }
 
 
     if (!testTitle) {
-      testTitle = "Test de fizică";
+      testTitle =
+        "Test de fizică";
     }
 
 
-    /* IDENTIFICATOR TEST */
+    /* ---------------------------------------------------------
+       IDENTIFICATOR TEST
+       --------------------------------------------------------- */
 
     const testId =
       String(
@@ -246,7 +301,9 @@
       ).trim();
 
 
-    /* PREFIX VARIANTĂ */
+    /* ---------------------------------------------------------
+       PREFIX VARIANTĂ
+       --------------------------------------------------------- */
 
     let variantPrefix =
       String(
@@ -254,7 +311,10 @@
         "FIZ"
       )
         .toUpperCase()
-        .replace(/[^A-Z0-9]/g, "");
+        .replace(
+          /[^A-Z0-9]/g,
+          ""
+        );
 
 
     if (!variantPrefix) {
@@ -262,7 +322,9 @@
     }
 
 
-    /* MESAJ ANTI-COPIERE */
+    /* ---------------------------------------------------------
+       MESAJ ANTI-COPIERE
+       --------------------------------------------------------- */
 
     const integrityWarningMessage =
       String(
@@ -272,6 +334,7 @@
 
 
     return {
+
       testId,
       testTitle,
       variantPrefix,
@@ -281,10 +344,14 @@
       officialPoints,
       testPoints,
 
-      questionBank: bank,
-      questionDistribution: distribution,
+      questionBank:
+        bank,
+
+      questionDistribution:
+        distribution,
 
       integrityWarningMessage
+
     };
   }
 
@@ -294,7 +361,10 @@
      ========================================================= */
 
   function escapeHtml(value) {
-    return String(value ?? "")
+
+    return String(
+      value ?? ""
+    )
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -304,19 +374,34 @@
 
 
   function stripHtml(value) {
-    return String(value ?? "")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
+
+    return String(
+      value ?? ""
+    )
+      .replace(
+        /<[^>]*>/g,
+        " "
+      )
+      .replace(
+        /\s+/g,
+        " "
+      )
       .trim();
   }
 
 
   function normalizeText(value) {
-    return String(value ?? "")
+
+    return String(
+      value ?? ""
+    )
       .trim()
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
       .replace(/ă/g, "a")
       .replace(/â/g, "a")
       .replace(/î/g, "i")
@@ -324,17 +409,32 @@
       .replace(/ş/g, "s")
       .replace(/ț/g, "t")
       .replace(/ţ/g, "t")
-      .replace(/\s+/g, " ");
+      .replace(
+        /\s+/g,
+        " "
+      );
   }
 
 
   function parseNumeric(value) {
+
     const cleaned =
-      String(value ?? "")
+      String(
+        value ?? ""
+      )
         .trim()
-        .replace(/\s+/g, "")
-        .replace(",", ".")
-        .replace(/[^0-9.\-]/g, "");
+        .replace(
+          /\s+/g,
+          ""
+        )
+        .replace(
+          ",",
+          "."
+        )
+        .replace(
+          /[^0-9.\-]/g,
+          ""
+        );
 
 
     if (
@@ -361,18 +461,32 @@
      ========================================================= */
 
   function getRandomInt(max) {
+
+    if (
+      !Number.isInteger(max) ||
+      max <= 0
+    ) {
+      return 0;
+    }
+
+
     if (
       window.crypto &&
       window.crypto.getRandomValues
     ) {
+
       const array =
         new Uint32Array(1);
+
 
       window.crypto.getRandomValues(
         array
       );
 
-      return array[0] % max;
+
+      return (
+        array[0] % max
+      );
     }
 
 
@@ -383,6 +497,7 @@
 
 
   function shuffle(array) {
+
     const copy =
       [...array];
 
@@ -392,8 +507,12 @@
       i > 0;
       i--
     ) {
+
       const j =
-        getRandomInt(i + 1);
+        getRandomInt(
+          i + 1
+        );
+
 
       [
         copy[i],
@@ -414,8 +533,10 @@
      ========================================================= */
 
   function generateVariantId() {
+
     const config =
       getConfig();
+
 
     const now =
       new Date();
@@ -461,8 +582,10 @@
      ========================================================= */
 
   function selectBalancedQuestions() {
+
     const config =
       getConfig();
+
 
     const bank =
       config.questionBank;
@@ -482,11 +605,13 @@
 
     let selected = [];
 
+
     const usedSubtypes =
       new Set();
 
 
     function subtypeKey(question) {
+
       return (
         question.subtype ||
         question.prompt
@@ -495,8 +620,8 @@
 
 
     /*
-      Dacă testul are distribuție pe categorii,
-      o respectăm.
+      Dacă există distribuție pe categorii,
+      aceasta este respectată.
     */
 
     if (
@@ -504,14 +629,25 @@
     ) {
 
       config.questionDistribution
-        .forEach(rule => {
+        .forEach(function (rule) {
+
+          const requiredCount =
+            Math.max(
+              0,
+              Number(rule.count) || 0
+            );
+
 
           const pool =
             shuffle(
               bank.filter(
-                question =>
-                  question.category ===
-                  rule.category
+                function (question) {
+
+                  return (
+                    question.category ===
+                    rule.category
+                  );
+                }
               )
             );
 
@@ -520,17 +656,16 @@
 
 
           /*
-            PASUL 1
-
-            Alegem cu prioritate subtype-uri
-            care nu au mai fost folosite.
+            PASUL 1:
+            selectăm subtype-uri distincte.
           */
 
-          for (const question of pool) {
+          for (
+            const question of pool
+          ) {
 
             if (
-              count >=
-              Number(rule.count)
+              count >= requiredCount
             ) {
               break;
             }
@@ -551,31 +686,32 @@
               question
             );
 
+
             usedSubtypes.add(
               key
             );
+
 
             count++;
           }
 
 
           /*
-            PASUL 2
-
-            Dacă nu sunt suficiente subtype-uri
-            distincte, completăm categoria.
+            PASUL 2:
+            dacă nu există suficiente subtype-uri distincte,
+            completăm categoria cu alte întrebări.
           */
 
           if (
-            count <
-            Number(rule.count)
+            count < requiredCount
           ) {
 
-            for (const question of pool) {
+            for (
+              const question of pool
+            ) {
 
               if (
-                count >=
-                Number(rule.count)
+                count >= requiredCount
               ) {
                 break;
               }
@@ -594,6 +730,7 @@
                 question
               );
 
+
               count++;
             }
           }
@@ -603,8 +740,8 @@
 
 
     /*
-      Dacă distribuția nu a furnizat suficiente
-      întrebări, completăm din întreaga bancă.
+      Dacă distribuția nu a furnizat suficiente întrebări,
+      completăm din banca generală.
     */
 
     if (
@@ -615,10 +752,14 @@
       const remaining =
         shuffle(
           bank.filter(
-            question =>
-              !selected.includes(
-                question
-              )
+            function (question) {
+
+              return (
+                !selected.includes(
+                  question
+                )
+              );
+            }
           )
         );
 
@@ -634,455 +775,374 @@
 
 
     /*
-      Amestecarea finală a întrebărilor.
+      Amestecare finală și creare stare proprie
+      pentru fiecare întrebare.
     */
 
-    return shuffle(selected)
-      .slice(0, targetCount)
+    return shuffle(
+      selected
+    )
+      .slice(
+        0,
+        targetCount
+      )
       .map(
-        (question, index) => ({
+        function (
+          question,
+          index
+        ) {
 
-          ...question,
+          return {
 
-          id: `q${index + 1}`,
+            ...question,
 
-          answer:
-            Array.isArray(
-              question.answer
-            )
-              ? [...question.answer]
-              : [question.answer],
+            id:
+              `q${index + 1}`,
 
-          options:
-            Array.isArray(
-              question.options
-            )
-              ? shuffle(
-                  question.options
-                )
-              : undefined,
+            answer:
+              Array.isArray(
+                question.answer
+              )
+                ? [...question.answer]
+                : [question.answer],
 
-          studentAnswer: "",
+            options:
+              Array.isArray(
+                question.options
+              )
+                ? shuffle(
+                    question.options
+                  )
+                : undefined,
 
-          checked: false,
+            studentAnswer:
+              "",
 
-          correct: false
+            checked:
+              false,
 
-        })
+            correct:
+              false
+
+          };
+        }
       );
   }
-/* =========================================================
-   INTEGRARE CU test-security.js
 
-   test-core.js NU gestionează direct securitatea.
-   Toată monitorizarea anti-copiere este delegată modulului:
 
-   window.PhysicsTestSecurity
-   ========================================================= */
+  /* =========================================================
+     INTEGRARE CU test-security.js
+     ========================================================= */
 
+  function getSecurityModule() {
 
-/* =========================================================
-   OBȚINERE MODUL SECURITATE
-   ========================================================= */
-
-function getSecurityModule() {
-
-  const security =
-    window.PhysicsTestSecurity;
-
-
-  if (
-    !security ||
-    typeof security.configure !== "function" ||
-    typeof security.start !== "function" ||
-    typeof security.stop !== "function" ||
-    typeof security.getReportData !== "function"
-  ) {
-
-    return null;
-  }
-
-
-  return security;
-}
-
-
-/* =========================================================
-   RAPORT SECURITATE IMPLICIT
-
-   Folosit numai ca protecție tehnică dacă modulul nu poate
-   furniza raportul.
-   ========================================================= */
-
-function createEmptySecurityReport() {
-
-  return {
-
-    integrityExitCount: 0,
-
-    integrityTotalAwaySeconds: 0,
-
-    integrityTotalAwayFormatted:
-      "0 secunde",
-
-    integrityItemsSummary:
-      "Nu s-au înregistrat părăsiri ale ecranului.",
-
-    integrityEvents: []
-
-  };
-}
-
-
-/* =========================================================
-   CONFIGURARE ȘI PORNIRE SECURITATE
-   ========================================================= */
-
-function configureAndStartSecurity(
-  testConfig
-) {
-
-  const security =
-    getSecurityModule();
-
-
-  if (!security) {
-
-    console.error(
-      "test-security.js nu este încărcat sau API-ul PhysicsTestSecurity este incomplet."
-    );
-
-    return false;
-  }
-
-
-  try {
-
-    security.configure({
-
-      enabled: true,
-
-      monitorVisibility: true,
-
-      blockContextMenu: true,
-
-      blockCopy: true,
-
-      blockCut: true,
-
-      blockPaste: true,
-
-      locale: "ro-RO",
-
-
-      /*
-        Modulul de securitate întreabă motorul dacă testul
-        este efectiv în desfășurare.
-      */
-
-      isActive: function () {
-
-        const testArea =
-          byId("testArea");
-
-
-        return Boolean(
-
-          testArea &&
-
-          !testArea.classList.contains(
-            "hidden"
-          ) &&
-
-          state.currentQuestions.length > 0 &&
-
-          !state.submitted
-
-        );
-      },
-
-
-      /*
-        Itemul la care se află elevul în momentul
-        părăsirii ecranului.
-      */
-
-      getCurrentItem: function () {
-
-        return (
-          state.currentQuestionIndex + 1
-        );
-      },
-
-
-      /*
-        Textul întrebării curente.
-
-        test-security.js elimină singur HTML-ul din prompt.
-      */
-
-      getCurrentQuestion: function () {
-
-        const question =
-          state.currentQuestions[
-            state.currentQuestionIndex
-          ];
-
-
-        return question
-          ? question.prompt
-          : "";
-      },
-
-
-      warningMessage:
-        testConfig.integrityWarningMessage
-
-    });
-
-
-    /*
-      start() resetează automat jurnalul și pornește
-      monitorizarea pentru această sesiune.
-    */
-
-    security.start();
-
-
-    return true;
-
-
-  } catch (error) {
-
-    console.error(
-      "Nu s-a putut porni modulul de securitate:",
-      error
-    );
-
-
-    return false;
-  }
-}
-
-
-/* =========================================================
-   OPRIRE SECURITATE + RAPORT
-   ========================================================= */
-
-function stopSecurityAndGetReport() {
-
-  const emptyReport =
-    createEmptySecurityReport();
-
-
-  const security =
-    getSecurityModule();
-
-
-  if (!security) {
-
-    console.error(
-      "Raportul anti-copiere nu poate fi obținut: test-security.js nu este disponibil."
-    );
-
-    return emptyReport;
-  }
-
-
-  try {
-
-    /*
-      stop() închide inclusiv un eventual eveniment
-      de părăsire rămas deschis.
-    */
-
-    security.stop();
-
-
-    const report =
-      security.getReportData();
+    const security =
+      window.PhysicsTestSecurity;
 
 
     if (
-      !report ||
-      typeof report !== "object"
+      !security ||
+      typeof security.configure !==
+        "function" ||
+      typeof security.start !==
+        "function" ||
+      typeof security.stop !==
+        "function" ||
+      typeof security.getReportData !==
+        "function"
     ) {
+
+      return null;
+    }
+
+
+    return security;
+  }
+
+
+  /* =========================================================
+     RAPORT SECURITATE IMPLICIT
+     ========================================================= */
+
+  function createEmptySecurityReport() {
+
+    return {
+
+      integrityExitCount:
+        0,
+
+      integrityTotalAwaySeconds:
+        0,
+
+      integrityTotalAwayFormatted:
+        "0 secunde",
+
+      integrityItemsSummary:
+        "Nu s-au înregistrat părăsiri ale ecranului.",
+
+      integrityEvents:
+        []
+
+    };
+  }
+
+
+  /* =========================================================
+     CONFIGURARE ȘI PORNIRE SECURITATE
+     ========================================================= */
+
+  function configureAndStartSecurity(
+    testConfig
+  ) {
+
+    const security =
+      getSecurityModule();
+
+
+    if (!security) {
+
+      console.error(
+        "test-security.js nu este încărcat sau API-ul PhysicsTestSecurity este incomplet."
+      );
+
+
+      return false;
+    }
+
+
+    try {
+
+      security.configure({
+
+        enabled:
+          true,
+
+        monitorVisibility:
+          true,
+
+        blockContextMenu:
+          true,
+
+        blockCopy:
+          true,
+
+        blockCut:
+          true,
+
+        blockPaste:
+          true,
+
+        locale:
+          "ro-RO",
+
+
+        /*
+          test-security.js verifică permanent dacă testul
+          este într-adevăr activ.
+        */
+
+        isActive:
+          function () {
+
+            const testArea =
+              byId(
+                "testArea"
+              );
+
+
+            return Boolean(
+
+              testArea &&
+
+              !testArea.classList.contains(
+                "hidden"
+              ) &&
+
+              state.currentQuestions.length >
+                0 &&
+
+              !state.submitted
+
+            );
+          },
+
+
+        /*
+          Numărul itemului la care se află elevul.
+        */
+
+        getCurrentItem:
+          function () {
+
+            return (
+              state.currentQuestionIndex +
+              1
+            );
+          },
+
+
+        /*
+          Textul întrebării curente.
+        */
+
+        getCurrentQuestion:
+          function () {
+
+            const question =
+              state.currentQuestions[
+                state.currentQuestionIndex
+              ];
+
+
+            return question
+              ? question.prompt
+              : "";
+          },
+
+
+        warningMessage:
+          testConfig
+            .integrityWarningMessage
+
+      });
+
+
+      /*
+        start() resetează jurnalul pentru noua sesiune.
+      */
+
+      security.start();
+
+
+      return true;
+
+
+    } catch (error) {
+
+      console.error(
+        "Nu s-a putut porni modulul de securitate:",
+        error
+      );
+
+
+      return false;
+    }
+  }
+
+
+  /* =========================================================
+     OPRIRE SECURITATE + RAPORT
+     ========================================================= */
+
+  function stopSecurityAndGetReport() {
+
+    const emptyReport =
+      createEmptySecurityReport();
+
+
+    const security =
+      getSecurityModule();
+
+
+    if (!security) {
+
+      console.error(
+        "Raportul anti-copiere nu poate fi obținut: test-security.js nu este disponibil."
+      );
+
 
       return emptyReport;
     }
 
 
-    /*
-      Valorile implicite protejează restul testului
-      în cazul în care un câmp ar lipsi accidental.
-    */
+    try {
 
-    return {
+      /*
+        stop() închide și un eventual eveniment de
+        părăsire rămas deschis.
+      */
 
-      ...emptyReport,
-
-      ...report,
-
-      integrityEvents:
-        Array.isArray(
-          report.integrityEvents
-        )
-          ? report.integrityEvents
-          : []
-
-    };
+      security.stop();
 
 
-  } catch (error) {
-
-    console.error(
-      "Eroare la obținerea raportului anti-copiere:",
-      error
-    );
+      const report =
+        security.getReportData();
 
 
-    return emptyReport;
-  }
-}
+      if (
+        !report ||
+        typeof report !== "object"
+      ) {
+
+        return emptyReport;
+      }
 
 
-/* =========================================================
-   STARE SECURITATE PENTRU DEBUG
-   ========================================================= */
+      return {
 
-function getSecurityState() {
+        ...emptyReport,
 
-  const security =
-    getSecurityModule();
+        ...report,
+
+        integrityEvents:
+          Array.isArray(
+            report.integrityEvents
+          )
+            ? report.integrityEvents
+            : []
+
+      };
 
 
-  if (
-    !security ||
-    typeof security.getState !==
-      "function"
-  ) {
+    } catch (error) {
 
-    return null;
+      console.error(
+        "Eroare la obținerea raportului anti-copiere:",
+        error
+      );
+
+
+      return emptyReport;
+    }
   }
 
-
-  try {
-
-    return security.getState();
-
-
-  } catch (error) {
-
-    console.error(
-      "Nu s-a putut citi starea modulului de securitate:",
-      error
-    );
-
-
-    return null;
-  }
-}
 
   /* =========================================================
-     EVENIMENTE ANTI-COPIERE
+     STARE SECURITATE PENTRU DEBUG
      ========================================================= */
 
-  document.addEventListener(
-    "visibilitychange",
-    function () {
+  function getSecurityState() {
 
-      if (document.hidden) {
-        handleScreenExit();
-      } else {
-        handleScreenReturn();
-      }
+    const security =
+      getSecurityModule();
 
+
+    if (
+      !security ||
+      typeof security.getState !==
+        "function"
+    ) {
+
+      return null;
     }
-  );
 
 
-  document.addEventListener(
-    "contextmenu",
-    function (event) {
+    try {
 
-      if (!isTestActive()) {
-        return;
-      }
+      return security.getState();
 
 
-      event.preventDefault();
+    } catch (error) {
 
-
-      alert(
-        "Click dreapta nu este permis " +
-        "în timpul testului."
+      console.error(
+        "Nu s-a putut citi starea modulului de securitate:",
+        error
       );
 
+
+      return null;
     }
-  );
-
-
-  document.addEventListener(
-    "copy",
-    function (event) {
-
-      if (!isTestActive()) {
-        return;
-      }
-
-
-      event.preventDefault();
-
-
-      alert(
-        "Copierea nu este permisă " +
-        "în timpul testului."
-      );
-
-    }
-  );
-
-
-  document.addEventListener(
-    "cut",
-    function (event) {
-
-      if (!isTestActive()) {
-        return;
-      }
-
-
-      event.preventDefault();
-
-
-      alert(
-        "Decuparea textului nu este " +
-        "permisă în timpul testului."
-      );
-
-    }
-  );
-
-
-  document.addEventListener(
-    "paste",
-    function (event) {
-
-      if (!isTestActive()) {
-        return;
-      }
-
-
-      event.preventDefault();
-
-
-      alert(
-        "Lipirea textului nu este permisă " +
-        "în timpul testului."
-      );
-
-    }
-  );
+  }
 
 
   /* =========================================================
@@ -1095,13 +1155,11 @@ function getSecurityState() {
   ) {
 
     /*
-      Dacă sheets.js este încărcat,
-      folosim funcția lui.
+      Preferăm funcția din sheets.js.
     */
 
     if (
-      typeof window
-        .setStartCheckMessage ===
+      typeof window.setStartCheckMessage ===
       "function"
     ) {
 
@@ -1110,16 +1168,19 @@ function getSecurityState() {
         isError
       );
 
+
       return;
     }
 
 
     /*
-      Fallback local.
+      Fallback dacă sheets.js nu este disponibil.
     */
 
     const element =
-      byId("startCheckMessage");
+      byId(
+        "startCheckMessage"
+      );
 
 
     if (!element) {
@@ -1133,7 +1194,10 @@ function getSecurityState() {
         "hidden"
       );
 
-      element.innerText = "";
+
+      element.innerText =
+        "";
+
 
       return;
     }
@@ -1160,15 +1224,21 @@ function getSecurityState() {
      ========================================================= */
 
   async function startTest() {
+
     const config =
       getConfig();
 
 
     const nameInput =
-      byId("studentName");
+      byId(
+        "studentName"
+      );
+
 
     const classInput =
-      byId("studentClass");
+      byId(
+        "studentClass"
+      );
 
 
     const name =
@@ -1183,19 +1253,27 @@ function getSecurityState() {
         : "";
 
 
+    /* ---------------------------------------------------------
+       VALIDARE DATE ELEV
+       --------------------------------------------------------- */
+
     if (
       !name ||
       !studentClass
     ) {
 
       alert(
-        "Completează numele, prenumele " +
-        "și clasa înainte de a începe testul."
+        "Completează numele, prenumele și clasa înainte de a începe testul."
       );
+
 
       return;
     }
 
+
+    /* ---------------------------------------------------------
+       VALIDARE BANCĂ
+       --------------------------------------------------------- */
 
     if (
       !config.questionBank.length
@@ -1205,12 +1283,15 @@ function getSecurityState() {
         "Banca de întrebări nu este configurată."
       );
 
+
       return;
     }
 
 
     const startButton =
-      byId("startTestBtn");
+      byId(
+        "startTestBtn"
+      );
 
 
     if (startButton) {
@@ -1218,21 +1299,21 @@ function getSecurityState() {
       startButton.disabled =
         true;
 
+
       startButton.innerText =
         "Se verifică...";
     }
 
 
     setStartMessage(
-      "Se verifică dacă ai mai " +
-      "susținut acest test...",
+      "Se verifică dacă ai mai susținut acest test...",
       false
     );
 
 
-    /*
-      Verificare Google Sheets.
-    */
+    /* ---------------------------------------------------------
+       VERIFICARE ÎNCERCARE ANTERIOARĂ
+       --------------------------------------------------------- */
 
     let priorAttempt = {
       found: false,
@@ -1241,8 +1322,7 @@ function getSecurityState() {
 
 
     if (
-      typeof window
-        .checkPriorAttempt ===
+      typeof window.checkPriorAttempt ===
       "function"
     ) {
 
@@ -1256,27 +1336,30 @@ function getSecurityState() {
               config.testId
             );
 
+
       } catch (error) {
 
         console.error(
-          "Eroare verificare încercare:",
+          "Eroare la verificarea încercării anterioare:",
           error
         );
-
       }
     }
 
 
-    /*
-      Elevul are deja un rezultat.
-    */
+    /* ---------------------------------------------------------
+       ELEVUL A MAI SUSȚINUT TESTUL
+       --------------------------------------------------------- */
 
-    if (priorAttempt.found) {
+    if (
+      priorAttempt.found
+    ) {
 
       if (startButton) {
 
         startButton.disabled =
           false;
+
 
         startButton.innerText =
           "Începe testul";
@@ -1286,16 +1369,18 @@ function getSecurityState() {
       const gradeText =
         priorAttempt.nota !==
           undefined &&
-        priorAttempt.nota !== null
+        priorAttempt.nota !==
+          null
+
           ? ` (nota ${priorAttempt.nota})`
+
           : "";
 
 
       setStartMessage(
         `Ai susținut deja acest test${gradeText}. ` +
         "Testul se dă o singură dată. " +
-        "Dacă ai un motiv întemeiat pentru o nouă " +
-        "încercare, vorbește cu profesorul.",
+        "Dacă ai un motiv întemeiat pentru o nouă încercare, vorbește cu profesorul.",
         true
       );
 
@@ -1305,16 +1390,17 @@ function getSecurityState() {
 
 
     /*
-      Verificarea nu a putut fi făcută.
-      Testul continuă, exact ca în versiunea existentă.
+      Dacă serverul nu a putut fi verificat,
+      nu blocăm automat elevul.
     */
 
-    if (!priorAttempt.checked) {
+    if (
+      !priorAttempt.checked
+    ) {
 
       setStartMessage(
-        "Nu s-a putut verifica automat dacă ai mai " +
-        "susținut testul. Testul poate continua, " +
-        "iar profesorul va putea verifica situația.",
+        "Nu s-a putut verifica automat dacă ai mai susținut testul. " +
+        "Testul poate continua, iar profesorul va putea verifica situația.",
         true
       );
 
@@ -1327,7 +1413,9 @@ function getSecurityState() {
     }
 
 
-    /* Inițializare test */
+    /* ---------------------------------------------------------
+       GENERARE TEST
+       --------------------------------------------------------- */
 
     state.submitted =
       false;
@@ -1354,55 +1442,64 @@ function getSecurityState() {
         startButton.disabled =
           false;
 
+
         startButton.innerText =
           "Începe testul";
       }
 
 
       alert(
-        "Nu există suficiente întrebări " +
-        "pentru generarea testului."
+        "Nu există suficiente întrebări pentru generarea testului."
       );
+
 
       return;
     }
 
-/* =====================================================
-   PORNIRE MODUL SECURITATE
-   ===================================================== */
 
-const securityStarted =
-  configureAndStartSecurity(
-    config
-  );
+    /* ---------------------------------------------------------
+       PORNIRE MODUL SECURITATE
+       --------------------------------------------------------- */
 
-
-if (!securityStarted) {
-
-  if (startButton) {
-
-    startButton.disabled =
-      false;
-
-    startButton.innerText =
-      "Începe testul";
-  }
+    const securityStarted =
+      configureAndStartSecurity(
+        config
+      );
 
 
-  setStartMessage(
-    "Modulul de securitate al testului nu s-a încărcat. Reîncarcă pagina și încearcă din nou.",
-    true
-  );
+    if (!securityStarted) {
+
+      if (startButton) {
+
+        startButton.disabled =
+          false;
 
 
-  alert(
-    "Testul nu poate începe deoarece modulul de securitate nu este disponibil. Reîncarcă pagina."
-  );
+        startButton.innerText =
+          "Începe testul";
+      }
 
 
-  return;
-}
-     
+      setStartMessage(
+        "Modulul de securitate al testului nu s-a încărcat. " +
+        "Reîncarcă pagina și încearcă din nou.",
+        true
+      );
+
+
+      alert(
+        "Testul nu poate începe deoarece modulul de securitate nu este disponibil. Reîncarcă pagina."
+      );
+
+
+      return;
+    }
+
+
+    /* ---------------------------------------------------------
+       AFIȘARE TEST
+       --------------------------------------------------------- */
+
     hideElement(
       "startCard"
     );
@@ -1414,30 +1511,39 @@ if (!securityStarted) {
 
 
     const studentInfo =
-      byId("studentInfo");
+      byId(
+        "studentInfo"
+      );
 
 
     if (studentInfo) {
+
       studentInfo.innerText =
         `${name} – ${studentClass}`;
     }
 
 
     const variantLabel =
-      byId("variantIdLabel");
+      byId(
+        "variantIdLabel"
+      );
 
 
     if (variantLabel) {
+
       variantLabel.innerText =
         state.variantId;
     }
 
 
     const totalCount =
-      byId("totalCount");
+      byId(
+        "totalCount"
+      );
 
 
     if (totalCount) {
+
       totalCount.innerText =
         state.currentQuestions.length;
     }
@@ -1456,8 +1562,11 @@ if (!securityStarted) {
      ========================================================= */
 
   function renderCurrentQuestion() {
+
     const container =
-      byId("questionsContainer");
+      byId(
+        "questionsContainer"
+      );
 
 
     const question =
@@ -1474,7 +1583,8 @@ if (!securityStarted) {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+      "";
 
 
     const card =
@@ -1486,14 +1596,18 @@ if (!securityStarted) {
     card.className =
       "question-card";
 
+
     card.id =
       `card-${question.id}`;
 
 
-    let answerHtml = "";
+    let answerHtml =
+      "";
 
 
-    /* ITEM CU ALEGERE */
+    /* ---------------------------------------------------------
+       ITEM CU ALEGERE
+       --------------------------------------------------------- */
 
     if (
       question.type ===
@@ -1509,53 +1623,66 @@ if (!securityStarted) {
 
 
       answerHtml = `
+
         <div class="answer-options">
 
-          ${options.map(option => `
+          ${options.map(function (option) {
 
-            <label>
+            return `
 
-              <input
-                type="radio"
-                name="${question.id}"
-                value="${escapeHtml(option)}"
+              <label>
 
-                ${
-                  question.studentAnswer ===
-                  option
-                    ? "checked"
-                    : ""
-                }
+                <input
+                  type="radio"
+                  name="${question.id}"
+                  value="${escapeHtml(option)}"
 
-                ${
-                  question.checked
-                    ? "disabled"
-                    : ""
-                }
-              />
+                  ${
+                    question.studentAnswer ===
+                    option
+                      ? "checked"
+                      : ""
+                  }
 
-              ${escapeHtml(option)}
+                  ${
+                    question.checked
+                      ? "disabled"
+                      : ""
+                  }
+                />
 
-            </label>
+                ${escapeHtml(option)}
 
-          `).join("")}
+              </label>
+
+            `;
+
+          }).join("")}
 
         </div>
       `;
 
+
     } else {
 
-      /* ITEM CU RĂSPUNS SCRIS */
+      /* -------------------------------------------------------
+         ITEM CU RĂSPUNS SCRIS
+         ------------------------------------------------------- */
 
       const placeholder =
         question.numeric
+
           ? "Scrie doar numărul (ex: 2.5 sau 2,5)"
+
           : "Scrie răspunsul aici";
 
 
       answerHtml = `
+
         <input
+
           id="${question.id}"
+
           type="text"
 
           inputmode="${
@@ -1577,17 +1704,23 @@ if (!securityStarted) {
               ? "disabled"
               : ""
           }
+
         />
       `;
     }
 
 
-    /* FEEDBACK */
+    /* ---------------------------------------------------------
+       FEEDBACK
+       --------------------------------------------------------- */
 
-    let feedbackHtml = "";
+    let feedbackHtml =
+      "";
 
 
-    if (question.checked) {
+    if (
+      question.checked
+    ) {
 
       feedbackHtml =
         question.correct
@@ -1615,7 +1748,8 @@ if (!securityStarted) {
       <div class="question-title">
 
         ${
-          state.currentQuestionIndex + 1
+          state.currentQuestionIndex +
+          1
         }.
 
         ${question.prompt}
@@ -1645,8 +1779,10 @@ if (!securityStarted) {
 
 
     if (currentLabel) {
+
       currentLabel.innerText =
-        state.currentQuestionIndex + 1;
+        state.currentQuestionIndex +
+        1;
     }
 
 
@@ -1661,6 +1797,7 @@ if (!securityStarted) {
      ========================================================= */
 
   function getCurrentAnswer() {
+
     const question =
       state.currentQuestions[
         state.currentQuestionIndex
@@ -1690,7 +1827,9 @@ if (!securityStarted) {
 
 
     const input =
-      byId(question.id);
+      byId(
+        question.id
+      );
 
 
     return input
@@ -1716,12 +1855,18 @@ if (!securityStarted) {
         : [question.answer];
 
 
-    /* RĂSPUNS NUMERIC */
+    /* ---------------------------------------------------------
+       RĂSPUNS NUMERIC
+       --------------------------------------------------------- */
 
-    if (question.numeric) {
+    if (
+      question.numeric
+    ) {
 
       const studentValue =
-        parseNumeric(value);
+        parseNumeric(
+          value
+        );
 
 
       if (
@@ -1734,42 +1879,59 @@ if (!securityStarted) {
       const tolerance =
         question.tolerance !==
           undefined
+
           ? Number(
               question.tolerance
             )
+
           : 0.1;
 
 
       return acceptedAnswers
-        .some(answer => {
+        .some(
+          function (answer) {
 
-          const correctValue =
-            parseNumeric(answer);
+            const correctValue =
+              parseNumeric(
+                answer
+              );
 
 
-          return (
-            correctValue !== null &&
-            Math.abs(
-              correctValue -
-              studentValue
-            ) <= tolerance
-          );
+            return (
 
-        });
+              correctValue !==
+                null &&
+
+              Math.abs(
+                correctValue -
+                studentValue
+              ) <= tolerance
+
+            );
+          }
+        );
     }
 
 
-    /* RĂSPUNS TEXT */
+    /* ---------------------------------------------------------
+       RĂSPUNS TEXT
+       --------------------------------------------------------- */
 
     const normalizedValue =
-      normalizeText(value);
+      normalizeText(
+        value
+      );
 
 
     return acceptedAnswers
       .some(
-        answer =>
-          normalizeText(answer) ===
-          normalizedValue
+        function (answer) {
+
+          return (
+            normalizeText(answer) ===
+            normalizedValue
+          );
+        }
       );
   }
 
@@ -1779,6 +1941,7 @@ if (!securityStarted) {
      ========================================================= */
 
   function checkCurrentQuestion() {
+
     const question =
       state.currentQuestions[
         state.currentQuestionIndex
@@ -1802,9 +1965,9 @@ if (!securityStarted) {
     if (!studentAnswer) {
 
       alert(
-        "Scrie sau alege un răspuns " +
-        "înainte de verificare."
+        "Scrie sau alege un răspuns înainte de verificare."
       );
+
 
       return;
     }
@@ -1820,8 +1983,10 @@ if (!securityStarted) {
     question.studentAnswer =
       studentAnswer;
 
+
     question.checked =
       true;
+
 
     question.correct =
       correct;
@@ -1836,6 +2001,7 @@ if (!securityStarted) {
      ========================================================= */
 
   function goToNextQuestion() {
+
     const question =
       state.currentQuestions[
         state.currentQuestionIndex
@@ -1847,12 +2013,14 @@ if (!securityStarted) {
     }
 
 
-    if (!question.checked) {
+    if (
+      !question.checked
+    ) {
 
       alert(
-        "Mai întâi verifică răspunsul " +
-        "la această întrebare."
+        "Mai întâi verifică răspunsul la această întrebare."
       );
+
 
       return;
     }
@@ -1860,12 +2028,15 @@ if (!securityStarted) {
 
     if (
       state.currentQuestionIndex <
-      state.currentQuestions.length - 1
+      state.currentQuestions.length -
+        1
     ) {
 
       state.currentQuestionIndex++;
 
+
       renderCurrentQuestion();
+
 
       scrollToTop();
     }
@@ -1877,6 +2048,7 @@ if (!securityStarted) {
      ========================================================= */
 
   function updateButtons() {
+
     const question =
       state.currentQuestions[
         state.currentQuestionIndex
@@ -1890,20 +2062,30 @@ if (!securityStarted) {
 
     const isLast =
       state.currentQuestionIndex ===
-      state.currentQuestions.length - 1;
+      state.currentQuestions.length -
+        1;
 
 
     const checkButton =
-      byId("checkBtn");
+      byId(
+        "checkBtn"
+      );
+
 
     const nextButton =
-      byId("nextBtn");
+      byId(
+        "nextBtn"
+      );
+
 
     const finishButton =
-      byId("finishBtn");
+      byId(
+        "finishBtn"
+      );
 
 
     if (checkButton) {
+
       checkButton.disabled =
         question.checked;
     }
@@ -1943,20 +2125,28 @@ if (!securityStarted) {
      ========================================================= */
 
   function updateProgress() {
+
     const answered =
       state.currentQuestions
         .filter(
-          question =>
-            question.checked
+          function (question) {
+
+            return (
+              question.checked
+            );
+          }
         )
         .length;
 
 
     const answeredCount =
-      byId("answeredCount");
+      byId(
+        "answeredCount"
+      );
 
 
     if (answeredCount) {
+
       answeredCount.innerText =
         answered;
     }
@@ -1974,10 +2164,13 @@ if (!securityStarted) {
 
 
     const progressFill =
-      byId("progressFill");
+      byId(
+        "progressFill"
+      );
 
 
     if (progressFill) {
+
       progressFill.style.width =
         `${percent}%`;
     }
@@ -1989,7 +2182,10 @@ if (!securityStarted) {
      ========================================================= */
 
   function submitTest() {
-    if (state.submitted) {
+
+    if (
+      state.submitted
+    ) {
       return;
     }
 
@@ -1997,22 +2193,32 @@ if (!securityStarted) {
     const unchecked =
       state.currentQuestions
         .filter(
-          question =>
-            !question.checked
+          function (question) {
+
+            return (
+              !question.checked
+            );
+          }
         )
         .length;
 
 
-    if (unchecked > 0) {
+    if (
+      unchecked > 0
+    ) {
 
       alert(
-        `Mai ai ${unchecked} ` +
-        "întrebări neverificate."
+        `Mai ai ${unchecked} întrebări neverificate.`
       );
+
 
       return;
     }
 
+
+    /*
+      Din acest moment testul nu mai este considerat activ.
+    */
 
     state.submitted =
       true;
@@ -2025,8 +2231,12 @@ if (!securityStarted) {
     const correct =
       state.currentQuestions
         .filter(
-          question =>
-            question.correct
+          function (question) {
+
+            return (
+              question.correct
+            );
+          }
         )
         .length;
 
@@ -2034,45 +2244,56 @@ if (!securityStarted) {
     const answerRows =
       state.currentQuestions
         .map(
-          (question, index) => ({
+          function (
+            question,
+            index
+          ) {
 
-            nr:
-              index + 1,
+            return {
 
-            prompt:
-              stripHtml(
-                question.prompt
-              ),
+              nr:
+                index + 1,
 
-            category:
-              question.category ||
-              "",
+              prompt:
+                stripHtml(
+                  question.prompt
+                ),
 
-            studentAnswer:
-              question.studentAnswer,
+              category:
+                question.category ||
+                "",
 
-            correct:
-              question.correct
+              studentAnswer:
+                question.studentAnswer,
 
-          })
+              correct:
+                question.correct
+
+            };
+          }
         );
 
 
     const percentage =
       state.currentQuestions.length
+
         ? (
             correct /
             state.currentQuestions.length
           )
+
         : 0;
 
 
     const grade =
       Math.max(
+
         1,
+
         config.officialPoints +
         percentage *
         config.testPoints
+
       );
 
 
@@ -2081,13 +2302,19 @@ if (!securityStarted) {
         grade * 100
       ) / 100;
 
-/* =====================================================
-   OPRIRE MONITORIZARE ȘI PRELUARE RAPORT ANTI-COPIERE
-   ===================================================== */
 
-const securityReport =
-  stopSecurityAndGetReport();
-     
+    /* ---------------------------------------------------------
+       RAPORT ANTI-COPIERE
+       --------------------------------------------------------- */
+
+    const securityReport =
+      stopSecurityAndGetReport();
+
+
+    /* ---------------------------------------------------------
+       PAYLOAD FINAL
+       --------------------------------------------------------- */
+
     const payload = {
 
       timestamp:
@@ -2105,14 +2332,20 @@ const securityReport =
 
       studentName:
         byId("studentName")
-          ? byId("studentName")
-              .value.trim()
+
+          ? byId(
+              "studentName"
+            ).value.trim()
+
           : "",
 
       studentClass:
         byId("studentClass")
-          ? byId("studentClass")
-              .value.trim()
+
+          ? byId(
+              "studentClass"
+            ).value.trim()
+
           : "",
 
       correct,
@@ -2132,15 +2365,18 @@ const securityReport =
       answers:
         answerRows,
 
-    answers:
-  answerRows,
+      /*
+        Aceste câmpuri sunt furnizate exclusiv
+        de test-security.js.
+      */
 
-...securityReport 
+      ...securityReport
+
     };
 
 
     /*
-      Raportul PDF citește această variabilă.
+      pdf-report.js citește această variabilă.
     */
 
     window.lastReportPayload =
@@ -2157,20 +2393,19 @@ const securityReport =
     );
 
 
-    /*
-      Salvarea în Sheets este delegată
-      către sheets.js.
-    */
+    /* ---------------------------------------------------------
+       GOOGLE SHEETS
+       --------------------------------------------------------- */
 
     if (
-      typeof window
-        .sendToGoogleSheet ===
+      typeof window.sendToGoogleSheet ===
       "function"
     ) {
 
       window.sendToGoogleSheet(
         payload
       );
+
 
     } else {
 
@@ -2180,7 +2415,9 @@ const securityReport =
 
 
       const sheetStatus =
-        byId("sheetStatus");
+        byId(
+          "sheetStatus"
+        );
 
 
       if (sheetStatus) {
@@ -2200,7 +2437,10 @@ const securityReport =
      AFIȘARE REZULTAT
      ========================================================= */
 
-  function showResult(payload) {
+  function showResult(
+    payload
+  ) {
+
     window.lastReportPayload =
       payload;
 
@@ -2211,7 +2451,9 @@ const securityReport =
 
 
     const gradeDisplay =
-      byId("gradeDisplay");
+      byId(
+        "gradeDisplay"
+      );
 
 
     if (gradeDisplay) {
@@ -2221,7 +2463,9 @@ const securityReport =
     }
 
 
-    /* RAPORT ANTI-COPIERE */
+    /* ---------------------------------------------------------
+       EVENIMENTE ANTI-COPIERE
+       --------------------------------------------------------- */
 
     const integrityReturns =
       Array.isArray(
@@ -2230,9 +2474,13 @@ const securityReport =
 
         ? payload.integrityEvents
             .filter(
-              event =>
-                event.tip ===
-                "revenire_in_test"
+              function (event) {
+
+                return (
+                  event.tip ===
+                  "revenire_in_test"
+                );
+              }
             )
 
         : [];
@@ -2240,44 +2488,52 @@ const securityReport =
 
     const integrityDetailsRows =
       integrityReturns
-        .map(event => `
+        .map(
+          function (event) {
 
-          <tr>
+            return `
 
-            <td>
-              ${escapeHtml(event.item)}
-            </td>
+              <tr>
 
-            <td>
-              ${
-                escapeHtml(
-                  event.durataSecunde
-                )
-              }
-              secunde
-            </td>
+                <td>
+                  ${
+                    escapeHtml(
+                      event.item
+                    )
+                  }
+                </td>
 
-            <td>
-              ${
-                escapeHtml(
-                  event.oraPlecare ||
-                  ""
-                )
-              }
-            </td>
+                <td>
+                  ${
+                    escapeHtml(
+                      event.durataSecunde
+                    )
+                  }
+                  secunde
+                </td>
 
-            <td>
-              ${
-                escapeHtml(
-                  event.oraRevenire ||
-                  ""
-                )
-              }
-            </td>
+                <td>
+                  ${
+                    escapeHtml(
+                      event.oraPlecare ||
+                      ""
+                    )
+                  }
+                </td>
 
-          </tr>
+                <td>
+                  ${
+                    escapeHtml(
+                      event.oraRevenire ||
+                      ""
+                    )
+                  }
+                </td>
 
-        `)
+              </tr>
+            `;
+          }
+        )
         .join("");
 
 
@@ -2285,6 +2541,7 @@ const securityReport =
       integrityReturns.length
 
         ? `
+
           <div
             class="review-table-wrapper"
           >
@@ -2294,12 +2551,14 @@ const securityReport =
             >
 
               <thead>
+
                 <tr>
                   <th>Item</th>
                   <th>Durată lipsă</th>
                   <th>Ora ieșirii</th>
                   <th>Ora revenirii</th>
                 </tr>
+
               </thead>
 
               <tbody>
@@ -2312,12 +2571,19 @@ const securityReport =
         `
 
         : `
+
           <p class="small">
+
             Nu s-au înregistrat părăsiri
             ale ecranului testului.
+
           </p>
         `;
 
+
+    /* ---------------------------------------------------------
+       PUNCTAJ
+       --------------------------------------------------------- */
 
     const earnedTestPoints =
       payload.total
@@ -2335,7 +2601,9 @@ const securityReport =
 
 
     const resultDetails =
-      byId("resultDetails");
+      byId(
+        "resultDetails"
+      );
 
 
     if (resultDetails) {
@@ -2365,9 +2633,15 @@ const securityReport =
         <br>
 
         Răspunsuri corecte:
-        <b>${payload.correct}</b>
+        <b>
+          ${payload.correct}
+        </b>
+
         din
-        <b>${payload.total}</b>
+
+        <b>
+          ${payload.total}
+        </b>
 
         <br>
 
@@ -2390,8 +2664,7 @@ const securityReport =
           <b>
             ${
               escapeHtml(
-                payload
-                  .integrityExitCount
+                payload.integrityExitCount
               )
             }
           </b>
@@ -2427,63 +2700,68 @@ const securityReport =
     }
 
 
-    /* REZUMAT RĂSPUNSURI */
+    /* ---------------------------------------------------------
+       REZUMAT RĂSPUNSURI
+       --------------------------------------------------------- */
 
     const reviewRows =
       payload.answers
-        .map(item => {
+        .map(
+          function (item) {
 
-          const resultText =
-            item.correct
-              ? "Corect"
-              : "Greșit";
-
-
-          const resultClass =
-            item.correct
-              ? "review-ok"
-              : "review-wrong";
+            const resultText =
+              item.correct
+                ? "Corect"
+                : "Greșit";
 
 
-          return `
+            const resultClass =
+              item.correct
+                ? "review-ok"
+                : "review-wrong";
 
-            <tr>
 
-              <td>
-                ${item.nr}
-              </td>
+            return `
 
-              <td>
-                ${
-                  escapeHtml(
-                    item.prompt
-                  )
-                }
-              </td>
+              <tr>
 
-              <td>
-                ${
-                  escapeHtml(
-                    item.studentAnswer
-                  )
-                }
-              </td>
+                <td>
+                  ${item.nr}
+                </td>
 
-              <td
-                class="${resultClass}"
-              >
-                ${resultText}
-              </td>
+                <td>
+                  ${
+                    escapeHtml(
+                      item.prompt
+                    )
+                  }
+                </td>
 
-            </tr>
-          `;
+                <td>
+                  ${
+                    escapeHtml(
+                      item.studentAnswer
+                    )
+                  }
+                </td>
 
-        })
+                <td
+                  class="${resultClass}"
+                >
+                  ${resultText}
+                </td>
+
+              </tr>
+            `;
+          }
+        )
         .join("");
 
 
     const resultReview =
-      byId("resultReview");
+      byId(
+        "resultReview"
+      );
 
 
     if (resultReview) {
@@ -2495,9 +2773,11 @@ const securityReport =
         </h3>
 
         <p class="small">
+
           Se afișează doar dacă răspunsul
           a fost corect sau greșit,
           fără răspunsul corect.
+
         </p>
 
         <div
@@ -2512,7 +2792,9 @@ const securityReport =
 
               <tr>
 
-                <th>Nr.</th>
+                <th>
+                  Nr.
+                </th>
 
                 <th>
                   Întrebarea
@@ -2542,7 +2824,9 @@ const securityReport =
 
 
     const resultArea =
-      byId("resultArea");
+      byId(
+        "resultArea"
+      );
 
 
     if (resultArea) {
@@ -2559,9 +2843,13 @@ const securityReport =
      ========================================================= */
 
   function enableResultButtons() {
+
+    /*
+      Preferăm implementarea din sheets.js.
+    */
+
     if (
-      typeof window
-        .setResultButtonsEnabled ===
+      typeof window.setResultButtonsEnabled ===
       "function"
     ) {
 
@@ -2569,24 +2857,49 @@ const securityReport =
         true
       );
 
+
       return;
     }
 
 
+    /*
+      Fallback dacă sheets.js lipsește.
+    */
+
     const pdfButton =
-      byId("downloadPdfBtn");
+      byId(
+        "downloadPdfBtn"
+      );
+
+
+    const resendButton =
+      byId(
+        "resendBtn"
+      );
+
 
     const newTestButton =
-      byId("newTestBtn");
+      byId(
+        "newTestBtn"
+      );
 
 
     if (pdfButton) {
+
       pdfButton.disabled =
         false;
     }
 
 
+    if (resendButton) {
+
+      resendButton.disabled =
+        false;
+    }
+
+
     if (newTestButton) {
+
       newTestButton.disabled =
         false;
     }
@@ -2598,6 +2911,7 @@ const securityReport =
      ========================================================= */
 
   function scrollToTop() {
+
     window.scrollTo({
       top: 0,
       behavior: "smooth"
@@ -2608,72 +2922,74 @@ const securityReport =
   /* =========================================================
      FUNCȚII PUBLICE
 
-     Sunt expuse deoarece HTML-ul actual folosește:
-     onclick="startTest()"
-     onclick="checkCurrentQuestion()"
-     etc.
+     HTML-ul folosește aceste funcții în onclick.
      ========================================================= */
 
   window.startTest =
     startTest;
 
+
   window.checkCurrentQuestion =
     checkCurrentQuestion;
+
 
   window.goToNextQuestion =
     goToNextQuestion;
 
+
   window.submitTest =
     submitTest;
+
 
   window.scrollToTop =
     scrollToTop;
 
 
   /* =========================================================
-     API OPȚIONAL PENTRU DEZVOLTARE
+     API PENTRU DEBUG / DEZVOLTARE
      ========================================================= */
 
   window.PhysicsTestCore = {
 
-  getConfig,
+    getConfig,
 
-  generateVariantId,
+    generateVariantId,
 
-  selectBalancedQuestions,
+    selectBalancedQuestions,
 
-  normalizeText,
+    normalizeText,
 
-  parseNumeric,
+    parseNumeric,
 
-  escapeHtml,
+    escapeHtml,
 
-  isCorrect,
+    isCorrect,
 
-  getSecurityState,
+    getSecurityState,
 
-  getState: function () {
+    getState:
+      function () {
 
-    return {
+        return {
 
-      currentQuestionIndex:
-        state.currentQuestionIndex,
+          currentQuestionIndex:
+            state.currentQuestionIndex,
 
-      variantId:
-        state.variantId,
+          variantId:
+            state.variantId,
 
-      submitted:
-        state.submitted,
+          submitted:
+            state.submitted,
 
-      questionCount:
-        state.currentQuestions.length,
+          questionCount:
+            state.currentQuestions.length,
 
-      security:
-        getSecurityState()
+          security:
+            getSecurityState()
 
-    };
-  }
+        };
+      }
 
-};
+  };
 
 })();
