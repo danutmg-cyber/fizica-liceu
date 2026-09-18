@@ -11,37 +11,34 @@
 
   <title>
     Test online – Evaluare inițială – Fizică – Clasa a X-a
-    (3 ore/săptămână)
+    (3 ore/săptămână) – 30 itemi
   </title>
 
-  <!-- CSS comun tuturor testelor -->
   <link
     rel="stylesheet"
     href="../../assets/css/teste.css"
   />
 
- <!-- Bibliotecă locală pentru raportul PDF -->
-<script src="../../assets/vendor/html2pdf.bundle.min.js"></script>
+  <!-- Biblioteca PDF locală -->
+  <script src="../../assets/vendor/html2pdf.bundle.min.js"></script>
 
-<!-- Fallback CDN dacă biblioteca locală nu se încarcă -->
-<script>
-  if (typeof html2pdf === "undefined") {
-    const fallback = document.createElement("script");
+  <!-- Fallback CDN -->
+  <script>
+    if (typeof html2pdf === "undefined") {
+      const fallback = document.createElement("script");
 
-    fallback.src =
-      "https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js";
+      fallback.src =
+        "https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js";
 
-    document.head.appendChild(fallback);
-  }
-</script>
-
+      document.head.appendChild(fallback);
+    }
+  </script>
 </head>
 
 
 <body>
 
 <div class="wrapper">
-
 
   <!-- =====================================================
        ANTET
@@ -120,15 +117,22 @@
 
     <div class="warning">
 
+      <b>Număr de itemi:</b>
+      30.
+
+      <br /><br />
+
       <b>Notare:</b>
       nota este de la 1 la 10,
       cu <b>1 punct din oficiu</b>.
       Partea de test valorează 9 puncte.
+      Fiecare răspuns corect valorează
+      <b>0,3 puncte</b>.
 
       <br /><br />
 
       <b>Timp de lucru recomandat:</b>
-      45 de minute.
+      60 de minute.
 
       <br /><br />
 
@@ -153,14 +157,13 @@
 
       Poți folosi punct sau virgulă
       pentru zecimale:
-
       <b>2.5</b> sau <b>2,5</b>.
 
       <br /><br />
 
       <b>Atenție anti-copiere:</b>
-      testul detectează părăsirea ecranului
-      prin schimbarea filei sau aplicației.
+      testul detectează părăsirea ecranului,
+      schimbarea filei sau aplicației.
 
       Evenimentele sunt înregistrate
       împreună cu itemul la care s-au produs,
@@ -170,12 +173,7 @@
 
       <b>Înainte de a începe:</b>
 
-      <ul
-        style="
-          margin:6px 0 0;
-          padding-left:20px;
-        "
-      >
+      <ul style="margin:6px 0 0; padding-left:20px;">
 
         <li>
           Închide toate celelalte aplicații
@@ -195,11 +193,9 @@
         </li>
 
         <li>
-          Dacă dai testul chiar de pe telefon,
+          Dacă dai testul de pe telefon,
           folosește modul „Nu deranja”,
-          nu modul avion,
-          deoarece este necesară conexiunea
-          la internet.
+          nu modul avion.
         </li>
 
       </ul>
@@ -235,7 +231,7 @@
 
 
   <!-- =====================================================
-       TEST
+       ZONA TEST
        ===================================================== -->
 
   <section
@@ -254,11 +250,8 @@
           <br />
 
           <span class="small">
-
             Variantă:
-
             <span id="variantIdLabel"></span>
-
           </span>
 
         </div>
@@ -427,10 +420,6 @@
   </section>
 
 
-  <!-- =====================================================
-       SUBSOL
-       ===================================================== -->
-
   <div class="footer">
 
     Material realizat de
@@ -450,7 +439,7 @@
 
 
 <!-- =========================================================
-     DATELE SPECIFICE ACESTUI TEST
+     BANCA DE ÎNTREBĂRI
      ========================================================= -->
 
 <script>
@@ -459,7 +448,7 @@
 
 
 /* =========================================================
-   FUNCȚII AJUTĂTOARE PENTRU BANCA DE ÎNTREBĂRI
+   FUNCȚII AJUTĂTOARE
    ========================================================= */
 
 function choiceQuestion(
@@ -472,8 +461,7 @@ function choiceQuestion(
 
   return {
 
-    type:
-      "choice",
+    type: "choice",
 
     category,
 
@@ -483,8 +471,7 @@ function choiceQuestion(
 
     options,
 
-    answer:
-      [correct]
+    answer: [correct]
 
   };
 }
@@ -500,31 +487,23 @@ function numericQuestion(
 
   return {
 
-    type:
-      "input",
+    type: "input",
 
     category,
 
     subtype,
 
-    numeric:
-      true,
+    numeric: true,
 
     tolerance,
 
     prompt,
 
-    answer:
-      [String(answer)]
+    answer: [String(answer)]
 
   };
 }
 
-
-/*
-  Numerele sunt afișate în stil românesc,
-  dar răspunsul intern rămâne numeric.
-*/
 
 function roNumber(value) {
 
@@ -534,9 +513,9 @@ function roNumber(value) {
 
 
 /* =========================================================
-   TABEL MIȘCARE
+   TABEL PENTRU MIȘCARE
 
-   Rândurile sunt intenționat scrise unul sub altul.
+   t și x sunt așezate pe două rânduri distincte.
    ========================================================= */
 
 function motionTable(
@@ -545,29 +524,45 @@ function motionTable(
 ) {
 
   return `
-    <table class="data-table">
-      <tbody>
-        <tr>
-          <th>t (s)</th>
-          ${times
-            .map(value => `<td>${roNumber(value)}</td>`)
-            .join("")}
-        </tr>
+    <div class="review-table-wrapper">
 
-        <tr>
-          <th>x (m)</th>
-          ${positions
-            .map(value => `<td>${roNumber(value)}</td>`)
-            .join("")}
-        </tr>
-      </tbody>
-    </table>
+      <table class="data-table">
+
+        <tbody>
+
+          <tr>
+            <th>t (s)</th>
+
+            ${times
+              .map(
+                value =>
+                  `<td>${roNumber(value)}</td>`
+              )
+              .join("")}
+          </tr>
+
+          <tr>
+            <th>x (m)</th>
+
+            ${positions
+              .map(
+                value =>
+                  `<td>${roNumber(value)}</td>`
+              )
+              .join("")}
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
   `;
 }
 
 
 /* =========================================================
-   SUBIECTUL I – CONCEPTE ȘI LIMBAJ FIZIC
+   CONCEPTE ȘI LIMBAJ FIZIC
    ========================================================= */
 
 const conceptQuestions = [
@@ -585,7 +580,6 @@ const conceptQuestions = [
     "newton (N)"
   ),
 
-
   choiceQuestion(
     "concepte",
     "unitate_masa",
@@ -598,7 +592,6 @@ const conceptQuestions = [
     ],
     "kilogram (kg)"
   ),
-
 
   choiceQuestion(
     "concepte",
@@ -613,6 +606,18 @@ const conceptQuestions = [
     "metru pe secundă (m/s)"
   ),
 
+  choiceQuestion(
+    "concepte",
+    "unitate_acceleratie",
+    "Unitatea de măsură în S.I. pentru accelerație este:",
+    [
+      "m/s",
+      "m/s²",
+      "N",
+      "J"
+    ],
+    "m/s²"
+  ),
 
   choiceQuestion(
     "concepte",
@@ -627,7 +632,6 @@ const conceptQuestions = [
     "zero"
   ),
 
-
   choiceQuestion(
     "concepte",
     "acceleratie_uniform_accelerata",
@@ -640,7 +644,6 @@ const conceptQuestions = [
     ],
     "constantă și diferită de zero"
   ),
-
 
   choiceQuestion(
     "concepte",
@@ -655,7 +658,6 @@ const conceptQuestions = [
     "5 N"
   ),
 
-
   choiceQuestion(
     "concepte",
     "rezultanta_acelasi_sens",
@@ -669,11 +671,10 @@ const conceptQuestions = [
     "8 N"
   ),
 
-
   choiceQuestion(
     "concepte",
     "dublare_forta",
-    "Dacă masa unui corp rămâne constantă, iar forța rezultantă care acționează asupra lui se dublează, accelerația corpului:",
+    "Dacă masa unui corp rămâne constantă, iar forța rezultantă se dublează, accelerația corpului:",
     [
       "se înjumătățește",
       "rămâne constantă",
@@ -683,11 +684,10 @@ const conceptQuestions = [
     "se dublează"
   ),
 
-
   choiceQuestion(
     "concepte",
     "dublare_masa",
-    "Dacă forța rezultantă rămâne constantă, iar masa unui corp se dublează, accelerația corpului:",
+    "Dacă forța rezultantă rămâne constantă, iar masa corpului se dublează, accelerația:",
     [
       "se dublează",
       "se înjumătățește",
@@ -696,7 +696,6 @@ const conceptQuestions = [
     ],
     "se înjumătățește"
   ),
-
 
   choiceQuestion(
     "concepte",
@@ -711,7 +710,6 @@ const conceptQuestions = [
     "masă și viteză"
   ),
 
-
   choiceQuestion(
     "concepte",
     "energie_potentiala",
@@ -725,39 +723,36 @@ const conceptQuestions = [
     "masă și înălțime"
   ),
 
-
   choiceQuestion(
     "concepte",
     "becuri_serie",
-    "Două becuri identice sunt conectate în serie într-un circuit. Dacă unul dintre becuri se arde și întrerupe circuitul:",
+    "Două becuri identice sunt conectate în serie. Dacă unul se arde și întrerupe circuitul:",
     [
       "celălalt luminează mai puternic",
-      "celălalt continuă să lumineze la fel",
+      "celălalt continuă să lumineze",
       "celălalt se stinge",
       "intensitatea curentului crește"
     ],
     "celălalt se stinge"
   ),
 
-
   choiceQuestion(
     "concepte",
     "becuri_paralel",
-    "Două becuri identice sunt conectate în paralel într-un circuit. Dacă unul dintre becuri se arde:",
+    "Două becuri identice sunt conectate în paralel. Dacă unul se arde:",
     [
       "celălalt se stinge",
-      "celălalt continuă să lumineze la fel",
-      "intensitatea curentului scade la zero pe ambele ramuri",
+      "celălalt continuă să lumineze",
+      "curentul devine zero pe ambele ramuri",
       "ambele becuri se sting"
     ],
-    "celălalt continuă să lumineze la fel"
+    "celălalt continuă să lumineze"
   ),
-
 
   choiceQuestion(
     "concepte",
     "legea_inertiei",
-    "Legea inerției (Legea I a lui Newton) afirmă că un corp asupra căruia acționează o forță rezultantă nulă:",
+    "Legea inerției afirmă că un corp asupra căruia acționează o forță rezultantă nulă:",
     [
       "își mărește viteza continuu",
       "își schimbă masa",
@@ -766,7 +761,6 @@ const conceptQuestions = [
     ],
     "își menține starea de repaus sau de mișcare rectilinie uniformă"
   ),
-
 
   choiceQuestion(
     "concepte",
@@ -781,10 +775,9 @@ const conceptQuestions = [
     "joule (J)"
   ),
 
-
   choiceQuestion(
     "concepte",
-    "unitate_putere_electrica",
+    "unitate_putere",
     "Unitatea de măsură în S.I. pentru putere este:",
     [
       "joule (J)",
@@ -799,91 +792,75 @@ const conceptQuestions = [
 
 
 /* =========================================================
-   SUBIECTUL II.A – MIȘCARE
-
-   Fiecare variantă are propriul tabel.
+   MIȘCARE – SETURI MULTIPLE
    ========================================================= */
 
 const motionSets = [
 
   {
-    times:
-      [0, 2, 4, 6, 8],
-
-    positions:
-      [0, 5, 10, 15, 20],
-
-    displacementTime:
-      6,
-
-    displacement:
-      15,
-
-    averageTime:
-      8,
-
-    averageSpeed:
-      2.5,
-
-    extrapolationTime:
-      12,
-
-    extrapolationPosition:
-      30
+    times: [0, 2, 4, 6, 8],
+    positions: [0, 5, 10, 15, 20],
+    displacementTime: 6,
+    displacement: 15,
+    averageTime: 8,
+    averageSpeed: 2.5,
+    extrapolationTime: 12,
+    extrapolationPosition: 30
   },
 
-
   {
-    times:
-      [0, 1, 2, 3, 4],
-
-    positions:
-      [0, 4, 8, 12, 16],
-
-    displacementTime:
-      3,
-
-    displacement:
-      12,
-
-    averageTime:
-      4,
-
-    averageSpeed:
-      4,
-
-    extrapolationTime:
-      6,
-
-    extrapolationPosition:
-      24
+    times: [0, 1, 2, 3, 4],
+    positions: [0, 4, 8, 12, 16],
+    displacementTime: 3,
+    displacement: 12,
+    averageTime: 4,
+    averageSpeed: 4,
+    extrapolationTime: 6,
+    extrapolationPosition: 24
   },
 
+  {
+    times: [0, 2, 4, 6, 8],
+    positions: [0, 6, 12, 18, 24],
+    displacementTime: 4,
+    displacement: 12,
+    averageTime: 8,
+    averageSpeed: 3,
+    extrapolationTime: 10,
+    extrapolationPosition: 30
+  },
 
   {
-    times:
-      [0, 2, 4, 6, 8],
+    times: [0, 1, 2, 3, 4],
+    positions: [0, 3, 6, 9, 12],
+    displacementTime: 3,
+    displacement: 9,
+    averageTime: 4,
+    averageSpeed: 3,
+    extrapolationTime: 7,
+    extrapolationPosition: 21
+  },
 
-    positions:
-      [0, 6, 12, 18, 24],
+  {
+    times: [0, 2, 4, 6, 8],
+    positions: [0, 8, 16, 24, 32],
+    displacementTime: 6,
+    displacement: 24,
+    averageTime: 8,
+    averageSpeed: 4,
+    extrapolationTime: 10,
+    extrapolationPosition: 40
+  },
 
-    displacementTime:
-      4,
-
-    displacement:
-      12,
-
-    averageTime:
-      8,
-
-    averageSpeed:
-      3,
-
-    extrapolationTime:
-      10,
-
-    extrapolationPosition:
-      30
+  {
+    times: [0, 3, 6, 9, 12],
+    positions: [0, 6, 12, 18, 24],
+    displacementTime: 9,
+    displacement: 18,
+    averageTime: 12,
+    averageSpeed: 2,
+    extrapolationTime: 15,
+    extrapolationPosition: 30
   }
 
 ];
@@ -918,7 +895,6 @@ const motionQuestions =
         `,
 
         set.displacement,
-
         0.5
       ),
 
@@ -928,18 +904,17 @@ const motionQuestions =
         "viteza_medie",
 
         `
-          Pentru mobilul descris de tabel:
+          Analizează tabelul:
 
           ${table}
 
-          calculează viteza medie
-          în intervalul 0–${roNumber(set.averageTime)} s.
+          Calculează viteza medie în intervalul
+          0–${roNumber(set.averageTime)} s.
 
           Scrie doar numărul, în m/s.
         `,
 
         set.averageSpeed,
-
         0.1
       ),
 
@@ -949,7 +924,7 @@ const motionQuestions =
         "tip_miscare",
 
         `
-          Analizează datele din tabel:
+          Analizează tabelul:
 
           ${table}
 
@@ -972,19 +947,18 @@ const motionQuestions =
         "pozitie_extrapolata",
 
         `
-          Mișcarea descrisă de tabel continuă
-          în același mod:
+          Mișcarea descrisă în tabel continuă
+          în același mod.
 
           ${table}
 
-          Estimează poziția mobilului
-          la t = ${roNumber(set.extrapolationTime)} s.
+          Estimează poziția mobilului la
+          t = ${roNumber(set.extrapolationTime)} s.
 
           Scrie doar numărul, în metri.
         `,
 
         set.extrapolationPosition,
-
         0.5
       )
 
@@ -994,25 +968,39 @@ const motionQuestions =
 
 
 /* =========================================================
-   SUBIECTUL II.B – MĂSURAREA UNEI LUNGIMI
+   MĂSURĂRI – SETURI MULTIPLE
    ========================================================= */
 
 const measurementSets = [
 
   {
-    values:
-      [15.2, 15.4, 15.3],
-
-    average:
-      15.3
+    values: [15.2, 15.4, 15.3],
+    average: 15.3
   },
 
   {
-    values:
-      [20.1, 20.3, 20.2],
+    values: [20.1, 20.3, 20.2],
+    average: 20.2
+  },
 
-    average:
-      20.2
+  {
+    values: [12.4, 12.6, 12.5],
+    average: 12.5
+  },
+
+  {
+    values: [18.6, 18.8, 18.7],
+    average: 18.7
+  },
+
+  {
+    values: [25.3, 25.5, 25.4],
+    average: 25.4
+  },
+
+  {
+    values: [30.1, 30.3, 30.2],
+    average: 30.2
   }
 
 ];
@@ -1035,10 +1023,9 @@ const measurementQuestions = [
         "masurare",
         "valoare_medie",
 
-        `Un elev măsoară lungimea unui obiect de trei ori și obține valorile: ${valuesText}. Calculează valoarea medie a lungimii. Scrie doar numărul, în cm.`,
+        `Un elev măsoară lungimea unui obiect de trei ori și obține valorile: ${valuesText}. Calculează valoarea medie. Scrie doar numărul, în cm.`,
 
         set.average,
-
         0.05
       ),
 
@@ -1047,10 +1034,9 @@ const measurementQuestions = [
         "masurare",
         "exprimare_metri",
 
-        `Exprimă în metri valoarea medie obținută pentru măsurătorile: ${valuesText}. Scrie doar numărul, în metri.`,
+        `Exprimă în metri valoarea medie a măsurătorilor: ${valuesText}. Scrie doar numărul, în metri.`,
 
         set.average / 100,
-
         0.001
       )
 
@@ -1066,7 +1052,7 @@ const measurementQuestions = [
     [
       "reduce erorile accidentale și crește precizia rezultatului",
       "mărește lungimea reală a obiectului",
-      "schimbă unitatea de măsură folosită",
+      "schimbă unitatea de măsură",
       "nu are nicio utilitate"
     ],
     "reduce erorile accidentale și crește precizia rezultatului"
@@ -1079,9 +1065,9 @@ const measurementQuestions = [
     "O posibilă sursă de eroare la măsurarea unei lungimi cu rigla este:",
     [
       "eroarea de paralaxă la citirea gradațiilor",
-      "culoarea obiectului măsurat",
-      "greutatea obiectului măsurat",
-      "temperatura camerei"
+      "culoarea obiectului",
+      "greutatea obiectului",
+      "forma mesei"
     ],
     "eroarea de paralaxă la citirea gradațiilor"
   ),
@@ -1104,72 +1090,19 @@ const measurementQuestions = [
 
 
 /* =========================================================
-   SUBIECTUL III – MECANICĂ
-
-   Sunt păstrate cele opt seturi de valori.
-   Pentru fiecare set sunt produse patru cerințe diferite.
-
-   Regula subtype din test-core.js garantează că în aceeași
-   variantă nu apar două cerințe de același tip.
+   MECANICĂ – 8 SETURI MULTIPLE
    ========================================================= */
 
 const mechanicsSets = [
 
-  {
-    m: 2,
-    F: 10,
-    Ff: 2,
-    t: 3
-  },
-
-  {
-    m: 4,
-    F: 20,
-    Ff: 4,
-    t: 2
-  },
-
-  {
-    m: 5,
-    F: 15,
-    Ff: 5,
-    t: 4
-  },
-
-  {
-    m: 3,
-    F: 18,
-    Ff: 3,
-    t: 2
-  },
-
-  {
-    m: 6,
-    F: 42,
-    Ff: 6,
-    t: 2
-  },
-
-  {
-    m: 10,
-    F: 25,
-    Ff: 5,
-    t: 5
-  },
-
-  {
-    m: 1,
-    F: 6,
-    Ff: 1,
-    t: 4
-  },
-
-  {
-    m: 8,
-    F: 32,
-    Ff: 8,
-    t: 4
-  }
+  { m: 2, F: 10, Ff: 2, t: 3 },
+  { m: 4, F: 20, Ff: 4, t: 2 },
+  { m: 5, F: 15, Ff: 5, t: 4 },
+  { m: 3, F: 18, Ff: 3, t: 2 },
+  { m: 6, F: 42, Ff: 6, t: 2 },
+  { m: 10, F: 25, Ff: 5, t: 5 },
+  { m: 1, F: 6, Ff: 1, t: 4 },
+  { m: 8, F: 32, Ff: 8, t: 4 }
 
 ];
 
@@ -1200,7 +1133,9 @@ const mechanicsQuestions =
 
 
     const dataText =
-      `m = ${roNumber(set.m)} kg, F = ${roNumber(set.F)} N, Ff = ${roNumber(set.Ff)} N`;
+      `m = ${roNumber(set.m)} kg, ` +
+      `F = ${roNumber(set.F)} N, ` +
+      `Ff = ${roNumber(set.Ff)} N`;
 
 
     return [
@@ -1209,10 +1144,9 @@ const mechanicsQuestions =
         "mecanica",
         "forta_rezultanta",
 
-        `Un corp cu ${dataText} se află pe o suprafață orizontală. Calculează modulul forței rezultante pe direcția mișcării. Scrie doar numărul, în newtoni.`,
+        `Un corp cu ${dataText} se află pe o suprafață orizontală. Calculează modulul forței rezultante. Scrie doar numărul, în newtoni.`,
 
         resultant,
-
         0.2
       ),
 
@@ -1224,7 +1158,6 @@ const mechanicsQuestions =
         `Un corp cu ${dataText} se află pe o suprafață orizontală. Calculează accelerația corpului. Scrie doar numărul, în m/s².`,
 
         acceleration,
-
         0.2
       ),
 
@@ -1233,10 +1166,9 @@ const mechanicsQuestions =
         "mecanica",
         "viteza_dupa_timp",
 
-        `Un corp cu ${dataText} pornește din repaus. Mișcarea este rectilinie uniform accelerată. Calculează viteza corpului după ${roNumber(set.t)} s. Scrie doar numărul, în m/s.`,
+        `Un corp cu ${dataText} pornește din repaus. Calculează viteza după ${roNumber(set.t)} s. Scrie doar numărul, în m/s.`,
 
         finalSpeed,
-
         0.5
       ),
 
@@ -1245,10 +1177,9 @@ const mechanicsQuestions =
         "mecanica",
         "distanta_parcursa",
 
-        `Un corp cu ${dataText} pornește din repaus. Mișcarea este rectilinie uniform accelerată. Calculează distanța parcursă în primele ${roNumber(set.t)} s. Scrie doar numărul, în metri.`,
+        `Un corp cu ${dataText} pornește din repaus. Calculează distanța parcursă în primele ${roNumber(set.t)} s. Scrie doar numărul, în metri.`,
 
         distance,
-
         0.5
       )
 
@@ -1262,16 +1193,13 @@ mechanicsQuestions.push(
   choiceQuestion(
     "mecanica",
     "frecare_efect",
-
-    "Dacă forța de frecare Ff crește, iar forța F și masa corpului rămân neschimbate, accelerația corpului:",
-
+    "Dacă forța de frecare crește, iar forța aplicată și masa corpului rămân constante, accelerația:",
     [
       "scade",
       "crește",
       "rămâne constantă",
-      "devine zero"
+      "devine întotdeauna zero"
     ],
-
     "scade"
   )
 
@@ -1279,7 +1207,7 @@ mechanicsQuestions.push(
 
 
 /* =========================================================
-   SUBIECTUL IV – INVESTIGAȚIE EXPERIMENTALĂ
+   INVESTIGAȚIE EXPERIMENTALĂ
    ========================================================= */
 
 const investigationQuestions = [
@@ -1287,102 +1215,79 @@ const investigationQuestions = [
   choiceQuestion(
     "investigatie",
     "variabila_independenta",
-
-    "Într-o investigație a relației dintre forța deformatoare și alungirea unui resort, mărimea fizică pe care elevul o modifică în mod controlat este:",
-
+    "Într-o investigație a relației dintre forța deformatoare și alungirea unui resort, variabila independentă este:",
     [
-      "forța deformatoare (greutatea agățată)",
+      "forța deformatoare",
       "alungirea resortului",
       "culoarea resortului",
       "timpul de așteptare"
     ],
-
-    "forța deformatoare (greutatea agățată)"
+    "forța deformatoare"
   ),
-
 
   choiceQuestion(
     "investigatie",
     "variabila_dependenta",
-
-    "Într-o investigație a relației dintre forța deformatoare și alungirea unui resort, mărimea fizică pe care elevul o măsoară este:",
-
+    "În aceeași investigație, variabila dependentă este:",
     [
       "alungirea resortului",
       "forța deformatoare",
       "masa resortului",
       "temperatura camerei"
     ],
-
     "alungirea resortului"
   ),
-
 
   choiceQuestion(
     "investigatie",
     "instrument_alungire",
-
     "Instrumentul potrivit pentru măsurarea alungirii resortului este:",
-
     [
       "rigla gradată",
       "cronometrul",
       "termometrul",
       "voltmetrul"
     ],
-
     "rigla gradată"
   ),
-
 
   choiceQuestion(
     "investigatie",
     "concluzie_hooke",
-
-    "Elevul constată că dublarea forței deformatoare produce aproximativ dublarea alungirii resortului. Concluzia corectă este:",
-
+    "Dublarea forței deformatoare produce aproximativ dublarea alungirii resortului. Concluzia corectă este:",
     [
-      "alungirea resortului este direct proporțională cu forța deformatoare",
-      "alungirea resortului nu depinde de forța deformatoare",
-      "forța deformatoare scade atunci când alungirea crește",
-      "alungirea este invers proporțională cu forța"
+      "alungirea este direct proporțională cu forța deformatoare",
+      "alungirea nu depinde de forță",
+      "alungirea este invers proporțională cu forța",
+      "forța scade când alungirea crește"
     ],
-
-    "alungirea resortului este direct proporțională cu forța deformatoare"
+    "alungirea este direct proporțională cu forța deformatoare"
   ),
-
 
   choiceQuestion(
     "investigatie",
     "rigurozitate",
-
-    "O măsură prin care experimentul cu resortul poate fi realizat mai riguros este:",
-
+    "O măsură pentru creșterea rigurozității experimentului este:",
     [
-      "repetarea măsurătorilor pentru fiecare forță și calcularea unei valori medii",
-      "folosirea unui singur set de date, fără repetare",
-      "evitarea notării unităților de măsură",
-      "modificarea mai multor mărimi simultan"
+      "repetarea măsurătorilor și calcularea valorii medii",
+      "realizarea unei singure măsurători",
+      "renunțarea la unitățile de măsură",
+      "modificarea mai multor variabile simultan"
     ],
-
-    "repetarea măsurătorilor pentru fiecare forță și calcularea unei valori medii"
+    "repetarea măsurătorilor și calcularea valorii medii"
   ),
-
 
   choiceQuestion(
     "investigatie",
     "tabel_coloane",
-
-    "Într-un tabel de date pentru investigația cu resortul, coloanele ar trebui să înregistreze:",
-
+    "În tabelul experimentului cu resortul trebuie înregistrate:",
     [
-      "masa atârnată/forța deformatoare și alungirea resortului",
+      "forța deformatoare și alungirea resortului",
       "doar culoarea resortului",
-      "doar temperatura camerei",
+      "doar temperatura",
       "doar timpul experimentului"
     ],
-
-    "masa atârnată/forța deformatoare și alungirea resortului"
+    "forța deformatoare și alungirea resortului"
   )
 
 ];
@@ -1397,90 +1302,66 @@ const fluidQuestions = [
   choiceQuestion(
     "statica_fluidelor",
     "unitate_presiune",
-
     "Unitatea de măsură în S.I. pentru presiune este:",
-
     [
       "pascal (Pa)",
       "newton (N)",
       "joule (J)",
       "watt (W)"
     ],
-
     "pascal (Pa)"
   ),
-
 
   choiceQuestion(
     "statica_fluidelor",
     "principiul_pascal",
-
     "Principiul lui Pascal afirmă că:",
-
     [
-      "presiunea exercitată asupra unui fluid aflat într-un vas închis se transmite integral în toate direcțiile",
-      "presiunea scade odată cu adâncimea",
-      "fluidele nu exercită presiune asupra pereților vasului",
-      "presiunea depinde doar de suprafața vasului"
+      "presiunea exercitată asupra unui fluid într-un vas închis se transmite în toate direcțiile",
+      "presiunea scade cu adâncimea",
+      "fluidele nu exercită presiune",
+      "presiunea depinde numai de forma vasului"
     ],
-
-    "presiunea exercitată asupra unui fluid aflat într-un vas închis se transmite integral în toate direcțiile"
+    "presiunea exercitată asupra unui fluid într-un vas închis se transmite în toate direcțiile"
   ),
-
 
   choiceQuestion(
     "statica_fluidelor",
     "principiul_arhimede",
-
-    "Principiul lui Arhimede afirmă că un corp scufundat într-un fluid este împins de jos în sus cu o forță egală cu:",
-
+    "Forța arhimedică este egală cu:",
     [
-      "greutatea fluidului dislocuit de corp",
-      "greutatea corpului",
+      "greutatea fluidului dislocuit",
+      "greutatea corpului în orice situație",
       "volumul corpului",
-      "densitatea fluidului"
+      "densitatea corpului"
     ],
-
-    "greutatea fluidului dislocuit de corp"
+    "greutatea fluidului dislocuit"
   ),
-
 
   choiceQuestion(
     "statica_fluidelor",
     "conditie_plutire",
-
-    "Un corp plutește la suprafața unui fluid dacă:",
-
+    "Un corp poate pluti la suprafața unui fluid dacă:",
     [
-      "densitatea corpului este mai mică decât densitatea fluidului",
-      "densitatea corpului este mai mare decât densitatea fluidului",
-      "densitatea corpului este egală cu zero",
-      "greutatea corpului este infinită"
+      "densitatea medie a corpului este mai mică decât densitatea fluidului",
+      "densitatea corpului este întotdeauna mai mare",
+      "masa corpului este zero",
+      "volumul fluidului este zero"
     ],
-
-    "densitatea corpului este mai mică decât densitatea fluidului"
+    "densitatea medie a corpului este mai mică decât densitatea fluidului"
   )
 
 ];
 
 
 [
-  {
-    h: 2,
-    tolerance: 500
-  },
-
-  {
-    h: 0.5,
-    tolerance: 200
-  },
-
-  {
-    h: 1.2,
-    tolerance: 300
-  }
-
-].forEach(function (set) {
+  0.5,
+  0.8,
+  1.2,
+  1.5,
+  2,
+  2.5
+].forEach(function (h) {
 
   fluidQuestions.push(
 
@@ -1488,13 +1369,11 @@ const fluidQuestions = [
       "statica_fluidelor",
       "presiune_hidrostatica",
 
-      `Calculează presiunea hidrostatică la adâncimea h = ${roNumber(set.h)} m în apă. Se cunosc ρ = 1000 kg/m³ și g = 10 N/kg. Scrie doar numărul, în pascali.`,
+      `Calculează presiunea hidrostatică la adâncimea h = ${roNumber(h)} m în apă. Se cunosc ρ = 1000 kg/m³ și g = 10 N/kg. Scrie doar numărul, în Pa.`,
 
-      1000 *
-      10 *
-      set.h,
+      1000 * 10 * h,
 
-      set.tolerance
+      100
     )
 
   );
@@ -1503,9 +1382,12 @@ const fluidQuestions = [
 
 
 [
-  0.002,
+  0.0005,
   0.001,
-  0.0015
+  0.0015,
+  0.002,
+  0.0025,
+  0.003
 ].forEach(function (volume) {
 
   fluidQuestions.push(
@@ -1514,13 +1396,11 @@ const fluidQuestions = [
       "statica_fluidelor",
       "forta_arhimedica",
 
-      `Un corp cu volumul V = ${roNumber(volume)} m³ este scufundat complet în apă. Se cunosc ρ = 1000 kg/m³ și g = 10 N/kg. Calculează forța arhimedică. Scrie doar numărul, în newtoni.`,
+      `Un corp cu volumul V = ${roNumber(volume)} m³ este scufundat complet în apă. Se cunosc ρ = 1000 kg/m³ și g = 10 N/kg. Calculează forța arhimedică. Scrie doar numărul, în N.`,
 
-      1000 *
-      10 *
-      volume,
+      1000 * 10 * volume,
 
-      1
+      0.5
     )
 
   );
@@ -1537,67 +1417,52 @@ const workQuestions = [
   choiceQuestion(
     "lucru_mecanic",
     "unitate_lucru_mecanic",
-
     "Unitatea de măsură în S.I. pentru lucrul mecanic este:",
-
     [
       "joule (J)",
       "newton (N)",
       "watt (W)",
       "pascal (Pa)"
     ],
-
     "joule (J)"
   ),
-
 
   choiceQuestion(
     "lucru_mecanic",
     "unghi_maxim",
-
-    "Lucrul mecanic efectuat de o forță este maxim atunci când:",
-
+    "Lucrul mecanic al unei forțe este maxim atunci când:",
     [
       "forța este paralelă cu deplasarea",
       "forța este perpendiculară pe deplasare",
       "deplasarea este nulă",
       "forța este nulă"
     ],
-
     "forța este paralelă cu deplasarea"
   ),
-
 
   choiceQuestion(
     "lucru_mecanic",
     "unghi_nul",
-
-    "Lucrul mecanic efectuat de o forță este nul atunci când:",
-
+    "Lucrul mecanic al unei forțe este nul atunci când:",
     [
       "forța este perpendiculară pe deplasare",
       "forța este paralelă cu deplasarea",
       "forța și deplasarea au același sens",
-      "forța este maximă"
+      "forța are valoare maximă"
     ],
-
     "forța este perpendiculară pe deplasare"
   ),
-
 
   choiceQuestion(
     "lucru_mecanic",
     "unitate_putere_mecanica",
-
     "Unitatea de măsură în S.I. pentru puterea mecanică este:",
-
     [
       "watt (W)",
       "joule (J)",
       "newton (N)",
       "pascal (Pa)"
     ],
-
     "watt (W)"
   )
 
@@ -1607,14 +1472,14 @@ const workQuestions = [
 [
   [20, 5],
   [15, 4],
-  [12, 7]
+  [12, 7],
+  [25, 4],
+  [18, 5],
+  [30, 3]
 ].forEach(function (set) {
 
-  const F =
-    set[0];
-
-  const d =
-    set[1];
+  const F = set[0];
+  const d = set[1];
 
 
   workQuestions.push(
@@ -1623,11 +1488,11 @@ const workQuestions = [
       "lucru_mecanic",
       "lucru_mecanic_calcul",
 
-      `O forță F = ${F} N deplasează un corp pe distanța d = ${d} m, în lungul direcției forței. Calculează lucrul mecanic efectuat. Scrie doar numărul, în jouli.`,
+      `O forță F = ${F} N deplasează un corp pe distanța d = ${d} m în direcția forței. Calculează lucrul mecanic. Scrie doar numărul, în J.`,
 
       F * d,
 
-      5
+      2
     )
 
   );
@@ -1638,14 +1503,14 @@ const workQuestions = [
 [
   [100, 10],
   [60, 5],
-  [90, 6]
+  [90, 6],
+  [120, 8],
+  [150, 10],
+  [80, 4]
 ].forEach(function (set) {
 
-  const work =
-    set[0];
-
-  const time =
-    set[1];
+  const work = set[0];
+  const time = set[1];
 
 
   workQuestions.push(
@@ -1654,7 +1519,7 @@ const workQuestions = [
       "lucru_mecanic",
       "putere_calcul",
 
-      `Se efectuează un lucru mecanic L = ${work} J în timpul t = ${time} s. Calculează puterea mecanică dezvoltată. Scrie doar numărul, în wați.`,
+      `Se efectuează un lucru mecanic L = ${work} J în timpul t = ${time} s. Calculează puterea mecanică. Scrie doar numărul, în W.`,
 
       work / time,
 
@@ -1675,85 +1540,66 @@ const simpleMachineQuestions = [
   choiceQuestion(
     "mecanisme_simple",
     "conditie_echilibru_parghie",
-
     "Condiția de echilibru a unei pârghii este:",
-
     [
-      "F1·b1 = F2·b2 (produsul dintre forță și brațul ei este același pentru ambele forțe)",
-      "F1 = F2",
-      "b1 = b2",
+      "F1·b1 = F2·b2",
+      "F1 = F2 în orice situație",
+      "b1 = b2 în orice situație",
       "F1 + b1 = F2 + b2"
     ],
-
-    "F1·b1 = F2·b2 (produsul dintre forță și brațul ei este același pentru ambele forțe)"
+    "F1·b1 = F2·b2"
   ),
-
 
   choiceQuestion(
     "mecanisme_simple",
     "parghie_gen1",
-
     "La o pârghie de gen I, punctul de sprijin se află:",
-
     [
       "între cele două forțe",
-      "la un capăt, cu forța rezistentă la celălalt capăt",
+      "la un capăt",
       "în afara pârghiei",
-      "doar la mijlocul brațului forței active"
+      "obligatoriu la mijloc"
     ],
-
     "între cele două forțe"
   ),
-
 
   choiceQuestion(
     "mecanisme_simple",
     "plan_inclinat",
-
-    "Planul înclinat, folosit pentru a ridica un corp la o anumită înălțime, are ca avantaj faptul că:",
-
+    "Avantajul planului înclinat este că:",
     [
-      "reduce forța necesară, dar mărește distanța parcursă",
-      "reduce atât forța cât și distanța parcursă",
+      "reduce forța necesară, dar mărește distanța",
+      "reduce și forța și distanța",
       "mărește forța necesară",
-      "nu modifică nici forța, nici distanța"
+      "nu modifică nimic"
     ],
-
-    "reduce forța necesară, dar mărește distanța parcursă"
+    "reduce forța necesară, dar mărește distanța"
   ),
-
 
   choiceQuestion(
     "mecanisme_simple",
     "scripete_fix",
-
-    "Un scripete fix folosit pentru ridicarea unei greutăți:",
-
+    "Un scripete fix:",
     [
-      "schimbă direcția forței, fără să reducă mărimea ei",
-      "reduce forța necesară la jumătate",
-      "mărește forța necesară",
-      "elimină nevoia de forță"
+      "schimbă direcția forței",
+      "înjumătățește întotdeauna forța",
+      "dublează forța",
+      "elimină forța"
     ],
-
-    "schimbă direcția forței, fără să reducă mărimea ei"
+    "schimbă direcția forței"
   ),
-
 
   choiceQuestion(
     "mecanisme_simple",
     "scripete_mobil",
-
-    "Un scripete mobil folosit pentru ridicarea unei greutăți:",
-
+    "În condiții ideale, un scripete mobil:",
     [
-      "reduce la jumătate forța necesară pentru ridicarea greutății",
+      "reduce la jumătate forța necesară",
       "dublează forța necesară",
-      "schimbă doar direcția forței, fără alt efect",
-      "nu are niciun efect asupra forței"
+      "nu influențează forța",
+      "elimină greutatea corpului"
     ],
-
-    "reduce la jumătate forța necesară pentru ridicarea greutății"
+    "reduce la jumătate forța necesară"
   )
 
 ];
@@ -1763,17 +1609,14 @@ const simpleMachineQuestions = [
   [20, 1, 0.5],
   [30, 0.6, 0.3],
   [15, 0.8, 0.4],
-  [24, 0.5, 0.2]
+  [24, 0.5, 0.2],
+  [18, 1, 0.3],
+  [40, 0.4, 0.2]
 ].forEach(function (set) {
 
-  const F2 =
-    set[0];
-
-  const b2 =
-    set[1];
-
-  const b1 =
-    set[2];
+  const F2 = set[0];
+  const b2 = set[1];
+  const b1 = set[2];
 
 
   simpleMachineQuestions.push(
@@ -1782,13 +1625,11 @@ const simpleMachineQuestions = [
       "mecanisme_simple",
       "calcul_parghie",
 
-      `La o pârghie aflată în echilibru, forța F2 = ${roNumber(F2)} N are brațul b2 = ${roNumber(b2)} m, iar forța F1 are brațul b1 = ${roNumber(b1)} m. Calculează F1. Scrie doar numărul, în newtoni.`,
+      `La o pârghie aflată în echilibru, F2 = ${roNumber(F2)} N, b2 = ${roNumber(b2)} m și b1 = ${roNumber(b1)} m. Calculează F1. Scrie doar numărul, în N.`,
 
-      F2 *
-      b2 /
-      b1,
+      F2 * b2 / b1,
 
-      1
+      0.5
     )
 
   );
@@ -1805,68 +1646,53 @@ const equilibriumQuestions = [
   choiceQuestion(
     "echilibrul_corpurilor",
     "conditie_echilibru_corp",
-
-    "Condiția de echilibru a unui corp rigid, care nu se rotește și nu se translatează, este:",
-
+    "Pentru echilibrul mecanic al unui corp rigid trebuie ca:",
     [
-      "suma forțelor care acționează asupra lui este nulă și suma momentelor forțelor este nulă",
-      "asupra lui acționează o singură forță",
-      "masa lui este nulă",
-      "viteza lui este constantă și diferită de zero"
+      "rezultanta forțelor și suma momentelor să fie nule",
+      "asupra corpului să acționeze o singură forță",
+      "masa corpului să fie zero",
+      "viteza să fie mare"
     ],
-
-    "suma forțelor care acționează asupra lui este nulă și suma momentelor forțelor este nulă"
+    "rezultanta forțelor și suma momentelor să fie nule"
   ),
-
 
   choiceQuestion(
     "echilibrul_corpurilor",
     "centru_greutate",
-
     "Centrul de greutate al unui corp este:",
-
     [
-      "punctul de aplicație al rezultantei greutăților tuturor particulelor corpului",
-      "punctul cel mai înalt al corpului",
+      "punctul de aplicație al rezultantei greutăților particulelor corpului",
+      "punctul cel mai înalt",
       "punctul de contact cu solul",
-      "un punct aflat întotdeauna în afara corpului"
+      "un punct aflat întotdeauna în exterior"
     ],
-
-    "punctul de aplicație al rezultantei greutăților tuturor particulelor corpului"
+    "punctul de aplicație al rezultantei greutăților particulelor corpului"
   ),
-
 
   choiceQuestion(
     "echilibrul_corpurilor",
     "stabilitate_echilibru",
-
-    "Un corp aflat în echilibru este cu atât mai stabil cu cât:",
-
+    "Stabilitatea unui corp crește atunci când:",
     [
       "centrul de greutate este mai jos și baza de susținere mai mare",
-      "centrul de greutate este mai sus și baza de susținere mai mică",
-      "masa corpului este mai mică",
-      "viteza corpului este mai mare"
+      "centrul de greutate este mai sus",
+      "baza de susținere este mai mică",
+      "masa corpului devine zero"
     ],
-
     "centrul de greutate este mai jos și baza de susținere mai mare"
   ),
-
 
   choiceQuestion(
     "echilibrul_corpurilor",
     "formula_moment",
-
-    "Momentul unei forțe față de un punct sau o axă se calculează cu formula:",
-
+    "Momentul unei forțe față de o axă se calculează cu relația:",
     [
-      "M = F·b (produsul dintre forță și brațul forței)",
+      "M = F·b",
       "M = F/b",
       "M = F+b",
       "M = F−b"
     ],
-
-    "M = F·b (produsul dintre forță și brațul forței)"
+    "M = F·b"
   )
 
 ];
@@ -1876,14 +1702,13 @@ const equilibriumQuestions = [
   [10, 0.3],
   [8, 0.5],
   [6, 0.4],
-  [14, 0.2]
+  [14, 0.2],
+  [20, 0.25],
+  [12, 0.5]
 ].forEach(function (set) {
 
-  const F =
-    set[0];
-
-  const arm =
-    set[1];
+  const F = set[0];
+  const arm = set[1];
 
 
   equilibriumQuestions.push(
@@ -1892,11 +1717,11 @@ const equilibriumQuestions = [
       "echilibrul_corpurilor",
       "calcul_moment",
 
-      `O forță F = ${roNumber(F)} N acționează cu brațul b = ${roNumber(arm)} m față de o axă de rotație. Calculează momentul forței. Scrie doar numărul, în N·m.`,
+      `O forță F = ${roNumber(F)} N are brațul b = ${roNumber(arm)} m. Calculează momentul forței. Scrie doar numărul, în N·m.`,
 
       F * arm,
 
-      0.2
+      0.1
     )
 
   );
@@ -1913,93 +1738,77 @@ const gravityQuestions = [
   choiceQuestion(
     "gravitatie",
     "legea_gravitatiei",
-
-    "Legea atracției universale afirmă că forța de atracție dintre două corpuri este:",
-
+    "Forța de atracție gravitațională dintre două corpuri este:",
     [
-      "direct proporțională cu produsul maselor și invers proporțională cu pătratul distanței dintre ele",
-      "direct proporțională cu distanța dintre ele",
-      "invers proporțională cu produsul maselor",
-      "independentă de masele corpurilor"
+      "direct proporțională cu produsul maselor și invers proporțională cu pătratul distanței",
+      "direct proporțională cu distanța",
+      "invers proporțională cu masele",
+      "independentă de mase"
     ],
-
-    "direct proporțională cu produsul maselor și invers proporțională cu pătratul distanței dintre ele"
+    "direct proporțională cu produsul maselor și invers proporțională cu pătratul distanței"
   ),
-
 
   choiceQuestion(
     "gravitatie",
     "greutate_definitie",
-
-    "Greutatea unui corp este:",
-
+    "Greutatea unui corp reprezintă:",
     [
-      "forța cu care Pământul sau alt astru atrage corpul",
-      "masa corpului, exprimată în newtoni",
-      "o mărime independentă de masa corpului",
-      "aceeași în orice punct din univers"
+      "forța gravitațională exercitată asupra corpului",
+      "masa corpului",
+      "volumul corpului",
+      "densitatea corpului"
     ],
-
-    "forța cu care Pământul sau alt astru atrage corpul"
+    "forța gravitațională exercitată asupra corpului"
   ),
-
 
   choiceQuestion(
     "gravitatie",
     "dependenta_distanta",
-
-    "Dacă distanța dintre două corpuri se dublează, iar masele lor rămân neschimbate, forța de atracție gravitațională dintre ele:",
-
+    "Dacă distanța dintre două corpuri se dublează, forța gravitațională:",
     [
       "se reduce de 4 ori",
       "se dublează",
-      "rămâne aceeași",
+      "rămâne constantă",
       "se reduce de 2 ori"
     ],
-
     "se reduce de 4 ori"
   ),
-
 
   choiceQuestion(
     "gravitatie",
     "dependenta_masa",
-
-    "Dacă masa unuia dintre cele două corpuri se dublează, iar distanța dintre ele rămâne aceeași, forța de atracție gravitațională dintre ele:",
-
+    "Dacă masa unuia dintre corpuri se dublează, iar restul condițiilor rămân aceleași, forța gravitațională:",
     [
       "se dublează",
       "se înjumătățește",
       "rămâne aceeași",
       "se reduce de 4 ori"
     ],
-
     "se dublează"
   ),
-
 
   choiceQuestion(
     "gravitatie",
     "g_independent_masa",
-
-    "Accelerația gravitațională g la care cade liber un corp, în absența frecării cu aerul:",
-
+    "În absența rezistenței aerului, accelerația căderii libere:",
     [
-      "nu depinde de masa corpului care cade",
-      "este mai mare pentru corpurile cu masă mai mare",
-      "este proporțională cu masa corpului",
-      "depinde de forma corpului, nu de masă"
+      "nu depinde de masa corpului",
+      "crește cu masa corpului",
+      "scade cu masa corpului",
+      "este zero"
     ],
-
-    "nu depinde de masa corpului care cade"
+    "nu depinde de masa corpului"
   )
 
 ];
 
 
 [
+  2,
+  4,
   5,
   8,
+  10,
   12
 ].forEach(function (mass) {
 
@@ -2009,150 +1818,9 @@ const gravityQuestions = [
       "gravitatie",
       "calcul_greutate",
 
-      `Un corp cu masa m = ${mass} kg se află la suprafața Pământului, unde g = 10 m/s². Calculează greutatea corpului. Scrie doar numărul, în newtoni.`,
+      `Un corp cu masa m = ${mass} kg se află la suprafața Pământului, unde g = 10 N/kg. Calculează greutatea. Scrie doar numărul, în N.`,
 
       mass * 10,
-
-      1
-    )
-
-  );
-
-});
-
-
-/* =========================================================
-   IMPULS ȘI ENERGIE MECANICĂ
-   ========================================================= */
-
-const impulseEnergyQuestions = [
-
-  choiceQuestion(
-    "impuls_energie",
-    "formula_impuls",
-
-    "Impulsul mecanic al unui corp se calculează cu formula:",
-
-    [
-      "p = m·v (produsul dintre masă și viteză)",
-      "p = m/v",
-      "p = m + v",
-      "p = v/m"
-    ],
-
-    "p = m·v (produsul dintre masă și viteză)"
-  ),
-
-
-  choiceQuestion(
-    "impuls_energie",
-    "unitate_impuls",
-
-    "Unitatea de măsură în S.I. pentru impulsul mecanic este:",
-
-    [
-      "kilogram-metru pe secundă (kg·m/s)",
-      "newton-metru (N·m)",
-      "joule (J)",
-      "watt (W)"
-    ],
-
-    "kilogram-metru pe secundă (kg·m/s)"
-  ),
-
-
-  choiceQuestion(
-    "impuls_energie",
-    "conservare_impuls",
-
-    "Legea conservării impulsului mecanic afirmă că, într-un sistem izolat:",
-
-    [
-      "impulsul total al sistemului rămâne constant în timp",
-      "impulsul total al sistemului crește mereu",
-      "impulsul total al sistemului scade mereu",
-      "impulsul fiecărui corp rămâne constant indiferent de ciocniri"
-    ],
-
-    "impulsul total al sistemului rămâne constant în timp"
-  ),
-
-
-  choiceQuestion(
-    "impuls_energie",
-    "energie_mecanica_definitie",
-
-    "Energia mecanică a unui corp este:",
-
-    [
-      "suma dintre energia cinetică și energia potențială ale corpului",
-      "produsul dintre energia cinetică și energia potențială",
-      "diferența dintre masă și viteză",
-      "aceeași cu lucrul mecanic efectuat de o singură forță"
-    ],
-
-    "suma dintre energia cinetică și energia potențială ale corpului"
-  ),
-
-
-  choiceQuestion(
-    "impuls_energie",
-    "conditie_conservare_energie",
-
-    "Legea conservării energiei mecanice se aplică riguros atunci când:",
-
-    [
-      "asupra corpului nu acționează forțe de frecare sau alte forțe disipative",
-      "corpul se mișcă cu viteză constantă",
-      "masa corpului este mare",
-      "corpul se află la înălțime mare"
-    ],
-
-    "asupra corpului nu acționează forțe de frecare sau alte forțe disipative"
-  ),
-
-
-  choiceQuestion(
-    "impuls_energie",
-    "randament_definitie",
-
-    "Randamentul unui sistem sau al unei mașini simple este:",
-
-    [
-      "raportul dintre lucrul mecanic util și lucrul mecanic total, exprimat de obicei procentual",
-      "diferența dintre lucrul mecanic util și cel total",
-      "suma dintre lucrul mecanic util și cel total",
-      "produsul dintre forța aplicată și distanța parcursă"
-    ],
-
-    "raportul dintre lucrul mecanic util și lucrul mecanic total, exprimat de obicei procentual"
-  )
-
-];
-
-
-[
-  [2, 3],
-  [4, 5],
-  [0.5, 10]
-].forEach(function (set) {
-
-  const mass =
-    set[0];
-
-  const speed =
-    set[1];
-
-
-  impulseEnergyQuestions.push(
-
-    numericQuestion(
-      "impuls_energie",
-      "calcul_impuls",
-
-      `Un corp cu masa m = ${roNumber(mass)} kg se deplasează cu viteza v = ${roNumber(speed)} m/s. Calculează impulsul mecanic. Scrie doar numărul, în kg·m/s.`,
-
-      mass * speed,
 
       0.5
     )
@@ -2162,16 +1830,135 @@ const impulseEnergyQuestions = [
 });
 
 
+/* =========================================================
+   IMPULS ȘI ENERGIE
+   ========================================================= */
+
+const impulseEnergyQuestions = [
+
+  choiceQuestion(
+    "impuls_energie",
+    "formula_impuls",
+    "Impulsul mecanic al unui corp se calculează cu relația:",
+    [
+      "p = m·v",
+      "p = m/v",
+      "p = m+v",
+      "p = v/m"
+    ],
+    "p = m·v"
+  ),
+
+  choiceQuestion(
+    "impuls_energie",
+    "unitate_impuls",
+    "Unitatea de măsură în S.I. pentru impuls este:",
+    [
+      "kg·m/s",
+      "J",
+      "W",
+      "Pa"
+    ],
+    "kg·m/s"
+  ),
+
+  choiceQuestion(
+    "impuls_energie",
+    "conservare_impuls",
+    "Într-un sistem izolat:",
+    [
+      "impulsul total se conservă",
+      "impulsul total crește mereu",
+      "impulsul total scade mereu",
+      "impulsul este întotdeauna zero"
+    ],
+    "impulsul total se conservă"
+  ),
+
+  choiceQuestion(
+    "impuls_energie",
+    "energie_mecanica_definitie",
+    "Energia mecanică este:",
+    [
+      "suma dintre energia cinetică și energia potențială",
+      "produsul dintre cele două energii",
+      "diferența dintre masă și viteză",
+      "egală întotdeauna cu energia cinetică"
+    ],
+    "suma dintre energia cinetică și energia potențială"
+  ),
+
+  choiceQuestion(
+    "impuls_energie",
+    "conditie_conservare_energie",
+    "Energia mecanică se conservă riguros atunci când:",
+    [
+      "nu acționează forțe disipative",
+      "viteza este mereu constantă",
+      "masa corpului este foarte mare",
+      "corpul este în repaus"
+    ],
+    "nu acționează forțe disipative"
+  ),
+
+  choiceQuestion(
+    "impuls_energie",
+    "randament_definitie",
+    "Randamentul unei mașini reprezintă:",
+    [
+      "raportul dintre lucrul mecanic util și lucrul mecanic consumat",
+      "suma lucrurilor mecanice",
+      "diferența dintre forțe",
+      "produsul dintre masă și viteză"
+    ],
+    "raportul dintre lucrul mecanic util și lucrul mecanic consumat"
+  )
+
+];
+
+
 [
-  [1, 5],
-  [2, 3]
+  [2, 3],
+  [4, 5],
+  [0.5, 10],
+  [3, 4],
+  [5, 2],
+  [1.5, 6]
 ].forEach(function (set) {
 
-  const mass =
-    set[0];
+  const mass = set[0];
+  const speed = set[1];
 
-  const height =
-    set[1];
+
+  impulseEnergyQuestions.push(
+
+    numericQuestion(
+      "impuls_energie",
+      "calcul_impuls",
+
+      `Un corp cu masa m = ${roNumber(mass)} kg are viteza v = ${roNumber(speed)} m/s. Calculează impulsul. Scrie doar numărul, în kg·m/s.`,
+
+      mass * speed,
+
+      0.2
+    )
+
+  );
+
+});
+
+
+[
+  [1, 5],
+  [2, 3],
+  [3, 2],
+  [4, 2.5],
+  [5, 2],
+  [2, 6]
+].forEach(function (set) {
+
+  const mass = set[0];
+  const height = set[1];
 
 
   impulseEnergyQuestions.push(
@@ -2180,13 +1967,11 @@ const impulseEnergyQuestions = [
       "impuls_energie",
       "calcul_energie_potentiala",
 
-      `Un corp cu masa m = ${roNumber(mass)} kg se află la înălțimea h = ${roNumber(height)} m față de sol. Se consideră g = 10 m/s². Calculează energia potențială gravitațională. Scrie doar numărul, în jouli.`,
+      `Un corp cu masa m = ${roNumber(mass)} kg se află la înălțimea h = ${roNumber(height)} m. Se consideră g = 10 N/kg. Calculează energia potențială gravitațională. Scrie doar numărul, în J.`,
 
-      mass *
-      10 *
-      height,
+      mass * 10 * height,
 
-      2
+      1
     )
 
   );
@@ -2195,160 +1980,116 @@ const impulseEnergyQuestions = [
 
 
 /* =========================================================
-   BANCA FINALĂ DE ÎNTREBĂRI
+   BANCA FINALĂ
    ========================================================= */
 
 const questionBank = [
 
   ...conceptQuestions,
-
   ...motionQuestions,
-
   ...measurementQuestions,
-
   ...mechanicsQuestions,
-
   ...investigationQuestions,
-
   ...fluidQuestions,
-
   ...workQuestions,
-
   ...simpleMachineQuestions,
-
   ...equilibriumQuestions,
-
   ...gravityQuestions,
-
   ...impulseEnergyQuestions
 
 ];
 
 
 /* =========================================================
-   DISTRIBUȚIA EXACTĂ A CELOR 20 DE ITEMI
+   DISTRIBUȚIA CELOR 30 DE ITEMI
 
-   Total:
-   2 + 2 + 2 + 3 + 2 + 1 + 2 + 1 + 1 + 2 + 2 = 20
+   4 + 3 + 2 + 4 + 2 + 3 + 3 + 2 + 2 + 2 + 3 = 30
 
-   test-core.js:
-   - amestecă pool-ul fiecărei categorii;
-   - preferă subtype-uri distincte;
-   - nu selectează de două ori același subtype;
-   - amestecă apoi ordinea finală a celor 20 de itemi;
-   - amestecă variantele de răspuns.
+   Pentru fiecare categorie:
+   - pool-ul este amestecat;
+   - se aleg cu prioritate subtype-uri diferite;
+   - pentru problemele numerice, setul de valori
+     este selectat aleator dintre variantele disponibile;
+   - la final se amestecă ordinea tuturor celor 30 de itemi.
    ========================================================= */
 
 const QUESTION_DISTRIBUTION = [
 
   {
-    category:
-      "concepte",
-
-    count:
-      2
+    category: "concepte",
+    count: 4
   },
 
   {
-    category:
-      "miscare",
-
-    count:
-      2
+    category: "miscare",
+    count: 3
   },
 
   {
-    category:
-      "masurare",
-
-    count:
-      2
+    category: "masurare",
+    count: 2
   },
 
   {
-    category:
-      "mecanica",
-
-    count:
-      3
+    category: "mecanica",
+    count: 4
   },
 
   {
-    category:
-      "investigatie",
-
-    count:
-      2
+    category: "investigatie",
+    count: 2
   },
 
   {
-    category:
-      "statica_fluidelor",
-
-    count:
-      1
+    category: "statica_fluidelor",
+    count: 3
   },
 
   {
-    category:
-      "lucru_mecanic",
-
-    count:
-      2
+    category: "lucru_mecanic",
+    count: 3
   },
 
   {
-    category:
-      "mecanisme_simple",
-
-    count:
-      1
+    category: "mecanisme_simple",
+    count: 2
   },
 
   {
-    category:
-      "echilibrul_corpurilor",
-
-    count:
-      1
+    category: "echilibrul_corpurilor",
+    count: 2
   },
 
   {
-    category:
-      "gravitatie",
-
-    count:
-      2
+    category: "gravitatie",
+    count: 2
   },
 
   {
-    category:
-      "impuls_energie",
-
-    count:
-      2
+    category: "impuls_energie",
+    count: 3
   }
 
 ];
 
 
 /* =========================================================
-   CONFIGURAREA MOTORULUI TESTULUI
+   CONFIGURAREA TESTULUI
    ========================================================= */
 
 window.PHYSICS_TEST_CONFIG = {
 
   testId:
-    "evaluare-initiala-clasa-10-3h",
+    "evaluare-initiala-clasa-10-3h-30-itemi-v1",
 
   testTitle:
-    "Evaluare inițială – Fizică – Clasa a X-a (3 ore/săptămână)",
+    "Evaluare inițială – Fizică – Clasa a X-a (3 ore/săptămână) – 30 itemi",
 
   variantPrefix:
-    "FIZ10I",
+    "FIZ10I30",
 
   questionCount:
-    20,
+    30,
 
   officialPoints:
     1,
@@ -2369,10 +2110,7 @@ window.PHYSICS_TEST_CONFIG = {
 
 
 /* =========================================================
-   CONFIGURAREA GOOGLE SHEETS
-
-   Nu există retry-uri POST automate.
-   sheets.js trimite o dată și verifică apoi salvarea.
+   GOOGLE SHEETS
    ========================================================= */
 
 window.PHYSICS_SHEETS_CONFIG = {
@@ -2381,7 +2119,7 @@ window.PHYSICS_SHEETS_CONFIG = {
     "https://script.google.com/macros/s/AKfycbwdCodYgGRailQJFG4QeOf0L2A1myjWkCdXoMlIDn4bweTQr_pCgQ4UPvtSjXwG5syO2g/exec",
 
   testId:
-    "evaluare-initiala-clasa-10-3h",
+    "evaluare-initiala-clasa-10-3h-30-itemi-v1",
 
   checkTimeoutMs:
     8000,
@@ -2408,26 +2146,15 @@ window.PHYSICS_SHEETS_CONFIG = {
 
 <!-- =========================================================
      MODULE COMUNE
-
-     Ordinea este importantă:
-     securitate → sheets → core → PDF
      ========================================================= -->
 
-<script
-  src="../../assets/js/test-security.js">
-</script>
+<script src="../../assets/js/test-security.js"></script>
 
-<script
-  src="../../assets/js/sheets.js">
-</script>
+<script src="../../assets/js/sheets.js"></script>
 
-<script
-  src="../../assets/js/test-core.js">
-</script>
+<script src="../../assets/js/test-core.js"></script>
 
-<script
-  src="../../assets/js/pdf-report.js">
-</script>
+<script src="../../assets/js/pdf-report.js"></script>
 
 
 </body>
