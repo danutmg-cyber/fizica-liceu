@@ -1,7 +1,15 @@
 /**
  * measurement-tools.js
- * Instrumente virtuale pentru experimentele de fizică
+ * Instrumente virtuale statice pentru experimentele de fizică
  * Fizică – clasa a IX-a
+ *
+ * Principii:
+ * - fără animații;
+ * - fără requestAnimationFrame;
+ * - elevul citește instrumentul;
+ * - valoarea măsurată nu este completată automat;
+ * - elevul notează în caiet și introduce manual valoarea;
+ * - verificarea acceptă toleranța determinată de rezoluția instrumentului.
  *
  * Prof. Dănuț Andronie
  * e-Mail: danutmg@gmail.com
@@ -20,7 +28,6 @@
   }
 
   const Tools = window.ExperimentTools;
-
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   /* =========================================================
@@ -29,16 +36,23 @@
 
   function svgElement(name, attributes = {}) {
     const element =
-      document.createElementNS(SVG_NS, name);
+      document.createElementNS(
+        SVG_NS,
+        name
+      );
 
-    Object.entries(attributes).forEach(
-      ([key, value]) => {
-        element.setAttribute(
-          key,
-          String(value)
-        );
-      }
-    );
+    Object.entries(attributes)
+      .forEach(([key, value]) => {
+        if (
+          value !== undefined &&
+          value !== null
+        ) {
+          element.setAttribute(
+            key,
+            String(value)
+          );
+        }
+      });
 
     return element;
   }
@@ -54,7 +68,9 @@
   function resolveContainer(target) {
     if (typeof target === "string") {
       const element =
-        document.querySelector(target);
+        document.querySelector(
+          target
+        );
 
       if (!element) {
         throw new Error(
@@ -65,7 +81,10 @@
       return element;
     }
 
-    if (target instanceof HTMLElement) {
+    if (
+      target instanceof
+      HTMLElement
+    ) {
       return target;
     }
 
@@ -74,7 +93,11 @@
     );
   }
 
-  function clamp(value, min, max) {
+  function clamp(
+    value,
+    min,
+    max
+  ) {
     return Tools.numbers.clamp(
       value,
       min,
@@ -89,25 +112,87 @@
     outputMin,
     outputMax
   ) {
+    if (
+      inputMax === inputMin
+    ) {
+      return outputMin;
+    }
+
     const ratio =
-      (value - inputMin) /
-      (inputMax - inputMin);
+      (
+        value -
+        inputMin
+      ) /
+      (
+        inputMax -
+        inputMin
+      );
 
     return (
       outputMin +
       ratio *
-      (outputMax - outputMin)
+      (
+        outputMax -
+        outputMin
+      )
     );
   }
 
-  function formatScaleValue(
+  function nearlyInteger(
     value,
-    decimals = 0
+    tolerance = 1e-6
   ) {
-    return Tools.numbers.formatNumber(
-      value,
-      decimals
+    return (
+      Math.abs(
+        value -
+        Math.round(value)
+      ) <
+      tolerance
     );
+  }
+
+  function decimalsFromResolution(
+    resolution
+  ) {
+    if (
+      !Number.isFinite(
+        resolution
+      ) ||
+      resolution <= 0
+    ) {
+      return 2;
+    }
+
+    const text =
+      resolution.toString();
+
+    if (
+      text.includes("e-")
+    ) {
+      return Number(
+        text.split("e-")[1]
+      );
+    }
+
+    const point =
+      text.indexOf(".");
+
+    return point < 0
+      ? 0
+      : text.length -
+        point -
+        1;
+  }
+
+  function formatNumber(
+    value,
+    decimals = 2
+  ) {
+    return Tools.numbers
+      .formatNumber(
+        value,
+        decimals
+      );
   }
 
   function addTitle(
@@ -115,101 +200,181 @@
     text
   ) {
     if (!text) {
-      return;
+      return null;
     }
 
     const title =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     title.className =
       "measurement-tool-title";
 
-    title.textContent = text;
+    title.textContent =
+      text;
 
-    container.appendChild(title);
+    container.appendChild(
+      title
+    );
+
+    return title;
+  }
+
+  function createToolWrapper(
+    container,
+    className
+  ) {
+    const wrapper =
+      document.createElement(
+        "div"
+      );
+
+    wrapper.className =
+      `measurement-tool ${className}`;
+
+    container.appendChild(
+      wrapper
+    );
+
+    return wrapper;
   }
 
   /* =========================================================
      RIGLĂ
      ========================================================= */
 
-  function createRuler(target, options = {}) {
+  function createRuler(
+    target,
+    options = {}
+  ) {
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
       min: 0,
       max: 0.30,
+
       majorStep: 0.01,
       minorStep: 0.001,
+
+      resolution: 0.001,
+
       unit: "m",
+
       orientation: "vertical",
+
       value: 0,
-      width: 110,
-      height: 420,
+
       showLabels: true,
-      decimals: 2,
+
+      decimals: null,
+
       title: "Riglă",
+
+      markerColor: "#dc2626",
+
       ...options
     };
+
+    if (
+      config.decimals ===
+      null
+    ) {
+      config.decimals =
+        decimalsFromResolution(
+          config.majorStep
+        );
+    }
 
     addTitle(
       container,
       config.title
     );
 
+    const vertical =
+      config.orientation ===
+      "vertical";
+
+    const width =
+      vertical ? 130 : 400;
+
+    const height =
+      vertical ? 430 : 125;
+
     const svg =
-      svgElement("svg", {
-        viewBox:
-          `0 0 ${config.width} ${config.height}`,
-        role: "img",
-        "aria-label":
-          "Riglă gradată"
-      });
+      svgElement(
+        "svg",
+        {
+          viewBox:
+            `0 0 ${width} ${height}`,
+
+          role: "img",
+
+          "aria-label":
+            "Riglă gradată"
+        }
+      );
 
     svg.classList.add(
       "measurement-ruler"
     );
 
-    const margin = 25;
+    const margin =
+      vertical ? 28 : 32;
 
-    const vertical =
-      config.orientation === "vertical";
-
-    const usableLength =
+    const usable =
       vertical
-        ? config.height - 2 * margin
-        : config.width - 2 * margin;
+        ? height -
+          2 * margin
+        : width -
+          2 * margin;
 
-    const scaleLine =
-      svgElement("line", vertical
-        ? {
-            x1: 45,
-            y1: margin,
-            x2: 45,
-            y2:
-              config.height - margin,
-            stroke: "currentColor",
-            "stroke-width": 2
-          }
-        : {
-            x1: margin,
-            y1: 45,
-            x2:
-              config.width - margin,
-            y2: 45,
-            stroke: "currentColor",
-            "stroke-width": 2
-          }
-      );
+    const axisX = 55;
+    const axisY = 42;
 
-    svg.appendChild(scaleLine);
+    const axis =
+      vertical
+        ? svgElement(
+            "line",
+            {
+              x1: axisX,
+              y1: margin,
+              x2: axisX,
+              y2:
+                height -
+                margin,
+              stroke: "#334155",
+              "stroke-width": 2
+            }
+          )
+        : svgElement(
+            "line",
+            {
+              x1: margin,
+              y1: axisY,
+              x2:
+                width -
+                margin,
+              y2: axisY,
+              stroke: "#334155",
+              "stroke-width": 2
+            }
+          );
+
+    svg.appendChild(axis);
+
+    const interval =
+      config.max -
+      config.min;
 
     const count =
       Math.round(
-        (config.max - config.min) /
+        interval /
         config.minorStep
       );
 
@@ -220,35 +385,43 @@
     ) {
       const value =
         config.min +
-        i * config.minorStep;
+        i *
+        config.minorStep;
 
       const majorRatio =
-        value / config.majorStep;
+        (
+          value -
+          config.min
+        ) /
+        config.majorStep;
 
       const isMajor =
-        Math.abs(
-          majorRatio -
-          Math.round(majorRatio)
-        ) < 1e-6;
+        nearlyInteger(
+          majorRatio
+        );
 
-      const mediumStep =
-        config.majorStep / 2;
+      const halfStep =
+        config.majorStep /
+        2;
 
       const mediumRatio =
-        value / mediumStep;
+        (
+          value -
+          config.min
+        ) /
+        halfStep;
 
       const isMedium =
         !isMajor &&
-        Math.abs(
-          mediumRatio -
-          Math.round(mediumRatio)
-        ) < 1e-6;
+        nearlyInteger(
+          mediumRatio
+        );
 
-      const length =
+      const tickLength =
         isMajor
-          ? 22
+          ? 24
           : isMedium
-            ? 15
+            ? 16
             : 9;
 
       const position =
@@ -257,161 +430,217 @@
           config.min,
           config.max,
           0,
-          usableLength
+          usable
         );
-
-      let tick;
 
       if (vertical) {
         const y =
-          config.height -
+          height -
           margin -
           position;
 
-        tick =
-          svgElement("line", {
-            x1: 45,
-            y1: y,
-            x2: 45 + length,
-            y2: y,
-            stroke: "currentColor",
-            "stroke-width":
-              isMajor ? 2 : 1
-          });
+        svg.appendChild(
+          svgElement(
+            "line",
+            {
+              x1: axisX,
+              y1: y,
+              x2:
+                axisX +
+                tickLength,
+              y2: y,
+              stroke: "#334155",
+              "stroke-width":
+                isMajor
+                  ? 2
+                  : 1
+            }
+          )
+        );
 
         if (
           isMajor &&
           config.showLabels
         ) {
           const label =
-            svgElement("text", {
-              x: 40,
-              y: y + 4,
-              "text-anchor": "end",
-              "font-size": 11,
-              fill: "currentColor"
-            });
+            svgElement(
+              "text",
+              {
+                x:
+                  axisX -
+                  6,
+                y:
+                  y +
+                  4,
+                "text-anchor":
+                  "end",
+                "font-size":
+                  11,
+                fill:
+                  "#334155"
+              }
+            );
 
           label.textContent =
-            formatScaleValue(
+            formatNumber(
               value,
               config.decimals
             );
 
-          svg.appendChild(label);
+          svg.appendChild(
+            label
+          );
         }
       } else {
         const x =
           margin +
           position;
 
-        tick =
-          svgElement("line", {
-            x1: x,
-            y1: 45,
-            x2: x,
-            y2: 45 + length,
-            stroke: "currentColor",
-            "stroke-width":
-              isMajor ? 2 : 1
-          });
+        svg.appendChild(
+          svgElement(
+            "line",
+            {
+              x1: x,
+              y1: axisY,
+              x2: x,
+              y2:
+                axisY +
+                tickLength,
+              stroke:
+                "#334155",
+              "stroke-width":
+                isMajor
+                  ? 2
+                  : 1
+            }
+          )
+        );
 
         if (
           isMajor &&
           config.showLabels
         ) {
           const label =
-            svgElement("text", {
-              x,
-              y: 82,
-              "text-anchor": "middle",
-              "font-size": 11,
-              fill: "currentColor"
-            });
+            svgElement(
+              "text",
+              {
+                x,
+                y: 88,
+                "text-anchor":
+                  "middle",
+                "font-size":
+                  11,
+                fill:
+                  "#334155"
+              }
+            );
 
           label.textContent =
-            formatScaleValue(
+            formatNumber(
               value,
               config.decimals
             );
 
-          svg.appendChild(label);
+          svg.appendChild(
+            label
+          );
         }
       }
-
-      svg.appendChild(tick);
     }
 
-    const unit =
-      svgElement("text", vertical
-        ? {
-            x: config.width / 2,
-            y: 16,
-            "text-anchor": "middle",
-            "font-size": 12,
-            fill: "currentColor"
-          }
-        : {
-            x:
-              config.width - 8,
-            y: 20,
-            "text-anchor": "end",
-            "font-size": 12,
-            fill: "currentColor"
-          }
+    const unitLabel =
+      svgElement(
+        "text",
+        vertical
+          ? {
+              x:
+                width -
+                12,
+              y: 20,
+              "text-anchor":
+                "end",
+              "font-size": 12,
+              "font-weight":
+                "600",
+              fill:
+                "#334155"
+            }
+          : {
+              x:
+                width -
+                8,
+              y: 20,
+              "text-anchor":
+                "end",
+              "font-size": 12,
+              "font-weight":
+                "600",
+              fill:
+                "#334155"
+            }
       );
 
-    unit.textContent =
+    unitLabel.textContent =
       config.unit;
 
-    svg.appendChild(unit);
+    svg.appendChild(
+      unitLabel
+    );
 
     /*
-     * Markerul indică poziția obiectului,
-     * NU afișează numeric valoarea.
+     * Reperul este vizual.
+     * Valoarea numerică nu este afișată.
      */
     const marker =
-      svgElement("line", {
-        stroke: "#e53935",
-        "stroke-width": 3
-      });
+      svgElement(
+        "line",
+        {
+          stroke:
+            config.markerColor,
+          "stroke-width": 3,
+          "stroke-linecap":
+            "round"
+        }
+      );
 
-    svg.appendChild(marker);
+    svg.appendChild(
+      marker
+    );
 
     function setValue(value) {
-      const safeValue =
+      const safe =
         clamp(
-          value,
+          Number(value),
           config.min,
           config.max
         );
 
       config.value =
-        safeValue;
+        safe;
 
       const position =
         mapValue(
-          safeValue,
+          safe,
           config.min,
           config.max,
           0,
-          usableLength
+          usable
         );
 
       if (vertical) {
         const y =
-          config.height -
+          height -
           margin -
           position;
 
         marker.setAttribute(
           "x1",
-          "20"
+          "22"
         );
 
         marker.setAttribute(
           "x2",
-          "92"
+          "114"
         );
 
         marker.setAttribute(
@@ -440,19 +669,23 @@
 
         marker.setAttribute(
           "y1",
-          "18"
+          "17"
         );
 
         marker.setAttribute(
           "y2",
-          "92"
+          "105"
         );
       }
     }
 
-    setValue(config.value);
+    setValue(
+      config.value
+    );
 
-    container.appendChild(svg);
+    container.appendChild(
+      svg
+    );
 
     return {
       type: "ruler",
@@ -465,12 +698,16 @@
 
       getValue() {
         return config.value;
+      },
+
+      getResolution() {
+        return config.resolution;
       }
     };
   }
 
   /* =========================================================
-     CRONOMETRU
+     CRONOMETRU STATIC
      ========================================================= */
 
   function createStopwatch(
@@ -480,15 +717,19 @@
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
-      resolution: 0.01,
       title: "Cronometru",
-      showControls: true,
-      onStart: null,
-      onStop: null,
-      onReset: null,
+
+      value: null,
+
+      resolution: 0.01,
+
+      revealValue: false,
+
       ...options
     };
 
@@ -498,13 +739,15 @@
     );
 
     const wrapper =
-      document.createElement("div");
-
-    wrapper.className =
-      "virtual-stopwatch";
+      createToolWrapper(
+        container,
+        "virtual-stopwatch"
+      );
 
     const display =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     display.className =
       "stopwatch-display";
@@ -517,245 +760,106 @@
     display.textContent =
       "00:00.00";
 
-    wrapper.appendChild(display);
+    const note =
+      document.createElement(
+        "div"
+      );
 
-    const controls =
-      document.createElement("div");
+    note.className =
+      "stopwatch-status";
 
-    controls.className =
-      "stopwatch-controls";
+    note.textContent =
+      "Cronometru pregătit";
 
-    const startButton =
-      document.createElement("button");
-
-    startButton.type = "button";
-    startButton.textContent = "START";
-
-    const stopButton =
-      document.createElement("button");
-
-    stopButton.type = "button";
-    stopButton.textContent = "STOP";
-
-    const resetButton =
-      document.createElement("button");
-
-    resetButton.type = "button";
-    resetButton.textContent = "RESET";
-
-    controls.append(
-      startButton,
-      stopButton,
-      resetButton
+    wrapper.append(
+      display,
+      note
     );
 
-    if (config.showControls) {
-      wrapper.appendChild(
-        controls
-      );
-    }
-
-    container.appendChild(
-      wrapper
-    );
-
-    let running = false;
-    let startTime = 0;
-    let accumulated = 0;
-    let frameId = null;
-
-    function formatTime(seconds) {
-      const minutes =
-        Math.floor(
-          seconds / 60
-        );
-
-      const remaining =
-        seconds -
-        minutes * 60;
-
-      const sec =
-        Math.floor(
-          remaining
-        );
-
-      const hundredths =
-        Math.floor(
-          (
-            remaining -
-            sec
-          ) * 100
-        );
-
-      return (
-        String(minutes)
-          .padStart(2, "0") +
-        ":" +
-        String(sec)
-          .padStart(2, "0") +
-        "." +
-        String(hundredths)
-          .padStart(2, "0")
-      );
-    }
-
-    function currentTime() {
-      if (!running) {
-        return accumulated;
-      }
-
-      return (
-        accumulated +
-        (
-          performance.now() -
-          startTime
-        ) /
-        1000
-      );
-    }
-
-    function updateDisplay() {
-      display.textContent =
-        formatTime(
-          currentTime()
-        );
-
-      if (running) {
-        frameId =
-          requestAnimationFrame(
-            updateDisplay
-          );
-      }
-    }
-
-    function start() {
-      if (running) {
-        return;
-      }
-
-      running = true;
-
-      startTime =
-        performance.now();
-
-      updateDisplay();
-
-      if (
-        typeof config.onStart ===
-        "function"
-      ) {
-        config.onStart(
-          currentTime()
-        );
-      }
-    }
-
-    function stop() {
-      if (!running) {
-        return currentTime();
-      }
-
-      accumulated =
-        currentTime();
-
-      running = false;
-
-      if (frameId) {
-        cancelAnimationFrame(
-          frameId
-        );
-      }
-
-      updateDisplay();
-
-      const measured =
+    function setValue(value) {
+      config.value =
         Tools.numbers.quantize(
-          accumulated,
+          Math.max(
+            0,
+            Number(value)
+          ),
           config.resolution
         );
 
       if (
-        typeof config.onStop ===
-        "function"
+        config.revealValue
       ) {
-        config.onStop(
-          measured
-        );
+        display.textContent =
+          `${formatNumber(
+            config.value,
+            decimalsFromResolution(
+              config.resolution
+            )
+          )} s`;
+      }
+    }
+
+    function reveal() {
+      if (
+        !Number.isFinite(
+          config.value
+        )
+      ) {
+        return;
       }
 
-      return measured;
+      display.textContent =
+        `${formatNumber(
+          config.value,
+          decimalsFromResolution(
+            config.resolution
+          )
+        )} s`;
+
+      note.textContent =
+        "Cronometru oprit";
+    }
+
+    function showRunning() {
+      display.textContent =
+        "În măsurare…";
+
+      note.textContent =
+        "Cronometrul funcționează";
     }
 
     function reset() {
-      running = false;
-
-      accumulated = 0;
-      startTime = 0;
-
-      if (frameId) {
-        cancelAnimationFrame(
-          frameId
-        );
-      }
-
       display.textContent =
         "00:00.00";
 
-      if (
-        typeof config.onReset ===
-        "function"
-      ) {
-        config.onReset();
-      }
+      note.textContent =
+        "Cronometru pregătit";
     }
 
-    function setTime(seconds) {
-      accumulated =
-        Math.max(
-          0,
-          seconds
-        );
-
-      display.textContent =
-        formatTime(
-          accumulated
-        );
+    if (
+      Number.isFinite(
+        config.value
+      )
+    ) {
+      setValue(
+        config.value
+      );
     }
-
-    startButton.addEventListener(
-      "click",
-      start
-    );
-
-    stopButton.addEventListener(
-      "click",
-      stop
-    );
-
-    resetButton.addEventListener(
-      "click",
-      reset
-    );
 
     return {
       type: "stopwatch",
 
       element: wrapper,
 
-      start,
-      stop,
+      config,
+
+      setValue,
+      reveal,
+      showRunning,
       reset,
-      setTime,
 
-      getTime() {
-        return Tools.numbers.quantize(
-          currentTime(),
-          config.resolution
-        );
-      },
-
-      isRunning() {
-        return running;
+      getValue() {
+        return config.value;
       }
     };
   }
@@ -771,19 +875,26 @@
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
       min: 0,
       max: 5,
+
       majorStep: 1,
       minorStep: 0.1,
+
       resolution: 0.1,
+
       unit: "N",
+
       value: 0,
-      height: 430,
-      width: 120,
-      title: "Dinamometru",
+
+      title:
+        "Dinamometru",
+
       ...options
     };
 
@@ -792,54 +903,70 @@
       config.title
     );
 
+    const width = 150;
+    const height = 440;
+
     const svg =
-      svgElement("svg", {
-        viewBox:
-          `0 0 ${config.width} ${config.height}`,
-        role: "img",
-        "aria-label":
-          "Dinamometru analogic"
-      });
+      svgElement(
+        "svg",
+        {
+          viewBox:
+            `0 0 ${width} ${height}`,
+
+          role: "img",
+
+          "aria-label":
+            "Dinamometru analogic"
+        }
+      );
 
     svg.classList.add(
       "measurement-dynamometer"
     );
 
     const body =
-      svgElement("rect", {
-        x: 20,
-        y: 20,
-        width:
-          config.width - 40,
-        height:
-          config.height - 70,
-        rx: 18,
-        fill: "#f8fafc",
-        stroke: "#475569",
-        "stroke-width": 3
-      });
+      svgElement(
+        "rect",
+        {
+          x: 20,
+          y: 16,
+          width: 105,
+          height: 355,
+          rx: 20,
+          fill: "#f8fafc",
+          stroke: "#475569",
+          "stroke-width": 3
+        }
+      );
 
-    svg.appendChild(body);
+    svg.appendChild(
+      body
+    );
 
-    const top = 55;
-    const bottom =
-      config.height - 75;
+    const top = 58;
+    const bottom = 335;
+    const axisX = 67;
 
-    const axis =
-      svgElement("line", {
-        x1: 58,
-        y1: top,
-        x2: 58,
-        y2: bottom,
-        stroke: "#334155",
-        "stroke-width": 2
-      });
-
-    svg.appendChild(axis);
+    svg.appendChild(
+      svgElement(
+        "line",
+        {
+          x1: axisX,
+          y1: top,
+          x2: axisX,
+          y2: bottom,
+          stroke: "#334155",
+          "stroke-width": 2
+        }
+      )
+    );
 
     const count =
       Math.round(
-        (config.max - config.min) /
+        (
+          config.max -
+          config.min
+        ) /
         config.minorStep
       );
 
@@ -850,17 +977,17 @@
     ) {
       const value =
         config.min +
-        i * config.minorStep;
-
-      const ratio =
-        value /
-        config.majorStep;
+        i *
+        config.minorStep;
 
       const isMajor =
-        Math.abs(
-          ratio -
-          Math.round(ratio)
-        ) < 1e-6;
+        nearlyInteger(
+          (
+            value -
+            config.min
+          ) /
+          config.majorStep
+        );
 
       const y =
         mapValue(
@@ -871,84 +998,124 @@
           bottom
         );
 
-      const tick =
-        svgElement("line", {
-          x1: 58,
-          y1: y,
-          x2:
-            isMajor ? 83 : 72,
-          y2: y,
-          stroke: "#334155",
-          "stroke-width":
-            isMajor ? 2 : 1
-        });
+      svg.appendChild(
+        svgElement(
+          "line",
+          {
+            x1: axisX,
+            y1: y,
 
-      svg.appendChild(tick);
+            x2:
+              axisX +
+              (
+                isMajor
+                  ? 30
+                  : 15
+              ),
+
+            y2: y,
+
+            stroke:
+              "#334155",
+
+            "stroke-width":
+              isMajor
+                ? 2
+                : 1
+          }
+        )
+      );
 
       if (isMajor) {
         const label =
-          svgElement("text", {
-            x: 50,
-            y: y + 4,
-            "text-anchor": "end",
-            "font-size": 12,
-            fill: "#334155"
-          });
-
-        label.textContent =
-          formatScaleValue(
-            value,
-            0
+          svgElement(
+            "text",
+            {
+              x:
+                axisX -
+                8,
+              y:
+                y +
+                4,
+              "text-anchor":
+                "end",
+              "font-size":
+                12,
+              fill:
+                "#334155"
+            }
           );
 
-        svg.appendChild(label);
+        label.textContent =
+          formatNumber(
+            value,
+            decimalsFromResolution(
+              config.majorStep
+            )
+          );
+
+        svg.appendChild(
+          label
+        );
       }
     }
 
-    const unitLabel =
-      svgElement("text", {
-        x: 60,
-        y: 44,
-        "text-anchor": "middle",
-        "font-size": 13,
-        "font-weight": "bold",
-        fill: "#334155"
-      });
+    const unit =
+      svgElement(
+        "text",
+        {
+          x: 73,
+          y: 43,
+          "text-anchor":
+            "middle",
+          "font-size": 14,
+          "font-weight":
+            "700",
+          fill: "#334155"
+        }
+      );
 
-    unitLabel.textContent =
+    unit.textContent =
       config.unit;
 
-    svg.appendChild(
-      unitLabel
-    );
+    svg.appendChild(unit);
 
     const pointer =
-      svgElement("polygon", {
-        fill: "#dc2626"
-      });
+      svgElement(
+        "polygon",
+        {
+          fill: "#dc2626"
+        }
+      );
 
-    svg.appendChild(pointer);
+    svg.appendChild(
+      pointer
+    );
 
-    const hook =
-      svgElement("path", {
-        d:
-          `M60 ${config.height - 48}
-           V${config.height - 30}
-           C60 ${config.height - 15},
-            85 ${config.height - 15},
-            85 ${config.height - 32}`,
-        fill: "none",
-        stroke: "#475569",
-        "stroke-width": 4,
-        "stroke-linecap": "round"
-      });
+    /*
+     * Cârligul dinamometrului.
+     */
+    svg.appendChild(
+      svgElement(
+        "path",
+        {
+          d:
+            "M72 371 V393 " +
+            "C72 416 105 416 105 391",
 
-    svg.appendChild(hook);
+          fill: "none",
+          stroke: "#475569",
+          "stroke-width": 4,
+          "stroke-linecap":
+            "round"
+        }
+      )
+    );
 
     function setValue(value) {
       config.value =
         clamp(
-          value,
+          Number(value),
           config.min,
           config.max
         );
@@ -964,9 +1131,11 @@
 
       pointer.setAttribute(
         "points",
-        `88,${y}
-         104,${y - 8}
-         104,${y + 8}`
+        [
+          `101,${y}`,
+          `119,${y - 8}`,
+          `119,${y + 8}`
+        ].join(" ")
       );
     }
 
@@ -974,12 +1143,17 @@
       config.value
     );
 
-    container.appendChild(svg);
+    container.appendChild(
+      svg
+    );
 
     return {
-      type: "dynamometer",
+      type:
+        "dynamometer",
 
       element: svg,
+
+      config,
 
       setValue,
 
@@ -1004,15 +1178,22 @@
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
       min: 0,
-      max: 2000,
-      resolution: 1,
-      unit: "g",
+      max: 2,
+
+      resolution: 0.001,
+
+      unit: "kg",
+
       value: 0,
+
       title: "Balanță",
+
       ...options
     };
 
@@ -1022,28 +1203,44 @@
     );
 
     const wrapper =
-      document.createElement("div");
-
-    wrapper.className =
-      "virtual-balance";
+      createToolWrapper(
+        container,
+        "virtual-balance"
+      );
 
     const plate =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     plate.className =
       "balance-plate";
 
+    plate.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
     const body =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     body.className =
       "balance-body";
 
     const display =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     display.className =
       "balance-display";
+
+    display.setAttribute(
+      "role",
+      "status"
+    );
 
     body.appendChild(
       display
@@ -1058,23 +1255,27 @@
       config.value =
         Tools.numbers.quantize(
           clamp(
-            value,
+            Number(value),
             config.min,
             config.max
           ),
           config.resolution
         );
 
+      const decimals =
+        decimalsFromResolution(
+          config.resolution
+        );
+
       /*
-       * La balanța digitală afișarea numerică
-       * este parte din instrumentul real.
+       * Balanța digitală afișează legitim
+       * valoarea numerică: aceasta este
+       * indicația instrumentului real.
        */
       display.textContent =
-        `${Tools.numbers.formatNumber(
+        `${formatNumber(
           config.value,
-          config.resolution < 1
-            ? 1
-            : 0
+          decimals
         )} ${config.unit}`;
     }
 
@@ -1082,19 +1283,21 @@
       config.value
     );
 
-    container.appendChild(
-      wrapper
-    );
-
     return {
       type: "balance",
 
       element: wrapper,
 
+      config,
+
       setValue,
 
       getValue() {
         return config.value;
+      },
+
+      getResolution() {
+        return config.resolution;
       }
     };
   }
@@ -1110,18 +1313,25 @@
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
       capacity: 1000,
-      resolution: 10,
+
       majorStep: 100,
       minorStep: 10,
+
+      resolution: 10,
+
       value: 0,
+
       unit: "mL",
-      width: 180,
-      height: 440,
-      title: "Cilindru gradat",
+
+      title:
+        "Cilindru gradat",
+
       ...options
     };
 
@@ -1130,104 +1340,134 @@
       config.title
     );
 
+    const width = 220;
+    const height = 460;
+
     const svg =
-      svgElement("svg", {
-        viewBox:
-          `0 0 ${config.width} ${config.height}`,
-        role: "img",
-        "aria-label":
-          "Cilindru gradat"
-      });
+      svgElement(
+        "svg",
+        {
+          viewBox:
+            `0 0 ${width} ${height}`,
+
+          role: "img",
+
+          "aria-label":
+            "Cilindru gradat cu lichid"
+        }
+      );
 
     svg.classList.add(
       "measurement-cylinder"
     );
 
     const top = 35;
-    const bottom =
-      config.height - 55;
+    const bottom = 405;
 
     const left = 55;
-    const right = 125;
+    const right = 130;
 
-    const liquidClipId =
-      `cylinder-clip-${Math.random()
+    const clipId =
+      "cylinder-clip-" +
+      Math.random()
         .toString(36)
-        .slice(2)}`;
+        .slice(2);
 
     const defs =
       svgElement("defs");
 
     const clip =
-      svgElement("clipPath", {
-        id: liquidClipId
-      });
-
-    const clipRect =
-      svgElement("rect", {
-        x: left,
-        y: top,
-        width:
-          right - left,
-        height:
-          bottom - top,
-        rx: 8
-      });
+      svgElement(
+        "clipPath",
+        {
+          id: clipId
+        }
+      );
 
     clip.appendChild(
-      clipRect
+      svgElement(
+        "rect",
+        {
+          x: left,
+          y: top,
+          width:
+            right -
+            left,
+          height:
+            bottom -
+            top,
+          rx: 7
+        }
+      )
     );
 
     defs.appendChild(
       clip
     );
 
-    svg.appendChild(defs);
+    svg.appendChild(
+      defs
+    );
 
-    const body =
-      svgElement("path", {
-        d:
-          `M${left} ${top}
-           L${left} ${bottom}
-           Q${left} ${bottom + 15}
-            ${(left + right) / 2}
-            ${bottom + 15}
-           Q${right} ${bottom + 15}
-            ${right} ${bottom}
-           L${right} ${top}`,
-        fill: "#ffffff",
-        stroke: "#475569",
-        "stroke-width": 3
-      });
+    const glass =
+      svgElement(
+        "path",
+        {
+          d:
+            `M${left} ${top} ` +
+            `L${left} ${bottom} ` +
+            `Q${left} 425 92 425 ` +
+            `Q${right} 425 ${right} ${bottom} ` +
+            `L${right} ${top}`,
 
-    svg.appendChild(body);
+          fill: "#ffffff",
+
+          stroke:
+            "#475569",
+
+          "stroke-width": 3
+        }
+      );
+
+    svg.appendChild(
+      glass
+    );
 
     const liquid =
-      svgElement("rect", {
-        x: left,
-        y: bottom,
-        width:
-          right - left,
-        height: 0,
-        fill: "#38bdf8",
-        opacity: 0.65,
-        "clip-path":
-          `url(#${liquidClipId})`
-      });
+      svgElement(
+        "rect",
+        {
+          x: left,
+          y: bottom,
+
+          width:
+            right -
+            left,
+
+          height: 0,
+
+          fill: "#38bdf8",
+
+          opacity: 0.62,
+
+          "clip-path":
+            `url(#${clipId})`
+        }
+      );
 
     svg.appendChild(
       liquid
     );
 
-    /*
-     * Menisc concav pentru apă.
-     */
     const meniscus =
-      svgElement("path", {
-        fill: "none",
-        stroke: "#0284c7",
-        "stroke-width": 2
-      });
+      svgElement(
+        "path",
+        {
+          fill: "none",
+          stroke: "#0284c7",
+          "stroke-width": 2.5
+        }
+      );
 
     svg.appendChild(
       meniscus
@@ -1249,9 +1489,10 @@
         config.minorStep;
 
       const isMajor =
-        value %
-          config.majorStep ===
-        0;
+        nearlyInteger(
+          value /
+          config.majorStep
+        );
 
       const y =
         mapValue(
@@ -1262,37 +1503,57 @@
           top
         );
 
-      const tick =
-        svgElement("line", {
-          x1: right,
-          y1: y,
-          x2:
-            right +
-            (
-              isMajor
-                ? 28
-                : 15
-            ),
-          y2: y,
-          stroke: "#334155",
-          "stroke-width":
-            isMajor ? 2 : 1
-        });
+      svg.appendChild(
+        svgElement(
+          "line",
+          {
+            x1: right,
+            y1: y,
 
-      svg.appendChild(tick);
+            x2:
+              right +
+              (
+                isMajor
+                  ? 32
+                  : 17
+              ),
+
+            y2: y,
+
+            stroke:
+              "#334155",
+
+            "stroke-width":
+              isMajor
+                ? 2
+                : 1
+          }
+        )
+      );
 
       if (isMajor) {
         const label =
-          svgElement("text", {
-            x:
-              right + 34,
-            y: y + 4,
-            "font-size": 11,
-            fill: "#334155"
-          });
+          svgElement(
+            "text",
+            {
+              x:
+                right +
+                38,
+              y:
+                y +
+                4,
+              "font-size":
+                11,
+              fill:
+                "#334155"
+            }
+          );
 
         label.textContent =
-          String(value);
+          formatNumber(
+            value,
+            0
+          );
 
         svg.appendChild(
           label
@@ -1301,24 +1562,35 @@
     }
 
     const unit =
-      svgElement("text", {
-        x:
-          config.width - 8,
-        y: 20,
-        "text-anchor": "end",
-        "font-size": 12,
-        fill: "#334155"
-      });
+      svgElement(
+        "text",
+        {
+          x:
+            width -
+            10,
+          y: 20,
+          "text-anchor":
+            "end",
+          "font-size":
+            12,
+          "font-weight":
+            "600",
+          fill:
+            "#334155"
+        }
+      );
 
     unit.textContent =
       config.unit;
 
-    svg.appendChild(unit);
+    svg.appendChild(
+      unit
+    );
 
     function setValue(value) {
       config.value =
         clamp(
-          value,
+          Number(value),
           0,
           config.capacity
         );
@@ -1339,21 +1611,19 @@
 
       liquid.setAttribute(
         "height",
-        bottom - levelY
+        bottom -
+        levelY
       );
 
       /*
-       * Curba este intenționat puțin accentuată
-       * pentru ca elevul să poată identifica
-       * partea inferioară a meniscului.
+       * Pentru apă citirea se face
+       * la baza meniscului concav.
        */
       meniscus.setAttribute(
         "d",
-        `M${left + 2} ${levelY - 3}
-         Q${(left + right) / 2}
-          ${levelY + 4}
-          ${right - 2}
-          ${levelY - 3}`
+        `M${left + 2} ${levelY - 3} ` +
+        `Q${(left + right) / 2} ${levelY + 5} ` +
+        `${right - 2} ${levelY - 3}`
       );
     }
 
@@ -1361,13 +1631,17 @@
       config.value
     );
 
-    container.appendChild(svg);
+    container.appendChild(
+      svg
+    );
 
     return {
       type:
         "graduatedCylinder",
 
       element: svg,
+
+      config,
 
       setValue,
 
@@ -1392,16 +1666,22 @@
     const container =
       resolveContainer(target);
 
-    clearContainer(container);
+    clearContainer(
+      container
+    );
 
     const config = {
       min: 0,
       max: 180,
-      value: 30,
+
       resolution: 1,
-      width: 340,
-      height: 190,
+
+      value: 30,
+
+      unit: "°",
+
       title: "Raportor",
+
       ...options
     };
 
@@ -1410,40 +1690,71 @@
       config.title
     );
 
-    const svg =
-      svgElement("svg", {
-        viewBox:
-          `0 0 ${config.width} ${config.height}`,
-        role: "img",
-        "aria-label": "Raportor"
-      });
+    const width = 360;
+    const height = 200;
 
     const cx =
-      config.width / 2;
+      width / 2;
 
     const cy =
-      config.height - 15;
+      height - 12;
 
-    const radius =
-      Math.min(
-        cx - 20,
-        cy - 10
+    const radius = 160;
+
+    const svg =
+      svgElement(
+        "svg",
+        {
+          viewBox:
+            `0 0 ${width} ${height}`,
+
+          role: "img",
+
+          "aria-label":
+            "Raportor gradat"
+        }
       );
 
-    const semicircle =
-      svgElement("path", {
-        d:
-          `M${cx - radius} ${cy}
-           A${radius} ${radius}
-           0 0 1
-           ${cx + radius} ${cy}`,
-        fill: "none",
-        stroke: "#475569",
-        "stroke-width": 3
-      });
+    svg.classList.add(
+      "measurement-protractor"
+    );
 
     svg.appendChild(
-      semicircle
+      svgElement(
+        "line",
+        {
+          x1:
+            cx -
+            radius,
+          y1: cy,
+          x2:
+            cx +
+            radius,
+          y2: cy,
+          stroke:
+            "#475569",
+          "stroke-width": 2
+        }
+      )
+    );
+
+    svg.appendChild(
+      svgElement(
+        "path",
+        {
+          d:
+            `M${cx - radius} ${cy} ` +
+            `A${radius} ${radius} 0 0 1 ` +
+            `${cx + radius} ${cy}`,
+
+          fill: "none",
+
+          stroke:
+            "#475569",
+
+          "stroke-width": 3
+        }
+      )
     );
 
     for (
@@ -1457,9 +1768,10 @@
         180;
 
       const major =
-        angle % 10 === 0;
+        angle % 10 ===
+        0;
 
-      const innerRadius =
+      const inner =
         radius -
         (
           major
@@ -1470,64 +1782,90 @@
       const x1 =
         cx -
         radius *
-        Math.cos(radians);
+        Math.cos(
+          radians
+        );
 
       const y1 =
         cy -
         radius *
-        Math.sin(radians);
+        Math.sin(
+          radians
+        );
 
       const x2 =
         cx -
-        innerRadius *
-        Math.cos(radians);
+        inner *
+        Math.cos(
+          radians
+        );
 
       const y2 =
         cy -
-        innerRadius *
-        Math.sin(radians);
+        inner *
+        Math.sin(
+          radians
+        );
 
       svg.appendChild(
-        svgElement("line", {
-          x1,
-          y1,
-          x2,
-          y2,
-          stroke: "#334155",
-          "stroke-width":
-            major ? 2 : 1
-        })
+        svgElement(
+          "line",
+          {
+            x1,
+            y1,
+            x2,
+            y2,
+            stroke:
+              "#334155",
+            "stroke-width":
+              major
+                ? 2
+                : 1
+          }
+        )
       );
 
       if (
         major &&
-        angle > 0 &&
-        angle < 180
+        angle !== 0 &&
+        angle !== 180
       ) {
         const labelRadius =
-          radius - 33;
+          radius - 34;
 
         const tx =
           cx -
           labelRadius *
-          Math.cos(radians);
+          Math.cos(
+            radians
+          );
 
         const ty =
           cy -
           labelRadius *
-          Math.sin(radians);
+          Math.sin(
+            radians
+          );
 
         const label =
-          svgElement("text", {
-            x: tx,
-            y: ty + 4,
-            "text-anchor": "middle",
-            "font-size": 10,
-            fill: "#334155"
-          });
+          svgElement(
+            "text",
+            {
+              x: tx,
+              y:
+                ty +
+                4,
+              "text-anchor":
+                "middle",
+              "font-size":
+                10,
+              fill:
+                "#334155"
+            }
+          );
 
         label.textContent =
-          String(angle);
+          `${angle}`;
 
         svg.appendChild(
           label
@@ -1536,21 +1874,30 @@
     }
 
     const pointer =
-      svgElement("line", {
-        x1: cx,
-        y1: cy,
-        stroke: "#dc2626",
-        "stroke-width": 3
-      });
+      svgElement(
+        "line",
+        {
+          x1: cx,
+          y1: cy,
+          x2: cx,
+          y2: cy,
+          stroke: "#dc2626",
+          "stroke-width": 3,
+          "stroke-linecap":
+            "round"
+        }
+      );
 
-    svg.appendChild(pointer);
+    svg.appendChild(
+      pointer
+    );
 
     function setValue(value) {
       config.value =
         clamp(
-          value,
-          0,
-          180
+          Number(value),
+          config.min,
+          config.max
         );
 
       const radians =
@@ -1559,20 +1906,24 @@
         180;
 
       const pointerRadius =
-        radius - 10;
+        radius - 8;
 
       pointer.setAttribute(
         "x2",
         cx -
-          pointerRadius *
-          Math.cos(radians)
+        pointerRadius *
+        Math.cos(
+          radians
+        )
       );
 
       pointer.setAttribute(
         "y2",
         cy -
-          pointerRadius *
-          Math.sin(radians)
+        pointerRadius *
+        Math.sin(
+          radians
+        )
       );
     }
 
@@ -1580,31 +1931,464 @@
       config.value
     );
 
-    container.appendChild(svg);
+    container.appendChild(
+      svg
+    );
 
     return {
       type: "protractor",
 
       element: svg,
 
+      config,
+
       setValue,
 
       getValue() {
         return config.value;
+      },
+
+      getResolution() {
+        return config.resolution;
       }
     };
   }
 
   /* =========================================================
-     VALIDAREA CITIRII INSTRUMENTULUI
+     TERMOMETRU
      ========================================================= */
 
-  function validateReading(options) {
+  function createThermometer(
+    target,
+    options = {}
+  ) {
+    const container =
+      resolveContainer(target);
+
+    clearContainer(
+      container
+    );
+
+    const config = {
+      min: -10,
+      max: 110,
+
+      majorStep: 10,
+      minorStep: 1,
+
+      resolution: 1,
+
+      value: 20,
+
+      unit: "°C",
+
+      title: "Termometru",
+
+      ...options
+    };
+
+    addTitle(
+      container,
+      config.title
+    );
+
+    const width = 155;
+    const height = 440;
+
+    const svg =
+      svgElement(
+        "svg",
+        {
+          viewBox:
+            `0 0 ${width} ${height}`,
+
+          role: "img",
+
+          "aria-label":
+            "Termometru gradat"
+        }
+      );
+
+    svg.classList.add(
+      "measurement-thermometer"
+    );
+
+    const top = 35;
+    const bottom = 365;
+
+    const tubeX = 76;
+
+    /*
+     * Tub exterior.
+     */
+    svg.appendChild(
+      svgElement(
+        "rect",
+        {
+          x: 66,
+          y: top,
+          width: 20,
+          height:
+            bottom -
+            top,
+          rx: 10,
+          fill: "#ffffff",
+          stroke:
+            "#475569",
+          "stroke-width": 3
+        }
+      )
+    );
+
+    /*
+     * Bulb.
+     */
+    svg.appendChild(
+      svgElement(
+        "circle",
+        {
+          cx: tubeX,
+          cy: 385,
+          r: 27,
+          fill: "#ffffff",
+          stroke:
+            "#475569",
+          "stroke-width": 3
+        }
+      )
+    );
+
+    const liquid =
+      svgElement(
+        "rect",
+        {
+          x: 71,
+          y: bottom,
+          width: 10,
+          height: 0,
+          rx: 5,
+          fill: "#dc2626"
+        }
+      );
+
+    svg.appendChild(
+      liquid
+    );
+
+    svg.appendChild(
+      svgElement(
+        "circle",
+        {
+          cx: tubeX,
+          cy: 385,
+          r: 19,
+          fill: "#dc2626"
+        }
+      )
+    );
+
+    const count =
+      Math.round(
+        (
+          config.max -
+          config.min
+        ) /
+        config.minorStep
+      );
+
+    for (
+      let i = 0;
+      i <= count;
+      i += 1
+    ) {
+      const value =
+        config.min +
+        i *
+        config.minorStep;
+
+      const isMajor =
+        nearlyInteger(
+          (
+            value -
+            config.min
+          ) /
+          config.majorStep
+        );
+
+      const y =
+        mapValue(
+          value,
+          config.min,
+          config.max,
+          bottom,
+          top
+        );
+
+      svg.appendChild(
+        svgElement(
+          "line",
+          {
+            x1: 90,
+            y1: y,
+            x2:
+              isMajor
+                ? 120
+                : 104,
+            y2: y,
+            stroke:
+              "#334155",
+            "stroke-width":
+              isMajor
+                ? 2
+                : 1
+          }
+        )
+      );
+
+      if (isMajor) {
+        const label =
+          svgElement(
+            "text",
+            {
+              x: 126,
+              y:
+                y +
+                4,
+              "font-size":
+                11,
+              fill:
+                "#334155"
+            }
+          );
+
+        label.textContent =
+          `${formatNumber(
+            value,
+            0
+          )}`;
+
+        svg.appendChild(
+          label
+        );
+      }
+    }
+
+    const unit =
+      svgElement(
+        "text",
+        {
+          x: 125,
+          y: 20,
+          "font-size": 12,
+          "font-weight":
+            "600",
+          fill:
+            "#334155"
+        }
+      );
+
+    unit.textContent =
+      config.unit;
+
+    svg.appendChild(unit);
+
+    function setValue(value) {
+      config.value =
+        clamp(
+          Number(value),
+          config.min,
+          config.max
+        );
+
+      const levelY =
+        mapValue(
+          config.value,
+          config.min,
+          config.max,
+          bottom,
+          top
+        );
+
+      liquid.setAttribute(
+        "y",
+        levelY
+      );
+
+      liquid.setAttribute(
+        "height",
+        bottom -
+        levelY +
+        23
+      );
+    }
+
+    setValue(
+      config.value
+    );
+
+    container.appendChild(
+      svg
+    );
+
+    return {
+      type: "thermometer",
+
+      element: svg,
+
+      config,
+
+      setValue,
+
+      getValue() {
+        return config.value;
+      },
+
+      getResolution() {
+        return config.resolution;
+      }
+    };
+  }
+
+  /* =========================================================
+     APARAT DIGITAL GENERIC
+     ========================================================= */
+
+  function createDigitalMeter(
+    target,
+    options = {}
+  ) {
+    const container =
+      resolveContainer(target);
+
+    clearContainer(
+      container
+    );
+
+    const config = {
+      min: -Infinity,
+      max: Infinity,
+
+      resolution: 0.01,
+
+      value: 0,
+
+      unit: "",
+
+      title:
+        "Aparat digital",
+
+      label: "",
+
+      ...options
+    };
+
+    addTitle(
+      container,
+      config.title
+    );
+
+    const wrapper =
+      createToolWrapper(
+        container,
+        "virtual-digital-meter"
+      );
+
+    if (config.label) {
+      const label =
+        document.createElement(
+          "div"
+        );
+
+      label.className =
+        "digital-meter-label";
+
+      label.textContent =
+        config.label;
+
+      wrapper.appendChild(
+        label
+      );
+    }
+
+    const display =
+      document.createElement(
+        "div"
+      );
+
+    display.className =
+      "digital-meter-display";
+
+    display.setAttribute(
+      "role",
+      "status"
+    );
+
+    wrapper.appendChild(
+      display
+    );
+
+    function setValue(value) {
+      const numeric =
+        Number(value);
+
+      config.value =
+        Tools.numbers.quantize(
+          clamp(
+            numeric,
+            config.min,
+            config.max
+          ),
+          config.resolution
+        );
+
+      display.textContent =
+        `${formatNumber(
+          config.value,
+          decimalsFromResolution(
+            config.resolution
+          )
+        )} ${config.unit}`.trim();
+    }
+
+    setValue(
+      config.value
+    );
+
+    return {
+      type:
+        "digitalMeter",
+
+      element: wrapper,
+
+      config,
+
+      setValue,
+
+      getValue() {
+        return config.value;
+      },
+
+      getResolution() {
+        return config.resolution;
+      }
+    };
+  }
+
+  /* =========================================================
+     VALIDAREA CITIRII
+     ========================================================= */
+
+  function validateReading(
+    options
+  ) {
     const {
       studentValue,
       expectedValue,
+
       resolution = 0,
+
       absoluteTolerance = 0,
+
       relativeTolerance = 0
     } = options;
 
@@ -1619,7 +2403,7 @@
   }
 
   /* =========================================================
-     CÂMP PENTRU CITIREA ELEVULUI
+     CÂMPUL ÎN CARE ELEVUL INTRODUCE CITIREA
      ========================================================= */
 
   function createReadingInput(
@@ -1632,28 +2416,47 @@
     const config = {
       label:
         "Valoarea citită",
+
       unit: "",
+
       placeholder: "",
+
       expectedValue: null,
+
       resolution: 0,
+
+      absoluteTolerance: 0,
+
       relativeTolerance: 0,
+
       maxAttempts: 3,
+
       hint:
         "Privește cu atenție scala instrumentului.",
+
+      notebookReminder: false,
+
       onCorrect: null,
+
       onWrong: null,
+
       onComplete: null,
+
       ...options
     };
 
     const wrapper =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     wrapper.className =
       "measurement-reading";
 
     const label =
-      document.createElement("label");
+      document.createElement(
+        "label"
+      );
 
     label.className =
       "measurement-reading-label";
@@ -1661,16 +2464,33 @@
     label.textContent =
       config.label;
 
+    const inputId =
+      "measurement-input-" +
+      Math.random()
+        .toString(36)
+        .slice(2);
+
+    label.htmlFor =
+      inputId;
+
     const row =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     row.className =
       "measurement-reading-row";
 
     const input =
-      document.createElement("input");
+      document.createElement(
+        "input"
+      );
 
-    input.type = "text";
+    input.id =
+      inputId;
+
+    input.type =
+      "text";
 
     input.inputMode =
       "decimal";
@@ -1678,16 +2498,19 @@
     input.autocomplete =
       "off";
 
+    input.spellcheck =
+      false;
+
     input.placeholder =
       config.placeholder;
 
-    input.setAttribute(
-      "aria-label",
-      config.label
-    );
+    input.className =
+      "measurement-reading-input";
 
     const unit =
-      document.createElement("span");
+      document.createElement(
+        "span"
+      );
 
     unit.className =
       "measurement-reading-unit";
@@ -1696,18 +2519,23 @@
       config.unit;
 
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
-    button.type = "button";
-
-    button.textContent =
-      "Verifică";
+    button.type =
+      "button";
 
     button.className =
       "measurement-check-button";
 
+    button.textContent =
+      "Verifică";
+
     const feedback =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     feedback.className =
       "measurement-feedback";
@@ -1736,6 +2564,14 @@
     let attempts = 0;
     let completed = false;
 
+    function showInvalidNumber() {
+      feedback.textContent =
+        "Introdu o valoare numerică. Poți folosi virgulă sau punct zecimal.";
+
+      feedback.className =
+        "measurement-feedback is-error";
+    }
+
     function check() {
       if (completed) {
         return;
@@ -1752,17 +2588,15 @@
           resolution:
             config.resolution,
 
+          absoluteTolerance:
+            config.absoluteTolerance,
+
           relativeTolerance:
             config.relativeTolerance
         });
 
       if (!result.valid) {
-        feedback.textContent =
-          "Introdu o valoare numerică.";
-
-        feedback.className =
-          "measurement-feedback is-error";
-
+        showInvalidNumber();
         return;
       }
 
@@ -1777,11 +2611,15 @@
         feedback.className =
           "measurement-feedback is-correct";
 
-        input.disabled = true;
-        button.disabled = true;
+        input.disabled =
+          true;
+
+        button.disabled =
+          true;
 
         if (
-          typeof config.onCorrect ===
+          typeof
+            config.onCorrect ===
           "function"
         ) {
           config.onCorrect(
@@ -1790,7 +2628,8 @@
         }
 
         if (
-          typeof config.onComplete ===
+          typeof
+            config.onComplete ===
           "function"
         ) {
           config.onComplete(
@@ -1801,29 +2640,34 @@
         return;
       }
 
+      /*
+       * Nu afișăm răspunsul corect,
+       * nici după mai multe încercări.
+       * Elevul trebuie să recitească
+       * instrumentul.
+       */
       if (
+        attempts === 1
+      ) {
+        feedback.textContent =
+          `Mai încearcă. ${config.hint}`;
+      } else if (
         attempts <
         config.maxAttempts
       ) {
         feedback.textContent =
-          `Mai încearcă. ${config.hint}`;
-
-        feedback.className =
-          "measurement-feedback is-hint";
+          "Verifică unitatea de măsură și numărul diviziunilor dintre două gradații principale.";
       } else {
-        /*
-         * Nu afișăm automat valoarea reală.
-         * Elevul este îndrumat să citească din nou.
-         */
         feedback.textContent =
-          "Citirea nu este încă în limitele acceptate. Verifică poziția indicatorului și diviziunile scalei.";
-
-        feedback.className =
-          "measurement-feedback is-error";
+          "Valoarea nu este încă în intervalul acceptat. Recitește instrumentul cu atenție și verifică unitatea de măsură.";
       }
 
+      feedback.className =
+        "measurement-feedback is-hint";
+
       if (
-        typeof config.onWrong ===
+        typeof
+          config.onWrong ===
         "function"
       ) {
         config.onWrong(
@@ -1842,38 +2686,49 @@
       "keydown",
       (event) => {
         if (
-          event.key === "Enter"
+          event.key ===
+          "Enter"
         ) {
+          event.preventDefault();
           check();
         }
       }
     );
 
     return {
-      element: wrapper,
+      element:
+        wrapper,
 
       input,
 
+      button,
+
+      feedback,
+
       check,
+
+      setExpectedValue(value) {
+        config.expectedValue =
+          value;
+      },
 
       reset() {
         attempts = 0;
         completed = false;
 
-        input.disabled = false;
-        button.disabled = false;
+        input.disabled =
+          false;
+
+        button.disabled =
+          false;
 
         input.value = "";
 
-        feedback.textContent = "";
+        feedback.textContent =
+          "";
 
         feedback.className =
           "measurement-feedback";
-      },
-
-      setExpectedValue(value) {
-        config.expectedValue =
-          value;
       },
 
       getAttempts() {
@@ -1897,16 +2752,28 @@
   ) {
     switch (type) {
       case "ruler":
+        return createRuler(
+          target,
+          options
+        );
+
       case "verticalRuler":
         return createRuler(
           target,
           {
+            ...options,
             orientation:
-              type ===
-              "verticalRuler"
-                ? "vertical"
-                : options.orientation,
-            ...options
+              "vertical"
+          }
+        );
+
+      case "horizontalRuler":
+        return createRuler(
+          target,
+          {
+            ...options,
+            orientation:
+              "horizontal"
           }
         );
 
@@ -1924,12 +2791,14 @@
         );
 
       case "balance":
+      case "digitalBalance":
         return createBalance(
           target,
           options
         );
 
       case "graduatedCylinder":
+      case "cylinder":
         return createGraduatedCylinder(
           target,
           options
@@ -1941,9 +2810,22 @@
           options
         );
 
+      case "thermometer":
+        return createThermometer(
+          target,
+          options
+        );
+
+      case "digitalMeter":
+      case "speedSensor":
+        return createDigitalMeter(
+          target,
+          options
+        );
+
       default:
         throw new Error(
-          `Instrument necunoscut: ${type}`
+          `Instrument necunoscut: "${type}".`
         );
     }
   }
@@ -1953,16 +2835,25 @@
      ========================================================= */
 
   window.MeasurementTools = {
-    version: "1.0.0",
+    version: "2.0.0",
 
     create,
 
     createRuler,
+
     createStopwatch,
+
     createDynamometer,
+
     createBalance,
+
     createGraduatedCylinder,
+
     createProtractor,
+
+    createThermometer,
+
+    createDigitalMeter,
 
     createReadingInput,
 
