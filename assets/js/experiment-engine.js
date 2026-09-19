@@ -1,17 +1,17 @@
 /**
  * experiment-engine.js
- * Motor generic pentru experimentele interactive
+ * Motor generic pentru experimente interactive pas-cu-pas
  * Fizică – clasa a IX-a
  *
- * Filosofie:
+ * Principii:
  * - fără animații;
- * - pași discreți;
- * - fiecare pas necesită o acțiune explicită;
- * - elevul citește instrumentele;
- * - elevul introduce manual valorile;
+ * - fiecare modificare apare după o acțiune explicită a elevului;
+ * - elevul citește instrumentul;
+ * - elevul notează în caiet;
+ * - elevul introduce valoarea;
  * - elevul efectuează calculele;
  * - elevul compară rezultatele;
- * - elevul formulează concluziile.
+ * - elevul formulează concluzia.
  *
  * Prof. Dănuț Andronie
  * e-Mail: danutmg@gmail.com
@@ -26,7 +26,7 @@
   "use strict";
 
   /* =========================================================
-     VERIFICAREA DEPENDENȚELOR
+     DEPENDENȚE
      ========================================================= */
 
   if (!window.ExperimentTools) {
@@ -49,41 +49,23 @@
 
   const Tools = window.ExperimentTools;
   const Physics = window.ExperimentPhysics;
-  const Instruments = window.MeasurementTools;
+  const Measurements = window.MeasurementTools;
 
   const instances = new Map();
 
   /* =========================================================
-     CONFIGURARE GENERALĂ
+     CONFIGURARE
      ========================================================= */
 
-  const DEFAULTS = {
+  const DEFAULT_OPTIONS = {
     minimumConclusionLength: 20,
+    minimumComparisonLength: 10,
     calculationTolerance: 0.02,
-    maximumAttempts: 3,
-
-    labels: {
-      verify: "Verifică",
-      continue: "Continuă",
-      previous: "Pasul anterior",
-      next: "Pasul următor",
-      completeAction: "Am realizat acțiunea",
-      recordComplete: "Am completat tabelul",
-      finish: "Finalizează experimentul",
-      restart: "Reia experimentul cu alte valori",
-      notebook:
-        "Notează mai întâi valoarea și calculele în caiet.",
-      correct:
-        "Corect.",
-      retry:
-        "Mai încearcă.",
-      completed:
-        "Experiment finalizat."
-    }
+    maximumAttempts: 3
   };
 
   /* =========================================================
-     FUNCȚII AJUTĂTOARE
+     FUNCȚII GENERALE
      ========================================================= */
 
   function createElement(
@@ -116,18 +98,34 @@
   }
 
   function escapeHtml(value) {
-    const div =
+    const element =
       document.createElement("div");
 
-    div.textContent =
+    element.textContent =
       String(value ?? "");
 
-    return div.innerHTML;
+    return element.innerHTML;
   }
 
-  function parseStudentNumber(value) {
-    return Tools.numbers
-      .parseNumber(value);
+  function isFiniteNumber(value) {
+    return (
+      typeof value === "number" &&
+      Number.isFinite(value)
+    );
+  }
+
+  function formatNumber(
+    value,
+    decimals = 2
+  ) {
+    if (!isFiniteNumber(value)) {
+      return "";
+    }
+
+    return Tools.numbers.formatNumber(
+      value,
+      decimals
+    );
   }
 
   function getByPath(
@@ -135,7 +133,8 @@
     path
   ) {
     if (
-      !object ||
+      object === null ||
+      object === undefined ||
       !path
     ) {
       return undefined;
@@ -144,10 +143,16 @@
     return String(path)
       .split(".")
       .reduce(
-        (current, key) =>
-          current == null
-            ? undefined
-            : current[key],
+        (current, key) => {
+          if (
+            current === null ||
+            current === undefined
+          ) {
+            return undefined;
+          }
+
+          return current[key];
+        },
         object
       );
   }
@@ -159,56 +164,56 @@
   }
 
   /* =========================================================
-     LOCALIZAREA AUTOMATĂ A JSON-ULUI
+     LOCALIZAREA FIȘIERULUI JSON
      ========================================================= */
 
   function getEngineScript() {
-    return (
-      document.currentScript ||
-      Array.from(
-        document.scripts
-      ).find((script) =>
-        script.src.includes(
-          "experiment-engine.js"
-        )
-      )
-    );
+    if (
+      document.currentScript &&
+      document.currentScript.src
+    ) {
+      return document.currentScript;
+    }
+
+    return Array
+      .from(document.scripts)
+      .find(
+        (script) =>
+          script.src &&
+          script.src.includes(
+            "experiment-engine.js"
+          )
+      );
   }
 
   function getDefaultDataUrl() {
     const script =
       getEngineScript();
 
-    if (!script || !script.src) {
-      return (
-        "../../../assets/data/" +
-        "experiments-clasa9.json"
-      );
+    if (
+      script &&
+      script.src
+    ) {
+      return new URL(
+        "../data/experiments-clasa9.json",
+        script.src
+      ).href;
     }
 
-    /*
-     * Pornim de la:
-     * assets/js/experiment-engine.js
-     *
-     * și ajungem la:
-     * assets/data/experiments-clasa9.json
-     */
-    return new URL(
-      "../data/experiments-clasa9.json",
-      script.src
-    ).href;
+    return (
+      "../../../assets/data/" +
+      "experiments-clasa9.json"
+    );
   }
 
-  async function loadExperimentsData(
-    url
-  ) {
+  async function loadJson(url) {
     const response =
       await fetch(url);
 
     if (!response.ok) {
       throw new Error(
         "Nu s-a putut încărca " +
-        `experiments-clasa9.json (${response.status}).`
+        `experiments-clasa9.json. HTTP ${response.status}`
       );
     }
 
@@ -216,7 +221,7 @@
   }
 
   /* =========================================================
-     MOTORUL PRINCIPAL
+     CLASA PRINCIPALĂ
      ========================================================= */
 
   class ExperimentEngine {
@@ -238,7 +243,7 @@
       }
 
       this.options = {
-        ...DEFAULTS,
+        ...DEFAULT_OPTIONS,
         ...options
       };
 
@@ -260,14 +265,15 @@
         getDefaultDataUrl();
 
       this.data = null;
-      this.defaults = null;
+      this.defaults = {};
       this.experiment = null;
-      this.simulation = null;
+      this.simulation = {};
       this.model = null;
-
       this.steps = [];
 
       this.state = {
+        version: "2.0.0",
+
         experimentId:
           this.experimentId,
 
@@ -275,19 +281,21 @@
 
         completedSteps: [],
 
-        answers: {},
-
         actions: {},
-
-        calculations: {},
 
         measurements: {},
 
+        calculations: {},
+
+        answers: {},
+
         choices: {},
 
-        table: {},
+        comparisons: {},
 
         conclusions: {},
+
+        tables: {},
 
         completed: false
       };
@@ -301,40 +309,41 @@
 
     async init() {
       this.data =
-        await loadExperimentsData(
+        await loadJson(
           this.dataUrl
         );
 
       this.defaults =
-        this.data.simulationDefaults ||
+        this.data
+          .simulationDefaults ||
         {};
 
       this.experiment =
-        this.data.experiments?.find(
-          (item) =>
-            item.id ===
-            this.experimentId
-        );
+        this.data
+          .experiments
+          ?.find(
+            (experiment) =>
+              experiment.id ===
+              this.experimentId
+          );
 
       if (!this.experiment) {
         throw new Error(
-          `Experimentul ${this.experimentId} nu există în JSON.`
+          `Experimentul ${this.experimentId} nu există în experiments-clasa9.json.`
         );
       }
 
       this.simulation =
         Tools.config.deepMerge(
           this.defaults,
-          this.experiment.simulation ||
+          this.experiment
+            .simulation ||
             {}
         );
 
-      /*
-       * Modelul fizic este creat numai dacă
-       * experimentul are simulation.type.
-       */
       if (
-        this.experiment.simulation
+        this.experiment
+          .simulation
           ?.type
       ) {
         this.model =
@@ -354,16 +363,19 @@
 
       this.restoreState();
 
+      this.validateCurrentStep();
+
       this.renderShell();
 
       if (
         this.steps.length === 0
       ) {
-        this.renderMissingSteps();
+        this.renderConfigurationError(
+          "Experimentul nu conține proprietatea steps."
+        );
+
         return this;
       }
-
-      this.ensureValidStep();
 
       this.render();
 
@@ -371,7 +383,7 @@
     }
 
     /* =======================================================
-       STARE / PERSISTENȚĂ
+       PERSISTENȚĂ
        ======================================================= */
 
     restoreState() {
@@ -381,15 +393,48 @@
         );
 
       if (
-        saved &&
-        saved.experimentId ===
+        !saved ||
+        saved.experimentId !==
           this.experimentId
       ) {
-        this.state = {
-          ...this.state,
-          ...saved
-        };
+        return;
       }
+
+      this.state = {
+        ...this.state,
+        ...saved,
+
+        actions:
+          saved.actions || {},
+
+        measurements:
+          saved.measurements || {},
+
+        calculations:
+          saved.calculations || {},
+
+        answers:
+          saved.answers || {},
+
+        choices:
+          saved.choices || {},
+
+        comparisons:
+          saved.comparisons || {},
+
+        conclusions:
+          saved.conclusions || {},
+
+        tables:
+          saved.tables || {},
+
+        completedSteps:
+          Array.isArray(
+            saved.completedSteps
+          )
+            ? saved.completedSteps
+            : []
+      };
     }
 
     saveState() {
@@ -399,7 +444,15 @@
       );
     }
 
-    ensureValidStep() {
+    validateCurrentStep() {
+      if (
+        !Number.isInteger(
+          this.state.currentStep
+        )
+      ) {
+        this.state.currentStep = 0;
+      }
+
       if (
         this.state.currentStep < 0
       ) {
@@ -407,13 +460,18 @@
       }
 
       if (
+        this.steps.length > 0 &&
         this.state.currentStep >=
-        this.steps.length
+          this.steps.length
       ) {
         this.state.currentStep =
           this.steps.length - 1;
       }
     }
+
+    /* =======================================================
+       PAȘI
+       ======================================================= */
 
     isStepCompleted(stepId) {
       return this.state
@@ -447,15 +505,220 @@
       }
 
       return step.requires.every(
-        (stepId) =>
+        (requiredStep) =>
           this.isStepCompleted(
-            stepId
+            requiredStep
           )
       );
     }
 
+    getCurrentStep() {
+      return this.steps[
+        this.state.currentStep
+      ];
+    }
+
     /* =======================================================
-       STRUCTURA GENERALĂ
+       REZOLVAREA DESCRIPTORILOR DIN JSON
+       ======================================================= */
+
+    resolveValue(descriptor) {
+      /*
+       * Numerele sunt valori literale.
+       */
+      if (
+        typeof descriptor ===
+        "number"
+      ) {
+        return descriptor;
+      }
+
+      /*
+       * Stringurile sunt valori literale.
+       *
+       * Important pentru:
+       * "wood"
+       * "rubber"
+       * "plastic"
+       */
+      if (
+        typeof descriptor ===
+        "string"
+      ) {
+        return descriptor;
+      }
+
+      if (
+        descriptor === null ||
+        descriptor === undefined
+      ) {
+        return null;
+      }
+
+      if (
+        Array.isArray(descriptor)
+      ) {
+        return descriptor.map(
+          (item) =>
+            this.resolveValue(
+              item
+            )
+        );
+      }
+
+      if (
+        typeof descriptor !==
+        "object"
+      ) {
+        return descriptor;
+      }
+
+      /* ---------- VALOARE LITERALĂ ---------- */
+
+      if (
+        Object.prototype
+          .hasOwnProperty
+          .call(
+            descriptor,
+            "value"
+          )
+      ) {
+        return descriptor.value;
+      }
+
+      /* ---------- MĂSURARE ---------- */
+
+      if (
+        descriptor.measurement
+      ) {
+        return this.state
+          .measurements[
+            descriptor.measurement
+          ];
+      }
+
+      /* ---------- CALCUL ---------- */
+
+      if (
+        descriptor.calculation
+      ) {
+        return this.state
+          .calculations[
+            descriptor.calculation
+          ];
+      }
+
+      /* ---------- RĂSPUNS ---------- */
+
+      if (
+        descriptor.answer
+      ) {
+        return this.state
+          .answers[
+            descriptor.answer
+          ];
+      }
+
+      /* ---------- PROPRIETATE MODEL ---------- */
+
+      if (
+        descriptor.modelProperty
+      ) {
+        if (!this.model) {
+          throw new Error(
+            "Modelul fizic nu este inițializat."
+          );
+        }
+
+        return getByPath(
+          this.model,
+          descriptor.modelProperty
+        );
+      }
+
+      /* ---------- METODĂ MODEL ---------- */
+
+      if (
+        descriptor.modelMethod
+      ) {
+        if (!this.model) {
+          throw new Error(
+            "Modelul fizic nu este inițializat."
+          );
+        }
+
+        const method =
+          this.model[
+            descriptor.modelMethod
+          ];
+
+        if (
+          typeof method !==
+          "function"
+        ) {
+          throw new Error(
+            `Metoda "${descriptor.modelMethod}" nu există în modelul fizic.`
+          );
+        }
+
+        const args =
+          (
+            descriptor.args ||
+            []
+          ).map(
+            (argument) =>
+              this.resolveValue(
+                argument
+              )
+          );
+
+        return method.apply(
+          this.model,
+          args
+        );
+      }
+
+      /* ---------- FUNCȚIE FIZICĂ GENERALĂ ---------- */
+
+      if (
+        descriptor.physicsCalculation
+      ) {
+        const calculation =
+          Physics.calculations[
+            descriptor
+              .physicsCalculation
+          ];
+
+        if (
+          typeof calculation !==
+          "function"
+        ) {
+          throw new Error(
+            `Calculul fizic "${descriptor.physicsCalculation}" nu există.`
+          );
+        }
+
+        const args =
+          (
+            descriptor.args ||
+            []
+          ).map(
+            (argument) =>
+              this.resolveValue(
+                argument
+              )
+          );
+
+        return calculation(
+          ...args
+        );
+      }
+
+      return null;
+    }
+
+    /* =======================================================
+       STRUCTURA VIZUALĂ
        ======================================================= */
 
     renderShell() {
@@ -467,8 +730,7 @@
         "experiment-engine"
       );
 
-      this.container.dataset
-        .experimentActive = "true";
+      /* ---------- HEADER ---------- */
 
       const header =
         createElement(
@@ -478,7 +740,7 @@
 
       const badge =
         createElement(
-          "div",
+          "span",
           "experiment-badge",
           this.experimentId
         );
@@ -489,22 +751,32 @@
           "experiment-title",
           this.experiment
             .officialTitle ||
-            this.experiment.title ||
-            "Experiment interactiv"
+            "Experiment"
+        );
+
+      const objective =
+        createElement(
+          "p",
+          "experiment-objective",
+          this.experiment
+            .objective ||
+            ""
         );
 
       const notebook =
         createElement(
           "div",
           "experiment-notebook-note",
-          this.defaults.notebook
+          this.defaults
+            .notebook
             ?.instruction ||
-            DEFAULTS.labels.notebook
+            "Notează valorile și calculele și în caiet."
         );
 
       header.append(
         badge,
         title,
+        objective,
         notebook
       );
 
@@ -528,6 +800,21 @@
           "experiment-progress-track"
         );
 
+      progressTrack.setAttribute(
+        "role",
+        "progressbar"
+      );
+
+      progressTrack.setAttribute(
+        "aria-valuemin",
+        "0"
+      );
+
+      progressTrack.setAttribute(
+        "aria-valuemax",
+        "100"
+      );
+
       const progressBar =
         createElement(
           "div",
@@ -543,7 +830,7 @@
         progressTrack
       );
 
-      /* ---------- ZONA PASULUI ---------- */
+      /* ---------- CONȚINUT ---------- */
 
       const stepArea =
         createElement(
@@ -551,48 +838,52 @@
           "experiment-step-area"
         );
 
-      stepArea.setAttribute(
-        "aria-live",
-        "polite"
-      );
-
       /* ---------- NAVIGARE ---------- */
 
       const navigation =
         createElement(
-          "div",
+          "nav",
           "experiment-navigation"
         );
+
+      navigation.setAttribute(
+        "aria-label",
+        "Navigarea experimentului"
+      );
 
       const previousButton =
         createElement(
           "button",
           "experiment-nav-button experiment-prev",
-          DEFAULTS.labels.previous
+          "← Pasul anterior"
         );
 
       previousButton.type =
         "button";
 
-      previousButton.addEventListener(
-        "click",
-        () => this.previousStep()
-      );
-
       const nextButton =
         createElement(
           "button",
           "experiment-nav-button experiment-next",
-          DEFAULTS.labels.next
+          "Pasul următor →"
         );
 
       nextButton.type =
         "button";
 
-      nextButton.addEventListener(
-        "click",
-        () => this.nextStep()
-      );
+      previousButton
+        .addEventListener(
+          "click",
+          () =>
+            this.previousStep()
+        );
+
+      nextButton
+        .addEventListener(
+          "click",
+          () =>
+            this.nextStep()
+        );
 
       navigation.append(
         previousButton,
@@ -620,6 +911,7 @@
 
       this.elements = {
         progressText,
+        progressTrack,
         progressBar,
         stepArea,
         navigation,
@@ -629,57 +921,34 @@
       };
     }
 
-    renderMissingSteps() {
-      const box =
-        createElement(
-          "div",
-          "experiment-warning"
-        );
-
-      box.innerHTML = `
-        <strong>Experimentul nu are încă pașii definiți.</strong>
-        <p>
-          Adaugă proprietatea
-          <code>"steps": [...]</code>
-          în obiectul ${escapeHtml(
-            this.experimentId
-          )}
-          din
-          <code>experiments-clasa9.json</code>.
-        </p>
-      `;
-
-      this.elements.stepArea
-        .appendChild(box);
-
-      this.elements.navigation
-        .hidden = true;
-    }
-
     /* =======================================================
-       RANDĂRI GENERALE
+       RANDĂRIRE PAS
        ======================================================= */
 
     render() {
-      this.updateProgress();
-
-      if (this.state.completed) {
-        this.renderCompletion();
-        return;
-      }
-
-      this.elements.navigation
+      this.elements.stepArea
         .hidden = false;
 
       this.elements.completionArea
         .hidden = true;
 
+      this.updateProgress();
+
+      if (
+        this.state.completed
+      ) {
+        this.renderCompletion();
+        return;
+      }
+
       const step =
-        this.steps[
-          this.state.currentStep
-        ];
+        this.getCurrentStep();
 
       if (!step) {
+        this.renderConfigurationError(
+          "Pas experimental inexistent."
+        );
+
         return;
       }
 
@@ -710,8 +979,9 @@
           "experiment-step-instruction"
         );
 
-      instruction.innerHTML =
-        step.instruction || "";
+      instruction.textContent =
+        step.instruction ||
+        "";
 
       this.elements.stepArea
         .append(
@@ -725,9 +995,17 @@
           step
         )
       ) {
-        this.renderLockedStep(
-          step
-        );
+        const warning =
+          createElement(
+            "div",
+            "experiment-step-locked",
+            "Finalizează pașii anteriori înainte de a continua."
+          );
+
+        this.elements.stepArea
+          .appendChild(
+            warning
+          );
 
         this.updateNavigation(
           step
@@ -738,50 +1016,50 @@
 
       switch (step.type) {
         case "action":
-          this.renderActionStep(
+          this.renderAction(
             step
           );
           break;
 
         case "measurement":
-          this.renderMeasurementStep(
+          this.renderMeasurement(
             step
           );
           break;
 
         case "record":
-          this.renderRecordStep(
+          this.renderRecord(
             step
           );
           break;
 
         case "calculation":
-          this.renderCalculationStep(
+          this.renderCalculation(
             step
           );
           break;
 
         case "comparison":
-          this.renderComparisonStep(
+          this.renderComparison(
             step
           );
           break;
 
         case "choice":
-          this.renderChoiceStep(
+          this.renderChoice(
             step
           );
           break;
 
         case "conclusion":
-          this.renderConclusionStep(
+          this.renderConclusion(
             step
           );
           break;
 
         default:
-          this.renderUnknownStep(
-            step
+          this.renderConfigurationError(
+            `Tip de pas necunoscut: "${step.type}".`
           );
       }
 
@@ -799,327 +1077,143 @@
       );
     }
 
-    renderLockedStep(step) {
-      const warning =
-        createElement(
-          "div",
-          "experiment-step-locked"
-        );
-
-      warning.innerHTML =
-        "Finalizează pașii anteriori înainte de a continua.";
-
-      this.elements.stepArea
-        .appendChild(warning);
-    }
-
-    renderUnknownStep(step) {
-      const warning =
-        createElement(
-          "div",
-          "experiment-warning",
-          `Tip de pas necunoscut: ${step.type}`
-        );
-
-      this.elements.stepArea
-        .appendChild(warning);
-    }
-
     /* =======================================================
-       PAS DE TIP ACTION
+       ACTION
        ======================================================= */
 
-    renderActionStep(step) {
-      const alreadyCompleted =
-        this.isStepCompleted(
-          step.id
-        );
-
-      const actionBox =
+    renderAction(step) {
+      const box =
         createElement(
           "div",
-          "experiment-action-box"
+          "experiment-action"
         );
 
-      if (alreadyCompleted) {
-        const done =
+      if (
+        this.isStepCompleted(
+          step.id
+        )
+      ) {
+        box.appendChild(
           createElement(
             "div",
             "experiment-success",
             "✓ Acțiune realizată."
-          );
-
-        actionBox.appendChild(
-          done
+          )
         );
-      } else {
-        const button =
-          createElement(
-            "button",
-            "experiment-action-button",
-            step.buttonLabel ||
-              DEFAULTS.labels
-                .completeAction
+
+        this.elements.stepArea
+          .appendChild(box);
+
+        return;
+      }
+
+      const button =
+        createElement(
+          "button",
+          "experiment-action-button",
+          step.buttonLabel ||
+            "Realizează acțiunea"
+        );
+
+      button.type =
+        "button";
+
+      button.addEventListener(
+        "click",
+        () => {
+          this.state.actions[
+            step.id
+          ] = {
+            action:
+              step.action ||
+              step.id,
+
+            completedAt:
+              new Date()
+                .toISOString()
+          };
+
+          this.completeStep(
+            step.id
           );
 
-        button.type =
-          "button";
-
-        button.addEventListener(
-          "click",
-          () => {
-            this.state.actions[
-              step.id
-            ] = {
+          this.emit(
+            "action",
+            {
+              step,
               action:
                 step.action ||
-                step.id,
-              completedAt:
-                new Date()
-                  .toISOString()
-            };
+                step.id
+            }
+          );
 
-            this.completeStep(
-              step.id
-            );
+          this.render();
+        }
+      );
 
-            this.emit(
-              "action",
-              {
-                step,
-                action:
-                  step.action ||
-                  step.id
-              }
-            );
-
-            this.render();
-          }
-        );
-
-        actionBox.appendChild(
-          button
-        );
-      }
+      box.appendChild(
+        button
+      );
 
       this.elements.stepArea
-        .appendChild(actionBox);
-    }
-
-    /* =======================================================
-       REZOLVAREA VALORILOR ASCUNSE
-       ======================================================= */
-
-    resolveValue(descriptor) {
-      if (
-        descriptor === null ||
-        descriptor === undefined
-      ) {
-        return null;
-      }
-
-      if (
-        typeof descriptor ===
-        "number"
-      ) {
-        return descriptor;
-      }
-
-      if (
-        typeof descriptor ===
-        "string"
-      ) {
-        /*
-         * Exemplu:
-         * "measurements.step-01"
-         */
-        return getByPath(
-          this.state,
-          descriptor
-        );
-      }
-
-      if (
-        typeof descriptor !==
-        "object"
-      ) {
-        return null;
-      }
-
-      if (
-        Number.isFinite(
-          descriptor.value
-        )
-      ) {
-        return descriptor.value;
-      }
-
-      /* ---------- RĂSPUNS ANTERIOR ---------- */
-
-      if (
-        descriptor.answer
-      ) {
-        return this.state.answers[
-          descriptor.answer
-        ];
-      }
-
-      if (
-        descriptor.measurement
-      ) {
-        return this.state
-          .measurements[
-          descriptor.measurement
-        ];
-      }
-
-      if (
-        descriptor.calculation
-      ) {
-        return this.state
-          .calculations[
-          descriptor.calculation
-        ];
-      }
-
-      /* ---------- MODEL FIZIC ---------- */
-
-      if (
-        descriptor.modelProperty &&
-        this.model
-      ) {
-        return getByPath(
-          this.model,
-          descriptor.modelProperty
-        );
-      }
-
-      if (
-        descriptor.modelMethod &&
-        this.model
-      ) {
-        const method =
-          this.model[
-            descriptor.modelMethod
-          ];
-
-        if (
-          typeof method !==
-          "function"
-        ) {
-          throw new Error(
-            `Metoda fizică ${descriptor.modelMethod} nu există.`
-          );
-        }
-
-        const args =
-          (
-            descriptor.args ||
-            []
-          ).map(
-            (arg) =>
-              this.resolveValue(
-                arg
-              )
-          );
-
-        return method.apply(
-          this.model,
-          args
-        );
-      }
-
-      /* ---------- CALCUL STANDARD ---------- */
-
-      if (
-        descriptor.physicsCalculation
-      ) {
-        const fn =
-          Physics.calculations[
-            descriptor
-              .physicsCalculation
-          ];
-
-        if (
-          typeof fn !==
-          "function"
-        ) {
-          throw new Error(
-            `Calcul fizic necunoscut: ${descriptor.physicsCalculation}`
-          );
-        }
-
-        const args =
-          (
-            descriptor.args ||
-            []
-          ).map(
-            (arg) =>
-              this.resolveValue(
-                arg
-              )
-          );
-
-        return fn(...args);
-      }
-
-      return null;
+        .appendChild(box);
     }
 
     /* =======================================================
        INSTRUMENTE
        ======================================================= */
 
-    getInstrumentConfig(
-      instrumentName
-    ) {
-      const list =
+    getInstrumentConfig(type) {
+      const instruments =
         this.experiment
           .simulation
           ?.instruments ||
         [];
 
       return (
-        list.find(
+        instruments.find(
           (instrument) =>
             instrument.type ===
-            instrumentName ||
+              type ||
             instrument.id ===
-            instrumentName
-        ) || {}
+              type
+        ) ||
+        {}
       );
     }
 
-    normalizeInstrumentOptions(
-      instrument
+    normalizeInstrumentConfig(
+      config
     ) {
-      const options = {
-        ...instrument
+      const result = {
+        ...config
       };
 
       if (
         Array.isArray(
-          instrument.range
+          result.range
         )
       ) {
-        options.min =
-          instrument.range[0];
+        result.min =
+          result.range[0];
 
-        options.max =
-          instrument.range[1];
+        result.max =
+          result.range[1];
       }
 
-      return options;
+      return result;
     }
 
+    /* =======================================================
+       CRONOMETRU FĂRĂ ANIMAȚIE
+       ======================================================= */
+
     renderStaticStopwatch(
-      target,
-      value,
+      container,
+      expectedValue,
       step
     ) {
-      clearElement(target);
-
-      const wrapper =
+      const box =
         createElement(
           "div",
           "static-stopwatch"
@@ -1129,8 +1223,13 @@
         createElement(
           "div",
           "stopwatch-display",
-          "--:--.--"
+          "00:00.00"
         );
+
+      display.setAttribute(
+        "role",
+        "timer"
+      );
 
       const controls =
         createElement(
@@ -1141,14 +1240,14 @@
       const start =
         createElement(
           "button",
-          "",
+          "stopwatch-start",
           "START"
         );
 
       const stop =
         createElement(
           "button",
-          "",
+          "stopwatch-stop",
           "STOP"
         );
 
@@ -1164,14 +1263,14 @@
         () => {
           started = true;
 
-          display.textContent =
-            "Cronometrul funcționează…";
-
           start.disabled =
             true;
 
           stop.disabled =
             false;
+
+          display.textContent =
+            "Cronometrul funcționează…";
         }
       );
 
@@ -1186,20 +1285,19 @@
             step.resolution ||
             0.01;
 
-          const measured =
+          const displayedValue =
             Tools.numbers.quantize(
-              value,
+              expectedValue,
               resolution
             );
 
           display.textContent =
-            `${Tools.numbers.formatNumber(
-              measured,
+            `${formatNumber(
+              displayedValue,
               2
             )} s`;
 
-          stop.disabled =
-            true;
+          stop.disabled = true;
         }
       );
 
@@ -1208,21 +1306,49 @@
         stop
       );
 
-      wrapper.append(
+      box.append(
         display,
         controls
       );
 
-      target.appendChild(
-        wrapper
+      container.appendChild(
+        box
       );
     }
 
     /* =======================================================
-       PAS DE TIP MEASUREMENT
+       MEASUREMENT
        ======================================================= */
 
-    renderMeasurementStep(step) {
+    renderMeasurement(step) {
+      let expectedValue;
+
+      try {
+        expectedValue =
+          this.resolveValue(
+            step.expectedValue ??
+            step.expected
+          );
+      } catch (error) {
+        this.renderConfigurationError(
+          error.message
+        );
+
+        return;
+      }
+
+      if (
+        !isFiniteNumber(
+          expectedValue
+        )
+      ) {
+        this.renderConfigurationError(
+          `Pasul "${step.id}" nu produce o valoare numerică validă.`
+        );
+
+        return;
+      }
+
       const wrapper =
         createElement(
           "div",
@@ -1235,47 +1361,19 @@
           "experiment-instrument-area"
         );
 
-      const inputArea =
+      const answerArea =
         createElement(
           "div",
-          "experiment-measurement-input"
+          "experiment-measurement-answer"
         );
 
       wrapper.append(
         instrumentArea,
-        inputArea
+        answerArea
       );
 
       this.elements.stepArea
         .appendChild(wrapper);
-
-      let expectedValue;
-
-      try {
-        expectedValue =
-          this.resolveValue(
-            step.expectedValue ||
-            step.expected
-          );
-      } catch (error) {
-        this.renderDeveloperError(
-          error.message
-        );
-
-        return;
-      }
-
-      if (
-        !Number.isFinite(
-          expectedValue
-        )
-      ) {
-        this.renderDeveloperError(
-          `Pasul ${step.id} nu are expectedValue valid.`
-        );
-
-        return;
-      }
 
       const instrumentType =
         step.instrument;
@@ -1285,8 +1383,8 @@
           instrumentType
         );
 
-      const instrumentConfig =
-        this.normalizeInstrumentOptions({
+      const config =
+        this.normalizeInstrumentConfig({
           ...baseConfig,
           ...(step.instrumentOptions ||
             {}),
@@ -1295,8 +1393,8 @@
         });
 
       /*
-       * Cronometrul este tratat separat,
-       * fără animație continuă.
+       * Cronometrul este intenționat static:
+       * nu folosim requestAnimationFrame.
        */
       if (
         instrumentType ===
@@ -1307,69 +1405,63 @@
           expectedValue,
           step
         );
-      } else if (
-        instrumentType
-      ) {
+      } else {
         try {
-          Instruments.create(
+          Measurements.create(
             instrumentType,
             instrumentArea,
-            instrumentConfig
+            config
           );
         } catch (error) {
-          this.renderDeveloperError(
+          this.renderConfigurationError(
             error.message
           );
+
+          return;
         }
       }
 
-      const existing =
+      const savedValue =
         this.state
           .measurements[
           step.id
         ];
 
       if (
-        Number.isFinite(
-          existing
+        isFiniteNumber(
+          savedValue
         )
       ) {
-        const result =
+        answerArea.appendChild(
           createElement(
             "div",
             "experiment-success",
-            `✓ Valoare înregistrată: ${
-              Tools.numbers
-                .formatNumber(
-                  existing,
-                  step.decimals ?? 2
-                )
-            } ${step.unit || ""}`
-          );
-
-        inputArea.appendChild(
-          result
+            `✓ Ai înregistrat ${formatNumber(
+              savedValue,
+              step.decimals ?? 2
+            )} ${step.unit || ""}.`
+          )
         );
 
         return;
       }
 
-      const notebook =
+      const reminder =
         createElement(
           "div",
           "experiment-notebook-reminder",
           step.notebookInstruction ||
-            DEFAULTS.labels.notebook
+            "Citește instrumentul, notează valoarea în caiet, apoi introdu valoarea mai jos."
         );
 
-      inputArea.appendChild(
-        notebook
+      answerArea.appendChild(
+        reminder
       );
 
       const reading =
-        Instruments
+        Measurements
           .createReadingInput(
-            inputArea,
+            answerArea,
             {
               label:
                 step.inputLabel ||
@@ -1398,7 +1490,7 @@
 
               hint:
                 step.hint ||
-                "Privește cu atenție scala instrumentului.",
+                "Verifică din nou poziția indicatorului și diviziunile scalei.",
 
               onCorrect:
                 (result) => {
@@ -1408,7 +1500,8 @@
                   ] =
                     result.studentValue;
 
-                  this.state.answers[
+                  this.state
+                    .answers[
                     step.id
                   ] =
                     result.studentValue;
@@ -1433,9 +1526,11 @@
             }
           );
 
-      if (reading?.input) {
+      if (
+        reading &&
         reading.input
-          .focus();
+      ) {
+        reading.input.focus();
       }
     }
 
@@ -1443,13 +1538,20 @@
        TABEL EXPERIMENTAL
        ======================================================= */
 
-    renderExperimentTable(
-      step
-    ) {
-      const definition =
+    getTableDefinition(step) {
+      return (
         step.table ||
         this.experiment
-          .dataTable;
+          .dataTable ||
+        null
+      );
+    }
+
+    renderTable(step) {
+      const definition =
+        this.getTableDefinition(
+          step
+        );
 
       if (
         !definition ||
@@ -1460,7 +1562,21 @@
         return null;
       }
 
-      const tableWrapper =
+      const tableId =
+        step.tableId ||
+        step.id;
+
+      if (
+        !this.state.tables[
+          tableId
+        ]
+      ) {
+        this.state.tables[
+          tableId
+        ] = {};
+      }
+
+      const wrapper =
         createElement(
           "div",
           "experiment-table-wrapper"
@@ -1482,26 +1598,26 @@
           "tr"
         );
 
-      definition.columns.forEach(
-        (column) => {
-          const th =
-            document.createElement(
-              "th"
+      definition.columns
+        .forEach(
+          (column) => {
+            const th =
+              document.createElement(
+                "th"
+              );
+
+            th.scope = "col";
+
+            th.textContent =
+              column.unit
+                ? `${column.label} (${column.unit})`
+                : column.label;
+
+            headerRow.appendChild(
+              th
             );
-
-          th.scope =
-            "col";
-
-          th.textContent =
-            column.unit
-              ? `${column.label} (${column.unit})`
-              : column.label;
-
-          headerRow.appendChild(
-            th
-          );
-        }
-      );
+          }
+        );
 
       thead.appendChild(
         headerRow
@@ -1515,114 +1631,111 @@
       const rowCount =
         step.rows ||
         definition.suggestedRows ||
-        this.data.labDefaults
+        this.data
+          .labDefaults
           ?.minimumRepeats ||
-        3;
-
-      const tableId =
-        step.tableId ||
-        step.id;
-
-      if (
-        !this.state.table[
-          tableId
-        ]
-      ) {
-        this.state.table[
-          tableId
-        ] = {};
-      }
+        1;
 
       for (
         let rowIndex = 0;
         rowIndex < rowCount;
         rowIndex += 1
       ) {
-        const tr =
+        const row =
           document.createElement(
             "tr"
           );
 
-        definition.columns.forEach(
-          (column) => {
-            const td =
-              document.createElement(
-                "td"
-              );
-
-            /*
-             * Coloana de număr de determinare
-             * poate fi automată.
-             */
-            if (
-              column.key ===
-                "trial" ||
-              column.autoIndex
-            ) {
-              td.textContent =
-                String(
-                  rowIndex + 1
+        definition.columns
+          .forEach(
+            (column) => {
+              const cell =
+                document.createElement(
+                  "td"
                 );
 
-              tr.appendChild(td);
-              return;
-            }
+              if (
+                column.key ===
+                  "trial" ||
+                column.autoIndex
+              ) {
+                cell.textContent =
+                  String(
+                    rowIndex + 1
+                  );
 
-            const input =
-              document.createElement(
-                "input"
+                row.appendChild(
+                  cell
+                );
+
+                return;
+              }
+
+              const input =
+                document.createElement(
+                  "input"
+                );
+
+              const isText =
+                column.inputType ===
+                  "text" ||
+                column.key ===
+                  "surface";
+
+              input.type =
+                "text";
+
+              input.inputMode =
+                isText
+                  ? "text"
+                  : "decimal";
+
+              input.autocomplete =
+                "off";
+
+              input.className =
+                "experiment-table-input";
+
+              const cellKey =
+                `${rowIndex}:${column.key}`;
+
+              input.value =
+                this.state.tables[
+                  tableId
+                ][cellKey] ||
+                "";
+
+              input.setAttribute(
+                "aria-label",
+                `${column.label}, rândul ${
+                  rowIndex + 1
+                }`
               );
 
-            input.type =
-              "text";
+              input.addEventListener(
+                "input",
+                () => {
+                  this.state.tables[
+                    tableId
+                  ][cellKey] =
+                    input.value.trim();
 
-            input.inputMode =
-              "decimal";
+                  this.saveState();
+                }
+              );
 
-            input.autocomplete =
-              "off";
+              cell.appendChild(
+                input
+              );
 
-            input.className =
-              "experiment-table-input";
-
-            input.setAttribute(
-              "aria-label",
-              `${column.label}, determinarea ${
-                rowIndex + 1
-              }`
-            );
-
-            const cellKey =
-              `${rowIndex}:${column.key}`;
-
-            input.value =
-              this.state.table[
-                tableId
-              ][cellKey] ??
-              "";
-
-            input.addEventListener(
-              "input",
-              () => {
-                this.state.table[
-                  tableId
-                ][cellKey] =
-                  input.value;
-
-                this.saveState();
-              }
-            );
-
-            td.appendChild(
-              input
-            );
-
-            tr.appendChild(td);
-          }
-        );
+              row.appendChild(
+                cell
+              );
+            }
+          );
 
         tbody.appendChild(
-          tr
+          row
         );
       }
 
@@ -1631,38 +1744,100 @@
         tbody
       );
 
-      tableWrapper.appendChild(
+      wrapper.appendChild(
         table
       );
 
-      return tableWrapper;
+      return wrapper;
+    }
+
+    tableIsComplete(step) {
+      const definition =
+        this.getTableDefinition(
+          step
+        );
+
+      if (!definition) {
+        return true;
+      }
+
+      const tableId =
+        step.tableId ||
+        step.id;
+
+      const stored =
+        this.state.tables[
+          tableId
+        ] ||
+        {};
+
+      const rowCount =
+        step.rows ||
+        definition.suggestedRows ||
+        this.data
+          .labDefaults
+          ?.minimumRepeats ||
+        1;
+
+      for (
+        let rowIndex = 0;
+        rowIndex < rowCount;
+        rowIndex += 1
+      ) {
+        for (
+          const column of
+          definition.columns
+      ) {
+          if (
+            column.key ===
+              "trial" ||
+            column.autoIndex
+          ) {
+            continue;
+          }
+
+          const cellKey =
+            `${rowIndex}:${column.key}`;
+
+          const value =
+            stored[cellKey];
+
+          if (
+            value === undefined ||
+            value === null ||
+            String(value).trim() ===
+              ""
+          ) {
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
 
     /* =======================================================
-       PAS DE TIP RECORD
+       RECORD
        ======================================================= */
 
-    renderRecordStep(step) {
+    renderRecord(step) {
       const wrapper =
         createElement(
           "div",
           "experiment-record"
         );
 
-      const note =
+      wrapper.appendChild(
         createElement(
           "div",
           "experiment-notebook-reminder",
           step.notebookInstruction ||
-            "Notează valorile în caiet și completează tabelul."
-        );
-
-      wrapper.appendChild(note);
+            "Completează tabelul folosind valorile pe care le-ai notat în caiet."
+        )
+      );
 
       const table =
-        this.renderExperimentTable(
-          step
-        );
+        this.renderTable(step);
 
       if (table) {
         wrapper.appendChild(
@@ -1679,114 +1854,117 @@
           createElement(
             "div",
             "experiment-success",
-            "✓ Date înregistrate."
+            "✓ Tabel completat."
           )
         );
-      } else {
-        const button =
-          createElement(
-            "button",
-            "experiment-action-button",
-            step.buttonLabel ||
-              DEFAULTS.labels
-                .recordComplete
+
+        this.elements.stepArea
+          .appendChild(wrapper);
+
+        return;
+      }
+
+      const feedback =
+        createElement(
+          "div",
+          "experiment-feedback"
+        );
+
+      feedback.setAttribute(
+        "aria-live",
+        "polite"
+      );
+
+      const button =
+        createElement(
+          "button",
+          "experiment-action-button",
+          step.buttonLabel ||
+            "Am completat tabelul"
+        );
+
+      button.type =
+        "button";
+
+      button.addEventListener(
+        "click",
+        () => {
+          if (
+            !this.tableIsComplete(
+              step
+            )
+          ) {
+            feedback.textContent =
+              "Completează toate căsuțele tabelului înainte de a continua.";
+
+            feedback.className =
+              "experiment-feedback is-hint";
+
+            return;
+          }
+
+          this.completeStep(
+            step.id
           );
 
-        button.type =
-          "button";
-
-        button.addEventListener(
-          "click",
-          () => {
-            this.completeStep(
-              step.id
-            );
-
-            this.emit(
-              "record",
-              {
-                step,
-                table:
-                  this.state.table[
+          this.emit(
+            "record",
+            {
+              step,
+              table:
+                deepClone(
+                  this.state.tables[
                     step.tableId ||
                     step.id
-                  ]
-              }
-            );
+                  ] ||
+                  {}
+                )
+            }
+          );
 
-            this.render();
-          }
-        );
+          this.render();
+        }
+      );
 
-        wrapper.appendChild(
-          button
-        );
-      }
+      wrapper.append(
+        button,
+        feedback
+      );
 
       this.elements.stepArea
         .appendChild(wrapper);
     }
 
     /* =======================================================
-       PAS DE TIP CALCULATION
+       CALCULATION
        ======================================================= */
 
-    renderCalculationStep(step) {
+    renderCalculation(step) {
       const wrapper =
         createElement(
           "div",
           "experiment-calculation"
         );
 
-      if (step.formulaLabel) {
-        const formula =
-          createElement(
-            "div",
-            "experiment-formula"
-          );
-
-        formula.innerHTML =
-          step.formulaLabel;
-
-        wrapper.appendChild(
-          formula
-        );
-      }
-
-      const reminder =
-        createElement(
-          "div",
-          "experiment-notebook-reminder",
-          step.notebookInstruction ||
-            "Efectuează calculul în caiet, apoi introdu rezultatul."
-        );
-
-      wrapper.appendChild(
-        reminder
-      );
-
-      const existing =
+      const savedValue =
         this.state
           .calculations[
           step.id
         ];
 
       if (
-        Number.isFinite(
-          existing
+        isFiniteNumber(
+          savedValue
         )
       ) {
         wrapper.appendChild(
           createElement(
             "div",
             "experiment-success",
-            `✓ Rezultat: ${
-              Tools.numbers
-                .formatNumber(
-                  existing,
-                  step.decimals ?? 2
-                )
-            } ${step.unit || ""}`
+            `✓ Rezultat înregistrat: ${formatNumber(
+              savedValue,
+              step.decimals ?? 2
+            )} ${step.unit || ""}`
           )
         );
 
@@ -1801,11 +1979,11 @@
       try {
         expectedValue =
           this.resolveValue(
-            step.expectedValue ||
+            step.expectedValue ??
             step.expected
           );
       } catch (error) {
-        this.renderDeveloperError(
+        this.renderConfigurationError(
           error.message
         );
 
@@ -1813,16 +1991,25 @@
       }
 
       if (
-        !Number.isFinite(
+        !isFiniteNumber(
           expectedValue
         )
       ) {
-        this.renderDeveloperError(
-          `Pasul ${step.id} nu are un rezultat calculat valid.`
+        this.renderConfigurationError(
+          `Rezultatul pentru pasul "${step.id}" nu este numeric.`
         );
 
         return;
       }
+
+      wrapper.appendChild(
+        createElement(
+          "div",
+          "experiment-notebook-reminder",
+          step.notebookInstruction ||
+            "Efectuează calculul în caiet. Introdu aici numai rezultatul obținut."
+        )
+      );
 
       const row =
         createElement(
@@ -1835,12 +2022,9 @@
           "input"
         );
 
-      input.type =
-        "text";
-
+      input.type = "text";
       input.inputMode =
         "decimal";
-
       input.autocomplete =
         "off";
 
@@ -1865,7 +2049,7 @@
           "button",
           "experiment-check-button",
           step.buttonLabel ||
-            DEFAULTS.labels.verify
+            "Verifică"
         );
 
       button.type =
@@ -1884,7 +2068,7 @@
 
       let attempts = 0;
 
-      const verify = () => {
+      const check = () => {
         const result =
           Tools.measurement
             .checkCalculation({
@@ -1905,7 +2089,7 @@
 
         if (!result.valid) {
           feedback.textContent =
-            "Introdu o valoare numerică.";
+            "Introdu un număr valid.";
 
           feedback.className =
             "experiment-feedback is-error";
@@ -1922,26 +2106,24 @@
           ] =
             result.studentValue;
 
-          this.state.answers[
+          this.state
+            .answers[
             step.id
           ] =
             result.studentValue;
+
+          this.completeStep(
+            step.id
+          );
+
+          input.disabled = true;
+          button.disabled = true;
 
           feedback.textContent =
             "✓ Calcul corect.";
 
           feedback.className =
             "experiment-feedback is-correct";
-
-          input.disabled =
-            true;
-
-          button.disabled =
-            true;
-
-          this.completeStep(
-            step.id
-          );
 
           this.emit(
             "calculation",
@@ -1959,31 +2141,21 @@
           return;
         }
 
-        if (
-          attempts >=
+        feedback.textContent =
+          step.hint ||
           (
-            step.showHintAfterAttempts ||
-            1
-          )
-        ) {
-          feedback.textContent =
-            step.hint ||
-            "Verifică formula, unitățile și operațiile efectuate.";
+            attempts >= 2
+              ? "Verifică formula, transformarea unităților și operațiile numerice."
+              : "Rezultatul nu este încă în limitele acceptate."
+          );
 
-          feedback.className =
-            "experiment-feedback is-hint";
-        } else {
-          feedback.textContent =
-            DEFAULTS.labels.retry;
-
-          feedback.className =
-            "experiment-feedback is-error";
-        }
+        feedback.className =
+          "experiment-feedback is-hint";
       };
 
       button.addEventListener(
         "click",
-        verify
+        check
       );
 
       input.addEventListener(
@@ -1993,7 +2165,7 @@
             event.key ===
             "Enter"
           ) {
-            verify();
+            check();
           }
         }
       );
@@ -2016,45 +2188,58 @@
     }
 
     /* =======================================================
-       PAS DE TIP COMPARISON
+       COMPARISON
        ======================================================= */
 
-    renderComparisonStep(step) {
+    renderComparison(step) {
       const wrapper =
         createElement(
           "div",
           "experiment-comparison"
         );
 
-      const measured =
-        this.resolveValue(
-          step.measuredSource
-            ? {
-                measurement:
-                  step.measuredSource
-              }
-            : step.measured
-        );
-
-      const calculated =
-        this.resolveValue(
-          step.calculatedSource
-            ? {
-                calculation:
-                  step.calculatedSource
-              }
-            : step.calculated
-        );
+      let measured = null;
+      let calculated = null;
 
       if (
-        Number.isFinite(
-          measured
-        ) &&
-        Number.isFinite(
-          calculated
-        )
+        step.measuredSource
       ) {
-        const comparisonGrid =
+        measured =
+          this.state
+            .measurements[
+            step.measuredSource
+          ];
+      } else if (
+        step.measured
+      ) {
+        measured =
+          this.resolveValue(
+            step.measured
+          );
+      }
+
+      if (
+        step.calculatedSource
+      ) {
+        calculated =
+          this.state
+            .calculations[
+            step.calculatedSource
+          ];
+      } else if (
+        step.calculated
+      ) {
+        calculated =
+          this.resolveValue(
+            step.calculated
+          );
+      }
+
+      if (
+        isFiniteNumber(measured) &&
+        isFiniteNumber(calculated)
+      ) {
+        const values =
           createElement(
             "div",
             "comparison-grid"
@@ -2067,9 +2252,9 @@
           );
 
         measuredBox.innerHTML =
-          `<strong>Valoare măsurată</strong><br>` +
-          `${escapeHtml(
-            Tools.numbers.formatNumber(
+          "<strong>Valoare măsurată</strong>" +
+          `<br>${escapeHtml(
+            formatNumber(
               measured,
               step.decimals ?? 2
             )
@@ -2084,9 +2269,9 @@
           );
 
         calculatedBox.innerHTML =
-          `<strong>Valoare calculată</strong><br>` +
-          `${escapeHtml(
-            Tools.numbers.formatNumber(
+          "<strong>Valoare calculată</strong>" +
+          `<br>${escapeHtml(
+            formatNumber(
               calculated,
               step.decimals ?? 2
             )
@@ -2094,129 +2279,149 @@
             step.unit || ""
           )}`;
 
-        comparisonGrid.append(
+        values.append(
           measuredBox,
           calculatedBox
         );
 
         wrapper.appendChild(
-          comparisonGrid
+          values
         );
       }
 
-      if (
-        this.isStepCompleted(
+      const saved =
+        this.state
+          .comparisons[
           step.id
-        )
-      ) {
+        ];
+
+      if (saved) {
+        const result =
+          createElement(
+            "div",
+            "experiment-success"
+          );
+
+        result.innerHTML =
+          "<strong>Interpretarea ta:</strong><br>" +
+          escapeHtml(saved);
+
         wrapper.appendChild(
-          createElement(
-            "div",
-            "experiment-success",
-            "✓ Rezultatele au fost comparate."
-          )
-        );
-      } else {
-        const prompt =
-          createElement(
-            "p",
-            "comparison-prompt",
-            step.question ||
-              "Compară cele două rezultate. Sunt apropiate în limitele experimentului?"
-          );
-
-        const textarea =
-          document.createElement(
-            "textarea"
-          );
-
-        textarea.className =
-          "experiment-interpretation";
-
-        textarea.rows =
-          step.rows || 3;
-
-        textarea.placeholder =
-          step.placeholder ||
-          "Scrie aici observația ta...";
-
-        const button =
-          createElement(
-            "button",
-            "experiment-action-button",
-            step.buttonLabel ||
-              "Salvează comparația"
-          );
-
-        button.type =
-          "button";
-
-        const feedback =
-          createElement(
-            "div",
-            "experiment-feedback"
-          );
-
-        button.addEventListener(
-          "click",
-          () => {
-            const text =
-              textarea.value.trim();
-
-            if (
-              text.length <
-              (
-                step.minimumLength ||
-                10
-              )
-            ) {
-              feedback.textContent =
-                "Scrie o observație puțin mai detaliată.";
-
-              feedback.className =
-                "experiment-feedback is-hint";
-
-              return;
-            }
-
-            this.state.answers[
-              step.id
-            ] = text;
-
-            this.completeStep(
-              step.id
-            );
-
-            this.emit(
-              "comparison",
-              {
-                step,
-                interpretation:
-                  text
-              }
-            );
-
-            this.render();
-          }
+          result
         );
 
-        wrapper.append(
-          prompt,
-          textarea,
-          button,
-          feedback
-        );
+        this.elements.stepArea
+          .appendChild(wrapper);
+
+        return;
       }
+
+      const question =
+        createElement(
+          "p",
+          "comparison-question",
+          step.question ||
+            "Compară cele două valori. Ce observi?"
+        );
+
+      const textarea =
+        document.createElement(
+          "textarea"
+        );
+
+      textarea.className =
+        "experiment-interpretation";
+
+      textarea.rows =
+        step.rows || 4;
+
+      textarea.placeholder =
+        step.placeholder ||
+        "Scrie observația ta...";
+
+      const feedback =
+        createElement(
+          "div",
+          "experiment-feedback"
+        );
+
+      const button =
+        createElement(
+          "button",
+          "experiment-action-button",
+          step.buttonLabel ||
+            "Salvează comparația"
+        );
+
+      button.type =
+        "button";
+
+      button.addEventListener(
+        "click",
+        () => {
+          const text =
+            textarea.value.trim();
+
+          const minimum =
+            step.minimumLength ||
+            this.options
+              .minimumComparisonLength;
+
+          if (
+            text.length <
+            minimum
+          ) {
+            feedback.textContent =
+              `Scrie o observație de cel puțin ${minimum} caractere.`;
+
+            feedback.className =
+              "experiment-feedback is-hint";
+
+            return;
+          }
+
+          this.state
+            .comparisons[
+            step.id
+          ] = text;
+
+          this.state
+            .answers[
+            step.id
+          ] = text;
+
+          this.completeStep(
+            step.id
+          );
+
+          this.emit(
+            "comparison",
+            {
+              step,
+              text
+            }
+          );
+
+          this.render();
+        }
+      );
+
+      wrapper.append(
+        question,
+        textarea,
+        button,
+        feedback
+      );
 
       this.elements.stepArea
         .appendChild(wrapper);
     }
 
     /* =======================================================
-       PAS DE TIP CHOICE
+       CHOICE
        ======================================================= */
 
-    renderChoiceStep(step) {
+    renderChoice(step) {
       const wrapper =
         createElement(
           "div",
@@ -2227,7 +2432,8 @@
         createElement(
           "p",
           "experiment-question",
-          step.question || ""
+          step.question ||
+            ""
         );
 
       wrapper.appendChild(
@@ -2243,7 +2449,7 @@
           createElement(
             "div",
             "experiment-success",
-            "✓ Interpretare corectă."
+            "✓ Răspuns corect."
           )
         );
 
@@ -2259,10 +2465,14 @@
           "experiment-feedback"
         );
 
-      (
-        step.options ||
-        []
-      ).forEach(
+      const options =
+        Array.isArray(
+          step.options
+        )
+          ? step.options
+          : [];
+
+      options.forEach(
         (option, index) => {
           const button =
             createElement(
@@ -2286,9 +2496,14 @@
                   step.id
                 ] = index;
 
-                this.state.answers[
+                this.state
+                  .answers[
                   step.id
                 ] = index;
+
+                this.completeStep(
+                  step.id
+                );
 
                 feedback.textContent =
                   step.feedbackCorrect ||
@@ -2297,20 +2512,16 @@
                 feedback.className =
                   "experiment-feedback is-correct";
 
-                this.completeStep(
-                  step.id
-                );
-
-                Array.from(
-                  wrapper.querySelectorAll(
+                wrapper
+                  .querySelectorAll(
                     "button"
                   )
-                ).forEach(
-                  (item) => {
-                    item.disabled =
-                      true;
-                  }
-                );
+                  .forEach(
+                    (item) => {
+                      item.disabled =
+                        true;
+                    }
+                  );
 
                 this.updateNavigation(
                   step
@@ -2319,7 +2530,7 @@
                 feedback.textContent =
                   step.feedbackWrong ||
                   step.hint ||
-                  "Analizează din nou rezultatele experimentului.";
+                  "Analizează din nou datele experimentului.";
 
                 feedback.className =
                   "experiment-feedback is-hint";
@@ -2342,27 +2553,23 @@
     }
 
     /* =======================================================
-       PAS DE TIP CONCLUSION
+       CONCLUSION
        ======================================================= */
 
-    renderConclusionStep(step) {
+    renderConclusion(step) {
       const wrapper =
         createElement(
           "div",
           "experiment-conclusion"
         );
 
-      if (
-        this.isStepCompleted(
+      const saved =
+        this.state
+          .conclusions[
           step.id
-        )
-      ) {
-        const saved =
-          this.state
-            .conclusions[
-            step.id
-          ];
+        ];
 
+      if (saved) {
         const result =
           createElement(
             "div",
@@ -2370,7 +2577,7 @@
           );
 
         result.innerHTML =
-          `<strong>Concluzia ta:</strong><br>` +
+          "<strong>Concluzia ta:</strong><br>" +
           escapeHtml(saved);
 
         wrapper.appendChild(
@@ -2386,7 +2593,7 @@
       const prompt =
         createElement(
           "p",
-          "",
+          "experiment-conclusion-prompt",
           step.question ||
             step.instruction ||
             "Formulează concluzia experimentului."
@@ -2405,7 +2612,13 @@
 
       textarea.placeholder =
         step.placeholder ||
-        "Scrie concluzia în 2-3 enunțuri...";
+        "Scrie concluzia în 2–3 enunțuri...";
+
+      const feedback =
+        createElement(
+          "div",
+          "experiment-feedback"
+        );
 
       const button =
         createElement(
@@ -2417,12 +2630,6 @@
 
       button.type =
         "button";
-
-      const feedback =
-        createElement(
-          "div",
-          "experiment-feedback"
-        );
 
       button.addEventListener(
         "click",
@@ -2440,7 +2647,7 @@
             minimum
           ) {
             feedback.textContent =
-              `Concluzia trebuie să conțină cel puțin ${minimum} caractere.`;
+              `Scrie o concluzie de cel puțin ${minimum} caractere.`;
 
             feedback.className =
               "experiment-feedback is-hint";
@@ -2453,7 +2660,8 @@
             step.id
           ] = text;
 
-          this.state.answers[
+          this.state
+            .answers[
             step.id
           ] = text;
 
@@ -2465,8 +2673,7 @@
             "conclusion",
             {
               step,
-              conclusion:
-                text
+              text
             }
           );
 
@@ -2486,12 +2693,12 @@
     }
 
     /* =======================================================
-       NAVIGAREA ÎNTRE PAȘI
+       NAVIGARE
        ======================================================= */
 
     previousStep() {
       if (
-        this.state.currentStep <=
+        this.state.currentStep ===
         0
       ) {
         return;
@@ -2502,26 +2709,24 @@
 
       this.saveState();
       this.render();
-      this.scrollToTop();
+      this.scrollToExperiment();
     }
 
     nextStep() {
-      const current =
-        this.steps[
-          this.state.currentStep
-        ];
+      const step =
+        this.getCurrentStep();
 
       if (
-        !current ||
+        !step ||
         !this.isStepCompleted(
-          current.id
+          step.id
         )
       ) {
         return;
       }
 
       if (
-        this.state.currentStep >=
+        this.state.currentStep ===
         this.steps.length - 1
       ) {
         this.finishExperiment();
@@ -2533,18 +2738,23 @@
 
       this.saveState();
       this.render();
-      this.scrollToTop();
+      this.scrollToExperiment();
     }
 
     updateNavigation(step) {
       const allowBack =
-        this.defaults.navigation
-          ?.allowBack !== false;
+        this.defaults
+          .navigation
+          ?.allowBack !==
+        false;
 
-      this.elements.previousButton
-        .hidden = !allowBack;
+      this.elements
+        .previousButton
+        .hidden =
+        !allowBack;
 
-      this.elements.previousButton
+      this.elements
+        .previousButton
         .disabled =
         this.state.currentStep ===
         0;
@@ -2554,20 +2764,24 @@
           step.id
         );
 
-      this.elements.nextButton
-        .disabled = !completed;
+      this.elements
+        .nextButton
+        .disabled =
+        !completed;
 
       if (
         this.state.currentStep ===
         this.steps.length - 1
       ) {
-        this.elements.nextButton
+        this.elements
+          .nextButton
           .textContent =
-          DEFAULTS.labels.finish;
+          "Finalizează experimentul";
       } else {
-        this.elements.nextButton
+        this.elements
+          .nextButton
           .textContent =
-          DEFAULTS.labels.next;
+          "Pasul următor →";
       }
     }
 
@@ -2602,7 +2816,7 @@
         this.elements
           .progressText
           .textContent =
-          `${completed}/${total} pași realizați`;
+          `${completed} din ${total} pași realizați`;
       }
 
       if (
@@ -2613,9 +2827,14 @@
           .progressBar
           .style.width =
           `${percentage}%`;
+      }
 
+      if (
         this.elements
-          .progressBar
+          .progressTrack
+      ) {
+        this.elements
+          .progressTrack
           .setAttribute(
             "aria-valuenow",
             String(percentage)
@@ -2648,9 +2867,6 @@
       this.emit(
         "complete",
         {
-          experimentId:
-            this.experimentId,
-
           state:
             deepClone(
               this.state
@@ -2662,10 +2878,10 @@
     }
 
     renderCompletion() {
-      this.elements.navigation
+      this.elements.stepArea
         .hidden = true;
 
-      this.elements.stepArea
+      this.elements.navigation
         .hidden = true;
 
       this.elements.completionArea
@@ -2676,7 +2892,7 @@
           .completionArea
       );
 
-      const success =
+      const card =
         createElement(
           "div",
           "experiment-final-card"
@@ -2685,34 +2901,22 @@
       const title =
         createElement(
           "h3",
-          "",
+          "experiment-final-title",
           "Experiment finalizat ✓"
         );
 
-      const summary =
+      const text =
         createElement(
-          "div",
-          "experiment-final-summary"
+          "p",
+          "experiment-final-text",
+          "Ai parcurs toate etapele: acțiuni experimentale, măsurări, înregistrarea datelor, calcule, comparații și concluzii."
         );
-
-      summary.innerHTML = `
-        <p>
-          Ai parcurs toți cei
-          <strong>${this.steps.length}</strong>
-          pași ai experimentului.
-        </p>
-
-        <p>
-          Măsurările, calculele și concluziile tale
-          au fost păstrate pe acest dispozitiv.
-        </p>
-      `;
 
       const restart =
         createElement(
           "button",
           "experiment-restart-button",
-          DEFAULTS.labels.restart
+          "Reia experimentul cu alte valori"
         );
 
       restart.type =
@@ -2720,19 +2924,19 @@
 
       restart.addEventListener(
         "click",
-        () => {
-          this.restartWithNewData();
-        }
+        () =>
+          this.restartWithNewData()
       );
 
-      success.append(
+      card.append(
         title,
-        summary,
+        text,
         restart
       );
 
-      this.elements.completionArea
-        .appendChild(success);
+      this.elements
+        .completionArea
+        .appendChild(card);
 
       this.updateProgress();
     }
@@ -2747,10 +2951,10 @@
     }
 
     /* =======================================================
-       ERORI DE CONFIGURARE
+       ERORI
        ======================================================= */
 
-    renderDeveloperError(
+    renderConfigurationError(
       message
     ) {
       const error =
@@ -2760,14 +2964,15 @@
         );
 
       error.innerHTML =
-        `<strong>Eroare de configurare:</strong> ` +
+        "<strong>Eroare de configurare:</strong> " +
         escapeHtml(message);
 
       this.elements.stepArea
         .appendChild(error);
 
       console.error(
-        `[${this.experimentId}] ${message}`
+        `[${this.experimentId}]`,
+        message
       );
     }
 
@@ -2775,27 +2980,32 @@
        EVENIMENTE
        ======================================================= */
 
-    emit(name, detail = {}) {
+    emit(
+      name,
+      detail = {}
+    ) {
       const event =
         new CustomEvent(
           `experiment:${name}`,
           {
             bubbles: true,
+
             detail: {
-              engine: this,
               experimentId:
                 this.experimentId,
+
+              engine: this,
+
               ...detail
             }
           }
         );
 
-      this.container.dispatchEvent(
-        event
-      );
+      this.container
+        .dispatchEvent(event);
     }
 
-    scrollToTop() {
+    scrollToExperiment() {
       this.container
         .scrollIntoView({
           behavior: "auto",
@@ -2805,7 +3015,7 @@
   }
 
   /* =========================================================
-     INIȚIALIZARE AUTOMATĂ
+     MOUNT
      ========================================================= */
 
   async function mount(
@@ -2858,10 +3068,10 @@
         );
 
       message.innerHTML =
-        `<strong>Experimentul nu a putut fi încărcat.</strong><br>` +
-        escapeHtml(
+        "<strong>Experimentul nu a putut fi încărcat.</strong>" +
+        `<br>${escapeHtml(
           error.message
-        );
+        )}`;
 
       element.appendChild(
         message
@@ -2871,6 +3081,10 @@
     return engine;
   }
 
+  /* =========================================================
+     INIȚIALIZARE AUTOMATĂ
+     ========================================================= */
+
   async function autoInit() {
     const containers =
       document.querySelectorAll(
@@ -2878,9 +3092,12 @@
       );
 
     for (
-      const container of containers
+      const container of
+      containers
     ) {
-      await mount(container);
+      await mount(
+        container
+      );
     }
   }
 
@@ -2901,7 +3118,7 @@
      ========================================================= */
 
   window.ExperimentEngine = {
-    version: "1.0.0",
+    version: "2.0.0",
 
     Engine:
       ExperimentEngine,
