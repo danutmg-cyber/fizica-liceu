@@ -3,18 +3,20 @@
  * Motor generic pentru experimente interactive pas-cu-pas
  * Fizică – clasa a IX-a
  *
- * Principii:
- * - fără animații;
- * - fiecare modificare apare după o acțiune explicită a elevului;
- * - elevul citește instrumentul;
- * - elevul notează în caiet;
- * - elevul introduce valoarea;
- * - elevul efectuează calculele;
- * - elevul compară rezultatele;
- * - elevul formulează concluzia.
- *
  * Prof. Dănuț Andronie
  * e-Mail: danutmg@gmail.com
+ *
+ * Principii:
+ * - fără animații;
+ * - acțiuni explicite ale elevului;
+ * - citirea manuală a instrumentelor;
+ * - notarea rezultatelor în caiet;
+ * - introducerea manuală a valorilor;
+ * - calcule efectuate de elev;
+ * - comparații și concluzii;
+ * - salvare locală a progresului;
+ * - trimitere / retrimitere către Google Apps Script;
+ * - raport PDF prin dialogul de imprimare al browserului.
  *
  * Dependențe:
  *   experiment-tools.js
@@ -54,15 +56,21 @@
   const instances = new Map();
 
   /* =========================================================
-     CONFIGURARE
+     CONSTANTE
      ========================================================= */
+
+  const ENGINE_VERSION = "3.0.0";
 
   const DEFAULT_OPTIONS = {
     minimumConclusionLength: 20,
     minimumComparisonLength: 10,
     calculationTolerance: 0.02,
-    maximumAttempts: 3
+    maximumAttempts: 3,
+    submissionTimeoutMs: 20000
   };
+
+  const STUDENT_PROFILE_KEY =
+    "fizica-liceu:student-profile";
 
   /* =========================================================
      FUNCȚII GENERALE
@@ -128,6 +136,12 @@
     );
   }
 
+  function deepClone(value) {
+    return JSON.parse(
+      JSON.stringify(value)
+    );
+  }
+
   function getByPath(
     object,
     path
@@ -157,14 +171,140 @@
       );
   }
 
-  function deepClone(value) {
-    return JSON.parse(
-      JSON.stringify(value)
+  function createId(prefix = "id") {
+    if (
+      window.crypto &&
+      typeof window.crypto.randomUUID ===
+        "function"
+    ) {
+      return (
+        prefix +
+        "-" +
+        window.crypto.randomUUID()
+      );
+    }
+
+    return (
+      prefix +
+      "-" +
+      Date.now().toString(36) +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2, 12)
+    );
+  }
+
+  function durationSeconds(
+    start,
+    end
+  ) {
+    if (!start || !end) {
+      return null;
+    }
+
+    const startTime =
+      new Date(start).getTime();
+
+    const endTime =
+      new Date(end).getTime();
+
+    if (
+      !Number.isFinite(startTime) ||
+      !Number.isFinite(endTime)
+    ) {
+      return null;
+    }
+
+    return Math.max(
+      0,
+      Math.round(
+        (endTime - startTime) /
+        1000
+      )
+    );
+  }
+
+  function safeLocalStorageGet(key) {
+    try {
+      return window.localStorage
+        .getItem(key);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function safeLocalStorageSet(
+    key,
+    value
+  ) {
+    try {
+      window.localStorage
+        .setItem(
+          key,
+          value
+        );
+    } catch (error) {
+      /* fără acțiune */
+    }
+  }
+
+  function loadStudentProfile() {
+    const raw =
+      safeLocalStorageGet(
+        STUDENT_PROFILE_KEY
+      );
+
+    if (!raw) {
+      return {
+        name: "",
+        className: ""
+      };
+    }
+
+    try {
+      const profile =
+        JSON.parse(raw);
+
+      return {
+        name:
+          String(
+            profile.name || ""
+          ),
+        className:
+          String(
+            profile.className || ""
+          )
+      };
+    } catch (error) {
+      return {
+        name: "",
+        className: ""
+      };
+    }
+  }
+
+  function saveStudentProfile(
+    profile
+  ) {
+    safeLocalStorageSet(
+      STUDENT_PROFILE_KEY,
+      JSON.stringify({
+        name:
+          String(
+            profile.name || ""
+          ).trim(),
+
+        className:
+          String(
+            profile.className || ""
+          ).trim()
+      })
     );
   }
 
   /* =========================================================
-     LOCALIZAREA FIȘIERULUI JSON
+     URL FIȘIER JSON
      ========================================================= */
 
   function getEngineScript() {
@@ -221,6 +361,54 @@
   }
 
   /* =========================================================
+     URL GOOGLE APPS SCRIPT
+     ========================================================= */
+
+  function getConfiguredAppScriptUrl(
+    container,
+    options
+  ) {
+    if (
+      options.appScriptUrl
+    ) {
+      return options.appScriptUrl;
+    }
+
+    if (
+      container.dataset
+        .appScriptUrl
+    ) {
+      return container.dataset
+        .appScriptUrl;
+    }
+
+    const meta =
+      document.querySelector(
+        'meta[name="experiment-web-app"]'
+      );
+
+    if (
+      meta &&
+      meta.content
+    ) {
+      return meta.content.trim();
+    }
+
+    if (
+      window.FIZICA_CONFIG &&
+      window.FIZICA_CONFIG
+        .experimentWebAppUrl
+    ) {
+      return String(
+        window.FIZICA_CONFIG
+          .experimentWebAppUrl
+      ).trim();
+    }
+
+    return "";
+  }
+
+  /* =========================================================
      CLASA PRINCIPALĂ
      ========================================================= */
 
@@ -264,15 +452,23 @@
           .experimentsSource ||
         getDefaultDataUrl();
 
+      this.appScriptUrl =
+        getConfiguredAppScriptUrl(
+          this.container,
+          options
+        );
+
       this.data = null;
       this.defaults = {};
+      this.reporting = {};
       this.experiment = null;
       this.simulation = {};
       this.model = null;
       this.steps = [];
 
       this.state = {
-        version: "2.0.0",
+        version:
+          ENGINE_VERSION,
 
         experimentId:
           this.experimentId,
@@ -297,6 +493,37 @@
 
         tables: {},
 
+        session: {
+          sessionId:
+            createId("session"),
+
+          startedAt:
+            new Date()
+              .toISOString(),
+
+          finishedAt: null
+        },
+
+        submission: {
+          reportId:
+            createId(
+              this.experimentId
+            ),
+
+          datasetId:
+            createId("dataset"),
+
+          submitted: false,
+
+          revision: 0,
+
+          lastSubmittedAt: null,
+
+          lastServerMessage: "",
+
+          lastStatus: "not-sent"
+        },
+
         completed: false
       };
 
@@ -318,6 +545,10 @@
           .simulationDefaults ||
         {};
 
+      this.reporting =
+        this.data.reporting ||
+        {};
+
       this.experiment =
         this.data
           .experiments
@@ -329,7 +560,7 @@
 
       if (!this.experiment) {
         throw new Error(
-          `Experimentul ${this.experimentId} nu există în experiments-clasa9.json.`
+          `Experimentul ${this.experimentId} nu există în JSON.`
         );
       }
 
@@ -362,7 +593,7 @@
           : [];
 
       this.restoreState();
-
+      this.ensureRuntimeState();
       this.validateCurrentStep();
 
       this.renderShell();
@@ -383,7 +614,7 @@
     }
 
     /* =======================================================
-       PERSISTENȚĂ
+       STARE
        ======================================================= */
 
     restoreState() {
@@ -433,8 +664,72 @@
             saved.completedSteps
           )
             ? saved.completedSteps
-            : []
+            : [],
+
+        session: {
+          ...this.state.session,
+          ...(saved.session || {})
+        },
+
+        submission: {
+          ...this.state.submission,
+          ...(saved.submission ||
+            {})
+        }
       };
+    }
+
+    ensureRuntimeState() {
+      if (
+        !this.state.session
+          .sessionId
+      ) {
+        this.state.session
+          .sessionId =
+          createId("session");
+      }
+
+      if (
+        !this.state.session
+          .startedAt
+      ) {
+        this.state.session
+          .startedAt =
+          new Date()
+            .toISOString();
+      }
+
+      if (
+        !this.state.submission
+          .reportId
+      ) {
+        this.state.submission
+          .reportId =
+          createId(
+            this.experimentId
+          );
+      }
+
+      if (
+        !this.state.submission
+          .datasetId
+      ) {
+        this.state.submission
+          .datasetId =
+          createId("dataset");
+      }
+
+      if (
+        !Number.isInteger(
+          this.state.submission
+            .revision
+        )
+      ) {
+        this.state.submission
+          .revision = 0;
+      }
+
+      this.saveState();
     }
 
     saveState() {
@@ -519,13 +814,10 @@
     }
 
     /* =======================================================
-       REZOLVAREA DESCRIPTORILOR DIN JSON
+       REZOLVAREA VALORILOR DIN JSON
        ======================================================= */
 
     resolveValue(descriptor) {
-      /*
-       * Numerele sunt valori literale.
-       */
       if (
         typeof descriptor ===
         "number"
@@ -533,14 +825,6 @@
         return descriptor;
       }
 
-      /*
-       * Stringurile sunt valori literale.
-       *
-       * Important pentru:
-       * "wood"
-       * "rubber"
-       * "plastic"
-       */
       if (
         typeof descriptor ===
         "string"
@@ -560,9 +844,7 @@
       ) {
         return descriptor.map(
           (item) =>
-            this.resolveValue(
-              item
-            )
+            this.resolveValue(item)
         );
       }
 
@@ -572,8 +854,6 @@
       ) {
         return descriptor;
       }
-
-      /* ---------- VALOARE LITERALĂ ---------- */
 
       if (
         Object.prototype
@@ -586,8 +866,6 @@
         return descriptor.value;
       }
 
-      /* ---------- MĂSURARE ---------- */
-
       if (
         descriptor.measurement
       ) {
@@ -596,8 +874,6 @@
             descriptor.measurement
           ];
       }
-
-      /* ---------- CALCUL ---------- */
 
       if (
         descriptor.calculation
@@ -608,8 +884,6 @@
           ];
       }
 
-      /* ---------- RĂSPUNS ---------- */
-
       if (
         descriptor.answer
       ) {
@@ -618,8 +892,6 @@
             descriptor.answer
           ];
       }
-
-      /* ---------- PROPRIETATE MODEL ---------- */
 
       if (
         descriptor.modelProperty
@@ -635,8 +907,6 @@
           descriptor.modelProperty
         );
       }
-
-      /* ---------- METODĂ MODEL ---------- */
 
       if (
         descriptor.modelMethod
@@ -678,10 +948,9 @@
         );
       }
 
-      /* ---------- FUNCȚIE FIZICĂ GENERALĂ ---------- */
-
       if (
-        descriptor.physicsCalculation
+        descriptor
+          .physicsCalculation
       ) {
         const calculation =
           Physics.calculations[
@@ -718,7 +987,7 @@
     }
 
     /* =======================================================
-       STRUCTURA VIZUALĂ
+       STRUCTURA INTERFEȚEI
        ======================================================= */
 
     renderShell() {
@@ -729,8 +998,6 @@
       this.container.classList.add(
         "experiment-engine"
       );
-
-      /* ---------- HEADER ---------- */
 
       const header =
         createElement(
@@ -770,7 +1037,7 @@
           this.defaults
             .notebook
             ?.instruction ||
-            "Notează valorile și calculele și în caiet."
+            "Notează valorile măsurate și calculele și în caiet."
         );
 
       header.append(
@@ -830,13 +1097,18 @@
         progressTrack
       );
 
-      /* ---------- CONȚINUT ---------- */
+      /* ---------- PAS ---------- */
 
       const stepArea =
         createElement(
           "section",
           "experiment-step-area"
         );
+
+      stepArea.setAttribute(
+        "aria-live",
+        "polite"
+      );
 
       /* ---------- NAVIGARE ---------- */
 
@@ -871,19 +1143,17 @@
       nextButton.type =
         "button";
 
-      previousButton
-        .addEventListener(
-          "click",
-          () =>
-            this.previousStep()
-        );
+      previousButton.addEventListener(
+        "click",
+        () =>
+          this.previousStep()
+      );
 
-      nextButton
-        .addEventListener(
-          "click",
-          () =>
-            this.nextStep()
-        );
+      nextButton.addEventListener(
+        "click",
+        () =>
+          this.nextStep()
+      );
 
       navigation.append(
         previousButton,
@@ -929,6 +1199,9 @@
       this.elements.stepArea
         .hidden = false;
 
+      this.elements.navigation
+        .hidden = false;
+
       this.elements.completionArea
         .hidden = true;
 
@@ -948,7 +1221,6 @@
         this.renderConfigurationError(
           "Pas experimental inexistent."
         );
-
         return;
       }
 
@@ -976,12 +1248,9 @@
       const instruction =
         createElement(
           "div",
-          "experiment-step-instruction"
+          "experiment-step-instruction",
+          step.instruction || ""
         );
-
-      instruction.textContent =
-        step.instruction ||
-        "";
 
       this.elements.stepArea
         .append(
@@ -995,16 +1264,13 @@
           step
         )
       ) {
-        const warning =
-          createElement(
-            "div",
-            "experiment-step-locked",
-            "Finalizează pașii anteriori înainte de a continua."
-          );
-
         this.elements.stepArea
           .appendChild(
-            warning
+            createElement(
+              "div",
+              "experiment-step-locked",
+              "Finalizează pașii anteriori înainte de a continua."
+            )
           );
 
         this.updateNavigation(
@@ -1016,9 +1282,7 @@
 
       switch (step.type) {
         case "action":
-          this.renderAction(
-            step
-          );
+          this.renderAction(step);
           break;
 
         case "measurement":
@@ -1028,9 +1292,7 @@
           break;
 
         case "record":
-          this.renderRecord(
-            step
-          );
+          this.renderRecord(step);
           break;
 
         case "calculation":
@@ -1046,9 +1308,7 @@
           break;
 
         case "choice":
-          this.renderChoice(
-            step
-          );
+          this.renderChoice(step);
           break;
 
         case "conclusion":
@@ -1065,15 +1325,6 @@
 
       this.updateNavigation(
         step
-      );
-
-      this.emit(
-        "stepchange",
-        {
-          step,
-          index:
-            this.state.currentStep
-        }
       );
     }
 
@@ -1226,11 +1477,6 @@
           "00:00.00"
         );
 
-      display.setAttribute(
-        "role",
-        "timer"
-      );
-
       const controls =
         createElement(
           "div",
@@ -1253,7 +1499,6 @@
 
       start.type = "button";
       stop.type = "button";
-
       stop.disabled = true;
 
       let started = false;
@@ -1333,7 +1578,6 @@
         this.renderConfigurationError(
           error.message
         );
-
         return;
       }
 
@@ -1345,7 +1589,6 @@
         this.renderConfigurationError(
           `Pasul "${step.id}" nu produce o valoare numerică validă.`
         );
-
         return;
       }
 
@@ -1392,10 +1635,6 @@
             expectedValue
         });
 
-      /*
-       * Cronometrul este intenționat static:
-       * nu folosim requestAnimationFrame.
-       */
       if (
         instrumentType ===
         "stopwatch"
@@ -1416,7 +1655,6 @@
           this.renderConfigurationError(
             error.message
           );
-
           return;
         }
       }
@@ -1446,16 +1684,13 @@
         return;
       }
 
-      const reminder =
+      answerArea.appendChild(
         createElement(
           "div",
           "experiment-notebook-reminder",
           step.notebookInstruction ||
             "Citește instrumentul, notează valoarea în caiet, apoi introdu valoarea mai jos."
-        );
-
-      answerArea.appendChild(
-        reminder
+        )
       );
 
       const reading =
@@ -1479,6 +1714,10 @@
                 baseConfig.resolution ??
                 0,
 
+              absoluteTolerance:
+                step.absoluteTolerance ??
+                0,
+
               relativeTolerance:
                 step.relativeTolerance ??
                 0,
@@ -1490,7 +1729,7 @@
 
               hint:
                 step.hint ||
-                "Verifică din nou poziția indicatorului și diviziunile scalei.",
+                "Verifică din nou scala instrumentului.",
 
               onCorrect:
                 (result) => {
@@ -1535,7 +1774,7 @@
     }
 
     /* =======================================================
-       TABEL EXPERIMENTAL
+       TABEL
        ======================================================= */
 
     getTableDefinition(step) {
@@ -1787,7 +2026,7 @@
         for (
           const column of
           definition.columns
-      ) {
+        ) {
           if (
             column.key ===
               "trial" ||
@@ -1796,17 +2035,15 @@
             continue;
           }
 
-          const cellKey =
+          const key =
             `${rowIndex}:${column.key}`;
 
-          const value =
-            stored[cellKey];
-
           if (
-            value === undefined ||
-            value === null ||
-            String(value).trim() ===
-              ""
+            stored[key] ===
+              undefined ||
+            String(
+              stored[key]
+            ).trim() === ""
           ) {
             return false;
           }
@@ -1832,7 +2069,7 @@
           "div",
           "experiment-notebook-reminder",
           step.notebookInstruction ||
-            "Completează tabelul folosind valorile pe care le-ai notat în caiet."
+            "Completează tabelul folosind valorile notate în caiet."
         )
       );
 
@@ -1870,11 +2107,6 @@
           "experiment-feedback"
         );
 
-      feedback.setAttribute(
-        "aria-live",
-        "polite"
-      );
-
       const button =
         createElement(
           "button",
@@ -1895,7 +2127,7 @@
             )
           ) {
             feedback.textContent =
-              "Completează toate căsuțele tabelului înainte de a continua.";
+              "Completează toate căsuțele tabelului.";
 
             feedback.className =
               "experiment-feedback is-hint";
@@ -1905,21 +2137,6 @@
 
           this.completeStep(
             step.id
-          );
-
-          this.emit(
-            "record",
-            {
-              step,
-              table:
-                deepClone(
-                  this.state.tables[
-                    step.tableId ||
-                    step.id
-                  ] ||
-                  {}
-                )
-            }
           );
 
           this.render();
@@ -1961,7 +2178,7 @@
           createElement(
             "div",
             "experiment-success",
-            `✓ Rezultat înregistrat: ${formatNumber(
+            `✓ Rezultat: ${formatNumber(
               savedValue,
               step.decimals ?? 2
             )} ${step.unit || ""}`
@@ -1986,7 +2203,6 @@
         this.renderConfigurationError(
           error.message
         );
-
         return;
       }
 
@@ -1998,7 +2214,6 @@
         this.renderConfigurationError(
           `Rezultatul pentru pasul "${step.id}" nu este numeric.`
         );
-
         return;
       }
 
@@ -2007,7 +2222,7 @@
           "div",
           "experiment-notebook-reminder",
           step.notebookInstruction ||
-            "Efectuează calculul în caiet. Introdu aici numai rezultatul obținut."
+            "Efectuează calculul în caiet, apoi introdu rezultatul."
         )
       );
 
@@ -2027,15 +2242,8 @@
         "decimal";
       input.autocomplete =
         "off";
-
       input.className =
         "experiment-answer-input";
-
-      input.setAttribute(
-        "aria-label",
-        step.inputLabel ||
-          "Rezultat calculat"
-      );
 
       const unit =
         createElement(
@@ -2048,8 +2256,7 @@
         createElement(
           "button",
           "experiment-check-button",
-          step.buttonLabel ||
-            "Verifică"
+          "Verifică"
         );
 
       button.type =
@@ -2060,11 +2267,6 @@
           "div",
           "experiment-feedback"
         );
-
-      feedback.setAttribute(
-        "aria-live",
-        "polite"
-      );
 
       let attempts = 0;
 
@@ -2125,15 +2327,6 @@
           feedback.className =
             "experiment-feedback is-correct";
 
-          this.emit(
-            "calculation",
-            {
-              step,
-              value:
-                result.studentValue
-            }
-          );
-
           this.updateNavigation(
             step
           );
@@ -2145,7 +2338,7 @@
           step.hint ||
           (
             attempts >= 2
-              ? "Verifică formula, transformarea unităților și operațiile numerice."
+              ? "Verifică formula, unitățile și calculele."
               : "Rezultatul nu este încă în limitele acceptate."
           );
 
@@ -2183,8 +2376,6 @@
 
       this.elements.stepArea
         .appendChild(wrapper);
-
-      input.focus();
     }
 
     /* =======================================================
@@ -2209,13 +2400,6 @@
             .measurements[
             step.measuredSource
           ];
-      } else if (
-        step.measured
-      ) {
-        measured =
-          this.resolveValue(
-            step.measured
-          );
       }
 
       if (
@@ -2226,20 +2410,17 @@
             .calculations[
             step.calculatedSource
           ];
-      } else if (
-        step.calculated
-      ) {
-        calculated =
-          this.resolveValue(
-            step.calculated
-          );
       }
 
       if (
-        isFiniteNumber(measured) &&
-        isFiniteNumber(calculated)
+        isFiniteNumber(
+          measured
+        ) &&
+        isFiniteNumber(
+          calculated
+        )
       ) {
-        const values =
+        const grid =
           createElement(
             "div",
             "comparison-grid"
@@ -2252,8 +2433,8 @@
           );
 
         measuredBox.innerHTML =
-          "<strong>Valoare măsurată</strong>" +
-          `<br>${escapeHtml(
+          "<strong>Valoare măsurată</strong><br>" +
+          `${escapeHtml(
             formatNumber(
               measured,
               step.decimals ?? 2
@@ -2269,8 +2450,8 @@
           );
 
         calculatedBox.innerHTML =
-          "<strong>Valoare calculată</strong>" +
-          `<br>${escapeHtml(
+          "<strong>Valoare calculată</strong><br>" +
+          `${escapeHtml(
             formatNumber(
               calculated,
               step.decimals ?? 2
@@ -2279,13 +2460,13 @@
             step.unit || ""
           )}`;
 
-        values.append(
+        grid.append(
           measuredBox,
           calculatedBox
         );
 
         wrapper.appendChild(
-          values
+          grid
         );
       }
 
@@ -2321,7 +2502,7 @@
           "p",
           "comparison-question",
           step.question ||
-            "Compară cele două valori. Ce observi?"
+            "Compară rezultatele și explică observația."
         );
 
       const textarea =
@@ -2336,7 +2517,6 @@
         step.rows || 4;
 
       textarea.placeholder =
-        step.placeholder ||
         "Scrie observația ta...";
 
       const feedback =
@@ -2372,7 +2552,7 @@
             minimum
           ) {
             feedback.textContent =
-              `Scrie o observație de cel puțin ${minimum} caractere.`;
+              `Scrie cel puțin ${minimum} caractere.`;
 
             feedback.className =
               "experiment-feedback is-hint";
@@ -2392,14 +2572,6 @@
 
           this.completeStep(
             step.id
-          );
-
-          this.emit(
-            "comparison",
-            {
-              step,
-              text
-            }
           );
 
           this.render();
@@ -2428,16 +2600,12 @@
           "experiment-choice"
         );
 
-      const question =
+      wrapper.appendChild(
         createElement(
           "p",
           "experiment-question",
-          step.question ||
-            ""
-        );
-
-      wrapper.appendChild(
-        question
+          step.question || ""
+        )
       );
 
       if (
@@ -2465,14 +2633,10 @@
           "experiment-feedback"
         );
 
-      const options =
-        Array.isArray(
-          step.options
-        )
-          ? step.options
-          : [];
-
-      options.forEach(
+      (
+        step.options ||
+        []
+      ).forEach(
         (option, index) => {
           const button =
             createElement(
@@ -2530,7 +2694,7 @@
                 feedback.textContent =
                   step.feedbackWrong ||
                   step.hint ||
-                  "Analizează din nou datele experimentului.";
+                  "Analizează din nou rezultatele experimentului.";
 
                 feedback.className =
                   "experiment-feedback is-hint";
@@ -2590,15 +2754,6 @@
         return;
       }
 
-      const prompt =
-        createElement(
-          "p",
-          "experiment-conclusion-prompt",
-          step.question ||
-            step.instruction ||
-            "Formulează concluzia experimentului."
-        );
-
       const textarea =
         document.createElement(
           "textarea"
@@ -2611,7 +2766,6 @@
         step.rows || 5;
 
       textarea.placeholder =
-        step.placeholder ||
         "Scrie concluzia în 2–3 enunțuri...";
 
       const feedback =
@@ -2647,7 +2801,7 @@
             minimum
           ) {
             feedback.textContent =
-              `Scrie o concluzie de cel puțin ${minimum} caractere.`;
+              `Scrie cel puțin ${minimum} caractere.`;
 
             feedback.className =
               "experiment-feedback is-hint";
@@ -2669,20 +2823,11 @@
             step.id
           );
 
-          this.emit(
-            "conclusion",
-            {
-              step,
-              text
-            }
-          );
-
           this.render();
         }
       );
 
       wrapper.append(
-        prompt,
         textarea,
         button,
         feedback
@@ -2759,30 +2904,20 @@
         this.state.currentStep ===
         0;
 
-      const completed =
-        this.isStepCompleted(
+      this.elements
+        .nextButton
+        .disabled =
+        !this.isStepCompleted(
           step.id
         );
 
       this.elements
         .nextButton
-        .disabled =
-        !completed;
-
-      if (
+        .textContent =
         this.state.currentStep ===
         this.steps.length - 1
-      ) {
-        this.elements
-          .nextButton
-          .textContent =
-          "Finalizează experimentul";
-      } else {
-        this.elements
-          .nextButton
-          .textContent =
-          "Pasul următor →";
-      }
+          ? "Finalizează experimentul"
+          : "Pasul următor →";
     }
 
     /* =======================================================
@@ -2843,7 +2978,7 @@
     }
 
     /* =======================================================
-       FINALIZARE
+       FINALIZARE EXPERIMENT
        ======================================================= */
 
     finishExperiment() {
@@ -2862,6 +2997,16 @@
       this.state.completed =
         true;
 
+      if (
+        !this.state.session
+          .finishedAt
+      ) {
+        this.state.session
+          .finishedAt =
+          new Date()
+            .toISOString();
+      }
+
       this.saveState();
 
       this.emit(
@@ -2876,6 +3021,539 @@
 
       this.renderCompletion();
     }
+
+    /* =======================================================
+       IDENTITATE ELEV
+       ======================================================= */
+
+    createStudentForm() {
+      const profile =
+        loadStudentProfile();
+
+      const wrapper =
+        createElement(
+          "div",
+          "experiment-student-form"
+        );
+
+      const heading =
+        createElement(
+          "h4",
+          "",
+          "Datele elevului"
+        );
+
+      const nameLabel =
+        document.createElement(
+          "label"
+        );
+
+      nameLabel.textContent =
+        "Nume și prenume";
+
+      const nameInput =
+        document.createElement(
+          "input"
+        );
+
+      nameInput.type =
+        "text";
+
+      nameInput.autocomplete =
+        "name";
+
+      nameInput.className =
+        "experiment-student-name";
+
+      nameInput.value =
+        profile.name;
+
+      nameInput.placeholder =
+        "Ex.: Popescu Andrei";
+
+      nameLabel.appendChild(
+        nameInput
+      );
+
+      const classLabel =
+        document.createElement(
+          "label"
+        );
+
+      classLabel.textContent =
+        "Clasa";
+
+      const classSelect =
+        document.createElement(
+          "select"
+        );
+
+      classSelect.className =
+        "experiment-student-class";
+
+      const classOptions =
+        this.reporting
+          .classOptions ||
+        [
+          {
+            value: "",
+            label: "Alege clasa"
+          },
+          {
+            value: "9 A",
+            label: "IX A"
+          },
+          {
+            value: "9 B",
+            label: "IX B"
+          },
+          {
+            value: "9 C",
+            label: "IX C"
+          },
+          {
+            value: "9 D",
+            label: "IX D"
+          }
+        ];
+
+      classOptions.forEach(
+        (item) => {
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          if (
+            typeof item ===
+            "string"
+          ) {
+            option.value = item;
+            option.textContent =
+              item;
+          } else {
+            option.value =
+              item.value;
+
+            option.textContent =
+              item.label;
+          }
+
+          classSelect.appendChild(
+            option
+          );
+        }
+      );
+
+      if (
+        profile.className
+      ) {
+        classSelect.value =
+          profile.className;
+      }
+
+      classLabel.appendChild(
+        classSelect
+      );
+
+      wrapper.append(
+        heading,
+        nameLabel,
+        classLabel
+      );
+
+      return {
+        wrapper,
+        nameInput,
+        classSelect
+      };
+    }
+
+    validateStudentData(
+      name,
+      className
+    ) {
+      const cleanName =
+        String(name || "")
+          .trim()
+          .replace(/\s+/g, " ");
+
+      const cleanClass =
+        String(
+          className || ""
+        ).trim();
+
+      if (
+        cleanName.length < 3
+      ) {
+        return {
+          valid: false,
+          message:
+            "Completează numele și prenumele."
+        };
+      }
+
+      if (!cleanClass) {
+        return {
+          valid: false,
+          message:
+            "Selectează clasa."
+        };
+      }
+
+      return {
+        valid: true,
+
+        student: {
+          name:
+            cleanName,
+
+          className:
+            cleanClass
+        }
+      };
+    }
+
+    /* =======================================================
+       PAYLOAD GOOGLE SHEETS
+       ======================================================= */
+
+    getMainConclusion() {
+      const values =
+        Object.values(
+          this.state.conclusions
+        );
+
+      return values.length
+        ? values[
+            values.length - 1
+          ]
+        : "";
+    }
+
+    getUnitTitle() {
+      if (
+        this.experiment.unitTitle
+      ) {
+        return this.experiment
+          .unitTitle;
+      }
+
+      return (
+        this.experiment.unitId ||
+        ""
+      );
+    }
+
+    buildSubmissionPayload(
+      student
+    ) {
+      const duration =
+        durationSeconds(
+          this.state.session
+            .startedAt,
+
+          this.state.session
+            .finishedAt
+        );
+
+      return {
+        schemaVersion:
+          "2.0.0",
+
+        reportId:
+          this.state.submission
+            .reportId,
+
+        revision:
+          this.state.submission
+            .revision + 1,
+
+        student: {
+          name:
+            student.name,
+
+          className:
+            student.className
+        },
+
+        experiment: {
+          id:
+            this.experimentId,
+
+          title:
+            this.experiment
+              .officialTitle ||
+            this.experiment.title ||
+            this.experimentId,
+
+          classLevel:
+            "9",
+
+          domain:
+            this.getUnitTitle(),
+
+          totalSteps:
+            this.steps.length,
+
+          dataSetId:
+            this.state.submission
+              .datasetId
+        },
+
+        session: {
+          sessionId:
+            this.state.session
+              .sessionId,
+
+          startedAt:
+            this.state.session
+              .startedAt,
+
+          finishedAt:
+            this.state.session
+              .finishedAt,
+
+          durationSeconds:
+            duration,
+
+          totalSteps:
+            this.steps.length,
+
+          completed:
+            this.state.completed
+        },
+
+        measurements:
+          deepClone(
+            this.state
+              .measurements
+          ),
+
+        calculations:
+          deepClone(
+            this.state
+              .calculations
+          ),
+
+        comparison:
+          deepClone(
+            this.state
+              .comparisons
+          ),
+
+        conclusions:
+          deepClone(
+            this.state
+              .conclusions
+          ),
+
+        completedSteps:
+          deepClone(
+            this.state
+              .completedSteps
+          ),
+
+        totalSteps:
+          this.steps.length,
+
+        completed:
+          this.state.completed,
+
+        evaluation: {
+          score: null,
+          maximumScore: null,
+          percent: null,
+          passed: null,
+
+          conclusion:
+            this.getMainConclusion()
+        },
+
+        dataset: {
+          id:
+            this.state.submission
+              .datasetId
+        },
+
+        application: {
+          pageUrl:
+            window.location.href,
+
+          engineVersion:
+            ENGINE_VERSION
+        }
+      };
+    }
+
+    /* =======================================================
+       TRIMITERE GOOGLE APPS SCRIPT
+       ======================================================= */
+
+    async submitResults(
+      student,
+      isResubmission = false
+    ) {
+      if (!this.appScriptUrl) {
+        throw new Error(
+          "URL-ul Web App Google Apps Script nu este configurat."
+        );
+      }
+
+      const payload =
+        this.buildSubmissionPayload(
+          student
+        );
+
+      const controller =
+        typeof AbortController !==
+        "undefined"
+          ? new AbortController()
+          : null;
+
+      let timeoutId = null;
+
+      if (controller) {
+        timeoutId =
+          window.setTimeout(
+            () =>
+              controller.abort(),
+            this.options
+              .submissionTimeoutMs
+          );
+      }
+
+      try {
+        const body =
+          new URLSearchParams();
+
+        body.set(
+          "payload",
+          JSON.stringify(payload)
+        );
+
+        const response =
+          await fetch(
+            this.appScriptUrl,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/x-www-form-urlencoded;charset=UTF-8"
+              },
+
+              body:
+                body.toString(),
+
+              redirect:
+                "follow",
+
+              signal:
+                controller
+                  ? controller.signal
+                  : undefined
+            }
+          );
+
+        const text =
+          await response.text();
+
+        let result;
+
+        try {
+          result =
+            JSON.parse(text);
+        } catch (error) {
+          throw new Error(
+            "Serverul nu a returnat un răspuns JSON valid. Verifică implementarea Web App."
+          );
+        }
+
+        if (
+          !response.ok ||
+          !result.ok
+        ) {
+          throw new Error(
+            result.error ||
+            result.message ||
+            "Rezultatele nu au putut fi trimise."
+          );
+        }
+
+        this.state.submission
+          .submitted = true;
+
+        this.state.submission
+          .revision =
+          Number(
+            result.revision ||
+            payload.revision
+          );
+
+        this.state.submission
+          .lastSubmittedAt =
+          result.serverTime ||
+          new Date()
+            .toISOString();
+
+        this.state.submission
+          .lastServerMessage =
+          result.message ||
+          (
+            isResubmission
+              ? "Rezultatele au fost actualizate."
+              : "Rezultatele au fost înregistrate."
+          );
+
+        this.state.submission
+          .lastStatus =
+          "success";
+
+        saveStudentProfile(
+          student
+        );
+
+        this.saveState();
+
+        this.emit(
+          isResubmission
+            ? "resubmit"
+            : "submit",
+          {
+            result,
+            payload
+          }
+        );
+
+        return result;
+      } catch (error) {
+        this.state.submission
+          .lastStatus =
+          "error";
+
+        this.state.submission
+          .lastServerMessage =
+          error.name ===
+          "AbortError"
+            ? "Trimiterea a durat prea mult. Verifică conexiunea la internet."
+            : error.message;
+
+        this.saveState();
+
+        throw error;
+      } finally {
+        if (timeoutId) {
+          clearTimeout(
+            timeoutId
+          );
+        }
+      }
+    }
+
+    /* =======================================================
+       RAPORT FINAL
+       ======================================================= */
 
     renderCompletion() {
       this.elements.stepArea
@@ -2905,33 +3583,328 @@
           "Experiment finalizat ✓"
         );
 
-      const text =
+      const summary =
         createElement(
           "p",
           "experiment-final-text",
-          "Ai parcurs toate etapele: acțiuni experimentale, măsurări, înregistrarea datelor, calcule, comparații și concluzii."
+          "Ai parcurs toate etapele experimentului. Completează datele tale, apoi poți trimite rezultatele profesorului și salva raportul în format PDF."
         );
 
-      const restart =
+      card.append(
+        title,
+        summary
+      );
+
+      /* ---------- DATE ELEV ---------- */
+
+      const studentForm =
+        this.createStudentForm();
+
+      card.appendChild(
+        studentForm.wrapper
+      );
+
+      /* ---------- STARE TRIMITERE ---------- */
+
+      const status =
+        createElement(
+          "div",
+          "experiment-submission-status"
+        );
+
+      status.setAttribute(
+        "aria-live",
+        "polite"
+      );
+
+      if (
+        this.state.submission
+          .submitted
+      ) {
+        status.className =
+          "experiment-submission-status is-success";
+
+        status.textContent =
+          `✓ ${
+            this.state.submission
+              .lastServerMessage ||
+            "Rezultatele au fost înregistrate."
+          }`;
+      }
+
+      card.appendChild(
+        status
+      );
+
+      /* ---------- BUTOANE ---------- */
+
+      const actions =
+        createElement(
+          "div",
+          "experiment-final-actions"
+        );
+
+      const sendButton =
+        createElement(
+          "button",
+          "experiment-submit-button",
+          "Trimite rezultatele"
+        );
+
+      sendButton.type =
+        "button";
+
+      /*
+       * După prima trimitere butonul principal
+       * nu mai este necesar.
+       */
+      sendButton.hidden =
+        this.state.submission
+          .submitted;
+
+      const resendButton =
+        createElement(
+          "button",
+          "experiment-resubmit-button",
+          "Retrimite rezultatele"
+        );
+
+      resendButton.type =
+        "button";
+
+      resendButton.hidden =
+        !this.state.submission
+          .submitted;
+
+      const pdfButton =
+        createElement(
+          "button",
+          "experiment-pdf-button",
+          "Descarcă PDF"
+        );
+
+      pdfButton.type =
+        "button";
+
+      const restartButton =
         createElement(
           "button",
           "experiment-restart-button",
           "Reia experimentul cu alte valori"
         );
 
-      restart.type =
+      restartButton.type =
         "button";
 
-      restart.addEventListener(
+      const validateIdentity =
+        () => {
+          const result =
+            this.validateStudentData(
+              studentForm
+                .nameInput.value,
+
+              studentForm
+                .classSelect.value
+            );
+
+          if (!result.valid) {
+            status.textContent =
+              result.message;
+
+            status.className =
+              "experiment-submission-status is-error";
+
+            return null;
+          }
+
+          return result.student;
+        };
+
+      /* ---------- TRIMITE ---------- */
+
+      sendButton.addEventListener(
         "click",
-        () =>
-          this.restartWithNewData()
+        async () => {
+          const student =
+            validateIdentity();
+
+          if (!student) {
+            return;
+          }
+
+          sendButton.disabled =
+            true;
+
+          status.textContent =
+            "Se trimit rezultatele…";
+
+          status.className =
+            "experiment-submission-status is-pending";
+
+          try {
+            const result =
+              await this.submitResults(
+                student,
+                false
+              );
+
+            status.textContent =
+              "✓ " +
+              (
+                result.message ||
+                "Rezultatele au fost înregistrate."
+              );
+
+            status.className =
+              "experiment-submission-status is-success";
+
+            sendButton.hidden =
+              true;
+
+            resendButton.hidden =
+              false;
+          } catch (error) {
+            status.textContent =
+              "Trimiterea nu a reușit. " +
+              (
+                this.state
+                  .submission
+                  .lastServerMessage ||
+                error.message
+              ) +
+              " Rezultatele sunt păstrate pe acest dispozitiv.";
+
+            status.className =
+              "experiment-submission-status is-error";
+
+            sendButton.disabled =
+              false;
+          }
+        }
       );
 
-      card.append(
-        title,
-        text,
-        restart
+      /* ---------- RETRIMITE ---------- */
+
+      resendButton.addEventListener(
+        "click",
+        async () => {
+          const student =
+            validateIdentity();
+
+          if (!student) {
+            return;
+          }
+
+          resendButton.disabled =
+            true;
+
+          status.textContent =
+            "Se retrimit rezultatele…";
+
+          status.className =
+            "experiment-submission-status is-pending";
+
+          try {
+            const result =
+              await this.submitResults(
+                student,
+                true
+              );
+
+            status.textContent =
+              "✓ " +
+              (
+                result.message ||
+                "Rezultatele au fost actualizate."
+              ) +
+              ` Revizia ${this.state.submission.revision}.`;
+
+            status.className =
+              "experiment-submission-status is-success";
+          } catch (error) {
+            status.textContent =
+              "Retrimiterea nu a reușit. " +
+              (
+                this.state
+                  .submission
+                  .lastServerMessage ||
+                error.message
+              );
+
+            status.className =
+              "experiment-submission-status is-error";
+          } finally {
+            resendButton.disabled =
+              false;
+          }
+        }
+      );
+
+      /* ---------- PDF ---------- */
+
+      pdfButton.addEventListener(
+        "click",
+        () => {
+          const student =
+            validateIdentity();
+
+          if (!student) {
+            return;
+          }
+
+          saveStudentProfile(
+            student
+          );
+
+          this.printPdfReport(
+            student
+          );
+        }
+      );
+
+      /* ---------- RESTART ---------- */
+
+      restartButton.addEventListener(
+        "click",
+        () => {
+          this.restartWithNewData();
+        }
+      );
+
+      actions.append(
+        sendButton,
+        resendButton,
+        pdfButton,
+        restartButton
+      );
+
+      card.appendChild(
+        actions
+      );
+
+      /* ---------- INFORMAȚII RAPORT ---------- */
+
+      const metadata =
+        createElement(
+          "div",
+          "experiment-report-metadata"
+        );
+
+      metadata.innerHTML =
+        `<small>` +
+        `ID raport: ${escapeHtml(
+          this.state.submission
+            .reportId
+        )}` +
+        `<br>` +
+        `Revizie: ${escapeHtml(
+          this.state.submission
+            .revision
+        )}` +
+        `</small>`;
+
+      card.appendChild(
+        metadata
       );
 
       this.elements
@@ -2941,7 +3914,508 @@
       this.updateProgress();
     }
 
+    /* =======================================================
+       PDF / RAPORT IMPRIMABIL
+       ======================================================= */
+
+    getStepTitle(stepId) {
+      const step =
+        this.steps.find(
+          (item) =>
+            item.id === stepId
+        );
+
+      return step
+        ? (
+            step.title ||
+            step.id
+          )
+        : stepId;
+    }
+
+    createKeyValueRows(
+      data,
+      includeUnits = true
+    ) {
+      return Object.entries(
+        data || {}
+      )
+        .map(
+          ([key, value]) => {
+            const step =
+              this.steps.find(
+                (item) =>
+                  item.id === key
+              );
+
+            const title =
+              step
+                ? (
+                    step.title ||
+                    key
+                  )
+                : key;
+
+            const unit =
+              includeUnits &&
+              step &&
+              step.unit
+                ? ` ${step.unit}`
+                : "";
+
+            const formatted =
+              typeof value ===
+              "number"
+                ? formatNumber(
+                    value,
+                    4
+                  )
+                : String(
+                    value ?? ""
+                  );
+
+            return (
+              "<tr>" +
+              `<td>${escapeHtml(
+                title
+              )}</td>` +
+              `<td>${escapeHtml(
+                formatted
+              )}${escapeHtml(
+                unit
+              )}</td>` +
+              "</tr>"
+            );
+          }
+        )
+        .join("");
+    }
+
+    createComparisonHtml() {
+      const entries =
+        Object.entries(
+          this.state.comparisons
+        );
+
+      if (!entries.length) {
+        return (
+          "<p>Nu au fost introduse comparații.</p>"
+        );
+      }
+
+      return entries
+        .map(
+          ([key, value]) =>
+            `<p><strong>${escapeHtml(
+              this.getStepTitle(
+                key
+              )
+            )}</strong><br>` +
+            `${escapeHtml(
+              value
+            )}</p>`
+        )
+        .join("");
+    }
+
+    createConclusionHtml() {
+      const entries =
+        Object.entries(
+          this.state.conclusions
+        );
+
+      if (!entries.length) {
+        return (
+          "<p>Nu a fost introdusă o concluzie.</p>"
+        );
+      }
+
+      return entries
+        .map(
+          ([key, value]) =>
+            `<p>${escapeHtml(
+              value
+            )}</p>`
+        )
+        .join("");
+    }
+
+    createTablesHtml() {
+      const tableEntries =
+        Object.entries(
+          this.state.tables
+        );
+
+      if (!tableEntries.length) {
+        return "";
+      }
+
+      return tableEntries
+        .map(
+          ([tableId, values]) => {
+            const rows =
+              Object.entries(values)
+                .map(
+                  ([key, value]) =>
+                    "<tr>" +
+                    `<td>${escapeHtml(
+                      key
+                    )}</td>` +
+                    `<td>${escapeHtml(
+                      value
+                    )}</td>` +
+                    "</tr>"
+                )
+                .join("");
+
+            return (
+              `<h3>${escapeHtml(
+                tableId
+              )}</h3>` +
+              `<table>` +
+              `<thead>` +
+              `<tr>` +
+              `<th>Câmp</th>` +
+              `<th>Valoare</th>` +
+              `</tr>` +
+              `</thead>` +
+              `<tbody>${rows}</tbody>` +
+              `</table>`
+            );
+          }
+        )
+        .join("");
+    }
+
+    printPdfReport(student) {
+      const reportWindow =
+        window.open(
+          "",
+          "_blank"
+        );
+
+      if (!reportWindow) {
+        window.alert(
+          "Browserul a blocat fereastra raportului. Permite ferestrele pop-up pentru această pagină."
+        );
+        return;
+      }
+
+      const finishedAt =
+        this.state.session
+          .finishedAt ||
+        new Date()
+          .toISOString();
+
+      const date =
+        new Date(
+          finishedAt
+        );
+
+      const localDate =
+        Number.isNaN(
+          date.getTime()
+        )
+          ? ""
+          : date.toLocaleString(
+              "ro-RO"
+            );
+
+      const measurementRows =
+        this.createKeyValueRows(
+          this.state.measurements
+        );
+
+      const calculationRows =
+        this.createKeyValueRows(
+          this.state.calculations
+        );
+
+      const tablesHtml =
+        this.createTablesHtml();
+
+      const comparisonsHtml =
+        this.createComparisonHtml();
+
+      const conclusionsHtml =
+        this.createConclusionHtml();
+
+      const reportId =
+        this.state.submission
+          .reportId;
+
+      const revision =
+        this.state.submission
+          .revision;
+
+      reportWindow.document.open();
+
+      reportWindow.document.write(`
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Raport ${escapeHtml(this.experimentId)}</title>
+
+<style>
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    color: #111827;
+    font-family:
+      Arial,
+      Helvetica,
+      sans-serif;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: 20pt;
+    color: #1d4ed8;
+  }
+
+  h2 {
+    margin-top: 24px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #cbd5e1;
+    font-size: 14pt;
+  }
+
+  h3 {
+    font-size: 12pt;
+  }
+
+  .meta {
+    margin: 16px 0;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+  }
+
+  .meta p {
+    margin: 3px 0;
+  }
+
+  table {
+    width: 100%;
+    margin: 10px 0 18px;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 7px 8px;
+    border: 1px solid #94a3b8;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: #e2e8f0;
+  }
+
+  .footer {
+    margin-top: 32px;
+    padding-top: 10px;
+    border-top: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 9pt;
+  }
+
+  .print-note {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+  }
+
+  @media print {
+    .print-note {
+      display: none;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="print-note">
+  Pentru salvare în format PDF alege
+  <strong>Salvare ca PDF / Save as PDF</strong>
+  în dialogul de imprimare.
+</div>
+
+<h1>
+  ${escapeHtml(
+    this.experiment
+      .officialTitle ||
+    this.experimentId
+  )}
+</h1>
+
+<p>
+  <strong>Fizică – clasa a IX-a</strong>
+</p>
+
+<div class="meta">
+
+  <p>
+    <strong>Elev:</strong>
+    ${escapeHtml(student.name)}
+  </p>
+
+  <p>
+    <strong>Clasa:</strong>
+    ${escapeHtml(student.className)}
+  </p>
+
+  <p>
+    <strong>Data:</strong>
+    ${escapeHtml(localDate)}
+  </p>
+
+  <p>
+    <strong>Experiment:</strong>
+    ${escapeHtml(this.experimentId)}
+  </p>
+
+  <p>
+    <strong>Prof. Dănuț Andronie</strong>
+  </p>
+
+  <p>
+    e-Mail: danutmg@gmail.com
+  </p>
+
+</div>
+
+<h2>Scopul lucrării</h2>
+
+<p>
+  ${escapeHtml(
+    this.experiment.objective ||
+    ""
+  )}
+</p>
+
+<h2>Rezultate experimentale</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mărime / măsurare</th>
+      <th>Valoare</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    ${
+      measurementRows ||
+      '<tr><td colspan="2">Nu sunt date.</td></tr>'
+    }
+  </tbody>
+</table>
+
+${
+  tablesHtml
+    ? `
+      <h2>Tabelul de date</h2>
+      ${tablesHtml}
+    `
+    : ""
+}
+
+<h2>Calcule</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Calcul</th>
+      <th>Rezultat</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    ${
+      calculationRows ||
+      '<tr><td colspan="2">Nu sunt calcule înregistrate.</td></tr>'
+    }
+  </tbody>
+</table>
+
+<h2>Compararea și interpretarea rezultatelor</h2>
+
+${comparisonsHtml}
+
+<h2>Concluzia elevului</h2>
+
+${conclusionsHtml}
+
+<div class="footer">
+
+  <p>
+    ID raport:
+    ${escapeHtml(reportId)}
+  </p>
+
+  <p>
+    Revizie:
+    ${escapeHtml(revision)}
+  </p>
+
+  <p>
+    Raport generat de
+    fizica-liceu.
+  </p>
+
+</div>
+
+<script>
+  window.addEventListener(
+    "load",
+    function () {
+      window.setTimeout(
+        function () {
+          window.print();
+        },
+        250
+      );
+    }
+  );
+<\/script>
+
+</body>
+</html>
+      `);
+
+      reportWindow.document.close();
+    }
+
+    /* =======================================================
+       RESTART
+       ======================================================= */
+
     restartWithNewData() {
+      /*
+       * restartWithNewData trebuie să șteargă
+       * progresul și seed-ul vechi.
+       *
+       * La reîncărcare se vor genera:
+       * - un nou dataset;
+       * - un nou sessionId;
+       * - un nou reportId.
+       */
       Tools.storage
         .restartWithNewData(
           this.experimentId
@@ -3023,7 +4497,8 @@
     options = {}
   ) {
     const element =
-      typeof container === "string"
+      typeof container ===
+      "string"
         ? document.querySelector(
             container
           )
@@ -3118,7 +4593,8 @@
      ========================================================= */
 
   window.ExperimentEngine = {
-    version: "2.0.0",
+    version:
+      ENGINE_VERSION,
 
     Engine:
       ExperimentEngine,
