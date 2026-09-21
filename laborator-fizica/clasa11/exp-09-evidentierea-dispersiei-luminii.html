@@ -1,1 +1,7031 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: evidențierea dispersiei luminii cu ajutorul unei prisme optice."
+>
+
+<title>
+    Evidențierea dispersiei luminii
+</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+
+    --red:#e22c2c;
+    --orange:#ef7c18;
+    --yellow:#e5b700;
+    --green:#24a148;
+    --cyan:#1597a8;
+    --blue:#2563eb;
+    --violet:#7c3aed;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.measure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn.red{
+    background:#c62828;
+}
+
+.btn.violet{
+    background:#6d28d9;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.75;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.optics-card,
+.goniometer-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.4rem .7rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   DISPERSIE LUMINA ALBA
+========================================================= */
+
+.optical-bench{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #b8ccd8;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #eef9ff,
+            #fff
+        );
+}
+
+.optical-bench svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:950/430;
+}
+
+.white-ray{
+    stroke:#f2c94c;
+    stroke-width:10;
+    filter:
+        drop-shadow(
+            0 0 4px #fff4a0
+        );
+}
+
+.prism-body{
+    fill:#dff7ff88;
+    stroke:#427b94;
+    stroke-width:4;
+}
+
+.prism-highlight{
+    fill:none;
+    stroke:#fff;
+    stroke-width:3;
+}
+
+.screen-line{
+    stroke:#586d7c;
+    stroke-width:8;
+}
+
+.spectrum-ray{
+    fill:none;
+    stroke-width:5;
+    stroke-linecap:round;
+}
+
+.r-red{
+    stroke:var(--red);
+}
+
+.r-orange{
+    stroke:var(--orange);
+}
+
+.r-yellow{
+    stroke:var(--yellow);
+}
+
+.r-green{
+    stroke:var(--green);
+}
+
+.r-cyan{
+    stroke:var(--cyan);
+}
+
+.r-blue{
+    stroke:var(--blue);
+}
+
+.r-violet{
+    stroke:var(--violet);
+}
+
+.spectrum-label{
+    font-size:15px;
+    font-weight:800;
+}
+
+.bench-label{
+    fill:#39576a;
+    font-size:17px;
+    font-weight:700;
+}
+
+
+/* =========================================================
+   GONIOMETRU
+========================================================= */
+
+.goniometer-stage{
+    overflow:hidden;
+    border:1px solid #abc4d1;
+    border-radius:16px;
+    background:
+        radial-gradient(
+            circle at center,
+            #fff,
+            #eef7fa
+        );
+}
+
+.goniometer-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/500;
+}
+
+.gon-circle{
+    fill:none;
+    stroke:#819ba8;
+    stroke-width:2;
+}
+
+.gon-tick{
+    stroke:#819ba8;
+    stroke-width:2;
+}
+
+.gon-reference{
+    stroke:#8098a6;
+    stroke-width:2;
+    stroke-dasharray:7 6;
+}
+
+.gon-incident{
+    stroke:#e5b700;
+    stroke-width:6;
+    stroke-linecap:round;
+}
+
+.gon-emergent{
+    stroke-width:6;
+    stroke-linecap:round;
+}
+
+.gon-normal{
+    stroke:#748b96;
+    stroke-width:2;
+    stroke-dasharray:5 5;
+}
+
+.gon-prism{
+    fill:#d9f5ff99;
+    stroke:#427b94;
+    stroke-width:4;
+}
+
+.gon-label{
+    fill:#39576a;
+    font-size:16px;
+    font-weight:700;
+}
+
+.gon-angle-label{
+    fill:#17324d;
+    font-size:18px;
+    font-weight:800;
+}
+
+.goniometer-control{
+    padding:1rem;
+    border-top:1px solid #bfd0da;
+    background:#f8fcfe;
+}
+
+.goniometer-control input[type="range"]{
+    width:100%;
+    accent-color:#126e82;
+}
+
+.digital-readouts{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+    margin:1rem 0;
+}
+
+.digital-readout{
+    padding:.65rem;
+    border-radius:9px;
+    color:#d8f5ff;
+    background:#10242d;
+    text-align:center;
+}
+
+.digital-readout span{
+    display:block;
+    color:#99bbc8;
+    font-size:.82rem;
+}
+
+.digital-readout strong{
+    font:
+        800 1.15rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+.color-selector{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.6rem;
+    margin:.8rem 0;
+}
+
+.measurement-lock{
+    padding:1rem;
+    margin:.8rem 0;
+    border:1px solid #bfd0da;
+    border-radius:10px;
+    background:#fff;
+}
+
+.locked-value{
+    font-weight:800;
+    color:#125e42;
+}
+
+
+/* =========================================================
+   SPECTRU
+========================================================= */
+
+.spectrum-strip{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            7,
+            1fr
+        );
+    overflow:hidden;
+    height:72px;
+    margin:1rem 0;
+    border-radius:12px;
+    border:1px solid #829aaa;
+}
+
+.spectrum-strip span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:.78rem;
+    font-weight:800;
+    text-shadow:
+        0 1px 3px #000;
+}
+
+.spectrum-strip .red{
+    background:#db2727;
+}
+
+.spectrum-strip .orange{
+    background:#ed7d18;
+}
+
+.spectrum-strip .yellow{
+    background:#d4ad00;
+}
+
+.spectrum-strip .green{
+    background:#249f48;
+}
+
+.spectrum-strip .cyan{
+    background:#138ca1;
+}
+
+.spectrum-strip .blue{
+    background:#2665cf;
+}
+
+.spectrum-strip .violet{
+    background:#7139ba;
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid,
+    .measure-grid,
+    .digital-readouts{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp09-dispersia-luminii",
+
+    code:
+        "EXP09",
+
+    title:
+        "Evidențierea dispersiei luminii",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Optică",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "sursa-luminoasa",
+        "prisma-sticla"
+    ],
+
+    requiredEquipment:[
+        "white-light-source",
+        "slit",
+        "collimator",
+        "glass-prism",
+        "goniometer",
+        "screen",
+        "red-filter",
+        "violet-filter"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script
+    src="../assets/js/instrumente-scala.js"
+    defer
+></script>
+
+<script
+    src="../assets/js/monitorizare.js"
+    defer
+></script>
+
+<script
+    src="../assets/js/google-sheets.js"
+    defer
+></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Optică
+    </p>
+
+    <h1>
+        Evidențierea dispersiei luminii
+    </h1>
+
+    <p>
+        Descompunerea luminii albe cu o prismă,
+        deviația minimă și dependența indicelui de refracție
+        de lungimea de undă.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+
+<p>
+    Clasa și numărul din catalog determină setul optic utilizat.
+    Pentru cei 30 de elevi sunt generate seturi distincte și
+    reproductibile.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual observațiile, măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Nu privi direct într-o sursă luminoasă intensă
+        și nu orienta fasciculul spre ochii unei persoane.
+    </strong>
+
+    Prisma din sticlă se manipulează cu grijă și se așază
+    stabil pe masa optică.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Nu privi direct în fasciculul colimat.
+    </li>
+
+    <li>
+        Nu orienta lumina spre ochii colegilor.
+    </li>
+
+    <li>
+        Manipulează prisma numai de fețele laterale,
+        evitând muchiile.
+    </li>
+
+    <li>
+        Nu utiliza o prismă fisurată sau ciobită.
+    </li>
+
+    <li>
+        Sursa se oprește înainte de modificarea montajului.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Dacă fasciculul luminos este orientat accidental spre o persoană:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        opresc sau deviez imediat în siguranță fasciculul
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="continue"
+    >
+
+    <span>
+        continui măsurarea deoarece lumina este vizibilă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează elementele necesare pentru producerea,
+    observarea și măsurarea dispersiei.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Dispersia luminii reprezintă dependența indicelui
+    de refracție al unui mediu de lungimea de undă.
+</p>
+
+
+<p>
+    În domeniul vizibil, pentru sticla folosită în experiment,
+    avem dispersie normală:
+</p>
+
+
+<div class="formula">
+
+    n<sub>violet</sub>
+    &gt;
+    n<sub>roșu</sub>
+
+</div>
+
+
+<p>
+    Legea refracției:
+</p>
+
+
+<div class="formula">
+
+    n₁ sin i =
+    n₂ sin r
+
+</div>
+
+
+<p>
+    Pentru o prismă cu unghiul refringent A:
+</p>
+
+
+<div class="formula">
+
+    δ =
+    i + e − A
+
+</div>
+
+
+<p>
+    La deviație minimă traiectoria este simetrică:
+</p>
+
+
+<div class="formula">
+
+    i = e
+
+    <br>
+
+    r₁ = r₂ = A/2
+
+</div>
+
+
+<div class="formula">
+
+    n =
+    sin[
+        (A + δ<sub>min</sub>) / 2
+    ]
+    /
+    sin(A/2)
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Într-o prismă de sticlă, dintre lumina roșie și cea violetă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDeviation"
+        value="violet"
+    >
+
+    <span>
+        violetul este deviat mai mult
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDeviation"
+        value="red"
+    >
+
+    <span>
+        roșul este deviat mai mult
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    În sticlă, pentru setul studiat:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIndex"
+        value="violet-higher"
+    >
+
+    <span>
+        n<sub>violet</sub> &gt; n<sub>roșu</sub>
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIndex"
+        value="red-higher"
+    >
+
+    <span>
+        n<sub>roșu</sub> &gt; n<sub>violet</sub>
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă indicele de refracție este mai mare, viteza luminii în mediu:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSpeed"
+        value="smaller"
+    >
+
+    <span>
+        este mai mică
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSpeed"
+        value="larger"
+    >
+
+    <span>
+        este mai mare
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, scopul, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Evidențierea calitativă a dispersiei
+</h2>
+
+
+<p>
+    Un fascicul îngust de lumină albă cade pe prisma optică.
+    Pornește sursa și urmărește lumina emergentă pe ecran.
+</p>
+
+
+<div class="optical-bench">
+
+<svg
+    viewBox="0 0 950 430"
+    role="img"
+    aria-label="Dispersia luminii albe prin prismă"
+>
+
+    <rect
+        x="45"
+        y="175"
+        width="85"
+        height="80"
+        rx="10"
+        fill="#294c60"
+    ></rect>
+
+    <circle
+        cx="87"
+        cy="215"
+        r="18"
+        fill="#fff9bb"
+    ></circle>
+
+    <text
+        class="bench-label"
+        x="48"
+        y="285"
+    >
+        sursă albă
+    </text>
+
+
+    <line
+        class="white-ray"
+        x1="130"
+        y1="215"
+        x2="370"
+        y2="215"
+        data-white-ray
+        opacity="0"
+    ></line>
+
+
+    <polygon
+        class="prism-body"
+        points="
+            400,90
+            555,330
+            315,330
+        "
+    ></polygon>
+
+    <polyline
+        class="prism-highlight"
+        points="
+            400,105
+            535,318
+            335,318
+            400,105
+        "
+    ></polyline>
+
+
+    <line
+        class="screen-line"
+        x1="875"
+        y1="70"
+        x2="875"
+        y2="360"
+    ></line>
+
+
+    <g
+        data-spectrum-rays
+        opacity="0"
+    >
+
+        <line
+            class="spectrum-ray r-red"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="155"
+        ></line>
+
+        <line
+            class="spectrum-ray r-orange"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="175"
+        ></line>
+
+        <line
+            class="spectrum-ray r-yellow"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="195"
+        ></line>
+
+        <line
+            class="spectrum-ray r-green"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="220"
+        ></line>
+
+        <line
+            class="spectrum-ray r-cyan"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="245"
+        ></line>
+
+        <line
+            class="spectrum-ray r-blue"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="270"
+        ></line>
+
+        <line
+            class="spectrum-ray r-violet"
+            x1="485"
+            y1="230"
+            x2="875"
+            y2="300"
+        ></line>
+
+
+        <text
+            class="spectrum-label"
+            fill="#c51f1f"
+            x="885"
+            y="160"
+        >
+            roșu
+        </text>
+
+        <text
+            class="spectrum-label"
+            fill="#6930ad"
+            x="885"
+            y="305"
+        >
+            violet
+        </text>
+
+    </g>
+
+</svg>
+
+</div>
+
+
+<button
+    class="btn success"
+    data-turn-light
+    type="button"
+>
+    Pornește sursa de lumină albă
+</button>
+
+
+<div
+    data-spectrum-observation
+    hidden
+>
+
+<div class="spectrum-strip">
+
+    <span class="red">
+        roșu
+    </span>
+
+    <span class="orange">
+        portocaliu
+    </span>
+
+    <span class="yellow">
+        galben
+    </span>
+
+    <span class="green">
+        verde
+    </span>
+
+    <span class="cyan">
+        cyan
+    </span>
+
+    <span class="blue">
+        albastru
+    </span>
+
+    <span class="violet">
+        violet
+    </span>
+
+</div>
+
+
+<fieldset>
+
+<legend>
+    Culoarea deviată cel mai puțin este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="qualitativeLeast"
+        value="red"
+    >
+
+    <span>
+        roșu
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="qualitativeLeast"
+        value="violet"
+    >
+
+    <span>
+        violet
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Culoarea deviată cel mai mult este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="qualitativeMost"
+        value="violet"
+    >
+
+    <span>
+        violet
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="qualitativeMost"
+        value="red"
+    >
+
+    <span>
+        roșu
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-spectrum-notebook
+    >
+
+    <span>
+        Am notat în caiet ordinea culorilor observate.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    data-check-spectrum
+    type="button"
+>
+    Verifică observațiile
+</button>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="spectrum"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-goniometer
+        type="button"
+        disabled
+    >
+        Continuă la măsurări
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Determinarea deviației minime
+</h2>
+
+
+<p>
+    Pentru fiecare radiație monocromatică modifică unghiul de
+    incidență și caută cea mai mică deviație a fasciculului emergent.
+</p>
+
+
+<div class="data-card">
+
+    <span class="parameter-chip">
+
+        Unghiul prismei:
+        A =
+        <b data-prism-angle>—</b>°
+
+    </span>
+
+    <span class="parameter-chip">
+
+        λ<sub>roșu</sub> =
+        650 nm
+
+    </span>
+
+    <span class="parameter-chip">
+
+        λ<sub>violet</sub> =
+        430 nm
+
+    </span>
+
+</div>
+
+
+<div class="color-selector">
+
+    <button
+        class="btn red"
+        data-select-color="red"
+        type="button"
+    >
+        Filtru roșu – 650 nm
+    </button>
+
+
+    <button
+        class="btn violet"
+        data-select-color="violet"
+        type="button"
+    >
+        Filtru violet – 430 nm
+    </button>
+
+</div>
+
+
+<div class="goniometer-stage">
+
+
+<svg
+    class="goniometer-svg"
+    viewBox="0 0 900 500"
+    role="img"
+    aria-label="Goniometru virtual cu prismă"
+>
+
+    <circle
+        class="gon-circle"
+        cx="450"
+        cy="250"
+        r="205"
+    ></circle>
+
+    <circle
+        class="gon-circle"
+        cx="450"
+        cy="250"
+        r="190"
+    ></circle>
+
+
+    <line
+        class="gon-reference"
+        x1="100"
+        y1="250"
+        x2="800"
+        y2="250"
+    ></line>
+
+
+    <line
+        class="gon-incident"
+        x1="90"
+        y1="250"
+        x2="370"
+        y2="250"
+    ></line>
+
+
+    <polygon
+        class="gon-prism"
+        points="
+            450,115
+            565,325
+            335,325
+        "
+    ></polygon>
+
+
+    <line
+        class="gon-normal"
+        x1="390"
+        y1="160"
+        x2="325"
+        y2="95"
+    ></line>
+
+
+    <line
+        class="gon-emergent r-red"
+        data-emergent-ray
+        x1="525"
+        y1="245"
+        x2="750"
+        y2="400"
+    ></line>
+
+
+    <text
+        class="gon-angle-label"
+        x="450"
+        y="82"
+    >
+        A
+    </text>
+
+
+    <text
+        class="gon-label"
+        x="150"
+        y="225"
+    >
+        fascicul incident
+    </text>
+
+
+    <text
+        class="gon-label"
+        data-ray-label
+        x="700"
+        y="450"
+    >
+        fascicul roșu
+    </text>
+
+
+    <g data-goniometer-ticks></g>
+
+</svg>
+
+
+<div class="goniometer-control">
+
+
+<label class="field">
+
+    Reglează unghiul de incidență
+
+    <input
+        type="range"
+        min="37"
+        max="68"
+        step="0.1"
+        value="38"
+        data-incidence-slider
+    >
+
+</label>
+
+
+<div class="digital-readouts">
+
+    <div class="digital-readout">
+
+        <span>
+            unghi de incidență
+        </span>
+
+        <strong data-incidence-readout>
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="digital-readout">
+
+        <span>
+            deviație curentă
+        </span>
+
+        <strong data-deviation-readout>
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="digital-readout">
+
+        <span>
+            minim observat până acum
+        </span>
+
+        <strong data-best-readout>
+            —
+        </strong>
+
+    </div>
+
+</div>
+
+
+<button
+    class="btn success"
+    data-lock-minimum
+    type="button"
+>
+    Fixează poziția de deviație minimă
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="goniometer"
+></p>
+
+</div>
+
+</div>
+
+
+<div class="measure-grid">
+
+
+<div class="measurement-lock">
+
+<h3>
+    Radiație roșie
+</h3>
+
+<p>
+    λ = 650 nm
+</p>
+
+<p>
+    i<sub>min</sub> =
+    <span
+        class="locked-value"
+        data-red-incidence
+    >
+        nemăsurat
+    </span>
+</p>
+
+<p>
+    δ<sub>min</sub> =
+    <span
+        class="locked-value"
+        data-red-deviation
+    >
+        nemăsurat
+    </span>
+</p>
+
+</div>
+
+
+<div class="measurement-lock">
+
+<h3>
+    Radiație violetă
+</h3>
+
+<p>
+    λ = 430 nm
+</p>
+
+<p>
+    i<sub>min</sub> =
+    <span
+        class="locked-value"
+        data-violet-incidence
+    >
+        nemăsurat
+    </span>
+</p>
+
+<p>
+    δ<sub>min</sub> =
+    <span
+        class="locked-value"
+        data-violet-deviation
+    >
+        nemăsurat
+    </span>
+</p>
+
+</div>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-goniometer-notebook
+    >
+
+    <span>
+        Am notat A, lungimile de undă și valorile
+        i<sub>min</sub>, δ<sub>min</sub> pentru ambele culori.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="measurements-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Indicele de refracție pentru radiația roșie
+</h3>
+
+
+<div class="formula">
+
+    n<sub>r</sub> =
+
+    sin[
+        (A + δ<sub>r,min</sub>)/2
+    ]
+
+    /
+
+    sin(A/2)
+
+</div>
+
+
+<label class="field">
+
+    n<sub>roșu</sub>
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="n-red"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Indicele de refracție pentru radiația violetă
+</h3>
+
+
+<div class="formula">
+
+    n<sub>v</sub> =
+
+    sin[
+        (A + δ<sub>v,min</sub>)/2
+    ]
+
+    /
+
+    sin(A/2)
+
+</div>
+
+
+<label class="field">
+
+    n<sub>violet</sub>
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="n-violet"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Dispersia indicelui de refracție
+</h3>
+
+
+<div class="formula">
+
+    Δn =
+    n<sub>violet</sub> −
+    n<sub>roșu</sub>
+
+</div>
+
+
+<label class="field">
+
+    Δn
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="delta-n"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    D<sub>rel</sub> =
+    Δn /
+    n<sub>roșu</sub>
+    ·100%
+
+</div>
+
+
+<label class="field">
+
+    Dispersia relativă D<sub>rel</sub> (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="dispersion-relative"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Dispersia unghiulară
+</h3>
+
+
+<div class="formula">
+
+    Δδ =
+    δ<sub>violet,min</sub> −
+    δ<sub>roșu,min</sub>
+
+</div>
+
+
+<label class="field">
+
+    Δδ (°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="angular-dispersion"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Viteza luminii în prismă
+</h3>
+
+
+<div class="formula">
+
+    v =
+    c/n
+
+    <br>
+
+    c ≈
+    3,00·10<sup>8</sup>
+    m/s
+
+</div>
+
+
+<label class="field">
+
+    v<sub>roșu</sub>
+    (10<sup>8</sup> m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="speed-red"
+    >
+
+</label>
+
+
+<label class="field">
+
+    v<sub>violet</sub>
+    (10<sup>8</sup> m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="speed-violet"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea rezultatelor
+</h3>
+
+
+<label class="field">
+
+    Explică de ce prisma separă lumina albă în culori
+    și leagă ordinea deviațiilor de valorile indicilor
+    de refracție și ale vitezelor de propagare.
+
+    <textarea
+        rows="7"
+        data-comparison
+        placeholder="Compară n roșu cu n violet, deviațiile și vitezele de propagare."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, calculele,
+        unitățile și interpretarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Dispersia luminii într-un mediu transparent înseamnă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="n-lambda"
+    >
+
+    <span>
+        dependența indicelui de refracție de lungimea de undă
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="intensity"
+    >
+
+    <span>
+        numai scăderea intensității luminii
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Pentru sticla studiată în domeniul vizibil:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="violet-index"
+    >
+
+    <span>
+        n<sub>violet</sub> &gt; n<sub>roșu</sub>
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="red-index"
+    >
+
+    <span>
+        n<sub>roșu</sub> &gt; n<sub>violet</sub>
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. La trecerea prin prismă, radiația violetă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="more"
+    >
+
+    <span>
+        este deviată mai mult decât radiația roșie
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="less"
+    >
+
+    <span>
+        este deviată mai puțin
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Dacă n<sub>violet</sub> &gt; n<sub>roșu</sub>, atunci în sticlă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="violet-slower"
+    >
+
+    <span>
+        v<sub>violet</sub> &lt; v<sub>roșu</sub>
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="violet-faster"
+    >
+
+    <span>
+        v<sub>violet</sub> &gt; v<sub>roșu</sub>
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Formulează concluzii despre dispersie, indicii de refracție, deviația minimă și viteza luminii în prismă."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: citirea unghiurilor, identificarea exactă a poziției de deviație minimă, alinierea prismei..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual observațiile,
+        măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const degToRad =
+    degrees =>
+        degrees *
+        Math.PI /
+        180;
+
+
+const radToDeg =
+    radians =>
+        radians *
+        180 /
+        Math.PI;
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    qualitativeComplete:
+        false,
+
+    selectedColor:
+        "red",
+
+    bestObserved:{
+
+        red:
+            Infinity,
+
+        violet:
+            Infinity
+
+    },
+
+    measurements:{
+
+        red:null,
+
+        violet:null
+
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+        element.classList.add(
+            type
+        );
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Spectru",
+
+    "Goniometru",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !== step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index === step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(index)
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <= state.step ||
+                    state.completed.has(
+                        index - 1
+                    )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function minimumDeviation(
+    prismAngleDeg,
+    refractiveIndex
+){
+
+    const halfA =
+        degToRad(
+            prismAngleDeg /
+            2
+        );
+
+
+    const incidence =
+        Math.asin(
+            refractiveIndex *
+            Math.sin(
+                halfA
+            )
+        );
+
+
+    const delta =
+        2 *
+        incidence -
+        degToRad(
+            prismAngleDeg
+        );
+
+
+    return {
+
+        incidenceDeg:
+            radToDeg(
+                incidence
+            ),
+
+        deviationDeg:
+            radToDeg(
+                delta
+            )
+
+    };
+
+}
+
+
+function prismDeviation(
+    incidenceDeg,
+    refractiveIndex,
+    prismAngleDeg
+){
+
+    const incidence =
+        degToRad(
+            incidenceDeg
+        );
+
+
+    const prismAngle =
+        degToRad(
+            prismAngleDeg
+        );
+
+
+    const sinR1 =
+        Math.sin(
+            incidence
+        ) /
+        refractiveIndex;
+
+
+    if(
+        Math.abs(
+            sinR1
+        ) >
+        1
+    ){
+
+        return null;
+
+    }
+
+
+    const r1 =
+        Math.asin(
+            sinR1
+        );
+
+
+    const r2 =
+        prismAngle -
+        r1;
+
+
+    const sinE =
+        refractiveIndex *
+        Math.sin(
+            r2
+        );
+
+
+    if(
+        Math.abs(
+            sinE
+        ) >
+        1
+    ){
+
+        return null;
+
+    }
+
+
+    const emergence =
+        Math.asin(
+            sinE
+        );
+
+
+    const deviation =
+        incidence +
+        emergence -
+        prismAngle;
+
+
+    return {
+
+        incidenceDeg,
+
+        r1Deg:
+            radToDeg(
+                r1
+            ),
+
+        r2Deg:
+            radToDeg(
+                r2
+            ),
+
+        emergenceDeg:
+            radToDeg(
+                emergence
+            ),
+
+        deviationDeg:
+            radToDeg(
+                deviation
+            )
+
+    };
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) - 1;
+
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    const angleSlot =
+        (
+            slot * 11 +
+            ci
+        ) %
+        7;
+
+
+    const prismAngle =
+        58 +
+        angleSlot *
+        .5;
+
+
+    const indexSlot =
+        (
+            slot * 13 +
+            ci * 5
+        ) %
+        20;
+
+
+    const nRed =
+        round(
+            1.505 +
+            indexSlot *
+            .0008,
+            4
+        );
+
+
+    const dispersionSlot =
+        (
+            slot * 17 +
+            ci * 3
+        ) %
+        9;
+
+
+    const deltaN =
+        .018 +
+        dispersionSlot *
+        .001;
+
+
+    const nViolet =
+        round(
+            nRed +
+            deltaN,
+            4
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP09`,
+
+        visible:{
+
+            prismAngle_deg:
+                prismAngle,
+
+            wavelengthRed_nm:
+                650,
+
+            wavelengthViolet_nm:
+                430
+
+        },
+
+        hidden:{
+
+            nRed,
+
+            nViolet
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length < 3 ||
+            !/^XI [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber < 1 ||
+            catalogNumber > 30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "sursa-luminoasa",
+                "prisma-sticla"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "sursa",
+        "Sursă de lumină albă"
+    ],
+
+    [
+        "fanta",
+        "Fantă îngustă"
+    ],
+
+    [
+        "colimator",
+        "Lentilă / colimator"
+    ],
+
+    [
+        "prisma",
+        "Prismă de sticlă"
+    ],
+
+    [
+        "goniometru",
+        "Goniometru / spectrometru"
+    ],
+
+    [
+        "ecran",
+        "Ecran alb"
+    ],
+
+    [
+        "filtru-rosu",
+        "Filtru roșu"
+    ],
+
+    [
+        "filtru-violet",
+        "Filtru violet"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ],
+
+    [
+        "calorimetru",
+        "Calorimetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "sursa",
+        "fanta",
+        "colimator",
+        "prisma",
+        "goniometru",
+        "ecran",
+        "filtru-rosu",
+        "filtru-violet"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(
+                            id
+                        )
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(
+                            id
+                        )
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] === id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INITIALE
+========================================================= */
+
+function renderInitialData(){
+
+    const visible =
+        state.set.visible;
+
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Unghiul refringent al prismei A</td>
+                    <td>
+                        ${visible.prismAngle_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Lungimea de undă – roșu</td>
+                    <td>
+                        ${visible.wavelengthRed_nm} nm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Lungimea de undă – violet</td>
+                    <td>
+                        ${visible.wavelengthViolet_nm} nm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția goniometrului</td>
+                    <td>0,1°</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-prism-angle]"
+    ).textContent =
+        visible.prismAngle_deg
+            .toFixed(1);
+
+}
+
+
+/* =========================================================
+   PREDICTII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const deviation =
+            qs(
+                'input[name="predictionDeviation"]:checked'
+            )?.value;
+
+
+        const index =
+            qs(
+                'input[name="predictionIndex"]:checked'
+            )?.value;
+
+
+        const speed =
+            qs(
+                'input[name="predictionSpeed"]:checked'
+            )?.value;
+
+
+        if(
+            !deviation ||
+            !index ||
+            !speed ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            deviation,
+
+            refractiveIndex:
+                index,
+
+            propagationSpeed:
+                speed,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DISPERSIE CALITATIVA
+========================================================= */
+
+qs(
+    "[data-turn-light]"
+).addEventListener(
+    "click",
+    () => {
+
+        qs(
+            "[data-white-ray]"
+        ).setAttribute(
+            "opacity",
+            "1"
+        );
+
+
+        qs(
+            "[data-spectrum-rays]"
+        ).setAttribute(
+            "opacity",
+            "1"
+        );
+
+
+        qs(
+            "[data-spectrum-observation]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-turn-light]"
+        ).disabled =
+            true;
+
+    }
+);
+
+
+qs(
+    "[data-check-spectrum]"
+).addEventListener(
+    "click",
+    () => {
+
+        const least =
+            qs(
+                'input[name="qualitativeLeast"]:checked'
+            )?.value;
+
+
+        const most =
+            qs(
+                'input[name="qualitativeMost"]:checked'
+            )?.value;
+
+
+        if(
+            least !==
+                "red" ||
+            most !==
+                "violet" ||
+            !qs(
+                "[data-spectrum-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "spectrum",
+                "Reanalizează poziția extremelor spectrului și confirmă notarea observației."
+            );
+
+
+            return;
+
+        }
+
+
+        state.qualitativeComplete =
+            true;
+
+
+        state.completed.add(
+            4
+        );
+
+
+        feedback(
+            "spectrum",
+            "Observația confirmă separarea luminii albe: roșul este deviat mai puțin, iar violetul mai mult.",
+            "ok"
+        );
+
+
+        qs(
+            "[data-next-goniometer]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+/* =========================================================
+   GONIOMETRU
+========================================================= */
+
+function drawGoniometerTicks(){
+
+    const group =
+        qs(
+            "[data-goniometer-ticks]"
+        );
+
+
+    if(
+        group.children.length
+    ){
+        return;
+    }
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    for(
+        let angle=0;
+        angle<360;
+        angle+=5
+    ){
+
+        const radians =
+            degToRad(
+                angle
+            );
+
+
+        const major =
+            angle %
+            10 ===
+            0;
+
+
+        const inner =
+            major
+                ? 176
+                : 183;
+
+
+        const outer =
+            190;
+
+
+        const x1 =
+            450 +
+            inner *
+            Math.cos(
+                radians
+            );
+
+
+        const y1 =
+            250 +
+            inner *
+            Math.sin(
+                radians
+            );
+
+
+        const x2 =
+            450 +
+            outer *
+            Math.cos(
+                radians
+            );
+
+
+        const y2 =
+            250 +
+            outer *
+            Math.sin(
+                radians
+            );
+
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            x1
+        );
+
+        line.setAttribute(
+            "y1",
+            y1
+        );
+
+        line.setAttribute(
+            "x2",
+            x2
+        );
+
+        line.setAttribute(
+            "y2",
+            y2
+        );
+
+        line.setAttribute(
+            "class",
+            "gon-tick"
+        );
+
+
+        group.append(
+            line
+        );
+
+    }
+
+}
+
+
+function currentRefractiveIndex(){
+
+    return (
+        state.selectedColor ===
+            "red"
+            ? state.set.hidden
+                .nRed
+            : state.set.hidden
+                .nViolet
+    );
+
+}
+
+
+function currentColorLabel(){
+
+    return (
+        state.selectedColor ===
+            "red"
+            ? "roșu"
+            : "violet"
+    );
+
+}
+
+
+function currentDeviation(){
+
+    const incidence =
+        Number(
+            qs(
+                "[data-incidence-slider]"
+            ).value
+        );
+
+
+    return prismDeviation(
+        incidence,
+        currentRefractiveIndex(),
+        state.set.visible
+            .prismAngle_deg
+    );
+
+}
+
+
+function updateGoniometer(){
+
+    const result =
+        currentDeviation();
+
+
+    const incidence =
+        Number(
+            qs(
+                "[data-incidence-slider]"
+            ).value
+        );
+
+
+    qs(
+        "[data-incidence-readout]"
+    ).textContent =
+        `${incidence.toFixed(1)}°`;
+
+
+    if(!result){
+
+        qs(
+            "[data-deviation-readout]"
+        ).textContent =
+            "—";
+
+
+        return;
+
+    }
+
+
+    const deviation =
+        result.deviationDeg;
+
+
+    state.bestObserved[
+        state.selectedColor
+    ] =
+        Math.min(
+            state.bestObserved[
+                state.selectedColor
+            ],
+            deviation
+        );
+
+
+    qs(
+        "[data-deviation-readout]"
+    ).textContent =
+        `${deviation.toFixed(1)}°`;
+
+
+    qs(
+        "[data-best-readout]"
+    ).textContent =
+        `${state.bestObserved[state.selectedColor].toFixed(1)}°`;
+
+
+    const originX =
+        525;
+
+
+    const originY =
+        245;
+
+
+    const length =
+        270;
+
+
+    const angle =
+        degToRad(
+            deviation
+        );
+
+
+    const endX =
+        originX +
+        length *
+        Math.cos(
+            angle
+        );
+
+
+    const endY =
+        originY +
+        length *
+        Math.sin(
+            angle
+        );
+
+
+    const ray =
+        qs(
+            "[data-emergent-ray]"
+        );
+
+
+    ray.setAttribute(
+        "x1",
+        originX
+    );
+
+
+    ray.setAttribute(
+        "y1",
+        originY
+    );
+
+
+    ray.setAttribute(
+        "x2",
+        endX
+    );
+
+
+    ray.setAttribute(
+        "y2",
+        endY
+    );
+
+
+    ray.setAttribute(
+        "class",
+        `gon-emergent ${
+            state.selectedColor ===
+                "red"
+                ? "r-red"
+                : "r-violet"
+        }`
+    );
+
+
+    qs(
+        "[data-ray-label]"
+    ).textContent =
+        `fascicul ${currentColorLabel()}`;
+
+}
+
+
+function selectColor(
+    color
+){
+
+    state.selectedColor =
+        color;
+
+
+    state.bestObserved[
+        color
+    ] =
+        Infinity;
+
+
+    qs(
+        "[data-incidence-slider]"
+    ).value =
+        "38";
+
+
+    feedback(
+        "goniometer",
+        `Filtrul ${color === "red" ? "roșu" : "violet"} este introdus. Modifică unghiul până găsești deviația minimă.`,
+        "warn"
+    );
+
+
+    updateGoniometer();
+
+}
+
+
+qsa(
+    "[data-select-color]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectColor(
+                    button.dataset
+                        .selectColor
+                );
+
+            }
+        );
+
+    }
+);
+
+
+qs(
+    "[data-incidence-slider]"
+).addEventListener(
+    "input",
+    updateGoniometer
+);
+
+
+/* =========================================================
+   FIXAREA MINIMULUI
+========================================================= */
+
+qs(
+    "[data-lock-minimum]"
+).addEventListener(
+    "click",
+    () => {
+
+        const color =
+            state.selectedColor;
+
+
+        if(
+            state.measurements[
+                color
+            ]
+        ){
+
+            feedback(
+                "goniometer",
+                `Măsurarea pentru ${currentColorLabel()} a fost deja fixată.`,
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const incidence =
+            Number(
+                qs(
+                    "[data-incidence-slider]"
+                ).value
+            );
+
+
+        const refractiveIndex =
+            currentRefractiveIndex();
+
+
+        const theoreticalMinimum =
+            minimumDeviation(
+                state.set.visible
+                    .prismAngle_deg,
+                refractiveIndex
+            );
+
+
+        const result =
+            currentDeviation();
+
+
+        if(!result){
+
+            feedback(
+                "goniometer",
+                "În această poziție fasciculul nu iese din prismă. Modifică unghiul."
+            );
+
+
+            return;
+
+        }
+
+
+        const difference =
+            incidence -
+            theoreticalMinimum
+                .incidenceDeg;
+
+
+        if(
+            Math.abs(
+                difference
+            ) >
+            .6
+        ){
+
+            feedback(
+                "goniometer",
+                difference <
+                    0
+                    ? "Deviația poate fi micșorată. Mărește puțin unghiul de incidență."
+                    : "Deviația poate fi micșorată. Micșorează puțin unghiul de incidență.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const measured = {
+
+            color,
+
+            wavelength_nm:
+                color ===
+                    "red"
+                    ? 650
+                    : 430,
+
+            incidence_deg:
+                round(
+                    incidence,
+                    1
+                ),
+
+            deviation_deg:
+                round(
+                    result.deviationDeg,
+                    1
+                ),
+
+            measuredAt:
+                now()
+
+        };
+
+
+        state.measurements[
+            color
+        ] =
+            measured;
+
+
+        if(
+            color ===
+            "red"
+        ){
+
+            qs(
+                "[data-red-incidence]"
+            ).textContent =
+                `${measured.incidence_deg.toFixed(1)}°`;
+
+
+            qs(
+                "[data-red-deviation]"
+            ).textContent =
+                `${measured.deviation_deg.toFixed(1)}°`;
+
+        }
+        else{
+
+            qs(
+                "[data-violet-incidence]"
+            ).textContent =
+                `${measured.incidence_deg.toFixed(1)}°`;
+
+
+            qs(
+                "[data-violet-deviation]"
+            ).textContent =
+                `${measured.deviation_deg.toFixed(1)}°`;
+
+        }
+
+
+        feedback(
+            "goniometer",
+            `Deviația minimă pentru ${currentColorLabel()} a fost înregistrată.`,
+            "ok"
+        );
+
+
+        if(
+            color ===
+                "red" &&
+            !state.measurements
+                .violet
+        ){
+
+            globalThis.setTimeout(
+                () =>
+                    selectColor(
+                        "violet"
+                    ),
+                500
+            );
+
+        }
+
+
+        checkMeasurementsComplete();
+
+    }
+);
+
+
+function checkMeasurementsComplete(){
+
+    if(
+        !state.measurements.red ||
+        !state.measurements.violet
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !qs(
+            "[data-goniometer-notebook]"
+        ).checked
+    ){
+
+        feedback(
+            "measurements-complete",
+            "Ambele deviații au fost măsurate. Confirmă și notarea valorilor în caiet.",
+            "warn"
+        );
+
+
+        return;
+
+    }
+
+
+    feedback(
+        "measurements-complete",
+        "Măsurările pentru radiația roșie și violetă sunt complete.",
+        "ok"
+    );
+
+
+    state.completed.add(
+        5
+    );
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+qs(
+    "[data-goniometer-notebook]"
+).addEventListener(
+    "change",
+    checkMeasurementsComplete
+);
+
+
+/* =========================================================
+   START GONIOMETRU
+========================================================= */
+
+qs(
+    "[data-next-goniometer]"
+).addEventListener(
+    "click",
+    () => {
+
+        drawGoniometerTicks();
+
+
+        selectColor(
+            "red"
+        );
+
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REZUMAT MASURARI
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+function renderMeasurementSummary(){
+
+    const red =
+        state.measurements.red;
+
+
+    const violet =
+        state.measurements.violet;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Roșu</th>
+                    <th>Violet</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>λ</td>
+                    <td>${red.wavelength_nm} nm</td>
+                    <td>${violet.wavelength_nm} nm</td>
+                </tr>
+
+                <tr>
+                    <td>i la deviație minimă</td>
+                    <td>${red.incidence_deg.toFixed(1)}°</td>
+                    <td>${violet.incidence_deg.toFixed(1)}°</td>
+                </tr>
+
+                <tr>
+                    <td>δmin</td>
+                    <td>${red.deviation_deg.toFixed(1)}°</td>
+                    <td>${violet.deviation_deg.toFixed(1)}°</td>
+                </tr>
+
+                <tr>
+                    <td>Unghi prismă A</td>
+                    <td colspan="2">
+                        ${state.set.visible.prismAngle_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function indexFromMinimumDeviation(
+    prismAngleDeg,
+    deviationDeg
+){
+
+    const numerator =
+        Math.sin(
+            degToRad(
+                (
+                    prismAngleDeg +
+                    deviationDeg
+                ) /
+                2
+            )
+        );
+
+
+    const denominator =
+        Math.sin(
+            degToRad(
+                prismAngleDeg /
+                2
+            )
+        );
+
+
+    return (
+        numerator /
+        denominator
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const A =
+        state.set.visible
+            .prismAngle_deg;
+
+
+    const redDeviation =
+        state.measurements
+            .red
+            .deviation_deg;
+
+
+    const violetDeviation =
+        state.measurements
+            .violet
+            .deviation_deg;
+
+
+    const nRed =
+        indexFromMinimumDeviation(
+            A,
+            redDeviation
+        );
+
+
+    const nViolet =
+        indexFromMinimumDeviation(
+            A,
+            violetDeviation
+        );
+
+
+    const deltaN =
+        nViolet -
+        nRed;
+
+
+    const relativeDispersion =
+        deltaN /
+        nRed *
+        100;
+
+
+    const angularDispersion =
+        violetDeviation -
+        redDeviation;
+
+
+    const speedRed =
+        3e8 /
+        nRed;
+
+
+    const speedViolet =
+        3e8 /
+        nViolet;
+
+
+    return {
+
+        nRed,
+
+        nViolet,
+
+        deltaN,
+
+        relativeDispersion_percent:
+            relativeDispersion,
+
+        angularDispersion_deg:
+            angularDispersion,
+
+        speedRed_m_s:
+            speedRed,
+
+        speedViolet_m_s:
+            speedViolet
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICAREA CALCULELOR
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            nRed:
+                answer(
+                    "n-red"
+                ),
+
+            nViolet:
+                answer(
+                    "n-violet"
+                ),
+
+            deltaN:
+                answer(
+                    "delta-n"
+                ),
+
+            relativeDispersion:
+                answer(
+                    "dispersion-relative"
+                ),
+
+            angularDispersion:
+                answer(
+                    "angular-dispersion"
+                ),
+
+            speedRed:
+                answer(
+                    "speed-red"
+                ),
+
+            speedViolet:
+                answer(
+                    "speed-violet"
+                )
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.nRed,
+                expected.nRed,
+                .002
+            ) &&
+
+            closeEnough(
+                values.nViolet,
+                expected.nViolet,
+                .002
+            ) &&
+
+            closeEnough(
+                values.deltaN,
+                expected.deltaN,
+                .002
+            ) &&
+
+            closeEnough(
+                values.relativeDispersion,
+                expected.relativeDispersion_percent,
+                .15
+            ) &&
+
+            closeEnough(
+                values.angularDispersion,
+                expected.angularDispersion_deg,
+                .15
+            ) &&
+
+            closeEnough(
+                values.speedRed,
+                expected.speedRed_m_s /
+                1e8,
+                .015
+            ) &&
+
+            closeEnough(
+                values.speedViolet,
+                expected.speedViolet_m_s /
+                1e8,
+                .015
+            );
+
+
+        if(
+            !correct ||
+            interpretation.length <
+                80 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică formula indicelui de refracție, utilizarea unghiurilor în grade, relația v = c/n și diferențele dintre valorile roșu și violet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    quantity:
+                        "unghi refringent prismă",
+
+                    value_deg:
+                        state.set.visible
+                            .prismAngle_deg,
+
+                    resolution_deg:
+                        .1
+                },
+
+                {
+                    radiation:
+                        "roșu",
+
+                    wavelength_nm:
+                        650,
+
+                    incidenceAtMinimum_deg:
+                        state.measurements
+                            .red
+                            .incidence_deg,
+
+                    minimumDeviation_deg:
+                        state.measurements
+                            .red
+                            .deviation_deg,
+
+                    resolution_deg:
+                        .1
+                },
+
+                {
+                    radiation:
+                        "violet",
+
+                    wavelength_nm:
+                        430,
+
+                    incidenceAtMinimum_deg:
+                        state.measurements
+                            .violet
+                            .incidence_deg,
+
+                    minimumDeviation_deg:
+                        state.measurements
+                            .violet
+                            .deviation_deg,
+
+                    resolution_deg:
+                        .1
+                }
+
+            ],
+
+            calculations:{
+
+                red:{
+
+                    wavelength_nm:
+                        650,
+
+                    refractiveIndex:
+                        round(
+                            expected.nRed,
+                            4
+                        ),
+
+                    speed_m_s:
+                        round(
+                            expected.speedRed_m_s,
+                            0
+                        )
+
+                },
+
+                violet:{
+
+                    wavelength_nm:
+                        430,
+
+                    refractiveIndex:
+                        round(
+                            expected.nViolet,
+                            4
+                        ),
+
+                    speed_m_s:
+                        round(
+                            expected.speedViolet_m_s,
+                            0
+                        )
+
+                },
+
+                dispersion:{
+
+                    refractiveIndexDifference:
+                        round(
+                            expected.deltaN,
+                            4
+                        ),
+
+                    relative_percent:
+                        round(
+                            expected.relativeDispersion_percent,
+                            3
+                        ),
+
+                    angular_deg:
+                        round(
+                            expected.angularDispersion_deg,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                qualitativeObservation:
+                    "violetul este deviat mai mult decât roșul",
+
+                indexOrder:
+                    "n_violet > n_roșu",
+
+                speedOrder:
+                    "v_violet < v_roșu",
+
+                normalDispersionObserved:
+                    true
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte și evidențiază dispersia normală a luminii în prismă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   În raport sunt transmise numai
+                   mărimile declarate elevului.
+                   Indicile interne folosite pentru
+                   generarea simulării nu sunt publicate.
+                */
+
+                generatedData:{
+
+                    prismAngle_deg:
+                        state.set.visible
+                            .prismAngle_deg,
+
+                    wavelengthRed_nm:
+                        state.set.visible
+                            .wavelengthRed_nm,
+
+                    wavelengthViolet_nm:
+                        state.set.visible
+                            .wavelengthViolet_nm,
+
+                    opticalElement:
+                        "prismă de sticlă"
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:
+                    true,
+
+                totalSteps:
+                    8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:
+                true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:
+                8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get(
+                    "q1"
+                ),
+
+            q2:
+                form.get(
+                    "q2"
+                ),
+
+            q3:
+                form.get(
+                    "q3"
+                ),
+
+            q4:
+                form.get(
+                    "q4"
+                )
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                120 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "n-lambda",
+
+            q2:
+                "violet-index",
+
+            q3:
+                "more",
+
+            q4:
+                "violet-slower"
+
+        };
+
+
+        const score =
+            Object
+                .keys(
+                    correct
+                )
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>δmin roșu</span>
+
+                <strong>
+                    ${state.measurements.red.deviation_deg.toFixed(1)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>δmin violet</span>
+
+                <strong>
+                    ${state.measurements.violet.deviation_deg.toFixed(1)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>n roșu</span>
+
+                <strong>
+                    ${c.red.refractiveIndex.toFixed(4)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>n violet</span>
+
+                <strong>
+                    ${c.violet.refractiveIndex.toFixed(4)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Δn</span>
+
+                <strong>
+                    ${c.dispersion.refractiveIndexDifference.toFixed(4)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Dispersie unghiulară</span>
+
+                <strong>
+                    ${c.dispersion.angular_deg.toFixed(2)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        /*
+           Copia locală este salvată înaintea
+           încercării de transmitere.
+        */
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă: ${error.message}`;
+
+        }
+
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            false
+        );
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            true
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(
+            /\s+/
+        );
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(
+                line
+            );
+
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+
+        lines.push(
+            line
+        );
+
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(
+        value
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(
+            value
+        )
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(
+                    line
+                )
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(
+        !pages.length
+    ){
+
+        pages.push([
+            "Raport"
+        ]);
+
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+
+                        `(${pdfEscape(line)}) Tj`,
+
+                        "T*"
+
+                    ]
+                ),
+
+                "ET"
+
+            ].join(
+                "\n"
+            );
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(
+                pdf
+            );
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(
+            pdf
+        );
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Optica",
+
+        "EXP09 - Evidentierea dispersiei luminii",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "PRISMA",
+
+        `Unghi refringent A = ${state.set.visible.prismAngle_deg.toFixed(1)} grade`,
+
+        "",
+
+        "RADIATIE ROSIE",
+
+        "lambda = 650 nm",
+
+        `i minim = ${state.measurements.red.incidence_deg.toFixed(1)} grade`,
+
+        `delta minim = ${state.measurements.red.deviation_deg.toFixed(1)} grade`,
+
+        `n rosu = ${c.red.refractiveIndex.toFixed(4)}`,
+
+        `v rosu = ${c.red.speed_m_s.toFixed(0)} m/s`,
+
+        "",
+
+        "RADIATIE VIOLETA",
+
+        "lambda = 430 nm",
+
+        `i minim = ${state.measurements.violet.incidence_deg.toFixed(1)} grade`,
+
+        `delta minim = ${state.measurements.violet.deviation_deg.toFixed(1)} grade`,
+
+        `n violet = ${c.violet.refractiveIndex.toFixed(4)}`,
+
+        `v violet = ${c.violet.speed_m_s.toFixed(0)} m/s`,
+
+        "",
+
+        "DISPERSIE",
+
+        `Delta n = ${c.dispersion.refractiveIndexDifference.toFixed(4)}`,
+
+        `Dispersie relativa = ${c.dispersion.relative_percent.toFixed(3)} %`,
+
+        `Dispersie unghiulara = ${c.dispersion.angular_deg.toFixed(2)} grade`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP09-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
