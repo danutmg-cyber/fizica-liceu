@@ -1,39 +1,60 @@
 /* ======================================================================
    FIZICA-LICEU
-   TRIMITEREA REZULTATELOR CATRE GOOGLE SHEETS
+   google-sheets.js
 
-   Versiune robusta pentru desktop, tableta si telefon.
+   Modul comun pentru transmiterea rezultatelor experimentelor
+   către Google Apps Script / Google Sheets.
 
-   Functionalitati:
-   - reportId unic pentru fiecare raport;
-   - salvare LOCALA inainte de orice tentativa de trimitere;
-   - aceleasi date sunt folosite la orice retrimitere;
-   - coada comuna pentru toate experimentele;
-   - retrimitere manuala;
-   - retrimitere automata la revenirea conexiunii;
-   - protectie impotriva trimiterilor simultane;
-   - suport pentru confirmare explicita din Google Apps Script;
-   - rapoartele neconfirmate NU sunt sterse din localStorage;
-   - compatibilitate cu experimentele existente.
+   FUNCȚIONALITĂȚI:
 
-   Configurare:
-   assets/data/configurare-generala.json
-   -> submission.googleScriptUrl
+   1. Construiește payload-ul standard al laboratorului.
+   2. Fiecare raport are un reportId unic.
+   3. Salvează raportul în localStorage ÎNAINTE de trimitere.
+   4. Retrimiterea folosește EXACT payload-ul salvat.
+   5. Primește confirmare explicită de la Google Apps Script.
+   6. Recunoaște:
+        - stored
+        - duplicate
+        - submission-error
+   7. Un raport este șters din coada locală numai după
+      confirmare explicită de la server.
+   8. Dacă nu vine confirmarea:
+        -> status = unconfirmed
+        -> raportul rămâne pe dispozitiv.
+   9. Dacă apare o eroare:
+        -> status = pending
+        -> raportul rămâne pe dispozitiv.
+   10. La revenirea internetului sunt retrimise automat
+       numai rapoartele "pending".
+   11. Rapoartele "unconfirmed" se retrimit manual.
+   12. Modulul poate fi folosit de clasele VI-XII.
 
-   Incarcare:
-   <script src="../assets/js/google-sheets.js" defer></script>
+   API PUBLIC:
 
-   API:
-   window.LaboratorGoogleSheets
+   window.LaboratorGoogleSheets.init()
 
-   Evenimente:
-   - laborator:google-sheets-ready
-   - laborator:submission-start
-   - laborator:submission-sent
-   - laborator:submission-unconfirmed
-   - laborator:submission-failed
-   - laborator:submission-queue-changed
+   window.LaboratorGoogleSheets.buildPayload()
 
+   window.LaboratorGoogleSheets.savePending(payload)
+
+   window.LaboratorGoogleSheets.submit(payload)
+
+   window.LaboratorGoogleSheets.retryReport(reportId)
+
+   window.LaboratorGoogleSheets.retryPending()
+
+   window.LaboratorGoogleSheets.getPendingReports()
+
+   window.LaboratorGoogleSheets.getQueueSummary()
+
+   EVENIMENTE:
+
+   laborator:google-sheets-ready
+   laborator:submission-start
+   laborator:submission-sent
+   laborator:submission-unconfirmed
+   laborator:submission-failed
+   laborator:submission-queue-changed
    ====================================================================== */
 
 (() => {
@@ -41,11 +62,11 @@
     "use strict";
 
 
-    /* ================================================================
+    /* ==================================================================
        CONSTANTE
-    ================================================================ */
+    ================================================================== */
 
-    const SCRIPT_URL =
+    const CURRENT_SCRIPT_URL =
         document.currentScript?.src ||
         document.baseURI;
 
@@ -53,16 +74,13 @@
     const DEFAULT_CONFIG_URL =
         new URL(
             "../data/configurare-generala.json",
-            SCRIPT_URL
+            CURRENT_SCRIPT_URL
         ).href;
 
 
     /*
-       IMPORTANT:
-       aceasta este aceeasi cheie folosita de pagina principala
-       pentru sectiunea:
-
-       "Rapoarte netrimise de pe acest dispozitiv"
+       Această cheie trebuie să fie aceeași cu cea utilizată
+       ulterior de rapoarte-netrimise.js.
     */
 
     const DEFAULT_QUEUE_KEY =
@@ -70,50 +88,54 @@
 
 
     /*
-       Lista ID-urilor confirmate ca trimise.
+       Păstrăm local ID-urile confirmate de server.
+       Este doar o protecție suplimentară.
 
-       Este folosita numai ca protectie suplimentara pe dispozitiv.
-       Protectia definitiva impotriva duplicatelor trebuie sa existe
-       si in Google Apps Script.
+       Protecția principală împotriva duplicatelor
+       este realizată în Google Apps Script.
     */
 
-    const SENT_IDS_KEY =
-        "fizica-laborator-rapoarte-trimise";
+    const SENT_REPORTS_KEY =
+        "fizica-laborator-rapoarte-confirmate";
 
 
-    const MAXIMUM_SENT_IDS = 200;
+    const MAX_SENT_REPORT_IDS =
+        300;
 
 
     /*
-       Identificatorul mesajelor postMessage pe care le va trimite
-       Google Apps Script dupa salvarea efectiva in tabel.
+       Trebuie să fie identic cu:
+
+       APP_CONFIG.CONFIRMATION_SOURCE
+
+       din Code.gs.
     */
 
-    const CONFIRMATION_SOURCE =
+    const SERVER_MESSAGE_SOURCE =
         "fizica-laborator-google-sheets";
 
 
     const CLIENT_VERSION =
-        "2.0.0";
+        "3.0.0";
 
 
-    /* ================================================================
-       STARE INTERNA
-    ================================================================ */
+    /* ==================================================================
+       STARE INTERNĂ
+    ================================================================== */
 
     const state = {
 
         initialized:false,
 
-        initPromise:null,
+        initializationPromise:null,
+
+        listenersAdded:false,
 
         generalConfig:null,
 
         submissionConfig:null,
 
         endpoint:"",
-
-        listenersAdded:false,
 
         submittingReportIds:
             new Set(),
@@ -133,9 +155,9 @@
     };
 
 
-    /* ================================================================
-       FUNCTII GENERALE
-    ================================================================ */
+    /* ==================================================================
+       UTILITARE GENERALE
+    ================================================================== */
 
     function clone(value){
 
@@ -185,22 +207,15 @@
     }
 
 
-    /*
-       Permite ca buildPayload({
-           student:{ catalogNumber:17 }
-       })
-
-       sa adauge doar proprietatea respectiva,
-       fara sa stearga name/className.
-    */
-
     function deepMerge(
         target,
         source
     ){
 
         if(!isPlainObject(source)){
+
             return clone(source);
+
         }
 
 
@@ -252,7 +267,8 @@
         ){
 
             return (
-                `${prefix}-` +
+                prefix +
+                "-" +
                 globalThis.crypto
                     .randomUUID()
             );
@@ -260,13 +276,13 @@
         }
 
 
-        const time =
+        const timestamp =
             Date.now()
                 .toString(36)
                 .toUpperCase();
 
 
-        const random =
+        const randomPart =
             Math.random()
                 .toString(36)
                 .slice(2,10)
@@ -274,13 +290,19 @@
 
 
         return (
-            `${prefix}-${time}-${random}`
+            prefix +
+            "-" +
+            timestamp +
+            "-" +
+            randomPart
         );
 
     }
 
 
-    function wait(milliseconds){
+    function wait(
+        milliseconds
+    ){
 
         return new Promise(
             resolve => {
@@ -297,14 +319,14 @@
 
 
     function dispatch(
-        name,
+        eventName,
         detail={}
     ){
 
         document.dispatchEvent(
 
             new CustomEvent(
-                name,
+                eventName,
                 {
                     detail:
                         clone(detail)
@@ -316,9 +338,9 @@
     }
 
 
-    /* ================================================================
+    /* ==================================================================
        LOCAL STORAGE
-    ================================================================ */
+    ================================================================== */
 
     function safeStorageGet(
         key,
@@ -327,24 +349,23 @@
 
         try{
 
-            const value =
-                globalThis
-                    .localStorage
+            const raw =
+                globalThis.localStorage
                     ?.getItem(key);
 
 
-            if(!value){
+            if(!raw){
                 return fallback;
             }
 
 
-            return JSON.parse(value);
+            return JSON.parse(raw);
 
         }
         catch(error){
 
             console.warn(
-                "[LaboratorGoogleSheets] Datele locale nu au putut fi citite.",
+                "[LaboratorGoogleSheets] Nu s-au putut citi datele locale.",
                 error
             );
 
@@ -363,8 +384,7 @@
 
         try{
 
-            globalThis
-                .localStorage
+            globalThis.localStorage
                 ?.setItem(
                     key,
                     JSON.stringify(value)
@@ -377,7 +397,7 @@
         catch(error){
 
             console.warn(
-                "[LaboratorGoogleSheets] Datele locale nu au putut fi salvate.",
+                "[LaboratorGoogleSheets] Nu s-au putut salva datele local.",
                 error
             );
 
@@ -389,9 +409,9 @@
     }
 
 
-    /* ================================================================
+    /* ==================================================================
        CONFIGURARE
-    ================================================================ */
+    ================================================================== */
 
     async function loadGeneralConfig(
         url=DEFAULT_CONFIG_URL
@@ -420,8 +440,8 @@
         if(!response.ok){
 
             throw new Error(
-                "Configurația generală nu a putut fi " +
-                `încărcată (${response.status}).`
+                "Configurarea generală nu a putut fi încărcată. " +
+                `HTTP ${response.status}.`
             );
 
         }
@@ -441,7 +461,9 @@
     }
 
 
-    function validateEndpoint(value){
+    function validateEndpoint(
+        value
+    ){
 
         const normalizedValue =
             normalize(value);
@@ -476,15 +498,14 @@
         }
 
 
+        const validProtocol =
+            url.protocol ===
+            "https:";
+
+
         const validHost =
-            (
-                url.protocol ===
-                "https:"
-            ) &&
-            (
-                url.hostname ===
-                "script.google.com"
-            );
+            url.hostname ===
+            "script.google.com";
 
 
         const validPath =
@@ -495,13 +516,13 @@
 
 
         if(
+            !validProtocol ||
             !validHost ||
             !validPath
         ){
 
             throw new Error(
-                "Adresa Google Apps Script nu este validă. " +
-                "Folosește adresa aplicației web care se termină în /exec."
+                "Adresa Google Apps Script trebuie să fie URL-ul deployment-ului care se termină în /exec."
             );
 
         }
@@ -512,9 +533,9 @@
     }
 
 
-    /* ================================================================
-       COADA LOCALA
-    ================================================================ */
+    /* ==================================================================
+       CHEIA COZII LOCALE
+    ================================================================== */
 
     function queueKey(){
 
@@ -527,7 +548,13 @@
     }
 
 
-    function normalizeQueueItem(item){
+    /* ==================================================================
+       NORMALIZARE ELEMENT DIN COADĂ
+    ================================================================== */
+
+    function normalizeQueueItem(
+        item
+    ){
 
         if(
             !item ||
@@ -538,6 +565,11 @@
             return null;
 
         }
+
+
+        const now =
+            new Date()
+                .toISOString();
 
 
         return {
@@ -564,14 +596,12 @@
 
             queuedAt:
                 item.queuedAt ||
-                new Date()
-                    .toISOString(),
+                now,
 
             updatedAt:
                 item.updatedAt ||
                 item.queuedAt ||
-                new Date()
-                    .toISOString(),
+                now,
 
             attempts:
                 Number(
@@ -596,21 +626,29 @@
     }
 
 
+    /* ==================================================================
+       CITIREA COZII
+    ================================================================== */
+
     function readQueue(){
 
-        const raw =
+        const stored =
             safeStorageGet(
                 queueKey(),
                 []
             );
 
 
-        if(!Array.isArray(raw)){
+        if(
+            !Array.isArray(stored)
+        ){
+
             return [];
+
         }
 
 
-        return raw
+        return stored
             .map(
                 normalizeQueueItem
             )
@@ -619,7 +657,13 @@
     }
 
 
-    function queueSummary(queue){
+    /* ==================================================================
+       REZUMAT COADĂ
+    ================================================================== */
+
+    function queueSummary(
+        queue=readQueue()
+    ){
 
         return {
 
@@ -645,16 +689,22 @@
     }
 
 
-    function writeQueue(queue){
+    /* ==================================================================
+       SCRIEREA COZII
+    ================================================================== */
 
-        const ok =
+    function writeQueue(
+        queue
+    ){
+
+        const success =
             safeStorageSet(
                 queueKey(),
                 queue
             );
 
 
-        if(ok){
+        if(success){
 
             dispatch(
                 "laborator:submission-queue-changed",
@@ -664,17 +714,19 @@
         }
 
 
-        return ok;
+        return success;
 
     }
 
 
-    /*
-       Raportul este introdus in coada INAINTE de trimitere.
+    /* ==================================================================
+       INTRODUCERE RAPORT ÎN COADĂ
 
-       Daca raportul exista deja, payload-ul original este pastrat.
-       Astfel retrimiterea foloseste EXACT aceleasi date.
-    */
+       IMPORTANT:
+       dacă raportul există deja, payload-ul existent este păstrat.
+
+       Retrimiterea trebuie să utilizeze EXACT raportul original.
+    ================================================================== */
 
     function ensureQueued(
         payload,
@@ -685,7 +737,7 @@
             readQueue();
 
 
-        const existingIndex =
+        const index =
             queue.findIndex(
                 item =>
                     item.reportId ===
@@ -698,24 +750,17 @@
                 .toISOString();
 
 
-        if(existingIndex >= 0){
+        if(index >= 0){
 
             const existing =
-                queue[
-                    existingIndex
-                ];
+                queue[index];
 
 
             const updated = {
 
                 ...existing,
 
-                version:2,
-
-                /*
-                   NU inlocuim payload-ul original
-                   decat daca cerem explicit acest lucru.
-                */
+                version:3,
 
                 payload:
                     options.replacePayload
@@ -729,7 +774,8 @@
                     existing.status ||
                     "pending",
 
-                updatedAt:now
+                updatedAt:
+                    now
 
             };
 
@@ -756,22 +802,25 @@
             }
 
 
-            queue[
-                existingIndex
-            ] = updated;
+            queue[index] =
+                updated;
 
 
-            writeQueue(queue);
+            writeQueue(
+                queue
+            );
 
 
-            return clone(updated);
+            return clone(
+                updated
+            );
 
         }
 
 
-        const item = {
+        const newItem = {
 
-            version:2,
+            version:3,
 
             reportId:
                 payload.reportId,
@@ -783,13 +832,17 @@
                 options.status ||
                 "pending",
 
-            queuedAt:now,
+            queuedAt:
+                now,
 
-            updatedAt:now,
+            updatedAt:
+                now,
 
-            attempts:0,
+            attempts:
+                0,
 
-            lastAttemptAt:null,
+            lastAttemptAt:
+                null,
 
             lastError:
                 options.lastError ||
@@ -802,15 +855,26 @@
         };
 
 
-        queue.push(item);
+        queue.push(
+            newItem
+        );
 
-        writeQueue(queue);
+
+        writeQueue(
+            queue
+        );
 
 
-        return clone(item);
+        return clone(
+            newItem
+        );
 
     }
 
+
+    /* ==================================================================
+       ACTUALIZARE ELEMENT DIN COADĂ
+    ================================================================== */
 
     function updateQueueItem(
         reportId,
@@ -847,7 +911,9 @@
         };
 
 
-        writeQueue(queue);
+        writeQueue(
+            queue
+        );
 
 
         return clone(
@@ -856,6 +922,10 @@
 
     }
 
+
+    /* ==================================================================
+       ÎNREGISTRAREA UNEI TENTATIVE
+    ================================================================== */
 
     function markQueueAttempt(
         reportId
@@ -878,6 +948,11 @@
         }
 
 
+        const now =
+            new Date()
+                .toISOString();
+
+
         queue[index] = {
 
             ...queue[index],
@@ -890,20 +965,24 @@
                 ) + 1,
 
             lastAttemptAt:
-                new Date()
-                    .toISOString(),
+                now,
 
             updatedAt:
-                new Date()
-                    .toISOString()
+                now
 
         };
 
 
-        writeQueue(queue);
+        writeQueue(
+            queue
+        );
 
     }
 
+
+    /* ==================================================================
+       ȘTERGERE RAPORT DIN COADĂ
+    ================================================================== */
 
     function removeFromQueue(
         reportId
@@ -913,7 +992,7 @@
             readQueue();
 
 
-        const updatedQueue =
+        const updated =
             queue.filter(
                 item =>
                     item.reportId !==
@@ -922,15 +1001,17 @@
 
 
         if(
-            updatedQueue.length ===
+            updated.length ===
             queue.length
         ){
+
             return false;
+
         }
 
 
         writeQueue(
-            updatedQueue
+            updated
         );
 
 
@@ -938,6 +1019,10 @@
 
     }
 
+
+    /* ==================================================================
+       OBȚINERE RAPORT LOCAL
+    ================================================================== */
 
     function getPendingReport(
         reportId
@@ -956,27 +1041,36 @@
     }
 
 
-    /* ================================================================
-       RAPOARTE CONFIRMATE
-    ================================================================ */
+    /* ==================================================================
+       LISTA ID-URILOR CONFIRMATE
+    ================================================================== */
+
+    function readSentReportIds(){
+
+        const stored =
+            safeStorageGet(
+                SENT_REPORTS_KEY,
+                []
+            );
+
+
+        return Array.isArray(
+            stored
+        )
+            ? stored
+            : [];
+
+    }
+
 
     function hasBeenSent(
         reportId
     ){
 
-        const ids =
-            safeStorageGet(
-                SENT_IDS_KEY,
-                []
-            );
-
-
-        return (
-            Array.isArray(ids) &&
-            ids.includes(
+        return readSentReportIds()
+            .includes(
                 reportId
-            )
-        );
+            );
 
     }
 
@@ -985,26 +1079,15 @@
         reportId
     ){
 
-        const storedIds =
-            safeStorageGet(
-                SENT_IDS_KEY,
-                []
-            );
+        const existing =
+            readSentReportIds();
 
 
-        const ids =
-            Array.isArray(
-                storedIds
-            )
-                ? storedIds
-                : [];
-
-
-        const updatedIds = [
+        const updated = [
 
             reportId,
 
-            ...ids.filter(
+            ...existing.filter(
                 id =>
                     id !==
                     reportId
@@ -1012,26 +1095,27 @@
 
         ].slice(
             0,
-            MAXIMUM_SENT_IDS
+            MAX_SENT_REPORT_IDS
         );
 
 
         safeStorageSet(
-            SENT_IDS_KEY,
-            updatedIds
+            SENT_REPORTS_KEY,
+            updated
         );
 
     }
 
 
-    /* ================================================================
-       CITIREA STARII LABORATORULUI
-    ================================================================ */
+    /* ==================================================================
+       CITIREA STĂRII LABORATORULUI
+    ================================================================== */
 
     function readGlobalState(){
 
         const session =
             clone(
+
                 globalThis
                     .LAB_SESSION ||
 
@@ -1040,14 +1124,18 @@
                     ?.getState?.() ||
 
                 {}
+
             );
 
 
         const experiment =
             clone(
+
                 globalThis
                     .LAB_EXPERIMENT_CONFIG ||
+
                 {}
+
             );
 
 
@@ -1167,9 +1255,9 @@
     }
 
 
-    /* ================================================================
-       CONSTRUIREA RAPORTULUI
-    ================================================================ */
+    /* ==================================================================
+       CONSTRUIREA PAYLOAD-ULUI
+    ================================================================== */
 
     function buildPayload(
         overrides={}
@@ -1200,6 +1288,9 @@
                 .finishedAt ||
 
             source.report
+                .finishedAt ||
+
+            source.session
                 .finishedAt ||
 
             currentTime
@@ -1244,6 +1335,16 @@
                 : null;
 
 
+        /*
+           reportId poate veni din:
+
+           1. overrides
+           2. raport
+           3. sesiune
+
+           dacă nu există, îl generăm.
+        */
+
         const reportId =
 
             normalize(
@@ -1261,8 +1362,14 @@
 
             ) ||
 
-            createId("RAP");
+            createId(
+                "RAP"
+            );
 
+
+        /*
+           Număr catalog.
+        */
 
         const rawCatalogNumber =
 
@@ -1281,20 +1388,20 @@
 
         if(
             rawCatalogNumber !==
-            null &&
+                null &&
             rawCatalogNumber !==
-            ""
+                ""
         ){
 
-            const converted =
+            const numeric =
                 Number(
                     rawCatalogNumber
                 );
 
 
             catalogNumber =
-                Number.isFinite(converted)
-                    ? converted
+                Number.isFinite(numeric)
+                    ? numeric
                     : normalize(
                         rawCatalogNumber
                     );
@@ -1302,12 +1409,19 @@
         }
 
 
+        /* --------------------------------------------------------------
+           PAYLOAD STANDARD
+        -------------------------------------------------------------- */
+
         const basePayload = {
 
             schemaVersion:
                 "1.1.0",
 
-            reportId,
+
+            reportId:
+                reportId,
+
 
             submittedAt:
                 currentTime
@@ -1317,29 +1431,39 @@
             application:{
 
                 name:
+
                     state.generalConfig
                         ?.application
                         ?.name ||
+
                     "Laborator virtual de fizică",
 
+
                 version:
+
                     state.generalConfig
                         ?.schemaVersion ||
+
                     "1.0.0",
+
 
                 clientVersion:
                     CLIENT_VERSION,
 
+
                 pageUrl:
-                    globalThis
-                        .location
+
+                    globalThis.location
                         ?.href ||
+
                     "",
 
+
                 userAgent:
-                    globalThis
-                        .navigator
+
+                    globalThis.navigator
                         ?.userAgent ||
+
                     ""
 
             },
@@ -1358,6 +1482,7 @@
 
                     ),
 
+
                 className:
                     normalize(
 
@@ -1369,7 +1494,10 @@
 
                     ),
 
-                catalogNumber,
+
+                catalogNumber:
+                    catalogNumber,
+
 
                 identityConfirmed:
                     Boolean(
@@ -1393,6 +1521,7 @@
 
                     ),
 
+
                 code:
                     normalize(
 
@@ -1403,6 +1532,7 @@
                             .experimentCode
 
                     ),
+
 
                 title:
                     normalize(
@@ -1415,6 +1545,7 @@
 
                     ),
 
+
                 classLevel:
                     normalize(
 
@@ -1425,6 +1556,7 @@
                             .grade
 
                     ),
+
 
                 domain:
                     normalize(
@@ -1437,6 +1569,7 @@
 
                     ),
 
+
                 risks:
                     Array.isArray(
                         source.experiment
@@ -1447,6 +1580,7 @@
                                 .risks
                         )
                         : [],
+
 
                 dataSetId:
 
@@ -1461,11 +1595,15 @@
 
                     null,
 
+
                 generatedData:
                     clone(
+
                         source.experiment
                             .generatedData ||
+
                         {}
+
                     )
 
             },
@@ -1484,13 +1622,18 @@
 
                     ),
 
+
                 startedAt:
                     sessionStarted,
+
 
                 finishedAt:
                     finishTime,
 
-                durationSeconds,
+
+                durationSeconds:
+                    durationSeconds,
+
 
                 dateDisplay:
                     normalize(
@@ -1525,8 +1668,8 @@
 
 
             measurements:
-
                 clone(
+
                     source.notebook
                         .measurements ||
 
@@ -1534,12 +1677,13 @@
                         .measurements ||
 
                     []
+
                 ),
 
 
             calculations:
-
                 clone(
+
                     source.notebook
                         .calculations ||
 
@@ -1547,12 +1691,13 @@
                         .calculations ||
 
                     {}
+
                 ),
 
 
             comparison:
-
                 clone(
+
                     source.notebook
                         .comparison ||
 
@@ -1560,6 +1705,7 @@
                         .comparison ||
 
                     {}
+
                 ),
 
 
@@ -1581,12 +1727,18 @@
                     source.report
                 ),
 
-                reportId
+                reportId:
+                    reportId
 
             }
 
         };
 
+
+        /*
+           Permite experimentului să suprascrie / adauge
+           anumite date.
+        */
 
         const merged =
             deepMerge(
@@ -1596,10 +1748,7 @@
 
 
         /*
-           Garantam consistenta intre:
-           payload.reportId
-           si
-           payload.report.reportId
+           Menținem obligatoriu același reportId.
         */
 
         merged.reportId =
@@ -1630,25 +1779,27 @@
     }
 
 
-    /* ================================================================
-       VALIDARE RAPORT
-    ================================================================ */
+    /* ==================================================================
+       VALIDAREA PAYLOAD-ULUI
+    ================================================================== */
 
     function validatePayload(
         payload
     ){
 
-        const errors = [];
+        const errors =
+            [];
 
 
         if(
             !normalize(
-                payload.reportId
+                payload
+                    ?.reportId
             )
         ){
 
             errors.push(
-                "lipsește identificatorul raportului"
+                "lipsește ID-ul raportului"
             );
 
         }
@@ -1656,7 +1807,8 @@
 
         if(
             !normalize(
-                payload.student
+                payload
+                    ?.student
                     ?.name
             )
         ){
@@ -1670,7 +1822,8 @@
 
         if(
             !normalize(
-                payload.student
+                payload
+                    ?.student
                     ?.className
             )
         ){
@@ -1684,7 +1837,23 @@
 
         if(
             !normalize(
-                payload.experiment
+                payload
+                    ?.experiment
+                    ?.id
+            )
+        ){
+
+            errors.push(
+                "lipsește ID-ul experimentului"
+            );
+
+        }
+
+
+        if(
+            !normalize(
+                payload
+                    ?.experiment
                     ?.title
             )
         ){
@@ -1698,26 +1867,14 @@
 
         if(
             !normalize(
-                payload.session
+                payload
+                    ?.session
                     ?.sessionId
             )
         ){
 
             errors.push(
-                "lipsește codul sesiunii"
-            );
-
-        }
-
-
-        if(
-            !payload.evaluation ||
-            payload.evaluation.score ===
-                undefined
-        ){
-
-            errors.push(
-                "evaluarea finală nu este completă"
+                "lipsește ID-ul sesiunii"
             );
 
         }
@@ -1739,9 +1896,9 @@
     }
 
 
-    /* ================================================================
-       STATUS IN INTERFATA
-    ================================================================ */
+    /* ==================================================================
+       STATUS VIZUAL
+    ================================================================== */
 
     function updateStatus(
         message,
@@ -1791,49 +1948,10 @@
                 );
 
 
-                if(
-                    type ===
-                    "sending"
-                ){
+                if(type){
 
                     element.classList.add(
-                        "is-sending"
-                    );
-
-                }
-
-
-                if(
-                    type ===
-                    "error"
-                ){
-
-                    element.classList.add(
-                        "is-error"
-                    );
-
-                }
-
-
-                if(
-                    type ===
-                    "success"
-                ){
-
-                    element.classList.add(
-                        "is-success"
-                    );
-
-                }
-
-
-                if(
-                    type ===
-                    "pending"
-                ){
-
-                    element.classList.add(
-                        "is-pending"
+                        `is-${type}`
                     );
 
                 }
@@ -1845,32 +1963,42 @@
     }
 
 
-    /* ================================================================
-       CONFIRMAREA DE LA GOOGLE APPS SCRIPT
-    ================================================================ */
+    /* ==================================================================
+       ORIGINEA MESAJULUI SERVERULUI
+    ================================================================== */
 
-    function allowedConfirmationOrigin(
+    function allowedServerOrigin(
         origin
     ){
 
         try{
 
             const url =
-                new URL(origin);
+                new URL(
+                    origin
+                );
+
+
+            if(
+                url.protocol !==
+                "https:"
+            ){
+
+                return false;
+
+            }
 
 
             return (
 
-                url.protocol ===
-                "https:" &&
+                url.hostname ===
+                    "script.google.com" ||
 
-                (
-                    url.hostname ===
-                        "script.google.com" ||
+                url.hostname ===
+                    "script.googleusercontent.com" ||
 
-                    url.hostname.endsWith(
-                        ".googleusercontent.com"
-                    )
+                url.hostname.endsWith(
+                    ".googleusercontent.com"
                 )
 
             );
@@ -1885,7 +2013,11 @@
     }
 
 
-    function parseConfirmationData(
+    /* ==================================================================
+       PARSAREA postMessage
+    ================================================================== */
+
+    function parseMessageData(
         value
     ){
 
@@ -1924,7 +2056,11 @@
     }
 
 
-    function isValidConfirmation(
+    /* ==================================================================
+       VERIFICAREA MESAJULUI SERVERULUI
+    ================================================================== */
+
+    function isMessageForReport(
         data,
         reportId
     ){
@@ -1936,7 +2072,7 @@
 
         if(
             data.source !==
-            CONFIRMATION_SOURCE
+            SERVER_MESSAGE_SOURCE
         ){
 
             return false;
@@ -1948,63 +2084,28 @@
                 data.reportId ||
                 ""
             ) !==
-            String(reportId)
+            String(
+                reportId
+            )
         ){
 
             return false;
         }
 
 
-        const acceptedTypes = [
-
-            "submission-confirmed",
-
-            "report-confirmed",
-
-            "report-stored"
-
-        ];
-
-
-        const acceptedStatuses = [
-
-            "stored",
-
-            "sent",
-
-            "duplicate",
-
-            "ok",
-
-            "confirmed"
-
-        ];
-
-
-        return (
-
-            acceptedTypes.includes(
-                data.type
-            ) ||
-
-            acceptedStatuses.includes(
-                data.status
-            )
-
-        );
+        return true;
 
     }
 
 
-    /* ================================================================
-       TRANSPORTUL CATRE GOOGLE APPS SCRIPT
+    /* ==================================================================
+       TRANSPORTUL
 
-       IMPORTANT:
-       incarcare iframe != confirmare salvare.
+       Google Apps Script este apelat prin formular POST într-un iframe
+       ascuns.
 
-       Raportul este considerat CONFIRMAT numai daca Apps Script
-       trimite un postMessage inapoi catre pagina.
-    ================================================================ */
+       Serverul trebuie să trimită confirmarea cu postMessage().
+    ================================================================== */
 
     function postPayload(
         payload
@@ -2017,7 +2118,7 @@
             ) => {
 
                 const frameName =
-                    "google-sheets-response-" +
+                    "lab-google-response-" +
                     Date.now() +
                     "-" +
                     Math.random()
@@ -2026,17 +2127,18 @@
 
 
                 const iframe =
-                    document
-                        .createElement(
-                            "iframe"
-                        );
+                    document.createElement(
+                        "iframe"
+                    );
 
 
                 iframe.name =
                     frameName;
 
+
                 iframe.hidden =
                     true;
+
 
                 iframe.setAttribute(
                     "aria-hidden",
@@ -2045,44 +2147,48 @@
 
 
                 const form =
-                    document
-                        .createElement(
-                            "form"
-                        );
+                    document.createElement(
+                        "form"
+                    );
 
 
                 form.method =
                     "POST";
 
+
                 form.action =
                     state.endpoint;
+
 
                 form.target =
                     frameName;
 
+
                 form.hidden =
                     true;
+
 
                 form.acceptCharset =
                     "UTF-8";
 
 
-                /*
-                   Payload complet.
-                */
+                /* ------------------------------------------------------
+                   PAYLOAD
+                ------------------------------------------------------ */
 
                 const payloadInput =
-                    document
-                        .createElement(
-                            "input"
-                        );
+                    document.createElement(
+                        "input"
+                    );
 
 
                 payloadInput.type =
                     "hidden";
 
+
                 payloadInput.name =
                     "payload";
+
 
                 payloadInput.value =
                     JSON.stringify(
@@ -2090,47 +2196,48 @@
                     );
 
 
-                /*
-                   Trimitem separat reportId,
-                   util pentru verificare rapida pe server.
-                */
+                /* ------------------------------------------------------
+                   reportId separat
+                ------------------------------------------------------ */
 
                 const reportIdInput =
-                    document
-                        .createElement(
-                            "input"
-                        );
+                    document.createElement(
+                        "input"
+                    );
 
 
                 reportIdInput.type =
                     "hidden";
 
+
                 reportIdInput.name =
                     "reportId";
+
 
                 reportIdInput.value =
                     payload.reportId;
 
 
-                /*
-                   Versiunea protocolului.
-                */
+                /* ------------------------------------------------------
+                   protocol client
+                ------------------------------------------------------ */
 
                 const protocolInput =
-                    document
-                        .createElement(
-                            "input"
-                        );
+                    document.createElement(
+                        "input"
+                    );
 
 
                 protocolInput.type =
                     "hidden";
 
+
                 protocolInput.name =
                     "clientProtocol";
 
+
                 protocolInput.value =
-                    "2";
+                    "3";
 
 
                 form.append(
@@ -2154,306 +2261,320 @@
                 );
 
 
-                let completed =
+                let finished =
                     false;
-
-
-                let remoteLoaded =
-                    false;
-
-
-                let loadGraceTimer =
-                    null;
-
-
-                let overallTimer =
-                    null;
 
 
                 const timeoutMilliseconds =
                     Math.max(
-                        3000,
+
+                        10000,
+
                         Number(
                             state.submissionConfig
                                 ?.timeoutMilliseconds ||
-                            15000
+                            20000
                         )
+
                     );
 
 
-                /*
-                   Dupa ce iframe-ul incarca raspunsul,
-                   asteptam putin confirmarea postMessage.
-                */
-
-                const confirmationGraceMilliseconds =
-                    Math.max(
-                        600,
-                        Number(
-                            state.submissionConfig
-                                ?.confirmationGraceMilliseconds ||
-                            1500
-                        )
-                    );
+                let timeoutId =
+                    null;
 
 
                 function cleanup(){
 
-                    globalThis
-                        .removeEventListener(
-                            "message",
-                            onMessage
-                        );
+                    globalThis.removeEventListener(
+                        "message",
+                        onMessage
+                    );
 
 
-                    if(loadGraceTimer){
+                    if(timeoutId){
 
-                        clearTimeout(
-                            loadGraceTimer
-                        );
-
-                    }
-
-
-                    if(overallTimer){
-
-                        clearTimeout(
-                            overallTimer
+                        globalThis.clearTimeout(
+                            timeoutId
                         );
 
                     }
 
+
+                    /*
+                       Întârziem puțin eliminarea iframe-ului
+                       pentru unele browsere mobile.
+                    */
 
                     globalThis.setTimeout(
                         () => {
 
-                            form.remove();
+                            try{
+                                form.remove();
+                            }
+                            catch(error){
+                                // nimic
+                            }
 
-                            iframe.remove();
+
+                            try{
+                                iframe.remove();
+                            }
+                            catch(error){
+                                // nimic
+                            }
 
                         },
-                        500
+                        400
                     );
 
                 }
 
 
-                function finish(result){
+                function finishSuccess(
+                    result
+                ){
 
-                    if(completed){
+                    if(finished){
                         return;
                     }
 
 
-                    completed =
+                    finished =
                         true;
 
 
                     cleanup();
 
 
-                    resolve(result);
+                    resolve(
+                        result
+                    );
 
                 }
 
 
-                function fail(error){
+                function finishError(
+                    error
+                ){
 
-                    if(completed){
+                    if(finished){
                         return;
                     }
 
 
-                    completed =
+                    finished =
                         true;
 
 
                     cleanup();
 
 
-                    reject(error);
+                    reject(
+                        error
+                    );
 
                 }
 
 
-                function onMessage(event){
+                /* ------------------------------------------------------
+                   PRIMIRE CONFIRMARE SERVER
+                ------------------------------------------------------ */
+
+                function onMessage(
+                    event
+                ){
 
                     /*
-                       Mesajul trebuie sa vina din iframe-ul
-                       creat pentru aceasta trimitere.
+                       Mesajul trebuie să vină chiar din iframe-ul
+                       creat pentru această cerere.
                     */
 
                     if(
                         event.source !==
                         iframe.contentWindow
                     ){
+
                         return;
+
                     }
 
 
                     if(
-                        !allowedConfirmationOrigin(
+                        !allowedServerOrigin(
                             event.origin
                         )
                     ){
+
                         return;
+
                     }
 
 
                     const data =
-                        parseConfirmationData(
+                        parseMessageData(
                             event.data
                         );
 
 
                     if(
-                        !isValidConfirmation(
+                        !isMessageForReport(
                             data,
                             payload.reportId
                         )
                     ){
+
                         return;
+
                     }
 
 
-                    finish({
+                    /* --------------------------------------------------
+                       EROARE CONFIRMATĂ DE SERVER
+                    -------------------------------------------------- */
 
-                        ok:true,
+                    if(
+                        data.type ===
+                            "submission-error" ||
 
-                        confirmed:true,
+                        data.status ===
+                            "error" ||
 
-                        status:
-                            data.status ||
-                            "confirmed",
+                        data.ok ===
+                            false
+                    ){
 
-                        duplicate:
-                            data.status ===
-                            "duplicate" ||
-                            Boolean(
-                                data.duplicate
-                            ),
+                        const error =
+                            new Error(
 
-                        type:
-                            "post-message-confirmation",
+                                data.error ||
 
-                        serverData:
-                            clone(data)
+                                data.message ||
 
-                    });
+                                "Google Apps Script a respins raportul."
+
+                            );
+
+
+                        error.serverConfirmed =
+                            true;
+
+
+                        error.serverData =
+                            clone(data);
+
+
+                        finishError(
+                            error
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    /* --------------------------------------------------
+                       RAPORT SALVAT
+                    -------------------------------------------------- */
+
+                    if(
+                        data.type ===
+                            "submission-confirmed" &&
+
+                        data.status ===
+                            "stored"
+                    ){
+
+                        finishSuccess({
+
+                            ok:true,
+
+                            confirmed:true,
+
+                            status:"stored",
+
+                            duplicate:false,
+
+                            transport:
+                                "postMessage",
+
+                            serverData:
+                                clone(data)
+
+                        });
+
+
+                        return;
+
+                    }
+
+
+                    /* --------------------------------------------------
+                       RAPORT DUPLICAT
+                    -------------------------------------------------- */
+
+                    if(
+                        data.type ===
+                            "submission-confirmed" &&
+
+                        data.status ===
+                            "duplicate"
+                    ){
+
+                        finishSuccess({
+
+                            ok:true,
+
+                            confirmed:true,
+
+                            status:"duplicate",
+
+                            duplicate:true,
+
+                            transport:
+                                "postMessage",
+
+                            serverData:
+                                clone(data)
+
+                        });
+
+                    }
 
                 }
 
 
-                globalThis
-                    .addEventListener(
-                        "message",
-                        onMessage
-                    );
-
-
-                iframe.addEventListener(
-                    "load",
-                    () => {
-
-                        /*
-                           Ignoram incarcarea initiala:
-                           about:blank
-                        */
-
-                        try{
-
-                            const location =
-                                iframe
-                                    .contentWindow
-                                    ?.location
-                                    ?.href;
-
-
-                            if(
-                                location &&
-                                location.startsWith(
-                                    "about:blank"
-                                )
-                            ){
-
-                                return;
-
-                            }
-
-                        }
-                        catch(error){
-
-                            /*
-                               Accesul produce exceptie cand
-                               iframe-ul a ajuns pe domeniul Google.
-
-                               Acest lucru este normal.
-                            */
-
-                        }
-
-
-                        remoteLoaded =
-                            true;
-
-
-                        /*
-                           Incarcarea paginii Google arata doar
-                           ca transportul a ajuns la endpoint.
-
-                           NU inseamna inca faptul ca randul
-                           este confirmat in Google Sheets.
-                        */
-
-                        if(loadGraceTimer){
-
-                            clearTimeout(
-                                loadGraceTimer
-                            );
-
-                        }
-
-
-                        loadGraceTimer =
-                            globalThis.setTimeout(
-                                () => {
-
-                                    finish({
-
-                                        ok:true,
-
-                                        confirmed:false,
-
-                                        type:
-                                            "form-submit-unconfirmed",
-
-                                        iframeLoaded:true
-
-                                    });
-
-                                },
-                                confirmationGraceMilliseconds
-                            );
-
-                    }
+                globalThis.addEventListener(
+                    "message",
+                    onMessage
                 );
 
 
-                overallTimer =
+                /* ------------------------------------------------------
+                   TIMEOUT
+
+                   NU îl considerăm succes.
+
+                   Raportul devine "unconfirmed" și rămâne local.
+                ------------------------------------------------------ */
+
+                timeoutId =
                     globalThis.setTimeout(
                         () => {
 
-                            finish({
+                            finishSuccess({
 
                                 ok:true,
 
                                 confirmed:false,
 
-                                type:
-                                    "form-submit-timeout",
+                                status:
+                                    "unconfirmed",
 
-                                iframeLoaded:
-                                    remoteLoaded
+                                duplicate:false,
+
+                                transport:
+                                    "confirmation-timeout"
 
                             });
 
@@ -2462,6 +2583,10 @@
                     );
 
 
+                /* ------------------------------------------------------
+                   TRIMITEREA FORMULARULUI
+                ------------------------------------------------------ */
+
                 try{
 
                     form.submit();
@@ -2469,7 +2594,9 @@
                 }
                 catch(error){
 
-                    fail(error);
+                    finishError(
+                        error
+                    );
 
                 }
 
@@ -2479,14 +2606,15 @@
     }
 
 
-    /* ================================================================
-       TRIMITERE CU REINCERCARI
+    /* ==================================================================
+       TRIMITERE CU REÎNCERCĂRI TEHNICE
 
-       Daca transportul a avut loc, dar nu avem confirmare,
-       NU retrimitem automat imediat.
+       Dacă serverul răspunde explicit cu o eroare,
+       NU insistăm automat.
 
-       Aceasta evita mai multe POST-uri consecutive inutile.
-    ================================================================ */
+       Dacă transportul ajunge la timeout, rezultatul este
+       "unconfirmed"; nu trimitem din nou automat.
+    ================================================================== */
 
     async function sendWithRetries(
         payload
@@ -2494,23 +2622,29 @@
 
         const maximumRetries =
             Math.max(
+
                 0,
+
                 Number(
                     state.submissionConfig
                         ?.maximumRetries ||
                     0
                 )
+
             );
 
 
-        const delay =
+        const retryDelay =
             Math.max(
-                0,
+
+                250,
+
                 Number(
                     state.submissionConfig
                         ?.retryDelayMilliseconds ||
-                    1000
+                    1200
                 )
+
             );
 
 
@@ -2538,19 +2672,17 @@
 
 
                 /*
-                   Daca POST-ul a fost executat,
-                   chiar daca nu este confirmat,
-                   ne oprim aici.
+                   stored / duplicate / unconfirmed
 
-                   Elevul poate folosi ulterior
-                   "Retrimite raportul".
+                   În toate aceste cazuri nu mai facem
+                   alt POST automat imediat.
                 */
 
                 return {
 
                     response,
 
-                    attempt:
+                    attempts:
                         attempt + 1
 
                 };
@@ -2562,16 +2694,33 @@
                     error;
 
 
+                /*
+                   Dacă Google Apps Script ne-a răspuns
+                   explicit cu o eroare, retry-ul automat
+                   nu este util.
+                */
+
+                if(
+                    error.serverConfirmed
+                ){
+
+                    throw error;
+
+                }
+
+
                 if(
                     attempt <
                     maximumRetries
                 ){
 
                     await wait(
-                        delay *
+
+                        retryDelay *
                         (
                             attempt + 1
                         )
+
                     );
 
                 }
@@ -2586,7 +2735,7 @@
             lastError ||
 
             new Error(
-                "Cererea nu a putut fi trimisă."
+                "Raportul nu a putut fi transmis."
             )
 
         );
@@ -2594,12 +2743,11 @@
     }
 
 
-    /* ================================================================
-       SALVARE LOCALA FARA TRIMITERE
+    /* ==================================================================
+       SALVARE LOCALĂ FĂRĂ TRIMITERE
 
-       Poate fi apelata imediat ce raportul final este construit:
-       await LaboratorGoogleSheets.savePending(payload);
-    ================================================================ */
+       Recomandat imediat după finalizarea experimentului.
+    ================================================================== */
 
     async function savePending(
         payloadOrOverrides=null
@@ -2614,14 +2762,17 @@
         }
 
 
-        const looksLikePayload =
+        const looksLikeCompletePayload =
             Boolean(
 
                 payloadOrOverrides
                     ?.schemaVersion &&
 
                 payloadOrOverrides
-                    ?.student
+                    ?.student &&
+
+                payloadOrOverrides
+                    ?.experiment
 
             );
 
@@ -2629,7 +2780,7 @@
         const payload =
             validatePayload(
 
-                looksLikePayload
+                looksLikeCompletePayload
 
                     ? clone(
                         payloadOrOverrides
@@ -2647,8 +2798,11 @@
             ensureQueued(
                 payload,
                 {
-                    status:"pending",
-                    lastError:""
+                    status:
+                        "pending",
+
+                    lastError:
+                        ""
                 }
             );
 
@@ -2660,9 +2814,9 @@
     }
 
 
-    /* ================================================================
-       TRIMITERE RAPORT
-    ================================================================ */
+    /* ==================================================================
+       TRIMITEREA RAPORTULUI
+    ================================================================== */
 
     async function submit(
         payloadOrOverrides=null,
@@ -2673,13 +2827,22 @@
             !state.initialized
         ){
 
-            await init();
+            const initialized =
+                await init();
+
+
+            if(!initialized){
+
+                throw new Error(
+                    "Modulul Google Sheets nu a putut fi inițializat."
+                );
+
+            }
 
         }
 
 
         if(
-            !state.initialized ||
             !state.submissionConfig ||
             !state.endpoint
         ){
@@ -2692,25 +2855,29 @@
 
 
         if(
-            !state.submissionConfig
-                .enabled
+            state.submissionConfig
+                .enabled ===
+            false
         ){
 
             throw new Error(
-                "Trimiterea către Google Sheets este dezactivată."
+                "Trimiterea rezultatelor este dezactivată."
             );
 
         }
 
 
-        const looksLikePayload =
+        const looksLikeCompletePayload =
             Boolean(
 
                 payloadOrOverrides
                     ?.schemaVersion &&
 
                 payloadOrOverrides
-                    ?.student
+                    ?.student &&
+
+                payloadOrOverrides
+                    ?.experiment
 
             );
 
@@ -2718,7 +2885,7 @@
         let payload =
             validatePayload(
 
-                looksLikePayload
+                looksLikeCompletePayload
 
                     ? clone(
                         payloadOrOverrides
@@ -2736,9 +2903,9 @@
             payload.reportId;
 
 
-        /*
-           Protectie impotriva dublului click.
-        */
+        /* --------------------------------------------------------------
+           EVITĂ DUBLU CLICK
+        -------------------------------------------------------------- */
 
         if(
             state.submittingReportIds
@@ -2752,50 +2919,47 @@
         }
 
 
-        const multipleSubmissionsAllowed =
-            Boolean(
-                state.submissionConfig
-                    .allowMultipleSubmissions
-            );
-
-
-        /*
-           Raport confirmat anterior pe acest dispozitiv.
-        */
+        /* --------------------------------------------------------------
+           RAPORT CONFIRMAT ANTERIOR
+        -------------------------------------------------------------- */
 
         if(
             !options.force &&
-            !multipleSubmissionsAllowed &&
-            hasBeenSent(reportId)
+            hasBeenSent(
+                reportId
+            )
         ){
 
             updateStatus(
-                "Acest raport a fost deja trimis și confirmat.",
+                "Acest raport a fost deja înregistrat.",
                 "success"
             );
 
 
             return {
 
-                status:"duplicate",
+                status:
+                    "duplicate",
 
-                reportId,
+                reportId:
+                    reportId,
 
-                confirmed:true
+                confirmed:
+                    true,
+
+                duplicate:
+                    true
 
             };
 
         }
 
 
-        /*
-           PAS ESENTIAL:
+        /* --------------------------------------------------------------
+           SALVARE LOCALĂ ÎNAINTE DE POST
 
-           salvam raportul LOCAL inainte sa facem POST.
-
-           Daca browserul se inchide sau conexiunea cade
-           dupa acest moment, datele raman pe dispozitiv.
-        */
+           Acesta este pasul critic pentru telefoane.
+        -------------------------------------------------------------- */
 
         if(
             state.submissionConfig
@@ -2803,30 +2967,33 @@
             false
         ){
 
-            const queueItem =
+            const queued =
                 ensureQueued(
                     payload,
                     {
-                        status:"pending"
+                        status:
+                            "pending"
                     }
                 );
 
 
             /*
-               Daca raportul exista deja in coada,
-               folosim EXACT payload-ul original.
+               Dacă exista deja în coadă,
+               folosim payload-ul original.
             */
 
             payload =
                 clone(
-                    queueItem.payload
+                    queued.payload
                 );
 
         }
 
 
         state.submittingReportIds
-            .add(reportId);
+            .add(
+                reportId
+            );
 
 
         updateStatus(
@@ -2835,7 +3002,7 @@
                 .messages
                 ?.sending ||
 
-            "Rezultatul se transmite către registrul clasei…",
+            "Datele se transmit către registrul clasei…",
 
             "sending"
 
@@ -2845,21 +3012,27 @@
         dispatch(
             "laborator:submission-start",
             {
-                reportId
+                reportId:
+                    reportId
             }
         );
 
 
         try{
 
+            /* ----------------------------------------------------------
+               OFFLINE
+            ---------------------------------------------------------- */
+
             if(
                 globalThis.navigator &&
-                !globalThis.navigator
-                    .onLine
+                globalThis.navigator
+                    .onLine ===
+                false
             ){
 
                 throw new Error(
-                    "Conexiunea la internet este indisponibilă."
+                    "Nu există conexiune la internet."
                 );
 
             }
@@ -2875,12 +3048,14 @@
                 result.response;
 
 
-            /* --------------------------------------------------------
-               CONFIRMARE EXPLICITA DE LA SERVER
-            -------------------------------------------------------- */
+            /* ----------------------------------------------------------
+               STORED
+            ---------------------------------------------------------- */
 
             if(
-                response.confirmed
+                response.confirmed &&
+                response.status ===
+                    "stored"
             ){
 
                 rememberSent(
@@ -2893,31 +3068,17 @@
                 );
 
 
-                const duplicate =
-                    Boolean(
-                        response.duplicate
-                    );
+                const successMessage =
 
+                    state.submissionConfig
+                        .messages
+                        ?.success ||
 
-                const message =
-                    duplicate
-
-                        ? (
-                            "Raportul exista deja în registru. " +
-                            "Nu a fost creat un rând duplicat."
-                        )
-
-                        : (
-                            state.submissionConfig
-                                .messages
-                                ?.success ||
-
-                            "Rezultatul a fost înregistrat."
-                        );
+                    "Rezultatele au fost înregistrate cu succes.";
 
 
                 updateStatus(
-                    message,
+                    successMessage,
                     "success"
                 );
 
@@ -2926,22 +3087,23 @@
                     "laborator:submission-sent",
                     {
 
-                        reportId,
+                        reportId:
+                            reportId,
 
-                        confirmed:true,
+                        confirmed:
+                            true,
 
-                        duplicate,
+                        duplicate:
+                            false,
 
                         status:
-                            duplicate
-                                ? "duplicate"
-                                : "sent",
+                            "stored",
 
                         attempts:
-                            result.attempt,
+                            result.attempts,
 
                         transport:
-                            response.type
+                            response.transport
 
                     }
                 );
@@ -2950,27 +3112,110 @@
                 return {
 
                     status:
-                        duplicate
-                            ? "duplicate"
-                            : "sent",
+                        "stored",
 
-                    reportId,
+                    reportId:
+                        reportId,
 
-                    confirmed:true,
+                    confirmed:
+                        true,
 
-                    duplicate,
+                    duplicate:
+                        false,
 
                     attempts:
-                        result.attempt
+                        result.attempts
 
                 };
 
             }
 
 
-            /* --------------------------------------------------------
-               POST EXECUTAT, DAR SERVERUL NU A CONFIRMAT
-            -------------------------------------------------------- */
+            /* ----------------------------------------------------------
+               DUPLICATE
+
+               Raportul există deja pe server.
+               Îl putem elimina în siguranță din coada locală.
+            ---------------------------------------------------------- */
+
+            if(
+                response.confirmed &&
+                response.status ===
+                    "duplicate"
+            ){
+
+                rememberSent(
+                    reportId
+                );
+
+
+                removeFromQueue(
+                    reportId
+                );
+
+
+                updateStatus(
+                    "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+                    "success"
+                );
+
+
+                dispatch(
+                    "laborator:submission-sent",
+                    {
+
+                        reportId:
+                            reportId,
+
+                        confirmed:
+                            true,
+
+                        duplicate:
+                            true,
+
+                        status:
+                            "duplicate",
+
+                        attempts:
+                            result.attempts,
+
+                        transport:
+                            response.transport
+
+                    }
+                );
+
+
+                return {
+
+                    status:
+                        "duplicate",
+
+                    reportId:
+                        reportId,
+
+                    confirmed:
+                        true,
+
+                    duplicate:
+                        true,
+
+                    attempts:
+                        result.attempts
+
+                };
+
+            }
+
+
+            /* ----------------------------------------------------------
+               UNCONFIRMED
+
+               Cererea a plecat, dar browserul nu a primit
+               confirmarea de la server.
+
+               NU ștergem raportul.
+            ---------------------------------------------------------- */
 
             updateQueueItem(
                 reportId,
@@ -2983,50 +3228,21 @@
                         "",
 
                     lastTransport:
-                        response.type
+                        response.transport ||
+                        "confirmation-timeout"
 
                 }
             );
 
 
-            const message =
-                "Cererea a fost transmisă către Google Apps Script, " +
-                "dar salvarea nu a fost confirmată de server. " +
+            const unconfirmedMessage =
+                "Datele au fost trimise, dar serverul nu a confirmat salvarea. " +
                 "Raportul rămâne salvat pe acest dispozitiv și poate fi retransmis.";
 
 
             updateStatus(
-                message,
+                unconfirmedMessage,
                 "pending"
-            );
-
-
-            /*
-               Evenimentul submission-sent ramane pentru
-               compatibilitate cu modulele existente.
-
-               confirmed:false arata clar ca nu avem
-               confirmarea salvarii.
-            */
-
-            dispatch(
-                "laborator:submission-sent",
-                {
-
-                    reportId,
-
-                    confirmed:false,
-
-                    status:
-                        "unconfirmed",
-
-                    attempts:
-                        result.attempt,
-
-                    transport:
-                        response.type
-
-                }
             );
 
 
@@ -3034,13 +3250,20 @@
                 "laborator:submission-unconfirmed",
                 {
 
-                    reportId,
+                    reportId:
+                        reportId,
+
+                    confirmed:
+                        false,
+
+                    status:
+                        "unconfirmed",
 
                     attempts:
-                        result.attempt,
+                        result.attempts,
 
                     transport:
-                        response.type
+                        response.transport
 
                 }
             );
@@ -3051,21 +3274,28 @@
                 status:
                     "unconfirmed",
 
-                reportId,
+                reportId:
+                    reportId,
 
-                confirmed:false,
+                confirmed:
+                    false,
+
+                duplicate:
+                    false,
 
                 attempts:
-                    result.attempt
+                    result.attempts
 
             };
 
         }
         catch(error){
 
-            /*
-               Raportul ramane / este pus in coada.
-            */
+            /* ----------------------------------------------------------
+               EROARE
+
+               Raportul rămâne în coada locală.
+            ---------------------------------------------------------- */
 
             if(
                 state.submissionConfig
@@ -3076,10 +3306,14 @@
                 ensureQueued(
                     payload,
                     {
-                        status:"pending",
+
+                        status:
+                            "pending",
+
                         lastError:
                             error.message ||
                             "Eroare necunoscută"
+
                     }
                 );
 
@@ -3092,19 +3326,16 @@
                     .messages
                     ?.failure ||
 
-                "Rezultatul nu a putut fi transmis.";
-
-
-            const message =
-
-                `${failureMessage} ` +
-
-                "Datele au fost păstrate local și pot fi retransmise ulterior.";
+                "Rezultatele nu au putut fi transmise.";
 
 
             updateStatus(
-                message,
+
+                failureMessage +
+                " Datele au rămas salvate pe acest dispozitiv.",
+
                 "error"
+
             );
 
 
@@ -3112,11 +3343,17 @@
                 "laborator:submission-failed",
                 {
 
-                    reportId,
+                    reportId:
+                        reportId,
 
                     message:
                         error.message ||
-                        "Eroare necunoscută"
+                        "Eroare necunoscută",
+
+                    serverConfirmed:
+                        Boolean(
+                            error.serverConfirmed
+                        )
 
                 }
             );
@@ -3137,9 +3374,9 @@
     }
 
 
-    /* ================================================================
-       RETRIMITEREA UNUI RAPORT ANUME
-    ================================================================ */
+    /* ==================================================================
+       RETRIMITEREA UNUI RAPORT
+    ================================================================== */
 
     async function retryReport(
         reportId
@@ -3170,11 +3407,17 @@
 
                 return {
 
-                    status:"duplicate",
+                    status:
+                        "duplicate",
 
-                    reportId,
+                    reportId:
+                        reportId,
 
-                    confirmed:true
+                    confirmed:
+                        true,
+
+                    duplicate:
+                        true
 
                 };
 
@@ -3182,11 +3425,18 @@
 
 
             throw new Error(
-                "Raportul solicitat nu mai există în memoria locală."
+                "Raportul nu mai există în memoria locală."
             );
 
         }
 
+
+        /*
+           IMPORTANT:
+
+           NU reconstruim raportul.
+           Folosim exact payload-ul salvat.
+        */
 
         return submit(
             item.payload,
@@ -3198,16 +3448,9 @@
     }
 
 
-    /* ================================================================
+    /* ==================================================================
        RETRIMITEREA COZII
-
-       Automat:
-       - retrimitem numai "pending"
-
-       Manual:
-       retryPending({ includeUnconfirmed:true })
-       poate retransmite si rapoartele neconfirmate.
-    ================================================================ */
+    ================================================================== */
 
     async function retryPending(
         options={}
@@ -3223,16 +3466,10 @@
 
 
         if(
-            !state.initialized
-        ){
-            return [];
-        }
-
-
-        if(
             globalThis.navigator &&
-            !globalThis.navigator
-                .onLine
+            globalThis.navigator
+                .onLine ===
+            false
         ){
 
             return [];
@@ -3271,11 +3508,6 @@
             of queue
         ){
 
-            /*
-               Daca raportul este deja procesat de alta actiune,
-               trecem la urmatorul.
-            */
-
             if(
                 state.submittingReportIds
                     .has(
@@ -3305,7 +3537,8 @@
 
                 results.push({
 
-                    status:"failed",
+                    status:
+                        "failed",
 
                     reportId:
                         item.reportId,
@@ -3317,8 +3550,8 @@
 
 
                 /*
-                   La retry automat ne oprim dupa
-                   prima problema de retea.
+                   Pentru retry automat ne oprim la prima
+                   eroare de rețea/server.
                 */
 
                 if(
@@ -3340,16 +3573,16 @@
     }
 
 
-    /* ================================================================
-       MEMORAREA EVENIMENTELOR DIN LABORATOR
-    ================================================================ */
+    /* ==================================================================
+       MEMORAREA EVENIMENTELOR LABORATORULUI
+    ================================================================== */
 
     function rememberEventData(
         event,
-        key
+        stateProperty
     ){
 
-        state[key] =
+        state[stateProperty] =
             clone(
                 event.detail ||
                 {}
@@ -3358,12 +3591,18 @@
     }
 
 
+    /* ==================================================================
+       LISTENERS
+    ================================================================== */
+
     function addEventListeners(){
 
         if(
             state.listenersAdded
         ){
+
             return;
+
         }
 
 
@@ -3371,9 +3610,9 @@
             true;
 
 
-        /* ----------------------------------------------------------
+        /* --------------------------------------------------------------
            EVALUARE
-        ---------------------------------------------------------- */
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:evaluation-complete",
@@ -3388,9 +3627,9 @@
         );
 
 
-        /* ----------------------------------------------------------
+        /* --------------------------------------------------------------
            ECHIPAMENTE
-        ---------------------------------------------------------- */
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:equipment-complete",
@@ -3405,9 +3644,9 @@
         );
 
 
-        /* ----------------------------------------------------------
-           CAIET / DATE EXPERIMENTALE
-        ---------------------------------------------------------- */
+        /* --------------------------------------------------------------
+           CAIET
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:notebook-complete",
@@ -3422,9 +3661,9 @@
         );
 
 
-        /* ----------------------------------------------------------
+        /* --------------------------------------------------------------
            SECURITATE
-        ---------------------------------------------------------- */
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:safety-complete",
@@ -3439,9 +3678,9 @@
         );
 
 
-        /* ----------------------------------------------------------
+        /* --------------------------------------------------------------
            MONITORIZARE
-        ---------------------------------------------------------- */
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:monitoring-update",
@@ -3456,15 +3695,14 @@
         );
 
 
-        /* ----------------------------------------------------------
+        /* --------------------------------------------------------------
            RAPORT FINAL
 
-           Daca raportul contine deja reportId, il salvam
-           imediat local.
+           Experimentul poate emite:
+           laborator:report-ready
 
-           Astfel elevul poate inchide pagina chiar inainte
-           de apasarea butonului "Trimite".
-        ---------------------------------------------------------- */
+           Dacă raportul este complet, îl salvăm imediat local.
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:report-ready",
@@ -3478,10 +3716,13 @@
 
                 const reportId =
                     normalize(
+
                         event.detail
                             ?.reportId ||
+
                         event.detail
                             ?.id
+
                     );
 
 
@@ -3490,34 +3731,37 @@
                 }
 
 
-                /*
-                   Salvarea este best-effort.
-                   Daca raportul nu este inca complet,
-                   nu blocam experimentul.
-                */
-
                 try{
 
                     const payload =
                         validatePayload(
+
                             buildPayload({
-                                reportId
+                                reportId:
+                                    reportId
                             })
+
                         );
 
 
                     ensureQueued(
                         payload,
                         {
-                            status:"pending"
+                            status:
+                                "pending"
                         }
                     );
 
                 }
                 catch(error){
 
+                    /*
+                       Nu blocăm experimentul dacă raportul încă
+                       nu este complet în acest moment.
+                    */
+
                     console.warn(
-                        "[LaboratorGoogleSheets] Raportul final nu a putut fi încă salvat automat.",
+                        "[LaboratorGoogleSheets] Raportul nu a putut fi salvat încă.",
                         error
                     );
 
@@ -3527,9 +3771,9 @@
         );
 
 
-        /* ----------------------------------------------------------
-           RETRY SOLICITAT PRIN EVENIMENT
-        ---------------------------------------------------------- */
+        /* --------------------------------------------------------------
+           RETRY PRIN EVENIMENT
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "laborator:submission-retry",
@@ -3564,19 +3808,21 @@
         );
 
 
-        /* ----------------------------------------------------------
-           BUTON STANDARD EXISTENT
-        ---------------------------------------------------------- */
+        /* --------------------------------------------------------------
+           BUTON STANDARD
+
+           Compatibilitate cu pagini care folosesc:
+           data-action="submit-final-report"
+        -------------------------------------------------------------- */
 
         document.addEventListener(
             "click",
             event => {
 
                 const button =
-                    event.target
-                        .closest(
-                            '[data-action="submit-final-report"]'
-                        );
+                    event.target.closest(
+                        '[data-action="submit-final-report"]'
+                    );
 
 
                 if(!button){
@@ -3603,32 +3849,39 @@
         );
 
 
-        /* ----------------------------------------------------------
-           REVENIREA INTERNETULUI
+        /* --------------------------------------------------------------
+           REVENIRE INTERNET
 
-           Retrimitem automat doar rapoartele care au esuat clar.
+           Retrimitem automat doar pending.
 
-           Rapoartele "unconfirmed" raman pentru retrimitere manuala,
-           deoarece este posibil sa fi ajuns deja la server.
-        ---------------------------------------------------------- */
+           NU retransmitem automat unconfirmed,
+           deoarece este posibil să fie deja în Sheets.
+        -------------------------------------------------------------- */
 
         globalThis.addEventListener(
             "online",
             () => {
 
-                retryPending({
-                    includeUnconfirmed:false
-                }).catch(
-                    console.error
+                globalThis.setTimeout(
+                    () => {
+
+                        retryPending({
+                            includeUnconfirmed:false
+                        }).catch(
+                            console.error
+                        );
+
+                    },
+                    600
                 );
 
             }
         );
 
 
-        /* ----------------------------------------------------------
-           MODIFICARE LOCALSTORAGE DIN ALTA FILA
-        ---------------------------------------------------------- */
+        /* --------------------------------------------------------------
+           MODIFICARE localStorage DIN ALTĂ FILĂ
+        -------------------------------------------------------------- */
 
         globalThis.addEventListener(
             "storage",
@@ -3638,7 +3891,9 @@
                     event.key !==
                     queueKey()
                 ){
+
                     return;
+
                 }
 
 
@@ -3655,9 +3910,9 @@
     }
 
 
-    /* ================================================================
-       INITIALIZARE
-    ================================================================ */
+    /* ==================================================================
+       INIȚIALIZARE
+    ================================================================== */
 
     async function init(
         options={}
@@ -3673,19 +3928,20 @@
 
 
         /*
-           Previne doua initializari simultane.
+           Previne două inițializări simultane.
         */
 
         if(
-            state.initPromise
+            state.initializationPromise
         ){
 
-            return state.initPromise;
+            return state
+                .initializationPromise;
 
         }
 
 
-        state.initPromise =
+        state.initializationPromise =
             (
                 async () => {
 
@@ -3703,23 +3959,14 @@
 
                         state.submissionConfig = {
 
-                            enabled:true,
-
-                            method:"POST",
-
-                            mode:"no-cors",
-
-                            contentType:
-                                "text/plain;charset=UTF-8",
+                            enabled:
+                                true,
 
                             timeoutMilliseconds:
-                                15000,
-
-                            confirmationGraceMilliseconds:
-                                1500,
+                                20000,
 
                             maximumRetries:
-                                2,
+                                1,
 
                             retryDelayMilliseconds:
                                 1500,
@@ -3727,17 +3974,62 @@
                             saveLocalBackup:
                                 true,
 
-                            allowMultipleSubmissions:
-                                false,
+                            localBackupKey:
+                                DEFAULT_QUEUE_KEY,
+
+                            messages:{
+
+                                sending:
+                                    "Datele se transmit către registrul clasei…",
+
+                                success:
+                                    "Rezultatele au fost înregistrate.",
+
+                                failure:
+                                    "Rezultatele nu au putut fi transmise."
+
+                            },
 
                             ...(
                                 state.generalConfig
-                                    .submission ||
+                                    ?.submission ||
                                 {}
                             ),
 
                             ...(
                                 options.submission ||
+                                {}
+                            )
+
+                        };
+
+
+                        /*
+                           Păstrăm mesajele implicite chiar dacă
+                           configurarea definește doar unul dintre ele.
+                        */
+
+                        state.submissionConfig.messages = {
+
+                            sending:
+                                "Datele se transmit către registrul clasei…",
+
+                            success:
+                                "Rezultatele au fost înregistrate.",
+
+                            failure:
+                                "Rezultatele nu au putut fi transmise.",
+
+                            ...(
+                                state.generalConfig
+                                    ?.submission
+                                    ?.messages ||
+                                {}
+                            ),
+
+                            ...(
+                                options.submission
+                                    ?.messages ||
                                 {}
                             )
 
@@ -3774,21 +4066,22 @@
                         );
 
 
-                        /*
-                           La deschiderea paginii retransmitem automat
-                           numai rapoartele care au esuat clar.
+                        /* ------------------------------------------------
+                           RETRY AUTOMAT LA PORNIRE
 
-                           Nu retransmitem automat "unconfirmed".
-                        */
+                           Numai pending.
+                           Nu unconfirmed.
+                        ------------------------------------------------ */
 
                         if(
                             globalThis.navigator
                                 ?.onLine &&
-                            readQueue().some(
-                                item =>
-                                    item.status ===
-                                    "pending"
-                            )
+                            readQueue()
+                                .some(
+                                    item =>
+                                        item.status ===
+                                        "pending"
+                                )
                         ){
 
                             globalThis.setTimeout(
@@ -3801,7 +4094,7 @@
                                     );
 
                                 },
-                                500
+                                900
                             );
 
                         }
@@ -3811,6 +4104,10 @@
 
                     }
                     catch(error){
+
+                        state.initialized =
+                            false;
+
 
                         updateStatus(
 
@@ -3829,16 +4126,12 @@
                         );
 
 
-                        state.initialized =
-                            false;
-
-
                         return false;
 
                     }
                     finally{
 
-                        state.initPromise =
+                        state.initializationPromise =
                             null;
 
                     }
@@ -3847,63 +4140,64 @@
             )();
 
 
-        return state.initPromise;
+        return state
+            .initializationPromise;
 
     }
 
 
-    /* ================================================================
+    /* ==================================================================
        API PUBLIC
-    ================================================================ */
+    ================================================================== */
 
     globalThis
         .LaboratorGoogleSheets =
         Object.freeze({
 
             /*
-               Initializare manuala, daca este necesara.
+               Inițializare.
             */
 
             init,
 
 
             /*
-               Construieste raportul.
+               Construirea raportului.
             */
 
             buildPayload,
 
 
             /*
-               Salveaza raportul local fara sa il trimita.
+               Salvare locală fără trimitere.
             */
 
             savePending,
 
 
             /*
-               Trimite raportul.
+               Trimiterea raportului.
             */
 
             submit,
 
 
             /*
-               Retrimite un singur raport dupa reportId.
+               Retrimiterea unui raport după ID.
             */
 
             retryReport,
 
 
             /*
-               Retrimite coada.
+               Retrimiterea cozii.
             */
 
             retryPending,
 
 
             /*
-               Returneaza toate rapoartele pastrate local.
+               Lista completă a rapoartelor locale.
             */
 
             getPending:
@@ -3913,10 +4207,6 @@
                     ),
 
 
-            /*
-               Alias mai explicit.
-            */
-
             getPendingReports:
                 () =>
                     clone(
@@ -3925,7 +4215,7 @@
 
 
             /*
-               Returneaza un raport anume.
+               Un singur raport.
             */
 
             getPendingReport:
@@ -3938,7 +4228,7 @@
 
 
             /*
-               Statistica pentru pagina principala.
+               Numărul rapoartelor.
             */
 
             getQueueSummary:
@@ -3951,8 +4241,9 @@
 
 
             /*
-               Eliminare manuala.
-               Nu o vom afisa elevilor in mod normal.
+               Eliminare manuală.
+
+               Nu recomand afișarea acestei funcții elevului.
             */
 
             removePending:
@@ -3963,15 +4254,14 @@
 
 
             /*
-               Verifica daca un ID a fost confirmat anterior
-               pe dispozitiv.
+               A fost confirmat pe acest dispozitiv?
             */
 
             hasBeenSent,
 
 
             /*
-               Starea modulului.
+               Configurare disponibilă?
             */
 
             isConfigured:
@@ -3983,7 +4273,7 @@
 
 
             /*
-               Cheia folosita de pagina principala.
+               Cheia localStorage.
             */
 
             getQueueKey:
@@ -3992,7 +4282,7 @@
 
 
             /*
-               Versiune.
+               Versiunea modulului.
             */
 
             version:
@@ -4001,9 +4291,9 @@
         });
 
 
-    /* ================================================================
-       PORNIRE AUTOMATA
-    ================================================================ */
+    /* ==================================================================
+       PORNIRE AUTOMATĂ
+    ================================================================== */
 
     if(
         document.readyState ===
