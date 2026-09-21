@@ -1,1 +1,8563 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul comportării rezistorului, bobinei și condensatorului în curent continuu și curent alternativ."
+>
+
+<title>
+    Studiul comportării rezistorului, bobinei și condensatorului în CC și CA
+</title>
+
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --primary-dark:#16425b;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+
+    --resistor:#1677c8;
+    --inductor:#7c3aed;
+    --capacitor:#d97706;
+
+    --voltage:#dc2626;
+    --current:#2563eb;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.component-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.component-grid.three{
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn.resistor{
+    background:var(--resistor);
+}
+
+.btn.inductor{
+    background:var(--inductor);
+}
+
+.btn.capacitor{
+    background:var(--capacitor);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok,
+.feedback.is-success{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad,
+.feedback.is-error{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.7;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.instrument-box,
+.component-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.component-card{
+    margin:0;
+}
+
+.component-card.resistor{
+    border-top:5px solid var(--resistor);
+}
+
+.component-card.inductor{
+    border-top:5px solid var(--inductor);
+}
+
+.component-card.capacitor{
+    border-top:5px solid var(--capacitor);
+}
+
+.component-symbol{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100px;
+    margin:.6rem 0;
+    border-radius:10px;
+    background:#fff;
+}
+
+.component-symbol svg{
+    width:min(290px,100%);
+    height:100px;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.35rem .65rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+    font-weight:700;
+}
+
+
+/* =========================================================
+   SCHEMĂ ELECTRICĂ
+========================================================= */
+
+.circuit-stage{
+    position:relative;
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #b8ccd8;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #eef9ff,
+            #fff
+        );
+}
+
+.circuit-header{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    align-items:center;
+    padding:.8rem 1rem;
+    border-bottom:1px solid #c8dae3;
+    background:#f8fcfe;
+}
+
+.circuit-badge{
+    padding:.35rem .7rem;
+    border-radius:999px;
+    color:#fff;
+    background:#126e82;
+    font-weight:800;
+}
+
+.circuit-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/330;
+}
+
+.wire{
+    fill:none;
+    stroke:#314e5d;
+    stroke-width:5;
+}
+
+.source{
+    fill:#fff;
+    stroke:#314e5d;
+    stroke-width:4;
+}
+
+.meter{
+    fill:#f7fbfd;
+    stroke:#126e82;
+    stroke-width:4;
+}
+
+.schematic-text{
+    fill:#17324d;
+    font-size:24px;
+    font-weight:800;
+    text-anchor:middle;
+    dominant-baseline:middle;
+}
+
+.schematic-small{
+    fill:#526b80;
+    font-size:17px;
+    font-weight:650;
+    text-anchor:middle;
+}
+
+.component-resistor{
+    fill:none;
+    stroke:var(--resistor);
+    stroke-width:6;
+}
+
+.component-inductor{
+    fill:none;
+    stroke:var(--inductor);
+    stroke-width:6;
+}
+
+.component-capacitor{
+    stroke:var(--capacitor);
+    stroke-width:7;
+}
+
+
+/* =========================================================
+   CONDENSATOR – TRANZITORIU CC
+========================================================= */
+
+.transient-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid #d2b78d;
+    border-radius:14px;
+    background:#fff9ef;
+}
+
+.transient-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:760/280;
+    background:#fff;
+    border:1px solid #e1d5c2;
+    border-radius:10px;
+}
+
+.graph-axis{
+    stroke:#7d8e97;
+    stroke-width:2;
+}
+
+.graph-grid{
+    stroke:#dce5ea;
+    stroke-width:1;
+}
+
+.graph-current{
+    fill:none;
+    stroke:#2563eb;
+    stroke-width:4;
+}
+
+.graph-voltage{
+    fill:none;
+    stroke:#dc2626;
+    stroke-width:4;
+}
+
+.graph-label{
+    fill:#526b80;
+    font-size:15px;
+    font-weight:650;
+}
+
+.transient-status{
+    margin:.7rem 0;
+    font-weight:750;
+}
+
+
+/* =========================================================
+   OSCILOSCOP – CA
+========================================================= */
+
+.scope-box{
+    margin:1rem 0;
+    overflow:hidden;
+    border:2px solid #334854;
+    border-radius:16px;
+    background:#071318;
+}
+
+.scope-header{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:.5rem;
+    padding:.7rem 1rem;
+    color:#d4edf8;
+    background:#10242d;
+}
+
+.scope-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:860/340;
+}
+
+.scope-grid{
+    stroke:#1d3e48;
+    stroke-width:1;
+}
+
+.scope-axis{
+    stroke:#406470;
+    stroke-width:2;
+}
+
+.scope-voltage{
+    fill:none;
+    stroke:#ff5b62;
+    stroke-width:4;
+}
+
+.scope-current{
+    fill:none;
+    stroke:#50a7ff;
+    stroke-width:4;
+}
+
+.scope-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    padding:.7rem 1rem 1rem;
+    color:#d4edf8;
+}
+
+.legend-swatch{
+    width:30px;
+    height:4px;
+    border-radius:5px;
+}
+
+.legend-swatch.voltage{
+    background:#ff5b62;
+}
+
+.legend-swatch.current{
+    background:#50a7ff;
+}
+
+.phase-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.6rem;
+    margin:1rem 0;
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+
+@media(max-width:900px){
+
+    .component-grid.three{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid,
+    .component-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp06-r-l-c-cc-ca",
+
+    code:
+        "EXP06",
+
+    title:
+        "Studiul comportării rezistorului, bobinei și condensatorului în CC și CA",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Curent alternativ",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "circuite-electrice",
+        "condensator",
+        "bobina"
+    ],
+
+    requiredEquipment:[
+        "low-voltage-source",
+        "resistor",
+        "inductor",
+        "capacitor",
+        "ammeter",
+        "voltmeter",
+        "frequency-meter",
+        "oscilloscope"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Curent continuu și curent alternativ
+    </p>
+
+    <h1>
+        Studiul comportării rezistorului, bobinei și
+        condensatorului în CC și CA
+    </h1>
+
+    <p>
+        Rezistență, reactanță inductivă, reactanță capacitivă,
+        impedanță și defazaj între tensiune și intensitatea curentului.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+
+<p>
+    Clasa și numărul din catalog determină setul experimental.
+    Pentru fiecare clasă sunt disponibile 30 de seturi distincte
+    și reproductibile.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările de
+        filă/aplicație, ieșirile din ecran complet și tentativele
+        de copiere. Nu sunt realizate înregistrări audio sau video.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Experimentul real se realizează numai cu surse de joasă tensiune.
+    </strong>
+
+    Nu se conectează niciodată montajul direct la rețeaua de 230 V.
+    Alimentarea se întrerupe înaintea modificării conexiunilor.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Montează sau modifică circuitul numai cu sursa oprită.
+    </li>
+
+    <li>
+        Respectă domeniile ampermetrului și voltmetrului.
+    </li>
+
+    <li>
+        Nu scurtcircuita sursa de tensiune.
+    </li>
+
+    <li>
+        Condensatorul se descarcă înainte de reconectare.
+    </li>
+
+    <li>
+        Bobina și rezistorul se pot încălzi dacă intensitatea curentului
+        depășește valoarea admisă.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci înainte de a înlocui rezistorul cu bobina?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="disconnect"
+    >
+
+    <span>
+        Oprirea sursei, apoi modificarea circuitului.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="live"
+    >
+
+    <span>
+        Modific circuitul în timp ce sursa rămâne conectată.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează numai aparatele și componentele necesare experimentului.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<h3>
+    Rezistorul
+</h3>
+
+
+<div class="formula">
+
+    CC și CA:
+
+    <br>
+
+    U = RI
+
+    <br><br>
+
+    Z<sub>R</sub> = R
+
+    <br>
+
+    φ = 0
+
+</div>
+
+
+<h3>
+    Bobina reală
+</h3>
+
+
+<p>
+    În curent continuu staționar, bobina se comportă în principal
+    prin rezistența electrică a conductorului său.
+</p>
+
+
+<div class="formula">
+
+    CC:
+
+    <br>
+
+    I ≈ U/r
+
+    <br><br>
+
+    CA:
+
+    <br>
+
+    X<sub>L</sub> =
+    ωL =
+    2πfL
+
+    <br>
+
+    Z<sub>L</sub> =
+    √(r² + X<sub>L</sub>²)
+
+</div>
+
+
+<h3>
+    Condensatorul
+</h3>
+
+
+<p>
+    În curent continuu, după terminarea regimului tranzitoriu,
+    condensatorul ideal nu mai este străbătut de curent.
+</p>
+
+
+<div class="formula">
+
+    CC staționar:
+
+    <br>
+
+    I → 0
+
+    <br><br>
+
+    CA:
+
+    <br>
+
+    X<sub>C</sub> =
+    1/(ωC)
+
+    <br>
+
+    Z<sub>C</sub> =
+    X<sub>C</sub>
+
+</div>
+
+
+<div class="formula">
+
+    ω =
+    2πf
+
+    <br><br>
+
+    Z =
+    U<sub>ef</sub> /
+    I<sub>ef</sub>
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    În curent continuu staționar, un condensator ideal:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionCapDC"
+        value="blocks"
+    >
+
+    <span>
+        nu mai este străbătut de curent după încărcare
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionCapDC"
+        value="conducts"
+    >
+
+    <span>
+        conduce un curent constant la fel ca un rezistor
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă frecvența curentului alternativ crește,
+    reactanța inductivă X<sub>L</sub>:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionL"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionL"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă frecvența curentului alternativ crește,
+    reactanța capacitivă X<sub>C</sub>:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionC"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionC"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, scopul, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5 – CC
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Comportarea în curent continuu
+</h2>
+
+
+<div class="data-card">
+
+    <strong>
+        Componentele setului:
+    </strong>
+
+    <br>
+
+    <span class="parameter-chip">
+        Rezistor:
+        R<sub>nom</sub> =
+        <b data-r-label>—</b>
+        Ω
+    </span>
+
+    <span class="parameter-chip">
+        Bobină:
+        L<sub>nom</sub> =
+        <b data-l-label>—</b>
+        H
+    </span>
+
+    <span class="parameter-chip">
+        Condensator:
+        C<sub>nom</sub> =
+        <b data-c-label>—</b>
+        μF
+    </span>
+
+</div>
+
+
+<div class="circuit-stage">
+
+    <div class="circuit-header">
+
+        <strong>
+            Montaj de măsurare în CC
+        </strong>
+
+        <span class="circuit-badge">
+            sursă de joasă tensiune
+        </span>
+
+    </div>
+
+
+    <svg
+        class="circuit-svg"
+        viewBox="0 0 900 330"
+        role="img"
+        aria-label="Circuit electric de curent continuu"
+    >
+
+        <path
+            class="wire"
+            d="
+                M120 165
+                L230 165
+                L230 80
+                L650 80
+                L650 165
+                L780 165
+                L780 255
+                L120 255
+                Z
+            "
+        ></path>
+
+
+        <circle
+            class="source"
+            cx="120"
+            cy="210"
+            r="42"
+        ></circle>
+
+        <text
+            class="schematic-text"
+            x="120"
+            y="202"
+        >
+            ⎓
+        </text>
+
+        <text
+            class="schematic-small"
+            x="120"
+            y="225"
+        >
+            CC
+        </text>
+
+
+        <circle
+            class="meter"
+            cx="780"
+            cy="210"
+            r="38"
+        ></circle>
+
+        <text
+            class="schematic-text"
+            x="780"
+            y="210"
+        >
+            A
+        </text>
+
+
+        <g data-dc-component-symbol></g>
+
+    </svg>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Tensiunea sursei
+</h3>
+
+
+<div data-dc-voltage-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        U<sub>CC</sub> (V)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-dc-voltage-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-dc-voltage
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-dc-voltage-notebook
+    >
+
+    <span>
+        Am notat tensiunea sursei.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="dc-voltage"
+></p>
+
+</div>
+
+
+<div class="component-grid three">
+
+
+<!-- REZISTOR -->
+
+<div class="component-card resistor">
+
+<h3>
+    B. Rezistor în CC
+</h3>
+
+
+<div class="component-symbol">
+
+    <svg viewBox="0 0 300 100">
+
+        <line
+            x1="10"
+            y1="50"
+            x2="55"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+        <polyline
+            points="
+                55,50
+                72,30
+                95,70
+                118,30
+                141,70
+                164,30
+                187,70
+                210,30
+                230,50
+            "
+            class="component-resistor"
+        ></polyline>
+
+        <line
+            x1="230"
+            y1="50"
+            x2="290"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+    </svg>
+
+</div>
+
+
+<button
+    class="btn resistor"
+    type="button"
+    data-select-dc="resistor"
+>
+    Conectează rezistorul
+</button>
+
+
+<div
+    data-dc-r-current-box
+    hidden
+>
+
+<div data-dc-r-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>R,CC</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-dc-r-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-dc-r-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-dc-r-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="dc-r-current"
+></p>
+
+</div>
+
+</div>
+
+
+<!-- BOBINĂ -->
+
+<div class="component-card inductor">
+
+<h3>
+    C. Bobină în CC
+</h3>
+
+
+<div class="component-symbol">
+
+    <svg viewBox="0 0 300 100">
+
+        <line
+            x1="10"
+            y1="50"
+            x2="55"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+        <path
+            d="
+                M55 50
+                C65 15,85 15,95 50
+                C105 15,125 15,135 50
+                C145 15,165 15,175 50
+                C185 15,205 15,215 50
+                C225 15,245 15,255 50
+            "
+            class="component-inductor"
+        ></path>
+
+        <line
+            x1="255"
+            y1="50"
+            x2="290"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+    </svg>
+
+</div>
+
+
+<button
+    class="btn inductor"
+    type="button"
+    data-select-dc="inductor"
+>
+    Conectează bobina
+</button>
+
+
+<div
+    data-dc-l-current-box
+    hidden
+>
+
+<div data-dc-l-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>L,CC</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-dc-l-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-dc-l-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-dc-l-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="dc-l-current"
+></p>
+
+</div>
+
+</div>
+
+
+<!-- CONDENSATOR -->
+
+<div class="component-card capacitor">
+
+<h3>
+    D. Condensator în CC
+</h3>
+
+
+<div class="component-symbol">
+
+    <svg viewBox="0 0 300 100">
+
+        <line
+            x1="10"
+            y1="50"
+            x2="125"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+        <line
+            x1="125"
+            y1="18"
+            x2="125"
+            y2="82"
+            class="component-capacitor"
+        ></line>
+
+        <line
+            x1="165"
+            y1="18"
+            x2="165"
+            y2="82"
+            class="component-capacitor"
+        ></line>
+
+        <line
+            x1="165"
+            y1="50"
+            x2="290"
+            y2="50"
+            stroke="#17324d"
+            stroke-width="5"
+        ></line>
+
+    </svg>
+
+</div>
+
+
+<button
+    class="btn capacitor"
+    type="button"
+    data-start-capacitor-dc
+>
+    Conectează condensatorul
+</button>
+
+
+<div
+    class="transient-box"
+    data-transient-box
+    hidden
+>
+
+<h4>
+    Regimul tranzitoriu de încărcare
+</h4>
+
+
+<svg
+    class="transient-svg"
+    viewBox="0 0 760 280"
+    role="img"
+    aria-label="Curbele de încărcare ale condensatorului"
+>
+
+    <line
+        class="graph-axis"
+        x1="60"
+        y1="225"
+        x2="720"
+        y2="225"
+    ></line>
+
+    <line
+        class="graph-axis"
+        x1="60"
+        y1="30"
+        x2="60"
+        y2="225"
+    ></line>
+
+
+    <line
+        class="graph-grid"
+        x1="60"
+        y1="80"
+        x2="720"
+        y2="80"
+    ></line>
+
+    <line
+        class="graph-grid"
+        x1="60"
+        y1="130"
+        x2="720"
+        y2="130"
+    ></line>
+
+    <line
+        class="graph-grid"
+        x1="60"
+        y1="180"
+        x2="720"
+        y2="180"
+    ></line>
+
+
+    <path
+        class="graph-current"
+        data-cap-current-curve
+    ></path>
+
+    <path
+        class="graph-voltage"
+        data-cap-voltage-curve
+    ></path>
+
+
+    <text
+        class="graph-label"
+        x="630"
+        y="54"
+    >
+        uC crește
+    </text>
+
+    <text
+        class="graph-label"
+        x="620"
+        y="205"
+    >
+        i scade
+    </text>
+
+</svg>
+
+
+<p
+    class="transient-status"
+    data-transient-status
+>
+    Pregătit.
+</p>
+
+</div>
+
+
+<div
+    data-dc-c-current-box
+    hidden
+>
+
+<div data-dc-c-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>C,CC</sub> după încărcare (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-dc-c-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-dc-c-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-dc-c-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea în regim staționar.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="dc-c-current"
+></p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="dc-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-ac
+        type="button"
+        disabled
+    >
+        Continuă la curent alternativ
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6 – CA
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Comportarea în curent alternativ
+</h2>
+
+
+<p>
+    Generatorul furnizează o tensiune sinusoidală.
+    Voltmetrul și ampermetrul indică valori efective.
+</p>
+
+
+<div class="field-grid">
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Tensiunea efectivă
+</h3>
+
+
+<div data-ac-voltage-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        U<sub>ef</sub> (V)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-ac-voltage-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-ac-voltage
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-ac-voltage-notebook
+    >
+
+    <span>
+        Am notat tensiunea efectivă.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="ac-voltage"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    B. Frecvența generatorului
+</h3>
+
+
+<div data-frequency-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-frequency-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-frequency
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-frequency-notebook
+    >
+
+    <span>
+        Am notat frecvența.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="frequency"
+></p>
+
+</div>
+
+
+</div>
+
+
+<div class="component-grid three">
+
+
+<div class="component-card resistor">
+
+<h3>
+    C. Rezistor în CA
+</h3>
+
+
+<button
+    class="btn resistor"
+    data-select-ac="resistor"
+    type="button"
+>
+    Conectează rezistorul
+</button>
+
+
+<div
+    data-ac-r-current-box
+    hidden
+>
+
+<div data-ac-r-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>R,ef</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-ac-r-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-ac-r-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-ac-r-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="ac-r-current"
+></p>
+
+</div>
+
+</div>
+
+
+<div class="component-card inductor">
+
+<h3>
+    D. Bobină în CA
+</h3>
+
+
+<button
+    class="btn inductor"
+    data-select-ac="inductor"
+    type="button"
+>
+    Conectează bobina
+</button>
+
+
+<div
+    data-ac-l-current-box
+    hidden
+>
+
+<div data-ac-l-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>L,ef</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-ac-l-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-ac-l-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-ac-l-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="ac-l-current"
+></p>
+
+</div>
+
+</div>
+
+
+<div class="component-card capacitor">
+
+<h3>
+    E. Condensator în CA
+</h3>
+
+
+<button
+    class="btn capacitor"
+    data-select-ac="capacitor"
+    type="button"
+>
+    Conectează condensatorul
+</button>
+
+
+<div
+    data-ac-c-current-box
+    hidden
+>
+
+<div data-ac-c-current-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>C,ef</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-ac-c-current-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-ac-c-current
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-ac-c-current-notebook
+    >
+
+    <span>
+        Am notat intensitatea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="ac-c-current"
+></p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<h3>
+    F. Compararea fazelor cu osciloscopul
+</h3>
+
+
+<p>
+    Selectează componenta și compară variația tensiunii
+    <strong style="color:#dc2626">u(t)</strong>
+    cu variația curentului
+    <strong style="color:#2563eb">i(t)</strong>.
+</p>
+
+
+<div class="phase-buttons">
+
+    <button
+        class="btn resistor"
+        data-scope-component="resistor"
+        type="button"
+    >
+        Rezistor
+    </button>
+
+    <button
+        class="btn inductor"
+        data-scope-component="inductor"
+        type="button"
+    >
+        Bobină
+    </button>
+
+    <button
+        class="btn capacitor"
+        data-scope-component="capacitor"
+        type="button"
+    >
+        Condensator
+    </button>
+
+</div>
+
+
+<div class="scope-box">
+
+    <div class="scope-header">
+
+        <strong>
+            Osciloscop virtual
+        </strong>
+
+        <span data-scope-status>
+            Selectează o componentă
+        </span>
+
+    </div>
+
+
+    <svg
+        class="scope-svg"
+        viewBox="0 0 860 340"
+        role="img"
+        aria-label="Osciloscop pentru tensiune și curent"
+    >
+
+        <g data-scope-grid></g>
+
+
+        <line
+            class="scope-axis"
+            x1="35"
+            y1="170"
+            x2="825"
+            y2="170"
+        ></line>
+
+
+        <path
+            class="scope-voltage"
+            data-scope-voltage
+        ></path>
+
+        <path
+            class="scope-current"
+            data-scope-current
+        ></path>
+
+    </svg>
+
+
+    <div class="scope-legend">
+
+        <span>
+            <span class="legend-swatch voltage"></span>
+            tensiune u(t)
+        </span>
+
+        <span>
+            <span class="legend-swatch current"></span>
+            curent i(t)
+        </span>
+
+    </div>
+
+</div>
+
+
+<fieldset>
+
+<legend>
+    Pentru bobină, observația osciloscopului arată că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="phaseInductor"
+        value="lags"
+    >
+
+    <span>
+        intensitatea curentului rămâne în urmă față de tensiune
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="phaseInductor"
+        value="leads"
+    >
+
+    <span>
+        intensitatea curentului este înaintea tensiunii
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Pentru condensator, observația osciloscopului arată că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="phaseCapacitor"
+        value="leads"
+    >
+
+    <span>
+        intensitatea curentului este înaintea tensiunii
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="phaseCapacitor"
+        value="lags"
+    >
+
+    <span>
+        intensitatea curentului rămâne în urmă față de tensiune
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<button
+    class="btn"
+    data-check-phases
+    type="button"
+>
+    Confirmă observațiile de fază
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="phases"
+></p>
+
+
+<p
+    class="feedback"
+    data-feedback="ac-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Rezistorul în CC
+</h3>
+
+
+<div class="formula">
+
+    R<sub>CC</sub> =
+    U<sub>CC</sub> /
+    I<sub>R,CC</sub>
+
+</div>
+
+
+<label class="field">
+
+    R<sub>CC</sub> (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="r-dc"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea față de valoarea nominală R<sub>nom</sub> (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="r-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Rezistența conductorului bobinei în CC
+</h3>
+
+
+<div class="formula">
+
+    r =
+    U<sub>CC</sub> /
+    I<sub>L,CC</sub>
+
+</div>
+
+
+<label class="field">
+
+    r (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="coil-r"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Rezistorul în CA
+</h3>
+
+
+<div class="formula">
+
+    Z<sub>R</sub> =
+    U<sub>ef</sub> /
+    I<sub>R,ef</sub>
+
+</div>
+
+
+<label class="field">
+
+    Z<sub>R</sub> (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="zr"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Bobina în CA
+</h3>
+
+
+<div class="formula">
+
+    Z<sub>L</sub> =
+    U<sub>ef</sub> /
+    I<sub>L,ef</sub>
+
+    <br><br>
+
+    X<sub>L</sub> =
+    √(Z<sub>L</sub>² − r²)
+
+</div>
+
+
+<label class="field">
+
+    Z<sub>L</sub> (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="zl"
+    >
+
+</label>
+
+
+<label class="field">
+
+    X<sub>L</sub> (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="xl"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    L<sub>exp</sub> =
+    X<sub>L</sub> /
+    (2πf)
+
+</div>
+
+
+<label class="field">
+
+    L<sub>exp</sub> (H)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="l-exp"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea față de L<sub>nom</sub> (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="l-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Condensatorul în CA
+</h3>
+
+
+<div class="formula">
+
+    X<sub>C</sub> =
+    Z<sub>C</sub> =
+    U<sub>ef</sub> /
+    I<sub>C,ef</sub>
+
+</div>
+
+
+<label class="field">
+
+    X<sub>C</sub> (Ω)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="xc"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    C<sub>exp</sub> =
+    1 /
+    (2πfX<sub>C</sub>)
+
+</div>
+
+
+<label class="field">
+
+    C<sub>exp</sub> (μF)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="c-exp"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea față de C<sub>nom</sub> (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="c-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    F. Compararea CC – CA
+</h3>
+
+
+<label class="field">
+
+    Explică de ce condensatorul blochează curentul continuu
+    staționar, dar permite existența unui curent alternativ.
+
+    <textarea
+        rows="4"
+        data-capacitor-interpretation
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Explică de ce bobina prezintă o opoziție mai mare în CA
+    decât în CC staționar.
+
+    <textarea
+        rows="4"
+        data-inductor-interpretation
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, transformările mA → A
+        și μF → F, calculele și interpretările.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Pentru un rezistor ideal în CA, tensiunea și curentul sunt:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="phase"
+    >
+
+    <span>
+        în fază
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="quadrature"
+    >
+
+    <span>
+        defazate cu 90°
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Într-o bobină inductivă, dacă frecvența crește:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="xl-increases"
+    >
+
+    <span>
+        X<sub>L</sub> crește
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="xl-decreases"
+    >
+
+    <span>
+        X<sub>L</sub> scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Pentru condensator, dacă frecvența crește:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="xc-decreases"
+    >
+
+    <span>
+        X<sub>C</sub> scade
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="xc-increases"
+    >
+
+    <span>
+        X<sub>C</sub> crește
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Într-un condensator ideal alimentat sinusoidal:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="current-leads"
+    >
+
+    <span>
+        curentul este înaintea tensiunii cu 90°
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="voltage-leads"
+    >
+
+    <span>
+        tensiunea este înaintea curentului cu 90°
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Compară comportarea rezistorului, bobinei și condensatorului în CC și CA folosind valorile măsurate și calculate."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: rezoluția instrumentelor, rezistența bobinei, toleranța componentelor, citirea scalei..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    round(
+        Math.round(
+            value /
+            step
+        ) *
+        step,
+        8
+    );
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    readings:{
+
+        dcVoltage:null,
+
+        dcRCurrent:null,
+
+        dcLCurrent:null,
+
+        dcCCurrent:null,
+
+        acVoltage:null,
+
+        frequency:null,
+
+        acRCurrent:null,
+
+        acLCurrent:null,
+
+        acCCurrent:null
+
+    },
+
+    instruments:{},
+
+    dcSelected:
+        new Set(),
+
+    acSelected:
+        new Set(),
+
+    capacitorTransientComplete:
+        false,
+
+    phasesComplete:
+        false,
+
+    scopeAnimation:{
+        frameId:null,
+        startedAt:null,
+        component:"resistor"
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+        element.classList.add(type);
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Curent continuu",
+
+    "Curent alternativ",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !== step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index === step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(index)
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <= state.step ||
+                    state.completed.has(
+                        index - 1
+                    )
+                ){
+
+                    showStep(index);
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(button);
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(className);
+
+
+    const index =
+        Number(catalogNumber) -
+        1;
+
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    /* ------------------------------------------------------
+       COMPONENTE
+    ------------------------------------------------------ */
+
+    const rSlot =
+        (
+            slot * 11 +
+            ci * 5
+        ) %
+        30;
+
+
+    const resistance =
+        82 +
+        rSlot *
+        4;
+
+
+    const lSlot =
+        (
+            slot * 13 +
+            ci * 7
+        ) %
+        30;
+
+
+    const inductance =
+        round(
+            .18 +
+            lSlot *
+            .012,
+            3
+        );
+
+
+    const coilRSlot =
+        (
+            slot * 17 +
+            ci
+        ) %
+        30;
+
+
+    const coilResistance =
+        round(
+            24 +
+            coilRSlot *
+            .7,
+            1
+        );
+
+
+    const cSlot =
+        (
+            slot * 19 +
+            ci * 3
+        ) %
+        30;
+
+
+    const capacitanceMicroF =
+        15 +
+        cSlot;
+
+
+    /* ------------------------------------------------------
+       SURSA CC
+    ------------------------------------------------------ */
+
+    const dcSlot =
+        (
+            slot * 23 +
+            ci
+        ) %
+        18;
+
+
+    const dcVoltage =
+        roundTo(
+            6 +
+            dcSlot *
+            .2,
+            .2
+        );
+
+
+    const dcRCurrentmA =
+        roundTo(
+            1000 *
+            dcVoltage /
+            resistance,
+            2
+        );
+
+
+    const dcLCurrentmA =
+        roundTo(
+            1000 *
+            dcVoltage /
+            coilResistance,
+            10
+        );
+
+
+    /*
+       Condensator ideal în regim staționar.
+    */
+
+    const dcCCurrentmA =
+        0;
+
+
+    /* ------------------------------------------------------
+       SURSA CA
+    ------------------------------------------------------ */
+
+    const acSlot =
+        (
+            slot * 29 +
+            ci * 3
+        ) %
+        16;
+
+
+    const acVoltage =
+        roundTo(
+            6.4 +
+            acSlot *
+            .2,
+            .2
+        );
+
+
+    const frequency =
+        42 +
+        (
+            slot * 17 +
+            ci * 4
+        ) %
+        29;
+
+
+    const omega =
+        2 *
+        Math.PI *
+        frequency;
+
+
+    const xl =
+        omega *
+        inductance;
+
+
+    const zl =
+        Math.sqrt(
+            coilResistance ** 2 +
+            xl ** 2
+        );
+
+
+    const cFarad =
+        capacitanceMicroF *
+        1e-6;
+
+
+    const xc =
+        1 /
+        (
+            omega *
+            cFarad
+        );
+
+
+    const acRCurrentmA =
+        roundTo(
+            1000 *
+            acVoltage /
+            resistance,
+            2
+        );
+
+
+    const acLCurrentmA =
+        roundTo(
+            1000 *
+            acVoltage /
+            zl,
+            2
+        );
+
+
+    const acCCurrentmA =
+        roundTo(
+            1000 *
+            acVoltage /
+            xc,
+            2
+        );
+
+
+    const coilPhaseDeg =
+        Math.atan2(
+            xl,
+            coilResistance
+        ) *
+        180 /
+        Math.PI;
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP06`,
+
+        visible:{
+
+            resistanceNominal_Ohm:
+                resistance,
+
+            inductanceNominal_H:
+                inductance,
+
+            capacitanceNominal_uF:
+                capacitanceMicroF
+
+        },
+
+        hidden:{
+
+            coilResistance_Ohm:
+                coilResistance,
+
+            dcVoltage_V:
+                dcVoltage,
+
+            dcRCurrent_mA:
+                dcRCurrentmA,
+
+            dcLCurrent_mA:
+                dcLCurrentmA,
+
+            dcCCurrent_mA:
+                dcCCurrentmA,
+
+            acVoltage_V:
+                acVoltage,
+
+            frequency_Hz:
+                frequency,
+
+            acRCurrent_mA:
+                acRCurrentmA,
+
+            acLCurrent_mA:
+                acLCurrentmA,
+
+            acCCurrent_mA:
+                acCCurrentmA,
+
+            coilPhase_deg:
+                coilPhaseDeg
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get("studentName") ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get("studentClass")
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get("catalogNumber")
+            );
+
+
+        if(
+            studentName.length < 3 ||
+            !/^XI [A-D]$/.test(studentClass) ||
+            !Number.isInteger(catalogNumber) ||
+            catalogNumber < 1 ||
+            catalogNumber > 30 ||
+            !form.get("monitorConsent") ||
+            !form.get("identityConfirmed")
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId("FIZ"),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG.title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG.id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:true,
+
+            monitoringAcknowledged:true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session.experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(0);
+
+
+        showStep(1);
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !== "disconnect" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "circuite-electrice",
+                "condensator",
+                "bobina"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(1);
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "sursa",
+        "Sursă de joasă tensiune CC/CA"
+    ],
+
+    [
+        "rezistor",
+        "Rezistor"
+    ],
+
+    [
+        "bobina",
+        "Bobină"
+    ],
+
+    [
+        "condensator",
+        "Condensator"
+    ],
+
+    [
+        "ampermetru",
+        "Ampermetru"
+    ],
+
+    [
+        "voltmetru",
+        "Voltmetru"
+    ],
+
+    [
+        "frecventometru",
+        "Frecvențometru"
+    ],
+
+    [
+        "osciloscop",
+        "Osciloscop"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "sursa",
+        "rezistor",
+        "bobina",
+        "condensator",
+        "ampermetru",
+        "voltmetru",
+        "frecventometru",
+        "osciloscop"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(label);
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] === id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(2);
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* =========================================================
+   DATE INIȚIALE
+========================================================= */
+
+function renderInitialData(){
+
+    const visible =
+        state.set.visible;
+
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Componentă</th>
+                    <th>Valoare nominală</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Rezistor</td>
+                    <td>${visible.resistanceNominal_Ohm} Ω</td>
+                </tr>
+
+                <tr>
+                    <td>Bobină</td>
+                    <td>${visible.inductanceNominal_H.toFixed(3)} H</td>
+                </tr>
+
+                <tr>
+                    <td>Condensator</td>
+                    <td>${visible.capacitanceNominal_uF} μF</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-r-label]"
+    ).textContent =
+        visible.resistanceNominal_Ohm;
+
+
+    qs(
+        "[data-l-label]"
+    ).textContent =
+        visible.inductanceNominal_H
+            .toFixed(3);
+
+
+    qs(
+        "[data-c-label]"
+    ).textContent =
+        visible.capacitanceNominal_uF;
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const capDC =
+            qs(
+                'input[name="predictionCapDC"]:checked'
+            )?.value;
+
+
+        const inductive =
+            qs(
+                'input[name="predictionL"]:checked'
+            )?.value;
+
+
+        const capacitive =
+            qs(
+                'input[name="predictionC"]:checked'
+            )?.value;
+
+
+        if(
+            !capDC ||
+            !inductive ||
+            !capacitive ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            capacitorDC:
+                capDC,
+
+            inductiveFrequency:
+                inductive,
+
+            capacitiveFrequency:
+                capacitive,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeDCVoltageInstrument();
+
+
+        state.completed.add(3);
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(4);
+
+    }
+);
+
+
+/* =========================================================
+   INSTRUMENT GENERIC
+========================================================= */
+
+function createInstrument({
+
+    key,
+
+    target,
+
+    label,
+
+    minimum,
+
+    maximum,
+
+    value,
+
+    minorDivision,
+
+    majorDivision,
+
+    decimals,
+
+    unit,
+
+    answer,
+
+    verify,
+
+    notebook,
+
+    feedbackName,
+
+    onCorrect
+
+}){
+
+    if(
+        state.instruments[key]
+    ){
+        return;
+    }
+
+
+    const container =
+        qs(target);
+
+
+    container.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail.correct
+            ){
+                return;
+            }
+
+
+            state.readings[key] =
+                event.detail;
+
+
+            if(
+                typeof onCorrect ===
+                "function"
+            ){
+
+                onCorrect(
+                    event.detail
+                );
+
+            }
+
+        }
+    );
+
+
+    state.instruments[key] =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `exp06-${key}`,
+
+                target:
+                    container,
+
+                type:
+                    "analog-meter",
+
+                label,
+
+                instruction:
+                    "Citește indicația aparatului și notează valoarea în caiet.",
+
+                minimum,
+
+                maximum,
+
+                value,
+
+                minorDivision,
+
+                majorDivision,
+
+                decimals,
+
+                unit,
+
+                tolerance:
+                    minorDivision /
+                    2 +
+                    .001,
+
+                answerInput:
+                    qs(answer),
+
+                feedbackTarget:
+                    qs(
+                        `[data-feedback="${feedbackName}"]`
+                    ),
+
+                verifyButton:
+                    qs(verify),
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    qs(notebook),
+
+                allowZoom:
+                    true
+
+            });
+
+}
+
+
+/* =========================================================
+   CC – TENSIUNE
+========================================================= */
+
+function initializeDCVoltageInstrument(){
+
+    createInstrument({
+
+        key:"dcVoltage",
+
+        target:
+            "[data-dc-voltage-instrument]",
+
+        label:
+            "Voltmetru CC",
+
+        minimum:0,
+
+        maximum:12,
+
+        value:
+            state.set.hidden.dcVoltage_V,
+
+        minorDivision:.2,
+
+        majorDivision:2,
+
+        decimals:1,
+
+        unit:"V",
+
+        answer:
+            "[data-dc-voltage-answer]",
+
+        verify:
+            "[data-check-dc-voltage]",
+
+        notebook:
+            "[data-dc-voltage-notebook]",
+
+        feedbackName:
+            "dc-voltage"
+
+    });
+
+}
+
+
+/* =========================================================
+   SIMBOLUL COMPONENTEI CC
+========================================================= */
+
+function showDCComponentSymbol(
+    component
+){
+
+    const group =
+        qs(
+            "[data-dc-component-symbol]"
+        );
+
+
+    group.replaceChildren();
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    if(
+        component ===
+        "resistor"
+    ){
+
+        const polyline =
+            document.createElementNS(
+                ns,
+                "polyline"
+            );
+
+
+        polyline.setAttribute(
+            "points",
+            "300,80 320,55 345,105 370,55 395,105 420,55 445,105 470,55 495,80 580,80"
+        );
+
+
+        polyline.setAttribute(
+            "class",
+            "component-resistor"
+        );
+
+
+        group.append(polyline);
+
+    }
+
+
+    if(
+        component ===
+        "inductor"
+    ){
+
+        const path =
+            document.createElementNS(
+                ns,
+                "path"
+            );
+
+
+        path.setAttribute(
+            "d",
+            "M300 80 C315 35,345 35,360 80 C375 35,405 35,420 80 C435 35,465 35,480 80 C495 35,525 35,540 80 L580 80"
+        );
+
+
+        path.setAttribute(
+            "class",
+            "component-inductor"
+        );
+
+
+        group.append(path);
+
+    }
+
+
+    if(
+        component ===
+        "capacitor"
+    ){
+
+        const left =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        left.setAttribute("x1","410");
+        left.setAttribute("x2","410");
+        left.setAttribute("y1","42");
+        left.setAttribute("y2","118");
+        left.setAttribute(
+            "class",
+            "component-capacitor"
+        );
+
+
+        const right =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        right.setAttribute("x1","455");
+        right.setAttribute("x2","455");
+        right.setAttribute("y1","42");
+        right.setAttribute("y2","118");
+        right.setAttribute(
+            "class",
+            "component-capacitor"
+        );
+
+
+        group.append(
+            left,
+            right
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CC – REZISTOR
+========================================================= */
+
+qs(
+    '[data-select-dc="resistor"]'
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.readings.dcVoltage
+        ){
+
+            feedback(
+                "dc-complete",
+                "Măsoară mai întâi tensiunea sursei."
+            );
+
+
+            return;
+
+        }
+
+
+        state.dcSelected.add(
+            "resistor"
+        );
+
+
+        showDCComponentSymbol(
+            "resistor"
+        );
+
+
+        qs(
+            "[data-dc-r-current-box]"
+        ).hidden =
+            false;
+
+
+        createInstrument({
+
+            key:"dcRCurrent",
+
+            target:
+                "[data-dc-r-current-instrument]",
+
+            label:
+                "Ampermetru CC – rezistor",
+
+            minimum:0,
+
+            maximum:160,
+
+            value:
+                state.set.hidden.dcRCurrent_mA,
+
+            minorDivision:2,
+
+            majorDivision:20,
+
+            decimals:0,
+
+            unit:"mA",
+
+            answer:
+                "[data-dc-r-current-answer]",
+
+            verify:
+                "[data-check-dc-r-current]",
+
+            notebook:
+                "[data-dc-r-current-notebook]",
+
+            feedbackName:
+                "dc-r-current",
+
+            onCorrect:
+                checkDCComplete
+
+        });
+
+    }
+);
+
+
+/* =========================================================
+   CC – BOBINĂ
+========================================================= */
+
+qs(
+    '[data-select-dc="inductor"]'
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.readings.dcVoltage
+        ){
+
+            feedback(
+                "dc-complete",
+                "Măsoară mai întâi tensiunea sursei."
+            );
+
+
+            return;
+
+        }
+
+
+        state.dcSelected.add(
+            "inductor"
+        );
+
+
+        showDCComponentSymbol(
+            "inductor"
+        );
+
+
+        qs(
+            "[data-dc-l-current-box]"
+        ).hidden =
+            false;
+
+
+        createInstrument({
+
+            key:"dcLCurrent",
+
+            target:
+                "[data-dc-l-current-instrument]",
+
+            label:
+                "Ampermetru CC – bobină",
+
+            minimum:0,
+
+            maximum:500,
+
+            value:
+                state.set.hidden.dcLCurrent_mA,
+
+            minorDivision:10,
+
+            majorDivision:50,
+
+            decimals:0,
+
+            unit:"mA",
+
+            answer:
+                "[data-dc-l-current-answer]",
+
+            verify:
+                "[data-check-dc-l-current]",
+
+            notebook:
+                "[data-dc-l-current-notebook]",
+
+            feedbackName:
+                "dc-l-current",
+
+            onCorrect:
+                checkDCComplete
+
+        });
+
+    }
+);
+
+
+/* =========================================================
+   CC – CONDENSATOR
+========================================================= */
+
+qs(
+    "[data-start-capacitor-dc]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.readings.dcVoltage
+        ){
+
+            feedback(
+                "dc-complete",
+                "Măsoară mai întâi tensiunea sursei."
+            );
+
+
+            return;
+
+        }
+
+
+        state.dcSelected.add(
+            "capacitor"
+        );
+
+
+        showDCComponentSymbol(
+            "capacitor"
+        );
+
+
+        runCapacitorTransient();
+
+    }
+);
+
+
+function runCapacitorTransient(){
+
+    const box =
+        qs(
+            "[data-transient-box]"
+        );
+
+
+    const status =
+        qs(
+            "[data-transient-status]"
+        );
+
+
+    const currentPath =
+        qs(
+            "[data-cap-current-curve]"
+        );
+
+
+    const voltagePath =
+        qs(
+            "[data-cap-voltage-curve]"
+        );
+
+
+    box.hidden =
+        false;
+
+
+    state.capacitorTransientComplete =
+        false;
+
+
+    status.textContent =
+        "Condensatorul se încarcă...";
+
+
+    const duration =
+        2600;
+
+
+    const start =
+        performance.now();
+
+
+    function frame(
+        timestamp
+    ){
+
+        const fraction =
+            Math.min(
+                1,
+                (
+                    timestamp -
+                    start
+                ) /
+                duration
+            );
+
+
+        /*
+           Reprezentare normalizată:
+           uC/U = 1 - e^-5t
+           i/I0 = e^-5t
+        */
+
+        let dU =
+            "";
+
+
+        let dI =
+            "";
+
+
+        const maximumX =
+            60 +
+            640 *
+            fraction;
+
+
+        for(
+            let x=60;
+            x<=maximumX;
+            x+=4
+        ){
+
+            const u =
+                (
+                    x -
+                    60
+                ) /
+                640;
+
+
+            const voltage =
+                1 -
+                Math.exp(
+                    -5 *
+                    u
+                );
+
+
+            const current =
+                Math.exp(
+                    -5 *
+                    u
+                );
+
+
+            const yU =
+                225 -
+                160 *
+                voltage;
+
+
+            const yI =
+                225 -
+                160 *
+                current;
+
+
+            dU +=
+                `${x === 60 ? "M" : "L"}${x},${yU.toFixed(1)} `;
+
+
+            dI +=
+                `${x === 60 ? "M" : "L"}${x},${yI.toFixed(1)} `;
+
+        }
+
+
+        voltagePath.setAttribute(
+            "d",
+            dU
+        );
+
+
+        currentPath.setAttribute(
+            "d",
+            dI
+        );
+
+
+        if(
+            fraction <
+            1
+        ){
+
+            requestAnimationFrame(
+                frame
+            );
+
+
+            return;
+
+        }
+
+
+        state.capacitorTransientComplete =
+            true;
+
+
+        status.textContent =
+            "Regim staționar: tensiunea pe condensator este aproape constantă, iar curentul tinde la zero.";
+
+
+        qs(
+            "[data-dc-c-current-box]"
+        ).hidden =
+            false;
+
+
+        createInstrument({
+
+            key:"dcCCurrent",
+
+            target:
+                "[data-dc-c-current-instrument]",
+
+            label:
+                "Ampermetru CC – condensator după încărcare",
+
+            minimum:0,
+
+            maximum:20,
+
+            value:
+                state.set.hidden.dcCCurrent_mA,
+
+            minorDivision:1,
+
+            majorDivision:5,
+
+            decimals:0,
+
+            unit:"mA",
+
+            answer:
+                "[data-dc-c-current-answer]",
+
+            verify:
+                "[data-check-dc-c-current]",
+
+            notebook:
+                "[data-dc-c-current-notebook]",
+
+            feedbackName:
+                "dc-c-current",
+
+            onCorrect:
+                checkDCComplete
+
+        });
+
+    }
+
+
+    requestAnimationFrame(
+        frame
+    );
+
+}
+
+
+/* =========================================================
+   FINAL CC
+========================================================= */
+
+function checkDCComplete(){
+
+    if(
+        !state.readings.dcVoltage ||
+        !state.readings.dcRCurrent ||
+        !state.readings.dcLCurrent ||
+        !state.readings.dcCCurrent ||
+        !state.capacitorTransientComplete
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "dc-complete",
+        "Măsurările în curent continuu sunt complete.",
+        "ok"
+    );
+
+
+    state.completed.add(4);
+
+
+    qs(
+        "[data-next-ac]"
+    ).disabled =
+        false;
+
+}
+
+
+qs(
+    "[data-next-ac]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeACSourceInstruments();
+
+
+        drawScopeGrid();
+
+
+        showScope(
+            "resistor"
+        );
+
+
+        showStep(5);
+
+    }
+);
+
+
+/* =========================================================
+   CA – SURSA
+========================================================= */
+
+function initializeACSourceInstruments(){
+
+    createInstrument({
+
+        key:"acVoltage",
+
+        target:
+            "[data-ac-voltage-instrument]",
+
+        label:
+            "Voltmetru CA – valoare efectivă",
+
+        minimum:0,
+
+        maximum:12,
+
+        value:
+            state.set.hidden.acVoltage_V,
+
+        minorDivision:.2,
+
+        majorDivision:2,
+
+        decimals:1,
+
+        unit:"V",
+
+        answer:
+            "[data-ac-voltage-answer]",
+
+        verify:
+            "[data-check-ac-voltage]",
+
+        notebook:
+            "[data-ac-voltage-notebook]",
+
+        feedbackName:
+            "ac-voltage"
+
+    });
+
+
+    createInstrument({
+
+        key:"frequency",
+
+        target:
+            "[data-frequency-instrument]",
+
+        label:
+            "Frecvențometru",
+
+        minimum:30,
+
+        maximum:80,
+
+        value:
+            state.set.hidden.frequency_Hz,
+
+        minorDivision:1,
+
+        majorDivision:10,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-frequency-answer]",
+
+        verify:
+            "[data-check-frequency]",
+
+        notebook:
+            "[data-frequency-notebook]",
+
+        feedbackName:
+            "frequency"
+
+    });
+
+}
+
+
+/* =========================================================
+   CA – CURENȚI
+========================================================= */
+
+qsa(
+    "[data-select-ac]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    !state.readings.acVoltage ||
+                    !state.readings.frequency
+                ){
+
+                    feedback(
+                        "ac-complete",
+                        "Măsoară mai întâi tensiunea efectivă și frecvența generatorului."
+                    );
+
+
+                    return;
+
+                }
+
+
+                const component =
+                    button.dataset
+                        .selectAc;
+
+
+                state.acSelected.add(
+                    component
+                );
+
+
+                if(
+                    component ===
+                    "resistor"
+                ){
+
+                    qs(
+                        "[data-ac-r-current-box]"
+                    ).hidden =
+                        false;
+
+
+                    createInstrument({
+
+                        key:"acRCurrent",
+
+                        target:
+                            "[data-ac-r-current-instrument]",
+
+                        label:
+                            "Ampermetru CA – rezistor",
+
+                        minimum:0,
+
+                        maximum:160,
+
+                        value:
+                            state.set.hidden.acRCurrent_mA,
+
+                        minorDivision:2,
+
+                        majorDivision:20,
+
+                        decimals:0,
+
+                        unit:"mA",
+
+                        answer:
+                            "[data-ac-r-current-answer]",
+
+                        verify:
+                            "[data-check-ac-r-current]",
+
+                        notebook:
+                            "[data-ac-r-current-notebook]",
+
+                        feedbackName:
+                            "ac-r-current",
+
+                        onCorrect:
+                            checkACComplete
+
+                    });
+
+                }
+
+
+                if(
+                    component ===
+                    "inductor"
+                ){
+
+                    qs(
+                        "[data-ac-l-current-box]"
+                    ).hidden =
+                        false;
+
+
+                    createInstrument({
+
+                        key:"acLCurrent",
+
+                        target:
+                            "[data-ac-l-current-instrument]",
+
+                        label:
+                            "Ampermetru CA – bobină",
+
+                        minimum:0,
+
+                        maximum:160,
+
+                        value:
+                            state.set.hidden.acLCurrent_mA,
+
+                        minorDivision:2,
+
+                        majorDivision:20,
+
+                        decimals:0,
+
+                        unit:"mA",
+
+                        answer:
+                            "[data-ac-l-current-answer]",
+
+                        verify:
+                            "[data-check-ac-l-current]",
+
+                        notebook:
+                            "[data-ac-l-current-notebook]",
+
+                        feedbackName:
+                            "ac-l-current",
+
+                        onCorrect:
+                            checkACComplete
+
+                    });
+
+                }
+
+
+                if(
+                    component ===
+                    "capacitor"
+                ){
+
+                    qs(
+                        "[data-ac-c-current-box]"
+                    ).hidden =
+                        false;
+
+
+                    createInstrument({
+
+                        key:"acCCurrent",
+
+                        target:
+                            "[data-ac-c-current-instrument]",
+
+                        label:
+                            "Ampermetru CA – condensator",
+
+                        minimum:0,
+
+                        maximum:300,
+
+                        value:
+                            state.set.hidden.acCCurrent_mA,
+
+                        minorDivision:2,
+
+                        majorDivision:20,
+
+                        decimals:0,
+
+                        unit:"mA",
+
+                        answer:
+                            "[data-ac-c-current-answer]",
+
+                        verify:
+                            "[data-check-ac-c-current]",
+
+                        notebook:
+                            "[data-ac-c-current-notebook]",
+
+                        feedbackName:
+                            "ac-c-current",
+
+                        onCorrect:
+                            checkACComplete
+
+                    });
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   OSCILOSCOP
+========================================================= */
+
+function drawScopeGrid(){
+
+    const group =
+        qs(
+            "[data-scope-grid]"
+        );
+
+
+    if(
+        group.children.length
+    ){
+        return;
+    }
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    for(
+        let x=35;
+        x<=825;
+        x+=79
+    ){
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute("x1",x);
+        line.setAttribute("x2",x);
+        line.setAttribute("y1","25");
+        line.setAttribute("y2","315");
+        line.setAttribute(
+            "class",
+            "scope-grid"
+        );
+
+
+        group.append(line);
+
+    }
+
+
+    for(
+        let y=25;
+        y<=315;
+        y+=48
+    ){
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute("x1","35");
+        line.setAttribute("x2","825");
+        line.setAttribute("y1",y);
+        line.setAttribute("y2",y);
+        line.setAttribute(
+            "class",
+            "scope-grid"
+        );
+
+
+        group.append(line);
+
+    }
+
+}
+
+
+function showScope(
+    component
+){
+
+    state.scopeAnimation.component =
+        component;
+
+
+    if(
+        state.scopeAnimation.frameId
+    ){
+
+        cancelAnimationFrame(
+            state.scopeAnimation.frameId
+        );
+
+    }
+
+
+    let phaseCurrent =
+        0;
+
+
+    let status;
+
+
+    if(
+        component ===
+        "resistor"
+    ){
+
+        phaseCurrent =
+            0;
+
+
+        status =
+            "Rezistor: u și i sunt în fază";
+
+    }
+
+
+    if(
+        component ===
+        "inductor"
+    ){
+
+        /*
+           Pentru bobina reală curentul rămâne în urmă
+           cu mai puțin de 90°.
+        */
+
+        phaseCurrent =
+            -state.set
+                .hidden
+                .coilPhase_deg *
+            Math.PI /
+            180;
+
+
+        status =
+            `Bobină reală: curentul rămâne în urmă cu aproximativ ${state.set.hidden.coilPhase_deg.toFixed(0)}°`;
+
+    }
+
+
+    if(
+        component ===
+        "capacitor"
+    ){
+
+        phaseCurrent =
+            Math.PI /
+            2;
+
+
+        status =
+            "Condensator ideal: curentul este înaintea tensiunii cu aproximativ 90°";
+
+    }
+
+
+    qs(
+        "[data-scope-status]"
+    ).textContent =
+        status;
+
+
+    const voltagePath =
+        qs(
+            "[data-scope-voltage]"
+        );
+
+
+    const currentPath =
+        qs(
+            "[data-scope-current]"
+        );
+
+
+    state.scopeAnimation.startedAt =
+        performance.now();
+
+
+    function frame(){
+
+        const elapsed =
+            (
+                performance.now() -
+                state.scopeAnimation.startedAt
+            ) /
+            1000;
+
+
+        let dU =
+            "";
+
+
+        let dI =
+            "";
+
+
+        const phaseTime =
+            elapsed *
+            2.8;
+
+
+        for(
+            let x=35;
+            x<=825;
+            x+=4
+        ){
+
+            const argument =
+                (
+                    x -
+                    35
+                ) /
+                790 *
+                6 *
+                Math.PI -
+                phaseTime;
+
+
+            const yU =
+                170 -
+                72 *
+                Math.sin(
+                    argument
+                );
+
+
+            const yI =
+                170 -
+                62 *
+                Math.sin(
+                    argument +
+                    phaseCurrent
+                );
+
+
+            dU +=
+                `${x === 35 ? "M" : "L"}${x},${yU.toFixed(1)} `;
+
+
+            dI +=
+                `${x === 35 ? "M" : "L"}${x},${yI.toFixed(1)} `;
+
+        }
+
+
+        voltagePath.setAttribute(
+            "d",
+            dU
+        );
+
+
+        currentPath.setAttribute(
+            "d",
+            dI
+        );
+
+
+        state.scopeAnimation.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    state.scopeAnimation.frameId =
+        requestAnimationFrame(
+            frame
+        );
+
+}
+
+
+qsa(
+    "[data-scope-component]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showScope(
+                    button.dataset
+                        .scopeComponent
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   FAZE
+========================================================= */
+
+qs(
+    "[data-check-phases]"
+).addEventListener(
+    "click",
+    () => {
+
+        const inductor =
+            qs(
+                'input[name="phaseInductor"]:checked'
+            )?.value;
+
+
+        const capacitor =
+            qs(
+                'input[name="phaseCapacitor"]:checked'
+            )?.value;
+
+
+        if(
+            inductor !==
+                "lags" ||
+            capacitor !==
+                "leads"
+        ){
+
+            feedback(
+                "phases",
+                "Reanalizează oscilogramele: la bobină curentul rămâne în urmă, iar la condensator curentul este înaintea tensiunii."
+            );
+
+
+            return;
+
+        }
+
+
+        state.phasesComplete =
+            true;
+
+
+        feedback(
+            "phases",
+            "Observațiile de fază sunt corecte.",
+            "ok"
+        );
+
+
+        checkACComplete();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL CA
+========================================================= */
+
+function checkACComplete(){
+
+    if(
+        !state.readings.acVoltage ||
+        !state.readings.frequency ||
+        !state.readings.acRCurrent ||
+        !state.readings.acLCurrent ||
+        !state.readings.acCCurrent ||
+        !state.phasesComplete
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "ac-complete",
+        "Măsurările și observațiile în curent alternativ sunt complete.",
+        "ok"
+    );
+
+
+    state.completed.add(5);
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   TRECERE LA CALCULE
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(6);
+
+    }
+);
+
+
+/* =========================================================
+   TABEL MĂSURĂRI
+========================================================= */
+
+function renderMeasurementSummary(){
+
+    const r =
+        state.readings;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Regim</th>
+                    <th>Componentă / mărime</th>
+                    <th>Valoare măsurată</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>CC</td>
+                    <td>U</td>
+                    <td>${r.dcVoltage.studentReading.toFixed(1)} V</td>
+                </tr>
+
+                <tr>
+                    <td>CC</td>
+                    <td>I rezistor</td>
+                    <td>${r.dcRCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+                <tr>
+                    <td>CC</td>
+                    <td>I bobină</td>
+                    <td>${r.dcLCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+                <tr>
+                    <td>CC staționar</td>
+                    <td>I condensator</td>
+                    <td>${r.dcCCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+                <tr>
+                    <td>CA</td>
+                    <td>Uef</td>
+                    <td>${r.acVoltage.studentReading.toFixed(1)} V</td>
+                </tr>
+
+                <tr>
+                    <td>CA</td>
+                    <td>f</td>
+                    <td>${r.frequency.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>CA</td>
+                    <td>I rezistor</td>
+                    <td>${r.acRCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+                <tr>
+                    <td>CA</td>
+                    <td>I bobină</td>
+                    <td>${r.acLCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+                <tr>
+                    <td>CA</td>
+                    <td>I condensator</td>
+                    <td>${r.acCCurrent.studentReading.toFixed(0)} mA</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function relativeError(
+    value,
+    reference
+){
+
+    return (
+        Math.abs(
+            value -
+            reference
+        ) /
+        Math.abs(reference) *
+        100
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const r =
+        state.readings;
+
+
+    const visible =
+        state.set.visible;
+
+
+    const uDC =
+        r.dcVoltage
+            .studentReading;
+
+
+    const iRDC =
+        r.dcRCurrent
+            .studentReading /
+        1000;
+
+
+    const iLDC =
+        r.dcLCurrent
+            .studentReading /
+        1000;
+
+
+    const rDC =
+        uDC /
+        iRDC;
+
+
+    const rError =
+        relativeError(
+            rDC,
+            visible.resistanceNominal_Ohm
+        );
+
+
+    const coilR =
+        uDC /
+        iLDC;
+
+
+    const uAC =
+        r.acVoltage
+            .studentReading;
+
+
+    const frequency =
+        r.frequency
+            .studentReading;
+
+
+    const iRAC =
+        r.acRCurrent
+            .studentReading /
+        1000;
+
+
+    const iLAC =
+        r.acLCurrent
+            .studentReading /
+        1000;
+
+
+    const iCAC =
+        r.acCCurrent
+            .studentReading /
+        1000;
+
+
+    const zr =
+        uAC /
+        iRAC;
+
+
+    const zl =
+        uAC /
+        iLAC;
+
+
+    const xlSquared =
+        Math.max(
+            0,
+            zl ** 2 -
+            coilR ** 2
+        );
+
+
+    const xl =
+        Math.sqrt(
+            xlSquared
+        );
+
+
+    const lExp =
+        xl /
+        (
+            2 *
+            Math.PI *
+            frequency
+        );
+
+
+    const lError =
+        relativeError(
+            lExp,
+            visible.inductanceNominal_H
+        );
+
+
+    const xc =
+        uAC /
+        iCAC;
+
+
+    const cExpFarad =
+        1 /
+        (
+            2 *
+            Math.PI *
+            frequency *
+            xc
+        );
+
+
+    const cExpMicroF =
+        cExpFarad *
+        1e6;
+
+
+    const cError =
+        relativeError(
+            cExpMicroF,
+            visible.capacitanceNominal_uF
+        );
+
+
+    return {
+
+        rDC_Ohm:
+            rDC,
+
+        rError_percent:
+            rError,
+
+        coilResistance_Ohm:
+            coilR,
+
+        zr_Ohm:
+            zr,
+
+        zl_Ohm:
+            zl,
+
+        xl_Ohm:
+            xl,
+
+        inductanceExp_H:
+            lExp,
+
+        inductanceError_percent:
+            lError,
+
+        xc_Ohm:
+            xc,
+
+        capacitanceExp_uF:
+            cExpMicroF,
+
+        capacitanceError_percent:
+            cError
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(value) &&
+        Math.abs(
+            value -
+            expected
+        ) <= tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICARE CALCULE
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            rDC:
+                answer("r-dc"),
+
+            rError:
+                answer("r-error"),
+
+            coilR:
+                answer("coil-r"),
+
+            zr:
+                answer("zr"),
+
+            zl:
+                answer("zl"),
+
+            xl:
+                answer("xl"),
+
+            lExp:
+                answer("l-exp"),
+
+            lError:
+                answer("l-error"),
+
+            xc:
+                answer("xc"),
+
+            cExp:
+                answer("c-exp"),
+
+            cError:
+                answer("c-error")
+
+        };
+
+
+        const capacitorInterpretation =
+            qs(
+                "[data-capacitor-interpretation]"
+            ).value.trim();
+
+
+        const inductorInterpretation =
+            qs(
+                "[data-inductor-interpretation]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.rDC,
+                expected.rDC_Ohm,
+                .8
+            ) &&
+
+            closeEnough(
+                values.rError,
+                expected.rError_percent,
+                .25
+            ) &&
+
+            closeEnough(
+                values.coilR,
+                expected.coilResistance_Ohm,
+                .5
+            ) &&
+
+            closeEnough(
+                values.zr,
+                expected.zr_Ohm,
+                .8
+            ) &&
+
+            closeEnough(
+                values.zl,
+                expected.zl_Ohm,
+                1.0
+            ) &&
+
+            closeEnough(
+                values.xl,
+                expected.xl_Ohm,
+                1.2
+            ) &&
+
+            closeEnough(
+                values.lExp,
+                expected.inductanceExp_H,
+                .008
+            ) &&
+
+            closeEnough(
+                values.lError,
+                expected.inductanceError_percent,
+                .30
+            ) &&
+
+            closeEnough(
+                values.xc,
+                expected.xc_Ohm,
+                1.0
+            ) &&
+
+            closeEnough(
+                values.cExp,
+                expected.capacitanceExp_uF,
+                .5
+            ) &&
+
+            closeEnough(
+                values.cError,
+                expected.capacitanceError_percent,
+                .30
+            );
+
+
+        if(
+            !correct ||
+            capacitorInterpretation.length < 50 ||
+            inductorInterpretation.length < 50 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică transformarea mA → A, formulele impedanțelor și reactanțelor, apoi interpretările pentru bobină și condensator."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    regime:"CC",
+                    quantity:"tensiune",
+                    instrument:"voltmetru",
+                    studentReading_V:
+                        state.readings.dcVoltage.studentReading,
+                    resolution_V:
+                        state.readings.dcVoltage.resolution,
+                    attempts:
+                        state.readings.dcVoltage.attempts
+                },
+
+                {
+                    regime:"CC",
+                    component:"rezistor",
+                    quantity:"intensitate",
+                    studentReading_mA:
+                        state.readings.dcRCurrent.studentReading,
+                    resolution_mA:
+                        state.readings.dcRCurrent.resolution,
+                    attempts:
+                        state.readings.dcRCurrent.attempts
+                },
+
+                {
+                    regime:"CC",
+                    component:"bobină",
+                    quantity:"intensitate staționară",
+                    studentReading_mA:
+                        state.readings.dcLCurrent.studentReading,
+                    resolution_mA:
+                        state.readings.dcLCurrent.resolution,
+                    attempts:
+                        state.readings.dcLCurrent.attempts
+                },
+
+                {
+                    regime:"CC",
+                    component:"condensator",
+                    quantity:"intensitate după încărcare",
+                    studentReading_mA:
+                        state.readings.dcCCurrent.studentReading,
+                    resolution_mA:
+                        state.readings.dcCCurrent.resolution,
+                    attempts:
+                        state.readings.dcCCurrent.attempts
+                },
+
+                {
+                    regime:"CA",
+                    quantity:"tensiune efectivă",
+                    studentReading_V:
+                        state.readings.acVoltage.studentReading,
+                    resolution_V:
+                        state.readings.acVoltage.resolution,
+                    attempts:
+                        state.readings.acVoltage.attempts
+                },
+
+                {
+                    regime:"CA",
+                    quantity:"frecvență",
+                    studentReading_Hz:
+                        state.readings.frequency.studentReading,
+                    resolution_Hz:
+                        state.readings.frequency.resolution,
+                    attempts:
+                        state.readings.frequency.attempts
+                },
+
+                {
+                    regime:"CA",
+                    component:"rezistor",
+                    quantity:"intensitate efectivă",
+                    studentReading_mA:
+                        state.readings.acRCurrent.studentReading,
+                    attempts:
+                        state.readings.acRCurrent.attempts
+                },
+
+                {
+                    regime:"CA",
+                    component:"bobină",
+                    quantity:"intensitate efectivă",
+                    studentReading_mA:
+                        state.readings.acLCurrent.studentReading,
+                    attempts:
+                        state.readings.acLCurrent.attempts
+                },
+
+                {
+                    regime:"CA",
+                    component:"condensator",
+                    quantity:"intensitate efectivă",
+                    studentReading_mA:
+                        state.readings.acCCurrent.studentReading,
+                    attempts:
+                        state.readings.acCCurrent.attempts
+                }
+
+            ],
+
+            calculations:{
+
+                resistor:{
+
+                    nominalResistance_Ohm:
+                        state.set
+                            .visible
+                            .resistanceNominal_Ohm,
+
+                    measuredResistanceDC_Ohm:
+                        round(
+                            expected.rDC_Ohm,
+                            3
+                        ),
+
+                    dcRelativeError_percent:
+                        round(
+                            expected.rError_percent,
+                            2
+                        ),
+
+                    impedanceAC_Ohm:
+                        round(
+                            expected.zr_Ohm,
+                            3
+                        )
+
+                },
+
+                inductor:{
+
+                    nominalInductance_H:
+                        state.set
+                            .visible
+                            .inductanceNominal_H,
+
+                    windingResistance_Ohm:
+                        round(
+                            expected.coilResistance_Ohm,
+                            3
+                        ),
+
+                    impedanceAC_Ohm:
+                        round(
+                            expected.zl_Ohm,
+                            3
+                        ),
+
+                    inductiveReactance_Ohm:
+                        round(
+                            expected.xl_Ohm,
+                            3
+                        ),
+
+                    experimentalInductance_H:
+                        round(
+                            expected.inductanceExp_H,
+                            4
+                        ),
+
+                    relativeError_percent:
+                        round(
+                            expected.inductanceError_percent,
+                            2
+                        )
+
+                },
+
+                capacitor:{
+
+                    nominalCapacitance_uF:
+                        state.set
+                            .visible
+                            .capacitanceNominal_uF,
+
+                    steadyDCcurrent_mA:
+                        state.readings
+                            .dcCCurrent
+                            .studentReading,
+
+                    capacitiveReactance_Ohm:
+                        round(
+                            expected.xc_Ohm,
+                            3
+                        ),
+
+                    experimentalCapacitance_uF:
+                        round(
+                            expected.capacitanceExp_uF,
+                            3
+                        ),
+
+                    relativeError_percent:
+                        round(
+                            expected.capacitanceError_percent,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                resistorPhase:
+                    "tensiune și curent aproximativ în fază",
+
+                inductorPhase:
+                    "curentul rămâne în urmă față de tensiune",
+
+                capacitorPhase:
+                    "curentul este înaintea tensiunii",
+
+                capacitorInterpretation,
+
+                inductorInterpretation
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(6);
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   CONSTRUIRE RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session.studentName,
+
+                className:
+                    state.session.studentClass,
+
+                catalogNumber:
+                    state.session.catalogNumber,
+
+                identityConfirmed:true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   În raport apar numai parametrii nominali
+                   declarați elevului. Parametrii interni ai
+                   simulării nu sunt publicați ca răspunsuri.
+                */
+
+                generatedData:{
+
+                    resistanceNominal_Ohm:
+                        state.set
+                            .visible
+                            .resistanceNominal_Ohm,
+
+                    inductanceNominal_H:
+                        state.set
+                            .visible
+                            .inductanceNominal_H,
+
+                    capacitanceNominal_uF:
+                        state.set
+                            .visible
+                            .capacitanceNominal_uF
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session.sessionId,
+
+                startedAt:
+                    state.session.startedAt,
+
+                finishedAt:
+                    state.evaluation.finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation.finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session.startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session.experimentDate,
+
+                completed:true,
+
+                totalSteps:8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook.measurements,
+
+            calculations:
+                state.notebook.calculations,
+
+            comparison:
+                state.notebook.comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation.finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALĂ
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           O a doua apăsare nu creează alt reportId.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length < 120 ||
+            errorSources.length < 40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:"phase",
+
+            q2:"xl-increases",
+
+            q3:"xc-decreases",
+
+            q4:"current-leads"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >= 3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:true,
+
+            notebookConfirmed:true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            state.reportId ||
+            makeId("RAP");
+
+
+        state.completed.add(7);
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook.calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>R determinat în CC</span>
+
+                <strong>
+                    ${c.resistor.measuredResistanceDC_Ohm.toFixed(1)} Ω
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Z rezistor în CA</span>
+
+                <strong>
+                    ${c.resistor.impedanceAC_Ohm.toFixed(1)} Ω
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>r bobină</span>
+
+                <strong>
+                    ${c.inductor.windingResistance_Ohm.toFixed(1)} Ω
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>X<sub>L</sub></span>
+
+                <strong>
+                    ${c.inductor.inductiveReactance_Ohm.toFixed(1)} Ω
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>L experimental</span>
+
+                <strong>
+                    ${c.inductor.experimentalInductance_H.toFixed(3)} H
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>X<sub>C</sub></span>
+
+                <strong>
+                    ${c.capacitor.capacitiveReactance_Ohm.toFixed(1)} Ω
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>C experimental</span>
+
+                <strong>
+                    ${c.capacitor.experimentalCapacitance_uF.toFixed(2)} μF
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        /*
+           IMPORTANT:
+           salvăm local înaintea oricărei transmisii.
+        */
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation.finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea prin modulul comun nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă: ${error.message}`;
+
+        }
+
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(text)
+            .trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(/\s+/);
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length > max &&
+            line
+        ){
+
+            lines.push(line);
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+        lines.push(line);
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+        pages.push(["Raport"]);
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(pageId);
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join("\n");
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(pdf);
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(pdf);
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:"application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook.calculations;
+
+
+    const r =
+        state.readings;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Curent continuu si curent alternativ",
+
+        "EXP06 - Comportarea rezistorului, bobinei si condensatorului in CC si CA",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "VALORI NOMINALE",
+
+        `R = ${state.set.visible.resistanceNominal_Ohm} ohm`,
+
+        `L = ${state.set.visible.inductanceNominal_H.toFixed(3)} H`,
+
+        `C = ${state.set.visible.capacitanceNominal_uF} microF`,
+
+        "",
+
+        "CURENT CONTINUU",
+
+        `U = ${r.dcVoltage.studentReading.toFixed(1)} V`,
+
+        `I rezistor = ${r.dcRCurrent.studentReading.toFixed(0)} mA`,
+
+        `I bobina = ${r.dcLCurrent.studentReading.toFixed(0)} mA`,
+
+        `I condensator dupa incarcare = ${r.dcCCurrent.studentReading.toFixed(0)} mA`,
+
+        `R determinat = ${c.resistor.measuredResistanceDC_Ohm.toFixed(3)} ohm`,
+
+        `Rezistenta conductorului bobinei = ${c.inductor.windingResistance_Ohm.toFixed(3)} ohm`,
+
+        "",
+
+        "CURENT ALTERNATIV",
+
+        `Uef = ${r.acVoltage.studentReading.toFixed(1)} V`,
+
+        `f = ${r.frequency.studentReading.toFixed(0)} Hz`,
+
+        `I rezistor = ${r.acRCurrent.studentReading.toFixed(0)} mA`,
+
+        `I bobina = ${r.acLCurrent.studentReading.toFixed(0)} mA`,
+
+        `I condensator = ${r.acCCurrent.studentReading.toFixed(0)} mA`,
+
+        "",
+
+        `ZR = ${c.resistor.impedanceAC_Ohm.toFixed(3)} ohm`,
+
+        `ZL = ${c.inductor.impedanceAC_Ohm.toFixed(3)} ohm`,
+
+        `XL = ${c.inductor.inductiveReactance_Ohm.toFixed(3)} ohm`,
+
+        `L experimental = ${c.inductor.experimentalInductance_H.toFixed(4)} H`,
+
+        `Abatere L = ${c.inductor.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        `XC = ${c.capacitor.capacitiveReactance_Ohm.toFixed(3)} ohm`,
+
+        `C experimental = ${c.capacitor.experimentalCapacitance_uF.toFixed(3)} microF`,
+
+        `Abatere C = ${c.capacitor.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETARI",
+
+        state.notebook
+            .comparison
+            .capacitorInterpretation,
+
+        state.notebook
+            .comparison
+            .inductorInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(lines);
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session.studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP06-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(anchor);
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(0);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
