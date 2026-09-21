@@ -1,66 +1,308 @@
 /* ======================================================================
    FIZICA-LICEU
-   AFISAREA SI RETRIMITEREA RAPOARTELOR NETRIMISE
+   rapoarte-netrimise.js
 
-   Folosit in:
-   laborator-fizica/index.html
+   Modul pentru afișarea și retransmiterea rapoartelor salvate local.
 
-   Citeste coada comuna utilizata de google-sheets.js:
-   fizica-laborator-rezultate-netrimise
-====================================================================== */
+   DESTINAȚIE:
+   laborator-fizica/assets/js/rapoarte-netrimise.js
+
+   FOLOSIRE:
+   în pagina principală laborator-fizica/index.html
+
+   NECESITĂ:
+   assets/js/google-sheets.js
+
+   FUNCȚIONALITĂȚI:
+
+   1. Citește rapoartele păstrate de LaboratorGoogleSheets.
+   2. Afișează secțiunea:
+      "Rapoarte netrimise de pe acest dispozitiv".
+   3. Ascunde automat secțiunea dacă nu există rapoarte.
+   4. Distinge:
+        - pending
+        - unconfirmed
+   5. Permite retransmiterea individuală.
+   6. Permite retransmiterea tuturor rapoartelor.
+   7. Actualizează interfața după:
+        - trimitere reușită;
+        - duplicat;
+        - eroare;
+        - modificarea localStorage;
+        - revenirea conexiunii.
+   8. Nu permite elevului să șteargă manual raportul.
+   9. Nu reconstruiește raportul.
+      Retrimite EXACT payload-ul salvat inițial.
+
+   MARCAJE HTML AȘTEPTATE:
+
+   [data-pending-reports]
+   [data-pending-reports-count]
+   [data-pending-reports-list]
+   [data-retry-all-reports]
+   [data-pending-global-status]
+
+   ====================================================================== */
 
 (() => {
 
     "use strict";
 
-    const STORAGE_KEY =
+
+    /* ==================================================================
+       CONSTANTE
+    ================================================================== */
+
+    const MODULE_VERSION =
+        "1.0.0";
+
+
+    const FALLBACK_STORAGE_KEY =
         "fizica-laborator-rezultate-netrimise";
 
 
-    const qs = selector =>
-        document.querySelector(selector);
+    /* ==================================================================
+       STARE
+    ================================================================== */
+
+    const state = {
+
+        initialized:false,
+
+        renderTimer:null,
+
+        retryingReportIds:
+            new Set(),
+
+        retryingAll:false
+
+    };
 
 
-    function clone(value) {
+    /* ==================================================================
+       SELECTORI
+    ================================================================== */
 
-        if (typeof structuredClone === "function") {
-            return structuredClone(value);
-        }
+    const SELECTORS = {
 
-        return JSON.parse(
-            JSON.stringify(value)
+        section:
+            "[data-pending-reports]",
+
+        list:
+            "[data-pending-reports-list]",
+
+        count:
+            "[data-pending-reports-count]",
+
+        retryAll:
+            "[data-retry-all-reports]",
+
+        globalStatus:
+            "[data-pending-global-status]"
+
+    };
+
+
+    /* ==================================================================
+       UTILITARE DOM
+    ================================================================== */
+
+    function qs(
+        selector,
+        scope=document
+    ){
+
+        return scope.querySelector(
+            selector
         );
 
     }
 
 
-    function readQueue() {
+    function createElement(
+        tag,
+        options={}
+    ){
 
-        try {
+        const element =
+            document.createElement(
+                tag
+            );
 
-            const raw =
-                localStorage.getItem(
-                    STORAGE_KEY
+
+        if(options.className){
+
+            element.className =
+                options.className;
+
+        }
+
+
+        if(
+            options.text !==
+            undefined
+        ){
+
+            element.textContent =
+                options.text;
+
+        }
+
+
+        if(options.attributes){
+
+            for(
+                const [name,value]
+                of Object.entries(
+                    options.attributes
+                )
+            ){
+
+                if(
+                    value === null ||
+                    value === undefined
+                ){
+
+                    continue;
+
+                }
+
+
+                element.setAttribute(
+                    name,
+                    String(value)
                 );
 
-            if (!raw) {
-                return [];
             }
 
-            const data =
+        }
+
+
+        return element;
+
+    }
+
+
+    /* ==================================================================
+       API GOOGLE SHEETS
+    ================================================================== */
+
+    function sheetsApi(){
+
+        return (
+            globalThis
+                .LaboratorGoogleSheets ||
+            null
+        );
+
+    }
+
+
+    /* ==================================================================
+       CHEIA localStorage
+    ================================================================== */
+
+    function getStorageKey(){
+
+        try{
+
+            return (
+                sheetsApi()
+                    ?.getQueueKey?.() ||
+                FALLBACK_STORAGE_KEY
+            );
+
+        }
+        catch(error){
+
+            return FALLBACK_STORAGE_KEY;
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       CITIRE RAPOARTE
+    ================================================================== */
+
+    function getReports(){
+
+        try{
+
+            const api =
+                sheetsApi();
+
+
+            if(
+                api &&
+                typeof api
+                    .getPendingReports ===
+                    "function"
+            ){
+
+                const reports =
+                    api.getPendingReports();
+
+
+                return Array.isArray(
+                    reports
+                )
+                    ? reports
+                    : [];
+
+            }
+
+        }
+        catch(error){
+
+            console.warn(
+                "[RapoarteNetrimise] API-ul Google Sheets nu a putut fi citit.",
+                error
+            );
+
+        }
+
+
+        /*
+           Fallback direct la localStorage.
+        */
+
+        try{
+
+            const raw =
+                globalThis
+                    .localStorage
+                    ?.getItem(
+                        getStorageKey()
+                    );
+
+
+            if(!raw){
+
+                return [];
+
+            }
+
+
+            const parsed =
                 JSON.parse(raw);
 
-            return Array.isArray(data)
-                ? data
+
+            return Array.isArray(
+                parsed
+            )
+                ? parsed
                 : [];
 
         }
-        catch (error) {
+        catch(error){
 
             console.warn(
-                "[RapoarteNetrimise] Coada nu a putut fi citita.",
+                "[RapoarteNetrimise] Coada locală nu a putut fi citită.",
                 error
             );
+
 
             return [];
 
@@ -69,90 +311,228 @@
     }
 
 
-    function formatDate(value) {
+    /* ==================================================================
+       DATA RAPORTULUI
+    ================================================================== */
 
-        if (!value) {
+    function reportDate(
+        item
+    ){
+
+        const payload =
+            item?.payload ||
+            {};
+
+
+        return (
+
+            payload
+                ?.session
+                ?.finishedAt ||
+
+            payload
+                ?.evaluation
+                ?.finishedAt ||
+
+            payload
+                ?.report
+                ?.finishedAt ||
+
+            payload
+                ?.session
+                ?.startedAt ||
+
+            item?.queuedAt ||
+
+            item?.updatedAt ||
+
+            null
+
+        );
+
+    }
+
+
+    /* ==================================================================
+       FORMATAREA DATEI
+    ================================================================== */
+
+    function formatDate(
+        value
+    ){
+
+        if(!value){
+
             return "dată necunoscută";
+
         }
 
+
         const date =
-            new Date(value);
+            new Date(
+                value
+            );
 
 
-        if (
+        if(
             Number.isNaN(
                 date.getTime()
             )
-        ) {
+        ){
+
             return "dată necunoscută";
+
         }
 
 
         return new Intl.DateTimeFormat(
             "ro-RO",
             {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric"
             }
         ).format(date);
 
     }
 
 
-    function getExperimentCode(payload) {
+    /* ==================================================================
+       FORMATAREA DATEI ȘI OREI
+    ================================================================== */
 
-        const experiment =
-            payload?.experiment || {};
+    function formatDateTime(
+        value
+    ){
 
+        if(!value){
 
-        /*
-           În noile experimente recomand:
-
-           code: "EXP01"
-
-           Dacă acest câmp nu există,
-           încercăm să-l deducem din id.
-        */
-
-        if (experiment.code) {
-
-            return String(
-                experiment.code
-            ).toUpperCase();
+            return "";
 
         }
 
 
-        const source =
-            String(
-                experiment.id ||
-                experiment.title ||
-                ""
+        const date =
+            new Date(
+                value
             );
+
+
+        if(
+            Number.isNaN(
+                date.getTime()
+            )
+        ){
+
+            return "";
+
+        }
+
+
+        return new Intl.DateTimeFormat(
+            "ro-RO",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        ).format(date);
+
+    }
+
+
+    /* ==================================================================
+       CODUL EXPERIMENTULUI
+    ================================================================== */
+
+    function experimentCode(
+        item
+    ){
+
+        const experiment =
+            item
+                ?.payload
+                ?.experiment ||
+            {};
 
 
         /*
-           Recunoaște:
-           exp-01
-           exp01
-           experimentul-1
-           experiment-02
+           Varianta recomandată:
+           experiment.code = "EXP01"
         */
 
-        const match =
-            source.match(
-                /(?:exp(?:erimentul|eriment)?)[\s_-]*0*(\d{1,2})/i
+        const directCode =
+            String(
+                experiment.code ||
+                ""
+            )
+                .trim()
+                .toUpperCase();
+
+
+        if(directCode){
+
+            return directCode;
+
+        }
+
+
+        /*
+           Pentru experimente mai vechi încercăm să deducem
+           numărul din experiment.id.
+        */
+
+        const source =
+            String(
+
+                experiment.id ||
+
+                experiment.title ||
+
+                ""
+
             );
 
 
-        if (match) {
+        const patterns = [
 
-            return (
-                "EXP" +
-                String(match[1])
-                    .padStart(2, "0")
-            );
+            /(?:^|[-_\s])exp[-_\s]*0*(\d{1,2})(?:$|[-_\s])/i,
+
+            /experiment(?:ul)?[-_\s]*0*(\d{1,2})/i,
+
+            /exp(?:eriment)?[-_\s]*0*(\d{1,2})/i
+
+        ];
+
+
+        for(
+            const pattern
+            of patterns
+        ){
+
+            const match =
+                source.match(
+                    pattern
+                );
+
+
+            if(match){
+
+                return (
+                    "EXP" +
+                    String(
+                        Number(
+                            match[1]
+                        )
+                    ).padStart(
+                        2,
+                        "0"
+                    )
+                );
+
+            }
 
         }
 
@@ -162,190 +542,747 @@
     }
 
 
-    function getReportDate(item) {
+    /* ==================================================================
+       TITLUL EXPERIMENTULUI
+    ================================================================== */
+
+    function experimentTitle(
+        item
+    ){
 
         return (
-            item?.payload?.session?.finishedAt ||
-            item?.payload?.report?.finishedAt ||
-            item?.queuedAt ||
-            null
+            String(
+                item
+                    ?.payload
+                    ?.experiment
+                    ?.title ||
+                "Experiment de fizică"
+            ).trim() ||
+            "Experiment de fizică"
         );
 
     }
 
 
-    function getStudentDescription(payload) {
+    /* ==================================================================
+       DATE ELEV
+    ================================================================== */
+
+    function studentInformation(
+        item
+    ){
 
         const student =
-            payload?.student || {};
+            item
+                ?.payload
+                ?.student ||
+            {};
 
 
-        const parts = [];
+        const information =
+            [];
 
 
-        if (student.className) {
+        if(student.className){
 
-            parts.push(
+            information.push(
                 `Clasa ${student.className}`
             );
 
         }
 
 
-        if (
-            student.catalogNumber !== undefined &&
-            student.catalogNumber !== null &&
-            student.catalogNumber !== ""
-        ) {
+        if(
+            student.catalogNumber !==
+                null &&
+            student.catalogNumber !==
+                undefined &&
+            student.catalogNumber !==
+                ""
+        ){
 
-            parts.push(
+            information.push(
                 `nr. ${student.catalogNumber}`
             );
 
         }
 
 
-        return (
-            parts.join(" • ") ||
-            "Date elev disponibile în raport"
+        return information.join(
+            " • "
         );
 
     }
 
 
-    function escapeHtml(value) {
+    /* ==================================================================
+       REPORT ID
+    ================================================================== */
 
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+    function reportId(
+        item
+    ){
+
+        return String(
+
+            item?.reportId ||
+
+            item
+                ?.payload
+                ?.reportId ||
+
+            item
+                ?.payload
+                ?.report
+                ?.reportId ||
+
+            ""
+
+        ).trim();
 
     }
 
 
-    function createReportCard(item) {
+    /* ==================================================================
+       STATUSUL RAPORTULUI
+    ================================================================== */
 
-        const payload =
-            item.payload || {};
+    function normalizeStatus(
+        item
+    ){
+
+        const status =
+            String(
+                item?.status ||
+                "pending"
+            )
+                .trim()
+                .toLowerCase();
+
+
+        if(
+            status ===
+            "unconfirmed"
+        ){
+
+            return "unconfirmed";
+
+        }
+
+
+        return "pending";
+
+    }
+
+
+    /* ==================================================================
+       TEXT STATUS
+    ================================================================== */
+
+    function statusInformation(
+        item
+    ){
+
+        const status =
+            normalizeStatus(
+                item
+            );
+
+
+        if(
+            status ===
+            "unconfirmed"
+        ){
+
+            return {
+
+                className:
+                    "is-unconfirmed",
+
+                title:
+                    "Trimitere neconfirmată",
+
+                text:
+                    "Datele au fost trimise, dar browserul nu a primit confirmarea salvării. Raportul poate fi retransmis în siguranță."
+
+            };
+
+        }
+
+
+        return {
+
+            className:
+                "is-pending",
+
+            title:
+                "În așteptarea trimiterii",
+
+            text:
+                "Raportul este salvat pe acest dispozitiv și nu a fost încă confirmat în registru."
+
+        };
+
+    }
+
+
+    /* ==================================================================
+       SORTAREA RAPOARTELOR
+
+       Cele mai recente apar primele.
+    ================================================================== */
+
+    function sortReports(
+        reports
+    ){
+
+        return [
+            ...reports
+        ].sort(
+            (
+                first,
+                second
+            ) => {
+
+                const firstDate =
+                    Date.parse(
+                        reportDate(first) ||
+                        ""
+                    ) ||
+                    0;
+
+
+                const secondDate =
+                    Date.parse(
+                        reportDate(second) ||
+                        ""
+                    ) ||
+                    0;
+
+
+                return (
+                    secondDate -
+                    firstDate
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ==================================================================
+       STARE GLOBALĂ ÎN INTERFAȚĂ
+    ================================================================== */
+
+    function setGlobalStatus(
+        message,
+        type=""
+    ){
+
+        const element =
+            qs(
+                SELECTORS.globalStatus
+            );
+
+
+        if(!element){
+            return;
+        }
+
+
+        element.textContent =
+            message;
+
+
+        element.classList.remove(
+
+            "is-info",
+
+            "is-success",
+
+            "is-error",
+
+            "is-warning"
+
+        );
+
+
+        if(type){
+
+            element.classList.add(
+                `is-${type}`
+            );
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       BUTON RETRIMITERE
+    ================================================================== */
+
+    function createRetryButton(
+        item
+    ){
+
+        const id =
+            reportId(
+                item
+            );
 
 
         const code =
-            getExperimentCode(
-                payload
+            experimentCode(
+                item
             );
 
 
         const date =
             formatDate(
-                getReportDate(item)
+                reportDate(
+                    item
+                )
             );
 
 
-        const title =
-            payload?.experiment?.title ||
-            "Experiment de fizică";
+        const button =
+            createElement(
+                "button",
+                {
+                    className:
+                        "pending-report-retry",
+
+                    text:
+                        `Retrimite raportul ${code} – ${date}`,
+
+                    attributes:{
+                        type:"button",
+                        "data-retry-report":id
+                    }
+                }
+            );
 
 
-        const reportId =
-            item.reportId ||
-            payload.reportId ||
-            "—";
+        if(
+            !id ||
+            state.retryingReportIds
+                .has(id)
+        ){
+
+            button.disabled =
+                true;
+
+        }
 
 
-        const student =
-            getStudentDescription(
-                payload
+        return button;
+
+    }
+
+
+    /* ==================================================================
+       CARD RAPORT
+    ================================================================== */
+
+    function createReportCard(
+        item
+    ){
+
+        const id =
+            reportId(
+                item
+            );
+
+
+        const code =
+            experimentCode(
+                item
+            );
+
+
+        const status =
+            statusInformation(
+                item
             );
 
 
         const article =
-            document.createElement(
-                "article"
+            createElement(
+                "article",
+                {
+                    className:
+                        "pending-report-card",
+
+                    attributes:{
+                        "data-report-id":id
+                    }
+                }
             );
 
 
-        article.className =
-            "pending-report-card";
+        /* --------------------------------------------------------------
+           INFORMAȚII
+        -------------------------------------------------------------- */
 
-
-        article.dataset.reportId =
-            reportId;
-
-
-        article.innerHTML = `
-
-            <div class="pending-report-info">
-
-                <div class="pending-report-heading">
-
-                    <span class="pending-report-code">
-                        ${escapeHtml(code)}
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(title)}
-                    </strong>
-
-                </div>
-
-
-                <div class="pending-report-meta">
-
-                    <span>
-                        ${escapeHtml(student)}
-                    </span>
-
-                    <span>
-                        ${escapeHtml(date)}
-                    </span>
-
-                </div>
-
-
-                <div class="pending-report-id">
-                    ID raport:
-                    <code>${escapeHtml(reportId)}</code>
-                </div>
-
-
-                ${
-                    item.lastError
-                        ? `
-                        <div class="pending-report-error">
-                            Ultima problemă:
-                            ${escapeHtml(item.lastError)}
-                        </div>
-                        `
-                        : ""
+        const information =
+            createElement(
+                "div",
+                {
+                    className:
+                        "pending-report-info"
                 }
+            );
 
-            </div>
+
+        const heading =
+            createElement(
+                "div",
+                {
+                    className:
+                        "pending-report-heading"
+                }
+            );
 
 
-            <div class="pending-report-actions">
+        const codeElement =
+            createElement(
+                "span",
+                {
+                    className:
+                        "pending-report-code",
 
-                <button
-                    type="button"
-                    class="pending-report-retry"
-                    data-retry-report="${escapeHtml(reportId)}">
+                    text:
+                        code
+                }
+            );
 
-                    Retrimite raportul
-                    ${escapeHtml(code)}
-                    – ${escapeHtml(date)}
 
-                </button>
+        const title =
+            createElement(
+                "strong",
+                {
+                    text:
+                        experimentTitle(
+                            item
+                        )
+                }
+            );
 
-                <span
-                    class="pending-report-status"
-                    data-retry-status
-                    aria-live="polite">
-                </span>
 
-            </div>
+        heading.append(
+            codeElement,
+            title
+        );
 
-        `;
+
+        information.append(
+            heading
+        );
+
+
+        /* --------------------------------------------------------------
+           META
+        -------------------------------------------------------------- */
+
+        const meta =
+            createElement(
+                "div",
+                {
+                    className:
+                        "pending-report-meta"
+                }
+            );
+
+
+        const student =
+            studentInformation(
+                item
+            );
+
+
+        if(student){
+
+            meta.append(
+                createElement(
+                    "span",
+                    {
+                        text:
+                            student
+                    }
+                )
+            );
+
+        }
+
+
+        const date =
+            formatDate(
+                reportDate(
+                    item
+                )
+            );
+
+
+        meta.append(
+            createElement(
+                "span",
+                {
+                    text:
+                        date
+                }
+            )
+        );
+
+
+        const attempts =
+            Number(
+                item?.attempts ||
+                0
+            );
+
+
+        if(attempts > 0){
+
+            meta.append(
+                createElement(
+                    "span",
+                    {
+                        text:
+                            attempts === 1
+                                ? "1 tentativă"
+                                : `${attempts} tentative`
+                    }
+                )
+            );
+
+        }
+
+
+        information.append(
+            meta
+        );
+
+
+        /* --------------------------------------------------------------
+           STATUS
+        -------------------------------------------------------------- */
+
+        const statusBox =
+            createElement(
+                "div",
+                {
+                    className:
+                        `pending-report-state ${status.className}`
+                }
+            );
+
+
+        const statusTitle =
+            createElement(
+                "strong",
+                {
+                    text:
+                        status.title
+                }
+            );
+
+
+        const statusText =
+            createElement(
+                "span",
+                {
+                    text:
+                        status.text
+                }
+            );
+
+
+        statusBox.append(
+            statusTitle,
+            statusText
+        );
+
+
+        information.append(
+            statusBox
+        );
+
+
+        /* --------------------------------------------------------------
+           ULTIMA EROARE
+        -------------------------------------------------------------- */
+
+        if(
+            item.lastError
+        ){
+
+            const errorBox =
+                createElement(
+                    "div",
+                    {
+                        className:
+                            "pending-report-error"
+                    }
+                );
+
+
+            errorBox.append(
+                createElement(
+                    "strong",
+                    {
+                        text:
+                            "Ultima problemă: "
+                    }
+                ),
+                document.createTextNode(
+                    String(
+                        item.lastError
+                    )
+                )
+            );
+
+
+            information.append(
+                errorBox
+            );
+
+        }
+
+
+        /* --------------------------------------------------------------
+           ID RAPORT
+        -------------------------------------------------------------- */
+
+        const idBox =
+            createElement(
+                "div",
+                {
+                    className:
+                        "pending-report-id"
+                }
+            );
+
+
+        idBox.append(
+            document.createTextNode(
+                "ID raport: "
+            )
+        );
+
+
+        idBox.append(
+            createElement(
+                "code",
+                {
+                    text:
+                        id || "—"
+                }
+            )
+        );
+
+
+        information.append(
+            idBox
+        );
+
+
+        /* --------------------------------------------------------------
+           ULTIMA ÎNCERCARE
+        -------------------------------------------------------------- */
+
+        if(
+            item.lastAttemptAt
+        ){
+
+            const lastAttempt =
+                formatDateTime(
+                    item.lastAttemptAt
+                );
+
+
+            if(lastAttempt){
+
+                information.append(
+                    createElement(
+                        "div",
+                        {
+                            className:
+                                "pending-report-last-attempt",
+
+                            text:
+                                `Ultima încercare: ${lastAttempt}`
+                        }
+                    )
+                );
+
+            }
+
+        }
+
+
+        /* --------------------------------------------------------------
+           ACȚIUNI
+        -------------------------------------------------------------- */
+
+        const actions =
+            createElement(
+                "div",
+                {
+                    className:
+                        "pending-report-actions"
+                }
+            );
+
+
+        const retryButton =
+            createRetryButton(
+                item
+            );
+
+
+        const retryStatus =
+            createElement(
+                "span",
+                {
+                    className:
+                        "pending-report-action-status",
+
+                    attributes:{
+                        "data-retry-status":"",
+                        "aria-live":"polite"
+                    }
+                }
+            );
+
+
+        if(
+            state.retryingReportIds
+                .has(id)
+        ){
+
+            retryStatus.textContent =
+                "Se retransmite…";
+
+
+            retryStatus.classList.add(
+                "is-sending"
+            );
+
+        }
+
+
+        actions.append(
+            retryButton,
+            retryStatus
+        );
+
+
+        article.append(
+            information,
+            actions
+        );
 
 
         return article;
@@ -353,85 +1290,101 @@
     }
 
 
-    function render() {
+    /* ==================================================================
+       RENDER
+    ================================================================== */
+
+    function render(){
 
         const section =
             qs(
-                "[data-pending-reports]"
+                SELECTORS.section
             );
 
 
         const list =
             qs(
-                "[data-pending-reports-list]"
+                SELECTORS.list
             );
 
 
-        const counter =
-            qs(
-                "[data-pending-reports-count]"
-            );
+        /*
+           Modulul poate fi încărcat și pe pagini
+           unde această secțiune nu există.
+        */
 
-
-        if (
+        if(
             !section ||
             !list
-        ) {
-            return;
-        }
-
-
-        const queue =
-            readQueue();
-
-
-        list.innerHTML = "";
-
-
-        if (counter) {
-
-            counter.textContent =
-                String(queue.length);
-
-        }
-
-
-        /*
-           Dacă nu există rapoarte netrimise,
-           secțiunea dispare complet.
-        */
-
-        if (!queue.length) {
-
-            section.hidden = true;
+        ){
 
             return;
 
         }
 
 
-        section.hidden = false;
-
-
-        /*
-           Cele mai recente apar primele.
-        */
-
-        const sorted =
-            [...queue].sort(
-                (a, b) =>
-                    Date.parse(
-                        b.queuedAt || 0
-                    ) -
-                    Date.parse(
-                        a.queuedAt || 0
-                    )
+        const reports =
+            sortReports(
+                getReports()
             );
 
 
-        for (const item of sorted) {
+        const count =
+            qs(
+                SELECTORS.count
+            );
 
-            list.append(
+
+        if(count){
+
+            count.textContent =
+                String(
+                    reports.length
+                );
+
+        }
+
+
+        /*
+           Fără rapoarte -> secțiunea dispare.
+        */
+
+        if(
+            reports.length ===
+            0
+        ){
+
+            list.replaceChildren();
+
+
+            section.hidden =
+                true;
+
+
+            setGlobalStatus(
+                ""
+            );
+
+
+            return;
+
+        }
+
+
+        section.hidden =
+            false;
+
+
+        const fragment =
+            document.createDocumentFragment();
+
+
+        for(
+            const item
+            of reports
+        ){
+
+            fragment.append(
                 createReportCard(
                     item
                 )
@@ -439,112 +1392,348 @@
 
         }
 
-    }
+
+        list.replaceChildren(
+            fragment
+        );
 
 
-    async function retryReport(
-        reportId,
-        button
-    ) {
+        /* --------------------------------------------------------------
+           BUTON RETRIMITE TOATE
+        -------------------------------------------------------------- */
 
-        const queue =
-            readQueue();
-
-
-        const item =
-            queue.find(
-                report =>
-                    report.reportId ===
-                    reportId
+        const retryAllButton =
+            qs(
+                SELECTORS.retryAll
             );
 
 
-        if (!item) {
+        if(retryAllButton){
 
-            render();
+            retryAllButton.disabled =
+                state.retryingAll ||
+                reports.length === 0;
+
+        }
+
+
+        /* --------------------------------------------------------------
+           STATUS CONEXIUNE
+        -------------------------------------------------------------- */
+
+        if(
+            globalThis.navigator &&
+            globalThis.navigator
+                .onLine ===
+            false
+        ){
+
+            setGlobalStatus(
+                "Dispozitivul este offline. Rapoartele sunt păstrate local și pot fi retransmise când conexiunea revine.",
+                "warning"
+            );
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       RENDER PROGRAMAT
+
+       Evită mai multe redesenări simultane dacă sosesc
+       mai multe evenimente apropiate.
+    ================================================================== */
+
+    function scheduleRender(
+        delay=50
+    ){
+
+        if(
+            state.renderTimer
+        ){
+
+            globalThis.clearTimeout(
+                state.renderTimer
+            );
+
+        }
+
+
+        state.renderTimer =
+            globalThis.setTimeout(
+                () => {
+
+                    state.renderTimer =
+                        null;
+
+
+                    render();
+
+                },
+                delay
+            );
+
+    }
+
+
+    /* ==================================================================
+       STATUSUL CARDULUI
+    ================================================================== */
+
+    function setCardStatus(
+        reportIdValue,
+        message,
+        type=""
+    ){
+
+        const cards =
+            document.querySelectorAll(
+                "[data-report-id]"
+            );
+
+
+        let card =
+            null;
+
+
+        for(
+            const candidate
+            of cards
+        ){
+
+            if(
+                candidate.dataset
+                    .reportId ===
+                reportIdValue
+            ){
+
+                card =
+                    candidate;
+
+
+                break;
+
+            }
+
+        }
+
+
+        if(!card){
+            return;
+        }
+
+
+        const statusElement =
+            card.querySelector(
+                "[data-retry-status]"
+            );
+
+
+        if(!statusElement){
+            return;
+        }
+
+
+        statusElement.textContent =
+            message;
+
+
+        statusElement.classList.remove(
+
+            "is-sending",
+
+            "is-success",
+
+            "is-error",
+
+            "is-warning"
+
+        );
+
+
+        if(type){
+
+            statusElement.classList.add(
+                `is-${type}`
+            );
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       RETRIMITERE RAPORT
+    ================================================================== */
+
+    async function retryReport(
+        reportIdValue
+    ){
+
+        const api =
+            sheetsApi();
+
+
+        if(
+            !api ||
+            typeof api.retryReport !==
+                "function"
+        ){
+
+            throw new Error(
+                "Modulul pentru transmiterea către Google Sheets nu este disponibil."
+            );
+
+        }
+
+
+        if(
+            globalThis.navigator &&
+            globalThis.navigator
+                .onLine ===
+            false
+        ){
+
+            throw new Error(
+                "Nu există conexiune la internet."
+            );
+
+        }
+
+
+        if(
+            state.retryingReportIds
+                .has(
+                    reportIdValue
+                )
+        ){
 
             return;
 
         }
 
 
-        const card =
-            button.closest(
-                ".pending-report-card"
+        state.retryingReportIds
+            .add(
+                reportIdValue
             );
 
 
-        const status =
-            card?.querySelector(
-                "[data-retry-status]"
-            );
+        setCardStatus(
+            reportIdValue,
+            "Se retransmite…",
+            "sending"
+        );
 
 
-        button.disabled = true;
+        scheduleRender();
 
 
-        if (status) {
+        try{
 
-            status.textContent =
-                "Se retransmite…";
-
-            status.className =
-                "pending-report-status is-sending";
-
-        }
-
-
-        try {
-
-            if (
-                !globalThis
-                    .LaboratorGoogleSheets
-                    ?.submit
-            ) {
-
-                throw new Error(
-                    "Modulul Google Sheets nu este disponibil."
+            const result =
+                await api.retryReport(
+                    reportIdValue
                 );
+
+
+            /* ----------------------------------------------------------
+               STORED
+            ---------------------------------------------------------- */
+
+            if(
+                result?.status ===
+                "stored"
+            ){
+
+                setCardStatus(
+                    reportIdValue,
+                    "Raport transmis și confirmat.",
+                    "success"
+                );
+
+
+                setGlobalStatus(
+                    "Raportul a fost transmis cu succes.",
+                    "success"
+                );
+
+
+                return result;
 
             }
 
 
-            const result =
-                await globalThis
-                    .LaboratorGoogleSheets
-                    .submit(
-                        clone(item.payload),
-                        {
-                            force: true
-                        }
-                    );
+            /* ----------------------------------------------------------
+               DUPLICATE
+            ---------------------------------------------------------- */
+
+            if(
+                result?.status ===
+                "duplicate"
+            ){
+
+                setCardStatus(
+                    reportIdValue,
+                    "Raportul exista deja în registru.",
+                    "success"
+                );
 
 
-            if (status) {
+                setGlobalStatus(
+                    "Raportul exista deja în registru; nu a fost creat un rând duplicat.",
+                    "success"
+                );
 
-                status.textContent =
-                    result?.status === "duplicate"
-                        ? "Raportul există deja."
-                        : "Retrimitere efectuată.";
 
-                status.className =
-                    "pending-report-status is-success";
+                return result;
+
+            }
+
+
+            /* ----------------------------------------------------------
+               UNCONFIRMED
+            ---------------------------------------------------------- */
+
+            if(
+                result?.status ===
+                "unconfirmed"
+            ){
+
+                setCardStatus(
+                    reportIdValue,
+                    "Retrimiterea nu a fost confirmată. Raportul rămâne salvat.",
+                    "warning"
+                );
+
+
+                setGlobalStatus(
+                    "Serverul nu a confirmat încă salvarea. Raportul a rămas pe dispozitiv.",
+                    "warning"
+                );
+
+
+                return result;
 
             }
 
 
             /*
-               google-sheets.js elimină automat
-               raportul din coadă la succes.
+               Răspuns necunoscut.
             */
 
-            window.setTimeout(
-                render,
-                700
+            setCardStatus(
+                reportIdValue,
+                "Raportul rămâne salvat local.",
+                "warning"
             );
 
+
+            return result;
+
         }
-        catch (error) {
+        catch(error){
 
             console.error(
                 "[RapoarteNetrimise]",
@@ -552,128 +1741,645 @@
             );
 
 
-            button.disabled = false;
+            setCardStatus(
+
+                reportIdValue,
+
+                error.message ||
+                "Raportul nu a putut fi retransmis.",
+
+                "error"
+
+            );
 
 
-            if (status) {
+            setGlobalStatus(
+                "Retrimiterea nu a reușit. Datele au rămas salvate pe acest dispozitiv.",
+                "error"
+            );
 
-                status.textContent =
-                    "Nu s-a putut retransmite. Raportul rămâne salvat.";
 
-                status.className =
-                    "pending-report-status is-error";
+            throw error;
 
-            }
+        }
+        finally{
+
+            state.retryingReportIds
+                .delete(
+                    reportIdValue
+                );
+
+
+            /*
+               Dacă stored/duplicate a eliminat raportul
+               din coadă, cardul va dispărea.
+            */
+
+            scheduleRender(
+                500
+            );
 
         }
 
     }
 
 
-    document.addEventListener(
-        "click",
-        event => {
+    /* ==================================================================
+       RETRIMITERE TOATE
+    ================================================================== */
 
-            const button =
-                event.target.closest(
-                    "[data-retry-report]"
+    async function retryAll(){
+
+        if(
+            state.retryingAll
+        ){
+
+            return;
+
+        }
+
+
+        if(
+            globalThis.navigator &&
+            globalThis.navigator
+                .onLine ===
+            false
+        ){
+
+            setGlobalStatus(
+                "Nu există conexiune la internet.",
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+        const api =
+            sheetsApi();
+
+
+        if(
+            !api ||
+            typeof api.retryPending !==
+                "function"
+        ){
+
+            setGlobalStatus(
+                "Modulul Google Sheets nu este disponibil.",
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+        const reports =
+            getReports();
+
+
+        if(
+            reports.length ===
+            0
+        ){
+
+            render();
+
+
+            return;
+
+        }
+
+
+        state.retryingAll =
+            true;
+
+
+        render();
+
+
+        setGlobalStatus(
+            "Se încearcă retransmiterea rapoartelor…",
+            "info"
+        );
+
+
+        try{
+
+            /*
+               La acțiunea MANUALĂ retransmitem și
+               rapoartele unconfirmed.
+
+               Backend-ul deduplică după reportId.
+            */
+
+            const results =
+                await api.retryPending({
+
+                    includeUnconfirmed:
+                        true,
+
+                    stopOnError:
+                        false
+
+                });
+
+
+            const stored =
+                results.filter(
+                    result =>
+                        result.status ===
+                        "stored"
+                ).length;
+
+
+            const duplicates =
+                results.filter(
+                    result =>
+                        result.status ===
+                        "duplicate"
+                ).length;
+
+
+            const failed =
+                results.filter(
+                    result =>
+                        result.status ===
+                        "failed"
+                ).length;
+
+
+            const unconfirmed =
+                results.filter(
+                    result =>
+                        result.status ===
+                        "unconfirmed"
+                ).length;
+
+
+            const confirmed =
+                stored +
+                duplicates;
+
+
+            if(
+                failed === 0 &&
+                unconfirmed === 0
+            ){
+
+                setGlobalStatus(
+                    confirmed === 1
+                        ? "1 raport a fost confirmat."
+                        : `${confirmed} rapoarte au fost confirmate.`,
+                    "success"
                 );
 
+            }
+            else{
 
-            if (!button) {
+                const parts =
+                    [];
+
+
+                if(confirmed){
+
+                    parts.push(
+                        `${confirmed} confirmate`
+                    );
+
+                }
+
+
+                if(unconfirmed){
+
+                    parts.push(
+                        `${unconfirmed} neconfirmate`
+                    );
+
+                }
+
+
+                if(failed){
+
+                    parts.push(
+                        `${failed} cu eroare`
+                    );
+
+                }
+
+
+                setGlobalStatus(
+                    `Retrimitere terminată: ${parts.join(", ")}.`,
+                    (
+                        failed
+                            ? "error"
+                            : "warning"
+                    )
+                );
+
+            }
+
+        }
+        catch(error){
+
+            console.error(
+                "[RapoarteNetrimise]",
+                error
+            );
+
+
+            setGlobalStatus(
+                error.message ||
+                "Rapoartele nu au putut fi retransmise.",
+                "error"
+            );
+
+        }
+        finally{
+
+            state.retryingAll =
+                false;
+
+
+            scheduleRender(
+                500
+            );
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       CLICK HANDLER
+    ================================================================== */
+
+    function handleClick(
+        event
+    ){
+
+        /* --------------------------------------------------------------
+           UN SINGUR RAPORT
+        -------------------------------------------------------------- */
+
+        const retryButton =
+            event.target.closest(
+                "[data-retry-report]"
+            );
+
+
+        if(retryButton){
+
+            event.preventDefault();
+
+
+            const id =
+                retryButton.dataset
+                    .retryReport;
+
+
+            if(!id){
                 return;
             }
 
 
-            const reportId =
-                button.dataset
-                    .retryReport;
+            retryButton.disabled =
+                true;
 
 
             retryReport(
-                reportId,
-                button
+                id
+            ).catch(
+                () => {
+
+                    /*
+                       Mesajul a fost deja afișat
+                       de retryReport().
+                    */
+
+                }
             );
 
+
+            return;
+
         }
-    );
 
 
-    /*
-       Actualizare după trimitere/retrimitere.
-    */
+        /* --------------------------------------------------------------
+           TOATE RAPOARTELE
+        -------------------------------------------------------------- */
 
-    document.addEventListener(
-        "laborator:submission-sent",
-        render
-    );
-
-
-    document.addEventListener(
-        "laborator:submission-failed",
-        render
-    );
+        const retryAllButton =
+            event.target.closest(
+                SELECTORS.retryAll
+            );
 
 
-    /*
-       Dacă altă filă modifică localStorage.
-    */
+        if(retryAllButton){
 
-    window.addEventListener(
-        "storage",
-        event => {
+            event.preventDefault();
 
-            if (
-                event.key ===
-                STORAGE_KEY
-            ) {
 
-                render();
+            retryAll();
+
+        }
+
+    }
+
+
+    /* ==================================================================
+       EVENIMENTE GOOGLE SHEETS
+    ================================================================== */
+
+    function addSubmissionListeners(){
+
+        /*
+           Coada s-a modificat.
+        */
+
+        document.addEventListener(
+            "laborator:submission-queue-changed",
+            () => {
+
+                scheduleRender();
 
             }
+        );
+
+
+        /*
+           Trimitere confirmată.
+        */
+
+        document.addEventListener(
+            "laborator:submission-sent",
+            () => {
+
+                scheduleRender(
+                    300
+                );
+
+            }
+        );
+
+
+        /*
+           Trimitere neconfirmată.
+        */
+
+        document.addEventListener(
+            "laborator:submission-unconfirmed",
+            () => {
+
+                scheduleRender(
+                    200
+                );
+
+            }
+        );
+
+
+        /*
+           Trimitere eșuată.
+        */
+
+        document.addEventListener(
+            "laborator:submission-failed",
+            () => {
+
+                scheduleRender(
+                    200
+                );
+
+            }
+        );
+
+
+        /*
+           Modulul Google Sheets este gata.
+        */
+
+        document.addEventListener(
+            "laborator:google-sheets-ready",
+            () => {
+
+                scheduleRender();
+
+            }
+        );
+
+    }
+
+
+    /* ==================================================================
+       EVENIMENTE BROWSER
+    ================================================================== */
+
+    function addBrowserListeners(){
+
+        /* --------------------------------------------------------------
+           CLICK
+        -------------------------------------------------------------- */
+
+        document.addEventListener(
+            "click",
+            handleClick
+        );
+
+
+        /* --------------------------------------------------------------
+           LOCAL STORAGE MODIFICAT DIN ALTĂ FILĂ
+        -------------------------------------------------------------- */
+
+        globalThis.addEventListener(
+            "storage",
+            event => {
+
+                if(
+                    event.key ===
+                    getStorageKey()
+                ){
+
+                    scheduleRender();
+
+                }
+
+            }
+        );
+
+
+        /* --------------------------------------------------------------
+           INTERNET DISPONIBIL
+        -------------------------------------------------------------- */
+
+        globalThis.addEventListener(
+            "online",
+            () => {
+
+                setGlobalStatus(
+                    "Conexiunea la internet este disponibilă. Rapoartele pot fi retransmise.",
+                    "info"
+                );
+
+
+                scheduleRender(
+                    500
+                );
+
+            }
+        );
+
+
+        /* --------------------------------------------------------------
+           INTERNET INDISPONIBIL
+        -------------------------------------------------------------- */
+
+        globalThis.addEventListener(
+            "offline",
+            () => {
+
+                setGlobalStatus(
+                    "Dispozitivul este offline. Rapoartele sunt păstrate local.",
+                    "warning"
+                );
+
+
+                scheduleRender();
+
+            }
+        );
+
+
+        /* --------------------------------------------------------------
+           REVENIRE PE PAGINĂ
+        -------------------------------------------------------------- */
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+
+                if(
+                    document.visibilityState ===
+                    "visible"
+                ){
+
+                    scheduleRender();
+
+                }
+
+            }
+        );
+
+
+        /*
+           Important mai ales pe telefon:
+           când pagina revine din BFCache.
+        */
+
+        globalThis.addEventListener(
+            "pageshow",
+            () => {
+
+                scheduleRender();
+
+            }
+        );
+
+    }
+
+
+    /* ==================================================================
+       INIȚIALIZARE
+    ================================================================== */
+
+    function init(){
+
+        if(
+            state.initialized
+        ){
+
+            render();
+
+
+            return;
 
         }
-    );
 
 
-    /*
-       Reafișăm starea când conexiunea revine.
-
-       google-sheets.js are deja propriul
-       mecanism de retry la evenimentul online.
-    */
-
-    window.addEventListener(
-        "online",
-        () => {
-
-            window.setTimeout(
-                render,
-                1000
-            );
-
-        }
-    );
+        state.initialized =
+            true;
 
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        render
-    );
+        addSubmissionListeners();
 
+
+        addBrowserListeners();
+
+
+        render();
+
+    }
+
+
+    /* ==================================================================
+       API PUBLIC
+    ================================================================== */
 
     globalThis
-        .LaboratorRapoarteNetrimise = {
+        .LaboratorRapoarteNetrimise =
+        Object.freeze({
+
+            init,
 
             render,
 
+            retryReport,
+
+            retryAll,
+
             getReports:
-                () => clone(
-                    readQueue()
-                ),
+                () => [
+                    ...getReports()
+                ],
 
-            retryReport
+            getCount:
+                () =>
+                    getReports()
+                        .length,
 
-        };
+            version:
+                MODULE_VERSION
+
+        });
+
+
+    /* ==================================================================
+       PORNIRE AUTOMATĂ
+    ================================================================== */
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init,
+            {
+                once:true
+            }
+        );
+
+    }
+    else{
+
+        init();
+
+    }
 
 })();
