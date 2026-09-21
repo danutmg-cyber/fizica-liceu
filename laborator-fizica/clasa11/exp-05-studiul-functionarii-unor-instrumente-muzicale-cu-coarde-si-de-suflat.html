@@ -1,1 +1,7832 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul funcționării instrumentelor muzicale cu coarde și de suflat."
+>
+
+<title>
+    Studiul funcționării unor instrumente muzicale cu coarde și de suflat
+</title>
+
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --primary-dark:#16425b;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+    --string:#6d28d9;
+    --open-pipe:#1677c8;
+    --closed-pipe:#d97706;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn.mode{
+    background:#6d28d9;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok,
+.feedback.is-success{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad,
+.feedback.is-error{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.7;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.instrument-box,
+.music-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   COARDĂ
+========================================================= */
+
+.string-stage{
+    position:relative;
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #b9ccd8;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #eef9ff,
+            #fff
+        );
+}
+
+.stage-header{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:.7rem;
+    padding:.8rem 1rem;
+    border-bottom:1px solid #c9d9e2;
+    background:#f8fcfe;
+}
+
+.stage-badge{
+    padding:.3rem .7rem;
+    border-radius:999px;
+    color:#fff;
+    background:#6d28d9;
+    font-weight:800;
+}
+
+.string-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:800/300;
+}
+
+.string-axis{
+    stroke:#9db1bd;
+    stroke-width:2;
+    stroke-dasharray:8 6;
+}
+
+.string-fixed{
+    fill:#465c68;
+}
+
+.string-wave{
+    fill:none;
+    stroke:var(--string);
+    stroke-width:5;
+}
+
+.string-node{
+    fill:#fff;
+    stroke:#6d28d9;
+    stroke-width:3;
+}
+
+.mode-controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:.7rem;
+    padding:0 1rem 1rem;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    padding:.35rem .65rem;
+    margin:.2rem;
+    border:1px solid #b6cad5;
+    border-radius:999px;
+    background:#f8fcfe;
+    color:#34566a;
+}
+
+
+/* =========================================================
+   TUBURI SONORE
+========================================================= */
+
+.pipe-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.pipe-stage{
+    overflow:hidden;
+    border:1px solid #b9ccd8;
+    border-radius:14px;
+    background:#fff;
+}
+
+.pipe-title{
+    padding:.7rem;
+    color:#fff;
+    text-align:center;
+    font-weight:800;
+}
+
+.pipe-title.open{
+    background:var(--open-pipe);
+}
+
+.pipe-title.closed{
+    background:var(--closed-pipe);
+}
+
+.pipe-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:520/310;
+}
+
+.pipe-wall{
+    fill:#e1e8ec;
+    stroke:#536b79;
+    stroke-width:4;
+}
+
+.pipe-open{
+    stroke:#1677c8;
+    stroke-width:5;
+}
+
+.pipe-closed{
+    stroke:#d97706;
+    stroke-width:7;
+}
+
+.air-axis{
+    stroke:#aab9c2;
+    stroke-width:2;
+    stroke-dasharray:7 6;
+}
+
+.air-wave-open{
+    fill:none;
+    stroke:#1677c8;
+    stroke-width:5;
+}
+
+.air-wave-closed{
+    fill:none;
+    stroke:#d97706;
+    stroke-width:5;
+}
+
+.node-label,
+.antinode-label{
+    font-size:14px;
+    font-weight:750;
+}
+
+.node-label{
+    fill:#8a3f00;
+}
+
+.antinode-label{
+    fill:#075985;
+}
+
+.air-mode-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    justify-content:center;
+    padding:0 .8rem .8rem;
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+@media(max-width:850px){
+
+    .pipe-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp05-instrumente-muzicale",
+
+    code:
+        "EXP05",
+
+    title:
+        "Studiul funcționării unor instrumente muzicale cu coarde și de suflat",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Unde mecanice și acustică",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "coarda-tensionata",
+        "generator-oscilatii",
+        "coloana-aer"
+    ],
+
+    requiredEquipment:[
+        "lab-coat",
+        "string",
+        "dynamometer",
+        "ruler",
+        "frequency-meter",
+        "open-pipe",
+        "closed-pipe",
+        "thermometer"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Unde mecanice și acustică
+    </p>
+
+    <h1>
+        Studiul funcționării unor instrumente muzicale
+        cu coarde și de suflat
+    </h1>
+
+    <p>
+        Frecvențe proprii, armonice, unde staționare,
+        rezonanța corzilor și a coloanelor de aer.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+<p>
+    Clasa și numărul din catalog determină setul experimental.
+    Pentru cei 30 de elevi sunt generate seturi distincte și
+    reproductibile.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările de
+        filă/aplicație, ieșirile din ecran complet și tentativele
+        de copiere. Nu sunt realizate înregistrări audio sau video.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>Atenție:</strong>
+
+    o coardă tensionată se poate desprinde sau rupe dacă este
+    suprasolicitată. Instrumentele de suflat utilizate în laborator
+    trebuie igienizate și nu se folosesc la comun prin contact direct.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Nu depăși tensiunea maximă indicată pentru coardă.
+    </li>
+
+    <li>
+        Nu apropia fața de coarda tensionată.
+    </li>
+
+    <li>
+        Verifică fixarea corzii înainte de excitarea acesteia.
+    </li>
+
+    <li>
+        Nu sufla direct într-un dispozitiv folosit anterior de alt elev
+        fără piesă individuală sau procedură de igienizare.
+    </li>
+
+    <li>
+        Menține volumul sonor la un nivel moderat.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci dacă observi că fixarea corzii începe să cedeze?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        Oprirea experimentului și refacerea montajului.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="continue"
+    >
+
+    <span>
+        Continui deoarece frecvența poate fi măsurată rapid.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+<p>
+    Selectează numai echipamentele necesare pentru cele două
+    subexperimente.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<h3>
+    A. Instrument muzical cu coardă
+</h3>
+
+
+<p>
+    Pentru o coardă ideală, fixată la ambele capete,
+    viteza undelor transversale este:
+</p>
+
+
+<div class="formula">
+
+    v =
+    √(F/μ)
+
+    <br><br>
+
+    μ =
+    densitatea liniară a corzii
+
+</div>
+
+
+<p>
+    Pentru modul fundamental:
+</p>
+
+
+<div class="formula">
+
+    λ₁ =
+    2L
+
+    <br><br>
+
+    f₁ =
+    (1 / 2L)
+    √(F/μ)
+
+</div>
+
+
+<p>
+    Pentru armonica de ordinul al doilea:
+</p>
+
+
+<div class="formula">
+
+    f₂ =
+    2f₁
+
+</div>
+
+
+<h3>
+    B. Instrument de suflat
+</h3>
+
+
+<p>
+    Pentru un tub deschis la ambele capete:
+</p>
+
+
+<div class="formula">
+
+    f₁ =
+    v / 2L
+
+    <br>
+
+    f₂ =
+    2f₁
+
+</div>
+
+
+<p>
+    Pentru un tub închis la un capăt:
+</p>
+
+
+<div class="formula">
+
+    f₁ =
+    v / 4L
+
+    <br>
+
+    f₃ =
+    3f₁
+
+</div>
+
+
+<p>
+    În aproximația utilizată în laborator, viteza sunetului în aer
+    depinde de temperatură:
+</p>
+
+
+<div class="formula">
+
+    v<sub>aer</sub>
+    ≈
+    331 +
+    0,6 θ
+
+    <br>
+
+    θ în °C,
+    v în m/s
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Dacă scurtăm lungimea vibrantă a unei corzi, păstrând F și μ constante,
+    frecvența fundamentală:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionStringLength"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionStringLength"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă mărim tensiunea unei corzi, păstrând L și μ constante,
+    frecvența:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionTension"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionTension"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Pentru aceeași lungime și aceeași viteză a sunetului,
+    frecvența fundamentală a unui tub închis la un capăt este:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPipe"
+        value="half"
+    >
+
+    <span>
+        jumătate din frecvența tubului deschis la ambele capete
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPipe"
+        value="double"
+    >
+
+    <span>
+        dublă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, scopul, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Instrumentul cu coardă
+</h2>
+
+
+<p>
+    Coarda este fixată la ambele capete.
+    Măsoară lungimea vibrantă, tensiunea și frecvențele
+    primelor două moduri proprii.
+</p>
+
+
+<div class="data-card">
+
+    <strong>
+        Eticheta corzii:
+    </strong>
+
+    <span class="parameter-chip">
+
+        densitate liniară
+        μ =
+        <b data-string-mu>—</b>
+        g/m
+
+    </span>
+
+</div>
+
+
+<div class="string-stage">
+
+    <div class="stage-header">
+
+        <strong>
+            Coardă vibrantă fixată la ambele capete
+        </strong>
+
+        <span
+            class="stage-badge"
+            data-string-mode-label
+        >
+            Modul fundamental
+        </span>
+
+    </div>
+
+
+    <svg
+        class="string-svg"
+        viewBox="0 0 800 300"
+        role="img"
+        aria-label="Undă staționară pe o coardă"
+    >
+
+        <rect
+            class="string-fixed"
+            x="35"
+            y="80"
+            width="20"
+            height="140"
+            rx="4"
+        ></rect>
+
+        <rect
+            class="string-fixed"
+            x="745"
+            y="80"
+            width="20"
+            height="140"
+            rx="4"
+        ></rect>
+
+
+        <line
+            class="string-axis"
+            x1="55"
+            y1="150"
+            x2="745"
+            y2="150"
+        ></line>
+
+
+        <path
+            class="string-wave"
+            data-string-wave
+        ></path>
+
+
+        <g data-string-nodes></g>
+
+    </svg>
+
+
+    <div class="mode-controls">
+
+        <button
+            class="btn mode"
+            type="button"
+            data-string-mode="1"
+        >
+            Excită fundamentalul
+        </button>
+
+        <button
+            class="btn mode"
+            type="button"
+            data-string-mode="2"
+        >
+            Excită armonica a II-a
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="field-grid">
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Lungimea vibrantă L
+</h3>
+
+
+<div data-string-length-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        L (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-string-length-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-string-length
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-string-length-notebook
+    >
+
+    <span>
+        Am notat lungimea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="string-length"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    B. Tensiunea în coardă
+</h3>
+
+
+<div data-string-force-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        F (N)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-string-force-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-string-force
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-string-force-notebook
+    >
+
+    <span>
+        Am notat tensiunea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="string-force"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    C. Frecvența fundamentală
+</h3>
+
+
+<div data-string-f1-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₁ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-string-f1-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-string-f1
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-string-f1-notebook
+    >
+
+    <span>
+        Am notat frecvența fundamentală.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="string-f1"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    D. Armonica a II-a
+</h3>
+
+
+<div data-string-f2-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₂ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-string-f2-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-string-f2
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-string-f2-notebook
+    >
+
+    <span>
+        Am notat frecvența armonicii a II-a.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="string-f2"
+></p>
+
+</div>
+
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="string-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-wind
+        type="button"
+        disabled
+    >
+        Continuă la instrumentele de suflat
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Instrumentele de suflat
+</h2>
+
+
+<p>
+    Compară două coloane de aer:
+</p>
+
+<ul>
+    <li>
+        tub deschis la ambele capete – model simplificat pentru
+        un instrument de tip flaut;
+    </li>
+
+    <li>
+        tub închis la un capăt – model simplificat pentru
+        un instrument de tip clarinet.
+    </li>
+</ul>
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Temperatura aerului
+</h3>
+
+
+<div data-temperature-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        θ (°C)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-temperature-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-temperature
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-temperature-notebook
+    >
+
+    <span>
+        Am notat temperatura.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="temperature"
+></p>
+
+</div>
+
+
+<div class="pipe-grid">
+
+
+<!-- =====================================================
+     TUB DESCHIS
+====================================================== -->
+
+<div class="music-card">
+
+<h3>
+    Tub deschis la ambele capete
+</h3>
+
+
+<div class="pipe-stage">
+
+    <div class="pipe-title open">
+        Coloană de aer deschisă–deschisă
+    </div>
+
+
+    <svg
+        class="pipe-svg"
+        viewBox="0 0 520 310"
+        role="img"
+        aria-label="Tub deschis la ambele capete"
+    >
+
+        <rect
+            class="pipe-wall"
+            x="45"
+            y="70"
+            width="430"
+            height="170"
+            rx="5"
+        ></rect>
+
+        <rect
+            x="51"
+            y="77"
+            width="418"
+            height="156"
+            fill="#ffffff"
+        ></rect>
+
+
+        <line
+            class="air-axis"
+            x1="55"
+            y1="155"
+            x2="465"
+            y2="155"
+        ></line>
+
+
+        <path
+            class="air-wave-open"
+            data-open-wave
+        ></path>
+
+
+        <text
+            class="antinode-label"
+            x="55"
+            y="270"
+        >
+            ventru
+        </text>
+
+        <text
+            class="antinode-label"
+            x="430"
+            y="270"
+        >
+            ventru
+        </text>
+
+    </svg>
+
+
+    <div class="air-mode-actions">
+
+        <button
+            class="btn mode"
+            type="button"
+            data-open-mode="1"
+        >
+            Fundamental
+        </button>
+
+        <button
+            class="btn mode"
+            type="button"
+            data-open-mode="2"
+        >
+            Armonica a II-a
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Lungimea coloanei de aer
+</h4>
+
+<div data-open-length-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        L<sub>d</sub> (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-open-length-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-open-length
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-open-length-notebook
+    >
+
+    <span>
+        Am notat lungimea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="open-length"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Frecvența fundamentală
+</h4>
+
+<div data-open-f1-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₁ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-open-f1-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-open-f1
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-open-f1-notebook
+    >
+
+    <span>
+        Am notat f₁.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="open-f1"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Armonica a II-a
+</h4>
+
+<div data-open-f2-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₂ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-open-f2-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-open-f2
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-open-f2-notebook
+    >
+
+    <span>
+        Am notat f₂.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="open-f2"
+></p>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     TUB ÎNCHIS
+====================================================== -->
+
+<div class="music-card">
+
+<h3>
+    Tub închis la un capăt
+</h3>
+
+
+<div class="pipe-stage">
+
+    <div class="pipe-title closed">
+        Coloană de aer închisă–deschisă
+    </div>
+
+
+    <svg
+        class="pipe-svg"
+        viewBox="0 0 520 310"
+        role="img"
+        aria-label="Tub închis la un capăt"
+    >
+
+        <rect
+            class="pipe-wall"
+            x="45"
+            y="70"
+            width="430"
+            height="170"
+            rx="5"
+        ></rect>
+
+        <rect
+            x="55"
+            y="77"
+            width="414"
+            height="156"
+            fill="#ffffff"
+        ></rect>
+
+
+        <line
+            class="pipe-closed"
+            x1="55"
+            y1="77"
+            x2="55"
+            y2="233"
+        ></line>
+
+
+        <line
+            class="air-axis"
+            x1="55"
+            y1="155"
+            x2="465"
+            y2="155"
+        ></line>
+
+
+        <path
+            class="air-wave-closed"
+            data-closed-wave
+        ></path>
+
+
+        <text
+            class="node-label"
+            x="55"
+            y="270"
+        >
+            nod
+        </text>
+
+        <text
+            class="antinode-label"
+            x="420"
+            y="270"
+        >
+            ventru
+        </text>
+
+    </svg>
+
+
+    <div class="air-mode-actions">
+
+        <button
+            class="btn mode"
+            type="button"
+            data-closed-mode="1"
+        >
+            Fundamental
+        </button>
+
+        <button
+            class="btn mode"
+            type="button"
+            data-closed-mode="3"
+        >
+            Prima armonică permisă: n = 3
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Lungimea coloanei de aer
+</h4>
+
+<div data-closed-length-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        L<sub>î</sub> (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-closed-length-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-closed-length
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-closed-length-notebook
+    >
+
+    <span>
+        Am notat lungimea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="closed-length"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Frecvența fundamentală
+</h4>
+
+<div data-closed-f1-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₁ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-closed-f1-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-closed-f1
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-closed-f1-notebook
+    >
+
+    <span>
+        Am notat f₁.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="closed-f1"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h4>
+    Prima armonică superioară permisă
+</h4>
+
+<p>
+    Pentru tubul ideal închis la un capăt, aceasta corespunde
+    armonicii de ordinul al treilea.
+</p>
+
+
+<div data-closed-f3-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        f₃ (Hz)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-closed-f3-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-closed-f3
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-closed-f3-notebook
+    >
+
+    <span>
+        Am notat f₃.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="closed-f3"
+></p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="wind-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Coarda vibrantă
+</h3>
+
+
+<div class="formula">
+
+    μ =
+    <span data-mu-formula>—</span>
+    g/m
+
+    <br><br>
+
+    v<sub>coardă</sub> =
+    √(F/μ)
+
+</div>
+
+
+<label class="field">
+
+    Viteza undei pe coardă,
+    v<sub>coardă</sub> (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="string-speed"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f<sub>1,teoretic</sub> =
+    v<sub>coardă</sub> / 2L
+
+</div>
+
+
+<label class="field">
+
+    f<sub>1,teoretic</sub> (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="string-f1-theory"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea relativă dintre frecvența măsurată și cea calculată (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="string-error"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    r<sub>coardă</sub> =
+    f₂ / f₁
+
+</div>
+
+
+<label class="field">
+
+    Raportul f₂/f₁
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="string-ratio"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Viteza sunetului în aer
+</h3>
+
+
+<div class="formula">
+
+    v<sub>T</sub> =
+    331 +
+    0,6θ
+
+</div>
+
+
+<label class="field">
+
+    Viteza estimată din temperatură,
+    v<sub>T</sub> (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="air-temperature-speed"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Tubul deschis la ambele capete
+</h3>
+
+
+<div class="formula">
+
+    v<sub>d</sub> =
+    2L<sub>d</sub>f₁
+
+</div>
+
+
+<label class="field">
+
+    v<sub>d</sub> (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="open-speed"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    r<sub>d</sub> =
+    f₂/f₁
+
+</div>
+
+
+<label class="field">
+
+    Raportul f₂/f₁
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="open-ratio"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Tubul închis la un capăt
+</h3>
+
+
+<div class="formula">
+
+    v<sub>î</sub> =
+    4L<sub>î</sub>f₁
+
+</div>
+
+
+<label class="field">
+
+    v<sub>î</sub> (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="closed-speed"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    r<sub>î</sub> =
+    f₃/f₁
+
+</div>
+
+
+<label class="field">
+
+    Raportul f₃/f₁
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="closed-ratio"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Compararea determinărilor vitezei sunetului
+</h3>
+
+
+<div class="formula">
+
+    v̄ =
+    (v<sub>d</sub> +
+    v<sub>î</sub>) / 2
+
+</div>
+
+
+<label class="field">
+
+    Viteza medie determinată experimental,
+    v̄ (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="air-average-speed"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    ε =
+    |v̄ − v<sub>T</sub>| /
+    v<sub>T</sub>
+    · 100%
+
+</div>
+
+
+<label class="field">
+
+    Abaterea relativă (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="air-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea fizică
+</h3>
+
+
+<label class="field">
+
+    Explică de ce modificarea lungimii unei corzi sau a unei
+    coloane de aer modifică înălțimea sunetului și compară
+    spectrul armonic al tubului deschis cu cel al tubului
+    închis la un capăt.
+
+    <textarea
+        rows="6"
+        data-comparison
+        placeholder="Folosește relațiile dintre L, f, tensiune și armonice."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, transformările de unități
+        și calculele.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Frecvența fundamentală a unei coarde ideale este
+    proporțională cu:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="sqrt-tension"
+    >
+
+    <span>
+        √F
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="tension-inverse"
+    >
+
+    <span>
+        1/F
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Dacă lungimea vibrantă a unei corzi se înjumătățește,
+    în aproximația ideală frecvența fundamentală:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="double"
+    >
+
+    <span>
+        se dublează
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="half"
+    >
+
+    <span>
+        se înjumătățește
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Un tub ideal deschis la ambele capete admite:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="all"
+    >
+
+    <span>
+        armonice de ordin întreg 1, 2, 3, ...
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="odd"
+    >
+
+    <span>
+        numai armonice impare
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Pentru tubul ideal închis la un capăt sunt permise:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="odd"
+    >
+
+    <span>
+        numai armonicele impare
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="all"
+    >
+
+    <span>
+        toate armonicele întregi
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="6"
+        minlength="100"
+        data-final-conclusion
+        required
+        placeholder="Formulează concluzii despre coardă, coloanele de aer, frecvența fundamentală și armonice."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: citirea lungimii, tensiunii, frecvenței, efectul capetelor tubului..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    round(
+        Math.round(
+            value /
+            step
+        ) *
+        step,
+        6
+    );
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    readings:{
+
+        stringLength:null,
+
+        stringForce:null,
+
+        stringF1:null,
+
+        stringF2:null,
+
+        temperature:null,
+
+        openLength:null,
+
+        openF1:null,
+
+        openF2:null,
+
+        closedLength:null,
+
+        closedF1:null,
+
+        closedF3:null
+
+    },
+
+    instruments:{},
+
+    stringAnimation:{
+        frameId:null,
+        startedAt:null,
+        mode:1
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+        element.classList.add(type);
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Instrument cu coardă",
+
+    "Instrumente de suflat",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !== step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index === step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(index)
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <= state.step ||
+                    state.completed.has(
+                        index - 1
+                    )
+                ){
+
+                    showStep(index);
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(button);
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(className);
+
+
+    const index =
+        Number(catalogNumber) - 1;
+
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    /* ------------------------------------------------------
+       COARDĂ
+    ------------------------------------------------------ */
+
+    const lengthSlot =
+        (
+            slot * 11 +
+            ci
+        ) %
+        30;
+
+
+    const stringLengthCm =
+        round(
+            54 +
+            lengthSlot *
+            .7,
+            1
+        );
+
+
+    const tensionSlot =
+        (
+            slot * 13 +
+            ci * 5
+        ) %
+        26;
+
+
+    const tensionN =
+        32 +
+        tensionSlot;
+
+
+    const muSlot =
+        (
+            slot * 17 +
+            ci * 7
+        ) %
+        15;
+
+
+    const muGm =
+        round(
+            1.8 +
+            muSlot *
+            .08,
+            2
+        );
+
+
+    const stringSpeed =
+        Math.sqrt(
+            tensionN /
+            (
+                muGm /
+                1000
+            )
+        );
+
+
+    const stringFundamentalIdeal =
+        stringSpeed /
+        (
+            2 *
+            stringLengthCm /
+            100
+        );
+
+
+    /*
+       Frecvențometrul are o rezoluție realistă
+       pentru scala utilizată.
+    */
+
+    const stringF1 =
+        roundTo(
+            stringFundamentalIdeal,
+            2
+        );
+
+
+    const stringF2 =
+        roundTo(
+            2 *
+            stringFundamentalIdeal,
+            2
+        );
+
+
+    /* ------------------------------------------------------
+       AER
+    ------------------------------------------------------ */
+
+    const temperatureSlot =
+        (
+            slot * 19 +
+            ci * 3
+        ) %
+        13;
+
+
+    const temperatureC =
+        18 +
+        temperatureSlot *
+        .5;
+
+
+    const soundSpeed =
+        331 +
+        .6 *
+        temperatureC;
+
+
+    const openSlot =
+        (
+            slot * 23 +
+            ci
+        ) %
+        30;
+
+
+    const openLengthCm =
+        52 +
+        openSlot;
+
+
+    const openFundamental =
+        soundSpeed /
+        (
+            2 *
+            openLengthCm /
+            100
+        );
+
+
+    const openF1 =
+        roundTo(
+            openFundamental,
+            2
+        );
+
+
+    const openF2 =
+        roundTo(
+            2 *
+            openFundamental,
+            2
+        );
+
+
+    const closedSlot =
+        (
+            slot * 29 +
+            ci * 5
+        ) %
+        30;
+
+
+    const closedLengthCm =
+        55 +
+        closedSlot;
+
+
+    const closedFundamental =
+        soundSpeed /
+        (
+            4 *
+            closedLengthCm /
+            100
+        );
+
+
+    const closedF1 =
+        roundTo(
+            closedFundamental,
+            2
+        );
+
+
+    const closedF3 =
+        roundTo(
+            3 *
+            closedFundamental,
+            2
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP05`,
+
+        visible:{
+
+            stringLinearDensity_g_m:
+                muGm
+
+        },
+
+        hidden:{
+
+            stringLength_cm:
+                stringLengthCm,
+
+            stringTension_N:
+                tensionN,
+
+            stringF1_Hz:
+                stringF1,
+
+            stringF2_Hz:
+                stringF2,
+
+            temperature_C:
+                temperatureC,
+
+            openLength_cm:
+                openLengthCm,
+
+            openF1_Hz:
+                openF1,
+
+            openF2_Hz:
+                openF2,
+
+            closedLength_cm:
+                closedLengthCm,
+
+            closedF1_Hz:
+                closedF1,
+
+            closedF3_Hz:
+                closedF3
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get("studentName") ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get("studentClass")
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get("catalogNumber")
+            );
+
+
+        if(
+            studentName.length < 3 ||
+            !/^XI [A-D]$/.test(studentClass) ||
+            !Number.isInteger(catalogNumber) ||
+            catalogNumber < 1 ||
+            catalogNumber > 30 ||
+            !form.get("monitorConsent") ||
+            !form.get("identityConfirmed")
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId("FIZ"),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG.title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG.id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:true,
+
+            monitoringAcknowledged:true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session.experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(0);
+
+
+        showStep(1);
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !== "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "coarda-tensionata",
+                "acustica"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(1);
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "halat",
+        "Halat de laborator"
+    ],
+
+    [
+        "coarda",
+        "Coardă elastică"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ],
+
+    [
+        "ruleta",
+        "Ruletă"
+    ],
+
+    [
+        "frecventometru",
+        "Frecvențometru / acordor"
+    ],
+
+    [
+        "tub-deschis",
+        "Tub deschis la ambele capete"
+    ],
+
+    [
+        "tub-inchis",
+        "Tub închis la un capăt"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "calorimetru",
+        "Calorimetru"
+    ],
+
+    [
+        "multimetru",
+        "Multimetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "halat",
+        "coarda",
+        "dinamometru",
+        "ruleta",
+        "frecventometru",
+        "tub-deschis",
+        "tub-inchis",
+        "termometru"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(label);
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] === id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(2);
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* =========================================================
+   DATE INIȚIALE
+========================================================= */
+
+function renderInitialData(){
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+                <tr>
+                    <th>Parametru cunoscut</th>
+                    <th>Valoare</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Densitatea liniară a corzii μ</td>
+                    <td>
+                        ${state.set.visible.stringLinearDensity_g_m.toFixed(2)}
+                        g/m
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția frecvențometrului</td>
+                    <td>2 Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Model tub deschis</td>
+                    <td>deschis la ambele capete</td>
+                </tr>
+
+                <tr>
+                    <td>Model tub închis</td>
+                    <td>închis la un capăt</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-string-mu]"
+    ).textContent =
+        state.set
+            .visible
+            .stringLinearDensity_g_m
+            .toFixed(2);
+
+
+    qs(
+        "[data-mu-formula]"
+    ).textContent =
+        state.set
+            .visible
+            .stringLinearDensity_g_m
+            .toFixed(2);
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const length =
+            qs(
+                'input[name="predictionStringLength"]:checked'
+            )?.value;
+
+
+        const tension =
+            qs(
+                'input[name="predictionTension"]:checked'
+            )?.value;
+
+
+        const pipe =
+            qs(
+                'input[name="predictionPipe"]:checked'
+            )?.value;
+
+
+        if(
+            !length ||
+            !tension ||
+            !pipe ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            stringLength:
+                length,
+
+            stringTension:
+                tension,
+
+            pipe,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeStringInstruments();
+
+
+        animateString(1);
+
+
+        state.completed.add(3);
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(4);
+
+    }
+);
+
+
+/* =========================================================
+   INSTRUMENT GENERIC
+========================================================= */
+
+function createInstrument({
+
+    key,
+
+    target,
+
+    type,
+
+    label,
+
+    minimum,
+
+    maximum,
+
+    value,
+
+    minorDivision,
+
+    majorDivision,
+
+    decimals,
+
+    unit,
+
+    answer,
+
+    verify,
+
+    notebook,
+
+    feedbackName,
+
+    onCorrect
+
+}){
+
+    const container =
+        qs(target);
+
+
+    container.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail.correct
+            ){
+                return;
+            }
+
+
+            state.readings[key] =
+                event.detail;
+
+
+            if(
+                typeof onCorrect ===
+                "function"
+            ){
+
+                onCorrect(
+                    event.detail
+                );
+
+            }
+
+        }
+    );
+
+
+    state.instruments[key] =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `exp05-${key}`,
+
+                target:
+                    container,
+
+                type,
+
+                label,
+
+                instruction:
+                    "Citește indicația instrumentului și notează valoarea în caiet.",
+
+                minimum,
+
+                maximum,
+
+                value,
+
+                minorDivision,
+
+                majorDivision,
+
+                decimals,
+
+                unit,
+
+                tolerance:
+                    minorDivision /
+                    2 +
+                    .001,
+
+                answerInput:
+                    qs(answer),
+
+                feedbackTarget:
+                    qs(
+                        `[data-feedback="${feedbackName}"]`
+                    ),
+
+                verifyButton:
+                    qs(verify),
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    qs(notebook),
+
+                allowZoom:
+                    true
+
+            });
+
+}
+
+
+/* =========================================================
+   INSTRUMENTE COARDĂ
+========================================================= */
+
+function initializeStringInstruments(){
+
+    if(
+        state.instruments.stringLength
+    ){
+        return;
+    }
+
+
+    const set =
+        state.set.hidden;
+
+
+    createInstrument({
+
+        key:
+            "stringLength",
+
+        target:
+            "[data-string-length-instrument]",
+
+        type:
+            "tape-measure",
+
+        label:
+            "Ruletă – lungimea vibrantă a corzii",
+
+        minimum:40,
+
+        maximum:85,
+
+        value:
+            set.stringLength_cm,
+
+        minorDivision:.5,
+
+        majorDivision:5,
+
+        decimals:1,
+
+        unit:"cm",
+
+        answer:
+            "[data-string-length-answer]",
+
+        verify:
+            "[data-check-string-length]",
+
+        notebook:
+            "[data-string-length-notebook]",
+
+        feedbackName:
+            "string-length",
+
+        onCorrect:
+            checkStringComplete
+
+    });
+
+
+    createInstrument({
+
+        key:
+            "stringForce",
+
+        target:
+            "[data-string-force-instrument]",
+
+        type:
+            "dynamometer",
+
+        label:
+            "Dinamometru – tensiunea în coardă",
+
+        minimum:20,
+
+        maximum:70,
+
+        value:
+            set.stringTension_N,
+
+        minorDivision:1,
+
+        majorDivision:5,
+
+        decimals:0,
+
+        unit:"N",
+
+        answer:
+            "[data-string-force-answer]",
+
+        verify:
+            "[data-check-string-force]",
+
+        notebook:
+            "[data-string-force-notebook]",
+
+        feedbackName:
+            "string-force",
+
+        onCorrect:
+            checkStringComplete
+
+    });
+
+
+    createInstrument({
+
+        key:
+            "stringF1",
+
+        target:
+            "[data-string-f1-instrument]",
+
+        type:
+            "analog-meter",
+
+        label:
+            "Frecvențometru – modul fundamental",
+
+        minimum:40,
+
+        maximum:300,
+
+        value:
+            set.stringF1_Hz,
+
+        minorDivision:2,
+
+        majorDivision:20,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-string-f1-answer]",
+
+        verify:
+            "[data-check-string-f1]",
+
+        notebook:
+            "[data-string-f1-notebook]",
+
+        feedbackName:
+            "string-f1",
+
+        onCorrect:
+            checkStringComplete
+
+    });
+
+
+    createInstrument({
+
+        key:
+            "stringF2",
+
+        target:
+            "[data-string-f2-instrument]",
+
+        type:
+            "analog-meter",
+
+        label:
+            "Frecvențometru – armonica a II-a",
+
+        minimum:80,
+
+        maximum:600,
+
+        value:
+            set.stringF2_Hz,
+
+        minorDivision:2,
+
+        majorDivision:40,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-string-f2-answer]",
+
+        verify:
+            "[data-check-string-f2]",
+
+        notebook:
+            "[data-string-f2-notebook]",
+
+        feedbackName:
+            "string-f2",
+
+        onCorrect:
+            checkStringComplete
+
+    });
+
+}
+
+
+function checkStringComplete(){
+
+    if(
+        !state.readings.stringLength ||
+        !state.readings.stringForce ||
+        !state.readings.stringF1 ||
+        !state.readings.stringF2
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "string-complete",
+        "Toate măsurările pentru coardă au fost realizate.",
+        "ok"
+    );
+
+
+    state.completed.add(4);
+
+
+    qs(
+        "[data-next-wind]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   ANIMAȚIA CORZII
+========================================================= */
+
+function animateString(
+    mode
+){
+
+    state.stringAnimation.mode =
+        mode;
+
+
+    qs(
+        "[data-string-mode-label]"
+    ).textContent =
+        mode === 1
+            ? "Modul fundamental"
+            : "Armonica a II-a";
+
+
+    if(
+        state.stringAnimation.frameId
+    ){
+
+        cancelAnimationFrame(
+            state.stringAnimation.frameId
+        );
+
+    }
+
+
+    state.stringAnimation.startedAt =
+        performance.now();
+
+
+    const path =
+        qs(
+            "[data-string-wave]"
+        );
+
+
+    const nodesGroup =
+        qs(
+            "[data-string-nodes]"
+        );
+
+
+    nodesGroup.replaceChildren();
+
+
+    const x1 =
+        55;
+
+
+    const x2 =
+        745;
+
+
+    for(
+        let i=0;
+        i<=mode;
+        i+=1
+    ){
+
+        const circle =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
+
+
+        circle.setAttribute(
+            "class",
+            "string-node"
+        );
+
+
+        circle.setAttribute(
+            "cx",
+            String(
+                x1 +
+                (
+                    x2 -
+                    x1
+                ) *
+                i /
+                mode
+            )
+        );
+
+
+        circle.setAttribute(
+            "cy",
+            "150"
+        );
+
+
+        circle.setAttribute(
+            "r",
+            "6"
+        );
+
+
+        nodesGroup.append(
+            circle
+        );
+
+    }
+
+
+    function frame(){
+
+        const t =
+            (
+                performance.now() -
+                state.stringAnimation.startedAt
+            ) /
+            1000;
+
+
+        const temporal =
+            Math.cos(
+                2 *
+                Math.PI *
+                (
+                    mode === 1
+                        ? 1.2
+                        : 2.4
+                ) *
+                t
+            );
+
+
+        let d =
+            "";
+
+
+        for(
+            let x=x1;
+            x<=x2;
+            x+=5
+        ){
+
+            const ratio =
+                (
+                    x -
+                    x1
+                ) /
+                (
+                    x2 -
+                    x1
+                );
+
+
+            const y =
+                150 -
+                62 *
+                Math.sin(
+                    mode *
+                    Math.PI *
+                    ratio
+                ) *
+                temporal;
+
+
+            d +=
+                `${x === x1 ? "M" : "L"}${x},${y.toFixed(1)} `;
+
+        }
+
+
+        path.setAttribute(
+            "d",
+            d
+        );
+
+
+        state.stringAnimation.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    state.stringAnimation.frameId =
+        requestAnimationFrame(
+            frame
+        );
+
+}
+
+
+qsa(
+    "[data-string-mode]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                animateString(
+                    Number(
+                        button.dataset.stringMode
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ETAPA 6
+========================================================= */
+
+qs(
+    "[data-next-wind]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeWindInstruments();
+
+
+        drawOpenPipeMode(1);
+
+
+        drawClosedPipeMode(1);
+
+
+        showStep(5);
+
+    }
+);
+
+
+/* =========================================================
+   INSTRUMENTE DE SUFLAT
+========================================================= */
+
+function initializeWindInstruments(){
+
+    if(
+        state.instruments.temperature
+    ){
+        return;
+    }
+
+
+    const set =
+        state.set.hidden;
+
+
+    const complete =
+        checkWindComplete;
+
+
+    createInstrument({
+
+        key:"temperature",
+
+        target:
+            "[data-temperature-instrument]",
+
+        type:"thermometer",
+
+        label:
+            "Termometru – temperatura aerului",
+
+        minimum:15,
+
+        maximum:30,
+
+        value:
+            set.temperature_C,
+
+        minorDivision:.5,
+
+        majorDivision:2.5,
+
+        decimals:1,
+
+        unit:"°C",
+
+        answer:
+            "[data-temperature-answer]",
+
+        verify:
+            "[data-check-temperature]",
+
+        notebook:
+            "[data-temperature-notebook]",
+
+        feedbackName:
+            "temperature",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"openLength",
+
+        target:
+            "[data-open-length-instrument]",
+
+        type:"tape-measure",
+
+        label:
+            "Ruletă – lungimea tubului deschis",
+
+        minimum:40,
+
+        maximum:90,
+
+        value:
+            set.openLength_cm,
+
+        minorDivision:1,
+
+        majorDivision:10,
+
+        decimals:0,
+
+        unit:"cm",
+
+        answer:
+            "[data-open-length-answer]",
+
+        verify:
+            "[data-check-open-length]",
+
+        notebook:
+            "[data-open-length-notebook]",
+
+        feedbackName:
+            "open-length",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"openF1",
+
+        target:
+            "[data-open-f1-instrument]",
+
+        type:"analog-meter",
+
+        label:
+            "Frecvențometru – tub deschis, fundamental",
+
+        minimum:150,
+
+        maximum:400,
+
+        value:
+            set.openF1_Hz,
+
+        minorDivision:2,
+
+        majorDivision:20,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-open-f1-answer]",
+
+        verify:
+            "[data-check-open-f1]",
+
+        notebook:
+            "[data-open-f1-notebook]",
+
+        feedbackName:
+            "open-f1",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"openF2",
+
+        target:
+            "[data-open-f2-instrument]",
+
+        type:"analog-meter",
+
+        label:
+            "Frecvențometru – tub deschis, armonica a II-a",
+
+        minimum:300,
+
+        maximum:800,
+
+        value:
+            set.openF2_Hz,
+
+        minorDivision:2,
+
+        majorDivision:40,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-open-f2-answer]",
+
+        verify:
+            "[data-check-open-f2]",
+
+        notebook:
+            "[data-open-f2-notebook]",
+
+        feedbackName:
+            "open-f2",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"closedLength",
+
+        target:
+            "[data-closed-length-instrument]",
+
+        type:"tape-measure",
+
+        label:
+            "Ruletă – lungimea tubului închis",
+
+        minimum:45,
+
+        maximum:95,
+
+        value:
+            set.closedLength_cm,
+
+        minorDivision:1,
+
+        majorDivision:10,
+
+        decimals:0,
+
+        unit:"cm",
+
+        answer:
+            "[data-closed-length-answer]",
+
+        verify:
+            "[data-check-closed-length]",
+
+        notebook:
+            "[data-closed-length-notebook]",
+
+        feedbackName:
+            "closed-length",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"closedF1",
+
+        target:
+            "[data-closed-f1-instrument]",
+
+        type:"analog-meter",
+
+        label:
+            "Frecvențometru – tub închis, fundamental",
+
+        minimum:70,
+
+        maximum:200,
+
+        value:
+            set.closedF1_Hz,
+
+        minorDivision:2,
+
+        majorDivision:10,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-closed-f1-answer]",
+
+        verify:
+            "[data-check-closed-f1]",
+
+        notebook:
+            "[data-closed-f1-notebook]",
+
+        feedbackName:
+            "closed-f1",
+
+        onCorrect:complete
+
+    });
+
+
+    createInstrument({
+
+        key:"closedF3",
+
+        target:
+            "[data-closed-f3-instrument]",
+
+        type:"analog-meter",
+
+        label:
+            "Frecvențometru – tub închis, armonica a III-a",
+
+        minimum:200,
+
+        maximum:600,
+
+        value:
+            set.closedF3_Hz,
+
+        minorDivision:2,
+
+        majorDivision:20,
+
+        decimals:0,
+
+        unit:"Hz",
+
+        answer:
+            "[data-closed-f3-answer]",
+
+        verify:
+            "[data-check-closed-f3]",
+
+        notebook:
+            "[data-closed-f3-notebook]",
+
+        feedbackName:
+            "closed-f3",
+
+        onCorrect:complete
+
+    });
+
+}
+
+
+function checkWindComplete(){
+
+    const keys = [
+
+        "temperature",
+
+        "openLength",
+
+        "openF1",
+
+        "openF2",
+
+        "closedLength",
+
+        "closedF1",
+
+        "closedF3"
+
+    ];
+
+
+    if(
+        !keys.every(
+            key =>
+                Boolean(
+                    state.readings[key]
+                )
+        )
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "wind-complete",
+        "Toate măsurările pentru coloanele de aer au fost realizate.",
+        "ok"
+    );
+
+
+    state.completed.add(5);
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   MODURI TUB DESCHIS
+========================================================= */
+
+function drawOpenPipeMode(
+    mode
+){
+
+    const path =
+        qs(
+            "[data-open-wave]"
+        );
+
+
+    const x1 =
+        55;
+
+
+    const x2 =
+        465;
+
+
+    const center =
+        155;
+
+
+    let d =
+        "";
+
+
+    for(
+        let x=x1;
+        x<=x2;
+        x+=4
+    ){
+
+        const u =
+            (
+                x -
+                x1
+            ) /
+            (
+                x2 -
+                x1
+            );
+
+
+        /*
+           Deplasarea particulelor:
+           ventru la ambele capete.
+        */
+
+        const y =
+            center -
+            55 *
+            Math.cos(
+                mode *
+                Math.PI *
+                u
+            );
+
+
+        d +=
+            `${x === x1 ? "M" : "L"}${x},${y.toFixed(1)} `;
+
+    }
+
+
+    path.setAttribute(
+        "d",
+        d
+    );
+
+}
+
+
+qsa(
+    "[data-open-mode]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                drawOpenPipeMode(
+                    Number(
+                        button.dataset.openMode
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   MODURI TUB ÎNCHIS
+========================================================= */
+
+function drawClosedPipeMode(
+    harmonic
+){
+
+    const path =
+        qs(
+            "[data-closed-wave]"
+        );
+
+
+    const x1 =
+        55;
+
+
+    const x2 =
+        465;
+
+
+    const center =
+        155;
+
+
+    let d =
+        "";
+
+
+    for(
+        let x=x1;
+        x<=x2;
+        x+=4
+    ){
+
+        const u =
+            (
+                x -
+                x1
+            ) /
+            (
+                x2 -
+                x1
+            );
+
+
+        /*
+           Nod al deplasării la capătul închis,
+           ventru la capătul deschis.
+
+           n = 1, 3, 5, ...
+        */
+
+        const y =
+            center -
+            55 *
+            Math.sin(
+                harmonic *
+                Math.PI *
+                u /
+                2
+            );
+
+
+        d +=
+            `${x === x1 ? "M" : "L"}${x},${y.toFixed(1)} `;
+
+    }
+
+
+    path.setAttribute(
+        "d",
+        d
+    );
+
+}
+
+
+qsa(
+    "[data-closed-mode]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                drawClosedPipeMode(
+                    Number(
+                        button.dataset.closedMode
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TRECERE LA CALCULE
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(6);
+
+    }
+);
+
+
+/* =========================================================
+   TABEL MĂSURĂRI
+========================================================= */
+
+function renderMeasurementSummary(){
+
+    const r =
+        state.readings;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Sistem</th>
+                    <th>Mărime</th>
+                    <th>Valoare măsurată</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Coardă</td>
+                    <td>L</td>
+                    <td>${r.stringLength.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>Coardă</td>
+                    <td>F</td>
+                    <td>${r.stringForce.studentReading.toFixed(0)} N</td>
+                </tr>
+
+                <tr>
+                    <td>Coardă</td>
+                    <td>f₁</td>
+                    <td>${r.stringF1.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Coardă</td>
+                    <td>f₂</td>
+                    <td>${r.stringF2.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Aer</td>
+                    <td>θ</td>
+                    <td>${r.temperature.studentReading.toFixed(1)} °C</td>
+                </tr>
+
+                <tr>
+                    <td>Tub deschis</td>
+                    <td>L</td>
+                    <td>${r.openLength.studentReading.toFixed(0)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>Tub deschis</td>
+                    <td>f₁</td>
+                    <td>${r.openF1.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Tub deschis</td>
+                    <td>f₂</td>
+                    <td>${r.openF2.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Tub închis</td>
+                    <td>L</td>
+                    <td>${r.closedLength.studentReading.toFixed(0)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>Tub închis</td>
+                    <td>f₁</td>
+                    <td>${r.closedF1.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+                <tr>
+                    <td>Tub închis</td>
+                    <td>f₃</td>
+                    <td>${r.closedF3.studentReading.toFixed(0)} Hz</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function relativeError(
+    measured,
+    reference
+){
+
+    return (
+        Math.abs(
+            measured -
+            reference
+        ) /
+        Math.abs(reference) *
+        100
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const r =
+        state.readings;
+
+
+    const mu =
+        state.set
+            .visible
+            .stringLinearDensity_g_m /
+        1000;
+
+
+    const stringLength =
+        r.stringLength
+            .studentReading /
+        100;
+
+
+    const force =
+        r.stringForce
+            .studentReading;
+
+
+    const stringSpeed =
+        Math.sqrt(
+            force /
+            mu
+        );
+
+
+    const stringF1Theory =
+        stringSpeed /
+        (
+            2 *
+            stringLength
+        );
+
+
+    const stringF1Measured =
+        r.stringF1
+            .studentReading;
+
+
+    const stringError =
+        relativeError(
+            stringF1Measured,
+            stringF1Theory
+        );
+
+
+    const stringRatio =
+        r.stringF2
+            .studentReading /
+        stringF1Measured;
+
+
+    const temperature =
+        r.temperature
+            .studentReading;
+
+
+    const airTemperatureSpeed =
+        331 +
+        .6 *
+        temperature;
+
+
+    const openLength =
+        r.openLength
+            .studentReading /
+        100;
+
+
+    const openSpeed =
+        2 *
+        openLength *
+        r.openF1
+            .studentReading;
+
+
+    const openRatio =
+        r.openF2
+            .studentReading /
+        r.openF1
+            .studentReading;
+
+
+    const closedLength =
+        r.closedLength
+            .studentReading /
+        100;
+
+
+    const closedSpeed =
+        4 *
+        closedLength *
+        r.closedF1
+            .studentReading;
+
+
+    const closedRatio =
+        r.closedF3
+            .studentReading /
+        r.closedF1
+            .studentReading;
+
+
+    const averageAirSpeed =
+        (
+            openSpeed +
+            closedSpeed
+        ) /
+        2;
+
+
+    const airError =
+        relativeError(
+            averageAirSpeed,
+            airTemperatureSpeed
+        );
+
+
+    return {
+
+        stringSpeed_m_s:
+            stringSpeed,
+
+        stringF1Theory_Hz:
+            stringF1Theory,
+
+        stringError_percent:
+            stringError,
+
+        stringHarmonicRatio:
+            stringRatio,
+
+        airTemperatureSpeed_m_s:
+            airTemperatureSpeed,
+
+        openPipeSpeed_m_s:
+            openSpeed,
+
+        openPipeHarmonicRatio:
+            openRatio,
+
+        closedPipeSpeed_m_s:
+            closedSpeed,
+
+        closedPipeHarmonicRatio:
+            closedRatio,
+
+        averageAirSpeed_m_s:
+            averageAirSpeed,
+
+        airError_percent:
+            airError
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(value) &&
+        Math.abs(
+            value -
+            expected
+        ) <= tolerance
+    );
+
+}
+
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer = name =>
+            numeric(
+                qs(
+                    `[data-calc="${name}"]`
+                ).value
+            );
+
+
+        const values = {
+
+            stringSpeed:
+                answer("string-speed"),
+
+            stringF1:
+                answer("string-f1-theory"),
+
+            stringError:
+                answer("string-error"),
+
+            stringRatio:
+                answer("string-ratio"),
+
+            airTemp:
+                answer("air-temperature-speed"),
+
+            openSpeed:
+                answer("open-speed"),
+
+            openRatio:
+                answer("open-ratio"),
+
+            closedSpeed:
+                answer("closed-speed"),
+
+            closedRatio:
+                answer("closed-ratio"),
+
+            averageAir:
+                answer("air-average-speed"),
+
+            airError:
+                answer("air-error")
+
+        };
+
+
+        const comparison =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.stringSpeed,
+                expected.stringSpeed_m_s,
+                .15
+            ) &&
+
+            closeEnough(
+                values.stringF1,
+                expected.stringF1Theory_Hz,
+                .25
+            ) &&
+
+            closeEnough(
+                values.stringError,
+                expected.stringError_percent,
+                .20
+            ) &&
+
+            closeEnough(
+                values.stringRatio,
+                expected.stringHarmonicRatio,
+                .03
+            ) &&
+
+            closeEnough(
+                values.airTemp,
+                expected.airTemperatureSpeed_m_s,
+                .15
+            ) &&
+
+            closeEnough(
+                values.openSpeed,
+                expected.openPipeSpeed_m_s,
+                .40
+            ) &&
+
+            closeEnough(
+                values.openRatio,
+                expected.openPipeHarmonicRatio,
+                .03
+            ) &&
+
+            closeEnough(
+                values.closedSpeed,
+                expected.closedPipeSpeed_m_s,
+                .50
+            ) &&
+
+            closeEnough(
+                values.closedRatio,
+                expected.closedPipeHarmonicRatio,
+                .04
+            ) &&
+
+            closeEnough(
+                values.averageAir,
+                expected.averageAirSpeed_m_s,
+                .40
+            ) &&
+
+            closeEnough(
+                values.airError,
+                expected.airError_percent,
+                .20
+            );
+
+
+        if(
+            !correct ||
+            comparison.length < 70 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică transformările g/m → kg/m și cm → m, apoi formulele pentru coardă și coloanele de aer."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    system:"coardă",
+                    quantity:"lungime vibrantă",
+                    instrument:"ruletă",
+                    studentReading_cm:
+                        state.readings.stringLength.studentReading,
+                    resolution_cm:
+                        state.readings.stringLength.resolution,
+                    attempts:
+                        state.readings.stringLength.attempts
+                },
+
+                {
+                    system:"coardă",
+                    quantity:"tensiune",
+                    instrument:"dinamometru",
+                    studentReading_N:
+                        state.readings.stringForce.studentReading,
+                    resolution_N:
+                        state.readings.stringForce.resolution,
+                    attempts:
+                        state.readings.stringForce.attempts
+                },
+
+                {
+                    system:"coardă",
+                    quantity:"frecvență fundamentală",
+                    instrument:"frecvențometru",
+                    studentReading_Hz:
+                        state.readings.stringF1.studentReading,
+                    resolution_Hz:
+                        state.readings.stringF1.resolution,
+                    attempts:
+                        state.readings.stringF1.attempts
+                },
+
+                {
+                    system:"coardă",
+                    quantity:"armonica a II-a",
+                    instrument:"frecvențometru",
+                    studentReading_Hz:
+                        state.readings.stringF2.studentReading,
+                    resolution_Hz:
+                        state.readings.stringF2.resolution,
+                    attempts:
+                        state.readings.stringF2.attempts
+                },
+
+                {
+                    system:"aer",
+                    quantity:"temperatură",
+                    instrument:"termometru",
+                    studentReading_C:
+                        state.readings.temperature.studentReading,
+                    resolution_C:
+                        state.readings.temperature.resolution,
+                    attempts:
+                        state.readings.temperature.attempts
+                },
+
+                {
+                    system:"tub deschis",
+                    quantity:"lungime",
+                    instrument:"ruletă",
+                    studentReading_cm:
+                        state.readings.openLength.studentReading,
+                    attempts:
+                        state.readings.openLength.attempts
+                },
+
+                {
+                    system:"tub deschis",
+                    quantity:"frecvență fundamentală",
+                    studentReading_Hz:
+                        state.readings.openF1.studentReading,
+                    attempts:
+                        state.readings.openF1.attempts
+                },
+
+                {
+                    system:"tub deschis",
+                    quantity:"armonica a II-a",
+                    studentReading_Hz:
+                        state.readings.openF2.studentReading,
+                    attempts:
+                        state.readings.openF2.attempts
+                },
+
+                {
+                    system:"tub închis",
+                    quantity:"lungime",
+                    instrument:"ruletă",
+                    studentReading_cm:
+                        state.readings.closedLength.studentReading,
+                    attempts:
+                        state.readings.closedLength.attempts
+                },
+
+                {
+                    system:"tub închis",
+                    quantity:"frecvență fundamentală",
+                    studentReading_Hz:
+                        state.readings.closedF1.studentReading,
+                    attempts:
+                        state.readings.closedF1.attempts
+                },
+
+                {
+                    system:"tub închis",
+                    quantity:"armonica a III-a",
+                    studentReading_Hz:
+                        state.readings.closedF3.studentReading,
+                    attempts:
+                        state.readings.closedF3.attempts
+                }
+
+            ],
+
+            calculations:{
+
+                string:{
+
+                    linearDensity_g_m:
+                        state.set
+                            .visible
+                            .stringLinearDensity_g_m,
+
+                    waveSpeed_m_s:
+                        round(
+                            expected.stringSpeed_m_s,
+                            3
+                        ),
+
+                    theoreticalFundamental_Hz:
+                        round(
+                            expected.stringF1Theory_Hz,
+                            3
+                        ),
+
+                    measuredFundamental_Hz:
+                        state.readings
+                            .stringF1
+                            .studentReading,
+
+                    relativeError_percent:
+                        round(
+                            expected.stringError_percent,
+                            2
+                        ),
+
+                    harmonicRatio_f2_f1:
+                        round(
+                            expected.stringHarmonicRatio,
+                            3
+                        )
+
+                },
+
+                air:{
+
+                    temperature_C:
+                        state.readings
+                            .temperature
+                            .studentReading,
+
+                    temperatureReferenceSpeed_m_s:
+                        round(
+                            expected.airTemperatureSpeed_m_s,
+                            3
+                        ),
+
+                    openPipeSpeed_m_s:
+                        round(
+                            expected.openPipeSpeed_m_s,
+                            3
+                        ),
+
+                    openPipeRatio_f2_f1:
+                        round(
+                            expected.openPipeHarmonicRatio,
+                            3
+                        ),
+
+                    closedPipeSpeed_m_s:
+                        round(
+                            expected.closedPipeSpeed_m_s,
+                            3
+                        ),
+
+                    closedPipeRatio_f3_f1:
+                        round(
+                            expected.closedPipeHarmonicRatio,
+                            3
+                        ),
+
+                    averageSpeed_m_s:
+                        round(
+                            expected.averageAirSpeed_m_s,
+                            3
+                        ),
+
+                    relativeError_percent:
+                        round(
+                            expected.airError_percent,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    comparison,
+
+                expectedOpenPipeRatio:
+                    2,
+
+                expectedClosedPipeRatio:
+                    3
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(6);
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session.studentName,
+
+                className:
+                    state.session.studentClass,
+
+                catalogNumber:
+                    state.session.catalogNumber,
+
+                identityConfirmed:true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   Trimitem doar parametrul declarat elevului.
+                   Valorile interne ale simulării nu sunt
+                   publicate drept răspunsuri.
+                */
+
+                generatedData:{
+
+                    stringLinearDensity_g_m:
+                        state.set
+                            .visible
+                            .stringLinearDensity_g_m,
+
+                    stringModel:
+                        "coardă fixată la ambele capete",
+
+                    openPipeModel:
+                        "tub deschis la ambele capete",
+
+                    closedPipeModel:
+                        "tub închis la un capăt"
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session.sessionId,
+
+                startedAt:
+                    state.session.startedAt,
+
+                finishedAt:
+                    state.evaluation.finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation.finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session.startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session.experimentDate,
+
+                completed:true,
+
+                totalSteps:8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook.measurements,
+
+            calculations:
+                state.notebook.calculations,
+
+            comparison:
+                state.notebook.comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation.finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           Dacă raportul a fost deja finalizat,
+           păstrăm același reportId.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length < 100 ||
+            errorSources.length < 40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "sqrt-tension",
+
+            q2:
+                "double",
+
+            q3:
+                "all",
+
+            q4:
+                "odd"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >= 3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:true,
+
+            notebookConfirmed:true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            state.reportId ||
+            makeId("RAP");
+
+
+        state.completed.add(7);
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook.calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+                <span>Punctaj conceptual</span>
+                <strong>${score}/4</strong>
+            </div>
+
+            <div class="result-card">
+                <span>v pe coardă</span>
+                <strong>${c.string.waveSpeed_m_s.toFixed(2)} m/s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>f₁ teoretic – coardă</span>
+                <strong>${c.string.theoreticalFundamental_Hz.toFixed(2)} Hz</strong>
+            </div>
+
+            <div class="result-card">
+                <span>f₂/f₁ – coardă</span>
+                <strong>${c.string.harmonicRatio_f2_f1.toFixed(2)}</strong>
+            </div>
+
+            <div class="result-card">
+                <span>v – tub deschis</span>
+                <strong>${c.air.openPipeSpeed_m_s.toFixed(2)} m/s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>v – tub închis</span>
+                <strong>${c.air.closedPipeSpeed_m_s.toFixed(2)} m/s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>v mediu aer</span>
+                <strong>${c.air.averageSpeed_m_s.toFixed(2)} m/s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Abatere v aer</span>
+                <strong>${c.air.relativeError_percent.toFixed(2)}%</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Set experimental</span>
+                <strong>${state.set.id}</strong>
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation.finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea prin modulul comun nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă de transmitere: ${error.message}`;
+
+        }
+
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(text).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(/\s+/);
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length > max &&
+            line
+        ){
+
+            lines.push(line);
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+        lines.push(line);
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/\(/g,"\\(")
+        .replace(/\)/g,"\\)");
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+        pages.push(["Raport"]);
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(pageId);
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join("\n");
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(pdf);
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(pdf);
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:"application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook.calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Unde mecanice si acustica",
+
+        "EXP05 - Instrumente muzicale cu coarde si de suflat",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "INSTRUMENT CU COARDA",
+
+        `Densitate liniara: ${state.set.visible.stringLinearDensity_g_m.toFixed(2)} g/m`,
+
+        `Lungime: ${state.readings.stringLength.studentReading.toFixed(1)} cm`,
+
+        `Tensiune: ${state.readings.stringForce.studentReading.toFixed(0)} N`,
+
+        `f1 masurat: ${state.readings.stringF1.studentReading.toFixed(0)} Hz`,
+
+        `f2 masurat: ${state.readings.stringF2.studentReading.toFixed(0)} Hz`,
+
+        `Viteza pe coarda: ${c.string.waveSpeed_m_s.toFixed(3)} m/s`,
+
+        `f1 teoretic: ${c.string.theoreticalFundamental_Hz.toFixed(3)} Hz`,
+
+        `Abatere relativa: ${c.string.relativeError_percent.toFixed(2)} %`,
+
+        `f2/f1: ${c.string.harmonicRatio_f2_f1.toFixed(3)}`,
+
+        "",
+
+        "INSTRUMENTE DE SUFLAT",
+
+        `Temperatura aerului: ${state.readings.temperature.studentReading.toFixed(1)} C`,
+
+        `Viteza estimata din temperatura: ${c.air.temperatureReferenceSpeed_m_s.toFixed(3)} m/s`,
+
+        "",
+
+        "Tub deschis:",
+
+        `L = ${state.readings.openLength.studentReading.toFixed(0)} cm`,
+
+        `f1 = ${state.readings.openF1.studentReading.toFixed(0)} Hz`,
+
+        `f2 = ${state.readings.openF2.studentReading.toFixed(0)} Hz`,
+
+        `v = ${c.air.openPipeSpeed_m_s.toFixed(3)} m/s`,
+
+        `f2/f1 = ${c.air.openPipeRatio_f2_f1.toFixed(3)}`,
+
+        "",
+
+        "Tub inchis la un capat:",
+
+        `L = ${state.readings.closedLength.studentReading.toFixed(0)} cm`,
+
+        `f1 = ${state.readings.closedF1.studentReading.toFixed(0)} Hz`,
+
+        `f3 = ${state.readings.closedF3.studentReading.toFixed(0)} Hz`,
+
+        `v = ${c.air.closedPipeSpeed_m_s.toFixed(3)} m/s`,
+
+        `f3/f1 = ${c.air.closedPipeRatio_f3_f1.toFixed(3)}`,
+
+        "",
+
+        `Viteza medie a sunetului: ${c.air.averageSpeed_m_s.toFixed(3)} m/s`,
+
+        `Abatere fata de valoarea estimata din temperatura: ${c.air.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETAREA ELEVULUI",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(lines);
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session.studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP05-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(anchor);
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(0);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
