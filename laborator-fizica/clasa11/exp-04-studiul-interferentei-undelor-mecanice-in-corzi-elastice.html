@@ -1,1 +1,7487 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul interferenței undelor mecanice în corzi elastice."
+>
+
+<title>Studiul interferenței undelor mecanice în corzi elastice</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --primary-dark:#16425b;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+    --wave1:#1677c8;
+    --wave2:#d97706;
+    --result:#7c3aed;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:linear-gradient(135deg,#16324f,#246b84);
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn.phase{
+    background:#6d28d9;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok,
+.feedback.is-success{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad,
+.feedback.is-error{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.65;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.interference-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.instrument-box{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid #b9ccd8;
+    border-radius:14px;
+    background:#f8fcfe;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   VIZUALIZAREA UNDELOR
+========================================================= */
+
+.wave-stage{
+    position:relative;
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #b7ccd8;
+    border-radius:16px;
+    background:
+        linear-gradient(#eef9ff,#ffffff);
+}
+
+.wave-stage-header{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:.7rem;
+    padding:.8rem 1rem;
+    border-bottom:1px solid #c8d9e2;
+    background:#f8fcfe;
+}
+
+.wave-stage-header strong{
+    color:#23465a;
+}
+
+.phase-badge{
+    padding:.3rem .65rem;
+    border-radius:999px;
+    color:#fff;
+    background:#6d28d9;
+    font-weight:800;
+}
+
+.wave-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:800/390;
+    background:
+        linear-gradient(
+            180deg,
+            #f5fcff,
+            #ffffff
+        );
+}
+
+.axis{
+    stroke:#9bb3bf;
+    stroke-width:1.5;
+    stroke-dasharray:7 6;
+}
+
+.wave-one{
+    fill:none;
+    stroke:var(--wave1);
+    stroke-width:3;
+}
+
+.wave-two{
+    fill:none;
+    stroke:var(--wave2);
+    stroke-width:3;
+}
+
+.wave-result{
+    fill:none;
+    stroke:var(--result);
+    stroke-width:5;
+}
+
+.wave-label{
+    font-size:16px;
+    font-weight:700;
+}
+
+.source-marker{
+    fill:#355d72;
+}
+
+.observation-line{
+    stroke:#d12b3c;
+    stroke-width:2;
+    stroke-dasharray:5 4;
+}
+
+.observation-label{
+    fill:#a0202d;
+    font-size:14px;
+    font-weight:700;
+}
+
+.wave-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    padding:.7rem 1rem 1rem;
+    color:#526b80;
+}
+
+.legend-item{
+    display:flex;
+    gap:.4rem;
+    align-items:center;
+}
+
+.legend-line{
+    width:30px;
+    height:4px;
+    border-radius:5px;
+}
+
+.legend-line.one{
+    background:var(--wave1);
+}
+
+.legend-line.two{
+    background:var(--wave2);
+}
+
+.legend-line.result{
+    background:var(--result);
+}
+
+
+/* =========================================================
+   CRONOMETRU
+========================================================= */
+
+.timer-panel{
+    max-width:720px;
+    margin:1rem auto;
+    padding:1rem;
+    text-align:center;
+    border:2px solid #506a78;
+    border-radius:16px;
+    color:#fff;
+    background:#15242d;
+}
+
+.timer-display{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:.8rem;
+}
+
+.timer-value{
+    min-width:220px;
+    padding:.6rem 1rem;
+    border-radius:8px;
+    color:#b8ffcf;
+    background:#050b0e;
+    font:700 clamp(2rem,7vw,3.4rem) ui-monospace,Consolas,monospace;
+    letter-spacing:.06em;
+}
+
+.counter-value{
+    min-width:180px;
+    padding:.7rem;
+    border-radius:8px;
+    color:#d9ecff;
+    background:#071218;
+    font:700 1.2rem ui-monospace,Consolas,monospace;
+}
+
+.timer-panel .actions{
+    justify-content:center;
+}
+
+.timer-note{
+    color:#c7dbe4;
+    font-size:.92rem;
+}
+
+
+/* =========================================================
+   INTERFERENȚĂ
+========================================================= */
+
+.phase-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:1rem;
+}
+
+.interference-card h3{
+    margin-top:0;
+}
+
+.phase-value{
+    font-size:1.5rem;
+    font-weight:850;
+    color:#6d28d9;
+}
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+@media(max-width:850px){
+
+    .phase-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp04-interferenta-unde-mecanice",
+
+    code:
+        "EXP04",
+
+    title:
+        "Studiul interferenței undelor mecanice în corzi elastice",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Unde mecanice",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "coarda-elastica",
+        "generator-oscilatii",
+        "corpuri-in-miscare"
+    ],
+
+    requiredEquipment:[
+        "lab-coat",
+        "elastic-string",
+        "two-wave-generators",
+        "ruler",
+        "tape-measure",
+        "stopwatch"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Unde mecanice
+    </p>
+
+    <h1>
+        Studiul interferenței undelor mecanice în corzi elastice
+    </h1>
+
+    <p>
+        Suprapunerea undelor armonice coerente,
+        interferență constructivă și distructivă,
+        diferență de fază și amplitudine rezultantă.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+<p>
+    Clasa și numărul din catalog determină setul experimental.
+    Fiecare dintre cei 30 de elevi ai unei clase primește
+    un set reproductibil.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere. Nu sunt realizate înregistrări
+        audio sau video.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>Atenție:</strong>
+
+    coarda elastică tensionată poate produce mișcări rapide.
+    Nu apropia fața de coardă și nu o întinde peste limita
+    indicată de montaj.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Verifică fixarea ambelor capete ale corzii.
+    </li>
+
+    <li>
+        Nu întinde excesiv coarda elastică.
+    </li>
+
+    <li>
+        Nu atinge coarda în timpul propagării undelor.
+    </li>
+
+    <li>
+        Păstrează zona din jurul montajului liberă.
+    </li>
+
+    <li>
+        Dacă un suport se deplasează, oprește experimentul.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci dacă unul dintre suporturile corzii se deplasează?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        Opresc experimentul și refac montajul.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="continue"
+    >
+
+    <span>
+        Continui măsurarea deoarece suportul nu influențează unda.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+<p>
+    Selectează numai echipamentele necesare pentru studiul
+    interferenței undelor mecanice.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Pe aceeași coardă se propagă în același sens două unde
+    armonice coerente, de aceeași frecvență și aceeași lungime
+    de undă, dar cu amplitudini și faze inițiale diferite.
+</p>
+
+
+<div class="formula">
+
+    y₁ =
+    A₁ sin(ωt − kx)
+
+    <br>
+
+    y₂ =
+    A₂ sin(ωt − kx + Δφ)
+
+</div>
+
+
+<p>
+    Conform principiului superpoziției:
+</p>
+
+
+<div class="formula">
+
+    y =
+    y₁ + y₂
+
+    <br><br>
+
+    A<sub>R</sub> =
+    √[
+        A₁² +
+        A₂² +
+        2A₁A₂ cos(Δφ)
+    ]
+
+</div>
+
+
+<div class="formula">
+
+    <strong>Interferență constructivă:</strong>
+
+    Δφ = 2πm
+
+    <br>
+
+    A<sub>max</sub> =
+    A₁ + A₂
+
+    <br><br>
+
+    <strong>Interferență distructivă:</strong>
+
+    Δφ = (2m + 1)π
+
+    <br>
+
+    A<sub>min</sub> =
+    |A₁ − A₂|
+
+</div>
+
+
+<div class="formula">
+
+    T =
+    t/N
+
+    <br><br>
+
+    f =
+    1/T =
+    N/t
+
+    <br><br>
+
+    v =
+    λf
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Pentru Δφ = 0°, amplitudinea rezultantă este:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionZero"
+        value="sum"
+    >
+
+    <span>
+        A₁ + A₂
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionZero"
+        value="difference"
+    >
+
+    <span>
+        |A₁ − A₂|
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Pentru Δφ = 180°, amplitudinea rezultantă este:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPi"
+        value="difference"
+    >
+
+    <span>
+        |A₁ − A₂|
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPi"
+        value="sum"
+    >
+
+    <span>
+        A₁ + A₂
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă diferența de fază se modifică între 0° și 180°:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIntermediate"
+        value="between"
+    >
+
+    <span>
+        amplitudinea rezultantă ia valori între minim și maxim
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIntermediate"
+        value="constant"
+    >
+
+    <span>
+        amplitudinea rezultantă rămâne constantă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, scopul, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Caracteristicile undelor componente
+</h2>
+
+
+<p>
+    Măsoară amplitudinile celor două unde,
+    lungimea de undă și timpul pentru cinci oscilații
+    ale unui punct al corzii.
+</p>
+
+
+<div
+    class="wave-stage"
+    data-wave-stage
+>
+
+    <div class="wave-stage-header">
+
+        <strong>
+            Reprezentarea undelor pe coardă
+        </strong>
+
+        <span
+            class="phase-badge"
+            data-wave-status
+        >
+            Unda 1
+        </span>
+
+    </div>
+
+
+    <svg
+        class="wave-svg"
+        viewBox="0 0 800 390"
+        role="img"
+        aria-label="Simularea undelor mecanice"
+    >
+
+        <line
+            class="axis"
+            x1="25"
+            y1="195"
+            x2="775"
+            y2="195"
+        ></line>
+
+
+        <line
+            class="observation-line"
+            x1="630"
+            y1="30"
+            x2="630"
+            y2="360"
+        ></line>
+
+
+        <text
+            class="observation-label"
+            x="640"
+            y="50"
+        >
+            punct de observație
+        </text>
+
+
+        <circle
+            class="source-marker"
+            cx="30"
+            cy="195"
+            r="9"
+        ></circle>
+
+
+        <path
+            class="wave-one"
+            data-wave-path="one"
+        ></path>
+
+
+        <path
+            class="wave-two"
+            data-wave-path="two"
+            hidden
+        ></path>
+
+
+        <path
+            class="wave-result"
+            data-wave-path="result"
+            hidden
+        ></path>
+
+    </svg>
+
+
+    <div class="wave-legend">
+
+        <span class="legend-item">
+            <span class="legend-line one"></span>
+            unda 1
+        </span>
+
+        <span class="legend-item">
+            <span class="legend-line two"></span>
+            unda 2
+        </span>
+
+        <span class="legend-item">
+            <span class="legend-line result"></span>
+            unda rezultantă
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="field-grid">
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Amplitudinea undei 1
+</h3>
+
+
+<div data-a1-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₁ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a1-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a1
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a1-notebook
+    >
+
+    <span>
+        Am notat A₁.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a1"
+></p>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    B. Amplitudinea undei 2
+</h3>
+
+
+<div data-a2-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₂ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a2-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a2
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a2-notebook
+    >
+
+    <span>
+        Am notat A₂.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a2"
+></p>
+
+</div>
+
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    C. Lungimea de undă
+</h3>
+
+<p>
+    Măsoară distanța dintre două creste succesive.
+</p>
+
+
+<div data-wavelength-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        λ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-wavelength-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-wavelength
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-wavelength-notebook
+    >
+
+    <span>
+        Am notat lungimea de undă.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="wavelength"
+></p>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    D. Măsurarea perioadei
+</h3>
+
+<p>
+    Cronometrează
+    <strong>5 oscilații complete</strong>
+    ale punctului marcat pe coardă.
+</p>
+
+
+<div class="timer-display">
+
+    <div
+        class="timer-value"
+        data-timer
+    >
+        00.00 s
+    </div>
+
+
+    <div class="counter-value">
+
+        Oscilații:
+        <strong data-counter>
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<p class="timer-note">
+    Butonul Start devine activ după ce ai realizat
+    cele trei citiri de mai sus.
+</p>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        data-start-timer
+        type="button"
+        disabled
+    >
+        Start
+    </button>
+
+    <button
+        class="btn warning"
+        data-stop-timer
+        type="button"
+        disabled
+    >
+        Stop
+    </button>
+
+    <button
+        class="btn secondary"
+        data-reset-timer
+        type="button"
+        disabled
+    >
+        Repetă măsurarea
+    </button>
+
+</div>
+
+</div>
+
+
+<label class="field">
+
+    Transcrie timpul pentru 5 oscilații, t (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-time-answer
+    >
+
+</label>
+
+
+<button
+    class="btn"
+    data-check-time
+    type="button"
+    disabled
+>
+    Verifică timpul transcris
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="time"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-interference
+        type="button"
+        disabled
+    >
+        Continuă la interferență
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Studiul interferenței
+</h2>
+
+
+<p>
+    Menținem frecvența, lungimea de undă și amplitudinile
+    celor două unde constante și modificăm numai diferența
+    de fază dintre ele.
+</p>
+
+
+<div
+    class="wave-stage"
+    data-interference-stage
+>
+
+    <div class="wave-stage-header">
+
+        <strong>
+            Suprapunerea celor două unde
+        </strong>
+
+        <span
+            class="phase-badge"
+            data-phase-display
+        >
+            Δφ = 0°
+        </span>
+
+    </div>
+
+
+    <svg
+        class="wave-svg"
+        viewBox="0 0 800 390"
+        role="img"
+        aria-label="Interferența celor două unde mecanice"
+    >
+
+        <line
+            class="axis"
+            x1="25"
+            y1="195"
+            x2="775"
+            y2="195"
+        ></line>
+
+
+        <line
+            class="observation-line"
+            x1="630"
+            y1="30"
+            x2="630"
+            y2="360"
+        ></line>
+
+
+        <text
+            class="observation-label"
+            x="640"
+            y="50"
+        >
+            punct de observație
+        </text>
+
+
+        <path
+            class="wave-one"
+            data-interference-path="one"
+        ></path>
+
+
+        <path
+            class="wave-two"
+            data-interference-path="two"
+        ></path>
+
+
+        <path
+            class="wave-result"
+            data-interference-path="result"
+        ></path>
+
+    </svg>
+
+
+    <div class="wave-legend">
+
+        <span class="legend-item">
+            <span class="legend-line one"></span>
+            y₁
+        </span>
+
+        <span class="legend-item">
+            <span class="legend-line two"></span>
+            y₂
+        </span>
+
+        <span class="legend-item">
+            <span class="legend-line result"></span>
+            y₁ + y₂
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="phase-grid">
+
+
+<!-- 0 DEGREES -->
+
+<div class="interference-card">
+
+<h3>
+    Regimul I
+</h3>
+
+<div class="phase-value">
+    Δφ = 0°
+</div>
+
+<p>
+    Cele două unde sunt în fază.
+</p>
+
+
+<button
+    class="btn phase"
+    type="button"
+    data-show-phase="zero"
+>
+    Afișează acest regim
+</button>
+
+
+<div data-result-instrument="zero"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A<sub>R,0</sub> (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-result-answer="zero"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-result="zero"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-result-notebook="zero"
+    >
+
+    <span>
+        Am notat valoarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="result-zero"
+></p>
+
+</div>
+
+
+<!-- FAZA INTERMEDIARĂ -->
+
+<div class="interference-card">
+
+<h3>
+    Regimul II
+</h3>
+
+<div
+    class="phase-value"
+    data-middle-phase-label
+>
+    Δφ = —
+</div>
+
+<p>
+    Interferență parțial constructivă/distructivă.
+</p>
+
+
+<button
+    class="btn phase"
+    type="button"
+    data-show-phase="middle"
+>
+    Afișează acest regim
+</button>
+
+
+<div data-result-instrument="middle"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A<sub>R,φ</sub> (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-result-answer="middle"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-result="middle"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-result-notebook="middle"
+    >
+
+    <span>
+        Am notat valoarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="result-middle"
+></p>
+
+</div>
+
+
+<!-- 180 DEGREES -->
+
+<div class="interference-card">
+
+<h3>
+    Regimul III
+</h3>
+
+<div class="phase-value">
+    Δφ = 180°
+</div>
+
+<p>
+    Cele două unde sunt în opoziție de fază.
+</p>
+
+
+<button
+    class="btn phase"
+    type="button"
+    data-show-phase="pi"
+>
+    Afișează acest regim
+</button>
+
+
+<div data-result-instrument="pi"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A<sub>R,180</sub> (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-result-answer="pi"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-result="pi"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-result-notebook="pi"
+    >
+
+    <span>
+        Am notat valoarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="result-pi"
+></p>
+
+</div>
+
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="interference"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Perioada și frecvența
+</h3>
+
+
+<div class="formula">
+
+    T =
+    t/5
+
+</div>
+
+
+<label class="field">
+
+    T (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="period"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f =
+    1/T =
+    5/t
+
+</div>
+
+
+<label class="field">
+
+    f (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="frequency"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Viteza de propagare
+</h3>
+
+
+<div class="formula">
+
+    v =
+    λf
+
+</div>
+
+
+<label class="field">
+
+    v (m/s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="speed"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Interferența constructivă
+</h3>
+
+
+<div class="formula">
+
+    Pentru Δφ = 0°:
+
+    <br>
+
+    A<sub>teoretic</sub> =
+    A₁ + A₂
+
+</div>
+
+
+<label class="field">
+
+    A<sub>teoretic,0</sub> (cm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="a-zero"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea relativă față de amplitudinea măsurată (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="error-zero"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Interferența pentru faza intermediară
+</h3>
+
+
+<div class="formula">
+
+    A<sub>teoretic</sub> =
+    √[
+        A₁² +
+        A₂² +
+        2A₁A₂cos(Δφ)
+    ]
+
+</div>
+
+
+<p>
+    Pentru setul tău:
+    <strong data-middle-phase-calculation>Δφ = —</strong>
+</p>
+
+
+<label class="field">
+
+    A<sub>teoretic,φ</sub> (cm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="a-middle"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea relativă (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="error-middle"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Interferența distructivă
+</h3>
+
+
+<div class="formula">
+
+    Pentru Δφ = 180°:
+
+    <br>
+
+    A<sub>teoretic</sub> =
+    |A₁ − A₂|
+
+</div>
+
+
+<label class="field">
+
+    A<sub>teoretic,180</sub> (cm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="a-pi"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea relativă (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="error-pi"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea rezultatelor
+</h3>
+
+
+<label class="field">
+
+    Explică modul în care diferența de fază influențează
+    amplitudinea undei rezultante.
+
+    <textarea
+        rows="5"
+        data-comparison
+        placeholder="Compară cele trei amplitudini măsurate și formulează o relație cauză–efect."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, transformările de unități,
+        calculele și comparațiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Principiul superpoziției afirmă că deplasarea rezultantă este:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="sum"
+    >
+
+    <span>
+        suma algebrică a deplasărilor produse de fiecare undă
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="product"
+    >
+
+    <span>
+        produsul deplasărilor celor două unde
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Interferența constructivă maximă apare când:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="zero"
+    >
+
+    <span>
+        diferența de fază este 2πm
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="pi"
+    >
+
+    <span>
+        diferența de fază este (2m+1)π
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Pentru două unde cu amplitudini diferite și Δφ = 180°:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="difference"
+    >
+
+    <span>
+        amplitudinea rezultantă este |A₁ − A₂|
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="always-zero"
+    >
+
+    <span>
+        amplitudinea rezultantă este întotdeauna zero
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Dacă frecvența rămâne constantă, iar lungimea de undă crește:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="speed-increases"
+    >
+
+    <span>
+        viteza de propagare crește
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="speed-decreases"
+    >
+
+    <span>
+        viteza de propagare scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="6"
+        minlength="100"
+        data-final-conclusion
+        required
+        placeholder="Folosește amplitudinile măsurate, diferențele de fază și relația v = λf."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: citirea amplitudinii, măsurarea lungimii de undă, timpul de reacție..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        )
+            .replace(
+                ",",
+                "."
+            )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    round(
+        Math.round(
+            value /
+            step
+        ) *
+        step,
+        6
+    );
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:
+        0,
+
+    completed:
+        new Set(),
+
+    session:
+        null,
+
+    set:
+        null,
+
+    safety:
+        null,
+
+    equipment:
+        null,
+
+    predictions:
+        null,
+
+    readings:{
+
+        a1:null,
+
+        a2:null,
+
+        wavelength:null,
+
+        result:{
+
+            zero:null,
+
+            middle:null,
+
+            pi:null
+
+        }
+
+    },
+
+    timerMeasurement:
+        null,
+
+    timerController:
+        null,
+
+    instruments:{},
+
+    waveAnimation:{
+        frameId:null,
+        startedAt:null,
+        phaseDeg:0,
+        mode:"one"
+    },
+
+    interferenceAnimation:{
+        frameId:null,
+        startedAt:null,
+        phaseDeg:0
+    },
+
+    notebook:
+        null,
+
+    evaluation:
+        null,
+
+    reportId:
+        null,
+
+    reportPayload:
+        null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Undele componente",
+
+    "Interferență",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button
+                .classList
+                .toggle(
+                    "is-active",
+                    index ===
+                    step
+                );
+
+
+            button
+                .classList
+                .toggle(
+                    "is-done",
+                    state.completed
+                        .has(index)
+                );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed
+                        .has(
+                            index - 1
+                        )
+                ){
+
+                    showStep(index);
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(button);
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   GENERAREA SETULUI
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function resultantAmplitude(
+    a1,
+    a2,
+    phaseDeg
+){
+
+    const phase =
+        phaseDeg *
+        Math.PI /
+        180;
+
+
+    return Math.sqrt(
+        a1 ** 2 +
+        a2 ** 2 +
+        2 *
+        a1 *
+        a2 *
+        Math.cos(phase)
+    );
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(className);
+
+
+    const index =
+        Number(catalogNumber) -
+        1;
+
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    /*
+       A1 este intenționat mai mare decât A2,
+       astfel încât interferența distructivă
+       să nu conducă la amplitudine zero.
+    */
+
+    const a1Slot =
+        (
+            slot * 11 +
+            ci * 5
+        ) %
+        10;
+
+
+    const a2Slot =
+        (
+            slot * 17 +
+            ci * 7
+        ) %
+        9;
+
+
+    const a1 =
+        round(
+            2.5 +
+            a1Slot *
+            .1,
+            1
+        );
+
+
+    const a2 =
+        round(
+            1.2 +
+            a2Slot *
+            .1,
+            1
+        );
+
+
+    const wavelengthSlot =
+        (
+            slot * 13 +
+            ci * 9
+        ) %
+        30;
+
+
+    const wavelengthCm =
+        56 +
+        wavelengthSlot;
+
+
+    const frequencySlot =
+        (
+            slot * 19 +
+            ci
+        ) %
+        24;
+
+
+    const frequencyHz =
+        1.25 +
+        frequencySlot *
+        .035;
+
+
+    const period =
+        1 /
+        frequencyHz;
+
+
+    const phaseOptions = [
+        45,
+        60,
+        75,
+        90,
+        105,
+        120,
+        135
+    ];
+
+
+    const middlePhase =
+        phaseOptions[
+            (
+                slot +
+                ci * 2
+            ) %
+            phaseOptions.length
+        ];
+
+
+    const arZero =
+        roundTo(
+            resultantAmplitude(
+                a1,
+                a2,
+                0
+            ),
+            .1
+        );
+
+
+    const arMiddle =
+        roundTo(
+            resultantAmplitude(
+                a1,
+                a2,
+                middlePhase
+            ),
+            .1
+        );
+
+
+    const arPi =
+        roundTo(
+            resultantAmplitude(
+                a1,
+                a2,
+                180
+            ),
+            .1
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP04`,
+
+        visible:{
+
+            oscillations:
+                5,
+
+            middlePhase_deg:
+                middlePhase
+
+        },
+
+        hidden:{
+
+            a1_cm:
+                a1,
+
+            a2_cm:
+                a2,
+
+            wavelength_cm:
+                wavelengthCm,
+
+            frequency_Hz:
+                frequencyHz,
+
+            period_s:
+                period,
+
+            resultZero_cm:
+                arZero,
+
+            resultMiddle_cm:
+                arMiddle,
+
+            resultPi_cm:
+                arPi
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get("studentName") ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get("studentClass")
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get("catalogNumber")
+            );
+
+
+        if(
+            studentName.length < 3 ||
+            !/^XI [A-D]$/.test(studentClass) ||
+            !Number.isInteger(catalogNumber) ||
+            catalogNumber < 1 ||
+            catalogNumber > 30 ||
+            !form.get("monitorConsent") ||
+            !form.get("identityConfirmed")
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId("FIZ"),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG.title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG.id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(0);
+
+
+        showStep(1);
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !== "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "coarda-elastica",
+                "generator-oscilatii"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(1);
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "halat",
+        "Halat de laborator"
+    ],
+
+    [
+        "coarda",
+        "Coardă elastică"
+    ],
+
+    [
+        "generatoare",
+        "Două generatoare coerente de oscilații"
+    ],
+
+    [
+        "rigla",
+        "Riglă gradată"
+    ],
+
+    [
+        "ruleta",
+        "Ruletă"
+    ],
+
+    [
+        "cronometru",
+        "Cronometru digital"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ],
+
+    [
+        "multimetru",
+        "Multimetru"
+    ],
+
+    [
+        "calorimetru",
+        "Calorimetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "halat",
+        "coarda",
+        "generatoare",
+        "rigla",
+        "ruleta",
+        "cronometru"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(label);
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] === id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(2);
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* =========================================================
+   DATE INIȚIALE
+========================================================= */
+
+function renderInitialData(){
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+                <tr>
+                    <th>Parametru</th>
+                    <th>Valoare</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Număr de oscilații cronometrate</td>
+                    <td>${state.set.visible.oscillations}</td>
+                </tr>
+
+                <tr>
+                    <td>Diferență de fază intermediară</td>
+                    <td>${state.set.visible.middlePhase_deg}°</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluție pentru amplitudine</td>
+                    <td>0,1 cm</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția cronometrului</td>
+                    <td>0,01 s</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-middle-phase-label]"
+    ).textContent =
+        `Δφ = ${state.set.visible.middlePhase_deg}°`;
+
+
+    qs(
+        "[data-middle-phase-calculation]"
+    ).textContent =
+        `Δφ = ${state.set.visible.middlePhase_deg}°`;
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const zero =
+            qs(
+                'input[name="predictionZero"]:checked'
+            )?.value;
+
+
+        const pi =
+            qs(
+                'input[name="predictionPi"]:checked'
+            )?.value;
+
+
+        const intermediate =
+            qs(
+                'input[name="predictionIntermediate"]:checked'
+            )?.value;
+
+
+        if(
+            !zero ||
+            !pi ||
+            !intermediate ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            zero,
+
+            pi,
+
+            intermediate,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeComponentInstruments();
+
+
+        startComponentWaveAnimation();
+
+
+        state.completed.add(3);
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(4);
+
+    }
+);
+
+
+/* =========================================================
+   DESENAREA UNDELOR
+========================================================= */
+
+function makeWavePath({
+
+    amplitudeCm,
+
+    phaseRad,
+
+    time,
+
+    wavelengthPixels=250,
+
+    centerY=195,
+
+    scale=22
+
+}){
+
+    const amplitude =
+        amplitudeCm *
+        scale;
+
+
+    const omega =
+        2 *
+        Math.PI *
+        (
+            state.set
+                ?.hidden
+                ?.frequency_Hz ||
+            1
+        );
+
+
+    let path =
+        "";
+
+
+    for(
+        let x=25;
+        x<=775;
+        x+=5
+    ){
+
+        const y =
+            centerY -
+            amplitude *
+            Math.sin(
+                2 *
+                Math.PI *
+                (
+                    x -
+                    25
+                ) /
+                wavelengthPixels -
+                omega *
+                time +
+                phaseRad
+            );
+
+
+        path +=
+            `${x === 25 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)} `;
+
+    }
+
+
+    return path;
+
+}
+
+
+function makeResultPath({
+
+    phaseDeg,
+
+    time
+
+}){
+
+    const a1 =
+        state.set.hidden.a1_cm;
+
+
+    const a2 =
+        state.set.hidden.a2_cm;
+
+
+    const phase =
+        phaseDeg *
+        Math.PI /
+        180;
+
+
+    const wavelengthPixels =
+        250;
+
+
+    const centerY =
+        195;
+
+
+    const scale =
+        22;
+
+
+    const omega =
+        2 *
+        Math.PI *
+        state.set.hidden.frequency_Hz;
+
+
+    let path =
+        "";
+
+
+    for(
+        let x=25;
+        x<=775;
+        x+=5
+    ){
+
+        const argument =
+            2 *
+            Math.PI *
+            (
+                x -
+                25
+            ) /
+            wavelengthPixels -
+            omega *
+            time;
+
+
+        const y1 =
+            a1 *
+            Math.sin(
+                argument
+            );
+
+
+        const y2 =
+            a2 *
+            Math.sin(
+                argument +
+                phase
+            );
+
+
+        const y =
+            centerY -
+            (
+                y1 +
+                y2
+            ) *
+            scale;
+
+
+        path +=
+            `${x === 25 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)} `;
+
+    }
+
+
+    return path;
+
+}
+
+
+/* =========================================================
+   ANIMAȚIA UNDELOR COMPONENTE
+========================================================= */
+
+function startComponentWaveAnimation(){
+
+    if(
+        state.waveAnimation
+            .frameId
+    ){
+
+        cancelAnimationFrame(
+            state.waveAnimation.frameId
+        );
+
+    }
+
+
+    state.waveAnimation.startedAt =
+        performance.now();
+
+
+    function frame(){
+
+        const elapsed =
+            (
+                performance.now() -
+                state.waveAnimation.startedAt
+            ) /
+            1000;
+
+
+        const path1 =
+            qs(
+                '[data-wave-path="one"]'
+            );
+
+
+        const path2 =
+            qs(
+                '[data-wave-path="two"]'
+            );
+
+
+        const pathResult =
+            qs(
+                '[data-wave-path="result"]'
+            );
+
+
+        path1.setAttribute(
+            "d",
+            makeWavePath({
+
+                amplitudeCm:
+                    state.set.hidden.a1_cm,
+
+                phaseRad:
+                    0,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        path2.setAttribute(
+            "d",
+            makeWavePath({
+
+                amplitudeCm:
+                    state.set.hidden.a2_cm,
+
+                phaseRad:
+                    0,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        pathResult.setAttribute(
+            "d",
+            makeResultPath({
+
+                phaseDeg:
+                    0,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        state.waveAnimation.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    state.waveAnimation.frameId =
+        requestAnimationFrame(
+            frame
+        );
+
+}
+
+
+/* =========================================================
+   INSTRUMENTELE UNDELOR COMPONENTE
+========================================================= */
+
+function initializeComponentInstruments(){
+
+    if(
+        state.instruments.a1
+    ){
+        return;
+    }
+
+
+    initializeReadingInstrument({
+
+        key:
+            "a1",
+
+        targetSelector:
+            "[data-a1-instrument]",
+
+        type:
+            "ruler",
+
+        value:
+            state.set.hidden.a1_cm,
+
+        maximum:
+            6,
+
+        minorDivision:
+            .1,
+
+        majorDivision:
+            1,
+
+        unit:
+            "cm",
+
+        label:
+            "Riglă – amplitudinea undei 1",
+
+        answerSelector:
+            "[data-a1-answer]",
+
+        buttonSelector:
+            "[data-check-a1]",
+
+        notebookSelector:
+            "[data-a1-notebook]",
+
+        feedbackName:
+            "a1",
+
+        readingDestination:
+            value => {
+
+                state.readings.a1 =
+                    value;
+
+
+                qs(
+                    "[data-wave-status]"
+                ).textContent =
+                    "Unda 2";
+
+
+                qs(
+                    '[data-wave-path="two"]'
+                ).hidden =
+                    false;
+
+            }
+
+    });
+
+
+    initializeReadingInstrument({
+
+        key:
+            "a2",
+
+        targetSelector:
+            "[data-a2-instrument]",
+
+        type:
+            "ruler",
+
+        value:
+            state.set.hidden.a2_cm,
+
+        maximum:
+            5,
+
+        minorDivision:
+            .1,
+
+        majorDivision:
+            1,
+
+        unit:
+            "cm",
+
+        label:
+            "Riglă – amplitudinea undei 2",
+
+        answerSelector:
+            "[data-a2-answer]",
+
+        buttonSelector:
+            "[data-check-a2]",
+
+        notebookSelector:
+            "[data-a2-notebook]",
+
+        feedbackName:
+            "a2",
+
+        readingDestination:
+            value => {
+
+                state.readings.a2 =
+                    value;
+
+            }
+
+    });
+
+
+    initializeReadingInstrument({
+
+        key:
+            "wavelength",
+
+        targetSelector:
+            "[data-wavelength-instrument]",
+
+        type:
+            "tape-measure",
+
+        value:
+            state.set.hidden.wavelength_cm,
+
+        maximum:
+            100,
+
+        minorDivision:
+            1,
+
+        majorDivision:
+            10,
+
+        decimals:
+            0,
+
+        unit:
+            "cm",
+
+        label:
+            "Ruletă – lungimea de undă",
+
+        answerSelector:
+            "[data-wavelength-answer]",
+
+        buttonSelector:
+            "[data-check-wavelength]",
+
+        notebookSelector:
+            "[data-wavelength-notebook]",
+
+        feedbackName:
+            "wavelength",
+
+        readingDestination:
+            value => {
+
+                state.readings.wavelength =
+                    value;
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   INSTRUMENT GENERIC
+========================================================= */
+
+function initializeReadingInstrument({
+
+    key,
+
+    targetSelector,
+
+    type,
+
+    value,
+
+    maximum,
+
+    minorDivision,
+
+    majorDivision,
+
+    decimals=null,
+
+    unit,
+
+    label,
+
+    answerSelector,
+
+    buttonSelector,
+
+    notebookSelector,
+
+    feedbackName,
+
+    readingDestination
+
+}){
+
+    const target =
+        qs(
+            targetSelector
+        );
+
+
+    target.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail.correct
+            ){
+                return;
+            }
+
+
+            readingDestination(
+                event.detail
+            );
+
+
+            checkComponentReadings();
+
+        }
+    );
+
+
+    state.instruments[key] =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `exp04-${key}`,
+
+                target,
+
+                type,
+
+                label,
+
+                instruction:
+                    "Citește valoarea indicată de instrument și noteaz-o în caiet.",
+
+                minimum:
+                    0,
+
+                maximum,
+
+                value,
+
+                minorDivision,
+
+                majorDivision,
+
+                decimals:
+                    decimals === null
+                        ? undefined
+                        : decimals,
+
+                unit,
+
+                tolerance:
+                    minorDivision /
+                    2 +
+                    .001,
+
+                answerInput:
+                    qs(
+                        answerSelector
+                    ),
+
+                feedbackTarget:
+                    qs(
+                        `[data-feedback="${feedbackName}"]`
+                    ),
+
+                verifyButton:
+                    qs(
+                        buttonSelector
+                    ),
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    qs(
+                        notebookSelector
+                    ),
+
+                allowZoom:
+                    true
+
+            });
+
+}
+
+
+/* =========================================================
+   CITIRI COMPLETE
+========================================================= */
+
+function checkComponentReadings(){
+
+    if(
+        !state.readings.a1 ||
+        !state.readings.a2 ||
+        !state.readings.wavelength
+    ){
+
+        return;
+
+    }
+
+
+    initializeTimer();
+
+
+    qs(
+        "[data-start-timer]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   CRONOMETRU
+========================================================= */
+
+function initializeTimer(){
+
+    if(
+        state.timerController
+    ){
+        return;
+    }
+
+
+    const period =
+        state.set.hidden.period_s;
+
+
+    const oscillations =
+        state.set.visible.oscillations;
+
+
+    const timerElement =
+        qs(
+            "[data-timer]"
+        );
+
+
+    const counterElement =
+        qs(
+            "[data-counter]"
+        );
+
+
+    const startButton =
+        qs(
+            "[data-start-timer]"
+        );
+
+
+    const stopButton =
+        qs(
+            "[data-stop-timer]"
+        );
+
+
+    const resetButton =
+        qs(
+            "[data-reset-timer]"
+        );
+
+
+    const verifyButton =
+        qs(
+            "[data-check-time]"
+        );
+
+
+    let runtime =
+        null;
+
+
+    function update(
+        elapsed
+    ){
+
+        timerElement.textContent =
+            `${elapsed.toFixed(2)} s`;
+
+
+        counterElement.textContent =
+            String(
+                Math.min(
+                    oscillations,
+                    Math.floor(
+                        elapsed /
+                        period
+                    )
+                )
+            );
+
+    }
+
+
+    function frame(){
+
+        if(!runtime){
+            return;
+        }
+
+
+        const elapsed =
+            (
+                performance.now() -
+                runtime.startedAt
+            ) /
+            1000;
+
+
+        update(
+            elapsed
+        );
+
+
+        runtime.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    function reset(){
+
+        if(
+            runtime?.frameId
+        ){
+
+            cancelAnimationFrame(
+                runtime.frameId
+            );
+
+        }
+
+
+        runtime =
+            null;
+
+
+        state.timerMeasurement =
+            null;
+
+
+        timerElement.textContent =
+            "00.00 s";
+
+
+        counterElement.textContent =
+            "0";
+
+
+        startButton.disabled =
+            false;
+
+
+        stopButton.disabled =
+            true;
+
+
+        resetButton.disabled =
+            true;
+
+
+        verifyButton.disabled =
+            true;
+
+
+        feedback(
+            "time",
+            ""
+        );
+
+    }
+
+
+    startButton.addEventListener(
+        "click",
+        () => {
+
+            runtime = {
+
+                startedAt:
+                    performance.now(),
+
+                frameId:
+                    null
+
+            };
+
+
+            startButton.disabled =
+                true;
+
+
+            stopButton.disabled =
+                false;
+
+
+            resetButton.disabled =
+                true;
+
+
+            verifyButton.disabled =
+                true;
+
+
+            runtime.frameId =
+                requestAnimationFrame(
+                    frame
+                );
+
+        }
+    );
+
+
+    stopButton.addEventListener(
+        "click",
+        () => {
+
+            if(!runtime){
+                return;
+            }
+
+
+            const elapsed =
+                (
+                    performance.now() -
+                    runtime.startedAt
+                ) /
+                1000;
+
+
+            if(
+                runtime.frameId
+            ){
+
+                cancelAnimationFrame(
+                    runtime.frameId
+                );
+
+            }
+
+
+            const targetTime =
+                oscillations *
+                period;
+
+
+            const reactionDelay =
+                elapsed -
+                targetTime;
+
+
+            startButton.disabled =
+                true;
+
+
+            stopButton.disabled =
+                true;
+
+
+            resetButton.disabled =
+                false;
+
+
+            if(
+                elapsed <
+                    targetTime ||
+                reactionDelay >
+                    .35
+            ){
+
+                feedback(
+                    "time",
+                    "Cronometrul trebuie oprit imediat după a cincea oscilație. Repetă măsurarea."
+                );
+
+
+                runtime =
+                    null;
+
+
+                return;
+
+            }
+
+
+            const measuredTime =
+                round(
+                    elapsed,
+                    2
+                );
+
+
+            state.timerMeasurement = {
+
+                oscillations,
+
+                measuredTime_s:
+                    measuredTime,
+
+                resolution_s:
+                    .01,
+
+                measuredAt:
+                    now()
+
+            };
+
+
+            timerElement.textContent =
+                `${measuredTime.toFixed(2)} s`;
+
+
+            counterElement.textContent =
+                String(
+                    oscillations
+                );
+
+
+            verifyButton.disabled =
+                false;
+
+
+            feedback(
+                "time",
+                "Cronometrarea este acceptată. Transcrie exact timpul afișat.",
+                "ok"
+            );
+
+
+            runtime =
+                null;
+
+        }
+    );
+
+
+    resetButton.addEventListener(
+        "click",
+        reset
+    );
+
+
+    state.timerController =
+        Object.freeze({
+            reset
+        });
+
+}
+
+
+/* =========================================================
+   VERIFICAREA TIMPULUI
+========================================================= */
+
+qs(
+    "[data-check-time]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.timerMeasurement
+        ){
+
+            feedback(
+                "time",
+                "Realizează mai întâi cronometrarea."
+            );
+
+
+            return;
+
+        }
+
+
+        const answer =
+            numeric(
+                qs(
+                    "[data-time-answer]"
+                ).value
+            );
+
+
+        if(
+            !Number.isFinite(answer) ||
+            Math.abs(
+                answer -
+                state.timerMeasurement.measuredTime_s
+            ) >
+            .011
+        ){
+
+            feedback(
+                "time",
+                "Transcrie exact valoarea indicată de cronometru."
+            );
+
+
+            return;
+
+        }
+
+
+        feedback(
+            "time",
+            "Timpul a fost transcris corect.",
+            "ok"
+        );
+
+
+        state.completed.add(4);
+
+
+        qs(
+            "[data-next-interference]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-interference]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeInterferenceInstruments();
+
+
+        setInterferencePhase(
+            "zero"
+        );
+
+
+        showStep(5);
+
+    }
+);
+
+
+/* =========================================================
+   INTERFERENȚĂ – ANIMAȚIE
+========================================================= */
+
+function phaseForKey(
+    key
+){
+
+    if(
+        key === "zero"
+    ){
+        return 0;
+    }
+
+
+    if(
+        key === "pi"
+    ){
+        return 180;
+    }
+
+
+    return state.set
+        .visible
+        .middlePhase_deg;
+
+}
+
+
+function setInterferencePhase(
+    key
+){
+
+    const phaseDeg =
+        phaseForKey(key);
+
+
+    state.interferenceAnimation.phaseDeg =
+        phaseDeg;
+
+
+    qs(
+        "[data-phase-display]"
+    ).textContent =
+        `Δφ = ${phaseDeg}°`;
+
+
+    if(
+        state.interferenceAnimation.frameId
+    ){
+
+        cancelAnimationFrame(
+            state.interferenceAnimation.frameId
+        );
+
+    }
+
+
+    state.interferenceAnimation.startedAt =
+        performance.now();
+
+
+    function frame(){
+
+        const elapsed =
+            (
+                performance.now() -
+                state.interferenceAnimation.startedAt
+            ) /
+            1000;
+
+
+        const phase =
+            phaseDeg *
+            Math.PI /
+            180;
+
+
+        qs(
+            '[data-interference-path="one"]'
+        ).setAttribute(
+            "d",
+            makeWavePath({
+
+                amplitudeCm:
+                    state.set.hidden.a1_cm,
+
+                phaseRad:
+                    0,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        qs(
+            '[data-interference-path="two"]'
+        ).setAttribute(
+            "d",
+            makeWavePath({
+
+                amplitudeCm:
+                    state.set.hidden.a2_cm,
+
+                phaseRad:
+                    phase,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        qs(
+            '[data-interference-path="result"]'
+        ).setAttribute(
+            "d",
+            makeResultPath({
+
+                phaseDeg,
+
+                time:
+                    elapsed
+
+            })
+        );
+
+
+        state.interferenceAnimation.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    state.interferenceAnimation.frameId =
+        requestAnimationFrame(
+            frame
+        );
+
+}
+
+
+/* =========================================================
+   INSTRUMENTE AMPLITUDINE REZULTANTĂ
+========================================================= */
+
+function initializeInterferenceInstruments(){
+
+    if(
+        state.instruments
+            .resultZero
+    ){
+        return;
+    }
+
+
+    const configurations = [
+
+        {
+            key:"zero",
+            value:
+                state.set.hidden.resultZero_cm
+        },
+
+        {
+            key:"middle",
+            value:
+                state.set.hidden.resultMiddle_cm
+        },
+
+        {
+            key:"pi",
+            value:
+                state.set.hidden.resultPi_cm
+        }
+
+    ];
+
+
+    configurations.forEach(
+        config => {
+
+            const target =
+                qs(
+                    `[data-result-instrument="${config.key}"]`
+                );
+
+
+            target.addEventListener(
+                "laborator:instrument-reading",
+                event => {
+
+                    if(
+                        !event.detail.correct
+                    ){
+                        return;
+                    }
+
+
+                    state.readings
+                        .result
+                        [config.key] =
+                        event.detail;
+
+
+                    checkInterferenceComplete();
+
+                }
+            );
+
+
+            state.instruments[
+                `result-${config.key}`
+            ] =
+                LaboratorInstrumente
+                    .afiseaza({
+
+                        id:
+                            `exp04-result-${config.key}`,
+
+                        target,
+
+                        type:
+                            "ruler",
+
+                        label:
+                            "Riglă – amplitudinea undei rezultante",
+
+                        instruction:
+                            "Citește amplitudinea maximă a undei rezultante.",
+
+                        minimum:
+                            0,
+
+                        maximum:
+                            7,
+
+                        value:
+                            config.value,
+
+                        minorDivision:
+                            .1,
+
+                        majorDivision:
+                            1,
+
+                        decimals:
+                            1,
+
+                        unit:
+                            "cm",
+
+                        tolerance:
+                            .051,
+
+                        answerInput:
+                            qs(
+                                `[data-result-answer="${config.key}"]`
+                            ),
+
+                        feedbackTarget:
+                            qs(
+                                `[data-feedback="result-${config.key}"]`
+                            ),
+
+                        verifyButton:
+                            qs(
+                                `[data-check-result="${config.key}"]`
+                            ),
+
+                        requireNotebookConfirmation:
+                            true,
+
+                        notebookConfirmation:
+                            qs(
+                                `[data-result-notebook="${config.key}"]`
+                            ),
+
+                        allowZoom:
+                            true
+
+                    });
+
+        }
+    );
+
+}
+
+
+qsa(
+    "[data-show-phase]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                setInterferencePhase(
+                    button.dataset
+                        .showPhase
+                );
+
+            }
+        );
+
+    }
+);
+
+
+function checkInterferenceComplete(){
+
+    if(
+        !state.readings.result.zero ||
+        !state.readings.result.middle ||
+        !state.readings.result.pi
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "interference",
+        "Toate cele trei regimuri de interferență au fost măsurate.",
+        "ok"
+    );
+
+
+    state.completed.add(5);
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   TRECERE LA CALCULE
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(6);
+
+    }
+);
+
+
+/* =========================================================
+   REZUMAT MĂSURĂRI
+========================================================= */
+
+function renderMeasurementSummary(){
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare măsurată</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>A₁</td>
+                    <td>${state.readings.a1.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>A₂</td>
+                    <td>${state.readings.a2.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>λ</td>
+                    <td>${state.readings.wavelength.studentReading.toFixed(0)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>t pentru 5 oscilații</td>
+                    <td>${state.timerMeasurement.measuredTime_s.toFixed(2)} s</td>
+                </tr>
+
+                <tr>
+                    <td>A rezultantă, Δφ = 0°</td>
+                    <td>${state.readings.result.zero.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>A rezultantă, Δφ = ${state.set.visible.middlePhase_deg}°</td>
+                    <td>${state.readings.result.middle.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+                <tr>
+                    <td>A rezultantă, Δφ = 180°</td>
+                    <td>${state.readings.result.pi.studentReading.toFixed(1)} cm</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE AȘTEPTATE
+========================================================= */
+
+function relativeError(
+    measured,
+    theoretical
+){
+
+    if(
+        theoretical === 0
+    ){
+
+        return measured === 0
+            ? 0
+            : 100;
+
+    }
+
+
+    return (
+        Math.abs(
+            measured -
+            theoretical
+        ) /
+        theoretical *
+        100
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const n =
+        state.set.visible
+            .oscillations;
+
+
+    const time =
+        state.timerMeasurement
+            .measuredTime_s;
+
+
+    const period =
+        time /
+        n;
+
+
+    const frequency =
+        1 /
+        period;
+
+
+    const wavelengthM =
+        state.readings
+            .wavelength
+            .studentReading /
+        100;
+
+
+    const speed =
+        wavelengthM *
+        frequency;
+
+
+    const a1 =
+        state.readings
+            .a1
+            .studentReading;
+
+
+    const a2 =
+        state.readings
+            .a2
+            .studentReading;
+
+
+    const phase =
+        state.set
+            .visible
+            .middlePhase_deg;
+
+
+    const theoreticalZero =
+        a1 +
+        a2;
+
+
+    const theoreticalMiddle =
+        resultantAmplitude(
+            a1,
+            a2,
+            phase
+        );
+
+
+    const theoreticalPi =
+        Math.abs(
+            a1 -
+            a2
+        );
+
+
+    const measuredZero =
+        state.readings
+            .result
+            .zero
+            .studentReading;
+
+
+    const measuredMiddle =
+        state.readings
+            .result
+            .middle
+            .studentReading;
+
+
+    const measuredPi =
+        state.readings
+            .result
+            .pi
+            .studentReading;
+
+
+    return {
+
+        period_s:
+            period,
+
+        frequency_Hz:
+            frequency,
+
+        speed_m_s:
+            speed,
+
+        theoreticalZero_cm:
+            theoreticalZero,
+
+        theoreticalMiddle_cm:
+            theoreticalMiddle,
+
+        theoreticalPi_cm:
+            theoreticalPi,
+
+        errorZero_percent:
+            relativeError(
+                measuredZero,
+                theoreticalZero
+            ),
+
+        errorMiddle_percent:
+            relativeError(
+                measuredMiddle,
+                theoreticalMiddle
+            ),
+
+        errorPi_percent:
+            relativeError(
+                measuredPi,
+                theoreticalPi
+            )
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(value) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICAREA CALCULELOR
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            period:
+                answer("period"),
+
+            frequency:
+                answer("frequency"),
+
+            speed:
+                answer("speed"),
+
+            aZero:
+                answer("a-zero"),
+
+            errorZero:
+                answer("error-zero"),
+
+            aMiddle:
+                answer("a-middle"),
+
+            errorMiddle:
+                answer("error-middle"),
+
+            aPi:
+                answer("a-pi"),
+
+            errorPi:
+                answer("error-pi")
+
+        };
+
+
+        const comparison =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.period,
+                expected.period_s,
+                .012
+            ) &&
+
+            closeEnough(
+                values.frequency,
+                expected.frequency_Hz,
+                .02
+            ) &&
+
+            closeEnough(
+                values.speed,
+                expected.speed_m_s,
+                .03
+            ) &&
+
+            closeEnough(
+                values.aZero,
+                expected.theoreticalZero_cm,
+                .06
+            ) &&
+
+            closeEnough(
+                values.errorZero,
+                expected.errorZero_percent,
+                .25
+            ) &&
+
+            closeEnough(
+                values.aMiddle,
+                expected.theoreticalMiddle_cm,
+                .08
+            ) &&
+
+            closeEnough(
+                values.errorMiddle,
+                expected.errorMiddle_percent,
+                .30
+            ) &&
+
+            closeEnough(
+                values.aPi,
+                expected.theoreticalPi_cm,
+                .06
+            ) &&
+
+            closeEnough(
+                values.errorPi,
+                expected.errorPi_percent,
+                .30
+            );
+
+
+        if(
+            !correct ||
+            comparison.length < 60 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică împărțirea timpului la 5, transformarea cm → m, formula v = λf și formula amplitudinii rezultante."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    instrument:"rigla",
+                    quantity:"amplitudinea undei 1",
+                    resolution_cm:.1,
+                    studentReading_cm:
+                        state.readings.a1.studentReading,
+                    attempts:
+                        state.readings.a1.attempts
+                },
+
+                {
+                    instrument:"rigla",
+                    quantity:"amplitudinea undei 2",
+                    resolution_cm:.1,
+                    studentReading_cm:
+                        state.readings.a2.studentReading,
+                    attempts:
+                        state.readings.a2.attempts
+                },
+
+                {
+                    instrument:"ruleta",
+                    quantity:"lungimea de undă",
+                    resolution_cm:1,
+                    studentReading_cm:
+                        state.readings.wavelength.studentReading,
+                    attempts:
+                        state.readings.wavelength.attempts
+                },
+
+                {
+                    instrument:"cronometru",
+                    quantity:"timp pentru 5 oscilații",
+                    resolution_s:.01,
+                    studentReading_s:
+                        state.timerMeasurement.measuredTime_s
+                },
+
+                {
+                    phase_deg:0,
+                    quantity:"amplitudinea rezultantă",
+                    studentReading_cm:
+                        state.readings.result.zero.studentReading
+                },
+
+                {
+                    phase_deg:
+                        state.set.visible.middlePhase_deg,
+                    quantity:"amplitudinea rezultantă",
+                    studentReading_cm:
+                        state.readings.result.middle.studentReading
+                },
+
+                {
+                    phase_deg:180,
+                    quantity:"amplitudinea rezultantă",
+                    studentReading_cm:
+                        state.readings.result.pi.studentReading
+                }
+
+            ],
+
+            calculations:{
+
+                period_s:
+                    round(
+                        expected.period_s,
+                        3
+                    ),
+
+                frequency_Hz:
+                    round(
+                        expected.frequency_Hz,
+                        3
+                    ),
+
+                propagationSpeed_m_s:
+                    round(
+                        expected.speed_m_s,
+                        3
+                    ),
+
+                interference:{
+
+                    phase0:{
+
+                        theoreticalAmplitude_cm:
+                            round(
+                                expected.theoreticalZero_cm,
+                                3
+                            ),
+
+                        measuredAmplitude_cm:
+                            state.readings.result.zero.studentReading,
+
+                        relativeError_percent:
+                            round(
+                                expected.errorZero_percent,
+                                2
+                            )
+
+                    },
+
+                    phaseIntermediate:{
+
+                        phase_deg:
+                            state.set.visible.middlePhase_deg,
+
+                        theoreticalAmplitude_cm:
+                            round(
+                                expected.theoreticalMiddle_cm,
+                                3
+                            ),
+
+                        measuredAmplitude_cm:
+                            state.readings.result.middle.studentReading,
+
+                        relativeError_percent:
+                            round(
+                                expected.errorMiddle_percent,
+                                2
+                            )
+
+                    },
+
+                    phase180:{
+
+                        theoreticalAmplitude_cm:
+                            round(
+                                expected.theoreticalPi_cm,
+                                3
+                            ),
+
+                        measuredAmplitude_cm:
+                            state.readings.result.pi.studentReading,
+
+                        relativeError_percent:
+                            round(
+                                expected.errorPi_percent,
+                                2
+                            )
+
+                    }
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    comparison,
+
+                constructiveMaximum:
+                    state.readings.result.zero.studentReading,
+
+                intermediate:
+                    state.readings.result.middle.studentReading,
+
+                destructiveMinimum:
+                    state.readings.result.pi.studentReading
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(6);
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   CONSTRUIREA RAPORTULUI
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session.studentName,
+
+                className:
+                    state.session.studentClass,
+
+                catalogNumber:
+                    state.session.catalogNumber,
+
+                identityConfirmed:true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   Parametrii ascunși ai simulării nu sunt
+                   publicați ca "răspunsuri corecte".
+                */
+
+                generatedData:{
+
+                    oscillations:
+                        state.set.visible.oscillations,
+
+                    middlePhase_deg:
+                        state.set.visible.middlePhase_deg
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session.sessionId,
+
+                startedAt:
+                    state.session.startedAt,
+
+                finishedAt:
+                    state.evaluation.finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation.finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session.startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session.experimentDate,
+
+                completed:true,
+
+                totalSteps:8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook.measurements,
+
+            calculations:
+                state.notebook.calculations,
+
+            comparison:
+                state.notebook.comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation.finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALĂ
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length < 100 ||
+            errorSources.length < 40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:"sum",
+
+            q2:"zero",
+
+            q3:"difference",
+
+            q4:"speed-increases"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >= 3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:true,
+
+            notebookConfirmed:true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            makeId("RAP");
+
+
+        state.completed.add(7);
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const calculations =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+                <span>Punctaj conceptual</span>
+                <strong>${score}/4</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Perioada T</span>
+                <strong>${calculations.period_s.toFixed(3)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Frecvența f</span>
+                <strong>${calculations.frequency_Hz.toFixed(3)} Hz</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Viteza de propagare</span>
+                <strong>${calculations.propagationSpeed_m_s.toFixed(3)} m/s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>A maximă măsurată</span>
+                <strong>${state.readings.result.zero.studentReading.toFixed(1)} cm</strong>
+            </div>
+
+            <div class="result-card">
+                <span>A minimă măsurată</span>
+                <strong>${state.readings.result.pi.studentReading.toFixed(1)} cm</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Faza intermediară</span>
+                <strong>${state.set.visible.middlePhase_deg}°</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Set experimental</span>
+                <strong>${state.set.id}</strong>
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation.finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală prin modulul comun nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă de transmitere: ${error.message}`;
+
+        }
+
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(text).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(/\s+/);
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length > max &&
+            line
+        ){
+
+            lines.push(line);
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+        lines.push(line);
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/\(/g,"\\(")
+        .replace(/\)/g,"\\)");
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+        pages.push(["Raport"]);
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(pageId);
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join("\n");
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(pdf);
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(pdf);
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:"application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook.calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Unde mecanice",
+
+        "EXP04 - Studiul interferentei undelor mecanice in corzi elastice",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "UNDE COMPONENTE",
+
+        `A1: ${state.readings.a1.studentReading.toFixed(1)} cm`,
+
+        `A2: ${state.readings.a2.studentReading.toFixed(1)} cm`,
+
+        `Lungimea de unda: ${state.readings.wavelength.studentReading.toFixed(0)} cm`,
+
+        `Timp pentru 5 oscilatii: ${state.timerMeasurement.measuredTime_s.toFixed(2)} s`,
+
+        `Perioada T: ${c.period_s.toFixed(3)} s`,
+
+        `Frecventa f: ${c.frequency_Hz.toFixed(3)} Hz`,
+
+        `Viteza de propagare: ${c.propagationSpeed_m_s.toFixed(3)} m/s`,
+
+        "",
+
+        "INTERFERENTA",
+
+        `Delta phi = 0 grade, A masurat = ${state.readings.result.zero.studentReading.toFixed(1)} cm`,
+
+        `A teoretic = ${c.interference.phase0.theoreticalAmplitude_cm.toFixed(3)} cm`,
+
+        `Abatere = ${c.interference.phase0.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        `Delta phi = ${state.set.visible.middlePhase_deg} grade, A masurat = ${state.readings.result.middle.studentReading.toFixed(1)} cm`,
+
+        `A teoretic = ${c.interference.phaseIntermediate.theoreticalAmplitude_cm.toFixed(3)} cm`,
+
+        `Abatere = ${c.interference.phaseIntermediate.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        `Delta phi = 180 grade, A masurat = ${state.readings.result.pi.studentReading.toFixed(1)} cm`,
+
+        `A teoretic = ${c.interference.phase180.theoreticalAmplitude_cm.toFixed(3)} cm`,
+
+        `Abatere = ${c.interference.phase180.relativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(lines);
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session.studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP04-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(anchor);
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(0);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
