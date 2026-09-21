@@ -1,1 +1,7748 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul circuitului oscilant LC și al oscilațiilor electromagnetice."
+>
+
+<title>
+    Studiul circuitului oscilant
+</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+
+    --capacitor:#e08a00;
+    --inductor:#7047b8;
+    --voltage:#ff5964;
+    --current:#4db7ff;
+    --energy-e:#e08a00;
+    --energy-b:#7047b8;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.measure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.75;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.instrument-box,
+.calculation-block,
+.oscillation-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.4rem .7rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+}
+
+
+/* =========================================================
+   CIRCUIT LC
+========================================================= */
+
+.circuit-stage{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #b8ccd8;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #eef9ff,
+            #fff
+        );
+}
+
+.circuit-header{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:.6rem;
+    padding:.8rem 1rem;
+    border-bottom:1px solid #c8dae3;
+    background:#f8fcfe;
+}
+
+.circuit-badge{
+    padding:.35rem .7rem;
+    border-radius:999px;
+    color:#fff;
+    background:#126e82;
+    font-weight:800;
+}
+
+.circuit-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/350;
+}
+
+.wire{
+    fill:none;
+    stroke:#314e5d;
+    stroke-width:5;
+}
+
+.capacitor-symbol{
+    stroke:var(--capacitor);
+    stroke-width:8;
+}
+
+.inductor-symbol{
+    fill:none;
+    stroke:var(--inductor);
+    stroke-width:7;
+}
+
+.source-circle{
+    fill:#fff;
+    stroke:#314e5d;
+    stroke-width:4;
+}
+
+.switch-line{
+    stroke:#19734b;
+    stroke-width:7;
+    stroke-linecap:round;
+}
+
+.circuit-text{
+    fill:#17324d;
+    font-size:22px;
+    font-weight:800;
+    text-anchor:middle;
+    dominant-baseline:middle;
+}
+
+.circuit-small{
+    fill:#526b80;
+    font-size:15px;
+    font-weight:700;
+    text-anchor:middle;
+}
+
+
+/* =========================================================
+   OSCILOSCOP
+========================================================= */
+
+.scope-box{
+    margin:1rem 0;
+    overflow:hidden;
+    border:2px solid #334854;
+    border-radius:16px;
+    background:#071318;
+}
+
+.scope-header{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:.6rem;
+    padding:.7rem 1rem;
+    color:#d4edf8;
+    background:#10242d;
+}
+
+.scope-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/390;
+}
+
+.scope-grid{
+    stroke:#1d3e48;
+    stroke-width:1;
+}
+
+.scope-axis{
+    stroke:#406470;
+    stroke-width:2;
+}
+
+.scope-voltage{
+    fill:none;
+    stroke:var(--voltage);
+    stroke-width:4;
+}
+
+.scope-current{
+    fill:none;
+    stroke:var(--current);
+    stroke-width:3;
+}
+
+.scope-cursor-a{
+    stroke:#facc15;
+    stroke-width:3;
+}
+
+.scope-cursor-b{
+    stroke:#22c55e;
+    stroke-width:3;
+}
+
+.scope-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    padding:.7rem 1rem 1rem;
+    color:#d4edf8;
+}
+
+.legend{
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+}
+
+.legend-line{
+    width:30px;
+    height:4px;
+    border-radius:5px;
+}
+
+.legend-line.voltage{
+    background:var(--voltage);
+}
+
+.legend-line.current{
+    background:var(--current);
+}
+
+.cursor-panel{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+    margin:1rem 0;
+}
+
+.cursor-card{
+    padding:1rem;
+    border:1px solid #bfd0da;
+    border-radius:12px;
+    background:#fff;
+}
+
+.cursor-card input[type="range"]{
+    width:100%;
+}
+
+.cursor-readout{
+    padding:.6rem;
+    margin-top:.5rem;
+    border-radius:8px;
+    color:#d9f4ff;
+    background:#10242d;
+    font-family:ui-monospace,Consolas,monospace;
+}
+
+
+/* =========================================================
+   ENERGII
+========================================================= */
+
+.energy-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid #bfd0da;
+    border-radius:14px;
+    background:#f8fbfd;
+}
+
+.energy-control input[type="range"]{
+    width:100%;
+}
+
+.energy-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.energy-meter{
+    padding:1rem;
+    border-radius:12px;
+    background:#fff;
+    border:1px solid #c8d8e1;
+}
+
+.energy-track{
+    height:28px;
+    overflow:hidden;
+    margin:.7rem 0;
+    border-radius:999px;
+    background:#e5edf1;
+}
+
+.energy-fill{
+    height:100%;
+    width:0;
+    transition:width .15s;
+}
+
+.energy-fill.electric{
+    background:var(--energy-e);
+}
+
+.energy-fill.magnetic{
+    background:var(--energy-b);
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid,
+    .measure-grid,
+    .cursor-panel,
+    .energy-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp08-circuit-oscilant",
+
+    code:
+        "EXP08",
+
+    title:
+        "Studiul circuitului oscilant",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Oscilații electromagnetice",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "circuite-electrice",
+        "condensator-incarcat",
+        "bobina"
+    ],
+
+    requiredEquipment:[
+        "low-voltage-dc-source",
+        "capacitor",
+        "inductor",
+        "switch",
+        "voltmeter",
+        "ammeter",
+        "oscilloscope"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Oscilații electromagnetice
+    </p>
+
+    <h1>
+        Studiul circuitului oscilant
+    </h1>
+
+    <p>
+        Oscilații electromagnetice libere, formula lui Thomson,
+        transformarea energiei electrice în energie magnetică
+        și amortizarea oscilațiilor.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+<p>
+    Clasa și numărul din catalog determină setul experimental.
+    Pentru fiecare elev este generată reproductibil o combinație
+    de inductanță, capacitate, tensiune inițială și pierderi.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Circuitul real se realizează numai cu tensiuni mici.
+    </strong>
+
+    Un condensator poate rămâne încărcat și după deconectarea
+    sursei. Înaintea modificării montajului, acesta trebuie
+    descărcat printr-o rezistență adecvată.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Alimentarea se oprește înaintea modificării circuitului.
+    </li>
+
+    <li>
+        Nu scurtcircuita direct un condensator încărcat.
+    </li>
+
+    <li>
+        Respectă polaritatea condensatorului dacă acesta este electrolitic.
+    </li>
+
+    <li>
+        Respectă tensiunea nominală maximă a condensatorului.
+    </li>
+
+    <li>
+        Nu conecta montajul la rețeaua de 230 V.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci cu un condensator încărcat înainte de modificarea montajului?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="discharge"
+    >
+
+    <span>
+        Îl descarc în condiții controlate printr-o rezistență adecvată.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="short"
+    >
+
+    <span>
+        Scurtcircuitez direct bornele cu un conductor.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează numai elementele necesare pentru încărcarea
+    condensatorului și observarea oscilațiilor electromagnetice.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Un condensator încărcat este conectat la o bobină.
+    Câmpul electric al condensatorului și câmpul magnetic
+    al bobinei își transferă periodic energia.
+</p>
+
+
+<div class="formula">
+
+    q(t) =
+    Q<sub>max</sub>
+    cos(ω₀t)
+
+    <br><br>
+
+    i(t) =
+    −ω₀Q<sub>max</sub>
+    sin(ω₀t)
+
+</div>
+
+
+<div class="formula">
+
+    ω₀ =
+    1/√(LC)
+
+    <br><br>
+
+    T₀ =
+    2π√(LC)
+
+    <br><br>
+
+    f₀ =
+    1/(2π√(LC))
+
+</div>
+
+
+<div class="formula">
+
+    W<sub>E</sub> =
+    C U<sub>C</sub>² / 2
+
+    <br><br>
+
+    W<sub>B</sub> =
+    L I² / 2
+
+</div>
+
+
+<p>
+    Într-un circuit real există pierderi ohmice, astfel încât
+    amplitudinea oscilațiilor scade treptat. Pentru pierderi mici,
+    perioada măsurată rămâne apropiată de valoarea dată de formula
+    lui Thomson.
+</p>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Imediat după conectarea condensatorului încărcat la bobină:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionStart"
+        value="electric"
+    >
+
+    <span>
+        energia este predominant electrică, în condensator
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionStart"
+        value="magnetic"
+    >
+
+    <span>
+        energia este predominant magnetică
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    După aproximativ un sfert de perioadă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionQuarter"
+        value="magnetic"
+    >
+
+    <span>
+        curentul are valoare mare, iar energia este predominant magnetică
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionQuarter"
+        value="electric"
+    >
+
+    <span>
+        condensatorul are tensiune maximă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă mărim inductanța L și păstrăm C constantă, perioada:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPeriod"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPeriod"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, schema, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Încărcarea condensatorului
+</h2>
+
+
+<div class="data-card">
+
+    <strong>
+        Componentele circuitului
+    </strong>
+
+    <br><br>
+
+    <span class="parameter-chip">
+        L =
+        <b data-l-label>—</b>
+        H
+    </span>
+
+    <span class="parameter-chip">
+        C =
+        <b data-c-label>—</b>
+        μF
+    </span>
+
+</div>
+
+
+<div class="circuit-stage">
+
+<div class="circuit-header">
+
+    <strong>
+        Încărcarea condensatorului
+    </strong>
+
+    <span
+        class="circuit-badge"
+        data-circuit-status
+    >
+        poziția 1 – încărcare
+    </span>
+
+</div>
+
+
+<svg
+    class="circuit-svg"
+    viewBox="0 0 900 350"
+    role="img"
+    aria-label="Circuit oscilant LC cu comutator"
+>
+
+    <circle
+        class="source-circle"
+        cx="120"
+        cy="185"
+        r="42"
+    ></circle>
+
+    <text
+        class="circuit-text"
+        x="120"
+        y="178"
+    >
+        ⎓
+    </text>
+
+    <text
+        class="circuit-small"
+        x="120"
+        y="205"
+    >
+        sursă
+    </text>
+
+
+    <path
+        class="wire"
+        d="
+            M120 143
+            L120 80
+            L330 80
+        "
+    ></path>
+
+
+    <line
+        class="capacitor-symbol"
+        x1="360"
+        y1="45"
+        x2="360"
+        y2="115"
+    ></line>
+
+    <line
+        class="capacitor-symbol"
+        x1="400"
+        y1="45"
+        x2="400"
+        y2="115"
+    ></line>
+
+
+    <path
+        class="wire"
+        d="
+            M330 80
+            L360 80
+
+            M400 80
+            L600 80
+        "
+    ></path>
+
+
+    <path
+        class="inductor-symbol"
+        d="
+            M600 80
+            C612 42,634 42,646 80
+            C658 42,680 42,692 80
+            C704 42,726 42,738 80
+            C750 42,772 42,784 80
+        "
+    ></path>
+
+
+    <path
+        class="wire"
+        d="
+            M784 80
+            L820 80
+            L820 270
+            L120 270
+            L120 227
+        "
+    ></path>
+
+
+    <line
+        class="switch-line"
+        data-switch-line
+        x1="500"
+        y1="268"
+        x2="555"
+        y2="228"
+    ></line>
+
+
+    <text
+        class="circuit-small"
+        x="380"
+        y="145"
+    >
+        C
+    </text>
+
+    <text
+        class="circuit-small"
+        x="690"
+        y="145"
+    >
+        L
+    </text>
+
+</svg>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    Tensiunea inițială a condensatorului
+</h3>
+
+
+<p>
+    Menține comutatorul în poziția de încărcare și citește
+    voltmetrul după stabilizarea indicației.
+</p>
+
+
+<div data-u0-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        U₀ (V)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-u0-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-u0
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-u0-notebook
+    >
+
+    <span>
+        Am notat tensiunea inițială U₀.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="u0"
+></p>
+
+</div>
+
+
+<fieldset>
+
+<legend>
+    Pentru producerea oscilațiilor libere, după încărcare trebuie:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="switchProcedure"
+        value="lc"
+    >
+
+    <span>
+        să deconectăm sursa și să închidem circuitul format din L și C
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="switchProcedure"
+        value="source"
+    >
+
+    <span>
+        să menținem permanent condensatorul conectat la sursa CC
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<button
+    class="btn success"
+    data-connect-lc
+    type="button"
+>
+    Comută pe circuitul LC
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="switch"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-oscillation
+        type="button"
+        disabled
+    >
+        Continuă la oscilații
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Observarea oscilațiilor electromagnetice
+</h2>
+
+
+<p>
+    Osciloscopul afișează tensiunea pe condensator.
+    Trasa albastră reprezintă intensitatea curentului,
+    scalată pentru comparația fazelor.
+</p>
+
+
+<div class="scope-box">
+
+<div class="scope-header">
+
+    <strong>
+        Osciloscop virtual
+    </strong>
+
+    <span>
+        U<sub>C</sub>(t) și i(t)
+    </span>
+
+</div>
+
+
+<svg
+    class="scope-svg"
+    viewBox="0 0 900 390"
+    role="img"
+    aria-label="Oscilații electromagnetice amortizate"
+>
+
+    <g data-scope-grid></g>
+
+
+    <line
+        class="scope-axis"
+        x1="55"
+        y1="195"
+        x2="855"
+        y2="195"
+    ></line>
+
+
+    <path
+        class="scope-voltage"
+        data-scope-voltage
+    ></path>
+
+
+    <path
+        class="scope-current"
+        data-scope-current
+    ></path>
+
+
+    <line
+        class="scope-cursor-a"
+        data-cursor-line-a
+        x1="55"
+        y1="25"
+        x2="55"
+        y2="355"
+    ></line>
+
+
+    <line
+        class="scope-cursor-b"
+        data-cursor-line-b
+        x1="55"
+        y1="25"
+        x2="55"
+        y2="355"
+    ></line>
+
+</svg>
+
+
+<div class="scope-legend">
+
+    <span class="legend">
+        <span class="legend-line voltage"></span>
+        U<sub>C</sub>(t)
+    </span>
+
+    <span class="legend">
+        <span class="legend-line current"></span>
+        i(t), scalat
+    </span>
+
+</div>
+
+</div>
+
+
+<h3>
+    A. Măsurarea timpului pentru 5 perioade
+</h3>
+
+
+<p>
+    Așază cursorul A pe primul maxim pozitiv și cursorul B
+    pe al șaselea maxim pozitiv. Între ele sunt cinci perioade complete.
+</p>
+
+
+<div class="cursor-panel">
+
+
+<div class="cursor-card">
+
+<h4>
+    Cursor A
+</h4>
+
+<input
+    type="range"
+    min="0"
+    max="1000"
+    step="1"
+    value="0"
+    data-cursor-a
+>
+
+<div
+    class="cursor-readout"
+    data-cursor-readout-a
+>
+    —
+</div>
+
+</div>
+
+
+<div class="cursor-card">
+
+<h4>
+    Cursor B
+</h4>
+
+<input
+    type="range"
+    min="0"
+    max="1000"
+    step="1"
+    value="760"
+    data-cursor-b
+>
+
+<div
+    class="cursor-readout"
+    data-cursor-readout-b
+>
+    —
+</div>
+
+</div>
+
+
+</div>
+
+
+<button
+    class="btn"
+    data-check-cursors
+    type="button"
+>
+    Fixează cursoarele
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="cursors"
+></p>
+
+
+<div
+    data-cursor-measurements
+    hidden
+>
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Transcrie Δt pentru 5 perioade (ms)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-delta-time-answer
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Transcrie amplitudinea după 5 perioade,
+        U₅ (V)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-u5-answer
+        >
+
+    </label>
+
+</div>
+
+
+<button
+    class="btn"
+    data-check-cursor-values
+    type="button"
+>
+    Verifică valorile transcrise
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="cursor-values"
+></p>
+
+</div>
+
+
+<h3>
+    B. Intensitatea maximă
+</h3>
+
+
+<div class="instrument-box">
+
+<p>
+    Aparatul funcționează în regim „peak hold” și reține
+    maximul primei semioscilații a curentului.
+</p>
+
+
+<div data-imax-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        I<sub>max</sub> (mA)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-imax-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-imax
+        type="button"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-imax-notebook
+    >
+
+    <span>
+        Am notat intensitatea maximă.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="imax"
+></p>
+
+</div>
+
+
+<h3>
+    C. Transformarea energiei
+</h3>
+
+
+<div class="energy-box">
+
+<p>
+    Deplasează cursorul temporal pe prima perioadă și observă
+    transferul energiei între condensator și bobină.
+</p>
+
+
+<div class="energy-control">
+
+<input
+    type="range"
+    min="0"
+    max="1000"
+    step="1"
+    value="0"
+    data-energy-slider
+>
+
+</div>
+
+
+<p>
+    Moment:
+    <strong data-energy-time>
+        0
+    </strong>
+</p>
+
+
+<div class="energy-grid">
+
+
+<div class="energy-meter">
+
+<strong>
+    Energie electrică în condensator
+</strong>
+
+<div class="energy-track">
+
+    <div
+        class="energy-fill electric"
+        data-electric-energy
+    ></div>
+
+</div>
+
+<span data-electric-percent>
+    —
+</span>
+
+</div>
+
+
+<div class="energy-meter">
+
+<strong>
+    Energie magnetică în bobină
+</strong>
+
+<div class="energy-track">
+
+    <div
+        class="energy-fill magnetic"
+        data-magnetic-energy
+    ></div>
+
+</div>
+
+<span data-magnetic-percent>
+    —
+</span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<fieldset>
+
+<legend>
+    La aproximativ T/4, energia dominantă este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="energyQuarter"
+        value="magnetic"
+    >
+
+    <span>
+        magnetică, în bobină
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="energyQuarter"
+        value="electric"
+    >
+
+    <span>
+        electrică, în condensator
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Scăderea amplitudinii oscilațiilor arată că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="dampingCause"
+        value="losses"
+    >
+
+    <span>
+        o parte din energia electromagnetică se disipă prin pierderi reale
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="dampingCause"
+        value="period-loss"
+    >
+
+    <span>
+        perioada oscilației este consumată
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<button
+    class="btn"
+    data-check-observations
+    type="button"
+>
+    Verifică observațiile
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="observations"
+></p>
+
+
+<p
+    class="feedback"
+    data-feedback="oscillation-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Perioada experimentală
+</h3>
+
+
+<div class="formula">
+
+    T<sub>exp</sub> =
+    Δt / 5
+
+</div>
+
+
+<label class="field">
+
+    T<sub>exp</sub> (ms)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="t-exp"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f<sub>exp</sub> =
+    1 /
+    T<sub>exp</sub>
+
+</div>
+
+
+<label class="field">
+
+    f<sub>exp</sub> (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="f-exp"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Formula lui Thomson
+</h3>
+
+
+<div class="formula">
+
+    T₀ =
+    2π√(LC)
+
+</div>
+
+
+<label class="field">
+
+    T₀ teoretic (ms)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="t-theory"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f₀ =
+    1 /
+    T₀
+
+</div>
+
+
+<label class="field">
+
+    f₀ teoretic (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="f-theory"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    ε<sub>T</sub> =
+    |
+        T<sub>exp</sub> − T₀
+    |
+    /
+    T₀
+    ·100%
+
+</div>
+
+
+<label class="field">
+
+    Abaterea relativă a perioadei (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="t-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Energia inițială
+</h3>
+
+
+<div class="formula">
+
+    W<sub>E,max</sub> =
+    C U₀² / 2
+
+</div>
+
+
+<label class="field">
+
+    W<sub>E,max</sub> (mJ)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-electric"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    W<sub>B,max,exp</sub> =
+    L I<sub>max</sub>² / 2
+
+</div>
+
+
+<label class="field">
+
+    W<sub>B,max,exp</sub> (mJ)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-magnetic"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Intensitatea maximă în modelul ideal
+</h3>
+
+
+<div class="formula">
+
+    C U₀² / 2 =
+    L I<sub>max,id</sub>² / 2
+
+    <br><br>
+
+    I<sub>max,id</sub> =
+    U₀√(C/L)
+
+</div>
+
+
+<label class="field">
+
+    I<sub>max,id</sub> (mA)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="imax-theory"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea I<sub>max,exp</sub> față de valoarea ideală (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="imax-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Amortizarea
+</h3>
+
+
+<div class="formula">
+
+    Raport de amplitudine =
+    U₅/U₀
+
+</div>
+
+
+<label class="field">
+
+    U₅/U₀
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="amplitude-ratio"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    Energia electrică maximă este proporțională cu U².
+
+    <br><br>
+
+    W₅/W₀ =
+    (U₅/U₀)²
+
+</div>
+
+
+<label class="field">
+
+    Energia rămasă după 5 perioade (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-retained"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea rezultatelor
+</h3>
+
+
+<label class="field">
+
+    Explică transformarea periodică a energiei între condensator
+    și bobină și cauza scăderii amplitudinii într-un circuit real.
+
+    <textarea
+        rows="6"
+        data-comparison
+        placeholder="Folosește observațiile Uc(t), i(t), energiile și comparația dintre Texp și formula lui Thomson."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, transformările de unități,
+        calculele și interpretarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Perioada proprie a unui circuit LC ideal este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="thomson"
+    >
+
+    <span>
+        T = 2π√(LC)
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="wrong"
+    >
+
+    <span>
+        T = 2πL/C
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Când tensiunea pe condensator este maximă, într-un circuit LC ideal:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="current-zero"
+    >
+
+    <span>
+        intensitatea curentului este zero
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="current-max"
+    >
+
+    <span>
+        intensitatea curentului este maximă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Când curentul este maxim în modul ideal:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="magnetic"
+    >
+
+    <span>
+        energia este predominant magnetică în bobină
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="electric"
+    >
+
+    <span>
+        energia este maximă în câmpul electric al condensatorului
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Amortizarea observată într-un circuit real se datorează în principal:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="losses"
+    >
+
+    <span>
+        pierderilor de energie, inclusiv efectului Joule
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="capacitance-loss"
+    >
+
+    <span>
+        dispariției treptate a capacității condensatorului
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Compară perioada experimentală cu formula lui Thomson și explică schimbul de energie și amortizarea."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: poziționarea cursoarelor, rezoluția osciloscopului, toleranțele L și C, pierderile ohmice..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    round(
+        Math.round(
+            value /
+            step
+        ) *
+        step,
+        8
+    );
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    lcConnected:false,
+
+    readings:{
+
+        u0:null,
+
+        imax:null
+
+    },
+
+    instruments:{},
+
+    cursors:{
+
+        locked:false,
+
+        tA_s:null,
+
+        tB_s:null,
+
+        uA_V:null,
+
+        uB_V:null,
+
+        deltaTime_s:null
+
+    },
+
+    cursorValuesConfirmed:false,
+
+    observationsConfirmed:false,
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+        element.classList.add(type);
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Încărcarea C",
+
+    "Oscilații",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !== step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index === step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(index)
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <= state.step ||
+                    state.completed.has(
+                        index - 1
+                    )
+                ){
+
+                    showStep(index);
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(button);
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function oscillatorParameters(
+    set=state.set
+){
+
+    const L =
+        set.visible
+            .inductance_H;
+
+
+    const C =
+        set.visible
+            .capacitance_uF *
+        1e-6;
+
+
+    const R =
+        set.hidden
+            .lossResistance_Ohm;
+
+
+    const U0 =
+        set.hidden
+            .initialVoltage_V;
+
+
+    const omega0 =
+        1 /
+        Math.sqrt(
+            L *
+            C
+        );
+
+
+    const alpha =
+        R /
+        (
+            2 *
+            L
+        );
+
+
+    const omegaD =
+        Math.sqrt(
+            Math.max(
+                0,
+                omega0 ** 2 -
+                alpha ** 2
+            )
+        );
+
+
+    const periodIdeal =
+        2 *
+        Math.PI /
+        omega0;
+
+
+    const periodDamped =
+        2 *
+        Math.PI /
+        omegaD;
+
+
+    return {
+
+        L,
+
+        C,
+
+        R,
+
+        U0,
+
+        omega0,
+
+        alpha,
+
+        omegaD,
+
+        periodIdeal_s:
+            periodIdeal,
+
+        periodDamped_s:
+            periodDamped,
+
+        frequencyIdeal_Hz:
+            1 /
+            periodIdeal,
+
+        frequencyDamped_Hz:
+            1 /
+            periodDamped
+
+    };
+
+}
+
+
+function voltageAt(
+    time
+){
+
+    const p =
+        oscillatorParameters();
+
+
+    /*
+       Soluția exactă pentru tensiunea condensatorului
+       în regim subamortizat, cu:
+       uC(0) = U0
+       i(0) = 0.
+    */
+
+    return (
+        p.U0 *
+        Math.exp(
+            -p.alpha *
+            time
+        ) *
+        (
+            Math.cos(
+                p.omegaD *
+                time
+            ) +
+            (
+                p.alpha /
+                p.omegaD
+            ) *
+            Math.sin(
+                p.omegaD *
+                time
+            )
+        )
+    );
+
+}
+
+
+function currentAt(
+    time
+){
+
+    const p =
+        oscillatorParameters();
+
+
+    /*
+       q = C uC
+       i = dq/dt.
+    */
+
+    return (
+        -p.C *
+        p.U0 *
+        (
+            p.omega0 ** 2 /
+            p.omegaD
+        ) *
+        Math.exp(
+            -p.alpha *
+            time
+        ) *
+        Math.sin(
+            p.omegaD *
+            time
+        )
+    );
+
+}
+
+
+function actualFirstCurrentMaximum(){
+
+    const p =
+        oscillatorParameters();
+
+
+    /*
+       Maximizăm numeric prima semioscilație.
+       Evităm introducerea unei formule suplimentare
+       în sarcina elevului.
+    */
+
+    const end =
+        p.periodDamped_s /
+        2;
+
+
+    let maximum =
+        0;
+
+
+    for(
+        let index=0;
+        index<=2000;
+        index+=1
+    ){
+
+        const time =
+            end *
+            index /
+            2000;
+
+
+        maximum =
+            Math.max(
+                maximum,
+                Math.abs(
+                    currentAt(
+                        time
+                    )
+                )
+            );
+
+    }
+
+
+    return maximum;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) - 1;
+
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    const lSlot =
+        (
+            slot * 11 +
+            ci * 5
+        ) %
+        30;
+
+
+    const inductance =
+        round(
+            .180 +
+            lSlot *
+            .008,
+            3
+        );
+
+
+    const cSlot =
+        (
+            slot * 13 +
+            ci * 7
+        ) %
+        30;
+
+
+    const capacitance =
+        22 +
+        cSlot;
+
+
+    const voltageSlot =
+        (
+            slot * 17 +
+            ci
+        ) %
+        16;
+
+
+    const initialVoltage =
+        roundTo(
+            6 +
+            voltageSlot *
+            .2,
+            .2
+        );
+
+
+    /*
+       Rezistența echivalentă a pierderilor circuitului.
+       Este intenționat mică pentru regim slab amortizat.
+    */
+
+    const rSlot =
+        (
+            slot * 19 +
+            ci * 3
+        ) %
+        17;
+
+
+    const lossResistance =
+        4 +
+        rSlot *
+        .4;
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP08`,
+
+        visible:{
+
+            inductance_H:
+                inductance,
+
+            capacitance_uF:
+                capacitance
+
+        },
+
+        hidden:{
+
+            initialVoltage_V:
+                initialVoltage,
+
+            lossResistance_Ohm:
+                lossResistance
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length < 3 ||
+            !/^XI [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber < 1 ||
+            catalogNumber > 30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(0);
+
+
+        showStep(1);
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "discharge" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "circuite-electrice",
+                "condensator-incarcat",
+                "bobina"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(1);
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "sursa",
+        "Sursă CC de joasă tensiune"
+    ],
+
+    [
+        "condensator",
+        "Condensator"
+    ],
+
+    [
+        "bobina",
+        "Bobină"
+    ],
+
+    [
+        "comutator",
+        "Comutator cu două poziții"
+    ],
+
+    [
+        "voltmetru",
+        "Voltmetru"
+    ],
+
+    [
+        "ampermetru",
+        "Ampermetru / sondă de curent"
+    ],
+
+    [
+        "osciloscop",
+        "Osciloscop"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "sursa",
+        "condensator",
+        "bobina",
+        "comutator",
+        "voltmetru",
+        "ampermetru",
+        "osciloscop"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(label);
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] === id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(2);
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* =========================================================
+   DATE INITIALE
+========================================================= */
+
+function renderInitialData(){
+
+    const visible =
+        state.set.visible;
+
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Componentă</th>
+                    <th>Valoare nominală</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Bobină</td>
+                    <td>
+                        ${visible.inductance_H.toFixed(3)}
+                        H
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Condensator</td>
+                    <td>
+                        ${visible.capacitance_uF}
+                        μF
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-l-label]"
+    ).textContent =
+        visible.inductance_H
+            .toFixed(3);
+
+
+    qs(
+        "[data-c-label]"
+    ).textContent =
+        visible.capacitance_uF;
+
+}
+
+
+/* =========================================================
+   PREDICTII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const start =
+            qs(
+                'input[name="predictionStart"]:checked'
+            )?.value;
+
+
+        const quarter =
+            qs(
+                'input[name="predictionQuarter"]:checked'
+            )?.value;
+
+
+        const period =
+            qs(
+                'input[name="predictionPeriod"]:checked'
+            )?.value;
+
+
+        if(
+            !start ||
+            !quarter ||
+            !period ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            start,
+
+            quarter,
+
+            period,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeU0Instrument();
+
+
+        state.completed.add(3);
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(4);
+
+    }
+);
+
+
+/* =========================================================
+   INSTRUMENT GENERIC
+========================================================= */
+
+function createInstrument({
+
+    key,
+
+    target,
+
+    label,
+
+    minimum,
+
+    maximum,
+
+    value,
+
+    minorDivision,
+
+    majorDivision,
+
+    decimals,
+
+    unit,
+
+    answer,
+
+    verify,
+
+    notebook,
+
+    feedbackName,
+
+    onCorrect
+
+}){
+
+    if(
+        state.instruments[key]
+    ){
+
+        return state.instruments[key];
+
+    }
+
+
+    const container =
+        qs(target);
+
+
+    container.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail.correct
+            ){
+                return;
+            }
+
+
+            state.readings[key] =
+                event.detail;
+
+
+            if(
+                typeof onCorrect ===
+                "function"
+            ){
+
+                onCorrect(
+                    event.detail
+                );
+
+            }
+
+        }
+    );
+
+
+    state.instruments[key] =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `exp08-${key}`,
+
+                target:
+                    container,
+
+                type:
+                    "analog-meter",
+
+                label,
+
+                instruction:
+                    "Citește indicația aparatului și notează valoarea în caiet.",
+
+                minimum,
+
+                maximum,
+
+                value,
+
+                minorDivision,
+
+                majorDivision,
+
+                decimals,
+
+                unit,
+
+                tolerance:
+                    minorDivision /
+                    2 +
+                    .001,
+
+                answerInput:
+                    qs(answer),
+
+                feedbackTarget:
+                    qs(
+                        `[data-feedback="${feedbackName}"]`
+                    ),
+
+                verifyButton:
+                    qs(verify),
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    qs(notebook),
+
+                allowZoom:
+                    true
+
+            });
+
+
+    return state.instruments[key];
+
+}
+
+
+/* =========================================================
+   U0
+========================================================= */
+
+function initializeU0Instrument(){
+
+    createInstrument({
+
+        key:"u0",
+
+        target:
+            "[data-u0-instrument]",
+
+        label:
+            "Voltmetru – tensiunea inițială a condensatorului",
+
+        minimum:0,
+
+        maximum:12,
+
+        value:
+            state.set
+                .hidden
+                .initialVoltage_V,
+
+        minorDivision:.2,
+
+        majorDivision:2,
+
+        decimals:1,
+
+        unit:"V",
+
+        answer:
+            "[data-u0-answer]",
+
+        verify:
+            "[data-check-u0]",
+
+        notebook:
+            "[data-u0-notebook]",
+
+        feedbackName:
+            "u0"
+
+    });
+
+}
+
+
+/* =========================================================
+   COMUTAREA PE LC
+========================================================= */
+
+qs(
+    "[data-connect-lc]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.readings.u0
+        ){
+
+            feedback(
+                "switch",
+                "Măsoară mai întâi tensiunea inițială U₀."
+            );
+
+
+            return;
+
+        }
+
+
+        const procedure =
+            qs(
+                'input[name="switchProcedure"]:checked'
+            )?.value;
+
+
+        if(
+            procedure !==
+            "lc"
+        ){
+
+            feedback(
+                "switch",
+                "Pentru oscilații libere, sursa trebuie deconectată, iar condensatorul trebuie conectat la bobină."
+            );
+
+
+            return;
+
+        }
+
+
+        state.lcConnected =
+            true;
+
+
+        qs(
+            "[data-circuit-status]"
+        ).textContent =
+            "poziția 2 – circuit LC";
+
+
+        const switchLine =
+            qs(
+                "[data-switch-line]"
+            );
+
+
+        switchLine.setAttribute(
+            "x2",
+            "585"
+        );
+
+
+        switchLine.setAttribute(
+            "y2",
+            "268"
+        );
+
+
+        feedback(
+            "switch",
+            "Condensatorul a fost deconectat de la sursă și conectat la bobină.",
+            "ok"
+        );
+
+
+        state.completed.add(4);
+
+
+        qs(
+            "[data-next-oscillation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+/* =========================================================
+   ETAPA 6
+========================================================= */
+
+qs(
+    "[data-next-oscillation]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeOscilloscope();
+
+        initializeImaxInstrument();
+
+        initializeEnergyView();
+
+        showStep(5);
+
+    }
+);
+
+
+/* =========================================================
+   OSCILOSCOP
+========================================================= */
+
+function scopeDuration(){
+
+    return oscillatorParameters()
+        .periodDamped_s *
+        6.5;
+
+}
+
+
+function scopeTimeFromPosition(
+    position
+){
+
+    return (
+        Number(position) /
+        1000 *
+        scopeDuration()
+    );
+
+}
+
+
+function scopeXFromPosition(
+    position
+){
+
+    return (
+        55 +
+        Number(position) /
+        1000 *
+        800
+    );
+
+}
+
+
+function initializeOscilloscope(){
+
+    drawScopeGrid();
+
+    drawOscillationTrace();
+
+    updateCursorDisplays();
+
+
+    qs(
+        "[data-cursor-a]"
+    ).addEventListener(
+        "input",
+        updateCursorDisplays
+    );
+
+
+    qs(
+        "[data-cursor-b]"
+    ).addEventListener(
+        "input",
+        updateCursorDisplays
+    );
+
+}
+
+
+function drawScopeGrid(){
+
+    const group =
+        qs(
+            "[data-scope-grid]"
+        );
+
+
+    if(
+        group.children.length
+    ){
+        return;
+    }
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    for(
+        let x=55;
+        x<=855;
+        x+=80
+    ){
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            x
+        );
+
+        line.setAttribute(
+            "x2",
+            x
+        );
+
+        line.setAttribute(
+            "y1",
+            25
+        );
+
+        line.setAttribute(
+            "y2",
+            355
+        );
+
+        line.setAttribute(
+            "class",
+            "scope-grid"
+        );
+
+
+        group.append(line);
+
+    }
+
+
+    for(
+        let y=35;
+        y<=355;
+        y+=40
+    ){
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            55
+        );
+
+        line.setAttribute(
+            "x2",
+            855
+        );
+
+        line.setAttribute(
+            "y1",
+            y
+        );
+
+        line.setAttribute(
+            "y2",
+            y
+        );
+
+        line.setAttribute(
+            "class",
+            "scope-grid"
+        );
+
+
+        group.append(line);
+
+    }
+
+}
+
+
+function drawOscillationTrace(){
+
+    const duration =
+        scopeDuration();
+
+
+    const p =
+        oscillatorParameters();
+
+
+    let voltagePath =
+        "";
+
+
+    let currentPath =
+        "";
+
+
+    /*
+       Scala curentului este normalizată independent,
+       fiind utilizată pentru vizualizarea defazajului.
+    */
+
+    const currentScaleReference =
+        p.U0 *
+        Math.sqrt(
+            p.C /
+            p.L
+        );
+
+
+    for(
+        let index=0;
+        index<=1200;
+        index+=1
+    ){
+
+        const fraction =
+            index /
+            1200;
+
+
+        const time =
+            duration *
+            fraction;
+
+
+        const x =
+            55 +
+            800 *
+            fraction;
+
+
+        const voltage =
+            voltageAt(
+                time
+            );
+
+
+        const current =
+            currentAt(
+                time
+            );
+
+
+        const yVoltage =
+            195 -
+            voltage /
+            p.U0 *
+            135;
+
+
+        const yCurrent =
+            195 -
+            current /
+            currentScaleReference *
+            105;
+
+
+        voltagePath +=
+            `${index === 0 ? "M" : "L"}${x.toFixed(1)},${yVoltage.toFixed(1)} `;
+
+
+        currentPath +=
+            `${index === 0 ? "M" : "L"}${x.toFixed(1)},${yCurrent.toFixed(1)} `;
+
+    }
+
+
+    qs(
+        "[data-scope-voltage]"
+    ).setAttribute(
+        "d",
+        voltagePath
+    );
+
+
+    qs(
+        "[data-scope-current]"
+    ).setAttribute(
+        "d",
+        currentPath
+    );
+
+}
+
+
+function cursorData(
+    selector
+){
+
+    const position =
+        Number(
+            qs(selector).value
+        );
+
+
+    const time =
+        scopeTimeFromPosition(
+            position
+        );
+
+
+    return {
+
+        position,
+
+        time_s:
+            time,
+
+        voltage_V:
+            voltageAt(
+                time
+            )
+
+    };
+
+}
+
+
+function updateCursorDisplays(){
+
+    if(
+        state.cursors.locked
+    ){
+        return;
+    }
+
+
+    const a =
+        cursorData(
+            "[data-cursor-a]"
+        );
+
+
+    const b =
+        cursorData(
+            "[data-cursor-b]"
+        );
+
+
+    qs(
+        "[data-cursor-line-a]"
+    ).setAttribute(
+        "x1",
+        scopeXFromPosition(
+            a.position
+        )
+    );
+
+
+    qs(
+        "[data-cursor-line-a]"
+    ).setAttribute(
+        "x2",
+        scopeXFromPosition(
+            a.position
+        )
+    );
+
+
+    qs(
+        "[data-cursor-line-b]"
+    ).setAttribute(
+        "x1",
+        scopeXFromPosition(
+            b.position
+        )
+    );
+
+
+    qs(
+        "[data-cursor-line-b]"
+    ).setAttribute(
+        "x2",
+        scopeXFromPosition(
+            b.position
+        )
+    );
+
+
+    qs(
+        "[data-cursor-readout-a]"
+    ).textContent =
+        `tA = ${(a.time_s * 1000).toFixed(2)} ms • Uc = ${a.voltage_V.toFixed(2)} V`;
+
+
+    qs(
+        "[data-cursor-readout-b]"
+    ).textContent =
+        `tB = ${(b.time_s * 1000).toFixed(2)} ms • Uc = ${b.voltage_V.toFixed(2)} V`;
+
+}
+
+
+/* =========================================================
+   FIXAREA CURSOARELOR
+========================================================= */
+
+qs(
+    "[data-check-cursors]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.cursors.locked
+        ){
+            return;
+        }
+
+
+        const a =
+            cursorData(
+                "[data-cursor-a]"
+            );
+
+
+        const b =
+            cursorData(
+                "[data-cursor-b]"
+            );
+
+
+        const period =
+            oscillatorParameters()
+                .periodDamped_s;
+
+
+        /*
+           A trebuie să fie aproape de primul maxim:
+           t = 0.
+
+           B trebuie să fie aproape de maximul pozitiv
+           după cinci perioade.
+        */
+
+        const targetA =
+            0;
+
+
+        const targetB =
+            5 *
+            period;
+
+
+        const tolerance =
+            .12 *
+            period;
+
+
+        if(
+            Math.abs(
+                a.time_s -
+                targetA
+            ) >
+            tolerance ||
+            Math.abs(
+                b.time_s -
+                targetB
+            ) >
+            tolerance
+        ){
+
+            feedback(
+                "cursors",
+                "Poziționează cursorul A pe primul maxim pozitiv și cursorul B pe maximul pozitiv aflat după cinci perioade.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        state.cursors = {
+
+            locked:true,
+
+            tA_s:
+                a.time_s,
+
+            tB_s:
+                b.time_s,
+
+            uA_V:
+                a.voltage_V,
+
+            uB_V:
+                b.voltage_V,
+
+            deltaTime_s:
+                b.time_s -
+                a.time_s
+
+        };
+
+
+        qs(
+            "[data-cursor-a]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-cursor-b]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-check-cursors]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-cursor-measurements]"
+        ).hidden =
+            false;
+
+
+        feedback(
+            "cursors",
+            `Cursoarele sunt fixate. Δt = ${(state.cursors.deltaTime_s * 1000).toFixed(2)} ms.`,
+            "ok"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TRANSCRIERE CURSOARE
+========================================================= */
+
+qs(
+    "[data-check-cursor-values]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.cursors.locked
+        ){
+            return;
+        }
+
+
+        const deltaTime =
+            numeric(
+                qs(
+                    "[data-delta-time-answer]"
+                ).value
+            );
+
+
+        const u5 =
+            numeric(
+                qs(
+                    "[data-u5-answer]"
+                ).value
+            );
+
+
+        const expectedTime =
+            state.cursors
+                .deltaTime_s *
+            1000;
+
+
+        const expectedU5 =
+            Math.abs(
+                state.cursors
+                    .uB_V
+            );
+
+
+        if(
+            !Number.isFinite(
+                deltaTime
+            ) ||
+            !Number.isFinite(
+                u5
+            ) ||
+            Math.abs(
+                deltaTime -
+                expectedTime
+            ) >
+            .08 ||
+            Math.abs(
+                u5 -
+                expectedU5
+            ) >
+            .06
+        ){
+
+            feedback(
+                "cursor-values",
+                "Transcrie valorile indicate de cursoarele osciloscopului."
+            );
+
+
+            return;
+
+        }
+
+
+        state.cursorValuesConfirmed =
+            true;
+
+
+        feedback(
+            "cursor-values",
+            "Valorile au fost transcrise corect.",
+            "ok"
+        );
+
+
+        checkOscillationComplete();
+
+    }
+);
+
+
+/* =========================================================
+   I MAX
+========================================================= */
+
+function initializeImaxInstrument(){
+
+    const imaxmA =
+        roundTo(
+            actualFirstCurrentMaximum() *
+            1000,
+            2
+        );
+
+
+    createInstrument({
+
+        key:"imax",
+
+        target:
+            "[data-imax-instrument]",
+
+        label:
+            "Ampermetru – valoarea maximă memorată",
+
+        minimum:0,
+
+        maximum:220,
+
+        value:
+            imaxmA,
+
+        minorDivision:2,
+
+        majorDivision:20,
+
+        decimals:0,
+
+        unit:"mA",
+
+        answer:
+            "[data-imax-answer]",
+
+        verify:
+            "[data-check-imax]",
+
+        notebook:
+            "[data-imax-notebook]",
+
+        feedbackName:
+            "imax",
+
+        onCorrect:
+            checkOscillationComplete
+
+    });
+
+}
+
+
+/* =========================================================
+   ENERGII
+========================================================= */
+
+function initializeEnergyView(){
+
+    const slider =
+        qs(
+            "[data-energy-slider]"
+        );
+
+
+    slider.addEventListener(
+        "input",
+        updateEnergyView
+    );
+
+
+    updateEnergyView();
+
+}
+
+
+function updateEnergyView(){
+
+    const slider =
+        qs(
+            "[data-energy-slider]"
+        );
+
+
+    const fraction =
+        Number(
+            slider.value
+        ) /
+        1000;
+
+
+    const p =
+        oscillatorParameters();
+
+
+    const time =
+        fraction *
+        p.periodDamped_s;
+
+
+    const voltage =
+        voltageAt(
+            time
+        );
+
+
+    const current =
+        currentAt(
+            time
+        );
+
+
+    const electric =
+        .5 *
+        p.C *
+        voltage ** 2;
+
+
+    const magnetic =
+        .5 *
+        p.L *
+        current ** 2;
+
+
+    const initial =
+        .5 *
+        p.C *
+        p.U0 ** 2;
+
+
+    const electricPercent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                electric /
+                initial *
+                100
+            )
+        );
+
+
+    const magneticPercent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                magnetic /
+                initial *
+                100
+            )
+        );
+
+
+    qs(
+        "[data-energy-time]"
+    ).textContent =
+        `${(time * 1000).toFixed(2)} ms (${fraction.toFixed(2)} T)`;
+
+
+    qs(
+        "[data-electric-energy]"
+    ).style.width =
+        `${electricPercent}%`;
+
+
+    qs(
+        "[data-magnetic-energy]"
+    ).style.width =
+        `${magneticPercent}%`;
+
+
+    qs(
+        "[data-electric-percent]"
+    ).textContent =
+        `${electricPercent.toFixed(1)}% din energia inițială`;
+
+
+    qs(
+        "[data-magnetic-percent]"
+    ).textContent =
+        `${magneticPercent.toFixed(1)}% din energia inițială`;
+
+}
+
+
+/* =========================================================
+   OBSERVATII
+========================================================= */
+
+qs(
+    "[data-check-observations]"
+).addEventListener(
+    "click",
+    () => {
+
+        const energy =
+            qs(
+                'input[name="energyQuarter"]:checked'
+            )?.value;
+
+
+        const damping =
+            qs(
+                'input[name="dampingCause"]:checked'
+            )?.value;
+
+
+        if(
+            energy !==
+                "magnetic" ||
+            damping !==
+                "losses"
+        ){
+
+            feedback(
+                "observations",
+                "Reanalizează schimbul de energie și scăderea amplitudinii oscilațiilor."
+            );
+
+
+            return;
+
+        }
+
+
+        state.observationsConfirmed =
+            true;
+
+
+        feedback(
+            "observations",
+            "Observațiile sunt corecte.",
+            "ok"
+        );
+
+
+        checkOscillationComplete();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL ETAPA 6
+========================================================= */
+
+function checkOscillationComplete(){
+
+    if(
+        !state.cursorValuesConfirmed ||
+        !state.readings.imax ||
+        !state.observationsConfirmed
+    ){
+
+        return;
+
+    }
+
+
+    feedback(
+        "oscillation-complete",
+        "Măsurările oscilațiilor electromagnetice sunt complete.",
+        "ok"
+    );
+
+
+    state.completed.add(5);
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   REZUMAT MASURARI
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(6);
+
+    }
+);
+
+
+function renderMeasurementSummary(){
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare experimentală</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>L</td>
+                    <td>
+                        ${state.set.visible.inductance_H.toFixed(3)}
+                        H
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>C</td>
+                    <td>
+                        ${state.set.visible.capacitance_uF}
+                        μF
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>U₀</td>
+                    <td>
+                        ${state.readings.u0.studentReading.toFixed(1)}
+                        V
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Δt pentru 5 perioade</td>
+                    <td>
+                        ${(state.cursors.deltaTime_s * 1000).toFixed(2)}
+                        ms
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>U₅</td>
+                    <td>
+                        ${Math.abs(state.cursors.uB_V).toFixed(2)}
+                        V
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Imax</td>
+                    <td>
+                        ${state.readings.imax.studentReading.toFixed(0)}
+                        mA
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function relativeError(
+    value,
+    reference
+){
+
+    return (
+        Math.abs(
+            value -
+            reference
+        ) /
+        Math.abs(
+            reference
+        ) *
+        100
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const L =
+        state.set.visible
+            .inductance_H;
+
+
+    const C =
+        state.set.visible
+            .capacitance_uF *
+        1e-6;
+
+
+    const U0 =
+        state.readings.u0
+            .studentReading;
+
+
+    const deltaTime =
+        state.cursors
+            .deltaTime_s;
+
+
+    const tExp =
+        deltaTime /
+        5;
+
+
+    const fExp =
+        1 /
+        tExp;
+
+
+    const tTheory =
+        2 *
+        Math.PI *
+        Math.sqrt(
+            L *
+            C
+        );
+
+
+    const fTheory =
+        1 /
+        tTheory;
+
+
+    const tError =
+        relativeError(
+            tExp,
+            tTheory
+        );
+
+
+    const electricEnergy =
+        .5 *
+        C *
+        U0 ** 2;
+
+
+    const iExp =
+        state.readings.imax
+            .studentReading /
+        1000;
+
+
+    const magneticEnergy =
+        .5 *
+        L *
+        iExp ** 2;
+
+
+    const iTheory =
+        U0 *
+        Math.sqrt(
+            C /
+            L
+        );
+
+
+    const iError =
+        relativeError(
+            iExp,
+            iTheory
+        );
+
+
+    const u5 =
+        Math.abs(
+            state.cursors
+                .uB_V
+        );
+
+
+    const amplitudeRatio =
+        u5 /
+        U0;
+
+
+    const energyRetained =
+        amplitudeRatio ** 2 *
+        100;
+
+
+    return {
+
+        periodExp_s:
+            tExp,
+
+        frequencyExp_Hz:
+            fExp,
+
+        periodTheory_s:
+            tTheory,
+
+        frequencyTheory_Hz:
+            fTheory,
+
+        periodError_percent:
+            tError,
+
+        electricEnergy_J:
+            electricEnergy,
+
+        magneticEnergy_J:
+            magneticEnergy,
+
+        theoreticalImax_A:
+            iTheory,
+
+        imaxError_percent:
+            iError,
+
+        amplitudeRatio,
+
+        energyRetained_percent:
+            energyRetained
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICARE CALCULE
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            tExp:
+                answer("t-exp"),
+
+            fExp:
+                answer("f-exp"),
+
+            tTheory:
+                answer("t-theory"),
+
+            fTheory:
+                answer("f-theory"),
+
+            tError:
+                answer("t-error"),
+
+            electric:
+                answer("energy-electric"),
+
+            magnetic:
+                answer("energy-magnetic"),
+
+            iTheory:
+                answer("imax-theory"),
+
+            iError:
+                answer("imax-error"),
+
+            amplitudeRatio:
+                answer("amplitude-ratio"),
+
+            energyRetained:
+                answer("energy-retained")
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.tExp,
+                expected.periodExp_s *
+                1000,
+                .08
+            ) &&
+
+            closeEnough(
+                values.fExp,
+                expected.frequencyExp_Hz,
+                .20
+            ) &&
+
+            closeEnough(
+                values.tTheory,
+                expected.periodTheory_s *
+                1000,
+                .08
+            ) &&
+
+            closeEnough(
+                values.fTheory,
+                expected.frequencyTheory_Hz,
+                .20
+            ) &&
+
+            closeEnough(
+                values.tError,
+                expected.periodError_percent,
+                .15
+            ) &&
+
+            closeEnough(
+                values.electric,
+                expected.electricEnergy_J *
+                1000,
+                .03
+            ) &&
+
+            closeEnough(
+                values.magnetic,
+                expected.magneticEnergy_J *
+                1000,
+                .03
+            ) &&
+
+            closeEnough(
+                values.iTheory,
+                expected.theoreticalImax_A *
+                1000,
+                .5
+            ) &&
+
+            closeEnough(
+                values.iError,
+                expected.imaxError_percent,
+                .25
+            ) &&
+
+            closeEnough(
+                values.amplitudeRatio,
+                expected.amplitudeRatio,
+                .012
+            ) &&
+
+            closeEnough(
+                values.energyRetained,
+                expected.energyRetained_percent,
+                .25
+            );
+
+
+        if(
+            !correct ||
+            interpretation.length < 80 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică transformările μF → F, ms → s și mA → A, formula lui Thomson și expresiile energiilor."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    quantity:
+                        "tensiune inițială condensator",
+
+                    instrument:
+                        "voltmetru",
+
+                    studentReading_V:
+                        state.readings.u0
+                            .studentReading,
+
+                    resolution_V:
+                        state.readings.u0
+                            .resolution,
+
+                    attempts:
+                        state.readings.u0
+                            .attempts
+                },
+
+                {
+                    quantity:
+                        "timp pentru 5 perioade",
+
+                    instrument:
+                        "cursoare osciloscop",
+
+                    deltaTime_ms:
+                        round(
+                            state.cursors
+                                .deltaTime_s *
+                            1000,
+                            3
+                        ),
+
+                    tA_ms:
+                        round(
+                            state.cursors
+                                .tA_s *
+                            1000,
+                            3
+                        ),
+
+                    tB_ms:
+                        round(
+                            state.cursors
+                                .tB_s *
+                            1000,
+                            3
+                        )
+                },
+
+                {
+                    quantity:
+                        "amplitudine după 5 perioade",
+
+                    instrument:
+                        "osciloscop",
+
+                    studentReading_V:
+                        round(
+                            Math.abs(
+                                state.cursors
+                                    .uB_V
+                            ),
+                            3
+                        )
+                },
+
+                {
+                    quantity:
+                        "intensitate maximă",
+
+                    instrument:
+                        "ampermetru peak hold",
+
+                    studentReading_mA:
+                        state.readings
+                            .imax
+                            .studentReading,
+
+                    resolution_mA:
+                        state.readings
+                            .imax
+                            .resolution,
+
+                    attempts:
+                        state.readings
+                            .imax
+                            .attempts
+                }
+
+            ],
+
+            calculations:{
+
+                period:{
+
+                    experimental_ms:
+                        round(
+                            expected.periodExp_s *
+                            1000,
+                            3
+                        ),
+
+                    theoretical_ms:
+                        round(
+                            expected.periodTheory_s *
+                            1000,
+                            3
+                        ),
+
+                    relativeError_percent:
+                        round(
+                            expected.periodError_percent,
+                            2
+                        )
+
+                },
+
+                frequency:{
+
+                    experimental_Hz:
+                        round(
+                            expected.frequencyExp_Hz,
+                            3
+                        ),
+
+                    theoretical_Hz:
+                        round(
+                            expected.frequencyTheory_Hz,
+                            3
+                        )
+
+                },
+
+                energy:{
+
+                    initialElectric_mJ:
+                        round(
+                            expected.electricEnergy_J *
+                            1000,
+                            4
+                        ),
+
+                    measuredPeakMagnetic_mJ:
+                        round(
+                            expected.magneticEnergy_J *
+                            1000,
+                            4
+                        ),
+
+                    theoreticalPeakCurrent_mA:
+                        round(
+                            expected.theoreticalImax_A *
+                            1000,
+                            3
+                        ),
+
+                    measuredPeakCurrent_mA:
+                        state.readings
+                            .imax
+                            .studentReading,
+
+                    currentRelativeError_percent:
+                        round(
+                            expected.imaxError_percent,
+                            2
+                        )
+
+                },
+
+                damping:{
+
+                    amplitudeRatioAfter5Periods:
+                        round(
+                            expected.amplitudeRatio,
+                            4
+                        ),
+
+                    retainedEnergy_percent:
+                        round(
+                            expected.energyRetained_percent,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                energyTransfer:
+                    "electrică ↔ magnetică",
+
+                dampingObserved:
+                    true,
+
+                thomsonVerified:
+                    expected.periodError_percent <
+                    5
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(6);
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                generatedData:{
+
+                    inductance_H:
+                        state.set
+                            .visible
+                            .inductance_H,
+
+                    capacitance_uF:
+                        state.set
+                            .visible
+                            .capacitance_uF,
+
+                    model:
+                        "circuit LC real slab amortizat"
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:true,
+
+                totalSteps:8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           Păstrăm același reportId dacă butonul
+           este apăsat din nou.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length < 120 ||
+            errorSources.length < 40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "thomson",
+
+            q2:
+                "current-zero",
+
+            q3:
+                "magnetic",
+
+            q4:
+                "losses"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >= 3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(7);
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>T experimental</span>
+
+                <strong>
+                    ${c.period.experimental_ms.toFixed(2)} ms
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>T Thomson</span>
+
+                <strong>
+                    ${c.period.theoretical_ms.toFixed(2)} ms
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Abaterea perioadei</span>
+
+                <strong>
+                    ${c.period.relativeError_percent.toFixed(2)}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>f experimental</span>
+
+                <strong>
+                    ${c.frequency.experimental_Hz.toFixed(2)} Hz
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Imax măsurat</span>
+
+                <strong>
+                    ${c.energy.measuredPeakCurrent_mA.toFixed(0)} mA
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Energie rămasă după 5T</span>
+
+                <strong>
+                    ${c.damping.retainedEnergy_percent.toFixed(1)}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            /*
+               Copia locală este creată înaintea
+               oricărei încercări de transmitere.
+            */
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă: ${error.message}`;
+
+        }
+
+
+        showStep(7);
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(/\s+/);
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(line);
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+        lines.push(line);
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/\(/g,"\\(")
+        .replace(/\)/g,"\\)");
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+        pages.push(["Raport"]);
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(pageId);
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join("\n");
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(pdf);
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(pdf);
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:"application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Oscilatii electromagnetice",
+
+        "EXP08 - Studiul circuitului oscilant",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "PARAMETRII CIRCUITULUI",
+
+        `L = ${state.set.visible.inductance_H.toFixed(3)} H`,
+
+        `C = ${state.set.visible.capacitance_uF} microF`,
+
+        `U0 = ${state.readings.u0.studentReading.toFixed(1)} V`,
+
+        "",
+
+        "MASURARI",
+
+        `Delta t pentru 5 perioade = ${(state.cursors.deltaTime_s * 1000).toFixed(3)} ms`,
+
+        `U5 = ${Math.abs(state.cursors.uB_V).toFixed(3)} V`,
+
+        `Imax = ${state.readings.imax.studentReading.toFixed(0)} mA`,
+
+        "",
+
+        "PERIOADA SI FRECVENTA",
+
+        `T experimental = ${c.period.experimental_ms.toFixed(3)} ms`,
+
+        `T Thomson = ${c.period.theoretical_ms.toFixed(3)} ms`,
+
+        `Abatere T = ${c.period.relativeError_percent.toFixed(2)} %`,
+
+        `f experimental = ${c.frequency.experimental_Hz.toFixed(3)} Hz`,
+
+        `f teoretic = ${c.frequency.theoretical_Hz.toFixed(3)} Hz`,
+
+        "",
+
+        "ENERGIE",
+
+        `Energia electrica initiala = ${c.energy.initialElectric_mJ.toFixed(4)} mJ`,
+
+        `Energia magnetica maxima masurata = ${c.energy.measuredPeakMagnetic_mJ.toFixed(4)} mJ`,
+
+        `Imax ideal = ${c.energy.theoreticalPeakCurrent_mA.toFixed(3)} mA`,
+
+        `Abatere Imax = ${c.energy.currentRelativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        "AMORTIZARE",
+
+        `U5/U0 = ${c.damping.amplitudeRatioAfter5Periods.toFixed(4)}`,
+
+        `Energia ramasa dupa 5 perioade = ${c.damping.retainedEnergy_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session.studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP08-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(0);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
