@@ -1,1 +1,6701 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul amortizării oscilațiilor mecanice."
+>
+
+<title>Studiul amortizării oscilațiilor mecanice</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --primary-dark:#16425b;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.experiment-shell{
+    width:min(1160px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:linear-gradient(135deg,#16324f,#246b84);
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:#126e82;
+}
+
+.step-tab.is-done{
+    border-color:#16825d;
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok,
+.feedback.is-success{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid #16794b;
+}
+
+.feedback.bad,
+.feedback.is-error{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid #b42318;
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid #b96200;
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+.instrument-box{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid #b9ccd8;
+    border-radius:14px;
+    background:#f8fcfe;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+/* =========================================================
+   OSCILATOR
+========================================================= */
+
+.oscillator-stage{
+    position:relative;
+    min-height:420px;
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #bdd0dc;
+    border-radius:16px;
+    background:
+        linear-gradient(#eaf7ff,#ffffff);
+}
+
+.stage-title{
+    position:absolute;
+    top:.8rem;
+    left:1rem;
+    font-weight:800;
+    color:#526b80;
+}
+
+.damping-badge{
+    position:absolute;
+    top:.8rem;
+    right:1rem;
+    padding:.35rem .7rem;
+    border-radius:999px;
+    color:#fff;
+    background:#126e82;
+    font-weight:750;
+}
+
+.spring-support{
+    position:absolute;
+    top:65px;
+    left:50%;
+    width:230px;
+    height:14px;
+    transform:translateX(-50%);
+    border-radius:6px;
+    background:#3f5968;
+}
+
+.equilibrium-line{
+    position:absolute;
+    top:275px;
+    left:18%;
+    right:18%;
+    border-top:2px dashed #8ba7b6;
+}
+
+.equilibrium-label{
+    position:absolute;
+    top:280px;
+    right:18%;
+    color:#738a98;
+    font-size:.82rem;
+}
+
+.spring-coil{
+    position:absolute;
+    top:79px;
+    left:50%;
+    width:52px;
+    height:160px;
+    transform:translateX(-50%);
+}
+
+.spring-coil svg{
+    width:100%;
+    height:100%;
+}
+
+.oscillator-mass{
+    position:absolute;
+    top:235px;
+    left:50%;
+    width:90px;
+    height:65px;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:3px solid #21546e;
+    border-radius:9px;
+    color:#fff;
+    background:#30789a;
+    font-weight:850;
+    will-change:top;
+}
+
+.damper{
+    position:absolute;
+    top:310px;
+    left:50%;
+    width:130px;
+    height:50px;
+    transform:translateX(-50%);
+    border:3px solid #a16422;
+    border-radius:8px;
+    background:#f0bb73;
+    text-align:center;
+    line-height:44px;
+    color:#664015;
+    font-weight:750;
+}
+
+.envelope-readout{
+    position:absolute;
+    left:1rem;
+    bottom:1rem;
+    padding:.6rem .8rem;
+    border-radius:9px;
+    color:#fff;
+    background:#17324ddd;
+    font-family:ui-monospace,Consolas,monospace;
+}
+
+/* =========================================================
+   CRONOMETRU
+========================================================= */
+
+.timer-panel{
+    max-width:680px;
+    margin:1rem auto;
+    padding:1rem;
+    text-align:center;
+    border:2px solid #506a78;
+    border-radius:16px;
+    color:#fff;
+    background:#15242d;
+}
+
+.timer-display{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:.8rem;
+}
+
+.timer-value{
+    min-width:220px;
+    padding:.6rem 1rem;
+    border-radius:8px;
+    color:#b8ffcf;
+    background:#050b0e;
+    font:700 clamp(2rem,7vw,3.4rem) ui-monospace,Consolas,monospace;
+    letter-spacing:.06em;
+}
+
+.counter-value{
+    min-width:175px;
+    padding:.7rem;
+    border-radius:8px;
+    color:#d9ecff;
+    background:#071218;
+    font:700 1.2rem ui-monospace,Consolas,monospace;
+}
+
+.timer-panel .actions{
+    justify-content:center;
+}
+
+.timer-note{
+    color:#c7dbe4;
+    font-size:.92rem;
+}
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+.compare-box{
+    padding:1rem;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp02-amortizarea-oscilatiilor",
+
+    code:
+        "EXP02",
+
+    title:
+        "Studiul amortizării oscilațiilor mecanice",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Oscilații mecanice",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "mase-suspendate",
+        "resort",
+        "stativ"
+    ],
+
+    requiredEquipment:[
+        "lab-coat",
+        "support-stand",
+        "spring",
+        "weights",
+        "ruler",
+        "stopwatch",
+        "damper"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Oscilații mecanice
+    </p>
+
+    <h1>
+        Studiul amortizării oscilațiilor mecanice
+    </h1>
+
+    <p>
+        Compararea a două regimuri de amortizare,
+        măsurarea scăderii amplitudinii și determinarea
+        decrementului logaritmic și a coeficientului de amortizare.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele experimentului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+<p>
+    Numărul din catalog determină setul experimental.
+    Pentru fiecare formațiune sunt disponibile 30 de seturi
+    distincte și reproductibile.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere. Nu sunt realizate înregistrări
+        audio sau video.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        efectua individual măsurările și calculele.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Atenție:
+    </strong>
+
+    corpul suspendat și resortul pot produce mișcări rapide.
+    Stativul trebuie să rămână stabil pe toată durata experimentului.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Verifică fixarea resortului înainte de pornirea oscilațiilor.
+    </li>
+
+    <li>
+        Nu trage resortul peste limita elastică.
+    </li>
+
+    <li>
+        Nu ține mâna sub masa suspendată.
+    </li>
+
+    <li>
+        Nu modifica amortizorul cât timp corpul oscilează.
+    </li>
+
+    <li>
+        Dacă stativul se deplasează, oprește imediat experimentul.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci dacă stativul începe să se deplaseze?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        Opresc experimentul și refac montajul.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="continue"
+    >
+
+    <span>
+        Continui până termin măsurarea.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+<p>
+    Selectează numai materialele necesare pentru studiul
+    amortizării oscilațiilor.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Studiem un oscilator elastic slab amortizat.
+    Forța disipativă este aproximată printr-o forță proporțională
+    cu viteza și orientată în sens opus mișcării.
+</p>
+
+
+<div class="formula">
+
+    m·x″ + b·x′ + k·x = 0
+
+    <br><br>
+
+    x(t) =
+    A<sub>0</sub>
+    e<sup>−βt</sup>
+    cos(ω<sub>d</sub>t + φ)
+
+    <br><br>
+
+    β =
+    b/(2m)
+
+</div>
+
+
+<p>
+    Anvelopa amplitudinii scade exponențial:
+</p>
+
+
+<div class="formula">
+
+    A(t) =
+    A<sub>0</sub>e<sup>−βt</sup>
+
+</div>
+
+
+<p>
+    Dacă măsurăm două amplitudini separate prin
+    <em>n</em> perioade:
+</p>
+
+
+<div class="formula">
+
+    Λ =
+    (1/n)
+    ln(A<sub>1</sub>/A<sub>n+1</sub>)
+
+    <br><br>
+
+    β =
+    Λ/T
+
+    <br><br>
+
+    τ =
+    1/β
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Dacă amortizarea devine mai puternică, amplitudinea
+    după același număr de oscilații:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionAmplitude"
+        value="smaller"
+    >
+
+    <span>
+        va fi mai mică
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionAmplitude"
+        value="larger"
+    >
+
+    <span>
+        va fi mai mare
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionAmplitude"
+        value="same"
+    >
+
+    <span>
+        va fi aceeași
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Într-un sistem amortizat, energia mecanică:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionEnergy"
+        value="decreases"
+    >
+
+    <span>
+        scade în timp
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionEnergy"
+        value="constant"
+    >
+
+    <span>
+        rămâne constantă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet titlul, scopul, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5 – REGIM I
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Regimul I – amortizare slabă
+</h2>
+
+<p>
+    Vei măsura amplitudinea inițială
+    A<sub>1</sub>, timpul pentru
+    <strong data-n-weak>5</strong>
+    oscilații complete și amplitudinea
+    A<sub>6</sub>.
+</p>
+
+
+<div
+    class="oscillator-stage"
+    data-stage="weak"
+>
+
+    <div class="stage-title">
+        Oscilator elastic
+    </div>
+
+    <div class="damping-badge">
+        Amortizare slabă
+    </div>
+
+    <div class="spring-support"></div>
+
+    <div class="equilibrium-line"></div>
+
+    <div class="equilibrium-label">
+        poziție de echilibru
+    </div>
+
+
+    <div
+        class="spring-coil"
+        data-coil="weak"
+    >
+
+        <svg
+            viewBox="0 0 50 200"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+        >
+
+            <polyline
+                points="
+                    25,0
+                    7,16
+                    43,32
+                    7,48
+                    43,64
+                    7,80
+                    43,96
+                    7,112
+                    43,128
+                    7,144
+                    43,160
+                    7,176
+                    25,200
+                "
+                fill="none"
+                stroke="#52636d"
+                stroke-width="4"
+            />
+
+        </svg>
+
+    </div>
+
+
+    <div
+        class="oscillator-mass"
+        data-mass="weak"
+    >
+        —
+    </div>
+
+
+    <div class="damper">
+        amortizor
+    </div>
+
+
+    <div
+        class="envelope-readout"
+        data-envelope="weak"
+    >
+        Oscilator în repaus
+    </div>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Măsoară amplitudinea A₁
+</h3>
+
+<p>
+    Amplitudinea este distanța maximă față de poziția de echilibru.
+</p>
+
+
+<div data-a1-instrument="weak"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₁ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a1-answer="weak"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a1="weak"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a1-notebook="weak"
+    >
+
+    <span>
+        Am notat A₁ în caiet.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a1-weak"
+></p>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    B. Cronometrează 5 oscilații complete
+</h3>
+
+
+<div class="timer-display">
+
+    <div
+        class="timer-value"
+        data-timer="weak"
+    >
+        00.00 s
+    </div>
+
+
+    <div class="counter-value">
+
+        Oscilații:
+        <strong data-counter="weak">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<p class="timer-note">
+    Pornește oscilatorul după ce ai măsurat A₁.
+    Oprește cronometrul imediat după a cincea oscilație completă.
+</p>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        type="button"
+        data-start="weak"
+        disabled
+    >
+        Start
+    </button>
+
+    <button
+        class="btn warning"
+        type="button"
+        data-stop="weak"
+        disabled
+    >
+        Stop
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        data-reset="weak"
+        disabled
+    >
+        Repetă cronometrarea
+    </button>
+
+</div>
+
+</div>
+
+
+<div
+    class="instrument-box"
+    data-a6-box="weak"
+    hidden
+>
+
+<h3>
+    C. Măsoară amplitudinea A₆
+</h3>
+
+<p>
+    Aceasta este amplitudinea după cinci perioade complete.
+</p>
+
+
+<div data-a6-instrument="weak"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₆ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a6-answer="weak"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a6="weak"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a6-notebook="weak"
+    >
+
+    <span>
+        Am notat A₆ în caiet.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a6-weak"
+></p>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="regime-weak"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-strong
+        type="button"
+        disabled
+    >
+        Continuă la regimul II
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6 – REGIM II
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Regimul II – amortizare mai accentuată
+</h2>
+
+<p>
+    Masa, resortul și amplitudinea inițială rămân aceleași.
+    Se modifică numai intensitatea amortizării.
+</p>
+
+
+<div
+    class="oscillator-stage"
+    data-stage="strong"
+>
+
+    <div class="stage-title">
+        Oscilator elastic
+    </div>
+
+    <div
+        class="damping-badge"
+        style="background:#b96200"
+    >
+        Amortizare mai accentuată
+    </div>
+
+    <div class="spring-support"></div>
+
+    <div class="equilibrium-line"></div>
+
+    <div class="equilibrium-label">
+        poziție de echilibru
+    </div>
+
+
+    <div
+        class="spring-coil"
+        data-coil="strong"
+    >
+
+        <svg
+            viewBox="0 0 50 200"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+        >
+
+            <polyline
+                points="
+                    25,0
+                    7,16
+                    43,32
+                    7,48
+                    43,64
+                    7,80
+                    43,96
+                    7,112
+                    43,128
+                    7,144
+                    43,160
+                    7,176
+                    25,200
+                "
+                fill="none"
+                stroke="#52636d"
+                stroke-width="4"
+            />
+
+        </svg>
+
+    </div>
+
+
+    <div
+        class="oscillator-mass"
+        data-mass="strong"
+    >
+        —
+    </div>
+
+
+    <div
+        class="damper"
+        style="background:#df9952"
+    >
+        amortizor
+    </div>
+
+
+    <div
+        class="envelope-readout"
+        data-envelope="strong"
+    >
+        Oscilator în repaus
+    </div>
+
+</div>
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Măsoară amplitudinea A₁
+</h3>
+
+
+<div data-a1-instrument="strong"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₁ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a1-answer="strong"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a1="strong"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a1-notebook="strong"
+    >
+
+    <span>
+        Am notat A₁ în caiet.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a1-strong"
+></p>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    B. Cronometrează 5 oscilații complete
+</h3>
+
+
+<div class="timer-display">
+
+    <div
+        class="timer-value"
+        data-timer="strong"
+    >
+        00.00 s
+    </div>
+
+
+    <div class="counter-value">
+
+        Oscilații:
+        <strong data-counter="strong">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        type="button"
+        data-start="strong"
+        disabled
+    >
+        Start
+    </button>
+
+    <button
+        class="btn warning"
+        type="button"
+        data-stop="strong"
+        disabled
+    >
+        Stop
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        data-reset="strong"
+        disabled
+    >
+        Repetă cronometrarea
+    </button>
+
+</div>
+
+</div>
+
+
+<div
+    class="instrument-box"
+    data-a6-box="strong"
+    hidden
+>
+
+<h3>
+    C. Măsoară amplitudinea A₆
+</h3>
+
+
+<div data-a6-instrument="strong"></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        A₆ (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-a6-answer="strong"
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-a6="strong"
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-a6-notebook="strong"
+    >
+
+    <span>
+        Am notat A₆ în caiet.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="a6-strong"
+></p>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="regime-strong"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    Regimul I – amortizare slabă
+</h3>
+
+
+<div class="formula">
+
+    T₁ =
+    t₁ / 5
+
+</div>
+
+
+<label class="field">
+
+    T₁ (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="weak-period"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    Λ₁ =
+    (1/5) ln(A₁/A₆)
+
+</div>
+
+
+<label class="field">
+
+    Decrement logaritmic Λ₁
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="weak-decrement"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    β₁ =
+    Λ₁/T₁
+
+</div>
+
+
+<label class="field">
+
+    β₁ (s⁻¹)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="weak-beta"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    τ₁ =
+    1/β₁
+
+</div>
+
+
+<label class="field">
+
+    τ₁ (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="weak-tau"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Scăderea amplitudinii după 5 perioade (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="weak-reduction"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    Regimul II – amortizare mai accentuată
+</h3>
+
+
+<div class="formula">
+
+    T₂ =
+    t₂ / 5
+
+</div>
+
+
+<label class="field">
+
+    T₂ (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="strong-period"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    Λ₂ =
+    (1/5) ln(A₁/A₆)
+
+</div>
+
+
+<label class="field">
+
+    Decrement logaritmic Λ₂
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="strong-decrement"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    β₂ =
+    Λ₂/T₂
+
+</div>
+
+
+<label class="field">
+
+    β₂ (s⁻¹)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="strong-beta"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    τ₂ =
+    1/β₂
+
+</div>
+
+
+<label class="field">
+
+    τ₂ (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="strong-tau"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Scăderea amplitudinii după 5 perioade (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="strong-reduction"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Compararea regimurilor
+</h3>
+
+
+<label class="field">
+
+    Explică relația dintre intensitatea amortizării,
+    coeficientul β și viteza de scădere a amplitudinii.
+
+    <textarea
+        rows="4"
+        data-comparison
+        placeholder="Compară β₁ cu β₂, τ₁ cu τ₂ și amplitudinile finale."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, calculele și unitățile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. În cazul amortizării vâscoase, anvelopa amplitudinii
+    unui oscilator subamortizat:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="exponential"
+    >
+
+    <span>
+        scade exponențial în timp
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="constant"
+    >
+
+    <span>
+        rămâne constantă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. O valoare mai mare a coeficientului β indică:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="faster"
+    >
+
+    <span>
+        o scădere mai rapidă a amplitudinii
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="slower"
+    >
+
+    <span>
+        o scădere mai lentă a amplitudinii
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Decrementul logaritmic Λ este:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="dimensionless"
+    >
+
+    <span>
+        o mărime adimensională
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="seconds"
+    >
+
+    <span>
+        o mărime exprimată în secunde
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Energia mecanică scade deoarece:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="dissipation"
+    >
+
+    <span>
+        forțele disipative transformă energie mecanică
+        în alte forme de energie
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="mass"
+    >
+
+    <span>
+        masa corpului scade în timpul oscilației
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="6"
+        minlength="100"
+        data-final-conclusion
+        required
+        placeholder="Compară cele două regimuri folosind amplitudinile, β și τ. Formulează o relație cauză–efect."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="De exemplu: timpul de reacție, citirea amplitudinii, rezoluția riglei..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    round(
+        Math.round(
+            value /
+            step
+        ) *
+        step,
+        6
+    );
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    readings:{
+
+        weak:{
+            a1:null,
+            a6:null
+        },
+
+        strong:{
+            a1:null,
+            a6:null
+        }
+
+    },
+
+    timers:{
+
+        weak:null,
+
+        strong:null
+
+    },
+
+    timerControllers:{},
+
+    instruments:{
+
+        weak:{},
+
+        strong:{}
+
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Amortizare slabă",
+
+    "Amortizare accentuată",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button
+                .classList
+                .toggle(
+                    "is-active",
+                    index ===
+                    step
+                );
+
+
+            button
+                .classList
+                .toggle(
+                    "is-done",
+                    state.completed
+                        .has(index)
+                );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed
+                        .has(
+                            index - 1
+                        )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SETURI EXPERIMENTALE
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function dampedPeriod(
+    massKg,
+    k,
+    beta
+){
+
+    const omega0 =
+        Math.sqrt(
+            k /
+            massKg
+        );
+
+
+    const omegaD =
+        Math.sqrt(
+            omega0 ** 2 -
+            beta ** 2
+        );
+
+
+    return (
+        2 *
+        Math.PI /
+        omegaD
+    );
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) - 1;
+
+
+    /*
+       Permutare 0...29.
+       gcd(7,30)=1.
+    */
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    const massG =
+        150 +
+        slot * 5;
+
+
+    const kSlot =
+        (
+            slot *
+            11 +
+            ci *
+            7
+        ) %
+        30;
+
+
+    const springK =
+        14 +
+        kSlot *
+        .25;
+
+
+    const amplitudeSlot =
+        (
+            slot *
+            13 +
+            ci *
+            5
+        ) %
+        30;
+
+
+    const initialAmplitude =
+        round(
+            8 +
+            amplitudeSlot *
+            .1,
+            1
+        );
+
+
+    const betaSlot =
+        (
+            slot *
+            17 +
+            ci
+        ) %
+        30;
+
+
+    const betaWeak =
+        .060 +
+        betaSlot *
+        .0013;
+
+
+    const betaStrong =
+        betaWeak +
+        .105 +
+        (
+            slot %
+            4
+        ) *
+        .006;
+
+
+    const massKg =
+        massG /
+        1000;
+
+
+    const periodWeak =
+        dampedPeriod(
+            massKg,
+            springK,
+            betaWeak
+        );
+
+
+    const periodStrong =
+        dampedPeriod(
+            massKg,
+            springK,
+            betaStrong
+        );
+
+
+    const n =
+        5;
+
+
+    /*
+       A6 = amplitudinea după 5 perioade.
+       Valorile sunt rotunjite la rezoluția riglei.
+    */
+
+    const a6Weak =
+        roundTo(
+            initialAmplitude *
+            Math.exp(
+                -betaWeak *
+                n *
+                periodWeak
+            ),
+            .1
+        );
+
+
+    const a6Strong =
+        roundTo(
+            initialAmplitude *
+            Math.exp(
+                -betaStrong *
+                n *
+                periodStrong
+            ),
+            .1
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP02`,
+
+        visible:{
+
+            mass_g:
+                massG,
+
+            oscillations:
+                n
+
+        },
+
+        weak:{
+
+            a1_cm:
+                initialAmplitude,
+
+            a6_cm:
+                a6Weak,
+
+            period_s:
+                periodWeak,
+
+            beta:
+                betaWeak
+
+        },
+
+        strong:{
+
+            a1_cm:
+                initialAmplitude,
+
+            a6_cm:
+                a6Strong,
+
+            period_s:
+                periodStrong,
+
+            beta:
+                betaStrong
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^XI [A-D]$/
+                .test(
+                    studentClass
+                ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:
+                true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "mase-suspendate",
+                "resort",
+                "stativ"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "halat",
+        "Halat de laborator"
+    ],
+
+    [
+        "stativ",
+        "Stativ cu tijă și clemă"
+    ],
+
+    [
+        "resort",
+        "Resort elastic"
+    ],
+
+    [
+        "masa",
+        "Corp cu masă marcată"
+    ],
+
+    [
+        "rigla",
+        "Riglă gradată"
+    ],
+
+    [
+        "cronometru",
+        "Cronometru digital"
+    ],
+
+    [
+        "amortizor",
+        "Amortizor reglabil"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ],
+
+    [
+        "multimetru",
+        "Multimetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "halat",
+        "stativ",
+        "resort",
+        "masa",
+        "rigla",
+        "cronometru",
+        "amortizor"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:
+                true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] ===
+                                            id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INIȚIALE
+========================================================= */
+
+function renderInitialData(){
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Masa corpului</td>
+                    <td>${state.set.visible.mass_g} g</td>
+                </tr>
+
+                <tr>
+                    <td>Numărul de perioade dintre A₁ și A₆</td>
+                    <td>${state.set.visible.oscillations}</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția riglei</td>
+                    <td>0,1 cm</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția cronometrului</td>
+                    <td>0,01 s</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        '[data-mass="weak"]'
+    ).textContent =
+        `${state.set.visible.mass_g} g`;
+
+
+    qs(
+        '[data-mass="strong"]'
+    ).textContent =
+        `${state.set.visible.mass_g} g`;
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const amplitude =
+            qs(
+                'input[name="predictionAmplitude"]:checked'
+            )?.value;
+
+
+        const energy =
+            qs(
+                'input[name="predictionEnergy"]:checked'
+            )?.value;
+
+
+        if(
+            !amplitude ||
+            !energy ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează ambele predicții și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            amplitude,
+
+            energy,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeRegime(
+            "weak"
+        );
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INSTRUMENTE DE AMPLITUDINE
+========================================================= */
+
+function initializeAmplitudeInstrument(
+    regime,
+    key
+){
+
+    if(
+        state.instruments
+            [regime]
+            [key]
+    ){
+
+        return;
+
+    }
+
+
+    const isA1 =
+        key ===
+        "a1";
+
+
+    const target =
+        qs(
+            `[data-${key}-instrument="${regime}"]`
+        );
+
+
+    const answer =
+        qs(
+            `[data-${key}-answer="${regime}"]`
+        );
+
+
+    const verify =
+        qs(
+            `[data-check-${key}="${regime}"]`
+        );
+
+
+    const notebook =
+        qs(
+            `[data-${key}-notebook="${regime}"]`
+        );
+
+
+    const value =
+        state.set
+            [regime]
+            [`${key}_cm`];
+
+
+    target.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail
+                    .correct
+            ){
+
+                return;
+
+            }
+
+
+            state.readings
+                [regime]
+                [key] =
+                event.detail;
+
+
+            if(isA1){
+
+                initializeTimer(
+                    regime
+                );
+
+
+                qs(
+                    `[data-start="${regime}"]`
+                ).disabled =
+                    false;
+
+            }
+
+
+            checkRegimeComplete(
+                regime
+            );
+
+        }
+    );
+
+
+    state.instruments
+        [regime]
+        [key] =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `${regime}-${key}`,
+
+                target,
+
+                type:
+                    "ruler",
+
+                label:
+                    isA1
+                        ? "Riglă – amplitudinea A₁"
+                        : "Riglă – amplitudinea A₆",
+
+                instruction:
+                    "Citește distanța maximă față de poziția de echilibru.",
+
+                minimum:
+                    0,
+
+                maximum:
+                    12,
+
+                value,
+
+                minorDivision:
+                    .1,
+
+                majorDivision:
+                    1,
+
+                decimals:
+                    1,
+
+                unit:
+                    "cm",
+
+                tolerance:
+                    .051,
+
+                answerInput:
+                    answer,
+
+                feedbackTarget:
+                    qs(
+                        `[data-feedback="${key}-${regime}"]`
+                    ),
+
+                verifyButton:
+                    verify,
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    notebook,
+
+                allowZoom:
+                    true
+
+            });
+
+}
+
+
+/* =========================================================
+   REGIM
+========================================================= */
+
+function initializeRegime(
+    regime
+){
+
+    initializeAmplitudeInstrument(
+        regime,
+        "a1"
+    );
+
+
+    setOscillatorVisual(
+        regime,
+        0
+    );
+
+}
+
+
+function revealFinalAmplitude(
+    regime
+){
+
+    qs(
+        `[data-a6-box="${regime}"]`
+    ).hidden =
+        false;
+
+
+    initializeAmplitudeInstrument(
+        regime,
+        "a6"
+    );
+
+}
+
+
+/* =========================================================
+   SIMULARE VIZUALĂ
+========================================================= */
+
+function setOscillatorVisual(
+    regime,
+    displacementCm,
+    envelopeCm=null
+){
+
+    const mass =
+        qs(
+            `[data-mass="${regime}"]`
+        );
+
+
+    const coil =
+        qs(
+            `[data-coil="${regime}"]`
+        );
+
+
+    const readout =
+        qs(
+            `[data-envelope="${regime}"]`
+        );
+
+
+    /*
+       1 cm -> aproximativ 6 px.
+    */
+
+    const displacementPx =
+        displacementCm *
+        6;
+
+
+    const massTop =
+        235 +
+        displacementPx;
+
+
+    const coilHeight =
+        Math.max(
+            90,
+            160 +
+            displacementPx
+        );
+
+
+    mass.style.top =
+        `${massTop}px`;
+
+
+    coil.style.height =
+        `${coilHeight}px`;
+
+
+    if(
+        envelopeCm ===
+        null
+    ){
+
+        readout.textContent =
+            "Oscilator în repaus";
+
+    }
+    else{
+
+        readout.textContent =
+            `Anvelopă ≈ ${envelopeCm.toFixed(1)} cm`;
+
+    }
+
+}
+
+
+/* =========================================================
+   CRONOMETRU + OSCILATOR AMORTIZAT
+========================================================= */
+
+function initializeTimer(
+    regime
+){
+
+    if(
+        state.timerControllers
+            [regime]
+    ){
+
+        return;
+
+    }
+
+
+    const model =
+        state.set
+            [regime];
+
+
+    const n =
+        state.set
+            .visible
+            .oscillations;
+
+
+    const timerElement =
+        qs(
+            `[data-timer="${regime}"]`
+        );
+
+
+    const counterElement =
+        qs(
+            `[data-counter="${regime}"]`
+        );
+
+
+    const startButton =
+        qs(
+            `[data-start="${regime}"]`
+        );
+
+
+    const stopButton =
+        qs(
+            `[data-stop="${regime}"]`
+        );
+
+
+    const resetButton =
+        qs(
+            `[data-reset="${regime}"]`
+        );
+
+
+    let runtime =
+        null;
+
+
+    function update(
+        elapsed
+    ){
+
+        timerElement.textContent =
+            `${elapsed.toFixed(2)} s`;
+
+
+        const completeOscillations =
+            Math.floor(
+                elapsed /
+                model.period_s
+            );
+
+
+        counterElement.textContent =
+            String(
+                Math.min(
+                    completeOscillations,
+                    n
+                )
+            );
+
+
+        const envelope =
+            model.a1_cm *
+            Math.exp(
+                -model.beta *
+                elapsed
+            );
+
+
+        const displacement =
+            envelope *
+            Math.cos(
+                2 *
+                Math.PI *
+                elapsed /
+                model.period_s
+            );
+
+
+        setOscillatorVisual(
+            regime,
+            displacement,
+            envelope
+        );
+
+    }
+
+
+    function frame(){
+
+        if(!runtime){
+            return;
+        }
+
+
+        const elapsed =
+            (
+                performance.now() -
+                runtime.startedAt
+            ) /
+            1000;
+
+
+        runtime.elapsed =
+            elapsed;
+
+
+        update(
+            elapsed
+        );
+
+
+        runtime.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    function reset(){
+
+        if(
+            runtime
+                ?.frameId
+        ){
+
+            cancelAnimationFrame(
+                runtime.frameId
+            );
+
+        }
+
+
+        runtime =
+            null;
+
+
+        state.timers
+            [regime] =
+            null;
+
+
+        timerElement.textContent =
+            "00.00 s";
+
+
+        counterElement.textContent =
+            "0";
+
+
+        startButton.disabled =
+            false;
+
+
+        stopButton.disabled =
+            true;
+
+
+        resetButton.disabled =
+            true;
+
+
+        setOscillatorVisual(
+            regime,
+            0
+        );
+
+
+        feedback(
+            `regime-${regime}`,
+            ""
+        );
+
+    }
+
+
+    startButton.addEventListener(
+        "click",
+        () => {
+
+            runtime = {
+
+                startedAt:
+                    performance.now(),
+
+                elapsed:
+                    0,
+
+                frameId:
+                    null
+
+            };
+
+
+            startButton.disabled =
+                true;
+
+
+            stopButton.disabled =
+                false;
+
+
+            resetButton.disabled =
+                true;
+
+
+            runtime.frameId =
+                requestAnimationFrame(
+                    frame
+                );
+
+        }
+    );
+
+
+    stopButton.addEventListener(
+        "click",
+        () => {
+
+            if(!runtime){
+                return;
+            }
+
+
+            const elapsed =
+                (
+                    performance.now() -
+                    runtime.startedAt
+                ) /
+                1000;
+
+
+            if(
+                runtime.frameId
+            ){
+
+                cancelAnimationFrame(
+                    runtime.frameId
+                );
+
+            }
+
+
+            const completeOscillations =
+                Math.floor(
+                    elapsed /
+                    model.period_s
+                );
+
+
+            stopButton.disabled =
+                true;
+
+
+            resetButton.disabled =
+                false;
+
+
+            /*
+               Trebuie oprit după a cincea oscilație,
+               înainte de finalizarea celei de-a șasea.
+            */
+
+            if(
+                completeOscillations !==
+                n
+            ){
+
+                feedback(
+                    `regime-${regime}`,
+                    `Ai oprit cronometrul după aproximativ ${completeOscillations} oscilații. Repetă măsurarea.`,
+                    "bad"
+                );
+
+
+                runtime =
+                    null;
+
+
+                return;
+
+            }
+
+
+            const measuredTime =
+                round(
+                    elapsed,
+                    2
+                );
+
+
+            state.timers
+                [regime] = {
+
+                    oscillations:
+                        n,
+
+                    measuredTime_s:
+                        measuredTime,
+
+                    resolution_s:
+                        .01,
+
+                    measuredAt:
+                        now()
+
+                };
+
+
+            timerElement.textContent =
+                `${measuredTime.toFixed(2)} s`;
+
+
+            counterElement.textContent =
+                String(n);
+
+
+            feedback(
+                `regime-${regime}`,
+                "Cronometrarea este acceptată. Măsoară acum amplitudinea A₆.",
+                "ok"
+            );
+
+
+            revealFinalAmplitude(
+                regime
+            );
+
+
+            /*
+               Afișăm poziția extremă corespunzătoare A6.
+            */
+
+            setOscillatorVisual(
+                regime,
+                model.a6_cm,
+                model.a6_cm
+            );
+
+
+            runtime =
+                null;
+
+
+            checkRegimeComplete(
+                regime
+            );
+
+        }
+    );
+
+
+    resetButton.addEventListener(
+        "click",
+        reset
+    );
+
+
+    state.timerControllers
+        [regime] =
+        Object.freeze({
+            reset
+        });
+
+}
+
+
+/* =========================================================
+   FINALIZAREA REGIMULUI
+========================================================= */
+
+function checkRegimeComplete(
+    regime
+){
+
+    const ready =
+        Boolean(
+            state.readings
+                [regime]
+                .a1 &&
+            state.readings
+                [regime]
+                .a6 &&
+            state.timers
+                [regime]
+        );
+
+
+    if(!ready){
+        return;
+    }
+
+
+    if(
+        regime ===
+        "weak"
+    ){
+
+        qs(
+            "[data-next-strong]"
+        ).disabled =
+            false;
+
+
+        state.completed.add(
+            4
+        );
+
+
+        feedback(
+            "regime-weak",
+            "Regimul I este complet măsurat.",
+            "ok"
+        );
+
+    }
+    else{
+
+        qs(
+            "[data-next-calculation]"
+        ).disabled =
+            false;
+
+
+        state.completed.add(
+            5
+        );
+
+
+        feedback(
+            "regime-strong",
+            "Regimul II este complet măsurat.",
+            "ok"
+        );
+
+    }
+
+}
+
+
+qs(
+    "[data-next-strong]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeRegime(
+            "strong"
+        );
+
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REZUMAT MĂSURĂRI
+========================================================= */
+
+function renderMeasurementSummary(){
+
+    const weak =
+        state.readings.weak;
+
+
+    const strong =
+        state.readings.strong;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Regim</th>
+                    <th>A₁ (cm)</th>
+                    <th>t pentru 5 oscilații (s)</th>
+                    <th>A₆ (cm)</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Amortizare slabă</td>
+                    <td>${weak.a1.studentReading.toFixed(1)}</td>
+                    <td>${state.timers.weak.measuredTime_s.toFixed(2)}</td>
+                    <td>${weak.a6.studentReading.toFixed(1)}</td>
+                </tr>
+
+                <tr>
+                    <td>Amortizare mai accentuată</td>
+                    <td>${strong.a1.studentReading.toFixed(1)}</td>
+                    <td>${state.timers.strong.measuredTime_s.toFixed(2)}</td>
+                    <td>${strong.a6.studentReading.toFixed(1)}</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE AȘTEPTATE
+========================================================= */
+
+function calculationsFor(
+    regime
+){
+
+    const n =
+        state.set
+            .visible
+            .oscillations;
+
+
+    const a1 =
+        state.readings
+            [regime]
+            .a1
+            .studentReading;
+
+
+    const a6 =
+        state.readings
+            [regime]
+            .a6
+            .studentReading;
+
+
+    const totalTime =
+        state.timers
+            [regime]
+            .measuredTime_s;
+
+
+    const period =
+        totalTime /
+        n;
+
+
+    const decrement =
+        (
+            1 /
+            n
+        ) *
+        Math.log(
+            a1 /
+            a6
+        );
+
+
+    const beta =
+        decrement /
+        period;
+
+
+    const tau =
+        1 /
+        beta;
+
+
+    const reduction =
+        (
+            1 -
+            a6 /
+            a1
+        ) *
+        100;
+
+
+    return {
+
+        period_s:
+            period,
+
+        decrement,
+
+        beta_s_1:
+            beta,
+
+        tau_s:
+            tau,
+
+        reduction_percent:
+            reduction
+
+    };
+
+}
+
+
+function expectedCalculations(){
+
+    return {
+
+        weak:
+            calculationsFor(
+                "weak"
+            ),
+
+        strong:
+            calculationsFor(
+                "strong"
+            )
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICAREA CALCULELOR
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer = name =>
+            numeric(
+                qs(
+                    `[data-calc="${name}"]`
+                ).value
+            );
+
+
+        const values = {
+
+            weak:{
+
+                period:
+                    answer(
+                        "weak-period"
+                    ),
+
+                decrement:
+                    answer(
+                        "weak-decrement"
+                    ),
+
+                beta:
+                    answer(
+                        "weak-beta"
+                    ),
+
+                tau:
+                    answer(
+                        "weak-tau"
+                    ),
+
+                reduction:
+                    answer(
+                        "weak-reduction"
+                    )
+
+            },
+
+            strong:{
+
+                period:
+                    answer(
+                        "strong-period"
+                    ),
+
+                decrement:
+                    answer(
+                        "strong-decrement"
+                    ),
+
+                beta:
+                    answer(
+                        "strong-beta"
+                    ),
+
+                tau:
+                    answer(
+                        "strong-tau"
+                    ),
+
+                reduction:
+                    answer(
+                        "strong-reduction"
+                    )
+
+            }
+
+        };
+
+
+        const comparison =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.weak.period,
+                expected.weak.period_s,
+                .012
+            ) &&
+
+            closeEnough(
+                values.weak.decrement,
+                expected.weak.decrement,
+                .006
+            ) &&
+
+            closeEnough(
+                values.weak.beta,
+                expected.weak.beta_s_1,
+                .012
+            ) &&
+
+            closeEnough(
+                values.weak.tau,
+                expected.weak.tau_s,
+                .2
+            ) &&
+
+            closeEnough(
+                values.weak.reduction,
+                expected.weak.reduction_percent,
+                .25
+            ) &&
+
+            closeEnough(
+                values.strong.period,
+                expected.strong.period_s,
+                .012
+            ) &&
+
+            closeEnough(
+                values.strong.decrement,
+                expected.strong.decrement,
+                .006
+            ) &&
+
+            closeEnough(
+                values.strong.beta,
+                expected.strong.beta_s_1,
+                .012
+            ) &&
+
+            closeEnough(
+                values.strong.tau,
+                expected.strong.tau_s,
+                .2
+            ) &&
+
+            closeEnough(
+                values.strong.reduction,
+                expected.strong.reduction_percent,
+                .25
+            );
+
+
+        if(
+            !correct ||
+            comparison.length <
+                50 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică formulele, logaritmul natural ln, rotunjirile și comparația dintre cele două regimuri."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    regime:
+                        "amortizare slabă",
+
+                    quantity:
+                        "A1",
+
+                    instrument:
+                        "rigla",
+
+                    resolution_cm:
+                        .1,
+
+                    studentReading_cm:
+                        state.readings
+                            .weak
+                            .a1
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .weak
+                            .a1
+                            .attempts
+                },
+
+                {
+                    regime:
+                        "amortizare slabă",
+
+                    quantity:
+                        "timp pentru 5 oscilații",
+
+                    instrument:
+                        "cronometru",
+
+                    studentReading_s:
+                        state.timers
+                            .weak
+                            .measuredTime_s,
+
+                    resolution_s:
+                        .01
+                },
+
+                {
+                    regime:
+                        "amortizare slabă",
+
+                    quantity:
+                        "A6",
+
+                    instrument:
+                        "rigla",
+
+                    resolution_cm:
+                        .1,
+
+                    studentReading_cm:
+                        state.readings
+                            .weak
+                            .a6
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .weak
+                            .a6
+                            .attempts
+                },
+
+                {
+                    regime:
+                        "amortizare accentuată",
+
+                    quantity:
+                        "A1",
+
+                    instrument:
+                        "rigla",
+
+                    resolution_cm:
+                        .1,
+
+                    studentReading_cm:
+                        state.readings
+                            .strong
+                            .a1
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .strong
+                            .a1
+                            .attempts
+                },
+
+                {
+                    regime:
+                        "amortizare accentuată",
+
+                    quantity:
+                        "timp pentru 5 oscilații",
+
+                    instrument:
+                        "cronometru",
+
+                    studentReading_s:
+                        state.timers
+                            .strong
+                            .measuredTime_s,
+
+                    resolution_s:
+                        .01
+                },
+
+                {
+                    regime:
+                        "amortizare accentuată",
+
+                    quantity:
+                        "A6",
+
+                    instrument:
+                        "rigla",
+
+                    resolution_cm:
+                        .1,
+
+                    studentReading_cm:
+                        state.readings
+                            .strong
+                            .a6
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .strong
+                            .a6
+                            .attempts
+                }
+
+            ],
+
+            calculations:{
+
+                weak:{
+
+                    period_s:
+                        round(
+                            expected
+                                .weak
+                                .period_s,
+                            3
+                        ),
+
+                    logarithmicDecrement:
+                        round(
+                            expected
+                                .weak
+                                .decrement,
+                            4
+                        ),
+
+                    beta_s_1:
+                        round(
+                            expected
+                                .weak
+                                .beta_s_1,
+                            4
+                        ),
+
+                    tau_s:
+                        round(
+                            expected
+                                .weak
+                                .tau_s,
+                            2
+                        ),
+
+                    amplitudeReduction_percent:
+                        round(
+                            expected
+                                .weak
+                                .reduction_percent,
+                            2
+                        )
+
+                },
+
+                strong:{
+
+                    period_s:
+                        round(
+                            expected
+                                .strong
+                                .period_s,
+                            3
+                        ),
+
+                    logarithmicDecrement:
+                        round(
+                            expected
+                                .strong
+                                .decrement,
+                            4
+                        ),
+
+                    beta_s_1:
+                        round(
+                            expected
+                                .strong
+                                .beta_s_1,
+                            4
+                        ),
+
+                    tau_s:
+                        round(
+                            expected
+                                .strong
+                                .tau_s,
+                            2
+                        ),
+
+                    amplitudeReduction_percent:
+                        round(
+                            expected
+                                .strong
+                                .reduction_percent,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    comparison,
+
+                strongerDampingHasGreaterBeta:
+                    expected.strong.beta_s_1 >
+                    expected.weak.beta_s_1,
+
+                strongerDampingHasShorterTau:
+                    expected.strong.tau_s <
+                    expected.weak.tau_s
+
+            },
+
+            completed:
+                true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   Nu trimitem parametrii ascunși:
+                   k, beta real, perioada simulată.
+                */
+
+                generatedData:{
+
+                    mass_g:
+                        state.set
+                            .visible
+                            .mass_g,
+
+                    oscillations:
+                        state.set
+                            .visible
+                            .oscillations,
+
+                    regimes:[
+                        "amortizare slabă",
+                        "amortizare mai accentuată"
+                    ]
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.round(
+                        (
+                            Date.parse(
+                                state.evaluation
+                                    .finishedAt
+                            ) -
+                            Date.parse(
+                                state.session
+                                    .startedAt
+                            )
+                        ) /
+                        1000
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:
+                    true,
+
+                totalSteps:
+                    8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:
+                true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:
+                8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALĂ
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                100 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "exponential",
+
+            q2:
+                "faster",
+
+            q3:
+                "dimensionless",
+
+            q4:
+                "dissipation"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+                <span>Punctaj conceptual</span>
+                <strong>${score}/4</strong>
+            </div>
+
+            <div class="result-card">
+                <span>β – amortizare slabă</span>
+                <strong>${c.weak.beta_s_1.toFixed(4)} s⁻¹</strong>
+            </div>
+
+            <div class="result-card">
+                <span>β – amortizare accentuată</span>
+                <strong>${c.strong.beta_s_1.toFixed(4)} s⁻¹</strong>
+            </div>
+
+            <div class="result-card">
+                <span>τ – amortizare slabă</span>
+                <strong>${c.weak.tau_s.toFixed(2)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>τ – amortizare accentuată</span>
+                <strong>${c.strong.tau_s.toFixed(2)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Set experimental</span>
+                <strong>${state.set.id}</strong>
+            </div>
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală prin modulul comun nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă de transmitere: ${error.message}`;
+
+        }
+
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const words =
+        asciiText(text)
+            .trim()
+            .split(/\s+/);
+
+
+    if(
+        words.length ===
+        1 &&
+        !words[0]
+    ){
+
+        return [""];
+
+    }
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    words.forEach(
+        word => {
+
+            const test =
+                line
+                    ? `${line} ${word}`
+                    : word;
+
+
+            if(
+                test.length >
+                    max &&
+                line
+            ){
+
+                lines.push(line);
+
+                line =
+                    word;
+
+            }
+            else{
+
+                line =
+                    test;
+
+            }
+
+        }
+    );
+
+
+    if(line){
+        lines.push(line);
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+        pages.push(["Raport"]);
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join("\n");
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(pdf);
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(pdf);
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:"application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Oscilatii mecanice",
+
+        "EXP02 - Studiul amortizarii oscilatiilor mecanice",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        `Masa corpului: ${state.set.visible.mass_g} g`,
+
+        "",
+
+        "REGIM I - AMORTIZARE SLABA",
+
+        `A1: ${state.readings.weak.a1.studentReading.toFixed(1)} cm`,
+
+        `Timp pentru 5 oscilatii: ${state.timers.weak.measuredTime_s.toFixed(2)} s`,
+
+        `A6: ${state.readings.weak.a6.studentReading.toFixed(1)} cm`,
+
+        `T: ${c.weak.period_s.toFixed(3)} s`,
+
+        `Decrement logaritmic: ${c.weak.logarithmicDecrement.toFixed(4)}`,
+
+        `Beta: ${c.weak.beta_s_1.toFixed(4)} s^-1`,
+
+        `Tau: ${c.weak.tau_s.toFixed(2)} s`,
+
+        `Scaderea amplitudinii: ${c.weak.amplitudeReduction_percent.toFixed(2)} %`,
+
+        "",
+
+        "REGIM II - AMORTIZARE MAI ACCENTUATA",
+
+        `A1: ${state.readings.strong.a1.studentReading.toFixed(1)} cm`,
+
+        `Timp pentru 5 oscilatii: ${state.timers.strong.measuredTime_s.toFixed(2)} s`,
+
+        `A6: ${state.readings.strong.a6.studentReading.toFixed(1)} cm`,
+
+        `T: ${c.strong.period_s.toFixed(3)} s`,
+
+        `Decrement logaritmic: ${c.strong.logarithmicDecrement.toFixed(4)}`,
+
+        `Beta: ${c.strong.beta_s_1.toFixed(4)} s^-1`,
+
+        `Tau: ${c.strong.tau_s.toFixed(2)} s`,
+
+        `Scaderea amplitudinii: ${c.strong.amplitudeReduction_percent.toFixed(2)} %`,
+
+        "",
+
+        "COMPARATIE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP02-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE DE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail
+                ?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
