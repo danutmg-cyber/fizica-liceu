@@ -1,1 +1,7411 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul a doi oscilatori mecanici cuplați, moduri normale și transfer de energie."
+>
+
+<title>Studiul a doi oscilatori mecanici cuplați</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --primary-dark:#16425b;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:linear-gradient(135deg,#16324f,#246b84);
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.55rem,4vw,2.45rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:#126e82;
+}
+
+.step-tab.is-done{
+    border-color:#16825d;
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok,
+.feedback.is-success{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid #16794b;
+}
+
+.feedback.bad,
+.feedback.is-error{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid #b42318;
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid #b96200;
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.instrument-box{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid #b9ccd8;
+    border-radius:14px;
+    background:#f8fcfe;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+/* =========================================================
+   MONTAJUL CUPLAT
+========================================================= */
+
+.coupled-stage{
+    position:relative;
+    min-height:390px;
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #bdd0dc;
+    border-radius:16px;
+    background:
+        linear-gradient(#eaf7ff,#ffffff);
+}
+
+.stage-title{
+    position:absolute;
+    top:.8rem;
+    left:1rem;
+    color:#526b80;
+    font-weight:800;
+}
+
+.mode-badge{
+    position:absolute;
+    top:.8rem;
+    right:1rem;
+    padding:.35rem .75rem;
+    border-radius:999px;
+    color:#fff;
+    background:#126e82;
+    font-weight:800;
+}
+
+.rail{
+    position:absolute;
+    left:5%;
+    right:5%;
+    top:245px;
+    height:8px;
+    border-radius:8px;
+    background:#647987;
+    box-shadow:0 8px 0 #becbd2;
+}
+
+.wall{
+    position:absolute;
+    top:130px;
+    width:18px;
+    height:145px;
+    border-radius:4px;
+    background:#455a65;
+}
+
+.wall.left{
+    left:5%;
+}
+
+.wall.right{
+    right:5%;
+}
+
+.mass{
+    position:absolute;
+    top:185px;
+    width:82px;
+    height:62px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:3px solid #21546e;
+    border-radius:9px;
+    color:#fff;
+    background:#30789a;
+    font-weight:850;
+    will-change:transform;
+}
+
+.mass.mass-1{
+    left:30%;
+}
+
+.mass.mass-2{
+    left:62%;
+}
+
+.mass-label{
+    display:grid;
+    text-align:center;
+    line-height:1.15;
+}
+
+.mass-label small{
+    font-weight:600;
+    opacity:.9;
+}
+
+.spring-line{
+    position:absolute;
+    top:211px;
+    height:10px;
+    transform-origin:left center;
+    pointer-events:none;
+}
+
+.spring-line svg{
+    width:100%;
+    height:28px;
+    overflow:visible;
+}
+
+.spring-line.left-spring{
+    left:6.5%;
+    width:23.5%;
+}
+
+.spring-line.coupling-spring{
+    left:37%;
+    width:25%;
+}
+
+.spring-line.right-spring{
+    left:69%;
+    width:24%;
+}
+
+.equilibrium-mark{
+    position:absolute;
+    top:165px;
+    height:105px;
+    border-left:2px dashed #a2b5c0;
+}
+
+.equilibrium-mark.one{
+    left:34%;
+}
+
+.equilibrium-mark.two{
+    left:66%;
+}
+
+.axis-label{
+    position:absolute;
+    top:275px;
+    color:#758c99;
+    font-size:.82rem;
+}
+
+.axis-label.one{
+    left:31%;
+}
+
+.axis-label.two{
+    left:63%;
+}
+
+.motion-readout{
+    position:absolute;
+    left:1rem;
+    bottom:1rem;
+    max-width:calc(100% - 2rem);
+    padding:.6rem .8rem;
+    border-radius:9px;
+    color:#fff;
+    background:#17324ddd;
+    font-family:ui-monospace,Consolas,monospace;
+}
+
+/* =========================================================
+   ENERGIE
+========================================================= */
+
+.energy-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin:1rem 0;
+}
+
+.energy-card{
+    padding:1rem;
+    border:1px solid #b9ccd8;
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.energy-track{
+    height:22px;
+    overflow:hidden;
+    margin-top:.5rem;
+    border-radius:999px;
+    background:#dbe6ec;
+}
+
+.energy-fill{
+    width:0;
+    height:100%;
+    transition:width .05s linear;
+}
+
+.energy-fill.one{
+    background:#2176ae;
+}
+
+.energy-fill.two{
+    background:#d97706;
+}
+
+.energy-value{
+    margin-top:.4rem;
+    font-weight:800;
+}
+
+/* =========================================================
+   CRONOMETRU
+========================================================= */
+
+.timer-panel{
+    max-width:720px;
+    margin:1rem auto;
+    padding:1rem;
+    text-align:center;
+    border:2px solid #506a78;
+    border-radius:16px;
+    color:#fff;
+    background:#15242d;
+}
+
+.timer-display{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:.8rem;
+}
+
+.timer-value{
+    min-width:220px;
+    padding:.6rem 1rem;
+    border-radius:8px;
+    color:#b8ffcf;
+    background:#050b0e;
+    font:700 clamp(2rem,7vw,3.4rem) ui-monospace,Consolas,monospace;
+    letter-spacing:.06em;
+}
+
+.counter-value{
+    min-width:175px;
+    padding:.7rem;
+    border-radius:8px;
+    color:#d9ecff;
+    background:#071218;
+    font:700 1.2rem ui-monospace,Consolas,monospace;
+}
+
+.timer-panel .actions{
+    justify-content:center;
+}
+
+.timer-note{
+    color:#c7dbe4;
+    font-size:.92rem;
+}
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid,
+    .energy-box{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .mass{
+        width:65px;
+        height:54px;
+        font-size:.8rem;
+    }
+
+    .mass.mass-1{
+        left:26%;
+    }
+
+    .mass.mass-2{
+        left:62%;
+    }
+
+    .equilibrium-mark.one{
+        left:31%;
+    }
+
+    .equilibrium-mark.two{
+        left:67%;
+    }
+
+    .spring-line.left-spring{
+        width:20%;
+    }
+
+    .spring-line.coupling-spring{
+        left:34%;
+        width:28%;
+    }
+
+    .spring-line.right-spring{
+        left:72%;
+        width:21%;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp03-oscilatori-cuplati",
+
+    code:
+        "EXP03",
+
+    title:
+        "Studiul a doi oscilatori mecanici cuplați",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Oscilații mecanice",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "resorturi",
+        "corpuri-mobile",
+        "stativ"
+    ],
+
+    requiredEquipment:[
+        "lab-coat",
+        "guide-rail",
+        "two-masses",
+        "springs",
+        "ruler",
+        "stopwatch"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Oscilații mecanice
+    </p>
+
+    <h1>
+        Studiul a doi oscilatori mecanici cuplați
+    </h1>
+
+    <p>
+        Moduri normale de oscilație, frecvențe proprii,
+        cuplaj elastic și transfer periodic de energie.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele experimentului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+<p>
+    Fiecare elev primește un set experimental determinat de
+    clasă și numărul din catalog. Reîncărcarea paginii nu
+    modifică parametrii setului.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările de
+        filă/aplicație, ieșirile din ecran complet și tentativele
+        de copiere. Nu sunt realizate înregistrări audio sau video.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările și calculele.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>Atenție:</strong>
+
+    resorturile pot lansa corpurile dacă sunt întinse excesiv.
+    Mișcarea celor două corpuri trebuie să se desfășoare numai
+    de-a lungul ghidajului.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Verifică fixarea resorturilor înainte de experiment.
+    </li>
+
+    <li>
+        Nu depăși amplitudinea indicată.
+    </li>
+
+    <li>
+        Nu pune degetele între corpuri și capetele ghidajului.
+    </li>
+
+    <li>
+        Nu desprinde resortul de cuplaj în timpul mișcării.
+    </li>
+
+    <li>
+        Oprește montajul dacă un corp părăsește ghidajul.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce faci dacă unul dintre resorturi se desprinde?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        Opresc experimentul și refac montajul.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="continue"
+    >
+
+    <span>
+        Continui măsurarea până la sfârșit.
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+<p>
+    Selectează numai elementele necesare studiului celor doi
+    oscilatori mecanici cuplați.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Considerăm două corpuri identice de masă
+    <em>m</em>, legate de două resorturi exterioare identice,
+    de constantă elastică <em>k</em>, și între ele printr-un
+    resort de cuplaj cu constanta <em>k<sub>c</sub></em>.
+</p>
+
+
+<div class="formula">
+
+    <strong>Modul normal simetric:</strong>
+
+    <br><br>
+
+    x₁ = x₂
+
+    <br>
+
+    ω<sub>s</sub>² =
+    k/m
+
+</div>
+
+
+<div class="formula">
+
+    <strong>Modul normal antisimetric:</strong>
+
+    <br><br>
+
+    x₁ = −x₂
+
+    <br>
+
+    ω<sub>a</sub>² =
+    (k + 2k<sub>c</sub>)/m
+
+</div>
+
+
+<div class="formula">
+
+    T =
+    2π/ω
+
+    <br><br>
+
+    k =
+    mω<sub>s</sub>²
+
+    <br><br>
+
+    k<sub>c</sub> =
+    m(ω<sub>a</sub>² − ω<sub>s</sub>²)/2
+
+</div>
+
+
+<p>
+    Dacă inițial este deplasat numai primul oscilator,
+    mișcarea este o suprapunere a celor două moduri normale.
+    Energia se transferă periodic de la un oscilator la celălalt.
+</p>
+
+
+<div class="formula">
+
+    T<sub>b</sub> =
+    2π /
+    |ω<sub>a</sub> − ω<sub>s</sub>|
+
+    <br><br>
+
+    t<sub>transfer</sub> =
+    T<sub>b</sub>/2 =
+    π /
+    |ω<sub>a</sub> − ω<sub>s</sub>|
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    În modul simetric, cele două corpuri se deplasează:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSym"
+        value="same"
+    >
+
+    <span>
+        în același sens și aproximativ cu aceeași deplasare
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSym"
+        value="opposite"
+    >
+
+    <span>
+        permanent în sensuri opuse
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Comparativ cu modul simetric, modul antisimetric ar trebui
+    să aibă:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPeriod"
+        value="shorter"
+    >
+
+    <span>
+        o perioadă mai mică
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPeriod"
+        value="longer"
+    >
+
+    <span>
+        o perioadă mai mare
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă este deplasat inițial numai primul corp:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionTransfer"
+        value="transfer"
+    >
+
+    <span>
+        energia poate trece periodic de la un oscilator la celălalt
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionTransfer"
+        value="none"
+    >
+
+    <span>
+        al doilea corp rămâne permanent în repaus
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet schema, formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Modul normal simetric
+</h2>
+
+
+<p>
+    Deplasează ambele corpuri în același sens cu aceeași
+    amplitudine și eliberează-le simultan.
+</p>
+
+
+<div class="instrument-box">
+
+<h3>
+    A. Măsoară amplitudinea inițială
+</h3>
+
+<p>
+    Citește amplitudinea indicată pe riglă.
+</p>
+
+
+<div data-amplitude-instrument></div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        Amplitudinea A (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-amplitude-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        type="button"
+        data-check-amplitude
+    >
+        Verifică
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-amplitude-notebook
+    >
+
+    <span>
+        Am notat amplitudinea în caiet.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="amplitude"
+></p>
+
+</div>
+
+
+<div
+    class="coupled-stage"
+    data-stage="symmetric"
+>
+
+    <div class="stage-title">
+        Doi oscilatori cuplați
+    </div>
+
+    <div class="mode-badge">
+        Mod simetric
+    </div>
+
+
+    <div class="wall left"></div>
+    <div class="wall right"></div>
+
+    <div class="rail"></div>
+
+
+    <div
+        class="spring-line left-spring"
+        data-spring-left="symmetric"
+    >
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div
+        class="spring-line coupling-spring"
+        data-spring-coupling="symmetric"
+    >
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#b46b19"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div
+        class="spring-line right-spring"
+        data-spring-right="symmetric"
+    >
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="equilibrium-mark one"></div>
+    <div class="equilibrium-mark two"></div>
+
+    <span class="axis-label one">
+        x₁ = 0
+    </span>
+
+    <span class="axis-label two">
+        x₂ = 0
+    </span>
+
+
+    <div
+        class="mass mass-1"
+        data-mass1="symmetric"
+    >
+        <span class="mass-label">
+            m₁
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="mass mass-2"
+        data-mass2="symmetric"
+    >
+        <span class="mass-label">
+            m₂
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="motion-readout"
+        data-motion-readout="symmetric"
+    >
+        Sistem în repaus
+    </div>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    Cronometrează 5 oscilații complete
+</h3>
+
+
+<div class="timer-display">
+
+    <div
+        class="timer-value"
+        data-timer="symmetric"
+    >
+        00.00 s
+    </div>
+
+
+    <div class="counter-value">
+
+        Oscilații:
+        <strong data-counter="symmetric">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<p class="timer-note">
+    Oprește cronometrul imediat după a cincea oscilație completă.
+</p>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        type="button"
+        data-start="symmetric"
+        disabled
+    >
+        Start
+    </button>
+
+    <button
+        class="btn warning"
+        type="button"
+        data-stop="symmetric"
+        disabled
+    >
+        Stop
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        data-reset="symmetric"
+        disabled
+    >
+        Repetă măsurarea
+    </button>
+
+</div>
+
+</div>
+
+
+<label class="field">
+
+    Transcrie timpul măsurat, t<sub>s</sub> (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-time-answer="symmetric"
+    >
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-check-time="symmetric"
+    disabled
+>
+    Verifică timpul transcris
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="symmetric"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-antisymmetric
+        type="button"
+        disabled
+    >
+        Continuă la modul antisimetric
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Modul antisimetric și transferul de energie
+</h2>
+
+
+<h3>
+    A. Modul normal antisimetric
+</h3>
+
+<p>
+    Deplasează corpurile cu aceeași amplitudine, dar în sensuri
+    opuse, apoi eliberează-le simultan.
+</p>
+
+
+<div
+    class="coupled-stage"
+    data-stage="antisymmetric"
+>
+
+    <div class="stage-title">
+        Doi oscilatori cuplați
+    </div>
+
+    <div
+        class="mode-badge"
+        style="background:#b96200"
+    >
+        Mod antisimetric
+    </div>
+
+
+    <div class="wall left"></div>
+    <div class="wall right"></div>
+
+    <div class="rail"></div>
+
+
+    <div class="spring-line left-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="spring-line coupling-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#b46b19"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="spring-line right-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="equilibrium-mark one"></div>
+    <div class="equilibrium-mark two"></div>
+
+
+    <div
+        class="mass mass-1"
+        data-mass1="antisymmetric"
+    >
+        <span class="mass-label">
+            m₁
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="mass mass-2"
+        data-mass2="antisymmetric"
+    >
+        <span class="mass-label">
+            m₂
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="motion-readout"
+        data-motion-readout="antisymmetric"
+    >
+        Sistem în repaus
+    </div>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    Cronometrează 5 oscilații complete
+</h3>
+
+
+<div class="timer-display">
+
+    <div
+        class="timer-value"
+        data-timer="antisymmetric"
+    >
+        00.00 s
+    </div>
+
+
+    <div class="counter-value">
+
+        Oscilații:
+        <strong data-counter="antisymmetric">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        type="button"
+        data-start="antisymmetric"
+    >
+        Start
+    </button>
+
+    <button
+        class="btn warning"
+        type="button"
+        data-stop="antisymmetric"
+        disabled
+    >
+        Stop
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        data-reset="antisymmetric"
+        disabled
+    >
+        Repetă măsurarea
+    </button>
+
+</div>
+
+</div>
+
+
+<label class="field">
+
+    Transcrie timpul măsurat,
+    t<sub>a</sub> (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-time-answer="antisymmetric"
+    >
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-check-time="antisymmetric"
+    disabled
+>
+    Verifică timpul transcris
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="antisymmetric"
+></p>
+
+
+<hr>
+
+
+<h3>
+    B. Transferul periodic de energie
+</h3>
+
+<p>
+    Acum numai primul corp este deplasat inițial.
+    Pornește mișcarea și urmărește energia celor doi oscilatori.
+    Apasă <strong>Marchează transferul maxim</strong> când
+    energia primului oscilator este minimă, iar energia celui
+    de-al doilea este maximă pentru prima dată.
+</p>
+
+
+<div
+    class="coupled-stage"
+    data-stage="beats"
+>
+
+    <div class="stage-title">
+        Bătăi și transfer de energie
+    </div>
+
+    <div
+        class="mode-badge"
+        style="background:#6d28d9"
+    >
+        Suprapunerea modurilor normale
+    </div>
+
+
+    <div class="wall left"></div>
+    <div class="wall right"></div>
+
+    <div class="rail"></div>
+
+
+    <div class="spring-line left-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="spring-line coupling-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#b46b19"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="spring-line right-spring">
+        <svg viewBox="0 0 200 30" preserveAspectRatio="none">
+            <polyline
+                points="0,15 15,15 25,3 40,27 55,3 70,27 85,3 100,27 115,3 130,27 145,3 160,27 175,15 200,15"
+                fill="none"
+                stroke="#687d89"
+                stroke-width="4"
+            />
+        </svg>
+    </div>
+
+
+    <div class="equilibrium-mark one"></div>
+    <div class="equilibrium-mark two"></div>
+
+
+    <div
+        class="mass mass-1"
+        data-mass1="beats"
+    >
+        <span class="mass-label">
+            m₁
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="mass mass-2"
+        data-mass2="beats"
+    >
+        <span class="mass-label">
+            m₂
+            <small data-mass-label></small>
+        </span>
+    </div>
+
+
+    <div
+        class="motion-readout"
+        data-motion-readout="beats"
+    >
+        Primul oscilator va fi deplasat inițial.
+    </div>
+
+</div>
+
+
+<div class="energy-box">
+
+    <div class="energy-card">
+
+        <strong>
+            Energia oscilatorului 1
+        </strong>
+
+        <div class="energy-track">
+            <div
+                class="energy-fill one"
+                data-energy1
+            ></div>
+        </div>
+
+        <div
+            class="energy-value"
+            data-energy1-value
+        >
+            100%
+        </div>
+
+    </div>
+
+
+    <div class="energy-card">
+
+        <strong>
+            Energia oscilatorului 2
+        </strong>
+
+        <div class="energy-track">
+            <div
+                class="energy-fill two"
+                data-energy2
+            ></div>
+        </div>
+
+        <div
+            class="energy-value"
+            data-energy2-value
+        >
+            0%
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="timer-panel">
+
+<h3>
+    Cronometru pentru transferul de energie
+</h3>
+
+
+<div
+    class="timer-value"
+    data-beat-timer
+>
+    00.00 s
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn success"
+        type="button"
+        data-start-beats
+        disabled
+    >
+        Pornește
+    </button>
+
+    <button
+        class="btn warning"
+        type="button"
+        data-mark-transfer
+        disabled
+    >
+        Marchează transferul maxim
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        data-reset-beats
+        disabled
+    >
+        Repetă
+    </button>
+
+</div>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="beats"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Modul simetric
+</h3>
+
+
+<div class="formula">
+
+    T<sub>s</sub> =
+    t<sub>s</sub>/5
+
+</div>
+
+
+<label class="field">
+
+    T<sub>s</sub> (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="Ts"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f<sub>s</sub> =
+    1/T<sub>s</sub>
+
+</div>
+
+
+<label class="field">
+
+    f<sub>s</sub> (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="fs"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Modul antisimetric
+</h3>
+
+
+<div class="formula">
+
+    T<sub>a</sub> =
+    t<sub>a</sub>/5
+
+</div>
+
+
+<label class="field">
+
+    T<sub>a</sub> (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="Ta"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    f<sub>a</sub> =
+    1/T<sub>a</sub>
+
+</div>
+
+
+<label class="field">
+
+    f<sub>a</sub> (Hz)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="fa"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Determinarea constantelor elastice
+</h3>
+
+
+<div class="formula">
+
+    ω<sub>s</sub> =
+    2π/T<sub>s</sub>
+
+    <br><br>
+
+    k =
+    mω<sub>s</sub>²
+
+</div>
+
+
+<label class="field">
+
+    Constanta elastică a unui resort exterior,
+    k (N/m)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="k"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    k<sub>c</sub> =
+    m(ω<sub>a</sub>² − ω<sub>s</sub>²)/2
+
+</div>
+
+
+<label class="field">
+
+    Constanta resortului de cuplaj,
+    k<sub>c</sub> (N/m)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="kc"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Bătăile și transferul de energie
+</h3>
+
+
+<div class="formula">
+
+    T<sub>b</sub> =
+    1 /
+    |f<sub>a</sub> − f<sub>s</sub>|
+
+</div>
+
+
+<label class="field">
+
+    Perioada bătăilor T<sub>b</sub> (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="Tbeat"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    t<sub>transfer,teoretic</sub> =
+    T<sub>b</sub>/2
+
+</div>
+
+
+<label class="field">
+
+    Timp teoretic până la primul transfer maxim (s)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="transferTheoretical"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    ε =
+    |t<sub>măsurat</sub> −
+    t<sub>teoretic</sub>| /
+    t<sub>teoretic</sub> · 100%
+
+</div>
+
+
+<label class="field">
+
+    Abaterea relativă (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="transferError"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretare
+</h3>
+
+
+<label class="field">
+
+    Compară perioadele celor două moduri și explică rolul
+    resortului de cuplaj.
+
+    <textarea
+        rows="4"
+        data-comparison
+        placeholder="Explică de ce modul antisimetric are o frecvență mai mare și cum apare transferul periodic de energie."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, calculele și unitățile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. În modul normal simetric:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="same"
+    >
+
+    <span>
+        cele două corpuri oscilează în fază
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="opposite"
+    >
+
+    <span>
+        cele două corpuri oscilează permanent în opoziție de fază
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. În modul antisimetric, resortul de cuplaj:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="active"
+    >
+
+    <span>
+        se deformează și contribuie la forța de revenire
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="inactive"
+    >
+
+    <span>
+        rămâne permanent nedeformat
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Pentru acest sistem:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="fa-higher"
+    >
+
+    <span>
+        f<sub>a</sub> &gt; f<sub>s</sub>
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="fs-higher"
+    >
+
+    <span>
+        f<sub>s</sub> &gt; f<sub>a</sub>
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Transferul periodic de energie apare deoarece:
+</legend>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="superposition"
+    >
+
+    <span>
+        mișcarea generală este o suprapunere a celor două moduri normale
+    </span>
+
+</label>
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="mass-change"
+    >
+
+    <span>
+        masele corpurilor se modifică periodic
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="6"
+        minlength="100"
+        data-final-conclusion
+        required
+        placeholder="Include relația dintre modurile normale, frecvențe, cuplaj și transferul de energie."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="De exemplu: timpul de reacție, rezoluția cronometrului, identificarea transferului maxim..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(selector);
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [...scope.querySelectorAll(selector)];
+
+
+const clone = value => {
+
+    if(
+        typeof structuredClone ===
+        "function"
+    ){
+
+        return structuredClone(value);
+
+    }
+
+
+    return JSON.parse(
+        JSON.stringify(value)
+    );
+
+};
+
+
+const numeric = value =>
+    Number(
+        String(
+            value ?? ""
+        ).replace(
+            ",",
+            "."
+        )
+    );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 ** decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) / factor;
+
+};
+
+
+const now = () =>
+    new Date()
+        .toISOString();
+
+
+const makeId = prefix => {
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+
+};
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:
+        0,
+
+    completed:
+        new Set(),
+
+    session:
+        null,
+
+    set:
+        null,
+
+    safety:
+        null,
+
+    equipment:
+        null,
+
+    predictions:
+        null,
+
+    amplitudeReading:
+        null,
+
+    modeTimers:{
+
+        symmetric:null,
+
+        antisymmetric:null
+
+    },
+
+    modeControllers:{},
+
+    beatController:
+        null,
+
+    beatMeasurement:
+        null,
+
+    instruments:{},
+
+    notebook:
+        null,
+
+    evaluation:
+        null,
+
+    reportId:
+        null,
+
+    reportPayload:
+        null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Mod simetric",
+
+    "Mod antisimetric",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button
+                .classList
+                .toggle(
+                    "is-active",
+                    index ===
+                    step
+                );
+
+
+            button
+                .classList
+                .toggle(
+                    "is-done",
+                    state.completed
+                        .has(index)
+                );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${(step + 1) / 8 * 100}%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed
+                        .has(
+                            index - 1
+                        )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step - 1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SETURI EXPERIMENTALE
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ?? 0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) - 1;
+
+
+    /*
+       Permutare completă 0...29.
+    */
+
+    const slot =
+        (
+            index * 7 +
+            ci * 3
+        ) %
+        30;
+
+
+    const massSlot =
+        (
+            slot * 11 +
+            ci * 5
+        ) %
+        30;
+
+
+    const massG =
+        180 +
+        massSlot *
+        5;
+
+
+    const kSlot =
+        (
+            slot * 13 +
+            ci * 7
+        ) %
+        20;
+
+
+    const k =
+        12 +
+        kSlot *
+        .4;
+
+
+    const couplingSlot =
+        (
+            slot * 17 +
+            ci
+        ) %
+        16;
+
+
+    const kc =
+        .80 +
+        couplingSlot *
+        .08;
+
+
+    const amplitudeSlot =
+        (
+            slot * 19 +
+            ci * 3
+        ) %
+        20;
+
+
+    const amplitudeCm =
+        round(
+            3.0 +
+            amplitudeSlot *
+            .1,
+            1
+        );
+
+
+    const massKg =
+        massG /
+        1000;
+
+
+    const omegaSym =
+        Math.sqrt(
+            k /
+            massKg
+        );
+
+
+    const omegaAnti =
+        Math.sqrt(
+            (
+                k +
+                2 *
+                kc
+            ) /
+            massKg
+        );
+
+
+    const periodSym =
+        2 *
+        Math.PI /
+        omegaSym;
+
+
+    const periodAnti =
+        2 *
+        Math.PI /
+        omegaAnti;
+
+
+    const beatPeriod =
+        2 *
+        Math.PI /
+        (
+            omegaAnti -
+            omegaSym
+        );
+
+
+    const transferTime =
+        beatPeriod /
+        2;
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP03`,
+
+        visible:{
+
+            mass_g:
+                massG,
+
+            amplitude_cm:
+                amplitudeCm,
+
+            oscillations:
+                5
+
+        },
+
+        hidden:{
+
+            k_N_m:
+                k,
+
+            kc_N_m:
+                kc,
+
+            omegaSym_rad_s:
+                omegaSym,
+
+            omegaAnti_rad_s:
+                omegaAnti,
+
+            periodSym_s:
+                periodSym,
+
+            periodAnti_s:
+                periodAnti,
+
+            beatPeriod_s:
+                beatPeriod,
+
+            transferTime_s:
+                transferTime
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^XI [A-D]$/
+                .test(
+                    studentClass
+                ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        qsa(
+            "[data-mass-label]"
+        ).forEach(
+            element => {
+
+                element.textContent =
+                    `${state.set.visible.mass_g} g`;
+
+            }
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:
+                true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "resorturi",
+                "corpuri-mobile",
+                "ghidaj"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "halat",
+        "Halat de laborator"
+    ],
+
+    [
+        "ghidaj",
+        "Ghidaj orizontal"
+    ],
+
+    [
+        "corpuri",
+        "Două corpuri identice"
+    ],
+
+    [
+        "resorturi",
+        "Trei resorturi"
+    ],
+
+    [
+        "rigla",
+        "Riglă gradată"
+    ],
+
+    [
+        "cronometru",
+        "Cronometru digital"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ],
+
+    [
+        "multimetru",
+        "Multimetru"
+    ],
+
+    [
+        "calorimetru",
+        "Calorimetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "halat",
+        "ghidaj",
+        "corpuri",
+        "resorturi",
+        "rigla",
+        "cronometru"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        label.innerHTML =
+            `<input type="checkbox" value="${id}">
+             <span>${name}</span>`;
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(id)
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment
+                            .has(id)
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:
+                true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] ===
+                                            id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INIȚIALE
+========================================================= */
+
+function renderInitialData(){
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Masa fiecărui corp</td>
+                    <td>${state.set.visible.mass_g} g</td>
+                </tr>
+
+                <tr>
+                    <td>Numărul de oscilații cronometrate</td>
+                    <td>${state.set.visible.oscillations}</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția riglei</td>
+                    <td>0,1 cm</td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția cronometrului</td>
+                    <td>0,01 s</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const symmetric =
+            qs(
+                'input[name="predictionSym"]:checked'
+            )?.value;
+
+
+        const period =
+            qs(
+                'input[name="predictionPeriod"]:checked'
+            )?.value;
+
+
+        const transfer =
+            qs(
+                'input[name="predictionTransfer"]:checked'
+            )?.value;
+
+
+        if(
+            !symmetric ||
+            !period ||
+            !transfer ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            symmetric,
+
+            period,
+
+            transfer,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeAmplitudeInstrument();
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   RIGLA PENTRU AMPLITUDINE
+========================================================= */
+
+function initializeAmplitudeInstrument(){
+
+    if(
+        state.instruments
+            .amplitude
+    ){
+        return;
+    }
+
+
+    const target =
+        qs(
+            "[data-amplitude-instrument]"
+        );
+
+
+    target.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            if(
+                !event.detail
+                    .correct
+            ){
+                return;
+            }
+
+
+            state.amplitudeReading =
+                event.detail;
+
+
+            initializeModeTimer(
+                "symmetric"
+            );
+
+
+            qs(
+                '[data-start="symmetric"]'
+            ).disabled =
+                false;
+
+        }
+    );
+
+
+    state.instruments
+        .amplitude =
+        LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    "exp03-amplitudine",
+
+                target,
+
+                type:
+                    "ruler",
+
+                label:
+                    "Riglă – amplitudinea inițială",
+
+                instruction:
+                    "Citește deplasarea maximă față de poziția de echilibru.",
+
+                minimum:
+                    0,
+
+                maximum:
+                    6,
+
+                value:
+                    state.set
+                        .visible
+                        .amplitude_cm,
+
+                minorDivision:
+                    .1,
+
+                majorDivision:
+                    1,
+
+                decimals:
+                    1,
+
+                unit:
+                    "cm",
+
+                tolerance:
+                    .051,
+
+                answerInput:
+                    qs(
+                        "[data-amplitude-answer]"
+                    ),
+
+                feedbackTarget:
+                    qs(
+                        '[data-feedback="amplitude"]'
+                    ),
+
+                verifyButton:
+                    qs(
+                        "[data-check-amplitude]"
+                    ),
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    qs(
+                        "[data-amplitude-notebook]"
+                    ),
+
+                allowZoom:
+                    true
+
+            });
+
+}
+
+
+/* =========================================================
+   POZIȚIILE CORPURILOR
+========================================================= */
+
+function displayMode(
+    mode,
+    elapsed
+){
+
+    const amplitudePx =
+        state.set
+            .visible
+            .amplitude_cm *
+        8;
+
+
+    let omega;
+
+
+    let x1;
+
+
+    let x2;
+
+
+    if(
+        mode ===
+        "symmetric"
+    ){
+
+        omega =
+            state.set
+                .hidden
+                .omegaSym_rad_s;
+
+
+        x1 =
+            amplitudePx *
+            Math.cos(
+                omega *
+                elapsed
+            );
+
+
+        x2 =
+            x1;
+
+    }
+    else{
+
+        omega =
+            state.set
+                .hidden
+                .omegaAnti_rad_s;
+
+
+        x1 =
+            amplitudePx *
+            Math.cos(
+                omega *
+                elapsed
+            );
+
+
+        x2 =
+            -x1;
+
+    }
+
+
+    const mass1 =
+        qs(
+            `[data-mass1="${mode}"]`
+        );
+
+
+    const mass2 =
+        qs(
+            `[data-mass2="${mode}"]`
+        );
+
+
+    mass1.style.transform =
+        `translateX(${x1}px)`;
+
+
+    mass2.style.transform =
+        `translateX(${x2}px)`;
+
+
+    const readout =
+        qs(
+            `[data-motion-readout="${mode}"]`
+        );
+
+
+    readout.textContent =
+        mode ===
+            "symmetric"
+            ? "x₁ și x₂ au același semn — corpurile oscilează în fază"
+            : "x₁ și x₂ au semne opuse — corpurile oscilează în opoziție de fază";
+
+}
+
+
+/* =========================================================
+   CRONOMETRE MODURI NORMALE
+========================================================= */
+
+function initializeModeTimer(
+    mode
+){
+
+    if(
+        state.modeControllers
+            [mode]
+    ){
+        return;
+    }
+
+
+    const period =
+        mode ===
+            "symmetric"
+            ? state.set.hidden.periodSym_s
+            : state.set.hidden.periodAnti_s;
+
+
+    const oscillations =
+        state.set
+            .visible
+            .oscillations;
+
+
+    const timerElement =
+        qs(
+            `[data-timer="${mode}"]`
+        );
+
+
+    const counterElement =
+        qs(
+            `[data-counter="${mode}"]`
+        );
+
+
+    const startButton =
+        qs(
+            `[data-start="${mode}"]`
+        );
+
+
+    const stopButton =
+        qs(
+            `[data-stop="${mode}"]`
+        );
+
+
+    const resetButton =
+        qs(
+            `[data-reset="${mode}"]`
+        );
+
+
+    const verifyButton =
+        qs(
+            `[data-check-time="${mode}"]`
+        );
+
+
+    let runtime =
+        null;
+
+
+    function update(
+        elapsed
+    ){
+
+        timerElement.textContent =
+            `${elapsed.toFixed(2)} s`;
+
+
+        counterElement.textContent =
+            String(
+                Math.min(
+                    oscillations,
+                    Math.floor(
+                        elapsed /
+                        period
+                    )
+                )
+            );
+
+
+        displayMode(
+            mode,
+            elapsed
+        );
+
+    }
+
+
+    function frame(){
+
+        if(!runtime){
+            return;
+        }
+
+
+        const elapsed =
+            (
+                performance.now() -
+                runtime.startedAt
+            ) /
+            1000;
+
+
+        runtime.elapsed =
+            elapsed;
+
+
+        update(
+            elapsed
+        );
+
+
+        runtime.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    function reset(){
+
+        if(
+            runtime
+                ?.frameId
+        ){
+
+            cancelAnimationFrame(
+                runtime.frameId
+            );
+
+        }
+
+
+        runtime =
+            null;
+
+
+        state.modeTimers
+            [mode] =
+            null;
+
+
+        timerElement.textContent =
+            "00.00 s";
+
+
+        counterElement.textContent =
+            "0";
+
+
+        startButton.disabled =
+            false;
+
+
+        stopButton.disabled =
+            true;
+
+
+        resetButton.disabled =
+            true;
+
+
+        verifyButton.disabled =
+            true;
+
+
+        displayMode(
+            mode,
+            0
+        );
+
+
+        feedback(
+            mode,
+            ""
+        );
+
+    }
+
+
+    startButton.addEventListener(
+        "click",
+        () => {
+
+            runtime = {
+
+                startedAt:
+                    performance.now(),
+
+                frameId:
+                    null
+
+            };
+
+
+            startButton.disabled =
+                true;
+
+
+            stopButton.disabled =
+                false;
+
+
+            resetButton.disabled =
+                true;
+
+
+            verifyButton.disabled =
+                true;
+
+
+            runtime.frameId =
+                requestAnimationFrame(
+                    frame
+                );
+
+        }
+    );
+
+
+    stopButton.addEventListener(
+        "click",
+        () => {
+
+            if(!runtime){
+                return;
+            }
+
+
+            const elapsed =
+                (
+                    performance.now() -
+                    runtime.startedAt
+                ) /
+                1000;
+
+
+            if(
+                runtime.frameId
+            ){
+
+                cancelAnimationFrame(
+                    runtime.frameId
+                );
+
+            }
+
+
+            startButton.disabled =
+                true;
+
+
+            stopButton.disabled =
+                true;
+
+
+            resetButton.disabled =
+                false;
+
+
+            const targetTime =
+                oscillations *
+                period;
+
+
+            const reactionDelay =
+                elapsed -
+                targetTime;
+
+
+            /*
+               Acceptăm o întârziere de reacție de maximum 0,35 s.
+            */
+
+            if(
+                elapsed <
+                    targetTime ||
+                reactionDelay >
+                    .35
+            ){
+
+                const count =
+                    Math.floor(
+                        elapsed /
+                        period
+                    );
+
+
+                feedback(
+                    mode,
+                    `Cronometrarea nu a fost realizată suficient de aproape de a cincea oscilație. Număr aproximativ: ${count}. Repetă măsurarea.`,
+                    "bad"
+                );
+
+
+                runtime =
+                    null;
+
+
+                return;
+
+            }
+
+
+            const measuredTime =
+                round(
+                    elapsed,
+                    2
+                );
+
+
+            state.modeTimers
+                [mode] = {
+
+                    oscillations,
+
+                    measuredTime_s:
+                        measuredTime,
+
+                    resolution_s:
+                        .01,
+
+                    measuredAt:
+                        now()
+
+                };
+
+
+            timerElement.textContent =
+                `${measuredTime.toFixed(2)} s`;
+
+
+            counterElement.textContent =
+                String(
+                    oscillations
+                );
+
+
+            verifyButton.disabled =
+                false;
+
+
+            feedback(
+                mode,
+                "Cronometrarea este acceptată. Transcrie exact timpul indicat.",
+                "ok"
+            );
+
+
+            runtime =
+                null;
+
+        }
+    );
+
+
+    resetButton.addEventListener(
+        "click",
+        reset
+    );
+
+
+    state.modeControllers
+        [mode] =
+        Object.freeze({
+            reset
+        });
+
+}
+
+
+/* =========================================================
+   VERIFICAREA TRANSCRIERII TIMPULUI
+========================================================= */
+
+function verifyModeTime(
+    mode
+){
+
+    const measurement =
+        state.modeTimers
+            [mode];
+
+
+    if(!measurement){
+
+        feedback(
+            mode,
+            "Realizează mai întâi cronometrarea."
+        );
+
+
+        return;
+    }
+
+
+    const answer =
+        numeric(
+            qs(
+                `[data-time-answer="${mode}"]`
+            ).value
+        );
+
+
+    if(
+        !Number.isFinite(
+            answer
+        ) ||
+        Math.abs(
+            answer -
+            measurement
+                .measuredTime_s
+        ) >
+        .011
+    ){
+
+        feedback(
+            mode,
+            "Transcrie exact valoarea indicată de cronometru."
+        );
+
+
+        return;
+    }
+
+
+    feedback(
+        mode,
+        "Timpul a fost transcris corect.",
+        "ok"
+    );
+
+
+    if(
+        mode ===
+        "symmetric"
+    ){
+
+        state.completed.add(
+            4
+        );
+
+
+        qs(
+            "[data-next-antisymmetric]"
+        ).disabled =
+            false;
+
+    }
+    else{
+
+        initializeBeatExperiment();
+
+
+        qs(
+            "[data-start-beats]"
+        ).disabled =
+            false;
+
+    }
+
+}
+
+
+qs(
+    '[data-check-time="symmetric"]'
+).addEventListener(
+    "click",
+    () => {
+
+        verifyModeTime(
+            "symmetric"
+        );
+
+    }
+);
+
+
+qs(
+    '[data-check-time="antisymmetric"]'
+).addEventListener(
+    "click",
+    () => {
+
+        verifyModeTime(
+            "antisymmetric"
+        );
+
+    }
+);
+
+
+qs(
+    "[data-next-antisymmetric]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeModeTimer(
+            "antisymmetric"
+        );
+
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+/* =========================================================
+   BĂTĂI ȘI TRANSFER DE ENERGIE
+========================================================= */
+
+function initializeBeatExperiment(){
+
+    if(
+        state.beatController
+    ){
+        return;
+    }
+
+
+    const mass1 =
+        qs(
+            '[data-mass1="beats"]'
+        );
+
+
+    const mass2 =
+        qs(
+            '[data-mass2="beats"]'
+        );
+
+
+    const timerElement =
+        qs(
+            "[data-beat-timer]"
+        );
+
+
+    const startButton =
+        qs(
+            "[data-start-beats]"
+        );
+
+
+    const markButton =
+        qs(
+            "[data-mark-transfer]"
+        );
+
+
+    const resetButton =
+        qs(
+            "[data-reset-beats]"
+        );
+
+
+    const energy1 =
+        qs(
+            "[data-energy1]"
+        );
+
+
+    const energy2 =
+        qs(
+            "[data-energy2]"
+        );
+
+
+    const energy1Value =
+        qs(
+            "[data-energy1-value]"
+        );
+
+
+    const energy2Value =
+        qs(
+            "[data-energy2-value]"
+        );
+
+
+    const readout =
+        qs(
+            '[data-motion-readout="beats"]'
+        );
+
+
+    let runtime =
+        null;
+
+
+    const omegaS =
+        state.set
+            .hidden
+            .omegaSym_rad_s;
+
+
+    const omegaA =
+        state.set
+            .hidden
+            .omegaAnti_rad_s;
+
+
+    const amplitudePx =
+        state.set
+            .visible
+            .amplitude_cm *
+        8;
+
+
+    function display(
+        elapsed
+    ){
+
+        timerElement.textContent =
+            `${elapsed.toFixed(2)} s`;
+
+
+        /*
+           x1 = A/2 [cos(ws t) + cos(wa t)]
+           x2 = A/2 [cos(ws t) - cos(wa t)]
+        */
+
+        const x1 =
+            amplitudePx /
+            2 *
+            (
+                Math.cos(
+                    omegaS *
+                    elapsed
+                ) +
+                Math.cos(
+                    omegaA *
+                    elapsed
+                )
+            );
+
+
+        const x2 =
+            amplitudePx /
+            2 *
+            (
+                Math.cos(
+                    omegaS *
+                    elapsed
+                ) -
+                Math.cos(
+                    omegaA *
+                    elapsed
+                )
+            );
+
+
+        mass1.style.transform =
+            `translateX(${x1}px)`;
+
+
+        mass2.style.transform =
+            `translateX(${x2}px)`;
+
+
+        /*
+           Modelul ideal al schimbului energetic:
+           E1/E = cos²(Δω t / 2)
+           E2/E = sin²(Δω t / 2)
+        */
+
+        const deltaOmega =
+            omegaA -
+            omegaS;
+
+
+        const fraction2 =
+            Math.sin(
+                deltaOmega *
+                elapsed /
+                2
+            ) ** 2;
+
+
+        const fraction1 =
+            1 -
+            fraction2;
+
+
+        const percent1 =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    fraction1 *
+                    100
+                )
+            );
+
+
+        const percent2 =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    fraction2 *
+                    100
+                )
+            );
+
+
+        energy1.style.width =
+            `${percent1}%`;
+
+
+        energy2.style.width =
+            `${percent2}%`;
+
+
+        energy1Value.textContent =
+            `${percent1.toFixed(0)}%`;
+
+
+        energy2Value.textContent =
+            `${percent2.toFixed(0)}%`;
+
+
+        readout.textContent =
+            `E₁ ≈ ${percent1.toFixed(0)}% • E₂ ≈ ${percent2.toFixed(0)}%`;
+
+    }
+
+
+    function frame(){
+
+        if(!runtime){
+            return;
+        }
+
+
+        const elapsed =
+            (
+                performance.now() -
+                runtime.startedAt
+            ) /
+            1000;
+
+
+        runtime.elapsed =
+            elapsed;
+
+
+        display(
+            elapsed
+        );
+
+
+        runtime.frameId =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+
+
+    function reset(){
+
+        if(
+            runtime
+                ?.frameId
+        ){
+
+            cancelAnimationFrame(
+                runtime.frameId
+            );
+
+        }
+
+
+        runtime =
+            null;
+
+
+        state.beatMeasurement =
+            null;
+
+
+        timerElement.textContent =
+            "00.00 s";
+
+
+        mass1.style.transform =
+            `translateX(${amplitudePx}px)`;
+
+
+        mass2.style.transform =
+            "translateX(0px)";
+
+
+        energy1.style.width =
+            "100%";
+
+
+        energy2.style.width =
+            "0%";
+
+
+        energy1Value.textContent =
+            "100%";
+
+
+        energy2Value.textContent =
+            "0%";
+
+
+        readout.textContent =
+            "Energia este inițial concentrată în oscilatorul 1.";
+
+
+        startButton.disabled =
+            false;
+
+
+        markButton.disabled =
+            true;
+
+
+        resetButton.disabled =
+            true;
+
+
+        feedback(
+            "beats",
+            ""
+        );
+
+    }
+
+
+    startButton.addEventListener(
+        "click",
+        () => {
+
+            state.beatMeasurement =
+                null;
+
+
+            runtime = {
+
+                startedAt:
+                    performance.now(),
+
+                frameId:
+                    null
+
+            };
+
+
+            startButton.disabled =
+                true;
+
+
+            markButton.disabled =
+                false;
+
+
+            resetButton.disabled =
+                false;
+
+
+            runtime.frameId =
+                requestAnimationFrame(
+                    frame
+                );
+
+        }
+    );
+
+
+    markButton.addEventListener(
+        "click",
+        () => {
+
+            if(!runtime){
+                return;
+            }
+
+
+            const elapsed =
+                (
+                    performance.now() -
+                    runtime.startedAt
+                ) /
+                1000;
+
+
+            const expected =
+                state.set
+                    .hidden
+                    .transferTime_s;
+
+
+            /*
+               Fereastră suficientă pentru reacția elevului pe telefon.
+            */
+
+            const error =
+                Math.abs(
+                    elapsed -
+                    expected
+                );
+
+
+            if(
+                error >
+                .60
+            ){
+
+                feedback(
+                    "beats",
+                    elapsed <
+                        expected
+                        ? "Ai marcat transferul prea devreme. Urmărește până când energia oscilatorului 2 atinge primul maxim."
+                        : "Ai marcat transferul prea târziu. Repetă și urmărește primul maxim al energiei oscilatorului 2.",
+                    "bad"
+                );
+
+
+                return;
+
+            }
+
+
+            if(
+                runtime.frameId
+            ){
+
+                cancelAnimationFrame(
+                    runtime.frameId
+                );
+
+            }
+
+
+            const measured =
+                round(
+                    elapsed,
+                    2
+                );
+
+
+            state.beatMeasurement = {
+
+                measuredTransferTime_s:
+                    measured,
+
+                resolution_s:
+                    .01,
+
+                measuredAt:
+                    now()
+
+            };
+
+
+            timerElement.textContent =
+                `${measured.toFixed(2)} s`;
+
+
+            display(
+                elapsed
+            );
+
+
+            startButton.disabled =
+                true;
+
+
+            markButton.disabled =
+                true;
+
+
+            resetButton.disabled =
+                false;
+
+
+            feedback(
+                "beats",
+                "Primul transfer maxim de energie a fost identificat corect.",
+                "ok"
+            );
+
+
+            state.completed.add(
+                5
+            );
+
+
+            qs(
+                "[data-next-calculation]"
+            ).disabled =
+                false;
+
+
+            runtime =
+                null;
+
+        }
+    );
+
+
+    resetButton.addEventListener(
+        "click",
+        reset
+    );
+
+
+    state.beatController =
+        Object.freeze({
+            reset
+        });
+
+
+    reset();
+
+}
+
+
+/* =========================================================
+   MĂSURĂRI → CALCULE
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REZUMAT MĂSURĂRI
+========================================================= */
+
+function renderMeasurementSummary(){
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare măsurată</th>
+                    <th>Rezoluție</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>m</td>
+                    <td>${state.set.visible.mass_g} g</td>
+                    <td>masă marcată</td>
+                </tr>
+
+                <tr>
+                    <td>A</td>
+                    <td>${state.amplitudeReading.studentReading.toFixed(1)} cm</td>
+                    <td>0,1 cm</td>
+                </tr>
+
+                <tr>
+                    <td>tₛ pentru 5 oscilații</td>
+                    <td>${state.modeTimers.symmetric.measuredTime_s.toFixed(2)} s</td>
+                    <td>0,01 s</td>
+                </tr>
+
+                <tr>
+                    <td>tₐ pentru 5 oscilații</td>
+                    <td>${state.modeTimers.antisymmetric.measuredTime_s.toFixed(2)} s</td>
+                    <td>0,01 s</td>
+                </tr>
+
+                <tr>
+                    <td>t transfer maxim</td>
+                    <td>${state.beatMeasurement.measuredTransferTime_s.toFixed(2)} s</td>
+                    <td>0,01 s</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function expectedCalculations(){
+
+    const m =
+        state.set
+            .visible
+            .mass_g /
+        1000;
+
+
+    const Ts =
+        state.modeTimers
+            .symmetric
+            .measuredTime_s /
+        5;
+
+
+    const Ta =
+        state.modeTimers
+            .antisymmetric
+            .measuredTime_s /
+        5;
+
+
+    const fs =
+        1 /
+        Ts;
+
+
+    const fa =
+        1 /
+        Ta;
+
+
+    const omegaS =
+        2 *
+        Math.PI /
+        Ts;
+
+
+    const omegaA =
+        2 *
+        Math.PI /
+        Ta;
+
+
+    const k =
+        m *
+        omegaS ** 2;
+
+
+    const kc =
+        m *
+        (
+            omegaA ** 2 -
+            omegaS ** 2
+        ) /
+        2;
+
+
+    const beatPeriod =
+        1 /
+        Math.abs(
+            fa -
+            fs
+        );
+
+
+    const transferTheory =
+        beatPeriod /
+        2;
+
+
+    const transferMeasured =
+        state.beatMeasurement
+            .measuredTransferTime_s;
+
+
+    const transferError =
+        Math.abs(
+            transferMeasured -
+            transferTheory
+        ) /
+        transferTheory *
+        100;
+
+
+    return {
+
+        Ts_s:
+            Ts,
+
+        Ta_s:
+            Ta,
+
+        fs_Hz:
+            fs,
+
+        fa_Hz:
+            fa,
+
+        omegaS_rad_s:
+            omegaS,
+
+        omegaA_rad_s:
+            omegaA,
+
+        k_N_m:
+            k,
+
+        kc_N_m:
+            kc,
+
+        beatPeriod_s:
+            beatPeriod,
+
+        transferTheory_s:
+            transferTheory,
+
+        transferMeasured_s:
+            transferMeasured,
+
+        transferError_percent:
+            transferError
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer = name =>
+            numeric(
+                qs(
+                    `[data-calc="${name}"]`
+                ).value
+            );
+
+
+        const values = {
+
+            Ts:
+                answer("Ts"),
+
+            fs:
+                answer("fs"),
+
+            Ta:
+                answer("Ta"),
+
+            fa:
+                answer("fa"),
+
+            k:
+                answer("k"),
+
+            kc:
+                answer("kc"),
+
+            Tbeat:
+                answer("Tbeat"),
+
+            transferTheory:
+                answer("transferTheoretical"),
+
+            transferError:
+                answer("transferError")
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.Ts,
+                expected.Ts_s,
+                .012
+            ) &&
+
+            closeEnough(
+                values.fs,
+                expected.fs_Hz,
+                .015
+            ) &&
+
+            closeEnough(
+                values.Ta,
+                expected.Ta_s,
+                .012
+            ) &&
+
+            closeEnough(
+                values.fa,
+                expected.fa_Hz,
+                .015
+            ) &&
+
+            closeEnough(
+                values.k,
+                expected.k_N_m,
+                .20
+            ) &&
+
+            closeEnough(
+                values.kc,
+                expected.kc_N_m,
+                .12
+            ) &&
+
+            closeEnough(
+                values.Tbeat,
+                expected.beatPeriod_s,
+                .15
+            ) &&
+
+            closeEnough(
+                values.transferTheory,
+                expected.transferTheory_s,
+                .10
+            ) &&
+
+            closeEnough(
+                values.transferError,
+                expected.transferError_percent,
+                .30
+            );
+
+
+        if(
+            !correct ||
+            interpretation.length <
+                60 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică împărțirea la 5, relația f = 1/T, transformarea masei în kg și formulele pentru k, kc și perioada bătăilor."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    instrument:
+                        "rigla",
+
+                    quantity:
+                        "amplitudine inițială",
+
+                    resolution_cm:
+                        .1,
+
+                    studentReading_cm:
+                        state.amplitudeReading
+                            .studentReading,
+
+                    attempts:
+                        state.amplitudeReading
+                            .attempts
+                },
+
+                {
+                    mode:
+                        "simetric",
+
+                    instrument:
+                        "cronometru",
+
+                    quantity:
+                        "timp pentru 5 oscilații",
+
+                    studentReading_s:
+                        state.modeTimers
+                            .symmetric
+                            .measuredTime_s,
+
+                    resolution_s:
+                        .01
+                },
+
+                {
+                    mode:
+                        "antisimetric",
+
+                    instrument:
+                        "cronometru",
+
+                    quantity:
+                        "timp pentru 5 oscilații",
+
+                    studentReading_s:
+                        state.modeTimers
+                            .antisymmetric
+                            .measuredTime_s,
+
+                    resolution_s:
+                        .01
+                },
+
+                {
+                    experiment:
+                        "transfer de energie",
+
+                    instrument:
+                        "cronometru",
+
+                    quantity:
+                        "timp până la primul transfer maxim",
+
+                    studentReading_s:
+                        state.beatMeasurement
+                            .measuredTransferTime_s,
+
+                    resolution_s:
+                        .01
+                }
+
+            ],
+
+            calculations:{
+
+                symmetricPeriod_s:
+                    round(
+                        expected.Ts_s,
+                        3
+                    ),
+
+                antisymmetricPeriod_s:
+                    round(
+                        expected.Ta_s,
+                        3
+                    ),
+
+                symmetricFrequency_Hz:
+                    round(
+                        expected.fs_Hz,
+                        3
+                    ),
+
+                antisymmetricFrequency_Hz:
+                    round(
+                        expected.fa_Hz,
+                        3
+                    ),
+
+                outerSpringConstant_N_m:
+                    round(
+                        expected.k_N_m,
+                        3
+                    ),
+
+                couplingSpringConstant_N_m:
+                    round(
+                        expected.kc_N_m,
+                        3
+                    ),
+
+                beatPeriod_s:
+                    round(
+                        expected.beatPeriod_s,
+                        3
+                    ),
+
+                theoreticalTransferTime_s:
+                    round(
+                        expected.transferTheory_s,
+                        3
+                    ),
+
+                measuredTransferTime_s:
+                    round(
+                        expected.transferMeasured_s,
+                        2
+                    ),
+
+                transferRelativeError_percent:
+                    round(
+                        expected.transferError_percent,
+                        2
+                    )
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                antisymmetricFrequencyGreater:
+                    expected.fa_Hz >
+                    expected.fs_Hz,
+
+                antisymmetricPeriodShorter:
+                    expected.Ta_s <
+                    expected.Ts_s
+
+            },
+
+            completed:
+                true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CONSTRUIRE RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   Sunt trimise numai datele inițiale
+                   vizibile elevului.
+
+                   Valorile ascunse k și kc folosite de
+                   motorul simulării nu sunt trimise.
+                */
+
+                generatedData:{
+
+                    mass_g:
+                        state.set
+                            .visible
+                            .mass_g,
+
+                    initialAmplitude_cm:
+                        state.set
+                            .visible
+                            .amplitude_cm,
+
+                    oscillations:
+                        state.set
+                            .visible
+                            .oscillations
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:
+                    true,
+
+                totalSteps:
+                    8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:
+                true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:
+                8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALĂ
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get("q1"),
+
+            q2:
+                form.get("q2"),
+
+            q3:
+                form.get("q3"),
+
+            q4:
+                form.get("q4")
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                100 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "same",
+
+            q2:
+                "active",
+
+            q3:
+                "fa-higher",
+
+            q4:
+                "superposition"
+
+        };
+
+
+        const score =
+            Object
+                .keys(correct)
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        state.reportId =
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+                <span>Punctaj conceptual</span>
+                <strong>${score}/4</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Tₛ</span>
+                <strong>${c.symmetricPeriod_s.toFixed(3)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Tₐ</span>
+                <strong>${c.antisymmetricPeriod_s.toFixed(3)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>fₛ</span>
+                <strong>${c.symmetricFrequency_Hz.toFixed(3)} Hz</strong>
+            </div>
+
+            <div class="result-card">
+                <span>fₐ</span>
+                <strong>${c.antisymmetricFrequency_Hz.toFixed(3)} Hz</strong>
+            </div>
+
+            <div class="result-card">
+                <span>k</span>
+                <strong>${c.outerSpringConstant_N_m.toFixed(2)} N/m</strong>
+            </div>
+
+            <div class="result-card">
+                <span>k cuplaj</span>
+                <strong>${c.couplingSpringConstant_N_m.toFixed(2)} N/m</strong>
+            </div>
+
+            <div class="result-card">
+                <span>T bătăi</span>
+                <strong>${c.beatPeriod_s.toFixed(2)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Transfer măsurat</span>
+                <strong>${c.measuredTransferTime_s.toFixed(2)} s</strong>
+            </div>
+
+            <div class="result-card">
+                <span>Set experimental</span>
+                <strong>${state.set.id}</strong>
+            </div>
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală prin modulul comun nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Raportul poate fi descărcat în PDF. Problemă de transmitere: ${error.message}`;
+
+        }
+
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+        "stored"
+    ){
+
+        setSubmissionStatus(
+            "Datele au fost înregistrate și confirmate de server.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "duplicate"
+    ){
+
+        setSubmissionStatus(
+            "Raportul exista deja în registru. Nu a fost creat un rând duplicat.",
+            "success"
+        );
+
+
+        qs(
+            "[data-submit-report]"
+        ).disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Datele rămân salvate local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        retryButton.disabled =
+            false;
+
+
+        if(
+            !globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                )
+        ){
+
+            sendButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(false);
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(true);
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(
+            /\s+/
+        );
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(
+                line
+            );
+
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+
+        lines.push(
+            line
+        );
+
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(value)
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(line)
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let i=0;
+        i<lines.length;
+        i+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                i,
+                i + perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+
+        pages.push([
+            "Raport experiment"
+        ]);
+
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+                        `(${pdfEscape(line)}) Tj`,
+                        "T*"
+                    ]
+                ),
+
+                "ET"
+
+            ].join(
+                "\n"
+            );
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(
+                pdf
+            );
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(
+            pdf
+        );
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Oscilatii mecanice",
+
+        "EXP03 - Studiul a doi oscilatori mecanici cuplati",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        `Masa fiecarui corp: ${state.set.visible.mass_g} g`,
+
+        `Amplitudinea initiala: ${state.amplitudeReading.studentReading.toFixed(1)} cm`,
+
+        "",
+
+        "MOD NORMAL SIMETRIC",
+
+        `Timp pentru 5 oscilatii: ${state.modeTimers.symmetric.measuredTime_s.toFixed(2)} s`,
+
+        `Perioada Ts: ${c.symmetricPeriod_s.toFixed(3)} s`,
+
+        `Frecventa fs: ${c.symmetricFrequency_Hz.toFixed(3)} Hz`,
+
+        "",
+
+        "MOD NORMAL ANTISIMETRIC",
+
+        `Timp pentru 5 oscilatii: ${state.modeTimers.antisymmetric.measuredTime_s.toFixed(2)} s`,
+
+        `Perioada Ta: ${c.antisymmetricPeriod_s.toFixed(3)} s`,
+
+        `Frecventa fa: ${c.antisymmetricFrequency_Hz.toFixed(3)} Hz`,
+
+        "",
+
+        "CONSTANTE ELASTICE",
+
+        `k: ${c.outerSpringConstant_N_m.toFixed(3)} N/m`,
+
+        `kc: ${c.couplingSpringConstant_N_m.toFixed(3)} N/m`,
+
+        "",
+
+        "BATAI SI TRANSFER DE ENERGIE",
+
+        `Perioada batailor: ${c.beatPeriod_s.toFixed(3)} s`,
+
+        `Timp transfer teoretic: ${c.theoreticalTransferTime_s.toFixed(3)} s`,
+
+        `Timp transfer masurat: ${c.measuredTransferTime_s.toFixed(2)} s`,
+
+        `Abatere relativa: ${c.transferRelativeError_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETAREA ELEVULUI",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP03-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    globalThis.setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail
+                ?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a reușit. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
