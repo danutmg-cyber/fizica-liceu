@@ -1,1 +1,7154 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: evidențierea difracției luminii cu rețeaua de difracție și determinarea lungimii de undă."
+>
+
+<title>
+    Evidențierea difracției luminii cu rețeaua de difracție
+</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+    --soft:#f7fbfd;
+
+    --laser:#ef3c3c;
+    --laser-soft:#ffaaa5;
+    --cursor-left:#f3b300;
+    --cursor-right:#1ca66a;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.5rem,4vw,2.4rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.measure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.75;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.measurement-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.4rem .7rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+    font-weight:700;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   MONTAJ
+========================================================= */
+
+.apparatus{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #abc3cf;
+    border-radius:16px;
+    background:#f7fcfe;
+}
+
+.apparatus svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:1000/360;
+}
+
+.laser-body{
+    fill:#2c4857;
+}
+
+.laser-ray{
+    stroke:var(--laser);
+    stroke-width:5;
+    filter:drop-shadow(0 0 4px var(--laser-soft));
+}
+
+.grating-line{
+    stroke:#355b6d;
+    stroke-width:2;
+}
+
+.screen-body{
+    fill:#eceff1;
+    stroke:#526b80;
+    stroke-width:5;
+}
+
+.apparatus-label{
+    fill:#39576a;
+    font-size:17px;
+    font-weight:700;
+}
+
+.order-ray{
+    stroke:#e74343;
+    stroke-width:3;
+    opacity:.55;
+}
+
+
+/* =========================================================
+   ECRAN DIFRACTIE
+========================================================= */
+
+.diffraction-stage{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #9fb8c5;
+    border-radius:16px;
+    background:#080000;
+}
+
+.diffraction-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:1000/300;
+}
+
+.screen-axis{
+    stroke:#ffffff44;
+    stroke-width:2;
+}
+
+.screen-tick{
+    stroke:#ffffff70;
+    stroke-width:2;
+}
+
+.screen-tick-label{
+    fill:#dbe9ef;
+    font-size:13px;
+    text-anchor:middle;
+}
+
+.maximum{
+    fill:#ff3131;
+}
+
+.maximum-glow{
+    fill:#ff6565;
+}
+
+.maximum-label{
+    fill:#fff;
+    font-size:15px;
+    font-weight:800;
+    text-anchor:middle;
+}
+
+.measure-cursor-left{
+    stroke:var(--cursor-left);
+    stroke-width:4;
+}
+
+.measure-cursor-right{
+    stroke:var(--cursor-right);
+    stroke-width:4;
+}
+
+.cursor-panel{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+    margin:1rem 0;
+}
+
+.cursor-card{
+    padding:1rem;
+    border:1px solid #bfd0da;
+    border-radius:12px;
+    background:#fff;
+}
+
+.cursor-card input[type="range"]{
+    width:100%;
+}
+
+.digital{
+    margin-top:.55rem;
+    padding:.65rem;
+    border-radius:8px;
+    color:#d9f6ff;
+    background:#10242d;
+    font:
+        800 1rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+.order-selector{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.6rem;
+    margin:1rem 0;
+}
+
+.order-result{
+    padding:.8rem;
+    margin:.7rem 0;
+    border:1px solid #bfd0da;
+    border-radius:10px;
+    background:#fff;
+}
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+    .field-grid,
+    .result-grid,
+    .measure-grid,
+    .choice-grid,
+    .cursor-panel{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp11-difractia-luminii-retea",
+
+    code:
+        "EXP11",
+
+    title:
+        "Evidențierea difracției luminii cu rețeaua de difracție",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Optică ondulatorie",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "laser",
+        "sticla-optica"
+    ],
+
+    requiredEquipment:[
+        "low-power-red-laser",
+        "diffraction-grating",
+        "screen",
+        "optical-bench",
+        "millimeter-scale"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Optică ondulatorie
+    </p>
+
+    <h1>
+        Evidențierea difracției luminii
+        cu rețeaua de difracție
+    </h1>
+
+    <p>
+        Observarea maximelor de difracție și determinarea
+        lungimii de undă a radiației laser.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+
+<p>
+    Clasa și numărul din catalog determină setul experimental.
+    Pentru fiecare dintre cei 30 de elevi ai unei clase este
+    generat reproductibil un set propriu de parametri.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual observațiile, măsurările,
+        calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Nu privi direct în fasciculul laser.
+    </strong>
+
+    Într-o realizare experimentală se utilizează numai
+    o sursă laser de putere mică, adecvată laboratorului
+    școlar, iar fasciculul este menținut sub nivelul ochilor.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Nu orienta fasciculul laser spre ochii unei persoane.
+    </li>
+
+    <li>
+        Nu privi direct în laser și nici prin instrumente optice.
+    </li>
+
+    <li>
+        Evită reflexiile pe suprafețe metalice sau lucioase.
+    </li>
+
+    <li>
+        Oprește laserul înainte de modificarea montajului.
+    </li>
+
+    <li>
+        Manipulează rețeaua de difracție numai de suport.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Ce trebuie făcut înainte de repoziționarea
+    rețelei de difracție?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="off"
+    >
+
+    <span>
+        se oprește sursa laser
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="on"
+    >
+
+    <span>
+        se menține laserul pornit și se privește direct alinierea
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează numai componentele necesare pentru realizarea
+    experimentului cu rețeaua de difracție.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Rețeaua de difracție conține un număr mare de fante
+    paralele, echidistante. Undele provenite de la fante
+    interferează și produc maxime principale bine definite.
+</p>
+
+
+<div class="formula">
+
+    a sin θ<sub>m</sub> =
+    mλ
+
+</div>
+
+
+<p>
+    unde:
+</p>
+
+<ul>
+
+    <li>
+        <strong>a</strong> – constanta rețelei;
+    </li>
+
+    <li>
+        <strong>m</strong> – ordinul maximului;
+    </li>
+
+    <li>
+        <strong>θ<sub>m</sub></strong> – unghiul maximului;
+    </li>
+
+    <li>
+        <strong>λ</strong> – lungimea de undă.
+    </li>
+
+</ul>
+
+
+<p>
+    Dacă rețeaua are
+    <strong>N</strong> linii/mm:
+</p>
+
+
+<div class="formula">
+
+    a =
+    1/N
+
+</div>
+
+
+<p>
+    cu atenție la unități. În SI:
+</p>
+
+
+<div class="formula">
+
+    a =
+    1 /
+    (
+        N · 1000
+    )
+    m
+
+</div>
+
+
+<p>
+    Pe ecran:
+</p>
+
+
+<div class="formula">
+
+    tan θ<sub>m</sub> =
+    x<sub>m</sub>/L
+
+</div>
+
+
+<p>
+    Pentru măsurarea simetrică a ordinelor −m și +m:
+</p>
+
+
+<div class="formula">
+
+    x<sub>m</sub> =
+    (
+        x<sub>+m</sub> -
+        x<sub>-m</sub>
+    ) / 2
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Maximul de ordin zero se află:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionZero"
+        value="center"
+    >
+
+    <span>
+        pe direcția fasciculului nedeviat
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionZero"
+        value="edge"
+    >
+
+    <span>
+        la marginea ecranului
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Pentru aceeași rețea și aceeași lungime de undă,
+    maximul de ordinul 2 este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionOrder"
+        value="farther"
+    >
+
+    <span>
+        mai depărtat de maximul central decât ordinul 1
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionOrder"
+        value="closer"
+    >
+
+    <span>
+        mai apropiat de centru
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă N, numărul de linii/mm, crește pentru aceeași λ:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDensity"
+        value="angle-increase"
+    >
+
+    <span>
+        unghiul de difracție al aceluiași ordin crește
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDensity"
+        value="angle-decrease"
+    >
+
+    <span>
+        unghiul de difracție scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet schema, relația rețelei
+        și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Evidențierea figurii de difracție
+</h2>
+
+
+<div class="data-card">
+
+    <span class="parameter-chip">
+        rețea:
+        <b data-lines-label>—</b>
+        linii/mm
+    </span>
+
+    <span class="parameter-chip">
+        L =
+        <b data-distance-label>—</b>
+        m
+    </span>
+
+    <span class="parameter-chip">
+        laser roșu
+    </span>
+
+</div>
+
+
+<div class="apparatus">
+
+<svg
+    viewBox="0 0 1000 360"
+    role="img"
+    aria-label="Montaj cu laser, rețea de difracție și ecran"
+>
+
+    <rect
+        class="laser-body"
+        x="40"
+        y="145"
+        width="110"
+        height="70"
+        rx="10"
+    ></rect>
+
+
+    <circle
+        cx="150"
+        cy="180"
+        r="9"
+        fill="#ff4b4b"
+    ></circle>
+
+
+    <line
+        class="laser-ray"
+        x1="160"
+        y1="180"
+        x2="415"
+        y2="180"
+    ></line>
+
+
+    <rect
+        x="415"
+        y="75"
+        width="25"
+        height="210"
+        fill="#d7f0f8"
+        stroke="#355b6d"
+        stroke-width="3"
+    ></rect>
+
+
+    <g data-grating-lines></g>
+
+
+    <line
+        class="order-ray"
+        x1="440"
+        y1="180"
+        x2="850"
+        y2="103"
+    ></line>
+
+    <line
+        class="order-ray"
+        x1="440"
+        y1="180"
+        x2="850"
+        y2="257"
+    ></line>
+
+    <line
+        class="order-ray"
+        x1="440"
+        y1="180"
+        x2="850"
+        y2="55"
+    ></line>
+
+    <line
+        class="order-ray"
+        x1="440"
+        y1="180"
+        x2="850"
+        y2="305"
+    ></line>
+
+
+    <rect
+        class="screen-body"
+        x="850"
+        y="35"
+        width="55"
+        height="290"
+        rx="5"
+    ></rect>
+
+
+    <text
+        class="apparatus-label"
+        x="50"
+        y="245"
+    >
+        laser
+    </text>
+
+    <text
+        class="apparatus-label"
+        x="370"
+        y="320"
+    >
+        rețea de difracție
+    </text>
+
+    <text
+        class="apparatus-label"
+        x="845"
+        y="345"
+    >
+        ecran
+    </text>
+
+</svg>
+
+</div>
+
+
+<button
+    class="btn success"
+    data-turn-laser
+    type="button"
+>
+    Pornește laserul
+</button>
+
+
+<div
+    data-pattern-observation
+    hidden
+>
+
+<h3>
+    Figura observată pe ecran
+</h3>
+
+
+<div class="diffraction-stage">
+
+<svg
+    class="diffraction-svg"
+    viewBox="0 0 1000 300"
+    role="img"
+    aria-label="Maxime de difracție produse de rețeaua de difracție"
+>
+
+    <rect
+        x="0"
+        y="0"
+        width="1000"
+        height="300"
+        fill="#080000"
+    ></rect>
+
+
+    <line
+        class="screen-axis"
+        x1="500"
+        y1="15"
+        x2="500"
+        y2="285"
+    ></line>
+
+
+    <g data-observation-pattern></g>
+
+</svg>
+
+</div>
+
+
+<fieldset>
+
+<legend>
+    Figura este simetrică față de:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="patternSymmetry"
+        value="zero"
+    >
+
+    <span>
+        maximul de ordin zero
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="patternSymmetry"
+        value="second"
+    >
+
+    <span>
+        maximul de ordin +2
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Ordinea maximelor de la stânga la dreapta este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="patternOrders"
+        value="correct"
+    >
+
+    <span>
+        −2, −1, 0, +1, +2
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="patternOrders"
+        value="incorrect"
+    >
+
+    <span>
+        0, −1, +1, −2, +2
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-pattern-notebook
+    >
+
+    <span>
+        Am schițat figura de difracție în caiet
+        și am marcat ordinele maximelor.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    data-check-pattern
+    type="button"
+>
+    Verifică observațiile
+</button>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="pattern"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-measurement
+        type="button"
+        disabled
+    >
+        Continuă la măsurări
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Măsurarea pozițiilor maximelor
+</h2>
+
+
+<p>
+    Pentru reducerea erorii de centrare măsurăm
+    simultan maximele simetrice −m și +m.
+</p>
+
+
+<div class="order-selector">
+
+    <button
+        class="btn"
+        data-select-order="1"
+        type="button"
+    >
+        Măsoară ordinul m = 1
+    </button>
+
+    <button
+        class="btn"
+        data-select-order="2"
+        type="button"
+    >
+        Măsoară ordinul m = 2
+    </button>
+
+</div>
+
+
+<div class="diffraction-stage">
+
+<svg
+    class="diffraction-svg"
+    viewBox="0 0 1000 300"
+    role="img"
+    aria-label="Ecran pentru măsurarea maximelor de difracție"
+>
+
+    <rect
+        x="0"
+        y="0"
+        width="1000"
+        height="300"
+        fill="#080000"
+    ></rect>
+
+
+    <line
+        class="screen-axis"
+        x1="500"
+        y1="15"
+        x2="500"
+        y2="285"
+    ></line>
+
+
+    <g data-measurement-pattern></g>
+
+
+    <line
+        class="measure-cursor-left"
+        data-cursor-left-line
+        x1="250"
+        y1="5"
+        x2="250"
+        y2="295"
+    ></line>
+
+
+    <line
+        class="measure-cursor-right"
+        data-cursor-right-line
+        x1="750"
+        y1="5"
+        x2="750"
+        y2="295"
+    ></line>
+
+</svg>
+
+</div>
+
+
+<div class="cursor-panel">
+
+
+<div class="cursor-card">
+
+<h3>
+    Cursor stânga
+</h3>
+
+<p>
+    maximul de ordin
+    <strong data-left-order-label>−1</strong>
+</p>
+
+
+<input
+    type="range"
+    min="0"
+    max="1000"
+    step="1"
+    value="300"
+    data-cursor-left
+>
+
+
+<div
+    class="digital"
+    data-cursor-left-readout
+>
+    —
+</div>
+
+</div>
+
+
+<div class="cursor-card">
+
+<h3>
+    Cursor dreapta
+</h3>
+
+<p>
+    maximul de ordin
+    <strong data-right-order-label>+1</strong>
+</p>
+
+
+<input
+    type="range"
+    min="0"
+    max="1000"
+    step="1"
+    value="700"
+    data-cursor-right
+>
+
+
+<div
+    class="digital"
+    data-cursor-right-readout
+>
+    —
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="data-card">
+
+    <p>
+        Separarea simetrică:
+        <strong data-separation-readout>
+            —
+        </strong>
+    </p>
+
+    <p>
+        Distanța față de centru:
+        <strong data-half-separation-readout>
+            —
+        </strong>
+    </p>
+
+</div>
+
+
+<button
+    class="btn success"
+    data-lock-order
+    type="button"
+>
+    Fixează măsurarea
+</button>
+
+
+<div class="measure-grid">
+
+<div class="order-result">
+
+    <h3>
+        Ordinul 1
+    </h3>
+
+    <p>
+        x<sub>−1</sub> =
+        <strong data-order1-left>
+            nemăsurat
+        </strong>
+    </p>
+
+    <p>
+        x<sub>+1</sub> =
+        <strong data-order1-right>
+            nemăsurat
+        </strong>
+    </p>
+
+    <p>
+        x₁ =
+        <strong data-order1-half>
+            nemăsurat
+        </strong>
+    </p>
+
+</div>
+
+
+<div class="order-result">
+
+    <h3>
+        Ordinul 2
+    </h3>
+
+    <p>
+        x<sub>−2</sub> =
+        <strong data-order2-left>
+            nemăsurat
+        </strong>
+    </p>
+
+    <p>
+        x<sub>+2</sub> =
+        <strong data-order2-right>
+            nemăsurat
+        </strong>
+    </p>
+
+    <p>
+        x₂ =
+        <strong data-order2-half>
+            nemăsurat
+        </strong>
+    </p>
+
+</div>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-measurement-notebook
+    >
+
+    <span>
+        Am notat N, L și pozițiile maximelor
+        pentru ordinele 1 și 2.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="measurement"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Constanta rețelei
+</h3>
+
+
+<div class="formula">
+
+    a =
+    1 /
+    (
+        N · 1000
+    )
+
+</div>
+
+
+<label class="field">
+
+    a (μm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="spacing"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Ordinul m = 1
+</h3>
+
+
+<div class="formula">
+
+    tan θ₁ =
+    x₁/L
+
+</div>
+
+
+<label class="field">
+
+    θ₁ (°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="theta1"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    λ₁ =
+    a sin θ₁
+
+</div>
+
+
+<label class="field">
+
+    λ₁ (nm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="lambda1"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Ordinul m = 2
+</h3>
+
+
+<div class="formula">
+
+    tan θ₂ =
+    x₂/L
+
+</div>
+
+
+<label class="field">
+
+    θ₂ (°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="theta2"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    λ₂ =
+    a sin θ₂ / 2
+
+</div>
+
+
+<label class="field">
+
+    λ₂ (nm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="lambda2"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Rezultatul final
+</h3>
+
+
+<div class="formula">
+
+    λ̄ =
+    (
+        λ₁ +
+        λ₂
+    ) / 2
+
+</div>
+
+
+<label class="field">
+
+    λ medie (nm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="lambda-mean"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    diferență relativă =
+
+    |
+        λ₁ − λ₂
+    |
+
+    /
+    λ̄
+    ·100%
+
+</div>
+
+
+<label class="field">
+
+    Diferența relativă dintre cele două determinări (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="relative-difference"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Ordinul maxim posibil
+</h3>
+
+
+<p>
+    Deoarece:
+</p>
+
+
+<div class="formula">
+
+    sin θ ≤ 1
+
+</div>
+
+
+<p>
+    rezultă:
+</p>
+
+
+<div class="formula">
+
+    m<sub>max</sub>
+    ≤
+    a/λ
+
+</div>
+
+
+<label class="field">
+
+    Cel mai mare ordin întreg posibil
+    m<sub>max</sub>
+
+    <input
+        type="number"
+        inputmode="numeric"
+        min="1"
+        step="1"
+        data-calc="mmax"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea experimentului
+</h3>
+
+
+<label class="field">
+
+    Explică de ce maximele apar simetric,
+    de ce ordinul 2 este mai depărtat de centru și
+    cum influențează numărul de linii/mm separarea maximelor.
+
+    <textarea
+        rows="7"
+        data-comparison
+        placeholder="Folosește relația a sin θ = mλ și legătura dintre N și constanta rețelei."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, transformările de unități,
+        calculele și interpretarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Relația pentru maximele principale
+    ale unei rețele de difracție este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="grating"
+    >
+
+    <span>
+        a sin θ = mλ
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="wrong"
+    >
+
+    <span>
+        a cos θ = λ/m
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. Dacă rețeaua are mai multe linii/mm,
+    constanta a a rețelei:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="smaller"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="larger"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Pentru aceeași rețea și aceeași radiație,
+    unghiul ordinului 2 este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="larger"
+    >
+
+    <span>
+        mai mare decât unghiul ordinului 1
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="smaller"
+    >
+
+    <span>
+        mai mic
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Măsurarea pozițiilor −m și +m este utilă deoarece:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="symmetry"
+    >
+
+    <span>
+        reduce influența erorii de localizare
+        a centrului figurii
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="wavelength"
+    >
+
+    <span>
+        dublează fizic lungimea de undă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Formulează concluzii despre figura de difracție, simetria ordinelor și lungimea de undă determinată."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: localizarea centrului maximelor, alinierea rețelei, măsurarea distanței L, rezoluția scalei..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual observațiile,
+        măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(
+        selector
+    );
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [
+        ...scope.querySelectorAll(
+            selector
+        )
+    ];
+
+
+const clone =
+    value => {
+
+        if(
+            typeof structuredClone ===
+            "function"
+        ){
+
+            return structuredClone(
+                value
+            );
+
+        }
+
+
+        return JSON.parse(
+            JSON.stringify(
+                value
+            )
+        );
+
+    };
+
+
+const numeric =
+    value =>
+        Number(
+            String(
+                value ??
+                ""
+            ).replace(
+                ",",
+                "."
+            )
+        );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 **
+        decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) /
+    factor;
+
+};
+
+
+const degToRad =
+    value =>
+        value *
+        Math.PI /
+        180;
+
+
+const radToDeg =
+    value =>
+        value *
+        180 /
+        Math.PI;
+
+
+const now =
+    () =>
+        new Date()
+            .toISOString();
+
+
+const makeId =
+    prefix => {
+
+        if(
+            globalThis.crypto
+                ?.randomUUID
+        ){
+
+            return (
+                `${prefix}-` +
+                globalThis.crypto
+                    .randomUUID()
+            );
+
+        }
+
+
+        return (
+            `${prefix}-` +
+            Date.now()
+                .toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2)
+        );
+
+    };
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    patternComplete:
+        false,
+
+    selectedOrder:
+        1,
+
+    measurements:{
+
+        order1:null,
+
+        order2:null
+
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Observare",
+
+    "Măsurări",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index ===
+                step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(
+                    index
+                )
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${
+            (
+                step +
+                1
+            ) /
+            8 *
+            100
+        }%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed.has(
+                        index -
+                        1
+                    )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step -
+                        1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ??
+    0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) -
+        1;
+
+
+    /*
+       7 și 30 sunt prime între ele:
+       fiecare dintre cei 30 de elevi
+       primește un slot distinct.
+    */
+
+    const slot =
+        (
+            index *
+            7 +
+            ci *
+            3
+        ) %
+        30;
+
+
+    const densitySlot =
+        (
+            slot *
+            11 +
+            ci *
+            5
+        ) %
+        30;
+
+
+    const linesPerMm =
+        300 +
+        densitySlot *
+        4;
+
+
+    const distanceSlot =
+        (
+            slot *
+            13 +
+            ci *
+            7
+        ) %
+        21;
+
+
+    const screenDistance_m =
+        round(
+            .90 +
+            distanceSlot *
+            .02,
+            2
+        );
+
+
+    const wavelengthSlot =
+        (
+            slot *
+            17 +
+            ci *
+            9
+        ) %
+        20;
+
+
+    /*
+       Laser roșu:
+       620 ... 658 nm.
+    */
+
+    const wavelength_nm =
+        620 +
+        wavelengthSlot *
+        2;
+
+
+    const spacing_m =
+        1 /
+        (
+            linesPerMm *
+            1000
+        );
+
+
+    function positionForOrder(
+        order
+    ){
+
+        const argument =
+            order *
+            wavelength_nm *
+            1e-9 /
+            spacing_m;
+
+
+        const theta =
+            Math.asin(
+                argument
+            );
+
+
+        return (
+            screenDistance_m *
+            Math.tan(
+                theta
+            ) *
+            1000
+        );
+
+    }
+
+
+    const x1_mm =
+        positionForOrder(
+            1
+        );
+
+
+    const x2_mm =
+        positionForOrder(
+            2
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP11`,
+
+        visible:{
+
+            linesPerMm,
+
+            screenDistance_m
+
+        },
+
+        hidden:{
+
+            wavelength_nm,
+
+            x1_mm,
+
+            x2_mm
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^XI [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "off" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "laser",
+                "sticla-optica"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "laser",
+        "Laser roșu de putere mică"
+    ],
+
+    [
+        "retea",
+        "Rețea de difracție"
+    ],
+
+    [
+        "ecran",
+        "Ecran alb"
+    ],
+
+    [
+        "banc-optic",
+        "Banc optic"
+    ],
+
+    [
+        "rigla",
+        "Riglă / scală milimetrică"
+    ],
+
+    [
+        "prisma",
+        "Prismă optică"
+    ],
+
+    [
+        "termometru",
+        "Termometru"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "laser",
+        "retea",
+        "ecran",
+        "banc-optic",
+        "rigla"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "checkbox";
+
+
+        input.value =
+            id;
+
+
+        const span =
+            document.createElement(
+                "span"
+            );
+
+
+        span.textContent =
+            name;
+
+
+        label.append(
+            input,
+            span
+        );
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(
+                            id
+                        )
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(
+                            id
+                        )
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] ===
+                                            id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        globalThis.LAB_EQUIPMENT_STATE =
+            clone(
+                state.equipment
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INITIALE
+========================================================= */
+
+function renderInitialData(){
+
+    const visible =
+        state.set.visible;
+
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Densitatea rețelei N</td>
+                    <td>
+                        ${visible.linesPerMm}
+                        linii/mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Distanța rețea–ecran L</td>
+                    <td>
+                        ${visible.screenDistance_m.toFixed(2)}
+                        m
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția scalei ecranului</td>
+                    <td>1 mm</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-lines-label]"
+    ).textContent =
+        visible.linesPerMm;
+
+
+    qs(
+        "[data-distance-label]"
+    ).textContent =
+        visible.screenDistance_m
+            .toFixed(2);
+
+}
+
+
+/* =========================================================
+   PREDICTII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const zero =
+            qs(
+                'input[name="predictionZero"]:checked'
+            )?.value;
+
+
+        const order =
+            qs(
+                'input[name="predictionOrder"]:checked'
+            )?.value;
+
+
+        const density =
+            qs(
+                'input[name="predictionDensity"]:checked'
+            )?.value;
+
+
+        if(
+            !zero ||
+            !order ||
+            !density ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            zeroOrder:
+                zero,
+
+            orderPosition:
+                order,
+
+            densityEffect:
+                density,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        renderGrating();
+
+        renderPattern(
+            "[data-observation-pattern]",
+            false
+        );
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DESEN RETEA
+========================================================= */
+
+function renderGrating(){
+
+    const group =
+        qs(
+            "[data-grating-lines]"
+        );
+
+
+    group.replaceChildren();
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    for(
+        let y=82;
+        y<=278;
+        y+=7
+    ){
+
+        const line =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            "419"
+        );
+
+
+        line.setAttribute(
+            "x2",
+            "436"
+        );
+
+
+        line.setAttribute(
+            "y1",
+            y
+        );
+
+
+        line.setAttribute(
+            "y2",
+            y
+        );
+
+
+        line.setAttribute(
+            "class",
+            "grating-line"
+        );
+
+
+        group.append(
+            line
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   GEOMETRIA ECRANULUI
+========================================================= */
+
+function screenHalfRangeMm(){
+
+    return Math.ceil(
+        state.set.hidden
+            .x2_mm *
+        1.25 /
+        25
+    ) *
+    25;
+
+}
+
+
+function svgXFromMm(
+    value
+){
+
+    const half =
+        screenHalfRangeMm();
+
+
+    return (
+        60 +
+        (
+            value +
+            half
+        ) /
+        (
+            2 *
+            half
+        ) *
+        880
+    );
+
+}
+
+
+function mmFromSlider(
+    value
+){
+
+    const half =
+        screenHalfRangeMm();
+
+
+    return (
+        -half +
+        Number(value) /
+        1000 *
+        2 *
+        half
+    );
+
+}
+
+
+/* =========================================================
+   FIGURA DE DIFRACTIE
+========================================================= */
+
+function addMaximum(
+    group,
+    positionMm,
+    order,
+    showLabels
+){
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    const x =
+        svgXFromMm(
+            positionMm
+        );
+
+
+    for(
+        let radius=32;
+        radius>=5;
+        radius-=5
+    ){
+
+        const ellipse =
+            document.createElementNS(
+                ns,
+                "ellipse"
+            );
+
+
+        ellipse.setAttribute(
+            "cx",
+            x
+        );
+
+
+        ellipse.setAttribute(
+            "cy",
+            "145"
+        );
+
+
+        ellipse.setAttribute(
+            "rx",
+            radius
+        );
+
+
+        ellipse.setAttribute(
+            "ry",
+            86
+        );
+
+
+        ellipse.setAttribute(
+            "class",
+            radius <=
+                7
+                ? "maximum"
+                : "maximum-glow"
+        );
+
+
+        ellipse.setAttribute(
+            "opacity",
+            radius <=
+                7
+                ? ".96"
+                : String(
+                    .018 +
+                    (
+                        32 -
+                        radius
+                    ) /
+                    32 *
+                    .035
+                )
+        );
+
+
+        group.append(
+            ellipse
+        );
+
+    }
+
+
+    if(showLabels){
+
+        const text =
+            document.createElementNS(
+                ns,
+                "text"
+            );
+
+
+        text.setAttribute(
+            "x",
+            x
+        );
+
+
+        text.setAttribute(
+            "y",
+            "275"
+        );
+
+
+        text.setAttribute(
+            "class",
+            "maximum-label"
+        );
+
+
+        text.textContent =
+            order > 0
+                ? `+${order}`
+                : String(order);
+
+
+        group.append(
+            text
+        );
+
+    }
+
+}
+
+
+function renderPattern(
+    selector,
+    showLabels
+){
+
+    const group =
+        qs(
+            selector
+        );
+
+
+    group.replaceChildren();
+
+
+    addMaximum(
+        group,
+        -state.set.hidden.x2_mm,
+        -2,
+        showLabels
+    );
+
+
+    addMaximum(
+        group,
+        -state.set.hidden.x1_mm,
+        -1,
+        showLabels
+    );
+
+
+    addMaximum(
+        group,
+        0,
+        0,
+        showLabels
+    );
+
+
+    addMaximum(
+        group,
+        state.set.hidden.x1_mm,
+        1,
+        showLabels
+    );
+
+
+    addMaximum(
+        group,
+        state.set.hidden.x2_mm,
+        2,
+        showLabels
+    );
+
+}
+
+
+/* =========================================================
+   OBSERVARE
+========================================================= */
+
+qs(
+    "[data-turn-laser]"
+).addEventListener(
+    "click",
+    () => {
+
+        qs(
+            "[data-pattern-observation]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-turn-laser]"
+        ).disabled =
+            true;
+
+    }
+);
+
+
+qs(
+    "[data-check-pattern]"
+).addEventListener(
+    "click",
+    () => {
+
+        const symmetry =
+            qs(
+                'input[name="patternSymmetry"]:checked'
+            )?.value;
+
+
+        const orders =
+            qs(
+                'input[name="patternOrders"]:checked'
+            )?.value;
+
+
+        if(
+            symmetry !==
+                "zero" ||
+            orders !==
+                "correct" ||
+            !qs(
+                "[data-pattern-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "pattern",
+                "Reanalizează simetria figurii și ordinea maximelor."
+            );
+
+
+            return;
+
+        }
+
+
+        state.patternComplete =
+            true;
+
+
+        state.completed.add(
+            4
+        );
+
+
+        feedback(
+            "pattern",
+            "Figura este simetrică față de maximul de ordin zero.",
+            "ok"
+        );
+
+
+        qs(
+            "[data-next-measurement]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+/* =========================================================
+   INIT MASURARE
+========================================================= */
+
+qs(
+    "[data-next-measurement]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderPattern(
+            "[data-measurement-pattern]",
+            true
+        );
+
+
+        selectOrder(
+            1
+        );
+
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SELECTARE ORDIN
+========================================================= */
+
+function sliderFromMm(
+    value
+){
+
+    const half =
+        screenHalfRangeMm();
+
+
+    return (
+        (
+            value +
+            half
+        ) /
+        (
+            2 *
+            half
+        ) *
+        1000
+    );
+
+}
+
+
+function selectedTarget(){
+
+    return (
+        state.selectedOrder ===
+            1
+            ? state.set.hidden
+                .x1_mm
+            : state.set.hidden
+                .x2_mm
+    );
+
+}
+
+
+function selectOrder(
+    order
+){
+
+    state.selectedOrder =
+        order;
+
+
+    const target =
+        order ===
+            1
+            ? state.set.hidden
+                .x1_mm
+            : state.set.hidden
+                .x2_mm;
+
+
+    qs(
+        "[data-left-order-label]"
+    ).textContent =
+        `−${order}`;
+
+
+    qs(
+        "[data-right-order-label]"
+    ).textContent =
+        `+${order}`;
+
+
+    const offset =
+        Math.min(
+            22,
+            target *
+            .12
+        );
+
+
+    qs(
+        "[data-cursor-left]"
+    ).value =
+        sliderFromMm(
+            -target +
+            offset
+        );
+
+
+    qs(
+        "[data-cursor-right]"
+    ).value =
+        sliderFromMm(
+            target -
+            offset
+        );
+
+
+    feedback(
+        "measurement",
+        `Poziționează cursoarele pe maximele −${order} și +${order}.`,
+        "warn"
+    );
+
+
+    updateMeasurementCursors();
+
+}
+
+
+qsa(
+    "[data-select-order]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectOrder(
+                    Number(
+                        button.dataset
+                            .selectOrder
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CURSOARE
+========================================================= */
+
+function updateMeasurementCursors(){
+
+    const left =
+        mmFromSlider(
+            qs(
+                "[data-cursor-left]"
+            ).value
+        );
+
+
+    const right =
+        mmFromSlider(
+            qs(
+                "[data-cursor-right]"
+            ).value
+        );
+
+
+    const svgLeft =
+        svgXFromMm(
+            left
+        );
+
+
+    const svgRight =
+        svgXFromMm(
+            right
+        );
+
+
+    qs(
+        "[data-cursor-left-line]"
+    ).setAttribute(
+        "x1",
+        svgLeft
+    );
+
+
+    qs(
+        "[data-cursor-left-line]"
+    ).setAttribute(
+        "x2",
+        svgLeft
+    );
+
+
+    qs(
+        "[data-cursor-right-line]"
+    ).setAttribute(
+        "x1",
+        svgRight
+    );
+
+
+    qs(
+        "[data-cursor-right-line]"
+    ).setAttribute(
+        "x2",
+        svgRight
+    );
+
+
+    qs(
+        "[data-cursor-left-readout]"
+    ).textContent =
+        `${left.toFixed(1)} mm`;
+
+
+    qs(
+        "[data-cursor-right-readout]"
+    ).textContent =
+        `+${Math.abs(right).toFixed(1)} mm`;
+
+
+    const separation =
+        right -
+        left;
+
+
+    qs(
+        "[data-separation-readout]"
+    ).textContent =
+        `${separation.toFixed(1)} mm`;
+
+
+    qs(
+        "[data-half-separation-readout]"
+    ).textContent =
+        `${(separation / 2).toFixed(1)} mm`;
+
+}
+
+
+qs(
+    "[data-cursor-left]"
+).addEventListener(
+    "input",
+    updateMeasurementCursors
+);
+
+
+qs(
+    "[data-cursor-right]"
+).addEventListener(
+    "input",
+    updateMeasurementCursors
+);
+
+
+/* =========================================================
+   FIXARE MASURARE
+========================================================= */
+
+qs(
+    "[data-lock-order]"
+).addEventListener(
+    "click",
+    () => {
+
+        const order =
+            state.selectedOrder;
+
+
+        const target =
+            selectedTarget();
+
+
+        const left =
+            mmFromSlider(
+                qs(
+                    "[data-cursor-left]"
+                ).value
+            );
+
+
+        const right =
+            mmFromSlider(
+                qs(
+                    "[data-cursor-right]"
+                ).value
+            );
+
+
+        const tolerance =
+            Math.max(
+                2.0,
+                target *
+                .012
+            );
+
+
+        if(
+            Math.abs(
+                left +
+                target
+            ) >
+                tolerance ||
+            Math.abs(
+                right -
+                target
+            ) >
+                tolerance
+        ){
+
+            feedback(
+                "measurement",
+                `Cursoarele nu sunt încă centrate pe maximele −${order} și +${order}.`,
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const measurement = {
+
+            order,
+
+            left_mm:
+                round(
+                    left,
+                    1
+                ),
+
+            right_mm:
+                round(
+                    right,
+                    1
+                ),
+
+            separation_mm:
+                round(
+                    right -
+                    left,
+                    1
+                ),
+
+            halfSeparation_mm:
+                round(
+                    (
+                        right -
+                        left
+                    ) /
+                    2,
+                    2
+                ),
+
+            measuredAt:
+                now()
+
+        };
+
+
+        state.measurements[
+            order ===
+                1
+                ? "order1"
+                : "order2"
+        ] =
+            measurement;
+
+
+        if(
+            order ===
+            1
+        ){
+
+            qs(
+                "[data-order1-left]"
+            ).textContent =
+                `${measurement.left_mm.toFixed(1)} mm`;
+
+
+            qs(
+                "[data-order1-right]"
+            ).textContent =
+                `${measurement.right_mm.toFixed(1)} mm`;
+
+
+            qs(
+                "[data-order1-half]"
+            ).textContent =
+                `${measurement.halfSeparation_mm.toFixed(2)} mm`;
+
+        }
+        else{
+
+            qs(
+                "[data-order2-left]"
+            ).textContent =
+                `${measurement.left_mm.toFixed(1)} mm`;
+
+
+            qs(
+                "[data-order2-right]"
+            ).textContent =
+                `${measurement.right_mm.toFixed(1)} mm`;
+
+
+            qs(
+                "[data-order2-half]"
+            ).textContent =
+                `${measurement.halfSeparation_mm.toFixed(2)} mm`;
+
+        }
+
+
+        feedback(
+            "measurement",
+            `Măsurarea pentru ordinul ${order} a fost înregistrată.`,
+            "ok"
+        );
+
+
+        if(
+            order ===
+                1 &&
+            !state.measurements
+                .order2
+        ){
+
+            globalThis.setTimeout(
+                () => {
+
+                    selectOrder(
+                        2
+                    );
+
+                },
+                450
+            );
+
+        }
+
+
+        checkMeasurementsComplete();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL MASURARE
+========================================================= */
+
+function checkMeasurementsComplete(){
+
+    if(
+        !state.measurements.order1 ||
+        !state.measurements.order2
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !qs(
+            "[data-measurement-notebook]"
+        ).checked
+    ){
+
+        feedback(
+            "measurement",
+            "Ambele ordine au fost măsurate. Confirmă și notarea datelor în caiet.",
+            "warn"
+        );
+
+
+        return;
+
+    }
+
+
+    state.completed.add(
+        5
+    );
+
+
+    feedback(
+        "measurement",
+        "Măsurările pentru ordinele 1 și 2 sunt complete.",
+        "ok"
+    );
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+}
+
+
+qs(
+    "[data-measurement-notebook]"
+).addEventListener(
+    "change",
+    checkMeasurementsComplete
+);
+
+
+/* =========================================================
+   REZUMAT MASURARI
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+function renderMeasurementSummary(){
+
+    const m1 =
+        state.measurements
+            .order1;
+
+
+    const m2 =
+        state.measurements
+            .order2;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>N</td>
+                    <td>
+                        ${state.set.visible.linesPerMm}
+                        linii/mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>L</td>
+                    <td>
+                        ${state.set.visible.screenDistance_m.toFixed(2)}
+                        m
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x−1</td>
+                    <td>
+                        ${m1.left_mm.toFixed(1)}
+                        mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x+1</td>
+                    <td>
+                        ${m1.right_mm.toFixed(1)}
+                        mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x1</td>
+                    <td>
+                        ${m1.halfSeparation_mm.toFixed(2)}
+                        mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x−2</td>
+                    <td>
+                        ${m2.left_mm.toFixed(1)}
+                        mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x+2</td>
+                    <td>
+                        ${m2.right_mm.toFixed(1)}
+                        mm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>x2</td>
+                    <td>
+                        ${m2.halfSeparation_mm.toFixed(2)}
+                        mm
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function expectedCalculations(){
+
+    const N =
+        state.set.visible
+            .linesPerMm;
+
+
+    const L =
+        state.set.visible
+            .screenDistance_m;
+
+
+    const spacing_m =
+        1 /
+        (
+            N *
+            1000
+        );
+
+
+    const spacing_um =
+        spacing_m *
+        1e6;
+
+
+    function calculateOrder(
+        measurement
+    ){
+
+        const x_m =
+            measurement
+                .halfSeparation_mm *
+            1e-3;
+
+
+        const theta =
+            Math.atan(
+                x_m /
+                L
+            );
+
+
+        const lambda_m =
+            spacing_m *
+            Math.sin(
+                theta
+            ) /
+            measurement.order;
+
+
+        return {
+
+            theta_deg:
+                radToDeg(
+                    theta
+                ),
+
+            lambda_nm:
+                lambda_m *
+                1e9
+
+        };
+
+    }
+
+
+    const order1 =
+        calculateOrder(
+            state.measurements
+                .order1
+        );
+
+
+    const order2 =
+        calculateOrder(
+            state.measurements
+                .order2
+        );
+
+
+    const lambdaMean =
+        (
+            order1.lambda_nm +
+            order2.lambda_nm
+        ) /
+        2;
+
+
+    const relativeDifference =
+        Math.abs(
+            order1.lambda_nm -
+            order2.lambda_nm
+        ) /
+        lambdaMean *
+        100;
+
+
+    const mMax =
+        Math.floor(
+            spacing_m /
+            (
+                lambdaMean *
+                1e-9
+            )
+        );
+
+
+    return {
+
+        spacing_um,
+
+        theta1_deg:
+            order1.theta_deg,
+
+        lambda1_nm:
+            order1.lambda_nm,
+
+        theta2_deg:
+            order2.theta_deg,
+
+        lambda2_nm:
+            order2.lambda_nm,
+
+        lambdaMean_nm:
+            lambdaMean,
+
+        relativeDifference_percent:
+            relativeDifference,
+
+        mMax
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICARE CALCULE
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            spacing:
+                answer(
+                    "spacing"
+                ),
+
+            theta1:
+                answer(
+                    "theta1"
+                ),
+
+            lambda1:
+                answer(
+                    "lambda1"
+                ),
+
+            theta2:
+                answer(
+                    "theta2"
+                ),
+
+            lambda2:
+                answer(
+                    "lambda2"
+                ),
+
+            lambdaMean:
+                answer(
+                    "lambda-mean"
+                ),
+
+            relativeDifference:
+                answer(
+                    "relative-difference"
+                ),
+
+            mMax:
+                answer(
+                    "mmax"
+                )
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.spacing,
+                expected.spacing_um,
+                .008
+            ) &&
+
+            closeEnough(
+                values.theta1,
+                expected.theta1_deg,
+                .08
+            ) &&
+
+            closeEnough(
+                values.lambda1,
+                expected.lambda1_nm,
+                2.0
+            ) &&
+
+            closeEnough(
+                values.theta2,
+                expected.theta2_deg,
+                .08
+            ) &&
+
+            closeEnough(
+                values.lambda2,
+                expected.lambda2_nm,
+                2.0
+            ) &&
+
+            closeEnough(
+                values.lambdaMean,
+                expected.lambdaMean_nm,
+                2.0
+            ) &&
+
+            closeEnough(
+                values.relativeDifference,
+                expected.relativeDifference_percent,
+                .25
+            ) &&
+
+            values.mMax ===
+                expected.mMax;
+
+
+        if(
+            !correct ||
+            interpretation.length <
+                90 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică transformările linii/mm → constanta rețelei, mm → m și folosirea funcțiilor trigonometrice."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    quantity:
+                        "densitate rețea",
+
+                    linesPerMm:
+                        state.set.visible
+                            .linesPerMm
+                },
+
+                {
+                    quantity:
+                        "distanță rețea-ecran",
+
+                    value_m:
+                        state.set.visible
+                            .screenDistance_m
+                },
+
+                {
+                    order:1,
+
+                    leftPosition_mm:
+                        state.measurements
+                            .order1
+                            .left_mm,
+
+                    rightPosition_mm:
+                        state.measurements
+                            .order1
+                            .right_mm,
+
+                    separation_mm:
+                        state.measurements
+                            .order1
+                            .separation_mm,
+
+                    x_mm:
+                        state.measurements
+                            .order1
+                            .halfSeparation_mm
+                },
+
+                {
+                    order:2,
+
+                    leftPosition_mm:
+                        state.measurements
+                            .order2
+                            .left_mm,
+
+                    rightPosition_mm:
+                        state.measurements
+                            .order2
+                            .right_mm,
+
+                    separation_mm:
+                        state.measurements
+                            .order2
+                            .separation_mm,
+
+                    x_mm:
+                        state.measurements
+                            .order2
+                            .halfSeparation_mm
+                }
+
+            ],
+
+            calculations:{
+
+                grating:{
+
+                    linesPerMm:
+                        state.set.visible
+                            .linesPerMm,
+
+                    spacing_um:
+                        round(
+                            expected.spacing_um,
+                            5
+                        )
+
+                },
+
+                order1:{
+
+                    angle_deg:
+                        round(
+                            expected.theta1_deg,
+                            3
+                        ),
+
+                    wavelength_nm:
+                        round(
+                            expected.lambda1_nm,
+                            2
+                        )
+
+                },
+
+                order2:{
+
+                    angle_deg:
+                        round(
+                            expected.theta2_deg,
+                            3
+                        ),
+
+                    wavelength_nm:
+                        round(
+                            expected.lambda2_nm,
+                            2
+                        )
+
+                },
+
+                final:{
+
+                    meanWavelength_nm:
+                        round(
+                            expected.lambdaMean_nm,
+                            2
+                        ),
+
+                    relativeDifference_percent:
+                        round(
+                            expected.relativeDifference_percent,
+                            2
+                        ),
+
+                    maximumPossibleOrder:
+                        expected.mMax
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                symmetry:
+                    "ordinele +m și -m sunt dispuse simetric față de ordinul zero",
+
+                secondOrder:
+                    "ordinul 2 este mai depărtat de centru decât ordinul 1",
+
+                densityEffect:
+                    "creșterea numărului de linii/mm micșorează constanta rețelei și mărește unghiul pentru același ordin"
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte. Cele două ordine conduc la valori apropiate ale lungimii de undă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PAYLOAD RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                /*
+                   Lungimea de undă internă folosită
+                   pentru generarea figurii nu este
+                   trimisă ca parametru inițial.
+                */
+
+                generatedData:{
+
+                    linesPerMm:
+                        state.set.visible
+                            .linesPerMm,
+
+                    screenDistance_m:
+                        state.set.visible
+                            .screenDistance_m,
+
+                    source:
+                        "laser roșu",
+
+                    measuredOrders:[
+                        1,
+                        2
+                    ]
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:
+                    true,
+
+                totalSteps:
+                    8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:
+                true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:
+                8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALA
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           Finalizarea repetată NU generează
+           un reportId nou.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get(
+                    "q1"
+                ),
+
+            q2:
+                form.get(
+                    "q2"
+                ),
+
+            q3:
+                form.get(
+                    "q3"
+                ),
+
+            q4:
+                form.get(
+                    "q4"
+                )
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                120 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "grating",
+
+            q2:
+                "smaller",
+
+            q3:
+                "larger",
+
+            q4:
+                "symmetry"
+
+        };
+
+
+        const score =
+            Object
+                .keys(
+                    correct
+                )
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_EVALUATION_STATE =
+            clone(
+                state.evaluation
+            );
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Constanta rețelei</span>
+
+                <strong>
+                    ${c.grating.spacing_um.toFixed(4)} μm
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>θ₁</span>
+
+                <strong>
+                    ${c.order1.angle_deg.toFixed(2)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>λ₁</span>
+
+                <strong>
+                    ${c.order1.wavelength_nm.toFixed(1)} nm
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>θ₂</span>
+
+                <strong>
+                    ${c.order2.angle_deg.toFixed(2)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>λ₂</span>
+
+                <strong>
+                    ${c.order2.wavelength_nm.toFixed(1)} nm
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>λ medie</span>
+
+                <strong>
+                    ${c.final.meanWavelength_nm.toFixed(1)} nm
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Diferență relativă</span>
+
+                <strong>
+                    ${c.final.relativeDifference_percent.toFixed(2)}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Ordin maxim posibil</span>
+
+                <strong>
+                    ${c.final.maximumPossibleOrder}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        /*
+           Salvare locală ÎNAINTE de
+           orice transmitere în rețea.
+        */
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Problemă la salvarea locală: ${error.message}`;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function markConfirmed(){
+
+    qs(
+        "[data-submit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-resubmit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-local-save-status]"
+    ).textContent =
+        "confirmat de server; copia de așteptare a fost eliminată";
+
+
+    qs(
+        "[data-local-save-status]"
+    ).className =
+        "status-success";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+            "stored" ||
+        result?.status ===
+            "duplicate"
+    ){
+
+        setSubmissionStatus(
+            result.status ===
+                "stored"
+                ? "Datele au fost înregistrate și confirmate de server."
+                : "Raportul exista deja în registru; nu a fost creat un duplicat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local și poate fi retransmis.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        const confirmed =
+            globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                );
+
+
+        if(confirmed){
+
+            sendButton.disabled =
+                true;
+
+
+            retryButton.disabled =
+                true;
+
+        }
+        else{
+
+            sendButton.disabled =
+                false;
+
+
+            retryButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            false
+        );
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            true
+        );
+
+    }
+);
+
+
+/* =========================================================
+   EVENIMENTE MODUL GOOGLE SHEETS
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail
+                ?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit${
+                event.detail?.message
+                    ? `: ${event.detail.message}`
+                    : "."
+            } Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+
+        return [""];
+    }
+
+
+    const words =
+        source.split(
+            /\s+/
+        );
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(
+                line
+            );
+
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+
+        lines.push(
+            line
+        );
+
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(
+        value
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(
+            value
+        )
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(
+                    line
+                )
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let index=0;
+        index<lines.length;
+        index+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                index,
+                index +
+                perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+
+        pages.push([
+            "Raport"
+        ]);
+
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+
+                        `(${pdfEscape(line)}) Tj`,
+
+                        "T*"
+
+                    ]
+                ),
+
+                "ET"
+
+            ].join(
+                "\n"
+            );
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(
+                pdf
+            );
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(
+            pdf
+        );
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const m1 =
+        state.measurements
+            .order1;
+
+
+    const m2 =
+        state.measurements
+            .order2;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Optica ondulatorie",
+
+        "EXP11 - Evidentierea difractiei luminii cu reteaua de difractie",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "DATE INITIALE",
+
+        `N = ${state.set.visible.linesPerMm} linii/mm`,
+
+        `L = ${state.set.visible.screenDistance_m.toFixed(2)} m`,
+
+        `Constanta retelei = ${c.grating.spacing_um.toFixed(5)} micrometri`,
+
+        "",
+
+        "ORDINUL 1",
+
+        `x(-1) = ${m1.left_mm.toFixed(1)} mm`,
+
+        `x(+1) = ${m1.right_mm.toFixed(1)} mm`,
+
+        `x1 = ${m1.halfSeparation_mm.toFixed(2)} mm`,
+
+        `theta1 = ${c.order1.angle_deg.toFixed(3)} grade`,
+
+        `lambda1 = ${c.order1.wavelength_nm.toFixed(2)} nm`,
+
+        "",
+
+        "ORDINUL 2",
+
+        `x(-2) = ${m2.left_mm.toFixed(1)} mm`,
+
+        `x(+2) = ${m2.right_mm.toFixed(1)} mm`,
+
+        `x2 = ${m2.halfSeparation_mm.toFixed(2)} mm`,
+
+        `theta2 = ${c.order2.angle_deg.toFixed(3)} grade`,
+
+        `lambda2 = ${c.order2.wavelength_nm.toFixed(2)} nm`,
+
+        "",
+
+        "REZULTAT FINAL",
+
+        `Lambda medie = ${c.final.meanWavelength_nm.toFixed(2)} nm`,
+
+        `Diferenta relativa = ${c.final.relativeDifference_percent.toFixed(2)} %`,
+
+        `Ordin maxim posibil = ${c.final.maximumPossibleOrder}`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP11-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    globalThis.setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
