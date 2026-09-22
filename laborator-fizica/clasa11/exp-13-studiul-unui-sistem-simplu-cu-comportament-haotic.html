@@ -1,1 +1,8482 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: studiul sensibilității la condițiile inițiale și al comportamentului haotic într-un pendul dublu."
+>
+
+<title>
+    Studiul unui sistem simplu cu comportament haotic
+</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+
+    --system-a:#2563eb;
+    --system-b:#ef4444;
+    --trail-a:#60a5fa;
+    --trail-b:#fb7185;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.5rem,4vw,2.4rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.measure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn.danger{
+    background:var(--danger);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.75;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.simulation-card,
+.measurement-card,
+.calculation-block{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.4rem .7rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+    font-weight:700;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   PENDUL DUBLU
+========================================================= */
+
+.pendulum-stage{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #9fb8c5;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #f7fcfe,
+            #eaf5f9
+        );
+}
+
+.pendulum-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/520;
+}
+
+.pivot{
+    fill:#17324d;
+}
+
+.support{
+    stroke:#526b80;
+    stroke-width:7;
+}
+
+.rod-a{
+    stroke:var(--system-a);
+    stroke-width:6;
+    stroke-linecap:round;
+}
+
+.rod-b{
+    stroke:var(--system-b);
+    stroke-width:5;
+    stroke-linecap:round;
+    opacity:.8;
+}
+
+.mass-a{
+    fill:var(--system-a);
+}
+
+.mass-b{
+    fill:var(--system-b);
+    opacity:.8;
+}
+
+.trail-a{
+    fill:none;
+    stroke:var(--trail-a);
+    stroke-width:3;
+    opacity:.7;
+}
+
+.trail-b{
+    fill:none;
+    stroke:var(--trail-b);
+    stroke-width:3;
+    opacity:.7;
+}
+
+.sim-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    padding:.8rem 1rem;
+    border-top:1px solid #bfd0da;
+    background:#fff;
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+}
+
+.legend-dot{
+    width:15px;
+    height:15px;
+    border-radius:50%;
+}
+
+.legend-a{
+    background:var(--system-a);
+}
+
+.legend-b{
+    background:var(--system-b);
+}
+
+.time-display{
+    display:inline-block;
+    padding:.55rem .8rem;
+    border-radius:8px;
+    color:#d9f6ff;
+    background:#10242d;
+    font:
+        800 1.05rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+.timeline{
+    width:100%;
+    accent-color:#126e82;
+}
+
+.sim-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.7rem;
+    margin:.8rem 0;
+}
+
+
+/* =========================================================
+   DISTANTOMETRU
+========================================================= */
+
+.meter-wrap{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #aac2cf;
+    border-radius:14px;
+    background:#fff;
+}
+
+.distance-meter{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:900/190;
+}
+
+.meter-axis{
+    stroke:#17324d;
+    stroke-width:4;
+}
+
+.meter-tick{
+    stroke:#526b80;
+    stroke-width:2;
+}
+
+.meter-label{
+    fill:#39576a;
+    font-size:14px;
+    text-anchor:middle;
+}
+
+.meter-needle{
+    stroke:#d22f27;
+    stroke-width:5;
+}
+
+.meter-title{
+    fill:#17324d;
+    font-size:18px;
+    font-weight:800;
+}
+
+.measure-entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.7rem;
+    align-items:end;
+    margin-top:.8rem;
+}
+
+.measure-entry input{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+
+/* =========================================================
+   COMPARATIE
+========================================================= */
+
+.comparison-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.regime-card{
+    padding:1rem;
+    border:1px solid #bfd0da;
+    border-radius:12px;
+    background:#fff;
+}
+
+.regime-card h3{
+    margin-top:0;
+}
+
+.regular-card{
+    border-top:5px solid #2563eb;
+}
+
+.chaotic-card{
+    border-top:5px solid #ef4444;
+}
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .measure-grid,
+    .choice-grid,
+    .comparison-grid{
+        grid-template-columns:1fr;
+    }
+
+    .measure-entry{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp13-sistem-haotic",
+
+    code:
+        "EXP13",
+
+    title:
+        "Studiul unui sistem simplu cu comportament haotic",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Sisteme dinamice și oscilații neliniare",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "corpuri-in-miscare",
+        "suport-mecanic"
+    ],
+
+    requiredEquipment:[
+        "double-pendulum",
+        "rigid-support",
+        "masses",
+        "protractor",
+        "metric-ruler",
+        "timer-or-camera"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Sisteme dinamice
+    </p>
+
+    <h1>
+        Studiul unui sistem simplu cu comportament haotic
+    </h1>
+
+    <p>
+        Pendulul dublu:
+        sensibilitatea la condițiile inițiale și
+        compararea unui regim regulat cu un regim haotic.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+
+<p>
+    Clasa și numărul din catalog determină masele,
+    lungimile și condițiile inițiale ale pendulului dublu.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet și
+        tentativele de copiere.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Pendulul dublu conține corpuri care se pot deplasa
+        rapid pe traiectorii greu de anticipat.
+    </strong>
+
+    Într-un experiment real, suportul trebuie fixat ferm,
+    iar elevii trebuie să păstreze distanță față de planul
+    de mișcare al pendulului.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Verifică fixarea suportului înainte de eliberarea pendulului.
+    </li>
+
+    <li>
+        Nu introduce mâna în zona de mișcare.
+    </li>
+
+    <li>
+        Nu utiliza mase deteriorate sau elemente de legătură slăbite.
+    </li>
+
+    <li>
+        Eliberează pendulul fără impuls suplimentar.
+    </li>
+
+    <li>
+        Oprește complet sistemul înainte de modificarea configurației.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Înainte de modificarea poziției unei mase:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="stop"
+    >
+
+    <span>
+        aștept oprirea completă a pendulului
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="moving"
+    >
+
+    <span>
+        prind masa în timp ce sistemul se mișcă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează elementele necesare pentru studiul experimental
+    al unui pendul dublu.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    Pendulul dublu este alcătuit din două pendule cuplate.
+    Poziția celui de-al doilea corp depinde de mișcarea
+    primului, iar ecuațiile de mișcare sunt neliniare.
+</p>
+
+
+<div class="formula">
+
+    starea sistemului:
+
+    <br>
+
+    (
+        θ₁,
+        ω₁,
+        θ₂,
+        ω₂
+    )
+
+</div>
+
+
+<p>
+    Două sisteme A și B au aceleași mase și aceleași lungimi.
+    Singura diferență inițială este:
+</p>
+
+
+<div class="formula">
+
+    Δθ₀ =
+    0,5°
+
+</div>
+
+
+<p>
+    Într-un regim cu sensibilitate puternică la condițiile
+    inițiale, o diferență foarte mică la început poate conduce
+    ulterior la traiectorii macroscopice foarte diferite.
+</p>
+
+
+<div class="formula">
+
+    s₀ =
+    2l₂
+    sin(
+        Δθ₀/2
+    )
+
+</div>
+
+
+<p>
+    Pentru comparația energetică, deoarece pendulele sunt
+    eliberate din repaus:
+</p>
+
+
+<div class="formula">
+
+    E₀ =
+
+    (m₁ + m₂) g l₁
+    (
+        1 − cos θ₁
+    )
+
+    +
+
+    m₂ g l₂
+    (
+        1 − cos θ₂
+    )
+
+</div>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Observație:
+    </strong>
+
+    o separare rapidă a două traiectorii apropiate este
+    o evidență experimentală a sensibilității la condițiile
+    inițiale. Experimentul de față nu reprezintă o determinare
+    matematică riguroasă a exponentului Lyapunov.
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    Două pendule duble cu condiții inițiale aproape identice,
+    într-un regim haotic:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSensitivity"
+        value="diverge"
+    >
+
+    <span>
+        pot ajunge după un timp în stări foarte diferite
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionSensitivity"
+        value="same"
+    >
+
+    <span>
+        trebuie să rămână permanent aproape identice
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Comportamentul haotic al unui sistem mecanic determinist înseamnă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDeterminism"
+        value="deterministic"
+    >
+
+    <span>
+        evoluția respectă ecuații determinate,
+        dar este foarte sensibilă la condițiile inițiale
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionDeterminism"
+        value="random"
+    >
+
+    <span>
+        sistemul nu mai respectă legile mecanicii
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă eroarea experimentală a poziției inițiale este foarte mică,
+    într-un regim haotic predicția pe termen lung:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionForecast"
+        value="limited"
+    >
+
+    <span>
+        poate deveni totuși nesigură
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionForecast"
+        value="perfect"
+    >
+
+    <span>
+        rămâne întotdeauna perfectă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet parametrii sistemului,
+        condițiile inițiale și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Regim de referință – mișcare relativ regulată
+</h2>
+
+
+<p>
+    Comparăm două pendule duble A și B.
+    Condițiile lor inițiale diferă numai cu 0,5° la
+    al doilea braț.
+</p>
+
+
+<div class="data-card">
+
+    <span class="parameter-chip">
+        θ₁ =
+        <b data-reg-theta1>—</b>°
+    </span>
+
+    <span class="parameter-chip">
+        θ₂,A =
+        <b data-reg-theta2>—</b>°
+    </span>
+
+    <span class="parameter-chip">
+        θ₂,B =
+        θ₂,A + 0,5°
+    </span>
+
+</div>
+
+
+<div class="pendulum-stage">
+
+<svg
+    class="pendulum-svg"
+    viewBox="0 0 900 520"
+    role="img"
+    aria-label="Două pendule duble cu condiții inițiale apropiate"
+>
+
+    <line
+        class="support"
+        x1="360"
+        y1="45"
+        x2="540"
+        y2="45"
+    ></line>
+
+    <circle
+        class="pivot"
+        cx="450"
+        cy="75"
+        r="9"
+    ></circle>
+
+
+    <path
+        class="trail-a"
+        data-reg-trail-a
+    ></path>
+
+    <path
+        class="trail-b"
+        data-reg-trail-b
+    ></path>
+
+
+    <line
+        class="rod-a"
+        data-reg-a-rod1
+    ></line>
+
+    <line
+        class="rod-a"
+        data-reg-a-rod2
+    ></line>
+
+    <circle
+        class="mass-a"
+        data-reg-a-mass1
+        r="14"
+    ></circle>
+
+    <circle
+        class="mass-a"
+        data-reg-a-mass2
+        r="17"
+    ></circle>
+
+
+    <line
+        class="rod-b"
+        data-reg-b-rod1
+    ></line>
+
+    <line
+        class="rod-b"
+        data-reg-b-rod2
+    ></line>
+
+    <circle
+        class="mass-b"
+        data-reg-b-mass1
+        r="12"
+    ></circle>
+
+    <circle
+        class="mass-b"
+        data-reg-b-mass2
+        r="15"
+    ></circle>
+
+</svg>
+
+
+<div class="sim-legend">
+
+    <span class="legend-item">
+
+        <span class="legend-dot legend-a"></span>
+
+        sistem A
+
+    </span>
+
+    <span class="legend-item">
+
+        <span class="legend-dot legend-b"></span>
+
+        sistem B:
+        θ₂,B(0) =
+        θ₂,A(0) + 0,5°
+
+    </span>
+
+</div>
+
+</div>
+
+
+<div class="control-card">
+
+<p>
+    Timp simulat:
+    <span
+        class="time-display"
+        data-reg-time
+    >
+        0,00 s
+    </span>
+</p>
+
+
+<button
+    class="btn success"
+    data-play-regular
+    type="button"
+>
+    Rulează 8 s
+</button>
+
+</div>
+
+
+<div
+    class="measurement-card"
+    data-regular-measurement
+    hidden
+>
+
+<h3>
+    Citește distanța dintre corpurile inferioare la t = 8,00 s
+</h3>
+
+
+<p>
+    Distanțometrul are acul poziționat la valoarea simulată.
+    Citește scala și introdu valoarea în centimetri.
+</p>
+
+
+<div class="meter-wrap">
+
+<svg
+    class="distance-meter"
+    data-regular-meter
+    viewBox="0 0 900 190"
+></svg>
+
+</div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        s<sub>reg</sub>(8 s) (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-regular-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-regular
+        type="button"
+    >
+        Verifică citirea
+    </button>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-regular-notebook
+    >
+
+    <span>
+        Am notat distanța dintre cele două traiectorii
+        la t = 8 s.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="regular"
+></p>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-chaos
+        type="button"
+        disabled
+    >
+        Continuă la regimul haotic
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Regim cu comportament haotic
+</h2>
+
+
+<p>
+    Păstrăm aceeași diferență inițială de numai
+    <strong>0,5°</strong>, dar sistemul este eliberat
+    dintr-o configurație cu energie mai mare.
+</p>
+
+
+<div class="data-card">
+
+    <span class="parameter-chip">
+        θ₁ =
+        <b data-chaos-theta1>—</b>°
+    </span>
+
+    <span class="parameter-chip">
+        θ₂,A =
+        <b data-chaos-theta2>—</b>°
+    </span>
+
+    <span class="parameter-chip">
+        Δθ₀ =
+        0,5°
+    </span>
+
+</div>
+
+
+<div class="pendulum-stage">
+
+<svg
+    class="pendulum-svg"
+    viewBox="0 0 900 520"
+    role="img"
+    aria-label="Evoluția a două pendule duble în regim haotic"
+>
+
+    <line
+        class="support"
+        x1="360"
+        y1="45"
+        x2="540"
+        y2="45"
+    ></line>
+
+    <circle
+        class="pivot"
+        cx="450"
+        cy="75"
+        r="9"
+    ></circle>
+
+
+    <path
+        class="trail-a"
+        data-chaos-trail-a
+    ></path>
+
+    <path
+        class="trail-b"
+        data-chaos-trail-b
+    ></path>
+
+
+    <line
+        class="rod-a"
+        data-chaos-a-rod1
+    ></line>
+
+    <line
+        class="rod-a"
+        data-chaos-a-rod2
+    ></line>
+
+    <circle
+        class="mass-a"
+        data-chaos-a-mass1
+        r="14"
+    ></circle>
+
+    <circle
+        class="mass-a"
+        data-chaos-a-mass2
+        r="17"
+    ></circle>
+
+
+    <line
+        class="rod-b"
+        data-chaos-b-rod1
+    ></line>
+
+    <line
+        class="rod-b"
+        data-chaos-b-rod2
+    ></line>
+
+    <circle
+        class="mass-b"
+        data-chaos-b-mass1
+        r="12"
+    ></circle>
+
+    <circle
+        class="mass-b"
+        data-chaos-b-mass2
+        r="15"
+    ></circle>
+
+</svg>
+
+
+<div class="sim-legend">
+
+    <span class="legend-item">
+
+        <span class="legend-dot legend-a"></span>
+
+        sistem A
+
+    </span>
+
+    <span class="legend-item">
+
+        <span class="legend-dot legend-b"></span>
+
+        sistem B
+
+    </span>
+
+</div>
+
+</div>
+
+
+<div class="control-card">
+
+<p>
+    Timp:
+    <span
+        class="time-display"
+        data-chaos-time
+    >
+        0,00 s
+    </span>
+</p>
+
+
+<input
+    class="timeline"
+    type="range"
+    min="0"
+    max="8000"
+    step="20"
+    value="0"
+    data-chaos-timeline
+>
+
+
+<div class="sim-buttons">
+
+    <button
+        class="btn success"
+        data-play-chaos
+        type="button"
+    >
+        Rulează / Pauză
+    </button>
+
+    <button
+        class="btn secondary"
+        data-reset-chaos
+        type="button"
+    >
+        Revenire la t = 0
+    </button>
+
+</div>
+
+</div>
+
+
+<p>
+    Realizează două măsurări:
+    <strong>t = 4,00 s</strong> și
+    <strong>t = 8,00 s</strong>.
+</p>
+
+
+<div class="sim-buttons">
+
+    <button
+        class="btn"
+        data-target-time="4"
+        type="button"
+    >
+        Selectează măsurarea de la 4 s
+    </button>
+
+    <button
+        class="btn"
+        data-target-time="8"
+        type="button"
+    >
+        Selectează măsurarea de la 8 s
+    </button>
+
+</div>
+
+
+<p>
+    Măsurarea selectată:
+    <strong data-chaos-target-label>
+        niciuna
+    </strong>
+</p>
+
+
+<button
+    class="btn success"
+    data-freeze-chaos
+    type="button"
+>
+    Fixează poziția pentru măsurare
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="chaos-time"
+></p>
+
+
+<div
+    class="measurement-card"
+    data-chaos-measurement
+    hidden
+>
+
+<h3 data-chaos-measurement-title>
+    Distanța dintre corpurile inferioare
+</h3>
+
+
+<div class="meter-wrap">
+
+<svg
+    class="distance-meter"
+    data-chaos-meter
+    viewBox="0 0 900 190"
+></svg>
+
+</div>
+
+
+<div class="measure-entry">
+
+    <label class="field">
+
+        Distanța citită (cm)
+
+        <input
+            type="text"
+            inputmode="decimal"
+            data-chaos-answer
+        >
+
+    </label>
+
+
+    <button
+        class="btn"
+        data-check-chaos-reading
+        type="button"
+    >
+        Verifică citirea
+    </button>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="chaos-reading"
+></p>
+
+</div>
+
+
+<div class="measure-grid">
+
+<div class="measurement-card">
+
+    <strong>
+        s<sub>haos</sub>(4 s)
+    </strong>
+
+    <p data-chaos-result-4>
+        nemăsurat
+    </p>
+
+</div>
+
+
+<div class="measurement-card">
+
+    <strong>
+        s<sub>haos</sub>(8 s)
+    </strong>
+
+    <p data-chaos-result-8>
+        nemăsurat
+    </p>
+
+</div>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-chaos-notebook
+    >
+
+    <span>
+        Am notat cele două distanțe și am schițat
+        modul în care traiectoriile se separă.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="chaos-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Separarea inițială
+</h3>
+
+
+<div class="formula">
+
+    s₀ =
+    2l₂
+    sin(
+        Δθ₀/2
+    )
+
+</div>
+
+
+<label class="field">
+
+    s₀ (cm)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="s0"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Amplificarea diferenței în regimul regulat
+</h3>
+
+
+<div class="formula">
+
+    K<sub>reg</sub> =
+    s<sub>reg</sub>(8 s) /
+    s₀
+
+</div>
+
+
+<label class="field">
+
+    K<sub>reg</sub>
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="k-regular"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Amplificarea diferenței în regimul haotic
+</h3>
+
+
+<div class="formula">
+
+    K₄ =
+    s<sub>haos</sub>(4 s) /
+    s₀
+
+    <br><br>
+
+    K₈ =
+    s<sub>haos</sub>(8 s) /
+    s₀
+
+</div>
+
+
+<div class="field-grid">
+
+<label class="field">
+
+    K₄
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="k4"
+    >
+
+</label>
+
+
+<label class="field">
+
+    K₈
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="k8"
+    >
+
+</label>
+
+</div>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Compararea sensibilității
+</h3>
+
+
+<div class="formula">
+
+    C =
+    K₈ /
+    K<sub>reg</sub>
+
+</div>
+
+
+<label class="field">
+
+    Raportul de sensibilitate C
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="contrast"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    E. Energia mecanică inițială
+</h3>
+
+
+<div class="formula">
+
+    E₀ =
+
+    (m₁ + m₂) g l₁
+    (
+        1 − cos θ₁
+    )
+
+    +
+
+    m₂ g l₂
+    (
+        1 − cos θ₂
+    )
+
+</div>
+
+
+<div class="field-grid">
+
+<label class="field">
+
+    E<sub>reg</sub> (J)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-regular"
+    >
+
+</label>
+
+
+<label class="field">
+
+    E<sub>haos</sub> (J)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-chaos"
+    >
+
+</label>
+
+</div>
+
+
+<div class="formula">
+
+    raport energetic =
+    E<sub>haos</sub> /
+    E<sub>reg</sub>
+
+</div>
+
+
+<label class="field">
+
+    E<sub>haos</sub> /
+    E<sub>reg</sub>
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="energy-ratio"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea rezultatelor
+</h3>
+
+
+<label class="field">
+
+    Compară cele două regimuri.
+    Explică de ce o diferență inițială de numai 0,5°
+    poate deveni macroscopică în regimul haotic și
+    de ce acest lucru limitează predicția pe termen lung.
+
+    <textarea
+        rows="8"
+        data-comparison
+        placeholder="Distinge între determinism, sensibilitate la condițiile inițiale și caracter aleatoriu."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, calculele și
+        comparația dintre cele două regimuri.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Un sistem haotic determinist:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="deterministic"
+    >
+
+    <span>
+        respectă ecuații determinate, dar poate fi foarte
+        sensibil la condițiile inițiale
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="random"
+    >
+
+    <span>
+        nu respectă legile mecanicii
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. „Sensibilitate la condițiile inițiale” înseamnă că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="sensitive"
+    >
+
+    <span>
+        stări inițiale foarte apropiate pot conduce ulterior
+        la evoluții foarte diferite
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="identical"
+    >
+
+    <span>
+        orice două condiții inițiale conduc la aceeași mișcare
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. De ce este dificilă predicția pe termen lung
+    într-un regim haotic?
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="precision"
+    >
+
+    <span>
+        erorile foarte mici ale condițiilor inițiale
+        pot fi amplificate puternic
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="gravity"
+    >
+
+    <span>
+        accelerația gravitațională dispare după câteva secunde
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. Faptul că două traiectorii se separă înseamnă că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="not-random"
+    >
+
+    <span>
+        nu trebuie confundat determinismul cu predictibilitatea
+        practică pe termen lung
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="laws-stop"
+    >
+
+    <span>
+        legile fizicii încetează să fie valabile
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Formulează concluzii despre sensibilitatea la condițiile inițiale, cele două regimuri și limita predicției."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: precizia unghiurilor inițiale, frecarea în articulații, măsurarea poziției, rezistența aerului..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual observațiile,
+        măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(
+        selector
+    );
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [
+        ...scope.querySelectorAll(
+            selector
+        )
+    ];
+
+
+const clone =
+    value => {
+
+        if(
+            typeof structuredClone ===
+            "function"
+        ){
+
+            return structuredClone(
+                value
+            );
+
+        }
+
+        return JSON.parse(
+            JSON.stringify(
+                value
+            )
+        );
+
+    };
+
+
+const numeric =
+    value =>
+        Number(
+            String(
+                value ??
+                ""
+            ).replace(
+                ",",
+                "."
+            )
+        );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 **
+        decimals;
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) /
+    factor;
+
+};
+
+
+const roundTo = (
+    value,
+    step
+) =>
+    Math.round(
+        value /
+        step
+    ) *
+    step;
+
+
+const degToRad =
+    value =>
+        value *
+        Math.PI /
+        180;
+
+
+const radToDeg =
+    value =>
+        value *
+        180 /
+        Math.PI;
+
+
+const now =
+    () =>
+        new Date()
+            .toISOString();
+
+
+const makeId =
+    prefix => {
+
+        if(
+            globalThis.crypto
+                ?.randomUUID
+        ){
+
+            return (
+                `${prefix}-` +
+                globalThis.crypto
+                    .randomUUID()
+            );
+
+        }
+
+        return (
+            `${prefix}-` +
+            Date.now()
+                .toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2)
+        );
+
+    };
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    regularReading_cm:null,
+
+    chaosTarget:null,
+
+    chaosReadings:{
+
+        t4_cm:null,
+
+        t8_cm:null
+
+    },
+
+    playback:{
+
+        regularFrame:null,
+
+        chaosFrame:null,
+
+        chaosPlaying:false
+
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Regim regulat",
+
+    "Regim haotic",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index ===
+                step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(
+                    index
+                )
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${
+            (
+                step +
+                1
+            ) /
+            8 *
+            100
+        }%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed.has(
+                        index -
+                        1
+                    )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step -
+                        1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   GENERAREA SETULUI
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ??
+    0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) -
+        1;
+
+
+    const slot =
+        (
+            index *
+            7 +
+            ci *
+            3
+        ) %
+        30;
+
+
+    const l1Index =
+        (
+            slot *
+            11 +
+            ci *
+            5
+        ) %
+        15;
+
+
+    const l2Index =
+        (
+            slot *
+            13 +
+            ci *
+            7
+        ) %
+        15;
+
+
+    const m1Index =
+        (
+            slot *
+            17 +
+            ci *
+            3
+        ) %
+        11;
+
+
+    const m2Index =
+        (
+            slot *
+            19 +
+            ci *
+            9
+        ) %
+        11;
+
+
+    const l1 =
+        round(
+            .34 +
+            l1Index *
+            .008,
+            3
+        );
+
+
+    const l2 =
+        round(
+            .28 +
+            l2Index *
+            .008,
+            3
+        );
+
+
+    const m1 =
+        round(
+            .120 +
+            m1Index *
+            .005,
+            3
+        );
+
+
+    const m2 =
+        round(
+            .100 +
+            m2Index *
+            .005,
+            3
+        );
+
+
+    const regularTheta1 =
+        16 +
+        (
+            slot %
+            5
+        );
+
+
+    const regularTheta2 =
+        10 +
+        (
+            (
+                slot *
+                3
+            ) %
+            6
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP13`,
+
+        slot,
+
+        visible:{
+
+            length1_m:
+                l1,
+
+            length2_m:
+                l2,
+
+            mass1_kg:
+                m1,
+
+            mass2_kg:
+                m2,
+
+            deltaInitial_deg:
+                .5,
+
+            regularInitial:{
+
+                theta1_deg:
+                    regularTheta1,
+
+                theta2_deg:
+                    regularTheta2
+
+            },
+
+            chaoticInitial:null
+
+        },
+
+        hidden:{
+
+            simulations:null,
+
+            readings:null
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   ECUATIILE PENDULULUI DUBLU
+========================================================= */
+
+function derivative(
+    vector,
+    parameters
+){
+
+    const [
+        theta1,
+        omega1,
+        theta2,
+        omega2
+    ] =
+        vector;
+
+
+    const {
+        m1,
+        m2,
+        l1,
+        l2
+    } =
+        parameters;
+
+
+    const g =
+        9.81;
+
+
+    const delta =
+        theta1 -
+        theta2;
+
+
+    const denominatorCommon =
+        2 *
+        m1 +
+        m2 -
+        m2 *
+        Math.cos(
+            2 *
+            theta1 -
+            2 *
+            theta2
+        );
+
+
+    const alpha1 =
+        (
+            -g *
+            (
+                2 *
+                m1 +
+                m2
+            ) *
+            Math.sin(
+                theta1
+            )
+
+            -
+
+            m2 *
+            g *
+            Math.sin(
+                theta1 -
+                2 *
+                theta2
+            )
+
+            -
+
+            2 *
+            Math.sin(
+                delta
+            ) *
+            m2 *
+            (
+                omega2 ** 2 *
+                l2
+
+                +
+
+                omega1 ** 2 *
+                l1 *
+                Math.cos(
+                    delta
+                )
+            )
+        )
+        /
+        (
+            l1 *
+            denominatorCommon
+        );
+
+
+    const alpha2 =
+        (
+            2 *
+            Math.sin(
+                delta
+            ) *
+            (
+                omega1 ** 2 *
+                l1 *
+                (
+                    m1 +
+                    m2
+                )
+
+                +
+
+                g *
+                (
+                    m1 +
+                    m2
+                ) *
+                Math.cos(
+                    theta1
+                )
+
+                +
+
+                omega2 ** 2 *
+                l2 *
+                m2 *
+                Math.cos(
+                    delta
+                )
+            )
+        )
+        /
+        (
+            l2 *
+            denominatorCommon
+        );
+
+
+    return [
+        omega1,
+        alpha1,
+        omega2,
+        alpha2
+    ];
+
+}
+
+
+function vectorAdd(
+    a,
+    b,
+    factor=1
+){
+
+    return a.map(
+        (
+            value,
+            index
+        ) =>
+            value +
+            b[index] *
+            factor
+    );
+
+}
+
+
+function rk4Step(
+    vector,
+    dt,
+    parameters
+){
+
+    const k1 =
+        derivative(
+            vector,
+            parameters
+        );
+
+
+    const k2 =
+        derivative(
+            vectorAdd(
+                vector,
+                k1,
+                dt /
+                2
+            ),
+            parameters
+        );
+
+
+    const k3 =
+        derivative(
+            vectorAdd(
+                vector,
+                k2,
+                dt /
+                2
+            ),
+            parameters
+        );
+
+
+    const k4 =
+        derivative(
+            vectorAdd(
+                vector,
+                k3,
+                dt
+            ),
+            parameters
+        );
+
+
+    return vector.map(
+        (
+            value,
+            index
+        ) =>
+            value +
+            dt /
+            6 *
+            (
+                k1[index] +
+                2 *
+                k2[index] +
+                2 *
+                k3[index] +
+                k4[index]
+            )
+    );
+
+}
+
+
+/* =========================================================
+   SIMULARE NUMERICA
+========================================================= */
+
+function simulationParameters(){
+
+    return {
+
+        m1:
+            state.set.visible
+                .mass1_kg,
+
+        m2:
+            state.set.visible
+                .mass2_kg,
+
+        l1:
+            state.set.visible
+                .length1_m,
+
+        l2:
+            state.set.visible
+                .length2_m
+
+    };
+
+}
+
+
+function positionsFromState(
+    vector,
+    parameters
+){
+
+    const [
+        theta1,
+        ,
+        theta2
+    ] =
+        vector;
+
+
+    const x1 =
+        parameters.l1 *
+        Math.sin(
+            theta1
+        );
+
+
+    const y1 =
+        parameters.l1 *
+        Math.cos(
+            theta1
+        );
+
+
+    const x2 =
+        x1 +
+        parameters.l2 *
+        Math.sin(
+            theta2
+        );
+
+
+    const y2 =
+        y1 +
+        parameters.l2 *
+        Math.cos(
+            theta2
+        );
+
+
+    return {
+        x1,
+        y1,
+        x2,
+        y2
+    };
+
+}
+
+
+function simulate(
+    theta1Deg,
+    theta2Deg,
+    duration=8
+){
+
+    const parameters =
+        simulationParameters();
+
+
+    const dt =
+        .004;
+
+
+    const sampleEvery =
+        5;
+
+
+    const totalSteps =
+        Math.round(
+            duration /
+            dt
+        );
+
+
+    let vector = [
+
+        degToRad(
+            theta1Deg
+        ),
+
+        0,
+
+        degToRad(
+            theta2Deg
+        ),
+
+        0
+
+    ];
+
+
+    const samples =
+        [];
+
+
+    for(
+        let step=0;
+        step<=totalSteps;
+        step+=1
+    ){
+
+        if(
+            step %
+            sampleEvery ===
+                0
+        ){
+
+            const time =
+                step *
+                dt;
+
+
+            samples.push({
+
+                time,
+
+                vector:[
+                    ...vector
+                ],
+
+                ...positionsFromState(
+                    vector,
+                    parameters
+                )
+
+            });
+
+        }
+
+
+        if(
+            step <
+            totalSteps
+        ){
+
+            vector =
+                rk4Step(
+                    vector,
+                    dt,
+                    parameters
+                );
+
+        }
+
+    }
+
+
+    return samples;
+
+}
+
+
+function simulatePair(
+    theta1Deg,
+    theta2Deg
+){
+
+    const delta =
+        state.set.visible
+            .deltaInitial_deg;
+
+
+    return {
+
+        A:
+            simulate(
+                theta1Deg,
+                theta2Deg
+            ),
+
+        B:
+            simulate(
+                theta1Deg,
+                theta2Deg +
+                delta
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   CITIRE TRAIECTORIE
+========================================================= */
+
+function sampleAt(
+    trajectory,
+    time
+){
+
+    const sampleStep =
+        .02;
+
+
+    const index =
+        Math.max(
+            0,
+            Math.min(
+                trajectory.length -
+                1,
+                Math.round(
+                    time /
+                    sampleStep
+                )
+            )
+        );
+
+
+    return trajectory[index];
+
+}
+
+
+function separationMeters(
+    pair,
+    time
+){
+
+    const a =
+        sampleAt(
+            pair.A,
+            time
+        );
+
+
+    const b =
+        sampleAt(
+            pair.B,
+            time
+        );
+
+
+    return Math.hypot(
+        a.x2 -
+        b.x2,
+        a.y2 -
+        b.y2
+    );
+
+}
+
+
+/* =========================================================
+   ALEGEREA REGIMULUI HAOTIC
+========================================================= */
+
+function prepareDynamics(){
+
+    const regular =
+        state.set.visible
+            .regularInitial;
+
+
+    const regularPair =
+        simulatePair(
+            regular.theta1_deg,
+            regular.theta2_deg
+        );
+
+
+    /*
+       Configurații cu energie ridicată.
+       Alegem determinist, pentru setul elevului,
+       configurația care produce cea mai clară
+       separare după 8 s.
+    */
+
+    const candidates = [
+
+        [120,-10],
+
+        [125,8],
+
+        [130,-15],
+
+        [118,20],
+
+        [135,2],
+
+        [112,-28],
+
+        [128,24],
+
+        [122,-20],
+
+        [132,-6],
+
+        [116,27]
+
+    ];
+
+
+    let best =
+        null;
+
+
+    for(
+        let offset=0;
+        offset<candidates.length;
+        offset+=1
+    ){
+
+        const candidate =
+            candidates[
+                (
+                    state.set.slot +
+                    offset
+                ) %
+                candidates.length
+            ];
+
+
+        const pair =
+            simulatePair(
+                candidate[0],
+                candidate[1]
+            );
+
+
+        const distance8 =
+            separationMeters(
+                pair,
+                8
+            );
+
+
+        const distance4 =
+            separationMeters(
+                pair,
+                4
+            );
+
+
+        const score =
+            distance8 +
+            .35 *
+            distance4;
+
+
+        if(
+            !best ||
+            score >
+            best.score
+        ){
+
+            best = {
+
+                theta1_deg:
+                    candidate[0],
+
+                theta2_deg:
+                    candidate[1],
+
+                pair,
+
+                score
+
+            };
+
+        }
+
+    }
+
+
+    state.set.visible
+        .chaoticInitial = {
+
+            theta1_deg:
+                best.theta1_deg,
+
+            theta2_deg:
+                best.theta2_deg
+
+        };
+
+
+    const regular8 =
+        roundTo(
+            separationMeters(
+                regularPair,
+                8
+            ) *
+            100,
+            .5
+        );
+
+
+    const chaotic4 =
+        roundTo(
+            separationMeters(
+                best.pair,
+                4
+            ) *
+            100,
+            .5
+        );
+
+
+    const chaotic8 =
+        roundTo(
+            separationMeters(
+                best.pair,
+                8
+            ) *
+            100,
+            .5
+        );
+
+
+    state.set.hidden
+        .simulations = {
+
+            regular:
+                regularPair,
+
+            chaotic:
+                best.pair
+
+        };
+
+
+    state.set.hidden
+        .readings = {
+
+            regular8_cm:
+                regular8,
+
+            chaotic4_cm:
+                chaotic4,
+
+            chaotic8_cm:
+                chaotic8
+
+        };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^XI [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        prepareDynamics();
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "stop" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "corpuri-in-miscare",
+                "suport-mecanic"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "pendul",
+        "Pendul dublu"
+    ],
+
+    [
+        "suport",
+        "Suport mecanic rigid"
+    ],
+
+    [
+        "mase",
+        "Mase pentru pendul"
+    ],
+
+    [
+        "raportor",
+        "Raportor"
+    ],
+
+    [
+        "rigla",
+        "Riglă metrică"
+    ],
+
+    [
+        "camera",
+        "Cronometru / cameră video"
+    ],
+
+    [
+        "prisma",
+        "Prismă optică"
+    ],
+
+    [
+        "voltmetru",
+        "Voltmetru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "pendul",
+        "suport",
+        "mase",
+        "raportor",
+        "rigla",
+        "camera"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "checkbox";
+
+
+        input.value =
+            id;
+
+
+        const span =
+            document.createElement(
+                "span"
+            );
+
+
+        span.textContent =
+            name;
+
+
+        label.append(
+            input,
+            span
+        );
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(
+                            id
+                        )
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(
+                            id
+                        )
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] ===
+                                            id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        globalThis.LAB_EQUIPMENT_STATE =
+            clone(
+                state.equipment
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INITIALE
+========================================================= */
+
+function renderInitialData(){
+
+    const v =
+        state.set.visible;
+
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>l₁</td>
+                    <td>${v.length1_m.toFixed(3)} m</td>
+                </tr>
+
+                <tr>
+                    <td>l₂</td>
+                    <td>${v.length2_m.toFixed(3)} m</td>
+                </tr>
+
+                <tr>
+                    <td>m₁</td>
+                    <td>${v.mass1_kg.toFixed(3)} kg</td>
+                </tr>
+
+                <tr>
+                    <td>m₂</td>
+                    <td>${v.mass2_kg.toFixed(3)} kg</td>
+                </tr>
+
+                <tr>
+                    <td>Diferența condițiilor inițiale</td>
+                    <td>Δθ₀ = ${v.deltaInitial_deg.toFixed(1)}°</td>
+                </tr>
+
+                <tr>
+                    <td>Regim regulat</td>
+                    <td>
+                        θ₁ = ${v.regularInitial.theta1_deg.toFixed(1)}°;
+                        θ₂ = ${v.regularInitial.theta2_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Regim haotic</td>
+                    <td>
+                        θ₁ = ${v.chaoticInitial.theta1_deg.toFixed(1)}°;
+                        θ₂ = ${v.chaoticInitial.theta2_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+
+    qs(
+        "[data-reg-theta1]"
+    ).textContent =
+        v.regularInitial
+            .theta1_deg
+            .toFixed(1);
+
+
+    qs(
+        "[data-reg-theta2]"
+    ).textContent =
+        v.regularInitial
+            .theta2_deg
+            .toFixed(1);
+
+
+    qs(
+        "[data-chaos-theta1]"
+    ).textContent =
+        v.chaoticInitial
+            .theta1_deg
+            .toFixed(1);
+
+
+    qs(
+        "[data-chaos-theta2]"
+    ).textContent =
+        v.chaoticInitial
+            .theta2_deg
+            .toFixed(1);
+
+}
+
+
+/* =========================================================
+   PREDICTII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const sensitivity =
+            qs(
+                'input[name="predictionSensitivity"]:checked'
+            )?.value;
+
+
+        const determinism =
+            qs(
+                'input[name="predictionDeterminism"]:checked'
+            )?.value;
+
+
+        const forecast =
+            qs(
+                'input[name="predictionForecast"]:checked'
+            )?.value;
+
+
+        if(
+            !sensitivity ||
+            !determinism ||
+            !forecast ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            sensitivity,
+
+            determinism,
+
+            forecast,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        renderPendulum(
+            "reg",
+            state.set.hidden
+                .simulations
+                .regular,
+            0
+        );
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DESEN PENDUL
+========================================================= */
+
+function pendulumScale(){
+
+    const total =
+        state.set.visible
+            .length1_m +
+        state.set.visible
+            .length2_m;
+
+
+    return (
+        355 /
+        total
+    );
+
+}
+
+
+function screenPoint(
+    sample,
+    pointName
+){
+
+    const scale =
+        pendulumScale();
+
+
+    const pivotX =
+        450;
+
+
+    const pivotY =
+        75;
+
+
+    if(
+        pointName ===
+        "p1"
+    ){
+
+        return {
+
+            x:
+                pivotX +
+                sample.x1 *
+                scale,
+
+            y:
+                pivotY +
+                sample.y1 *
+                scale
+
+        };
+
+    }
+
+
+    return {
+
+        x:
+            pivotX +
+            sample.x2 *
+            scale,
+
+        y:
+            pivotY +
+            sample.y2 *
+            scale
+
+    };
+
+}
+
+
+function setLine(
+    selector,
+    x1,
+    y1,
+    x2,
+    y2
+){
+
+    const line =
+        qs(
+            selector
+        );
+
+
+    line.setAttribute(
+        "x1",
+        x1
+    );
+
+    line.setAttribute(
+        "y1",
+        y1
+    );
+
+    line.setAttribute(
+        "x2",
+        x2
+    );
+
+    line.setAttribute(
+        "y2",
+        y2
+    );
+
+}
+
+
+function setCircle(
+    selector,
+    x,
+    y
+){
+
+    const circle =
+        qs(
+            selector
+        );
+
+
+    circle.setAttribute(
+        "cx",
+        x
+    );
+
+    circle.setAttribute(
+        "cy",
+        y
+    );
+
+}
+
+
+function trailPath(
+    trajectory,
+    time
+){
+
+    const startTime =
+        Math.max(
+            0,
+            time -
+            1.4
+        );
+
+
+    const points =
+        [];
+
+
+    for(
+        let t=startTime;
+        t<=time;
+        t+=.08
+    ){
+
+        const sample =
+            sampleAt(
+                trajectory,
+                t
+            );
+
+
+        const point =
+            screenPoint(
+                sample,
+                "p2"
+            );
+
+
+        points.push(
+            point
+        );
+
+    }
+
+
+    return points.map(
+        (
+            point,
+            index
+        ) =>
+            `${
+                index ===
+                    0
+                    ? "M"
+                    : "L"
+            }${point.x.toFixed(1)},${point.y.toFixed(1)}`
+    ).join(
+        " "
+    );
+
+}
+
+
+function renderPendulum(
+    prefix,
+    pair,
+    time
+){
+
+    const a =
+        sampleAt(
+            pair.A,
+            time
+        );
+
+
+    const b =
+        sampleAt(
+            pair.B,
+            time
+        );
+
+
+    const a1 =
+        screenPoint(
+            a,
+            "p1"
+        );
+
+
+    const a2 =
+        screenPoint(
+            a,
+            "p2"
+        );
+
+
+    const b1 =
+        screenPoint(
+            b,
+            "p1"
+        );
+
+
+    const b2 =
+        screenPoint(
+            b,
+            "p2"
+        );
+
+
+    setLine(
+        `[data-${prefix}-a-rod1]`,
+        450,
+        75,
+        a1.x,
+        a1.y
+    );
+
+
+    setLine(
+        `[data-${prefix}-a-rod2]`,
+        a1.x,
+        a1.y,
+        a2.x,
+        a2.y
+    );
+
+
+    setCircle(
+        `[data-${prefix}-a-mass1]`,
+        a1.x,
+        a1.y
+    );
+
+
+    setCircle(
+        `[data-${prefix}-a-mass2]`,
+        a2.x,
+        a2.y
+    );
+
+
+    setLine(
+        `[data-${prefix}-b-rod1]`,
+        450,
+        75,
+        b1.x,
+        b1.y
+    );
+
+
+    setLine(
+        `[data-${prefix}-b-rod2]`,
+        b1.x,
+        b1.y,
+        b2.x,
+        b2.y
+    );
+
+
+    setCircle(
+        `[data-${prefix}-b-mass1]`,
+        b1.x,
+        b1.y
+    );
+
+
+    setCircle(
+        `[data-${prefix}-b-mass2]`,
+        b2.x,
+        b2.y
+    );
+
+
+    qs(
+        `[data-${prefix}-trail-a]`
+    ).setAttribute(
+        "d",
+        trailPath(
+            pair.A,
+            time
+        )
+    );
+
+
+    qs(
+        `[data-${prefix}-trail-b]`
+    ).setAttribute(
+        "d",
+        trailPath(
+            pair.B,
+            time
+        )
+    );
+
+}
+
+
+/* =========================================================
+   DISTANTOMETRU
+========================================================= */
+
+function meterMaximum(
+    value,
+    mode="chaos"
+){
+
+    if(
+        mode ===
+        "regular"
+    ){
+
+        return Math.max(
+            10,
+            Math.ceil(
+                Math.max(
+                    value *
+                    2.2,
+                    8
+                ) /
+                5
+            ) *
+            5
+        );
+
+    }
+
+
+    const geometricMaximum =
+        2 *
+        (
+            state.set.visible
+                .length1_m +
+            state.set.visible
+                .length2_m
+        ) *
+        100;
+
+
+    return Math.ceil(
+        geometricMaximum /
+        20
+    ) *
+    20;
+
+}
+
+
+function renderDistanceMeter(
+    selector,
+    value,
+    maximum,
+    title
+){
+
+    const svg =
+        qs(
+            selector
+        );
+
+
+    const ns =
+        "http://www.w3.org/2000/svg";
+
+
+    svg.replaceChildren();
+
+
+    const titleText =
+        document.createElementNS(
+            ns,
+            "text"
+        );
+
+
+    titleText.setAttribute(
+        "x",
+        50
+    );
+
+    titleText.setAttribute(
+        "y",
+        35
+    );
+
+    titleText.setAttribute(
+        "class",
+        "meter-title"
+    );
+
+
+    titleText.textContent =
+        title;
+
+
+    svg.append(
+        titleText
+    );
+
+
+    const axis =
+        document.createElementNS(
+            ns,
+            "line"
+        );
+
+
+    axis.setAttribute(
+        "x1",
+        60
+    );
+
+    axis.setAttribute(
+        "y1",
+        110
+    );
+
+    axis.setAttribute(
+        "x2",
+        840
+    );
+
+    axis.setAttribute(
+        "y2",
+        110
+    );
+
+    axis.setAttribute(
+        "class",
+        "meter-axis"
+    );
+
+
+    svg.append(
+        axis
+    );
+
+
+    for(
+        let index=0;
+        index<=50;
+        index+=1
+    ){
+
+        const fraction =
+            index /
+            50;
+
+
+        const x =
+            60 +
+            fraction *
+            780;
+
+
+        const major =
+            index %
+            5 ===
+            0;
+
+
+        const tick =
+            document.createElementNS(
+                ns,
+                "line"
+            );
+
+
+        tick.setAttribute(
+            "x1",
+            x
+        );
+
+        tick.setAttribute(
+            "x2",
+            x
+        );
+
+        tick.setAttribute(
+            "y1",
+            110
+        );
+
+        tick.setAttribute(
+            "y2",
+            major
+                ? 82
+                : 94
+        );
+
+        tick.setAttribute(
+            "class",
+            "meter-tick"
+        );
+
+
+        svg.append(
+            tick
+        );
+
+
+        if(major){
+
+            const label =
+                document.createElementNS(
+                    ns,
+                    "text"
+                );
+
+
+            label.setAttribute(
+                "x",
+                x
+            );
+
+            label.setAttribute(
+                "y",
+                145
+            );
+
+            label.setAttribute(
+                "class",
+                "meter-label"
+            );
+
+
+            label.textContent =
+                (
+                    maximum *
+                    fraction
+                ).toFixed(
+                    maximum <=
+                        20
+                        ? 1
+                        : 0
+                );
+
+
+            svg.append(
+                label
+            );
+
+        }
+
+    }
+
+
+    const needleX =
+        60 +
+        Math.min(
+            1,
+            value /
+            maximum
+        ) *
+        780;
+
+
+    const needle =
+        document.createElementNS(
+            ns,
+            "line"
+        );
+
+
+    needle.setAttribute(
+        "x1",
+        needleX
+    );
+
+    needle.setAttribute(
+        "x2",
+        needleX
+    );
+
+    needle.setAttribute(
+        "y1",
+        58
+    );
+
+    needle.setAttribute(
+        "y2",
+        118
+    );
+
+    needle.setAttribute(
+        "class",
+        "meter-needle"
+    );
+
+
+    svg.append(
+        needle
+    );
+
+
+    const unit =
+        document.createElementNS(
+            ns,
+            "text"
+        );
+
+
+    unit.setAttribute(
+        "x",
+        850
+    );
+
+    unit.setAttribute(
+        "y",
+        145
+    );
+
+    unit.setAttribute(
+        "class",
+        "meter-label"
+    );
+
+
+    unit.textContent =
+        "cm";
+
+
+    svg.append(
+        unit
+    );
+
+}
+
+
+/* =========================================================
+   REGIM REGULAT
+========================================================= */
+
+qs(
+    "[data-play-regular]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.playback
+                .regularFrame
+        ){
+
+            cancelAnimationFrame(
+                state.playback
+                    .regularFrame
+            );
+
+        }
+
+
+        const pair =
+            state.set.hidden
+                .simulations
+                .regular;
+
+
+        const started =
+            performance.now();
+
+
+        const speed =
+            2;
+
+
+        function frame(
+            timestamp
+        ){
+
+            const time =
+                Math.min(
+                    8,
+                    (
+                        timestamp -
+                        started
+                    ) /
+                    1000 *
+                    speed
+                );
+
+
+            renderPendulum(
+                "reg",
+                pair,
+                time
+            );
+
+
+            qs(
+                "[data-reg-time]"
+            ).textContent =
+                `${time.toFixed(2)} s`;
+
+
+            if(
+                time <
+                8
+            ){
+
+                state.playback
+                    .regularFrame =
+                    requestAnimationFrame(
+                        frame
+                    );
+
+
+                return;
+
+            }
+
+
+            state.playback
+                .regularFrame =
+                null;
+
+
+            const value =
+                state.set.hidden
+                    .readings
+                    .regular8_cm;
+
+
+            renderDistanceMeter(
+                "[data-regular-meter]",
+                value,
+                meterMaximum(
+                    value,
+                    "regular"
+                ),
+                "Distanța dintre corpurile inferioare la t = 8,00 s"
+            );
+
+
+            qs(
+                "[data-regular-measurement]"
+            ).hidden =
+                false;
+
+        }
+
+
+        state.playback
+            .regularFrame =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+);
+
+
+qs(
+    "[data-check-regular]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            numeric(
+                qs(
+                    "[data-regular-answer]"
+                ).value
+            );
+
+
+        const expected =
+            state.set.hidden
+                .readings
+                .regular8_cm;
+
+
+        if(
+            !Number.isFinite(
+                answer
+            ) ||
+            Math.abs(
+                answer -
+                expected
+            ) >
+            .65
+        ){
+
+            feedback(
+                "regular",
+                "Reverifică poziția acului pe scala distanțometrului."
+            );
+
+
+            return;
+
+        }
+
+
+        if(
+            !qs(
+                "[data-regular-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "regular",
+                "Citirea este corectă. Confirmă și notarea în caiet.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        state.regularReading_cm =
+            round(
+                answer,
+                1
+            );
+
+
+        state.completed.add(
+            4
+        );
+
+
+        qs(
+            "[data-next-chaos]"
+        ).disabled =
+            false;
+
+
+        feedback(
+            "regular",
+            "Măsurarea regimului de referință este corectă.",
+            "ok"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INIT REGIM HAOTIC
+========================================================= */
+
+qs(
+    "[data-next-chaos]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderPendulum(
+            "chaos",
+            state.set.hidden
+                .simulations
+                .chaotic,
+            0
+        );
+
+
+        qs(
+            "[data-chaos-timeline]"
+        ).value =
+            0;
+
+
+        qs(
+            "[data-chaos-time]"
+        ).textContent =
+            "0,00 s";
+
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TIMELINE HAOS
+========================================================= */
+
+function updateChaosAtTime(
+    time
+){
+
+    renderPendulum(
+        "chaos",
+        state.set.hidden
+            .simulations
+            .chaotic,
+        time
+    );
+
+
+    qs(
+        "[data-chaos-time]"
+    ).textContent =
+        `${time.toFixed(2)} s`;
+
+}
+
+
+qs(
+    "[data-chaos-timeline]"
+).addEventListener(
+    "input",
+    event => {
+
+        if(
+            state.playback
+                .chaosPlaying
+        ){
+
+            state.playback
+                .chaosPlaying =
+                false;
+
+
+            if(
+                state.playback
+                    .chaosFrame
+            ){
+
+                cancelAnimationFrame(
+                    state.playback
+                        .chaosFrame
+                );
+
+            }
+
+        }
+
+
+        const time =
+            Number(
+                event.currentTarget
+                    .value
+            ) /
+            1000;
+
+
+        updateChaosAtTime(
+            time
+        );
+
+    }
+);
+
+
+qs(
+    "[data-play-chaos]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.playback
+                .chaosPlaying
+        ){
+
+            state.playback
+                .chaosPlaying =
+                false;
+
+
+            if(
+                state.playback
+                    .chaosFrame
+            ){
+
+                cancelAnimationFrame(
+                    state.playback
+                        .chaosFrame
+                );
+
+            }
+
+
+            return;
+
+        }
+
+
+        state.playback
+            .chaosPlaying =
+            true;
+
+
+        const slider =
+            qs(
+                "[data-chaos-timeline]"
+            );
+
+
+        let initialTime =
+            Number(
+                slider.value
+            ) /
+            1000;
+
+
+        if(
+            initialTime >=
+            8
+        ){
+
+            initialTime =
+                0;
+
+
+            slider.value =
+                0;
+
+        }
+
+
+        const started =
+            performance.now();
+
+
+        const speed =
+            1.6;
+
+
+        function frame(
+            timestamp
+        ){
+
+            if(
+                !state.playback
+                    .chaosPlaying
+            ){
+
+                return;
+
+            }
+
+
+            const elapsed =
+                (
+                    timestamp -
+                    started
+                ) /
+                1000 *
+                speed;
+
+
+            const time =
+                Math.min(
+                    8,
+                    initialTime +
+                    elapsed
+                );
+
+
+            slider.value =
+                Math.round(
+                    time *
+                    1000
+                );
+
+
+            updateChaosAtTime(
+                time
+            );
+
+
+            if(
+                time <
+                8
+            ){
+
+                state.playback
+                    .chaosFrame =
+                    requestAnimationFrame(
+                        frame
+                    );
+
+            }
+            else{
+
+                state.playback
+                    .chaosPlaying =
+                    false;
+
+
+                state.playback
+                    .chaosFrame =
+                    null;
+
+            }
+
+        }
+
+
+        state.playback
+            .chaosFrame =
+            requestAnimationFrame(
+                frame
+            );
+
+    }
+);
+
+
+qs(
+    "[data-reset-chaos]"
+).addEventListener(
+    "click",
+    () => {
+
+        state.playback
+            .chaosPlaying =
+            false;
+
+
+        if(
+            state.playback
+                .chaosFrame
+        ){
+
+            cancelAnimationFrame(
+                state.playback
+                    .chaosFrame
+            );
+
+        }
+
+
+        qs(
+            "[data-chaos-timeline]"
+        ).value =
+            0;
+
+
+        updateChaosAtTime(
+            0
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SELECTIE MOMENT DE MASURARE
+========================================================= */
+
+qsa(
+    "[data-target-time]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                state.chaosTarget =
+                    Number(
+                        button.dataset
+                            .targetTime
+                    );
+
+
+                qs(
+                    "[data-chaos-target-label]"
+                ).textContent =
+                    `t = ${state.chaosTarget.toFixed(2)} s`;
+
+
+                feedback(
+                    "chaos-time",
+                    `Poziționează cursorul temporal la ${state.chaosTarget.toFixed(2)} s și fixează poziția.`,
+                    "warn"
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   FIXARE MOMENT
+========================================================= */
+
+qs(
+    "[data-freeze-chaos]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.chaosTarget ===
+            null
+        ){
+
+            feedback(
+                "chaos-time",
+                "Selectează mai întâi măsurarea de la 4 s sau 8 s."
+            );
+
+
+            return;
+
+        }
+
+
+        const current =
+            Number(
+                qs(
+                    "[data-chaos-timeline]"
+                ).value
+            ) /
+            1000;
+
+
+        if(
+            Math.abs(
+                current -
+                state.chaosTarget
+            ) >
+            .06
+        ){
+
+            feedback(
+                "chaos-time",
+                `Poziționează cursorul la ${state.chaosTarget.toFixed(2)} s.`,
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const value =
+            state.chaosTarget ===
+                4
+                ? state.set.hidden
+                    .readings
+                    .chaotic4_cm
+                : state.set.hidden
+                    .readings
+                    .chaotic8_cm;
+
+
+        renderDistanceMeter(
+            "[data-chaos-meter]",
+            value,
+            meterMaximum(
+                value,
+                "chaos"
+            ),
+            `Distanța dintre corpurile inferioare la t = ${state.chaosTarget.toFixed(2)} s`
+        );
+
+
+        qs(
+            "[data-chaos-measurement-title]"
+        ).textContent =
+            `Măsurare la t = ${state.chaosTarget.toFixed(2)} s`;
+
+
+        qs(
+            "[data-chaos-answer]"
+        ).value =
+            "";
+
+
+        qs(
+            "[data-chaos-measurement]"
+        ).hidden =
+            false;
+
+
+        feedback(
+            "chaos-time",
+            "Poziția a fost fixată. Citește distanțometrul.",
+            "ok"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   VERIFICARE CITIRE HAOS
+========================================================= */
+
+qs(
+    "[data-check-chaos-reading]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.chaosTarget ===
+            null
+        ){
+            return;
+        }
+
+
+        const answer =
+            numeric(
+                qs(
+                    "[data-chaos-answer]"
+                ).value
+            );
+
+
+        const expected =
+            state.chaosTarget ===
+                4
+                ? state.set.hidden
+                    .readings
+                    .chaotic4_cm
+                : state.set.hidden
+                    .readings
+                    .chaotic8_cm;
+
+
+        if(
+            !Number.isFinite(
+                answer
+            ) ||
+            Math.abs(
+                answer -
+                expected
+            ) >
+            1.0
+        ){
+
+            feedback(
+                "chaos-reading",
+                "Reverifică poziția acului pe scala distanțometrului."
+            );
+
+
+            return;
+
+        }
+
+
+        if(
+            state.chaosTarget ===
+            4
+        ){
+
+            state.chaosReadings
+                .t4_cm =
+                round(
+                    answer,
+                    1
+                );
+
+
+            qs(
+                "[data-chaos-result-4]"
+            ).textContent =
+                `${state.chaosReadings.t4_cm.toFixed(1)} cm`;
+
+        }
+        else{
+
+            state.chaosReadings
+                .t8_cm =
+                round(
+                    answer,
+                    1
+                );
+
+
+            qs(
+                "[data-chaos-result-8]"
+            ).textContent =
+                `${state.chaosReadings.t8_cm.toFixed(1)} cm`;
+
+        }
+
+
+        feedback(
+            "chaos-reading",
+            "Citirea a fost înregistrată.",
+            "ok"
+        );
+
+
+        qs(
+            "[data-chaos-measurement]"
+        ).hidden =
+            true;
+
+
+        checkChaosComplete();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL ETAPA HAOS
+========================================================= */
+
+function checkChaosComplete(){
+
+    if(
+        state.chaosReadings
+            .t4_cm ===
+            null ||
+        state.chaosReadings
+            .t8_cm ===
+            null
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !qs(
+            "[data-chaos-notebook]"
+        ).checked
+    ){
+
+        feedback(
+            "chaos-complete",
+            "Ambele distanțe au fost măsurate. Confirmă și notarea în caiet.",
+            "warn"
+        );
+
+
+        return;
+
+    }
+
+
+    state.completed.add(
+        5
+    );
+
+
+    qs(
+        "[data-next-calculation]"
+    ).disabled =
+        false;
+
+
+    feedback(
+        "chaos-complete",
+        "Măsurările regimului haotic sunt complete.",
+        "ok"
+    );
+
+}
+
+
+qs(
+    "[data-chaos-notebook]"
+).addEventListener(
+    "change",
+    checkChaosComplete
+);
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function initialSeparationCm(){
+
+    const l2 =
+        state.set.visible
+            .length2_m;
+
+
+    const delta =
+        degToRad(
+            state.set.visible
+                .deltaInitial_deg
+        );
+
+
+    return (
+        2 *
+        l2 *
+        Math.sin(
+            delta /
+            2
+        ) *
+        100
+    );
+
+}
+
+
+function initialEnergy(
+    theta1Deg,
+    theta2Deg
+){
+
+    const v =
+        state.set.visible;
+
+
+    const g =
+        9.81;
+
+
+    return (
+        (
+            v.mass1_kg +
+            v.mass2_kg
+        ) *
+        g *
+        v.length1_m *
+        (
+            1 -
+            Math.cos(
+                degToRad(
+                    theta1Deg
+                )
+            )
+        )
+
+        +
+
+        v.mass2_kg *
+        g *
+        v.length2_m *
+        (
+            1 -
+            Math.cos(
+                degToRad(
+                    theta2Deg
+                )
+            )
+        )
+    );
+
+}
+
+
+function expectedCalculations(){
+
+    const s0 =
+        initialSeparationCm();
+
+
+    const kRegular =
+        state.regularReading_cm /
+        s0;
+
+
+    const k4 =
+        state.chaosReadings
+            .t4_cm /
+        s0;
+
+
+    const k8 =
+        state.chaosReadings
+            .t8_cm /
+        s0;
+
+
+    const contrast =
+        k8 /
+        Math.max(
+            kRegular,
+            .0001
+        );
+
+
+    const regular =
+        state.set.visible
+            .regularInitial;
+
+
+    const chaotic =
+        state.set.visible
+            .chaoticInitial;
+
+
+    const energyRegular =
+        initialEnergy(
+            regular.theta1_deg,
+            regular.theta2_deg
+        );
+
+
+    const energyChaos =
+        initialEnergy(
+            chaotic.theta1_deg,
+            chaotic.theta2_deg
+        );
+
+
+    return {
+
+        s0_cm:
+            s0,
+
+        kRegular,
+
+        k4,
+
+        k8,
+
+        contrast,
+
+        energyRegular_J:
+            energyRegular,
+
+        energyChaos_J:
+            energyChaos,
+
+        energyRatio:
+            energyChaos /
+            energyRegular
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   REZUMAT
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+function renderMeasurementSummary(){
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Δθ₀</td>
+                    <td>
+                        ${state.set.visible.deltaInitial_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>sreg(8 s)</td>
+                    <td>
+                        ${state.regularReading_cm.toFixed(1)} cm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>shaos(4 s)</td>
+                    <td>
+                        ${state.chaosReadings.t4_cm.toFixed(1)} cm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>shaos(8 s)</td>
+                    <td>
+                        ${state.chaosReadings.t8_cm.toFixed(1)} cm
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   VERIFICARE CALCULE
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            s0:
+                answer(
+                    "s0"
+                ),
+
+            kRegular:
+                answer(
+                    "k-regular"
+                ),
+
+            k4:
+                answer(
+                    "k4"
+                ),
+
+            k8:
+                answer(
+                    "k8"
+                ),
+
+            contrast:
+                answer(
+                    "contrast"
+                ),
+
+            energyRegular:
+                answer(
+                    "energy-regular"
+                ),
+
+            energyChaos:
+                answer(
+                    "energy-chaos"
+                ),
+
+            energyRatio:
+                answer(
+                    "energy-ratio"
+                )
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.s0,
+                expected.s0_cm,
+                .06
+            ) &&
+
+            closeEnough(
+                values.kRegular,
+                expected.kRegular,
+                Math.max(
+                    .15,
+                    expected.kRegular *
+                    .025
+                )
+            ) &&
+
+            closeEnough(
+                values.k4,
+                expected.k4,
+                Math.max(
+                    .2,
+                    expected.k4 *
+                    .025
+                )
+            ) &&
+
+            closeEnough(
+                values.k8,
+                expected.k8,
+                Math.max(
+                    .2,
+                    expected.k8 *
+                    .025
+                )
+            ) &&
+
+            closeEnough(
+                values.contrast,
+                expected.contrast,
+                Math.max(
+                    .2,
+                    expected.contrast *
+                    .03
+                )
+            ) &&
+
+            closeEnough(
+                values.energyRegular,
+                expected.energyRegular_J,
+                .015
+            ) &&
+
+            closeEnough(
+                values.energyChaos,
+                expected.energyChaos_J,
+                .025
+            ) &&
+
+            closeEnough(
+                values.energyRatio,
+                expected.energyRatio,
+                .08
+            );
+
+
+        if(
+            !correct ||
+            interpretation.length <
+                100 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică transformarea unghiului în formula trigonometrică, raporturile de amplificare și expresia energiei potențiale."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    regime:
+                        "relativ regulat",
+
+                    time_s:
+                        8,
+
+                    separation_cm:
+                        state.regularReading_cm
+                },
+
+                {
+                    regime:
+                        "haotic",
+
+                    time_s:
+                        4,
+
+                    separation_cm:
+                        state.chaosReadings
+                            .t4_cm
+                },
+
+                {
+                    regime:
+                        "haotic",
+
+                    time_s:
+                        8,
+
+                    separation_cm:
+                        state.chaosReadings
+                            .t8_cm
+                }
+
+            ],
+
+            calculations:{
+
+                initialSeparation_cm:
+                    round(
+                        expected.s0_cm,
+                        4
+                    ),
+
+                regular:{
+
+                    amplification8:
+                        round(
+                            expected.kRegular,
+                            3
+                        ),
+
+                    initialEnergy_J:
+                        round(
+                            expected.energyRegular_J,
+                            4
+                        )
+
+                },
+
+                chaotic:{
+
+                    amplification4:
+                        round(
+                            expected.k4,
+                            3
+                        ),
+
+                    amplification8:
+                        round(
+                            expected.k8,
+                            3
+                        ),
+
+                    initialEnergy_J:
+                        round(
+                            expected.energyChaos_J,
+                            4
+                        )
+
+                },
+
+                comparison:{
+
+                    sensitivityRatio:
+                        round(
+                            expected.contrast,
+                            3
+                        ),
+
+                    energyRatio:
+                        round(
+                            expected.energyRatio,
+                            3
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                initialDifference_deg:
+                    state.set.visible
+                        .deltaInitial_deg,
+
+                observedFeature:
+                    "sensibilitate puternică la condițiile inițiale",
+
+                caution:
+                    "experimentul evidențiază comportament compatibil cu un regim haotic; nu determină riguros exponentul Lyapunov"
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte. Separarea mult mai puternică din al doilea regim evidențiază sensibilitatea la condițiile inițiale.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PAYLOAD RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                generatedData:{
+
+                    system:
+                        "pendul dublu",
+
+                    length1_m:
+                        state.set.visible
+                            .length1_m,
+
+                    length2_m:
+                        state.set.visible
+                            .length2_m,
+
+                    mass1_kg:
+                        state.set.visible
+                            .mass1_kg,
+
+                    mass2_kg:
+                        state.set.visible
+                            .mass2_kg,
+
+                    deltaInitial_deg:
+                        state.set.visible
+                            .deltaInitial_deg,
+
+                    regularInitial:
+                        state.set.visible
+                            .regularInitial,
+
+                    chaoticInitial:
+                        state.set.visible
+                            .chaoticInitial
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:true,
+
+                totalSteps:8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALA
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           Același reportId este păstrat
+           la orice apăsare ulterioară.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get(
+                    "q1"
+                ),
+
+            q2:
+                form.get(
+                    "q2"
+                ),
+
+            q3:
+                form.get(
+                    "q3"
+                ),
+
+            q4:
+                form.get(
+                    "q4"
+                )
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                120 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "deterministic",
+
+            q2:
+                "sensitive",
+
+            q3:
+                "precision",
+
+            q4:
+                "not-random"
+
+        };
+
+
+        const score =
+            Object
+                .keys(
+                    correct
+                )
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_EVALUATION_STATE =
+            clone(
+                state.evaluation
+            );
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Separare inițială</span>
+
+                <strong>
+                    ${c.initialSeparation_cm.toFixed(3)} cm
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>K regulat – 8 s</span>
+
+                <strong>
+                    ${c.regular.amplification8.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>K haotic – 4 s</span>
+
+                <strong>
+                    ${c.chaotic.amplification4.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>K haotic – 8 s</span>
+
+                <strong>
+                    ${c.chaotic.amplification8.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Raport sensibilitate</span>
+
+                <strong>
+                    ${c.comparison.sensitivityRatio.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>E haotic / E regulat</span>
+
+                <strong>
+                    ${c.comparison.energyRatio.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        /*
+           Raportul este salvat local înainte
+           de prima încercare de transmitere.
+        */
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Problemă la salvarea locală: ${error.message}`;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function markConfirmed(){
+
+    qs(
+        "[data-submit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-resubmit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-local-save-status]"
+    ).textContent =
+        "confirmat de server; eliminat din coada locală";
+
+
+    qs(
+        "[data-local-save-status]"
+    ).className =
+        "status-success";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+            "stored" ||
+        result?.status ===
+            "duplicate"
+    ){
+
+        setSubmissionStatus(
+            result.status ===
+                "stored"
+                ? "Datele au fost înregistrate și confirmate de server."
+                : "Raportul exista deja în registru; nu a fost creat un duplicat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local și poate fi retransmis.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        const confirmed =
+            globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                );
+
+
+        if(confirmed){
+
+            sendButton.disabled =
+                true;
+
+
+            retryButton.disabled =
+                true;
+
+        }
+        else{
+
+            sendButton.disabled =
+                false;
+
+
+            retryButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            false
+        );
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            true
+        );
+
+    }
+);
+
+
+/* =========================================================
+   EVENIMENTE GOOGLE SHEETS
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail
+                ?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit${
+                event.detail?.message
+                    ? `: ${event.detail.message}`
+                    : "."
+            } Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(
+            /\s+/
+        );
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(
+                line
+            );
+
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+        lines.push(
+            line
+        );
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(
+        value
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(
+            value
+        )
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(
+                    line
+                )
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let index=0;
+        index<lines.length;
+        index+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                index,
+                index +
+                perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+
+        pages.push([
+            "Raport"
+        ]);
+
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+
+                        `(${pdfEscape(line)}) Tj`,
+
+                        "T*"
+
+                    ]
+                ),
+
+                "ET"
+
+            ].join(
+                "\n"
+            );
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(
+                pdf
+            );
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(
+            pdf
+        );
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const v =
+        state.set.visible;
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Sisteme dinamice",
+
+        "EXP13 - Studiul unui sistem simplu cu comportament haotic",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "SISTEM",
+
+        "Pendul dublu",
+
+        `l1 = ${v.length1_m.toFixed(3)} m`,
+
+        `l2 = ${v.length2_m.toFixed(3)} m`,
+
+        `m1 = ${v.mass1_kg.toFixed(3)} kg`,
+
+        `m2 = ${v.mass2_kg.toFixed(3)} kg`,
+
+        `Diferenta initiala Delta theta = ${v.deltaInitial_deg.toFixed(1)} grade`,
+
+        "",
+
+        "REGIM DE REFERINTA",
+
+        `theta1 = ${v.regularInitial.theta1_deg.toFixed(1)} grade`,
+
+        `theta2 = ${v.regularInitial.theta2_deg.toFixed(1)} grade`,
+
+        `Separare la 8 s = ${state.regularReading_cm.toFixed(1)} cm`,
+
+        `Amplificare K = ${c.regular.amplification8.toFixed(3)}`,
+
+        `Energie initiala = ${c.regular.initialEnergy_J.toFixed(4)} J`,
+
+        "",
+
+        "REGIM HAOTIC",
+
+        `theta1 = ${v.chaoticInitial.theta1_deg.toFixed(1)} grade`,
+
+        `theta2 = ${v.chaoticInitial.theta2_deg.toFixed(1)} grade`,
+
+        `Separare la 4 s = ${state.chaosReadings.t4_cm.toFixed(1)} cm`,
+
+        `Separare la 8 s = ${state.chaosReadings.t8_cm.toFixed(1)} cm`,
+
+        `K4 = ${c.chaotic.amplification4.toFixed(3)}`,
+
+        `K8 = ${c.chaotic.amplification8.toFixed(3)}`,
+
+        `Energie initiala = ${c.chaotic.initialEnergy_J.toFixed(4)} J`,
+
+        "",
+
+        "COMPARATIE",
+
+        `Separare initiala = ${c.initialSeparation_cm.toFixed(4)} cm`,
+
+        `Raport de sensibilitate = ${c.comparison.sensitivityRatio.toFixed(3)}`,
+
+        `Raport energetic = ${c.comparison.energyRatio.toFixed(3)}`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP13-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    globalThis.setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
