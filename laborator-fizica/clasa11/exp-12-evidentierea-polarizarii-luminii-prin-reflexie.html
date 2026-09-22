@@ -1,1 +1,6799 @@
+<!doctype html>
+<html lang="ro">
 
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a XI-a: evidențierea polarizării luminii prin reflexie și determinarea unghiului Brewster."
+>
+
+<title>
+    Evidențierea polarizării luminii prin reflexie
+</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+
+    --incident:#f4c430;
+    --reflected:#ff4d4d;
+    --refracted:#35a7ff;
+
+    --analyzer:#7c3aed;
+}
+
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #16324f,
+            #246b84
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.5rem,4vw,2.4rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:#16825d;
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:#17324d;
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+.experiment-panel[hidden],
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.measure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:1rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:.7rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.75;
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.data-card,
+.calculation-block,
+.measurement-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.parameter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    padding:.4rem .7rem;
+    margin:.2rem;
+    border:1px solid #b5cad5;
+    border-radius:999px;
+    background:#fff;
+    font-weight:700;
+}
+
+.measurements-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0;
+}
+
+.measurements-table th,
+.measurements-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+    text-align:center;
+}
+
+.measurements-table th{
+    background:#edf5f8;
+}
+
+
+/* =========================================================
+   MONTAJ OPTIC
+========================================================= */
+
+.optical-stage{
+    overflow:hidden;
+    margin:1rem 0;
+    border:1px solid #abc3cf;
+    border-radius:16px;
+    background:
+        linear-gradient(
+            #f4fbfe,
+            #fff
+        );
+}
+
+.optical-svg{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:950/520;
+}
+
+.surface{
+    stroke:#355b6d;
+    stroke-width:8;
+}
+
+.normal{
+    stroke:#768f9c;
+    stroke-width:2;
+    stroke-dasharray:8 7;
+}
+
+.ray-incident{
+    stroke:var(--incident);
+    stroke-width:7;
+    stroke-linecap:round;
+}
+
+.ray-reflected{
+    stroke:var(--reflected);
+    stroke-width:7;
+    stroke-linecap:round;
+}
+
+.ray-refracted{
+    stroke:var(--refracted);
+    stroke-width:7;
+    stroke-linecap:round;
+}
+
+.optical-label{
+    fill:#39576a;
+    font-size:17px;
+    font-weight:700;
+}
+
+.angle-label{
+    fill:#17324d;
+    font-size:18px;
+    font-weight:800;
+}
+
+.sample{
+    fill:#a9dcf055;
+    stroke:#4f879c;
+    stroke-width:3;
+}
+
+
+/* =========================================================
+   DETECTOR
+========================================================= */
+
+.detector{
+    padding:1rem;
+    border-radius:14px;
+    color:#d9f6ff;
+    background:#10242d;
+    text-align:center;
+}
+
+.detector-label{
+    color:#8fbdca;
+    font-size:.9rem;
+}
+
+.detector-value{
+    margin:.4rem 0;
+    font:
+        800 2rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+.detector-bar{
+    height:22px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#29414c;
+}
+
+.detector-fill{
+    width:0;
+    height:100%;
+    background:
+        linear-gradient(
+            90deg,
+            #126e82,
+            #5ef0be
+        );
+    transition:width .15s;
+}
+
+.control-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid #bfd0da;
+    border-radius:14px;
+    background:#f8fbfd;
+}
+
+.control-card input[type="range"]{
+    width:100%;
+    accent-color:#126e82;
+}
+
+.digital{
+    display:inline-block;
+    min-width:120px;
+    padding:.55rem .8rem;
+    border-radius:8px;
+    color:#d9f6ff;
+    background:#10242d;
+    text-align:center;
+    font:
+        800 1.05rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+
+/* =========================================================
+   ANALIZOR
+========================================================= */
+
+.analyzer-disk{
+    width:min(290px,80vw);
+    aspect-ratio:1/1;
+    margin:1rem auto;
+    position:relative;
+    border:7px solid #5f7080;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            #dff7ff,
+            #9dc9dd
+        );
+}
+
+.analyzer-axis{
+    position:absolute;
+    left:50%;
+    top:12%;
+    width:5px;
+    height:76%;
+    border-radius:5px;
+    background:var(--analyzer);
+    transform:
+        translateX(-50%)
+        rotate(0deg);
+    transform-origin:center;
+}
+
+.analyzer-center{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:#17324d;
+    transform:translate(-50%,-50%);
+}
+
+.analyzer-label{
+    position:absolute;
+    bottom:8px;
+    width:100%;
+    text-align:center;
+    font-weight:800;
+    color:#17324d;
+}
+
+.measure-record{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+    gap:.7rem;
+    margin:1rem 0;
+}
+
+.measure-slot{
+    padding:.9rem;
+    border:1px solid #bfd0da;
+    border-radius:10px;
+    background:#fff;
+    text-align:center;
+}
+
+.measure-slot strong{
+    display:block;
+    margin-top:.4rem;
+    font-size:1.15rem;
+}
+
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.15rem;
+}
+
+.compare-box{
+    padding:1rem;
+    margin:1rem 0;
+    border:2px solid #9fc0d0;
+    border-radius:12px;
+    background:#eff8fb;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .measure-grid,
+    .choice-grid,
+    .measure-record{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+    .report-actions .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+window.LAB_EXPERIMENT_CONFIG = {
+
+    id:
+        "clasa11-exp12-polarizarea-prin-reflexie",
+
+    code:
+        "EXP12",
+
+    title:
+        "Evidențierea polarizării luminii prin reflexie",
+
+    classLevel:
+        "11",
+
+    domain:
+        "Optică ondulatorie",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "laser",
+        "sticla-optica"
+    ],
+
+    requiredEquipment:[
+        "low-power-laser",
+        "glass-plate",
+        "rotating-support",
+        "analyzer",
+        "photodetector",
+        "angular-scale"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
+</script>
+
+
+<script src="../assets/js/instrumente-scala.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+<script src="../assets/js/google-sheets.js" defer></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+    <p>
+        Laborator virtual de fizică •
+        Clasa a XI-a •
+        Optică ondulatorie
+    </p>
+
+    <h1>
+        Evidențierea polarizării luminii prin reflexie
+    </h1>
+
+    <p>
+        Unghiul Brewster, analizarea fasciculului reflectat
+        și determinarea gradului de polarizare.
+    </p>
+
+
+    <div class="experiment-meta">
+
+        <span data-header-student>
+            Elev neidentificat
+        </span>
+
+        <span data-header-class>
+            Clasa —
+        </span>
+
+        <span data-header-catalog>
+            Nr. catalog —
+        </span>
+
+        <span data-header-date>
+            Data —
+        </span>
+
+        <span>
+            Monitorizare:
+            <b data-monitoring-status>
+                oprită
+            </b>
+        </span>
+
+    </div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+    <p data-progress-text>
+        Etapa 1 din 8
+    </p>
+
+    <div class="progress-track">
+
+        <div
+            class="progress-fill"
+            data-progress-fill
+        ></div>
+
+    </div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+    1. Identificarea elevului
+</h2>
+
+
+<p>
+    Clasa și numărul din catalog determină proprietățile
+    probei optice virtuale utilizate în experiment.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numele și prenumele
+
+        <input
+            name="studentName"
+            minlength="3"
+            maxlength="80"
+            autocomplete="name"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Clasa
+
+        <input
+            name="studentClass"
+            list="clase-xi"
+            placeholder="XI A"
+            required
+        >
+
+    </label>
+
+</div>
+
+
+<datalist id="clase-xi">
+    <option value="XI A">
+    <option value="XI B">
+    <option value="XI C">
+    <option value="XI D">
+</datalist>
+
+
+<div class="field-grid">
+
+    <label class="field">
+
+        Numărul în catalog
+
+        <input
+            name="catalogNumber"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            required
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        Set experimental
+
+        <input
+            data-session-set
+            readonly
+        >
+
+    </label>
+
+</div>
+
+
+<label class="field">
+
+    Data și ora începerii
+
+    <input
+        data-session-date
+        readonly
+    >
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="monitorConsent"
+        required
+    >
+
+    <span>
+        Am înțeles că pagina poate înregistra schimbările
+        de filă/aplicație, ieșirile din ecran complet
+        și tentativele de copiere.
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        name="identityConfirmed"
+        required
+    >
+
+    <span>
+        Confirm că datele introduse sunt ale mele și că voi
+        realiza individual măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+    Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+    2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+    <strong>
+        Nu privi direct în fasciculul laser și nici
+        în reflexia speculară produsă de placa de sticlă.
+    </strong>
+
+    În laboratorul real se folosește numai o sursă
+    laser de putere mică destinată activităților didactice.
+
+</div>
+
+
+<ul>
+
+    <li>
+        Menține fasciculul sub nivelul ochilor.
+    </li>
+
+    <li>
+        Nu orienta fasciculul spre alte persoane.
+    </li>
+
+    <li>
+        Evită suprafețele reflectante necontrolate.
+    </li>
+
+    <li>
+        Oprește laserul înainte de repoziționarea plăcii.
+    </li>
+
+    <li>
+        Manipulează placa de sticlă numai de margini.
+    </li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+    Înainte de schimbarea poziției plăcii de sticlă:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="off"
+    >
+
+    <span>
+        opresc sursa laser
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="safetyQuiz"
+        value="on"
+    >
+
+    <span>
+        păstrez laserul pornit și urmăresc direct fasciculul
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-safety-commitment
+    >
+
+    <span>
+        Am citit și am înțeles regulile de securitate.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-complete-safety
+        type="button"
+    >
+        Accept instructajul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+    3. Selectarea echipamentelor
+</h2>
+
+
+<p>
+    Selectează numai componentele necesare pentru
+    studiul polarizării prin reflexie.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-equipment
+        type="button"
+    >
+        Verifică trusa
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+    4. Modelul fizic și predicțiile
+</h2>
+
+
+<p>
+    O undă luminoasă nepolarizată poate fi descompusă
+    în două componente ale câmpului electric:
+</p>
+
+
+<ul>
+
+    <li>
+        componenta <strong>s</strong>, perpendiculară pe
+        planul de incidență;
+    </li>
+
+    <li>
+        componenta <strong>p</strong>, paralelă cu
+        planul de incidență.
+    </li>
+
+</ul>
+
+
+<p>
+    La un anumit unghi de incidență, numit
+    <strong>unghi Brewster</strong>, componenta p
+    a luminii reflectate dispare în modelul ideal.
+</p>
+
+
+<div class="formula">
+
+    tan i<sub>B</sub> =
+    n₂/n₁
+
+</div>
+
+
+<p>
+    Pentru trecerea din aer într-un dielectric:
+</p>
+
+
+<div class="formula">
+
+    n ≈ tan i<sub>B</sub>
+
+</div>
+
+
+<p>
+    La unghiul Brewster, raza reflectată și cea refractată
+    sunt perpendiculare:
+</p>
+
+
+<div class="formula">
+
+    i<sub>B</sub> +
+    r<sub>B</sub> =
+    90°
+
+</div>
+
+
+<p>
+    Dacă lumina reflectată este analizată cu un polarizor rotativ,
+    intensitatea variază aproximativ după legea lui Malus:
+</p>
+
+
+<div class="formula">
+
+    I =
+    I<sub>max</sub>
+    cos² α
+
+</div>
+
+
+<div data-initial-data></div>
+
+
+<fieldset>
+
+<legend>
+    La unghiul Brewster, lumina reflectată este predominant:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPolarization"
+        value="s"
+    >
+
+    <span>
+        polarizată perpendicular pe planul de incidență
+        – componenta s
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionPolarization"
+        value="p"
+    >
+
+    <span>
+        polarizată paralel cu planul de incidență
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    La unghiul Brewster, raza reflectată și raza refractată:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionRays"
+        value="perpendicular"
+    >
+
+    <span>
+        sunt perpendiculare
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionRays"
+        value="parallel"
+    >
+
+    <span>
+        sunt paralele
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Dacă indicele de refracție al probei este mai mare,
+    unghiul Brewster:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIndex"
+        value="increase"
+    >
+
+    <span>
+        crește
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="predictionIndex"
+        value="decrease"
+    >
+
+    <span>
+        scade
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-initial-notebook
+    >
+
+    <span>
+        Am notat în caiet formulele și predicțiile.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-initial
+        type="button"
+    >
+        Continuă
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+    5. Determinarea unghiului Brewster
+</h2>
+
+
+<p>
+    Analizorul este orientat astfel încât transmite componenta
+    paralelă cu planul de incidență. Modifică unghiul de incidență
+    și caută minimul semnalului reflectat.
+</p>
+
+
+<div class="data-card">
+
+    <span class="parameter-chip">
+        mediu incident:
+        aer
+    </span>
+
+    <span class="parameter-chip">
+        probă:
+        dielectric transparent
+    </span>
+
+    <span class="parameter-chip">
+        analizor:
+        componenta p
+    </span>
+
+</div>
+
+
+<div class="optical-stage">
+
+<svg
+    class="optical-svg"
+    viewBox="0 0 950 520"
+    role="img"
+    aria-label="Reflexia și refracția luminii pe o suprafață dielectrică"
+>
+
+    <rect
+        class="sample"
+        x="80"
+        y="300"
+        width="790"
+        height="170"
+    ></rect>
+
+
+    <line
+        class="surface"
+        x1="80"
+        y1="300"
+        x2="870"
+        y2="300"
+    ></line>
+
+
+    <line
+        class="normal"
+        x1="475"
+        y1="45"
+        x2="475"
+        y2="475"
+    ></line>
+
+
+    <line
+        class="ray-incident"
+        data-incident-ray
+        x1="180"
+        y1="80"
+        x2="475"
+        y2="300"
+    ></line>
+
+
+    <line
+        class="ray-reflected"
+        data-reflected-ray
+        x1="475"
+        y1="300"
+        x2="770"
+        y2="80"
+    ></line>
+
+
+    <line
+        class="ray-refracted"
+        data-refracted-ray
+        x1="475"
+        y1="300"
+        x2="620"
+        y2="450"
+    ></line>
+
+
+    <text
+        class="optical-label"
+        x="110"
+        y="275"
+    >
+        aer
+    </text>
+
+    <text
+        class="optical-label"
+        x="110"
+        y="340"
+    >
+        dielectric
+    </text>
+
+
+    <text
+        class="angle-label"
+        data-incidence-angle-svg
+        x="400"
+        y="205"
+    >
+        i
+    </text>
+
+
+    <text
+        class="angle-label"
+        data-refraction-angle-svg
+        x="525"
+        y="370"
+    >
+        r
+    </text>
+
+</svg>
+
+</div>
+
+
+<div class="control-card">
+
+<label class="field">
+
+    Unghiul de incidență i
+
+    <input
+        type="range"
+        min="35"
+        max="75"
+        step="0.1"
+        value="40"
+        data-incidence-slider
+    >
+
+</label>
+
+
+<p>
+    i =
+    <span
+        class="digital"
+        data-incidence-readout
+    >
+        40,0°
+    </span>
+</p>
+
+
+<p>
+    r =
+    <span
+        class="digital"
+        data-refraction-readout
+    >
+        —
+    </span>
+</p>
+
+
+<p>
+    i + r =
+    <span
+        class="digital"
+        data-angle-sum-readout
+    >
+        —
+    </span>
+</p>
+
+</div>
+
+
+<div class="detector">
+
+    <div class="detector-label">
+        Fotodetector – componenta p reflectată
+    </div>
+
+    <div
+        class="detector-value"
+        data-brewster-detector
+    >
+        —
+    </div>
+
+    <div class="detector-bar">
+
+        <div
+            class="detector-fill"
+            data-brewster-bar
+        ></div>
+
+    </div>
+
+</div>
+
+
+<button
+    class="btn success"
+    data-lock-brewster
+    type="button"
+>
+    Fixează minimul
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="brewster"
+></p>
+
+
+<div
+    class="data-card"
+    data-brewster-result
+    hidden
+>
+
+    <strong>
+        Poziția minimului:
+    </strong>
+
+    <br><br>
+
+    i<sub>B,exp</sub> =
+    <span data-brewster-angle-result>
+        —
+    </span>
+
+    <br>
+
+    r<sub>B,exp</sub> =
+    <span data-brewster-refraction-result>
+        —
+    </span>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-brewster-notebook
+    >
+
+    <span>
+        Am notat unghiul de incidență și unghiul de refracție
+        la minim.
+    </span>
+
+</label>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-analyzer
+        type="button"
+        disabled
+    >
+        Continuă cu analizorul
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+    6. Evidențierea polarizării fasciculului reflectat
+</h2>
+
+
+<p>
+    Menținem placa la unghiul Brewster găsit experimental.
+    Rotește analizorul și urmărește intensitatea fasciculului
+    reflectat.
+</p>
+
+
+<div class="formula">
+
+    α = 0°:
+    axa analizorului este perpendiculară
+    pe planul de incidență – transmite componenta s.
+
+    <br><br>
+
+    α = 90°:
+    axa analizorului este paralelă
+    cu planul de incidență – transmite componenta p.
+
+</div>
+
+
+<div class="analyzer-disk">
+
+    <div
+        class="analyzer-axis"
+        data-analyzer-axis
+    ></div>
+
+    <div class="analyzer-center"></div>
+
+    <div class="analyzer-label">
+        analizor
+    </div>
+
+</div>
+
+
+<div class="control-card">
+
+<label class="field">
+
+    Unghiul analizorului α
+
+    <input
+        type="range"
+        min="0"
+        max="180"
+        step="1"
+        value="0"
+        data-analyzer-slider
+    >
+
+</label>
+
+
+<p>
+    α =
+    <span
+        class="digital"
+        data-analyzer-angle
+    >
+        0°
+    </span>
+</p>
+
+</div>
+
+
+<div class="detector">
+
+    <div class="detector-label">
+        Intensitatea transmisă de analizor
+    </div>
+
+    <div
+        class="detector-value"
+        data-analyzer-detector
+    >
+        —
+    </div>
+
+    <div class="detector-bar">
+
+        <div
+            class="detector-fill"
+            data-analyzer-bar
+        ></div>
+
+    </div>
+
+</div>
+
+
+<p>
+    Înregistrează semnalul pentru α = 0°, 45° și 90°.
+</p>
+
+
+<div class="measure-record">
+
+
+<div class="measure-slot">
+
+    α = 0°
+
+    <strong data-i0-result>
+        nemăsurat
+    </strong>
+
+</div>
+
+
+<div class="measure-slot">
+
+    α = 45°
+
+    <strong data-i45-result>
+        nemăsurat
+    </strong>
+
+</div>
+
+
+<div class="measure-slot">
+
+    α = 90°
+
+    <strong data-i90-result>
+        nemăsurat
+    </strong>
+
+</div>
+
+
+</div>
+
+
+<button
+    class="btn success"
+    data-record-intensity
+    type="button"
+>
+    Înregistrează intensitatea la unghiul curent
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="analyzer"
+></p>
+
+
+<fieldset>
+
+<legend>
+    Variația puternică a intensității la rotirea analizorului arată că:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="polarizationObservation"
+        value="polarized"
+    >
+
+    <span>
+        fasciculul reflectat este puternic polarizat
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="polarizationObservation"
+        value="unpolarized"
+    >
+
+    <span>
+        fasciculul este complet nepolarizat
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    Intensitatea minimă apare când analizorul transmite:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="minimumComponent"
+        value="p"
+    >
+
+    <span>
+        componenta p, paralelă cu planul de incidență
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="minimumComponent"
+        value="s"
+    >
+
+    <span>
+        componenta s
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-analyzer-notebook
+    >
+
+    <span>
+        Am notat I(0°), I(45°) și I(90°).
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    data-check-analyzer
+    type="button"
+>
+    Verifică observațiile
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="analyzer-complete"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn success"
+        data-next-calculation
+        type="button"
+        disabled
+    >
+        Continuă la calcule
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+    7. Prelucrarea datelor experimentale
+</h2>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-block">
+
+<h3>
+    A. Indicele de refracție – legea Brewster
+</h3>
+
+
+<div class="formula">
+
+    n =
+    tan i<sub>B</sub>
+
+</div>
+
+
+<label class="field">
+
+    n
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="index"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    B. Unghiul de refracție la Brewster
+</h3>
+
+
+<div class="formula">
+
+    r<sub>B</sub> =
+    90° −
+    i<sub>B</sub>
+
+</div>
+
+
+<label class="field">
+
+    r<sub>B</sub> calculat (°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="refraction"
+    >
+
+</label>
+
+
+<div class="formula">
+
+    i<sub>B</sub> +
+    r<sub>B</sub>
+    ≈
+    90°
+
+</div>
+
+
+<label class="field">
+
+    i<sub>B</sub> + r<sub>B</sub> (°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="sum"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    C. Gradul de polarizare al luminii reflectate
+</h3>
+
+
+<div class="formula">
+
+    P =
+    (
+        I<sub>max</sub> −
+        I<sub>min</sub>
+    )
+    /
+    (
+        I<sub>max</sub> +
+        I<sub>min</sub>
+    )
+
+</div>
+
+
+<p>
+    În montajul nostru:
+</p>
+
+
+<div class="formula">
+
+    I<sub>max</sub> =
+    I(0°)
+
+    <br>
+
+    I<sub>min</sub> =
+    I(90°)
+
+</div>
+
+
+<label class="field">
+
+    P (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="polarization"
+    >
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+    D. Verificarea legii lui Malus
+</h3>
+
+
+<p>
+    Pentru α = 45°:
+</p>
+
+
+<div class="formula">
+
+    cos²45° =
+    1/2
+
+</div>
+
+
+<p>
+    Dacă polarizarea este aproape completă:
+</p>
+
+
+<div class="formula">
+
+    I(45°) /
+    I(0°)
+    ≈
+    0,5
+
+</div>
+
+
+<label class="field">
+
+    I(45°) / I(0°)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="malus-ratio"
+    >
+
+</label>
+
+
+<label class="field">
+
+    Abaterea față de 0,5 (%)
+
+    <input
+        type="text"
+        inputmode="decimal"
+        data-calc="malus-error"
+    >
+
+</label>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>
+    Interpretarea rezultatelor
+</h3>
+
+
+<label class="field">
+
+    Explică de ce intensitatea componentei p reflectate
+    prezintă un minim la unghiul Brewster și de ce rotirea
+    analizorului evidențiază polarizarea fasciculului reflectat.
+
+    <textarea
+        rows="7"
+        data-comparison
+        placeholder="Folosește legea Brewster, componentele s și p și variația intensității prin analizor."
+    ></textarea>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-calculation-notebook
+    >
+
+    <span>
+        Am trecut în caiet formulele, calculele,
+        unitățile și interpretarea.
+    </span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+    <button
+        class="btn"
+        data-check-calculation
+        type="button"
+    >
+        Verifică rezultatele
+    </button>
+
+    <button
+        class="btn success"
+        data-next-evaluation
+        type="button"
+        disabled
+    >
+        Continuă la concluzii
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+    8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+    1. Legea Brewster pentru trecerea din mediul 1
+    în mediul 2 este:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="brewster"
+    >
+
+    <span>
+        tan i<sub>B</sub> = n₂/n₁
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q1"
+        value="wrong"
+    >
+
+    <span>
+        sin i<sub>B</sub> = n₁/n₂
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    2. La unghiul Brewster, componenta p a luminii reflectate:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="minimum"
+    >
+
+    <span>
+        este minimă și, în modelul ideal, nulă
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q2"
+        value="maximum"
+    >
+
+    <span>
+        este maximă
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    3. Lumina reflectată la unghiul Brewster este predominant:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="s"
+    >
+
+    <span>
+        polarizată perpendicular pe planul de incidență
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q3"
+        value="p"
+    >
+
+    <span>
+        polarizată paralel cu planul de incidență
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+    4. La unghiul Brewster, raza reflectată și cea refractată:
+</legend>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="perpendicular"
+    >
+
+    <span>
+        sunt perpendiculare
+    </span>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="radio"
+        name="q4"
+        value="parallel"
+    >
+
+    <span>
+        sunt paralele
+    </span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+    Concluzia experimentului
+
+    <textarea
+        rows="7"
+        minlength="120"
+        data-final-conclusion
+        required
+        placeholder="Formulează concluzii despre unghiul Brewster, polarizarea fasciculului reflectat și indicele de refracție determinat."
+    ></textarea>
+
+</label>
+
+
+<label class="field">
+
+    Precizează cel puțin două surse de eroare experimentală
+
+    <textarea
+        rows="4"
+        minlength="40"
+        data-error-sources
+        required
+        placeholder="Exemple: identificarea minimului, rezoluția scalei unghiulare, alinierea analizorului, sensibilitatea detectorului..."
+    ></textarea>
+
+</label>
+
+
+<label class="choice">
+
+    <input
+        type="checkbox"
+        data-individual-confirmation
+        required
+    >
+
+    <span>
+        Confirm că am realizat individual observațiile,
+        măsurările, calculele și concluziile.
+    </span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+    Finalizează experimentul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+    Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+    <p>
+        <strong>ID raport:</strong>
+        <span data-report-id>—</span>
+    </p>
+
+    <p>
+        <strong>Copie locală:</strong>
+        <span data-local-save-status>—</span>
+    </p>
+
+    <p>
+        <strong>Transmitere:</strong>
+
+        <span
+            data-submission-status
+            aria-live="polite"
+        >
+            Raportul nu a fost încă trimis.
+        </span>
+    </p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+    <button
+        class="btn success"
+        data-submit-report
+        type="button"
+    >
+        Trimite datele
+    </button>
+
+    <button
+        class="btn warning"
+        data-resubmit-report
+        type="button"
+    >
+        Retrimite datele
+    </button>
+
+    <button
+        class="btn secondary"
+        data-download-pdf
+        type="button"
+    >
+        Descarcă PDF
+    </button>
+
+    <button
+        class="btn secondary"
+        type="button"
+        onclick="window.print()"
+    >
+        Tipărește
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn secondary"
+        data-previous
+        type="button"
+    >
+        Înapoi
+    </button>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(
+        selector
+    );
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [
+        ...scope.querySelectorAll(
+            selector
+        )
+    ];
+
+
+const clone =
+    value => {
+
+        if(
+            typeof structuredClone ===
+            "function"
+        ){
+
+            return structuredClone(
+                value
+            );
+
+        }
+
+
+        return JSON.parse(
+            JSON.stringify(
+                value
+            )
+        );
+
+    };
+
+
+const numeric =
+    value =>
+        Number(
+            String(
+                value ??
+                ""
+            ).replace(
+                ",",
+                "."
+            )
+        );
+
+
+const round = (
+    value,
+    decimals=2
+) => {
+
+    const factor =
+        10 **
+        decimals;
+
+
+    return Math.round(
+        (
+            value +
+            Number.EPSILON
+        ) *
+        factor
+    ) /
+    factor;
+
+};
+
+
+const degToRad =
+    value =>
+        value *
+        Math.PI /
+        180;
+
+
+const radToDeg =
+    value =>
+        value *
+        180 /
+        Math.PI;
+
+
+const now =
+    () =>
+        new Date()
+            .toISOString();
+
+
+const makeId =
+    prefix => {
+
+        if(
+            globalThis.crypto
+                ?.randomUUID
+        ){
+
+            return (
+                `${prefix}-` +
+                globalThis.crypto
+                    .randomUUID()
+            );
+
+        }
+
+
+        return (
+            `${prefix}-` +
+            Date.now()
+                .toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2)
+        );
+
+    };
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    brewster:{
+
+        locked:false,
+
+        incidence_deg:null,
+
+        refraction_deg:null,
+
+        pSignal:null
+
+    },
+
+    analyzer:{
+
+        i0:null,
+
+        i45:null,
+
+        i90:null
+
+    },
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const stepLabels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Model fizic",
+
+    "Brewster",
+
+    "Analizor",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index ===
+                step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(
+                    index
+                )
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${
+            (
+                step +
+                1
+            ) /
+            8 *
+            100
+        }%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+stepLabels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed.has(
+                        index -
+                        1
+                    )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step -
+                        1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /^11/,
+            "XI"
+        )
+        .replace(
+            /^(XI)([A-D])$/,
+            "$1 $2"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ??
+    0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const index =
+        Number(
+            catalogNumber
+        ) -
+        1;
+
+
+    const slot =
+        (
+            index *
+            7 +
+            ci *
+            3
+        ) %
+        30;
+
+
+    /*
+       30 de valori distincte.
+       Domeniu optic realist:
+       aproximativ 1,485 ... 1,5285.
+    */
+
+    const refractiveIndex =
+        round(
+            1.485 +
+            slot *
+            .0015,
+            4
+        );
+
+
+    const detectorScale =
+        940 +
+        (
+            (
+                slot *
+                11 +
+                ci *
+                5
+            ) %
+            15
+        ) *
+        8;
+
+
+    const brewsterAngle =
+        radToDeg(
+            Math.atan(
+                refractiveIndex
+            )
+        );
+
+
+    const refractionAtBrewster =
+        90 -
+        brewsterAngle;
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(catalogNumber).padStart(2,"0")}-EXP12`,
+
+        visible:{
+
+            incidentMedium:
+                "aer",
+
+            sample:
+                "dielectric transparent",
+
+            wavelength_nm:
+                635
+
+        },
+
+        hidden:{
+
+            refractiveIndex,
+
+            detectorScale,
+
+            brewsterAngle_deg:
+                brewsterAngle,
+
+            refractionAtBrewster_deg:
+                refractionAtBrewster
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   FRESNEL
+========================================================= */
+
+function fresnel(
+    incidenceDeg
+){
+
+    const n1 =
+        1;
+
+
+    const n2 =
+        state.set.hidden
+            .refractiveIndex;
+
+
+    const i =
+        degToRad(
+            incidenceDeg
+        );
+
+
+    const sinR =
+        n1 /
+        n2 *
+        Math.sin(
+            i
+        );
+
+
+    const r =
+        Math.asin(
+            sinR
+        );
+
+
+    const cosI =
+        Math.cos(
+            i
+        );
+
+
+    const cosR =
+        Math.cos(
+            r
+        );
+
+
+    const rs =
+        (
+            n1 *
+            cosI -
+            n2 *
+            cosR
+        ) /
+        (
+            n1 *
+            cosI +
+            n2 *
+            cosR
+        );
+
+
+    const rp =
+        (
+            n2 *
+            cosI -
+            n1 *
+            cosR
+        ) /
+        (
+            n2 *
+            cosI +
+            n1 *
+            cosR
+        );
+
+
+    return {
+
+        incidence_deg:
+            incidenceDeg,
+
+        refraction_deg:
+            radToDeg(
+                r
+            ),
+
+        Rs:
+            rs ** 2,
+
+        Rp:
+            rp ** 2
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^XI [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect toate datele și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                LAB_EXPERIMENT_CONFIG
+                    .title,
+
+            experimentId:
+                LAB_EXPERIMENT_CONFIG
+                    .id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "off" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Răspunde corect și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "general",
+                "laser",
+                "sticla-optica"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "laser",
+        "Sursă laser de putere mică"
+    ],
+
+    [
+        "placa",
+        "Placă dielectrică transparentă"
+    ],
+
+    [
+        "suport",
+        "Suport rotativ cu scală unghiulară"
+    ],
+
+    [
+        "analizor",
+        "Analizor polarizant rotativ"
+    ],
+
+    [
+        "detector",
+        "Fotodetector"
+    ],
+
+    [
+        "scala",
+        "Scală unghiulară"
+    ],
+
+    [
+        "retea",
+        "Rețea de difracție"
+    ],
+
+    [
+        "dinamometru",
+        "Dinamometru"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set([
+        "laser",
+        "placa",
+        "suport",
+        "analizor",
+        "detector",
+        "scala"
+    ]);
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "checkbox";
+
+
+        input.value =
+            id;
+
+
+        const span =
+            document.createElement(
+                "span"
+            );
+
+
+        span.textContent =
+            name;
+
+
+        label.append(
+            input,
+            span
+        );
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(
+                            id
+                        )
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(
+                            id
+                        )
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment
+                                    .find(
+                                        item =>
+                                            item[0] ===
+                                            id
+                                    )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        globalThis.LAB_EQUIPMENT_STATE =
+            clone(
+                state.equipment
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialData();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   DATE INITIALE
+========================================================= */
+
+function renderInitialData(){
+
+    qs(
+        "[data-initial-data]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime / element</th>
+                    <th>Valoare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Mediul incident</td>
+                    <td>aer</td>
+                </tr>
+
+                <tr>
+                    <td>Proba</td>
+                    <td>dielectric transparent</td>
+                </tr>
+
+                <tr>
+                    <td>Lungime de undă laser</td>
+                    <td>
+                        ${state.set.visible.wavelength_nm}
+                        nm
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Rezoluția scalei unghiulare</td>
+                    <td>0,1°</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   PREDICTII
+========================================================= */
+
+qs(
+    "[data-check-initial]"
+).addEventListener(
+    "click",
+    () => {
+
+        const polarization =
+            qs(
+                'input[name="predictionPolarization"]:checked'
+            )?.value;
+
+
+        const rays =
+            qs(
+                'input[name="predictionRays"]:checked'
+            )?.value;
+
+
+        const index =
+            qs(
+                'input[name="predictionIndex"]:checked'
+            )?.value;
+
+
+        if(
+            !polarization ||
+            !rays ||
+            !index ||
+            !qs(
+                "[data-initial-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "initial",
+                "Completează toate predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            polarization,
+
+            rayRelation:
+                rays,
+
+            refractiveIndexEffect:
+                index,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        initializeBrewsterStage();
+
+
+        state.completed.add(
+            3
+        );
+
+
+        feedback(
+            "initial",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+/* =========================================================
+   GEOMETRIE RAZE
+========================================================= */
+
+function updateRayGeometry(
+    incidenceDeg
+){
+
+    const data =
+        fresnel(
+            incidenceDeg
+        );
+
+
+    const originX =
+        475;
+
+
+    const originY =
+        300;
+
+
+    const incidentLength =
+        330;
+
+
+    const reflectedLength =
+        330;
+
+
+    const refractedLength =
+        190;
+
+
+    const i =
+        degToRad(
+            incidenceDeg
+        );
+
+
+    const r =
+        degToRad(
+            data.refraction_deg
+        );
+
+
+    const ix =
+        originX -
+        incidentLength *
+        Math.sin(
+            i
+        );
+
+
+    const iy =
+        originY -
+        incidentLength *
+        Math.cos(
+            i
+        );
+
+
+    const rx =
+        originX +
+        reflectedLength *
+        Math.sin(
+            i
+        );
+
+
+    const ry =
+        originY -
+        reflectedLength *
+        Math.cos(
+            i
+        );
+
+
+    const tx =
+        originX +
+        refractedLength *
+        Math.sin(
+            r
+        );
+
+
+    const ty =
+        originY +
+        refractedLength *
+        Math.cos(
+            r
+        );
+
+
+    const incident =
+        qs(
+            "[data-incident-ray]"
+        );
+
+
+    incident.setAttribute(
+        "x1",
+        ix
+    );
+
+    incident.setAttribute(
+        "y1",
+        iy
+    );
+
+
+    const reflected =
+        qs(
+            "[data-reflected-ray]"
+        );
+
+
+    reflected.setAttribute(
+        "x2",
+        rx
+    );
+
+    reflected.setAttribute(
+        "y2",
+        ry
+    );
+
+
+    const refracted =
+        qs(
+            "[data-refracted-ray]"
+        );
+
+
+    refracted.setAttribute(
+        "x2",
+        tx
+    );
+
+    refracted.setAttribute(
+        "y2",
+        ty
+    );
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   BREWSTER
+========================================================= */
+
+function pDetectorSignal(
+    incidenceDeg
+){
+
+    const data =
+        fresnel(
+            incidenceDeg
+        );
+
+
+    return (
+        state.set.hidden
+            .detectorScale *
+        data.Rp
+    );
+
+}
+
+
+function updateBrewster(){
+
+    if(
+        state.brewster.locked
+    ){
+        return;
+    }
+
+
+    const incidence =
+        Number(
+            qs(
+                "[data-incidence-slider]"
+            ).value
+        );
+
+
+    const data =
+        updateRayGeometry(
+            incidence
+        );
+
+
+    const signal =
+        pDetectorSignal(
+            incidence
+        );
+
+
+    qs(
+        "[data-incidence-readout]"
+    ).textContent =
+        `${incidence.toFixed(1)}°`;
+
+
+    qs(
+        "[data-refraction-readout]"
+    ).textContent =
+        `${data.refraction_deg.toFixed(1)}°`;
+
+
+    qs(
+        "[data-angle-sum-readout]"
+    ).textContent =
+        `${(incidence + data.refraction_deg).toFixed(1)}°`;
+
+
+    qs(
+        "[data-brewster-detector]"
+    ).textContent =
+        `${signal.toFixed(3)} u.a.`;
+
+
+    /*
+       Scala detectorului este doar vizuală.
+    */
+
+    const barPercent =
+        Math.min(
+            100,
+            signal /
+            25 *
+            100
+        );
+
+
+    qs(
+        "[data-brewster-bar]"
+    ).style.width =
+        `${barPercent}%`;
+
+}
+
+
+function initializeBrewsterStage(){
+
+    qs(
+        "[data-incidence-slider]"
+    ).value =
+        "40";
+
+
+    updateBrewster();
+
+}
+
+
+qs(
+    "[data-incidence-slider]"
+).addEventListener(
+    "input",
+    updateBrewster
+);
+
+
+qs(
+    "[data-lock-brewster]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.brewster.locked
+        ){
+            return;
+        }
+
+
+        const incidence =
+            Number(
+                qs(
+                    "[data-incidence-slider]"
+                ).value
+            );
+
+
+        const theoretical =
+            state.set.hidden
+                .brewsterAngle_deg;
+
+
+        const difference =
+            incidence -
+            theoretical;
+
+
+        if(
+            Math.abs(
+                difference
+            ) >
+            .4
+        ){
+
+            feedback(
+                "brewster",
+                difference <
+                    0
+                    ? "Semnalul componentei p poate fi redus. Mărește puțin unghiul de incidență."
+                    : "Ai depășit minimul. Micșorează puțin unghiul de incidență.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const data =
+            fresnel(
+                incidence
+            );
+
+
+        state.brewster = {
+
+            locked:true,
+
+            incidence_deg:
+                round(
+                    incidence,
+                    1
+                ),
+
+            refraction_deg:
+                round(
+                    data.refraction_deg,
+                    2
+                ),
+
+            pSignal:
+                round(
+                    pDetectorSignal(
+                        incidence
+                    ),
+                    4
+                )
+
+        };
+
+
+        qs(
+            "[data-incidence-slider]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-lock-brewster]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-brewster-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-brewster-angle-result]"
+        ).textContent =
+            `${state.brewster.incidence_deg.toFixed(1)}°`;
+
+
+        qs(
+            "[data-brewster-refraction-result]"
+        ).textContent =
+            `${state.brewster.refraction_deg.toFixed(1)}°`;
+
+
+        feedback(
+            "brewster",
+            "Minimul componentei p a fost identificat.",
+            "ok"
+        );
+
+
+        checkBrewsterComplete();
+
+    }
+);
+
+
+function checkBrewsterComplete(){
+
+    if(
+        !state.brewster.locked ||
+        !qs(
+            "[data-brewster-notebook]"
+        ).checked
+    ){
+
+        return;
+
+    }
+
+
+    state.completed.add(
+        4
+    );
+
+
+    qs(
+        "[data-next-analyzer]"
+    ).disabled =
+        false;
+
+
+    feedback(
+        "brewster",
+        "Unghiul Brewster a fost măsurat și notat.",
+        "ok"
+    );
+
+}
+
+
+qs(
+    "[data-brewster-notebook]"
+).addEventListener(
+    "change",
+    checkBrewsterComplete
+);
+
+
+/* =========================================================
+   INIT ANALIZOR
+========================================================= */
+
+qs(
+    "[data-next-analyzer]"
+).addEventListener(
+    "click",
+    () => {
+
+        initializeAnalyzer();
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+function analyzerIntensity(
+    angleDeg
+){
+
+    const optics =
+        fresnel(
+            state.brewster
+                .incidence_deg
+        );
+
+
+    const alpha =
+        degToRad(
+            angleDeg
+        );
+
+
+    /*
+       Lumina incidentă este nepolarizată:
+       jumătate din intensitate pe s,
+       jumătate pe p.
+
+       Analizorul are α = 0 pentru axa s.
+    */
+
+    return (
+        state.set.hidden
+            .detectorScale *
+        .5 *
+        (
+            optics.Rs *
+            Math.cos(
+                alpha
+            ) ** 2 +
+            optics.Rp *
+            Math.sin(
+                alpha
+            ) ** 2
+        )
+    );
+
+}
+
+
+function updateAnalyzer(){
+
+    const angle =
+        Number(
+            qs(
+                "[data-analyzer-slider]"
+            ).value
+        );
+
+
+    const intensity =
+        analyzerIntensity(
+            angle
+        );
+
+
+    qs(
+        "[data-analyzer-angle]"
+    ).textContent =
+        `${angle.toFixed(0)}°`;
+
+
+    qs(
+        "[data-analyzer-axis]"
+    ).style.transform =
+        `translateX(-50%) rotate(${angle}deg)`;
+
+
+    qs(
+        "[data-analyzer-detector]"
+    ).textContent =
+        `${intensity.toFixed(3)} u.a.`;
+
+
+    const maximum =
+        analyzerIntensity(
+            0
+        );
+
+
+    qs(
+        "[data-analyzer-bar]"
+    ).style.width =
+        `${
+            Math.min(
+                100,
+                intensity /
+                maximum *
+                100
+            )
+        }%`;
+
+}
+
+
+function initializeAnalyzer(){
+
+    qs(
+        "[data-analyzer-slider]"
+    ).value =
+        "0";
+
+
+    updateAnalyzer();
+
+}
+
+
+qs(
+    "[data-analyzer-slider]"
+).addEventListener(
+    "input",
+    updateAnalyzer
+);
+
+
+/* =========================================================
+   INREGISTRARE I0 I45 I90
+========================================================= */
+
+qs(
+    "[data-record-intensity]"
+).addEventListener(
+    "click",
+    () => {
+
+        const angle =
+            Number(
+                qs(
+                    "[data-analyzer-slider]"
+                ).value
+            );
+
+
+        const targets = [
+            0,
+            45,
+            90
+        ];
+
+
+        const target =
+            targets.find(
+                value =>
+                    Math.abs(
+                        angle -
+                        value
+                    ) <=
+                    1
+            );
+
+
+        if(
+            target ===
+            undefined
+        ){
+
+            feedback(
+                "analyzer",
+                "Pentru înregistrare poziționează analizorul la 0°, 45° sau 90°.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        const intensity =
+            round(
+                analyzerIntensity(
+                    target
+                ),
+                3
+            );
+
+
+        if(
+            target ===
+            0
+        ){
+
+            state.analyzer.i0 =
+                intensity;
+
+
+            qs(
+                "[data-i0-result]"
+            ).textContent =
+                `${intensity.toFixed(3)} u.a.`;
+
+        }
+
+
+        if(
+            target ===
+            45
+        ){
+
+            state.analyzer.i45 =
+                intensity;
+
+
+            qs(
+                "[data-i45-result]"
+            ).textContent =
+                `${intensity.toFixed(3)} u.a.`;
+
+        }
+
+
+        if(
+            target ===
+            90
+        ){
+
+            state.analyzer.i90 =
+                intensity;
+
+
+            qs(
+                "[data-i90-result]"
+            ).textContent =
+                `${intensity.toFixed(3)} u.a.`;
+
+        }
+
+
+        feedback(
+            "analyzer",
+            `Intensitatea la α = ${target}° a fost înregistrată.`,
+            "ok"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   FINAL ANALIZOR
+========================================================= */
+
+qs(
+    "[data-check-analyzer]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            state.analyzer.i0 ===
+                null ||
+            state.analyzer.i45 ===
+                null ||
+            state.analyzer.i90 ===
+                null
+        ){
+
+            feedback(
+                "analyzer-complete",
+                "Înregistrează mai întâi intensitățile la 0°, 45° și 90°."
+            );
+
+
+            return;
+
+        }
+
+
+        const observation =
+            qs(
+                'input[name="polarizationObservation"]:checked'
+            )?.value;
+
+
+        const minimum =
+            qs(
+                'input[name="minimumComponent"]:checked'
+            )?.value;
+
+
+        if(
+            observation !==
+                "polarized" ||
+            minimum !==
+                "p"
+        ){
+
+            feedback(
+                "analyzer-complete",
+                "Reanalizează variația intensității la rotirea analizorului."
+            );
+
+
+            return;
+
+        }
+
+
+        if(
+            !qs(
+                "[data-analyzer-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "analyzer-complete",
+                "Confirmă notarea celor trei intensități în caiet.",
+                "warn"
+            );
+
+
+            return;
+
+        }
+
+
+        state.completed.add(
+            5
+        );
+
+
+        qs(
+            "[data-next-calculation]"
+        ).disabled =
+            false;
+
+
+        feedback(
+            "analyzer-complete",
+            "Variația intensității evidențiază polarizarea fasciculului reflectat.",
+            "ok"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REZUMAT
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+function renderMeasurementSummary(){
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare măsurată</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>iB</td>
+                    <td>
+                        ${state.brewster.incidence_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>rB</td>
+                    <td>
+                        ${state.brewster.refraction_deg.toFixed(1)}°
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>I(0°)</td>
+                    <td>
+                        ${state.analyzer.i0.toFixed(3)}
+                        u.a.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>I(45°)</td>
+                    <td>
+                        ${state.analyzer.i45.toFixed(3)}
+                        u.a.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>I(90°)</td>
+                    <td>
+                        ${state.analyzer.i90.toFixed(3)}
+                        u.a.
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+function expectedCalculations(){
+
+    const iB =
+        state.brewster
+            .incidence_deg;
+
+
+    const rB =
+        90 -
+        iB;
+
+
+    const n =
+        Math.tan(
+            degToRad(
+                iB
+            )
+        );
+
+
+    const i0 =
+        state.analyzer.i0;
+
+
+    const i45 =
+        state.analyzer.i45;
+
+
+    const i90 =
+        state.analyzer.i90;
+
+
+    const polarization =
+        (
+            i0 -
+            i90
+        ) /
+        (
+            i0 +
+            i90
+        ) *
+        100;
+
+
+    const malusRatio =
+        i45 /
+        i0;
+
+
+    const malusError =
+        Math.abs(
+            malusRatio -
+            .5
+        ) /
+        .5 *
+        100;
+
+
+    return {
+
+        refractiveIndex:
+            n,
+
+        refraction_deg:
+            rB,
+
+        angleSum_deg:
+            iB +
+            rB,
+
+        polarization_percent:
+            polarization,
+
+        malusRatio,
+
+        malusError_percent:
+            malusError
+
+    };
+
+}
+
+
+function closeEnough(
+    value,
+    expected,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Math.abs(
+            value -
+            expected
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICARE CALCULE
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        const answer =
+            name =>
+                numeric(
+                    qs(
+                        `[data-calc="${name}"]`
+                    ).value
+                );
+
+
+        const values = {
+
+            index:
+                answer(
+                    "index"
+                ),
+
+            refraction:
+                answer(
+                    "refraction"
+                ),
+
+            sum:
+                answer(
+                    "sum"
+                ),
+
+            polarization:
+                answer(
+                    "polarization"
+                ),
+
+            malusRatio:
+                answer(
+                    "malus-ratio"
+                ),
+
+            malusError:
+                answer(
+                    "malus-error"
+                )
+
+        };
+
+
+        const interpretation =
+            qs(
+                "[data-comparison]"
+            ).value.trim();
+
+
+        const correct =
+
+            closeEnough(
+                values.index,
+                expected.refractiveIndex,
+                .008
+            ) &&
+
+            closeEnough(
+                values.refraction,
+                expected.refraction_deg,
+                .15
+            ) &&
+
+            closeEnough(
+                values.sum,
+                expected.angleSum_deg,
+                .15
+            ) &&
+
+            closeEnough(
+                values.polarization,
+                expected.polarization_percent,
+                .4
+            ) &&
+
+            closeEnough(
+                values.malusRatio,
+                expected.malusRatio,
+                .012
+            ) &&
+
+            closeEnough(
+                values.malusError,
+                expected.malusError_percent,
+                .4
+            );
+
+
+        if(
+            !correct ||
+            interpretation.length <
+                90 ||
+            !qs(
+                "[data-calculation-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "calculation",
+                "Reverifică funcția tangentă în grade, relația iB + rB = 90° și formulele pentru P și legea lui Malus."
+            );
+
+
+            return;
+
+        }
+
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    quantity:
+                        "unghi Brewster",
+
+                    incidence_deg:
+                        state.brewster
+                            .incidence_deg,
+
+                    refraction_deg:
+                        state.brewster
+                            .refraction_deg,
+
+                    analyzerConfiguration:
+                        "componenta p",
+
+                    pDetectorSignal:
+                        state.brewster
+                            .pSignal
+                },
+
+                {
+                    quantity:
+                        "intensitate prin analizor",
+
+                    analyzerAngle_deg:
+                        0,
+
+                    intensity_au:
+                        state.analyzer.i0
+                },
+
+                {
+                    quantity:
+                        "intensitate prin analizor",
+
+                    analyzerAngle_deg:
+                        45,
+
+                    intensity_au:
+                        state.analyzer.i45
+                },
+
+                {
+                    quantity:
+                        "intensitate prin analizor",
+
+                    analyzerAngle_deg:
+                        90,
+
+                    intensity_au:
+                        state.analyzer.i90
+                }
+
+            ],
+
+            calculations:{
+
+                brewster:{
+
+                    incidence_deg:
+                        state.brewster
+                            .incidence_deg,
+
+                    refractionCalculated_deg:
+                        round(
+                            expected.refraction_deg,
+                            2
+                        ),
+
+                    angleSum_deg:
+                        round(
+                            expected.angleSum_deg,
+                            2
+                        ),
+
+                    refractiveIndex:
+                        round(
+                            expected.refractiveIndex,
+                            4
+                        )
+
+                },
+
+                polarization:{
+
+                    Imax_au:
+                        state.analyzer.i0,
+
+                    I45_au:
+                        state.analyzer.i45,
+
+                    Imin_au:
+                        state.analyzer.i90,
+
+                    degree_percent:
+                        round(
+                            expected.polarization_percent,
+                            2
+                        )
+
+                },
+
+                malus:{
+
+                    ratioI45I0:
+                        round(
+                            expected.malusRatio,
+                            4
+                        ),
+
+                    theoreticalRatio:
+                        .5,
+
+                    relativeDeviation_percent:
+                        round(
+                            expected.malusError_percent,
+                            2
+                        )
+
+                }
+
+            },
+
+            comparison:{
+
+                studentInterpretation:
+                    interpretation,
+
+                reflectedPolarization:
+                    "predominant s – perpendiculară pe planul de incidență",
+
+                brewsterCondition:
+                    "componenta p reflectată prezintă minim",
+
+                rayCondition:
+                    "raza reflectată și raza refractată sunt aproximativ perpendiculare"
+
+            },
+
+            completed:true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            clone(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        clone(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Calculele sunt corecte și confirmă polarizarea prin reflexie.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            6
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PAYLOAD RAPORT
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    return globalThis
+        .LaboratorGoogleSheets
+        .buildPayload({
+
+            reportId:
+                state.reportId,
+
+            student:{
+
+                name:
+                    state.session
+                        .studentName,
+
+                className:
+                    state.session
+                        .studentClass,
+
+                catalogNumber:
+                    state.session
+                        .catalogNumber,
+
+                identityConfirmed:
+                    true
+
+            },
+
+            experiment:{
+
+                ...globalThis
+                    .LAB_EXPERIMENT_CONFIG,
+
+                dataSetId:
+                    state.set.id,
+
+                generatedData:{
+
+                    incidentMedium:
+                        state.set.visible
+                            .incidentMedium,
+
+                    sample:
+                        state.set.visible
+                            .sample,
+
+                    wavelength_nm:
+                        state.set.visible
+                            .wavelength_nm,
+
+                    method:
+                        "Brewster + analizor rotativ"
+
+                }
+
+            },
+
+            session:{
+
+                sessionId:
+                    state.session
+                        .sessionId,
+
+                startedAt:
+                    state.session
+                        .startedAt,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt,
+
+                durationSeconds:
+                    Math.max(
+                        0,
+                        Math.round(
+                            (
+                                Date.parse(
+                                    state.evaluation
+                                        .finishedAt
+                                ) -
+                                Date.parse(
+                                    state.session
+                                        .startedAt
+                                )
+                            ) /
+                            1000
+                        )
+                    ),
+
+                dateDisplay:
+                    state.session
+                        .experimentDate,
+
+                completed:true,
+
+                totalSteps:
+                    8
+
+            },
+
+            safety:
+                state.safety,
+
+            equipment:
+                state.equipment,
+
+            notebook:
+                state.notebook,
+
+            measurements:
+                state.notebook
+                    .measurements,
+
+            calculations:
+                state.notebook
+                    .calculations,
+
+            comparison:
+                state.notebook
+                    .comparison,
+
+            evaluation:
+                state.evaluation,
+
+            monitoring,
+
+            completed:true,
+
+            completedSteps:
+                [...state.completed],
+
+            totalSteps:
+                8,
+
+            report:{
+
+                reportId:
+                    state.reportId,
+
+                finishedAt:
+                    state.evaluation
+                        .finishedAt
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   EVALUARE FINALA
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        /*
+           Nu generăm un reportId nou
+           la o a doua apăsare.
+        */
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get(
+                    "q1"
+                ),
+
+            q2:
+                form.get(
+                    "q2"
+                ),
+
+            q3:
+                form.get(
+                    "q3"
+                ),
+
+            q4:
+                form.get(
+                    "q4"
+                )
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            ).value.trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            ).value.trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                120 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "brewster",
+
+            q2:
+                "minimum",
+
+            q3:
+                "s",
+
+            q4:
+                "perpendicular"
+
+        };
+
+
+        const score =
+            Object
+                .keys(
+                    correct
+                )
+                .filter(
+                    key =>
+                        answers[key] ===
+                        correct[key]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            passed:
+                score >=
+                3,
+
+            correctAnswers:
+                score,
+
+            totalQuestions:
+                4,
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            notebookConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_EVALUATION_STATE =
+            clone(
+                state.evaluation
+            );
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const c =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>Punctaj conceptual</span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Unghi Brewster</span>
+
+                <strong>
+                    ${c.brewster.incidence_deg.toFixed(1)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Indice de refracție</span>
+
+                <strong>
+                    ${c.brewster.refractiveIndex.toFixed(4)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>iB + rB</span>
+
+                <strong>
+                    ${c.brewster.angleSum_deg.toFixed(1)}°
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Grad de polarizare</span>
+
+                <strong>
+                    ${c.polarization.degree_percent.toFixed(1)}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>I45 / I0</span>
+
+                <strong>
+                    ${c.malus.ratioI45I0.toFixed(3)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Abatere Malus</span>
+
+                <strong>
+                    ${c.malus.relativeDeviation_percent.toFixed(2)}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>Set experimental</span>
+
+                <strong>
+                    ${state.set.id}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qs(
+            "[data-finalize-button]"
+        ).disabled =
+            true;
+
+
+        /*
+           Salvare locală înainte de transmitere.
+        */
+
+        try{
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            await globalThis
+                .LaboratorGoogleSheets
+                .savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
+
+
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvarea locală nu a fost confirmată";
+
+
+            qs(
+                "[data-submission-status]"
+            ).textContent =
+                `Problemă la salvarea locală: ${error.message}`;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function markConfirmed(){
+
+    qs(
+        "[data-submit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-resubmit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-local-save-status]"
+    ).textContent =
+        "confirmat de server; copia de așteptare a fost eliminată";
+
+
+    qs(
+        "[data-local-save-status]"
+    ).className =
+        "status-success";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    if(
+        result?.status ===
+            "stored" ||
+        result?.status ===
+            "duplicate"
+    ){
+
+        setSubmissionStatus(
+            result.status ===
+                "stored"
+                ? "Datele au fost înregistrate și confirmate de server."
+                : "Raportul exista deja în registru; nu a fost creat un duplicat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+
+        return;
+
+    }
+
+
+    if(
+        result?.status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Serverul nu a confirmat salvarea. Raportul rămâne salvat local și poate fi retransmis.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    retry=false
+){
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        if(
+            !state.reportPayload
+        ){
+
+            state.reportPayload =
+                buildReportPayload();
+
+        }
+
+
+        setSubmissionStatus(
+            retry
+                ? "Se retransmit datele..."
+                : "Se transmit datele..."
+        );
+
+
+        const result =
+            retry
+
+                ? await globalThis
+                    .LaboratorGoogleSheets
+                    .retryReport(
+                        state.reportId
+                    )
+
+                : await globalThis
+                    .LaboratorGoogleSheets
+                    .submit(
+                        state.reportPayload
+                    );
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        const confirmed =
+            globalThis
+                .LaboratorGoogleSheets
+                ?.hasBeenSent?.(
+                    state.reportId
+                );
+
+
+        if(confirmed){
+
+            sendButton.disabled =
+                true;
+
+
+            retryButton.disabled =
+                true;
+
+        }
+        else{
+
+            sendButton.disabled =
+                false;
+
+
+            retryButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            false
+        );
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            true
+        );
+
+    }
+);
+
+
+/* =========================================================
+   EVENIMENTE TRANSMITERE
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            event.detail
+                ?.duplicate
+                ? "Raportul exista deja în registru; nu a fost duplicat."
+                : "Raport transmis și confirmat.",
+            "success"
+        );
+
+
+        markConfirmed();
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit${
+                event.detail?.message
+                    ? `: ${event.detail.message}`
+                    : "."
+            } Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PDF LOCAL
+========================================================= */
+
+function asciiText(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /ș|ş/g,
+            "s"
+        )
+        .replace(
+            /Ș|Ş/g,
+            "S"
+        )
+        .replace(
+            /ț|ţ/g,
+            "t"
+        )
+        .replace(
+            /Ț|Ţ/g,
+            "T"
+        )
+        .replace(
+            /[^\x20-\x7E]/g,
+            " "
+        );
+
+}
+
+
+function wrapPdfLine(
+    text,
+    max=82
+){
+
+    const source =
+        asciiText(
+            text
+        ).trim();
+
+
+    if(!source){
+        return [""];
+    }
+
+
+    const words =
+        source.split(
+            /\s+/
+        );
+
+
+    const lines =
+        [];
+
+
+    let line =
+        "";
+
+
+    for(
+        const word
+        of words
+    ){
+
+        const candidate =
+            line
+                ? `${line} ${word}`
+                : word;
+
+
+        if(
+            candidate.length >
+                max &&
+            line
+        ){
+
+            lines.push(
+                line
+            );
+
+
+            line =
+                word;
+
+        }
+        else{
+
+            line =
+                candidate;
+
+        }
+
+    }
+
+
+    if(line){
+
+        lines.push(
+            line
+        );
+
+    }
+
+
+    return lines;
+
+}
+
+
+function pdfEscape(
+    value
+){
+
+    return asciiText(
+        value
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /\(/g,
+            "\\("
+        )
+        .replace(
+            /\)/g,
+            "\\)"
+        );
+
+}
+
+
+function byteLength(
+    value
+){
+
+    return new TextEncoder()
+        .encode(
+            value
+        )
+        .length;
+
+}
+
+
+function createPdfBlob(
+    rawLines
+){
+
+    const lines =
+        rawLines.flatMap(
+            line =>
+                wrapPdfLine(
+                    line
+                )
+        );
+
+
+    const perPage =
+        48;
+
+
+    const pages =
+        [];
+
+
+    for(
+        let index=0;
+        index<lines.length;
+        index+=perPage
+    ){
+
+        pages.push(
+            lines.slice(
+                index,
+                index +
+                perPage
+            )
+        );
+
+    }
+
+
+    if(!pages.length){
+
+        pages.push([
+            "Raport"
+        ]);
+
+    }
+
+
+    const objects =
+        [];
+
+
+    objects[1] =
+        "<< /Type /Catalog /Pages 2 0 R >>";
+
+
+    objects[3] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+
+    const pageIds =
+        [];
+
+
+    pages.forEach(
+        (
+            page,
+            index
+        ) => {
+
+            const pageId =
+                4 +
+                index *
+                2;
+
+
+            const contentId =
+                pageId +
+                1;
+
+
+            pageIds.push(
+                pageId
+            );
+
+
+            const content = [
+
+                "BT",
+
+                "/F1 10 Tf",
+
+                "50 790 Td",
+
+                "14 TL",
+
+                ...page.flatMap(
+                    line => [
+
+                        `(${pdfEscape(line)}) Tj`,
+
+                        "T*"
+
+                    ]
+                ),
+
+                "ET"
+
+            ].join(
+                "\n"
+            );
+
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+
+        }
+    );
+
+
+    objects[2] =
+        `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+
+    let pdf =
+        "%PDF-1.4\n%1234\n";
+
+
+    const offsets =
+        [0];
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        offsets[id] =
+            byteLength(
+                pdf
+            );
+
+
+        pdf +=
+            `${id} 0 obj\n${objects[id]}\nendobj\n`;
+
+    }
+
+
+    const xrefOffset =
+        byteLength(
+            pdf
+        );
+
+
+    pdf +=
+        `xref\n0 ${objects.length}\n`;
+
+
+    pdf +=
+        "0000000000 65535 f \n";
+
+
+    for(
+        let id=1;
+        id<objects.length;
+        id+=1
+    ){
+
+        pdf +=
+            `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+
+    }
+
+
+    pdf +=
+        `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+
+    return new Blob(
+        [pdf],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+function downloadPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const c =
+        state.notebook
+            .calculations;
+
+
+    const lines = [
+
+        "RAPORT EXPERIMENT DE FIZICA",
+
+        "",
+
+        "Clasa a XI-a - Optica ondulatorie",
+
+        "EXP12 - Evidentierea polarizarii luminii prin reflexie",
+
+        "",
+
+        `ID raport: ${state.reportId}`,
+
+        `Elev: ${state.session.studentName}`,
+
+        `Clasa: ${state.session.studentClass}`,
+
+        `Numar catalog: ${state.session.catalogNumber}`,
+
+        `Set experimental: ${state.set.id}`,
+
+        `Data: ${state.session.experimentDate}`,
+
+        "",
+
+        "UNGHIUL BREWSTER",
+
+        `iB experimental = ${state.brewster.incidence_deg.toFixed(1)} grade`,
+
+        `rB experimental = ${state.brewster.refraction_deg.toFixed(2)} grade`,
+
+        `Indice de refractie = ${c.brewster.refractiveIndex.toFixed(4)}`,
+
+        `iB + rB = ${c.brewster.angleSum_deg.toFixed(2)} grade`,
+
+        "",
+
+        "ANALIZOR",
+
+        `I(0 grade) = ${state.analyzer.i0.toFixed(3)} u.a.`,
+
+        `I(45 grade) = ${state.analyzer.i45.toFixed(3)} u.a.`,
+
+        `I(90 grade) = ${state.analyzer.i90.toFixed(3)} u.a.`,
+
+        `Grad de polarizare = ${c.polarization.degree_percent.toFixed(2)} %`,
+
+        `I45/I0 = ${c.malus.ratioI45I0.toFixed(4)}`,
+
+        `Abatere fata de legea Malus la 45 grade = ${c.malus.relativeDeviation_percent.toFixed(2)} %`,
+
+        "",
+
+        "INTERPRETARE",
+
+        state.notebook
+            .comparison
+            .studentInterpretation,
+
+        "",
+
+        "CONCLUZIA ELEVULUI",
+
+        state.evaluation
+            .conclusion,
+
+        "",
+
+        "SURSE DE EROARE",
+
+        state.evaluation
+            .errorSources,
+
+        "",
+
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,
+
+        "",
+
+        `ID unic raport: ${state.reportId}`
+
+    ];
+
+
+    const blob =
+        createPdfBlob(
+            lines
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const anchor =
+        document.createElement(
+            "a"
+        );
+
+
+    const safeName =
+        asciiText(
+            state.session
+                .studentName
+        )
+            .replace(
+                /[^A-Za-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    anchor.href =
+        url;
+
+
+    anchor.download =
+        `EXP12-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}-${safeName}.pdf`;
+
+
+    document.body.append(
+        anchor
+    );
+
+
+    anchor.click();
+
+
+    anchor.remove();
+
+
+    globalThis.setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    downloadPdf
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
