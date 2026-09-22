@@ -628,7 +628,1670 @@ body{
     }
 
 }
+/* =========================================================
+   VALIDARE DETALIATĂ A CALCULELOR
+========================================================= */
 
+const CALC_FIELD_SELECTORS = {
+
+    gravPeriod:
+        "[data-grav-period-answer]",
+
+    gravity:
+        "[data-g-answer]",
+
+    gravityError:
+        "[data-g-error-answer]",
+
+    kStatic:
+        "[data-k-static-answer]",
+
+    elasticPeriod:
+        "[data-elastic-period-answer]",
+
+    kDynamic:
+        "[data-k-dynamic-answer]",
+
+    kDifference:
+        "[data-k-difference-answer]",
+
+    gravInterpretation:
+        "[data-grav-interpretation]",
+
+    elasticInterpretation:
+        "[data-elastic-interpretation]",
+
+    notebook:
+        "[data-calculation-notebook]"
+
+};
+
+
+/* ---------------------------------------------------------
+   Citirea numerelor introduse de elev
+
+   Acceptă:
+   1,234
+   1.234
+   2,5 %
+--------------------------------------------------------- */
+
+function parseStudentNumber(
+    value
+){
+
+    const normalized =
+        String(
+            value ??
+            ""
+        )
+            .trim()
+            .replace(
+                /\s+/g,
+                ""
+            )
+            .replace(
+                "%",
+                ""
+            )
+            .replace(
+                ",",
+                "."
+            );
+
+
+    if(
+        normalized ===
+        ""
+    ){
+
+        return NaN;
+
+    }
+
+
+    return Number(
+        normalized
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   Verifică dacă valoarea elevului este apropiată
+   de cel puțin una dintre valorile acceptabile.
+
+   Sunt folosite mai multe valori acceptabile atunci când
+   o rotunjire corectă a unui rezultat intermediar poate
+   modifica puțin rezultatul următor.
+--------------------------------------------------------- */
+
+function closeToAny(
+    studentValue,
+    candidates,
+    tolerance
+){
+
+    if(
+        !Number.isFinite(
+            studentValue
+        )
+    ){
+
+        return false;
+
+    }
+
+
+    return candidates.some(
+        candidate =>
+            Number.isFinite(
+                candidate
+            ) &&
+            Math.abs(
+                studentValue -
+                candidate
+            ) <=
+            tolerance
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   Marchează un câmp
+--------------------------------------------------------- */
+
+function markCalculationField(
+    key,
+    status,
+    message
+){
+
+    const selector =
+        CALC_FIELD_SELECTORS[
+            key
+        ];
+
+
+    const element =
+        qs(
+            selector
+        );
+
+
+    const messageElement =
+        qs(
+            `[data-field-feedback="${key}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.classList.remove(
+        "calc-ok",
+        "calc-error"
+    );
+
+
+    const choice =
+        element.closest(
+            ".choice"
+        );
+
+
+    if(choice){
+
+        choice.classList.remove(
+            "calc-ok",
+            "calc-error"
+        );
+
+    }
+
+
+    if(
+        status ===
+        "ok"
+    ){
+
+        element.classList.add(
+            "calc-ok"
+        );
+
+
+        if(choice){
+
+            choice.classList.add(
+                "calc-ok"
+            );
+
+        }
+
+
+        element.setAttribute(
+            "aria-invalid",
+            "false"
+        );
+
+    }
+    else if(
+        status ===
+        "bad"
+    ){
+
+        element.classList.add(
+            "calc-error"
+        );
+
+
+        if(choice){
+
+            choice.classList.add(
+                "calc-error"
+            );
+
+        }
+
+
+        element.setAttribute(
+            "aria-invalid",
+            "true"
+        );
+
+    }
+
+
+    if(messageElement){
+
+        messageElement.textContent =
+            message;
+
+
+        messageElement.className =
+            "calc-field-feedback";
+
+
+        if(status){
+
+            messageElement.classList.add(
+                status
+            );
+
+        }
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   Detectarea unei posibile greșeli de unitate
+
+   Nu afișează rezultatul corect.
+--------------------------------------------------------- */
+
+function isNearScaledValue(
+    studentValue,
+    expectedValue,
+    factor
+){
+
+    if(
+        !Number.isFinite(
+            studentValue
+        ) ||
+        !Number.isFinite(
+            expectedValue
+        )
+    ){
+
+        return false;
+
+    }
+
+
+    const scaled =
+        expectedValue *
+        factor;
+
+
+    const tolerance =
+        Math.max(
+            Math.abs(
+                scaled
+            ) *
+            .025,
+            .02
+        );
+
+
+    return (
+        Math.abs(
+            studentValue -
+            scaled
+        ) <=
+        tolerance
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   Verificarea unui rezultat numeric
+--------------------------------------------------------- */
+
+function validateNumericResult({
+
+    key,
+
+    label,
+
+    candidates,
+
+    tolerance,
+
+    decimals,
+
+    genericHint,
+
+    specialHint=null
+
+}){
+
+    const element =
+        qs(
+            CALC_FIELD_SELECTORS[
+                key
+            ]
+        );
+
+
+    const raw =
+        element.value.trim();
+
+
+    if(
+        raw ===
+        ""
+    ){
+
+        markCalculationField(
+            key,
+            "bad",
+            "Completează acest rezultat."
+        );
+
+
+        return {
+
+            ok:false,
+
+            label,
+
+            element,
+
+            value:NaN
+
+        };
+
+    }
+
+
+    const value =
+        parseStudentNumber(
+            raw
+        );
+
+
+    if(
+        !Number.isFinite(
+            value
+        )
+    ){
+
+        markCalculationField(
+            key,
+            "bad",
+            "Introdu numai valoarea numerică. Poți folosi virgulă sau punct zecimal."
+        );
+
+
+        return {
+
+            ok:false,
+
+            label,
+
+            element,
+
+            value
+
+        };
+
+    }
+
+
+    const ok =
+        closeToAny(
+            value,
+            candidates,
+            tolerance
+        );
+
+
+    if(ok){
+
+        markCalculationField(
+            key,
+            "ok",
+            `Calcul numeric corect. Pentru prezentare, păstrează ${decimals} ${decimals === 1 ? "zecimală" : "zecimale"}.`
+        );
+
+
+        return {
+
+            ok:true,
+
+            label,
+
+            element,
+
+            value
+
+        };
+
+    }
+
+
+    const specificMessage =
+        typeof specialHint ===
+            "function"
+            ? specialHint(
+                value,
+                candidates[0]
+            )
+            : null;
+
+
+    markCalculationField(
+        key,
+        "bad",
+        specificMessage ||
+        genericHint
+    );
+
+
+    return {
+
+        ok:false,
+
+        label,
+
+        element,
+
+        value
+
+    };
+
+}
+
+
+/* ---------------------------------------------------------
+   Resetăm marcajul când elevul modifică răspunsul
+--------------------------------------------------------- */
+
+Object
+    .entries(
+        CALC_FIELD_SELECTORS
+    )
+    .forEach(
+        ([
+            key,
+            selector
+        ]) => {
+
+            const element =
+                qs(
+                    selector
+                );
+
+
+            if(!element){
+                return;
+            }
+
+
+            const eventName =
+                element.type ===
+                    "checkbox"
+                    ? "change"
+                    : "input";
+
+
+            element.addEventListener(
+                eventName,
+                () => {
+
+                    element.classList.remove(
+                        "calc-ok",
+                        "calc-error"
+                    );
+
+
+                    const choice =
+                        element.closest(
+                            ".choice"
+                        );
+
+
+                    if(choice){
+
+                        choice.classList.remove(
+                            "calc-ok",
+                            "calc-error"
+                        );
+
+                    }
+
+
+                    const messageElement =
+                        qs(
+                            `[data-field-feedback="${key}"]`
+                        );
+
+
+                    if(messageElement){
+
+                        messageElement.textContent =
+                            "";
+
+
+                        messageElement.className =
+                            "calc-field-feedback";
+
+                    }
+
+
+                    /*
+                       Dacă elevul modifică un calcul după
+                       o verificare, nu mai permitem trecerea
+                       mai departe până la o nouă verificare.
+                    */
+
+                    qs(
+                        "[data-next-evaluation]"
+                    ).disabled =
+                        true;
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   BUTONUL "VERIFICĂ REZULTATELE"
+========================================================= */
+
+qs(
+    "[data-check-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        const expected =
+            expectedCalculations();
+
+
+        /*
+           Valorile introduse de elev.
+        */
+
+        const answers = {
+
+            gravPeriod:
+                parseStudentNumber(
+                    qs(
+                        "[data-grav-period-answer]"
+                    ).value
+                ),
+
+            gravity:
+                parseStudentNumber(
+                    qs(
+                        "[data-g-answer]"
+                    ).value
+                ),
+
+            gravityError:
+                parseStudentNumber(
+                    qs(
+                        "[data-g-error-answer]"
+                    ).value
+                ),
+
+            kStatic:
+                parseStudentNumber(
+                    qs(
+                        "[data-k-static-answer]"
+                    ).value
+                ),
+
+            elasticPeriod:
+                parseStudentNumber(
+                    qs(
+                        "[data-elastic-period-answer]"
+                    ).value
+                ),
+
+            kDynamic:
+                parseStudentNumber(
+                    qs(
+                        "[data-k-dynamic-answer]"
+                    ).value
+                ),
+
+            kDifference:
+                parseStudentNumber(
+                    qs(
+                        "[data-k-difference-answer]"
+                    ).value
+                )
+
+        };
+
+
+        const errors =
+            [];
+
+
+        let firstInvalid =
+            null;
+
+
+/* =========================================================
+   1. PERIOADA PENDULULUI GRAVITAȚIONAL
+========================================================= */
+
+        const gravPeriodCheck =
+            validateNumericResult({
+
+                key:
+                    "gravPeriod",
+
+                label:
+                    "perioada Tg",
+
+                candidates:[
+                    expected.gravPeriod_s
+                ],
+
+                /*
+                   Acceptăm fără probleme rotunjirea
+                   normală la 3 zecimale.
+                */
+
+                tolerance:
+                    .0051,
+
+                decimals:
+                    3,
+
+                genericHint:
+                    `Reverifică formula T = t/N. Folosește timpul total măsurat și numărul de oscilații din tabel.`,
+
+                specialHint:
+                    value => {
+
+                        if(
+                            Math.abs(
+                                value -
+                                state.gravTimer
+                                    .measuredTime_s
+                            ) <=
+                            .03
+                        ){
+
+                            return "Ai introdus probabil timpul total măsurat. Perioada unei oscilații se obține împărțind timpul total la numărul de oscilații.";
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        if(
+            !gravPeriodCheck.ok
+        ){
+
+            errors.push(
+                gravPeriodCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                gravPeriodCheck.element;
+
+        }
+
+
+/* =========================================================
+   2. ACCELERAȚIA GRAVITAȚIONALĂ
+========================================================= */
+
+        const lengthM =
+            state.readings
+                .gravLength
+                .studentReading /
+            100;
+
+
+        const gravityCandidates = [
+            expected.gravity_m_s2
+        ];
+
+
+        /*
+           Dacă Tg a fost calculată corect și apoi rotunjită
+           de elev, acceptăm și rezultatul obținut folosind
+           acea valoare rotunjită.
+        */
+
+        if(
+            gravPeriodCheck.ok &&
+            Number.isFinite(
+                answers.gravPeriod
+            ) &&
+            answers.gravPeriod >
+                0
+        ){
+
+            gravityCandidates.push(
+
+                (
+                    4 *
+                    Math.PI ** 2 *
+                    lengthM
+                ) /
+                (
+                    answers.gravPeriod **
+                    2
+                )
+
+            );
+
+        }
+
+
+        const gravityCheck =
+            validateNumericResult({
+
+                key:
+                    "gravity",
+
+                label:
+                    "accelerația gravitațională g",
+
+                candidates:
+                    gravityCandidates,
+
+                tolerance:
+                    .08,
+
+                decimals:
+                    2,
+
+                genericHint:
+                    "Reverifică relația g = 4π²l/Tg². Lungimea trebuie introdusă în metri și perioada în secunde.",
+
+                specialHint:
+                    (
+                        value,
+                        exact
+                    ) => {
+
+                        if(
+                            isNearScaledValue(
+                                value,
+                                exact,
+                                100
+                            )
+                        ){
+
+                            return "Verifică transformarea lungimii: valoarea măsurată este în centimetri, dar în formula pentru g trebuie folosită în metri.";
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        if(
+            !gravityCheck.ok
+        ){
+
+            errors.push(
+                gravityCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                gravityCheck.element;
+
+        }
+
+
+/* =========================================================
+   3. ABATEREA RELATIVĂ A LUI g
+========================================================= */
+
+        const gravityErrorCandidates = [
+            expected.gravityError_percent
+        ];
+
+
+        /*
+           Acceptăm abaterea calculată din valoarea lui g
+           corect rotunjită de elev.
+        */
+
+        if(
+            gravityCheck.ok &&
+            Number.isFinite(
+                answers.gravity
+            )
+        ){
+
+            gravityErrorCandidates.push(
+
+                Math.abs(
+                    answers.gravity -
+                    9.81
+                ) /
+                9.81 *
+                100
+
+            );
+
+        }
+
+
+        const gravityErrorCheck =
+            validateNumericResult({
+
+                key:
+                    "gravityError",
+
+                label:
+                    "abaterea relativă εg",
+
+                candidates:
+                    gravityErrorCandidates,
+
+                tolerance:
+                    .20,
+
+                decimals:
+                    2,
+
+                genericHint:
+                    "Reverifică formula εg = |g − 9,81| / 9,81 · 100%. Nu uita valoarea absolută și înmulțirea cu 100 pentru exprimarea în procente."
+
+            });
+
+
+        if(
+            !gravityErrorCheck.ok
+        ){
+
+            errors.push(
+                gravityErrorCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                gravityErrorCheck.element;
+
+        }
+
+
+/* =========================================================
+   4. CONSTANTA ELASTICĂ – METODA STATICĂ
+========================================================= */
+
+        const kStaticCheck =
+            validateNumericResult({
+
+                key:
+                    "kStatic",
+
+                label:
+                    "k static",
+
+                candidates:[
+                    expected.kStatic_N_m
+                ],
+
+                tolerance:
+                    .12,
+
+                decimals:
+                    2,
+
+                genericHint:
+                    "Reverifică relația k = F/Δl. Forța rămâne în newtoni, dar alungirea trebuie transformată din centimetri în metri.",
+
+                specialHint:
+                    (
+                        value,
+                        exact
+                    ) => {
+
+                        if(
+                            isNearScaledValue(
+                                value,
+                                exact,
+                                .01
+                            )
+                        ){
+
+                            return "Valoarea sugerează că ai folosit alungirea direct în centimetri. Transformă Δl din cm în m înainte de împărțire.";
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        if(
+            !kStaticCheck.ok
+        ){
+
+            errors.push(
+                kStaticCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                kStaticCheck.element;
+
+        }
+
+
+/* =========================================================
+   5. PERIOADA PENDULULUI ELASTIC
+========================================================= */
+
+        const elasticPeriodCheck =
+            validateNumericResult({
+
+                key:
+                    "elasticPeriod",
+
+                label:
+                    "perioada Te",
+
+                candidates:[
+                    expected.elasticPeriod_s
+                ],
+
+                tolerance:
+                    .0051,
+
+                decimals:
+                    3,
+
+                genericHint:
+                    "Reverifică formula Te = t/N. Timpul cronometrat este timpul pentru mai multe oscilații, nu perioada unei singure oscilații.",
+
+                specialHint:
+                    value => {
+
+                        if(
+                            Math.abs(
+                                value -
+                                state.elasticTimer
+                                    .measuredTime_s
+                            ) <=
+                            .03
+                        ){
+
+                            return "Ai introdus probabil timpul total cronometrat. Împarte timpul la numărul de oscilații.";
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        if(
+            !elasticPeriodCheck.ok
+        ){
+
+            errors.push(
+                elasticPeriodCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                elasticPeriodCheck.element;
+
+        }
+
+
+/* =========================================================
+   6. CONSTANTA ELASTICĂ – METODA DINAMICĂ
+========================================================= */
+
+        const massKg =
+            state.set
+                .elastic
+                .mass_g /
+            1000;
+
+
+        const kDynamicCandidates = [
+            expected.kDynamic_N_m
+        ];
+
+
+        if(
+            elasticPeriodCheck.ok &&
+            Number.isFinite(
+                answers.elasticPeriod
+            ) &&
+            answers.elasticPeriod >
+                0
+        ){
+
+            kDynamicCandidates.push(
+
+                (
+                    4 *
+                    Math.PI ** 2 *
+                    massKg
+                ) /
+                (
+                    answers.elasticPeriod **
+                    2
+                )
+
+            );
+
+        }
+
+
+        const kDynamicCheck =
+            validateNumericResult({
+
+                key:
+                    "kDynamic",
+
+                label:
+                    "k dinamic",
+
+                candidates:
+                    kDynamicCandidates,
+
+                tolerance:
+                    .12,
+
+                decimals:
+                    2,
+
+                genericHint:
+                    "Reverifică relația k = 4π²m/Te². Masa trebuie transformată din grame în kilograme.",
+
+                specialHint:
+                    (
+                        value,
+                        exact
+                    ) => {
+
+                        if(
+                            isNearScaledValue(
+                                value,
+                                exact,
+                                1000
+                            )
+                        ){
+
+                            return "Valoarea sugerează că masa a fost folosită în grame. În formulă trebuie introdusă masa în kilograme.";
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        if(
+            !kDynamicCheck.ok
+        ){
+
+            errors.push(
+                kDynamicCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                kDynamicCheck.element;
+
+        }
+
+
+/* =========================================================
+   7. DIFERENȚA RELATIVĂ DINTRE CELE DOUĂ VALORI k
+========================================================= */
+
+        const kDifferenceCandidates = [
+            expected.kDifference_percent
+        ];
+
+
+        /*
+           Dacă ambele valori k introduse de elev sunt acceptate,
+           acceptăm și diferența relativă calculată din valorile
+           lui rotunjite.
+        */
+
+        if(
+            kStaticCheck.ok &&
+            kDynamicCheck.ok &&
+            Number.isFinite(
+                answers.kStatic
+            ) &&
+            Number.isFinite(
+                answers.kDynamic
+            ) &&
+            (
+                answers.kStatic +
+                answers.kDynamic
+            ) !==
+                0
+        ){
+
+            kDifferenceCandidates.push(
+
+                Math.abs(
+                    answers.kDynamic -
+                    answers.kStatic
+                ) /
+                (
+                    (
+                        answers.kDynamic +
+                        answers.kStatic
+                    ) /
+                    2
+                ) *
+                100
+
+            );
+
+        }
+
+
+        const kDifferenceCheck =
+            validateNumericResult({
+
+                key:
+                    "kDifference",
+
+                label:
+                    "diferența relativă dintre k",
+
+                candidates:
+                    kDifferenceCandidates,
+
+                tolerance:
+                    .25,
+
+                decimals:
+                    2,
+
+                genericHint:
+                    "Reverifică formula diferenței relative. La numitor trebuie folosită media aritmetică (kdinamic + kstatic)/2, iar rezultatul se înmulțește cu 100%."
+
+            });
+
+
+        if(
+            !kDifferenceCheck.ok
+        ){
+
+            errors.push(
+                kDifferenceCheck.label
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                kDifferenceCheck.element;
+
+        }
+
+
+/* =========================================================
+   INTERPRETĂRI
+========================================================= */
+
+        const gravInterpretation =
+            qs(
+                "[data-grav-interpretation]"
+            ).value.trim();
+
+
+        const gravInterpretationOk =
+            gravInterpretation.length >=
+            30;
+
+
+        markCalculationField(
+            "gravInterpretation",
+            gravInterpretationOk
+                ? "ok"
+                : "bad",
+            gravInterpretationOk
+                ? "Interpretarea este completată."
+                : "Dezvoltă interpretarea. Compară rezultatul cu valoarea de referință și precizează cel puțin o posibilă sursă a diferenței."
+        );
+
+
+        if(
+            !gravInterpretationOk
+        ){
+
+            errors.push(
+                "interpretarea pentru pendulul gravitațional"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                qs(
+                    "[data-grav-interpretation]"
+                );
+
+        }
+
+
+        const elasticInterpretation =
+            qs(
+                "[data-elastic-interpretation]"
+            ).value.trim();
+
+
+        const elasticInterpretationOk =
+            elasticInterpretation.length >=
+            30;
+
+
+        markCalculationField(
+            "elasticInterpretation",
+            elasticInterpretationOk
+                ? "ok"
+                : "bad",
+            elasticInterpretationOk
+                ? "Interpretarea este completată."
+                : "Dezvoltă explicația. Precizează de ce metoda statică și cea dinamică pot conduce la valori ușor diferite."
+        );
+
+
+        if(
+            !elasticInterpretationOk
+        ){
+
+            errors.push(
+                "interpretarea pentru pendulul elastic"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                qs(
+                    "[data-elastic-interpretation]"
+                );
+
+        }
+
+
+/* =========================================================
+   CONFIRMAREA CAIETULUI
+========================================================= */
+
+        const notebookChecked =
+            qs(
+                "[data-calculation-notebook]"
+            ).checked;
+
+
+        markCalculationField(
+            "notebook",
+            notebookChecked
+                ? "ok"
+                : "bad",
+            notebookChecked
+                ? "Confirmare înregistrată."
+                : "Bifează confirmarea după ce ai trecut formulele, transformările și calculele în caiet."
+        );
+
+
+        if(
+            !notebookChecked
+        ){
+
+            errors.push(
+                "confirmarea calculelor în caiet"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                qs(
+                    "[data-calculation-notebook]"
+                );
+
+        }
+
+
+/* =========================================================
+   REZUMATUL ERORILOR
+========================================================= */
+
+        if(
+            errors.length
+        ){
+
+            feedback(
+                "calculation",
+                `Mai ai de corectat ${errors.length} ${
+                    errors.length ===
+                        1
+                        ? "element"
+                        : "elemente"
+                }: ${errors.join("; ")}. Câmpurile sunt marcate cu roșu. Rezultatele corecte sunt marcate cu verde.`,
+                "bad"
+            );
+
+
+            qs(
+                "[data-next-evaluation]"
+            ).disabled =
+                true;
+
+
+            if(firstInvalid){
+
+                firstInvalid.scrollIntoView({
+                    behavior:"smooth",
+                    block:"center"
+                });
+
+
+                globalThis.setTimeout(
+                    () => {
+
+                        firstInvalid.focus({
+                            preventScroll:true
+                        });
+
+                    },
+                    450
+                );
+
+            }
+
+
+            return;
+
+        }
+
+
+/* =========================================================
+   TOATE CALCULELE SUNT CORECTE
+========================================================= */
+
+        state.notebook = {
+
+            dataSetId:
+                state.set.id,
+
+            measurements:[
+
+                {
+                    instrument:
+                        "ruleta",
+
+                    quantity:
+                        "lungime pendul gravitațional",
+
+                    resolution_cm:
+                        .5,
+
+                    studentReading_cm:
+                        state.readings
+                            .gravLength
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .gravLength
+                            .attempts
+                },
+
+                {
+                    instrument:
+                        "cronometru",
+
+                    quantity:
+                        "timp pendul gravitațional",
+
+                    oscillations:
+                        state.set
+                            .grav
+                            .oscillations,
+
+                    resolution_s:
+                        .01,
+
+                    studentReading_s:
+                        state.gravTimer
+                            .measuredTime_s
+                },
+
+                {
+                    instrument:
+                        "dinamometru",
+
+                    quantity:
+                        "forță",
+
+                    resolution_N:
+                        .05,
+
+                    studentReading_N:
+                        state.readings
+                            .force
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .force
+                            .attempts
+                },
+
+                {
+                    instrument:
+                        "rigla",
+
+                    quantity:
+                        "alungire resort",
+
+                    resolution_cm:
+                        .2,
+
+                    studentReading_cm:
+                        state.readings
+                            .extension
+                            .studentReading,
+
+                    attempts:
+                        state.readings
+                            .extension
+                            .attempts
+                },
+
+                {
+                    instrument:
+                        "cronometru",
+
+                    quantity:
+                        "timp pendul elastic",
+
+                    oscillations:
+                        state.set
+                            .elastic
+                            .oscillations,
+
+                    resolution_s:
+                        .01,
+
+                    studentReading_s:
+                        state.elasticTimer
+                            .measuredTime_s
+                }
+
+            ],
+
+            calculations:{
+
+                gravPeriod_s:
+                    round(
+                        expected.gravPeriod_s,
+                        3
+                    ),
+
+                gravity_m_s2:
+                    round(
+                        expected.gravity_m_s2,
+                        3
+                    ),
+
+                gravityReference_m_s2:
+                    9.81,
+
+                gravityError_percent:
+                    round(
+                        expected.gravityError_percent,
+                        2
+                    ),
+
+                elasticPeriod_s:
+                    round(
+                        expected.elasticPeriod_s,
+                        3
+                    ),
+
+                kStatic_N_m:
+                    round(
+                        expected.kStatic_N_m,
+                        3
+                    ),
+
+                kDynamic_N_m:
+                    round(
+                        expected.kDynamic_N_m,
+                        3
+                    ),
+
+                kDifference_percent:
+                    round(
+                        expected.kDifference_percent,
+                        2
+                    )
+
+            },
+
+            comparison:{
+
+                gravityReference_m_s2:
+                    9.81,
+
+                gravityMeasured_m_s2:
+                    round(
+                        expected.gravity_m_s2,
+                        3
+                    ),
+
+                gravityError_percent:
+                    round(
+                        expected.gravityError_percent,
+                        2
+                    ),
+
+                kStatic_N_m:
+                    round(
+                        expected.kStatic_N_m,
+                        3
+                    ),
+
+                kDynamic_N_m:
+                    round(
+                        expected.kDynamic_N_m,
+                        3
+                    ),
+
+                kDifference_percent:
+                    round(
+                        expected.kDifference_percent,
+                        2
+                    ),
+
+                gravInterpretation,
+
+                elasticInterpretation
+
+            },
+
+            completed:
+                true,
+
+            completedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_NOTEBOOK_STATE =
+            copy(
+                state.notebook
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:notebook-complete",
+                {
+                    detail:
+                        copy(
+                            state.notebook
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "calculation",
+            "Toate calculele sunt corecte. Interpretările și confirmarea din caiet sunt complete. Poți continua la concluzii.",
+            "ok"
+        );
+
+
+        qs(
+            "[data-next-evaluation]"
+        ).disabled =
+            false;
+
+
+        state.completed.add(
+            6
+        );
+
+    }
+);
 </style>
 
 
