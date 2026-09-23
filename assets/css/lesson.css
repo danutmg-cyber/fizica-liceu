@@ -552,16 +552,45 @@ mjx-container {
   max-width: 100%;
 }
 
-mjx-container[display="true"] {
-  overflow-x: auto;
 
+/*
+ * Formulele INLINE trebuie să rămână în același rând cu textul.
+ *
+ * Important:
+ * main.css conține svg { display: block; }.
+ * MathJax SVG generează formulele sub formă de <svg>,
+ * deci anulăm regula globală numai pentru formulele inline.
+ */
+mjx-container[jax="SVG"]:not([display="true"]) {
+  display: inline-block !important;
+  max-width: none;
+  vertical-align: middle;
+}
+
+mjx-container[jax="SVG"]:not([display="true"]) > svg {
+  display: inline !important;
+  max-width: none;
+}
+
+
+/*
+ * Formulele DISPLAY rămân pe rând separat.
+ */
+mjx-container[display="true"] {
+  display: block !important;
+
+  overflow-x: auto;
   overflow-y: hidden;
 
-  padding:
-    5px 0;
+  padding: 5px 0;
 
-  -webkit-overflow-scrolling:
-    touch;
+  -webkit-overflow-scrolling: touch;
+}
+
+mjx-container[jax="SVG"][display="true"] > svg {
+  display: block !important;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 
