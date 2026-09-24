@@ -1,80 +1,9831 @@
 <!doctype html>
 <html lang="ro">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Laborator virtual: determinarea căldurii specifice a unui corp solid.">
-  <title>Determinarea căldurii specifice a unui corp</title>
-  <link rel="stylesheet" href="../assets/css/laborator-core.css">
-  <link rel="stylesheet" href="../assets/css/laborator-2d.css">
-  <link rel="stylesheet" href="../assets/css/instrumente-scala.css">
-  <link rel="stylesheet" href="../assets/css/print.css" media="print">
-  <style>
-    .shell{max-width:1100px;margin:auto;padding:1rem}.hero{padding:1.4rem;border-radius:18px;color:#fff;background:linear-gradient(135deg,#143d59,#126e82)}
-    .hero h1{margin:.25rem 0;font-size:clamp(1.5rem,4vw,2.4rem)}.meta,.actions{display:flex;flex-wrap:wrap;gap:.7rem}.meta span{padding:.35rem .7rem;border:1px solid #ffffff66;border-radius:999px;background:#ffffff18}
-    .progress{height:12px;margin:1rem 0;overflow:hidden;border-radius:99px;background:#dbe8ef}.progress>div{height:100%;width:12.5%;background:#16825d;transition:.25s}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin:1rem 0}
-    .tab{min-height:44px;border:1px solid #aac0ce;border-radius:9px;background:#fff;font-weight:700}.tab.active{color:#fff;background:#126e82}.tab.done{border-color:#16825d;background:#eaf8f1}
-    .panel{padding:clamp(1rem,3vw,1.6rem);border:1px solid #bfd0da;border-radius:16px;background:#fff;box-shadow:0 8px 26px #17324d12}.panel[hidden]{display:none}.grid,.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-    .field{display:grid;gap:.35rem}.field input,.field textarea{box-sizing:border-box;width:100%;padding:.7rem;border:2px solid #829aaa;border-radius:8px;font:inherit}.choice{display:flex;gap:.6rem;padding:.75rem;border:1px solid #bfd0da;border-radius:10px;background:#f7fbfd}.choice input{width:1.2rem;height:1.2rem}
-    .equipment{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}.actions{justify-content:space-between;margin-top:1.2rem}.btn{min-height:44px;padding:.7rem 1rem;border:0;border-radius:9px;color:#fff;background:#126e82;font:inherit;font-weight:750}.btn.secondary{color:#17324d;background:#e6eff4}.btn.success{background:#16794b}.btn:disabled{opacity:.5}
-    .feedback{min-height:1.4rem;margin:.8rem 0;padding:.7rem;border-radius:7px}.feedback:empty{padding:0}.ok{color:#0c5534;background:#eaf8f1;border-left:4px solid #16794b}.bad{color:#7e1710;background:#fff0ee;border-left:4px solid #b42318}.formula{padding:1rem;border-left:4px solid #126e82;background:#edf7fb;font-size:1.08rem}
-    .monitor{position:sticky;top:.4rem;z-index:5;display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin:1rem 0;padding:.7rem;border:1px solid #e4a11b;border-radius:10px;background:#fff8df}.monitor strong{color:#8a3c00}.card{padding:.8rem;border:1px solid #b8c9d7;border-radius:10px;background:#f8fbfd}.card span{display:block;color:#526b80}.simulation{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:end;padding:1rem;border-radius:14px;background:#edf7fb;text-align:center}.vessel{position:relative;width:120px;height:155px;margin:auto;border:5px solid #7898aa;border-top:0;border-radius:0 0 18px 18px}.water{position:absolute;inset:auto 0 0;height:55%;background:#3ca8e899}.solid{width:62px;height:62px;margin:25px auto;background:#b87333;border:3px solid #7a421b;transition:transform 1s}.phase{text-align:center;font-weight:750}
-    @media(max-width:760px){.tabs{grid-template-columns:repeat(2,1fr)}.grid,.results,.equipment,.simulation{grid-template-columns:1fr}.actions .btn{flex:1}}
-  </style>
-  <script>
-    window.LAB_EXPERIMENT_CONFIG={id:"experimentul-2-caldura-specifica-corp",title:"Determinarea căldurii specifice a unui corp",classLevel:"10",domain:"Termodinamică",risks:["corp-fierbinte","lichide-calde","sticlarie"],modules:{monitoring:true}};
-  </script>
-  <script src="../assets/js/instrumente-scala.js?v=14" defer></script>
-  <script src="../assets/js/monitorizare.js?v=14" defer></script>
-  <script src="../assets/js/google-sheets.js?v=14" defer></script>
-</head>
-<body>
-<main class="shell">
-  <header class="hero"><p>Laborator virtual de fizică • Clasa a X-a • Termodinamică</p><h1>Determinarea căldurii specifice a unui corp</h1><p>Metoda calorimetrică</p><div class="meta"><span data-student>Elev neidentificat</span><span data-class>Clasa —</span><span data-date>Data —</span></div></header>
-  <aside class="monitor" aria-live="polite"><strong>Monitorizarea atenției este activă</strong><span>Schimbări de ecran: <b data-monitoring-count="tabSwitches">0</b></span><span>Timp în afara laboratorului: <b data-monitoring-count="screenAwaySeconds">0</b> s (<b data-away-readable>0 s</b>)</span><span>Rămâi în pagina experimentului și lucrează concentrat.</span></aside>
-  <p data-progress-text>Etapa 1 din 8</p><div class="progress"><div data-progress></div></div><nav class="tabs" data-tabs></nav>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <section class="panel" data-panel="0"><h2>1. Identificarea elevului</h2><p>Data și ora se înregistrează automat.</p><form data-identification><div class="grid"><label class="field">Numele și prenumele<input name="name" minlength="3" maxlength="80" required></label><label class="field">Clasa<input name="class" list="classes" placeholder="X A" required></label></div><datalist id="classes"><option value="X A"><option value="X B"><option value="X C"><option value="X D"></datalist><label class="field">Data și ora<input data-session-date readonly></label><label class="choice"><input type="checkbox" name="monitor" required><span>Am înțeles că se înregistrează numărul schimbărilor de ecran și durata totală a absenței. Nu se înregistrează conținutul altor aplicații.</span></label><label class="choice"><input type="checkbox" name="identity" required><span>Confirm că datele sunt ale mele și voi realiza individual experimentul.</span></label><p class="feedback" data-feedback="id"></p><button class="btn">Începe laboratorul</button></form></section>
+<meta
+    name="description"
+    content="Laborator virtual de fizică pentru clasa a X-a: determinarea căldurii specifice a unui corp prin metoda calorimetrică."
+>
 
-  <section class="panel" data-panel="1" hidden><h2>2. Securitatea în laborator</h2><div class="feedback bad"><strong>Atenție:</strong> corpul încălzit și apa fierbinte pot produce arsuri. Folosește cleștele și urmează indicațiile profesorului.</div><ul><li>Poartă halat și ochelari de protecție.</li><li>Nu atinge corpul încălzit cu mâna.</li><li>Nu folosi recipiente fisurate.</li><li>Șterge imediat apa vărsată și anunță profesorul.</li></ul><label class="choice"><input type="radio" name="safety" value="tongs">Corpul fierbinte se transferă cu cleștele.</label><label class="choice"><input type="radio" name="safety" value="hand">Corpul fierbinte se transferă cu mâna.</label><label class="choice"><input type="checkbox" data-safety-check>Am citit regulile și mă angajez să le respect.</label><p class="feedback" data-feedback="safety"></p><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn" data-safety>Accept instructajul</button></div></section>
+<title>Determinarea căldurii specifice a unui corp</title>
 
-  <section class="panel" data-panel="2" hidden><h2>3. Selectarea echipamentelor</h2><p>Selectează numai materialele necesare.</p><div class="equipment" data-equipment></div><p class="feedback" data-feedback="equipment"></p><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn" data-check-equipment>Verifică trusa</button></div></section>
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/instrumente-scala.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
 
-  <section class="panel" data-panel="3" hidden><h2>4. Datele inițiale</h2><p><strong>Set experimental repartizat:</strong> <span data-set>se generează</span></p><p>Scrie în caiet titlul, scopul, tabelul de date și relația calorimetrică.</p><div class="formula">m<sub>c</sub>c<sub>c</sub>(T<sub>c</sub>−T<sub>e</sub>) = m<sub>a</sub>c<sub>a</sub>(T<sub>e</sub>−T<sub>a</sub>)<br>c<sub>c</sub> = m<sub>a</sub>c<sub>a</sub>(T<sub>e</sub>−T<sub>a</sub>) / [m<sub>c</sub>(T<sub>c</sub>−T<sub>e</sub>)]</div><div class="grid" data-initial></div><label class="choice"><input type="checkbox" data-noted>Am notat în caiet datele inițiale și unitățile de măsură.</label><p class="feedback" data-feedback="initial"></p><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn" data-check-initial>Verifică datele</button></div></section>
+<style>
 
-  <section class="panel" data-panel="4" hidden><h2>5. Realizarea experimentului</h2><ol><li>Se cântărește corpul și apa.</li><li>Corpul se încălzește până la temperatura T<sub>c</sub>.</li><li>Se transferă rapid în calorimetrul cu apă.</li><li>Se agită ușor și se așteaptă echilibrul termic.</li></ol><div class="simulation"><div><div class="solid" data-solid></div><p>Corp încălzit</p></div><div><div class="vessel"><div class="water"></div></div><p>Apă în calorimetru</p></div><div><div class="vessel"><div class="water"></div></div><p>Corp + apă</p></div></div><p class="phase" data-phase>Pregătit pentru experiment</p><p class="feedback" data-feedback="experiment"></p><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn" data-run>Realizează experimentul</button><button class="btn success" data-next-reading disabled>Continuă la citire</button></div></section>
+*{
+    box-sizing:border-box;
+}
 
-  <section class="panel" data-panel="5" hidden><h2>6. Citirea temperaturii pe scală</h2><p>Citește singur nivelul coloanei termometrice și notează valoarea în caiet.</p><div data-instrument-slot><p>Instrumentul se încarcă…</p></div><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn success" data-next-calculation disabled>Continuă la calcule</button></div></section>
+:root{
+    --primary:#126e82;
+    --success:#16794b;
+    --warning:#b96200;
+    --danger:#b42318;
+    --border:#bfd0da;
+    --text:#17324d;
+    --muted:#586d7c;
+}
 
-  <section class="panel" data-panel="6" hidden><h2>7. Calculul și compararea</h2><label class="field">Transcrie calculul din caiet<textarea data-steps rows="4" placeholder="c = ... J/(kg·K)"></textarea></label><div class="grid"><label class="field">Căldura specifică determinată [J/(kg·K)]<input data-answer inputmode="decimal"></label><label class="field">Eroarea relativă față de valoarea de referință (%)<input data-error inputmode="decimal"></label></div><label class="field">Compară rezultatul și precizează surse de eroare<textarea data-interpretation rows="3"></textarea></label><label class="choice"><input type="checkbox" data-calculation-noted>Am notat în caiet calculul, comparația și concluzia.</label><p class="feedback" data-feedback="calculation"></p><div class="actions"><button class="btn secondary" data-prev>Înapoi</button><button class="btn" data-check-calculation>Verifică rezultatele</button><button class="btn success" data-next-evaluation disabled>Continuă la evaluare</button></div></section>
+body{
+    margin:0;
+    color:var(--text);
+    background:#eef5f7;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
 
-  <section class="panel" data-panel="7" hidden><h2>8. Evaluarea și raportul final</h2><form data-evaluation><fieldset><legend>1. Unitatea SI pentru căldura specifică este:</legend><label class="choice"><input type="radio" name="q1" value="correct">J/(kg·K)</label><label class="choice"><input type="radio" name="q1" value="wrong">J·kg/K</label></fieldset><fieldset><legend>2. Corpul fierbinte:</legend><label class="choice"><input type="radio" name="q2" value="correct">cedează căldură apei</label><label class="choice"><input type="radio" name="q2" value="wrong">primește căldură de la apă</label></fieldset><fieldset><legend>3. Pierderile de căldură pot:</legend><label class="choice"><input type="radio" name="q3" value="correct">produce diferențe față de valoarea tabelară</label><label class="choice"><input type="radio" name="q3" value="wrong">fi întotdeauna nule</label></fieldset><label class="field">Concluzia experimentului<textarea data-conclusion rows="3"></textarea></label><label class="choice"><input type="checkbox" data-individual>Confirm că am realizat individual citirile și calculele.</label><button class="btn">Finalizează evaluarea</button></form><div data-final hidden><h3>Raport pregătit</h3><div class="results" data-results></div><p class="monitor"><strong>Raport de atenție:</strong> <span data-final-monitor></span></p><p class="feedback" data-submission-status></p><div class="actions"><button class="btn secondary" type="button" onclick="print()">Tipărește</button><button class="btn success" type="button" data-submit>Trimite în Google Sheets</button></div></div></section>
-</main>
+.experiment-shell{
+    width:min(1180px,100%);
+    margin:auto;
+    padding:1rem;
+}
+
+/* =========================================================
+   ANTET
+========================================================= */
+
+.experiment-header{
+    padding:1.4rem;
+    border-radius:18px;
+    color:#fff;
+    background:
+        linear-gradient(
+            135deg,
+            #143d59,
+            #126e82
+        );
+}
+
+.experiment-header h1{
+    margin:.25rem 0;
+    font-size:clamp(1.45rem,4vw,2.35rem);
+}
+
+.experiment-header p{
+    margin:.35rem 0;
+}
+
+.experiment-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.experiment-meta span{
+    padding:.35rem .7rem;
+    border:1px solid #ffffff66;
+    border-radius:999px;
+    background:#ffffff18;
+}
+
+/* =========================================================
+   PROGRES
+========================================================= */
+
+.progress-wrap{
+    margin:1rem 0;
+}
+
+.progress-track{
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dbe8ef;
+}
+
+.progress-fill{
+    width:12.5%;
+    height:100%;
+    background:var(--success);
+    transition:width .25s;
+}
+
+.step-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.45rem;
+    margin:1rem 0;
+}
+
+.step-tab{
+    min-height:44px;
+    padding:.5rem;
+    border:1px solid #aac0ce;
+    border-radius:9px;
+    color:var(--text);
+    background:#fff;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.step-tab.is-active{
+    color:#fff;
+    background:var(--primary);
+}
+
+.step-tab.is-done{
+    border-color:var(--success);
+    background:#eaf8f1;
+}
+
+/* =========================================================
+   PANOURI
+========================================================= */
+
+.experiment-panel{
+    padding:clamp(1rem,3vw,1.6rem);
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 26px #17324d12;
+}
+
+[hidden]{
+    display:none !important;
+}
+
+.field-grid,
+.result-grid,
+.instrument-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:1rem;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+    gap:.7rem;
+}
+
+.field{
+    display:grid;
+    gap:.35rem;
+}
+
+.field input,
+.field textarea{
+    width:100%;
+    padding:.72rem;
+    border:2px solid #829aaa;
+    border-radius:8px;
+    font:inherit;
+}
+
+.choice{
+    display:flex;
+    gap:.6rem;
+    align-items:flex-start;
+    padding:.75rem;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#f7fbfd;
+}
+
+.choice input{
+    width:1.2rem;
+    height:1.2rem;
+    flex:0 0 auto;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.7rem;
+    margin-top:1.2rem;
+}
+
+.btn{
+    min-height:44px;
+    padding:.7rem 1rem;
+    border:0;
+    border-radius:9px;
+    color:#fff;
+    background:var(--primary);
+    font:inherit;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.btn.secondary{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.btn.success{
+    background:var(--success);
+}
+
+.btn.warning{
+    background:var(--warning);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+.feedback{
+    min-height:1.5rem;
+    margin:.8rem 0;
+    padding:.7rem;
+    border-radius:7px;
+}
+
+.feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+    border-left:4px solid var(--success);
+}
+
+.feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+    border-left:4px solid var(--danger);
+}
+
+.feedback.warn{
+    color:#794300;
+    background:#fff6e5;
+    border-left:4px solid var(--warning);
+}
+
+.lab-warning{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:5px solid #c87900;
+    border-radius:8px;
+    background:#fff7e6;
+}
+
+.formula{
+    padding:1rem;
+    margin:1rem 0;
+    border-left:4px solid var(--primary);
+    background:#edf7fb;
+    font-size:1.08rem;
+    line-height:1.8;
+}
+
+.concept-card,
+.instrument-card,
+.calculation-block,
+.reference-card{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+/* =========================================================
+   PARAMETRI
+========================================================= */
+
+.parameter-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+    gap:.7rem;
+    margin:1rem 0;
+}
+
+.parameter{
+    padding:.8rem;
+    border:1px solid #bdd0da;
+    border-radius:10px;
+    background:#fff;
+    text-align:center;
+}
+
+.parameter span{
+    display:block;
+    color:var(--muted);
+    font-size:.88rem;
+}
+
+.parameter strong{
+    display:block;
+    margin-top:.25rem;
+}
+
+/* =========================================================
+   BALANȚĂ DIGITALĂ
+========================================================= */
+
+.balance{
+    max-width:390px;
+    margin:auto;
+    padding:1rem;
+    border:3px solid #718894;
+    border-radius:18px;
+    background:#dce5e9;
+    box-shadow:
+        inset 0 0 0 4px #c2d0d6;
+}
+
+.balance-pan{
+    width:72%;
+    height:38px;
+    margin:0 auto 1rem;
+    border-radius:50%;
+    background:
+        linear-gradient(
+            #eef3f5,
+            #a8b7bd
+        );
+    border:2px solid #85989f;
+}
+
+.balance-object{
+    width:75px;
+    height:58px;
+    margin:-65px auto 15px;
+    border-radius:8px 8px 13px 13px;
+    background:#b87333;
+    border:2px solid #7a421b;
+}
+
+.balance-water{
+    width:70px;
+    height:55px;
+    margin:-62px auto 12px;
+    border:4px solid #8ba8b5;
+    border-top:0;
+    background:
+        linear-gradient(
+            transparent 25%,
+            #4aa8dc99 25%
+        );
+}
+
+.balance-display{
+    padding:.65rem;
+    border:5px solid #566b73;
+    border-radius:8px;
+    color:#102c20;
+    background:#cde6c5;
+    text-align:right;
+    font:
+        800 1.7rem
+        ui-monospace,
+        Consolas,
+        monospace;
+}
+
+.balance-label{
+    margin:.8rem 0 .2rem;
+    text-align:center;
+    font-weight:700;
+}
+
+.instrument-answer{
+    display:grid;
+    gap:.55rem;
+    margin-top:.8rem;
+}
+
+.instrument-feedback{
+    min-height:1.3rem;
+}
+
+.instrument-feedback.is-success{
+    color:var(--success);
+}
+
+.instrument-feedback.is-error{
+    color:var(--danger);
+}
+
+.reading-success{
+    padding:.65rem;
+    border-radius:8px;
+    color:#0c5534;
+    background:#eaf8f1;
+}
+
+/* =========================================================
+   PROCEDURĂ
+========================================================= */
+
+.heating-stage{
+    display:grid;
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+    gap:1rem;
+    align-items:end;
+    min-height:300px;
+    padding:1rem;
+    border:1px solid #b7cfda;
+    border-radius:14px;
+    background:
+        linear-gradient(
+            #edf9ff,
+            #fff
+        );
+}
+
+.station{
+    text-align:center;
+}
+
+.vessel{
+    position:relative;
+    width:120px;
+    height:160px;
+    margin:auto;
+    overflow:hidden;
+    border:5px solid #7898aa;
+    border-top:0;
+    border-radius:0 0 18px 18px;
+}
+
+.water{
+    position:absolute;
+    right:0;
+    bottom:0;
+    left:0;
+    height:62%;
+    background:#55afe099;
+}
+
+.hot-water{
+    background:#e87b6299;
+}
+
+.solid{
+    width:65px;
+    height:65px;
+    margin:20px auto;
+    border:3px solid #6f4d35;
+    border-radius:8px;
+    transition:
+        transform .8s,
+        background .6s;
+}
+
+.calorimeter-body{
+    position:relative;
+    width:145px;
+    height:175px;
+    margin:auto;
+    overflow:hidden;
+    border:8px double #748893;
+    border-radius:12px;
+    background:#f5f9fa;
+}
+
+.calorimeter-water{
+    position:absolute;
+    right:7px;
+    bottom:7px;
+    left:7px;
+    height:55%;
+    background:#55afe088;
+}
+
+.phase{
+    margin:1rem 0;
+    text-align:center;
+    font-size:1.08rem;
+    font-weight:750;
+}
+
+.procedure-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:.7rem;
+    margin:1rem 0;
+}
+
+.procedure-btn{
+    color:var(--text);
+    background:#e6eff4;
+}
+
+.procedure-btn.is-done{
+    color:#fff;
+    background:var(--success);
+}
+
+/* =========================================================
+   TABELE
+========================================================= */
+
+.measurements-table,
+.rounding-table{
+    width:100%;
+    margin:1rem 0;
+    border-collapse:collapse;
+}
+
+.measurements-table th,
+.measurements-table td,
+.rounding-table th,
+.rounding-table td{
+    padding:.6rem;
+    border:1px solid #b8c9d7;
+}
+
+.measurements-table th,
+.rounding-table th{
+    background:#edf5f8;
+}
+
+.measurements-table td{
+    text-align:center;
+}
+
+/* =========================================================
+   CALCULE
+========================================================= */
+
+.calculation-guide{
+    padding:1rem;
+    margin:1rem 0 1.4rem;
+    border:2px solid #7fa9bd;
+    border-radius:12px;
+    background:#f0f8fb;
+}
+
+.rounding-note{
+    display:block;
+    margin:.25rem 0 .45rem;
+    color:#526b80;
+    font-size:.92rem;
+}
+
+.calc-check-btn{
+    justify-self:start;
+    margin-top:.35rem;
+}
+
+.calc-feedback{
+    min-height:1.35rem;
+    margin:.35rem 0 0;
+    padding:.45rem .6rem;
+    border-radius:7px;
+    font-size:.93rem;
+}
+
+.calc-feedback:empty{
+    min-height:0;
+    margin:0;
+    padding:0;
+}
+
+.calc-feedback.ok{
+    color:#0c5534;
+    background:#eaf8f1;
+}
+
+.calc-feedback.bad{
+    color:#7e1710;
+    background:#fff0ee;
+}
+
+.calc-feedback.info{
+    color:#31536a;
+    background:#edf6fa;
+}
+
+.calc-ok{
+    border-color:#16825d !important;
+    background:#f3fcf7 !important;
+}
+
+.calc-error{
+    border-color:#b42318 !important;
+    background:#fff7f6 !important;
+}
+
+.reference-card{
+    border:2px solid #8db8ca;
+    background:#eef8fb;
+}
+
+.calculation-progress{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid #a8c3cf;
+    border-radius:12px;
+    background:#f7fbfd;
+}
+
+/* =========================================================
+   RAPORT
+========================================================= */
+
+.result-card{
+    padding:.9rem;
+    border:1px solid #b8c9d7;
+    border-radius:10px;
+    background:#f8fbfd;
+}
+
+.result-card span{
+    display:block;
+    color:#526b80;
+}
+
+.result-card strong{
+    font-size:1.08rem;
+}
+
+.report-status{
+    margin:1rem 0;
+    padding:1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#f8fbfd;
+}
+
+.status-success{
+    color:var(--success);
+}
+
+.status-error{
+    color:var(--danger);
+}
+
+.status-local{
+    color:#805100;
+}
+
+.report-actions{
+    justify-content:flex-start;
+}
+
+@media(max-width:800px){
+
+    .parameter-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:760px){
+
+    .step-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .field-grid,
+    .result-grid,
+    .choice-grid,
+    .instrument-grid,
+    .parameter-grid,
+    .procedure-grid,
+    .heating-stage{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        flex:1 1 160px;
+    }
+
+    .report-actions{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-  const qs=(s,r=document)=>r.querySelector(s), qsa=(s,r=document)=>[...r.querySelectorAll(s)], number=v=>Number(String(v??"").replace(",",".")), now=()=>new Date().toISOString(), wait=ms=>new Promise(r=>setTimeout(r,ms));
-  const feedback=(n,m,ok=false)=>{const e=qs(`[data-feedback="${n}"]`);e.textContent=m;e.className=`feedback ${ok?"ok":"bad"}`};
-  const labels=["Identificare","Securitate","Echipamente","Date inițiale","Experiment","Citirea scalei","Calcule","Evaluare"], panels=qsa("[data-panel]"), state={step:0,completed:new Set(),set:null,session:null,safety:null,equipment:null,reading:null,notebook:null,evaluation:null,instrument:null,reportId:null};
-  const materials=[{name:"Aluminiu",c:900},{name:"Fier",c:450},{name:"Cupru",c:385},{name:"Alamă",c:380},{name:"Sticlă",c:840}];
-  const sets=Array.from({length:50},(_,i)=>{const material=materials[i%materials.length],mc=.08+(i%9)*.01,ma=.12+((i*3)%9)*.01,Tc=72+(i*7)%23,Ta=14+(i*5)%9;const ideal=(mc*material.c*Tc+ma*4180*Ta)/(mc*material.c+ma*4180),measured=Math.round((ideal+[ -.4,-.2,0,.2,.4][i%5])*2)/2;const experimental=ma*4180*(measured-Ta)/(mc*(Tc-measured));return{id:i+1,material,mc,ma,Tc,Ta,measured,experimental,error:Math.abs(experimental-material.c)/material.c*100}});
-  const randomSet=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return sets[a[0]%50]};
-  function show(i){state.step=i;panels.forEach((p,j)=>p.hidden=i!==j);qsa(".tab").forEach((b,j)=>{b.classList.toggle("active",i===j);b.classList.toggle("done",state.completed.has(j))});qs("[data-progress-text]").textContent=`Etapa ${i+1} din 8`;qs("[data-progress]").style.width=`${(i+1)*12.5}%`;scrollTo({top:0,behavior:"smooth"})}
-  labels.forEach((x,i)=>{const b=document.createElement("button");b.type="button";b.className="tab";b.textContent=`${i+1}. ${x}`;b.onclick=()=>{if(i<=state.step||state.completed.has(i-1))show(i)};qs("[data-tabs]").append(b)});qsa("[data-prev]").forEach(b=>b.onclick=()=>show(Math.max(0,state.step-1)));
-  const readable=s=>s<60?`${s} s`:`${Math.floor(s/60)} min ${s%60} s`;function updateMonitor(){const m=globalThis.LaboratorMonitorizare?.getState?.()||{};qs("[data-away-readable]").textContent=readable(m.screenAwaySeconds||0)}document.addEventListener("laborator:monitoring-update",updateMonitor);document.addEventListener("visibilitychange",()=>setTimeout(updateMonitor,100));setInterval(updateMonitor,1000);
-  qs("[data-session-date]").value=new Intl.DateTimeFormat("ro-RO",{dateStyle:"long",timeStyle:"medium"}).format(new Date());
-  qs("[data-identification]").onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),name=String(f.get("name")||"").trim(),cl=String(f.get("class")||"").trim().toUpperCase();if(name.length<3||!/^(X\s?[A-D]|10\s?[A-D])$/.test(cl)||!f.get("monitor")||!f.get("identity")){feedback("id","Completează corect toate câmpurile și confirmările.");return}state.set=randomSet();state.session={sessionId:`FIZ-${crypto.randomUUID()}`,studentName:name,studentClass:cl.replace(/^10/,"X").replace(/^(X)([A-D])$/,"$1 $2"),dataSetId:state.set.id,startedAt:now(),experimentDate:new Intl.DateTimeFormat("ro-RO",{dateStyle:"long"}).format(new Date()),identityConfirmed:true,monitoringAcknowledged:true};globalThis.LAB_SESSION=structuredClone(state.session);qs("[data-student]").textContent=name;qs("[data-class]").textContent=`Clasa ${state.session.studentClass}`;qs("[data-date]").textContent=state.session.experimentDate;qs("[data-set]").textContent=`Setul ${state.set.id}`;document.dispatchEvent(new CustomEvent("laborator:identification-complete",{detail:structuredClone(state.session)}));state.completed.add(0);show(1)};
-  qs("[data-safety]").onclick=()=>{if(qs('input[name="safety"]:checked')?.value!=="tongs"||!qs("[data-safety-check]").checked){feedback("safety","Alege răspunsul sigur și confirmă angajamentul.");return}state.safety={accepted:true,acceptedAt:now(),activeDomains:["general","termic","sticlarie"]};globalThis.LAB_SAFETY_STATE=structuredClone(state.safety);document.dispatchEvent(new CustomEvent("laborator:safety-complete",{detail:state.safety}));feedback("safety","Instructaj acceptat.",true);state.completed.add(1);show(2)};
-  const equipment=[["lab-coat","Halat"],["safety-glasses","Ochelari"],["protective-gloves","Mănuși termice"],["calorimeter","Calorimetru"],["thermometer","Termometru"],["balance","Balanță"],["tongs","Clește"],["solid-body","Corp solid"],["water","Apă"],["voltmeter","Voltmetru"],["lens","Lentilă"],["spring","Resort"]],required=new Set(equipment.slice(0,9).map(x=>x[0]));equipment.forEach(([id,name])=>{const l=document.createElement("label");l.className="choice";l.innerHTML=`<input type="checkbox" value="${id}"><span>${name}</span>`;qs("[data-equipment]").append(l)});
-  qs("[data-check-equipment]").onclick=()=>{const selected=new Set(qsa("[data-equipment] input:checked").map(x=>x.value));if([...required].some(x=>!selected.has(x))||[...selected].some(x=>!required.has(x))){feedback("equipment","Trusa nu este corectă. Selectează cele 9 elemente necesare și nimic în plus.");return}state.equipment={completed:true,selectedIds:[...selected],items:[...selected].map(id=>({id,name:equipment.find(x=>x[0]===id)[1]}))};document.dispatchEvent(new CustomEvent("laborator:equipment-complete",{detail:state.equipment}));renderInitial();feedback("equipment","Trusa este corectă.",true);state.completed.add(2);show(3)};
-  function renderInitial(){const a=[["m corp",state.set.mc*1000,"g","mc"],["T corp",state.set.Tc,"°C","Tc"],["m apă",state.set.ma*1000,"g","ma"],["T apă",state.set.Ta,"°C","Ta"]];qs("[data-initial]").innerHTML=a.map(([l,v,u,k])=>`<label class="field">${l}: <strong>${v} ${u}</strong><input data-key="${k}" inputmode="decimal" placeholder="Transcrie valoarea"></label>`).join("")}
-  qs("[data-check-initial]").onclick=()=>{const ok=qsa("[data-key]").every(x=>{const expected=["mc","ma"].includes(x.dataset.key)?state.set[x.dataset.key]*1000:state.set[x.dataset.key];return number(x.value)===expected});if(!ok||!qs("[data-noted]").checked){feedback("initial","Verifică toate valorile și confirmă notarea în caiet.");return}feedback("initial","Datele au fost transcrise corect.",true);state.completed.add(3);show(4)};
-  qs("[data-run]").onclick=async e=>{e.currentTarget.disabled=true;qs("[data-phase]").textContent="Corpul este încălzit…";await wait(900);qs("[data-solid]").style.transform="translate(240px,95px)";qs("[data-phase]").textContent="Corpul este transferat în calorimetru…";await wait(1100);qs("[data-phase]").textContent="S-a atins echilibrul termic. Citește termometrul.";feedback("experiment","Măsurarea este pregătită. Nu ți se oferă citirea numerică.",true);e.currentTarget.textContent="Repetă animația";e.currentTarget.disabled=false;qs("[data-next-reading]").disabled=false;state.completed.add(4)};
-  qs("[data-next-reading]").onclick=async()=>{show(5);if(state.instrument)return;const slot=qs("[data-instrument-slot]");try{const r=await fetch("../assets/componente/citire-instrument.html",{cache:"no-cache"});if(r.ok)slot.innerHTML=await r.text()}catch{}let component=qs("[data-scale-reading-component]",slot);if(!component){slot.innerHTML=`<section data-scale-reading-component><h3 data-scale-component-title></h3><div data-scale-render-target></div><label class="field">Temperatura citită<input data-scale-answer inputmode="decimal"></label><span data-scale-answer-unit>°C</span><label class="choice"><input type="checkbox" data-scale-notebook-checkbox>Am notat citirea în caiet.</label><button class="btn" data-action="verify-scale-reading">Verifică citirea</button><p data-scale-feedback></p><div data-scale-reading-result hidden><strong data-scale-result-student-reading></strong><span data-scale-result-resolution></span><span data-scale-result-attempts></span><span data-scale-result-instrument></span><p data-scale-reading-success hidden>Citire acceptată.</p></div></section>`;component=qs("[data-scale-reading-component]",slot)}qs("[data-scale-component-title]",component).textContent="Temperatura de echilibru";state.instrument=globalThis.LaboratorInstrumente.afiseaza({id:"termometru-caldura-specifica",target:qs("[data-scale-render-target]",component),type:"thermometer",label:"Termometru",instruction:"Citește capătul coloanei.",minimum:Math.floor(state.set.measured/5)*5-5,maximum:Math.floor(state.set.measured/5)*5+10,value:state.set.measured,minorDivision:.5,majorDivision:5,decimals:1,unit:"°C",tolerance:.26,answerInput:qs("[data-scale-answer]",component),feedbackTarget:qs("[data-scale-feedback]",component),verifyButton:qs('[data-action="verify-scale-reading"]',component),requireNotebookConfirmation:true,notebookConfirmation:qs("[data-scale-notebook-checkbox]",component)});component.addEventListener("laborator:instrument-reading",ev=>{if(!ev.detail.correct)return;state.reading=ev.detail;const result=qs("[data-scale-reading-result]",component);if(result)result.hidden=false;const set=(s,v)=>{const x=qs(s,component);if(x)x.textContent=v};set("[data-scale-result-instrument]","Termometru");set("[data-scale-result-student-reading]",`${ev.detail.studentReading} °C`);set("[data-scale-result-resolution]",`${ev.detail.resolution} °C`);set("[data-scale-result-attempts]",ev.detail.attempts);const success=qs("[data-scale-reading-success]",component);if(success)success.hidden=false;qs("[data-next-calculation]").disabled=false;state.completed.add(5)})};
-  qs("[data-next-calculation]").onclick=()=>show(6);qs("[data-check-calculation]").onclick=()=>{const c=number(qs("[data-answer]").value),er=number(qs("[data-error]").value),steps=qs("[data-steps]").value.trim(),interpretation=qs("[data-interpretation]").value.trim();if(steps.length<8||interpretation.length<20||!qs("[data-calculation-noted]").checked||Math.abs(c-state.set.experimental)>2||Math.abs(er-state.set.error)>.25){feedback("calculation","Reverifică formula, rezultatul și eroarea relativă. Folosește temperatura citită și rotunjește la două zecimale.");return}state.notebook={dataSetId:state.set.id,measurements:[{instrument:"termometru",material:state.set.material.name,massBody_g:state.set.mc*1000,temperatureBody_C:state.set.Tc,massWater_g:state.set.ma*1000,temperatureWater_C:state.set.Ta,equilibriumTemperature_C:state.reading.studentReading,resolution_C:.5,readingAttempts:state.reading.attempts}],calculations:{formula:"c=ma*ca*(Te-Ta)/(mc*(Tc-Te))",studentSteps:steps,specificHeat_J_kgK:Number(c.toFixed(2)),referenceValue_J_kgK:state.set.material.c},comparison:{relativeErrorPercent:Number(er.toFixed(2)),interpretation},completed:true,completedAt:now()};globalThis.LAB_NOTEBOOK_STATE=structuredClone(state.notebook);document.dispatchEvent(new CustomEvent("laborator:notebook-complete",{detail:state.notebook}));feedback("calculation","Calculul și comparația sunt corecte.",true);qs("[data-next-evaluation]").disabled=false;state.completed.add(6)};qs("[data-next-evaluation]").onclick=()=>show(7);
-  qs("[data-evaluation]").onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),score=["q1","q2","q3"].filter(q=>f.get(q)==="correct").length,conclusion=qs("[data-conclusion]").value.trim();if(!f.get("q1")||!f.get("q2")||!f.get("q3")||conclusion.length<25||!qs("[data-individual]").checked){alert("Completează toate răspunsurile, concluzia și confirmarea.");return}state.evaluation={score,maximumScore:3,percent:Number((score/3*100).toFixed(2)),passed:score>=2,correctAnswers:score,totalQuestions:3,conclusion,individualWorkConfirmed:true,finishedAt:now()};state.reportId=`RAP-${crypto.randomUUID()}`;document.dispatchEvent(new CustomEvent("laborator:evaluation-complete",{detail:state.evaluation}));const m=globalThis.LaboratorMonitorizare?.getState?.()||{};qs("[data-results]").innerHTML=`<div class="card"><span>Punctaj</span><strong>${score}/3</strong></div><div class="card"><span>Material</span><strong>${state.set.material.name}</strong></div><div class="card"><span>c determinat</span><strong>${state.notebook.calculations.specificHeat_J_kgK} J/(kg·K)</strong></div><div class="card"><span>Eroare relativă</span><strong>${state.notebook.comparison.relativeErrorPercent}%</strong></div>`;qs("[data-final-monitor]").textContent=`${m.tabSwitches||0} schimbări de ecran; ${readable(m.screenAwaySeconds||0)} în afara laboratorului; cea mai lungă absență ${readable(m.longestScreenAwaySeconds||0)}.`;qs("[data-final]").hidden=false;state.completed.add(7)};
-  qs("[data-submit]").onclick=async e=>{const b=e.currentTarget;b.disabled=true;qs("[data-submission-status]").textContent="Se transmite raportul…";try{const monitoring=globalThis.LaboratorMonitorizare?.getState?.()||{},payload=globalThis.LaboratorGoogleSheets.buildPayload({reportId:state.reportId,student:{name:state.session.studentName,className:state.session.studentClass,identityConfirmed:true},experiment:{...globalThis.LAB_EXPERIMENT_CONFIG,dataSetId:state.set.id},session:{sessionId:state.session.sessionId,startedAt:state.session.startedAt,finishedAt:state.evaluation.finishedAt,durationSeconds:Math.round((Date.parse(state.evaluation.finishedAt)-Date.parse(state.session.startedAt))/1000),dateDisplay:state.session.experimentDate},safety:state.safety,equipment:state.equipment,notebook:state.notebook,measurements:state.notebook.measurements,calculations:state.notebook.calculations,comparison:state.notebook.comparison,evaluation:state.evaluation,monitoring,report:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt}});await globalThis.LaboratorGoogleSheets.submit(payload);qs("[data-submission-status]").textContent="Raportul a fost expediat către Google Sheets. Profesorul poate verifica înregistrarea.";b.textContent="Raport expediat"}catch(err){qs("[data-submission-status]").textContent=`Eroare: ${err.message}`;b.disabled=false}};show(0);
-});
+
+window.LAB_EXPERIMENT_CONFIG={
+
+    id:
+        "clasa10-exp02-caldura-specifica-corp",
+
+    code:
+        "EXP02",
+
+    title:
+        "Determinarea căldurii specifice a unui corp",
+
+    classLevel:
+        "10",
+
+    domain:
+        "Termodinamică",
+
+    totalSteps:
+        8,
+
+    risks:[
+        "thermal",
+        "glass",
+        "fire"
+    ],
+
+    requiredEquipment:[
+        "lab-coat",
+        "safety-glasses",
+        "thermal-gloves",
+        "laboratory-balance",
+        "thermometer",
+        "calorimeter",
+        "heat-source",
+        "laboratory-tongs",
+        "beaker",
+        "glass-stirring-rod",
+        "water",
+        "slotted-masses"
+    ],
+
+    modules:{
+        monitoring:true
+    }
+
+};
+
 </script>
+
+
+<script
+    src="../assets/js/instrumente-scala.js"
+    defer
+></script>
+
+<script
+    src="../assets/js/monitorizare.js"
+    defer
+></script>
+
+<script
+    src="../assets/js/google-sheets.js"
+    defer
+></script>
+
+</head>
+
+
+<body>
+
+<main
+    class="experiment-shell"
+    data-experiment-app
+>
+
+
+<header class="experiment-header">
+
+<p>
+Laborator virtual de fizică •
+Clasa a X-a •
+Termodinamică
+</p>
+
+<h1>
+Determinarea căldurii specifice a unui corp
+</h1>
+
+<p>
+Metoda calorimetrică:
+schimbul de căldură dintre un corp metalic încălzit și apă.
+</p>
+
+
+<div class="experiment-meta">
+
+<span data-header-student>
+Elev neidentificat
+</span>
+
+<span data-header-class>
+Clasa —
+</span>
+
+<span data-header-catalog>
+Nr. catalog —
+</span>
+
+<span data-header-date>
+Data —
+</span>
+
+<span>
+Monitorizare:
+<b data-monitoring-status>
+oprită
+</b>
+</span>
+
+</div>
+
+</header>
+
+
+<div class="progress-wrap">
+
+<p data-progress-text>
+Etapa 1 din 8
+</p>
+
+<div class="progress-track">
+
+<div
+    class="progress-fill"
+    data-progress-fill
+></div>
+
+</div>
+
+</div>
+
+
+<nav
+    class="step-tabs"
+    data-step-tabs
+    aria-label="Etapele laboratorului"
+></nav>
+
+
+<!-- =========================================================
+     ETAPA 1
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="0"
+>
+
+<h2>
+1. Identificarea elevului
+</h2>
+
+<p>
+Clasa și numărul din catalog determină corpul experimental,
+masele și temperaturile utilizate.
+Setul este individual și reproductibil.
+</p>
+
+
+<form data-identification-form>
+
+
+<div class="field-grid">
+
+<label class="field">
+
+Numele și prenumele
+
+<input
+    name="studentName"
+    minlength="3"
+    maxlength="80"
+    autocomplete="name"
+    required
+>
+
+</label>
+
+
+<label class="field">
+
+Clasa
+
+<input
+    name="studentClass"
+    list="clase-x"
+    placeholder="X A"
+    required
+>
+
+</label>
+
+</div>
+
+
+<datalist id="clase-x">
+
+<option value="X A">
+<option value="X B">
+<option value="X C">
+<option value="X D">
+
+</datalist>
+
+
+<div class="field-grid">
+
+<label class="field">
+
+Numărul în catalog
+
+<input
+    name="catalogNumber"
+    type="number"
+    min="1"
+    max="30"
+    step="1"
+    required
+>
+
+</label>
+
+
+<label class="field">
+
+Set experimental
+
+<input
+    data-session-set
+    readonly
+>
+
+</label>
+
+</div>
+
+
+<label class="field">
+
+Data și ora începerii
+
+<input
+    data-session-date
+    readonly
+>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    name="monitorConsent"
+    required
+>
+
+<span>
+Am înțeles că pagina poate înregistra schimbările de filă/aplicație,
+ieșirea din ecran complet și tentativele de copiere.
+Nu se înregistrează audio sau video.
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    name="identityConfirmed"
+    required
+>
+
+<span>
+Confirm că datele sunt ale mele și că voi realiza individual
+măsurările, calculele și concluziile.
+</span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="identification"
+></p>
+
+
+<button
+    class="btn"
+    type="submit"
+>
+Începe laboratorul
+</button>
+
+</form>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 2
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="1"
+    hidden
+>
+
+<h2>
+2. Securitatea în laborator
+</h2>
+
+
+<div class="lab-warning">
+
+<strong>
+Corpul metalic, baia de încălzire și apa pot produce arsuri.
+</strong>
+
+Corpul încălzit se manipulează numai cu cleștele de laborator
+și cu echipamentul de protecție indicat.
+
+</div>
+
+
+<ul>
+
+<li>
+Poartă halat, ochelari și mănuși termoizolante.
+</li>
+
+<li>
+Nu atinge corpul încălzit cu mâna.
+</li>
+
+<li>
+Nu utiliza recipiente din sticlă fisurate.
+</li>
+
+<li>
+Nu lăsa sursa de încălzire nesupravegheată.
+</li>
+
+<li>
+Transferă corpul cu cleștele și evită vărsarea apei.
+</li>
+
+<li>
+Oprește sursa înainte de demontarea montajului.
+</li>
+
+</ul>
+
+
+<fieldset>
+
+<legend>
+Corpul metalic încălzit se transferă:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="safetyQuiz"
+    value="tongs"
+>
+
+<span>
+cu cleștele de laborator
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="safetyQuiz"
+    value="hand"
+>
+
+<span>
+cu mâna, dacă transferul este rapid
+</span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-safety-commitment
+>
+
+<span>
+Am citit și am înțeles regulile de securitate.
+</span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="safety"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+<button
+    class="btn"
+    data-complete-safety
+    type="button"
+>
+Accept instructajul
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 3
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="2"
+    hidden
+>
+
+<h2>
+3. Selectarea echipamentelor
+</h2>
+
+<p>
+Selectează numai echipamentele și materialele necesare
+determinării calorimetrice.
+</p>
+
+
+<div
+    class="choice-grid"
+    data-equipment-list
+></div>
+
+
+<p
+    class="feedback"
+    data-feedback="equipment"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+<button
+    class="btn"
+    data-check-equipment
+    type="button"
+>
+Verifică trusa
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 4
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="3"
+    hidden
+>
+
+<h2>
+4. Modelul fizic și datele inițiale
+</h2>
+
+
+<div class="concept-card">
+
+<h3>
+Principiul metodei
+</h3>
+
+<p>
+Corpul încălzit cedează căldură apei mai reci.
+În modelul ideal se neglijează schimbul de căldură
+cu mediul și capacitatea termică a calorimetrului.
+</p>
+
+
+<div class="formula">
+
+Q<sub>corp</sub> =
+Q<sub>apă</sub>
+
+<br><br>
+
+m<sub>c</sub> c<sub>c</sub>
+(T<sub>c</sub> − T<sub>e</sub>)
+
+=
+
+m<sub>a</sub> c<sub>a</sub>
+(T<sub>e</sub> − T<sub>a</sub>)
+
+</div>
+
+
+<div class="formula">
+
+c<sub>c</sub> =
+
+m<sub>a</sub> c<sub>a</sub>
+(T<sub>e</sub> − T<sub>a</sub>)
+
+/
+
+[
+m<sub>c</sub>
+(T<sub>c</sub> − T<sub>e</sub>)
+]
+
+</div>
+
+
+<p>
+Pentru apă utilizăm:
+<strong>
+c<sub>a</sub> = 4180 J/(kg·K)
+</strong>.
+</p>
+
+</div>
+
+
+<div data-known-parameters></div>
+
+
+<h3>
+Măsurări inițiale
+</h3>
+
+<p>
+Determină masa corpului, masa apei și temperatura inițială a apei.
+</p>
+
+
+<div class="instrument-grid">
+
+
+<article
+    class="instrument-card"
+    data-balance-card="body"
+></article>
+
+
+<article
+    class="instrument-card"
+    data-balance-card="water"
+></article>
+
+
+<article class="instrument-card">
+
+<div data-water-temperature-instrument></div>
+
+
+<div class="instrument-answer">
+
+<label class="field">
+
+Temperatura apei T<sub>a</sub> (°C)
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-water-temperature-answer
+>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-water-temperature-notebook
+>
+
+<span>
+Am trecut temperatura inițială a apei în caiet.
+</span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-verify-water-temperature
+>
+Verifică citirea
+</button>
+
+
+<p
+    class="instrument-feedback"
+    data-water-temperature-feedback
+></p>
+
+</div>
+
+</article>
+
+
+<article class="instrument-card">
+
+<h3>
+Predicție experimentală
+</h3>
+
+
+<fieldset>
+
+<legend>
+Corpul încălzit, introdus în apa mai rece:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="predictionDirection"
+    value="body-to-water"
+>
+
+<span>
+cedează căldură apei
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="predictionDirection"
+    value="water-to-body"
+>
+
+<span>
+primește căldură de la apă
+</span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+Temperatura de echilibru trebuie să fie:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="predictionTemperature"
+    value="between"
+>
+
+<span>
+între T<sub>a</sub> și T<sub>c</sub>
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="predictionTemperature"
+    value="outside"
+>
+
+<span>
+în afara intervalului dintre cele două temperaturi
+</span>
+
+</label>
+
+</fieldset>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-model-notebook
+>
+
+<span>
+Am notat relația calorimetrică și predicțiile în caiet.
+</span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-check-predictions
+>
+Verifică predicțiile
+</button>
+
+
+<p
+    class="feedback"
+    data-feedback="predictions"
+></p>
+
+</article>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="initial"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+<button
+    class="btn success"
+    data-next-heating
+    type="button"
+    disabled
+>
+Continuă la încălzirea corpului
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 5
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="4"
+    hidden
+>
+
+<h2>
+5. Încălzirea și transferul corpului
+</h2>
+
+
+<p>
+Corpul se încălzește într-o baie de apă.
+După atingerea echilibrului termic cu baia,
+considerăm temperatura corpului egală cu temperatura băii.
+</p>
+
+
+<div class="heating-stage">
+
+
+<div class="station">
+
+<div
+    class="solid"
+    data-solid-sample
+></div>
+
+<p>
+Corp metalic
+</p>
+
+</div>
+
+
+<div class="station">
+
+<div class="vessel">
+
+<div class="water hot-water"></div>
+
+<div
+    class="solid"
+    data-heating-solid
+    style="
+        position:absolute;
+        left:24px;
+        bottom:25px;
+        margin:0;
+        opacity:.12;
+    "
+></div>
+
+</div>
+
+<p>
+Baie de încălzire
+</p>
+
+</div>
+
+
+<div class="station">
+
+<div class="calorimeter-body">
+
+<div class="calorimeter-water"></div>
+
+<div
+    class="solid"
+    data-calorimeter-solid
+    style="
+        position:absolute;
+        left:36px;
+        bottom:28px;
+        margin:0;
+        opacity:0;
+    "
+></div>
+
+</div>
+
+<p>
+Calorimetru cu apă
+</p>
+
+</div>
+
+</div>
+
+
+<p
+    class="phase"
+    data-heating-phase
+>
+Corpul nu a fost încă introdus în baia de încălzire.
+</p>
+
+
+<div class="procedure-grid">
+
+<button
+    class="btn procedure-btn"
+    type="button"
+    data-heating-action="immerse"
+>
+1. Introdu corpul în baia de încălzire
+</button>
+
+<button
+    class="btn procedure-btn"
+    type="button"
+    data-heating-action="wait"
+>
+2. Așteaptă echilibrarea termică
+</button>
+
+</div>
+
+
+<div
+    class="instrument-card"
+    data-body-temperature-card
+    hidden
+>
+
+<div data-body-temperature-instrument></div>
+
+
+<div class="instrument-answer">
+
+<label class="field">
+
+Temperatura corpului T<sub>c</sub> (°C)
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-body-temperature-answer
+>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-body-temperature-notebook
+>
+
+<span>
+Am trecut temperatura corpului în caiet.
+</span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-verify-body-temperature
+>
+Verifică citirea
+</button>
+
+
+<p
+    class="instrument-feedback"
+    data-body-temperature-feedback
+></p>
+
+</div>
+
+</div>
+
+
+<button
+    class="btn warning"
+    type="button"
+    data-transfer-body
+    disabled
+>
+Transferă rapid corpul cu cleștele în calorimetru
+</button>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-transfer-notebook
+    disabled
+>
+
+<span>
+Am notat că transferul trebuie realizat rapid,
+pentru reducerea pierderilor de căldură.
+</span>
+
+</label>
+
+
+<p
+    class="feedback"
+    data-feedback="heating"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+<button
+    class="btn success"
+    data-next-equilibrium
+    type="button"
+    disabled
+>
+Continuă la echilibrul termic
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 6
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="5"
+    hidden
+>
+
+<h2>
+6. Temperatura de echilibru
+</h2>
+
+
+<p>
+După introducerea corpului încălzit în calorimetru,
+amestecă ușor și așteaptă stabilizarea temperaturii.
+</p>
+
+
+<div class="procedure-grid">
+
+<button
+    class="btn procedure-btn"
+    type="button"
+    data-mixing-action="stir"
+>
+1. Amestecă ușor
+</button>
+
+<button
+    class="btn procedure-btn"
+    type="button"
+    data-mixing-action="wait"
+>
+2. Așteaptă stabilizarea temperaturii
+</button>
+
+</div>
+
+
+<p
+    class="phase"
+    data-equilibrium-phase
+>
+Temperatura nu a fost încă stabilizată.
+</p>
+
+
+<div
+    class="instrument-card"
+    data-equilibrium-card
+    hidden
+>
+
+<div data-equilibrium-instrument></div>
+
+
+<div class="instrument-answer">
+
+<label class="field">
+
+Temperatura de echilibru T<sub>e</sub> (°C)
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-equilibrium-answer
+>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-equilibrium-notebook
+>
+
+<span>
+Am trecut temperatura de echilibru în caiet.
+</span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="button"
+    data-verify-equilibrium
+>
+Verifică citirea
+</button>
+
+
+<p
+    class="instrument-feedback"
+    data-equilibrium-feedback
+></p>
+
+</div>
+
+</div>
+
+
+<p
+    class="feedback"
+    data-feedback="equilibrium"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+<button
+    class="btn success"
+    data-next-calculation
+    type="button"
+    disabled
+>
+Continuă la calcule
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 7
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="6"
+    hidden
+>
+
+<h2>
+7. Prelucrarea datelor
+</h2>
+
+
+<div class="calculation-guide">
+
+<h3>
+Reguli pentru calcule
+</h3>
+
+<ul>
+
+<li>
+Fiecare rezultat se verifică separat cu butonul
+<strong>Verifică</strong>.
+</li>
+
+<li>
+Masele trebuie transformate din grame în kilograme.
+</li>
+
+<li>
+Pentru diferențele de temperatură,
+o diferență de 1 °C este egală numeric cu 1 K.
+</li>
+
+<li>
+Pentru apă:
+<strong>c<sub>a</sub> = 4180 J/(kg·K)</strong>.
+</li>
+
+<li>
+Folosește temperaturile efectiv citite pe instrumente.
+</li>
+
+<li>
+Nu introduce unitatea în câmpul numeric.
+</li>
+
+<li>
+Poți folosi virgulă sau punct zecimal.
+</li>
+
+<li>
+Păstrează cifre suplimentare în calculele intermediare.
+</li>
+
+<li>
+Sunt acceptate atât
+<strong>rotunjirea</strong>,
+cât și
+<strong>trunchierea corectă</strong>.
+</li>
+
+<li>
+Dacă modifici un rezultat deja verificat,
+calculele care depind de acesta trebuie reverificate.
+</li>
+
+</ul>
+
+
+<table class="rounding-table">
+
+<thead>
+
+<tr>
+<th>Mărime</th>
+<th>Zecimale</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>m<sub>c</sub>, m<sub>a</sub> în kg</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>ΔT<sub>a</sub>, ΔT<sub>c</sub></td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>Q<sub>a</sub></td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>c<sub>c</sub></td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>eroarea relativă</td>
+<td>2</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div data-measurement-summary></div>
+
+
+<div class="calculation-progress">
+
+<strong data-calculation-progress>
+Calcule verificate: 0/7
+</strong>
+
+<p>
+Un rezultat verde a fost verificat.
+Dacă modifici valoarea după verificare,
+rezultatul și calculele dependente sunt invalidate.
+</p>
+
+</div>
+
+
+<!-- CALCUL 1 -->
+
+<div class="calculation-block">
+
+<h3>
+A. Masa corpului în unități SI
+</h3>
+
+
+<div class="formula">
+
+m<sub>c</sub>(kg) =
+m<sub>c</sub>(g) / 1000
+
+</div>
+
+
+<label class="field">
+
+m<sub>c</sub> (kg)
+
+<span class="rounding-note">
+3 zecimale.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="body-mass-kg"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="body-mass-kg"
+></p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="body-mass-kg"
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<!-- CALCUL 2 -->
+
+<div class="calculation-block">
+
+<h3>
+B. Masa apei în unități SI
+</h3>
+
+
+<div class="formula">
+
+m<sub>a</sub>(kg) =
+m<sub>a</sub>(g) / 1000
+
+</div>
+
+
+<label class="field">
+
+m<sub>a</sub> (kg)
+
+<span class="rounding-note">
+3 zecimale.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="water-mass-kg"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="water-mass-kg"
+></p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="water-mass-kg"
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<!-- CALCUL 3 -->
+
+<div class="calculation-block">
+
+<h3>
+C. Creșterea temperaturii apei
+</h3>
+
+
+<div class="formula">
+
+ΔT<sub>a</sub> =
+T<sub>e</sub> − T<sub>a</sub>
+
+</div>
+
+
+<label class="field">
+
+ΔT<sub>a</sub> (K)
+
+<span class="rounding-note">
+1 zecimală.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="water-delta"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="water-delta"
+></p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="water-delta"
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<!-- CALCUL 4 -->
+
+<div class="calculation-block">
+
+<h3>
+D. Scăderea temperaturii corpului
+</h3>
+
+
+<div class="formula">
+
+ΔT<sub>c</sub> =
+T<sub>c</sub> − T<sub>e</sub>
+
+</div>
+
+
+<label class="field">
+
+ΔT<sub>c</sub> (K)
+
+<span class="rounding-note">
+1 zecimală.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="body-delta"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="body-delta"
+></p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="body-delta"
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<!-- CALCUL 5 -->
+
+<div class="calculation-block">
+
+<h3>
+E. Căldura primită de apă
+</h3>
+
+
+<div class="formula">
+
+Q<sub>a</sub> =
+m<sub>a</sub>
+c<sub>a</sub>
+ΔT<sub>a</sub>
+
+</div>
+
+
+<label class="field">
+
+Q<sub>a</sub> (J)
+
+<span class="rounding-note">
+0 zecimale.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="water-heat"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="water-heat"
+>
+Verifică mai întâi masa apei în kg și ΔT al apei.
+</p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="water-heat"
+    disabled
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<!-- CALCUL 6 -->
+
+<div class="calculation-block">
+
+<h3>
+F. Căldura specifică a corpului
+</h3>
+
+
+<div class="formula">
+
+c<sub>c</sub> =
+
+Q<sub>a</sub>
+
+/
+
+[
+m<sub>c</sub>
+ΔT<sub>c</sub>
+]
+
+</div>
+
+
+<label class="field">
+
+c<sub>c</sub> [J/(kg·K)]
+
+<span class="rounding-note">
+0 zecimale.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="specific-heat"
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="specific-heat"
+>
+Verifică mai întâi Q<sub>a</sub>, masa corpului și ΔT al corpului.
+</p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="specific-heat"
+    disabled
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<div
+    class="reference-card"
+    data-reference-card
+    hidden
+>
+
+<h3>
+Valoarea de referință
+</h3>
+
+<p>
+Valoarea tabelară este afișată numai după ce ai determinat
+corect valoarea experimentală.
+</p>
+
+<p data-reference-value></p>
+
+</div>
+
+
+<!-- CALCUL 7 -->
+
+<div class="calculation-block">
+
+<h3>
+G. Eroarea relativă
+</h3>
+
+
+<div class="formula">
+
+ε =
+
+|c<sub>exp</sub> − c<sub>ref</sub>|
+
+/
+
+c<sub>ref</sub>
+
+·100%
+
+</div>
+
+
+<label class="field">
+
+ε (%)
+
+<span class="rounding-note">
+2 zecimale.
+</span>
+
+<input
+    type="text"
+    inputmode="decimal"
+    data-calc="relative-error"
+    disabled
+>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="relative-error"
+>
+Determină mai întâi corect căldura specifică experimentală.
+</p>
+
+
+<button
+    class="btn secondary calc-check-btn"
+    type="button"
+    data-check-calc="relative-error"
+    disabled
+>
+Verifică
+</button>
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+H. Calculul din caiet
+</h3>
+
+
+<label class="field">
+
+Transcrie succint calculul utilizat pentru determinarea
+căldurii specifice.
+
+<textarea
+    rows="6"
+    data-student-steps
+    placeholder="m = ... kg; ΔT = ...; Q = ...; c = ..."
+></textarea>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="student-steps"
+></p>
+
+</label>
+
+</div>
+
+
+<div class="calculation-block">
+
+<h3>
+I. Interpretarea fizică
+</h3>
+
+
+<label class="field">
+
+Explică de ce valoarea experimentală poate fi diferită
+de valoarea de referință.
+
+<textarea
+    rows="7"
+    data-comparison
+    placeholder="Discută pierderile de căldură, calorimetrul, transferul corpului, rezoluția termometrului și ipotezele modelului ideal."
+></textarea>
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="comparison"
+></p>
+
+</label>
+
+</div>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-calculation-notebook
+>
+
+<span>
+Am trecut în caiet formulele, calculele,
+unitățile și interpretarea.
+</span>
+
+</label>
+
+
+<p
+    class="calc-feedback"
+    data-calc-feedback="notebook"
+></p>
+
+
+<p
+    class="feedback"
+    data-feedback="calculation"
+></p>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+
+<button
+    class="btn"
+    data-check-analysis
+    type="button"
+>
+Verifică interpretarea și caietul
+</button>
+
+
+<button
+    class="btn success"
+    data-next-evaluation
+    type="button"
+    disabled
+>
+Continuă la concluzii
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ETAPA 8
+========================================================= -->
+
+<section
+    class="experiment-panel"
+    data-panel="7"
+    hidden
+>
+
+<h2>
+8. Concluzii și raport
+</h2>
+
+
+<form data-evaluation-form>
+
+
+<fieldset>
+
+<legend>
+1. Unitatea SI pentru căldura specifică este:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q1"
+    value="correct"
+>
+
+<span>
+J/(kg·K)
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q1"
+    value="wrong"
+>
+
+<span>
+J·kg/K
+</span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+2. În experiment, corpul încălzit:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q2"
+    value="gives"
+>
+
+<span>
+cedează căldură apei
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q2"
+    value="receives"
+>
+
+<span>
+primește căldură de la apă
+</span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+3. În modelul ideal utilizat la calcul presupunem:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q3"
+    value="ideal"
+>
+
+<span>
+căldura cedată de corp este egală cu cea primită de apă
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q3"
+    value="created"
+>
+
+<span>
+căldura este creată în calorimetru
+</span>
+
+</label>
+
+</fieldset>
+
+
+<fieldset>
+
+<legend>
+4. O sursă importantă de diferență față de valoarea tabelară este:
+</legend>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q4"
+    value="losses"
+>
+
+<span>
+schimbul de căldură cu calorimetrul și mediul
+</span>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="radio"
+    name="q4"
+    value="none"
+>
+
+<span>
+nu există nicio sursă de eroare
+</span>
+
+</label>
+
+</fieldset>
+
+
+<label class="field">
+
+Concluzia experimentului
+
+<textarea
+    rows="7"
+    minlength="120"
+    data-final-conclusion
+    required
+    placeholder="Formulează concluzia despre metoda calorimetrică, sensul schimbului de căldură, valoarea determinată și comparația cu valoarea de referință."
+></textarea>
+
+</label>
+
+
+<label class="field">
+
+Precizează cel puțin două surse de eroare sau limitări
+
+<textarea
+    rows="5"
+    minlength="40"
+    data-error-sources
+    required
+    placeholder="Exemple: pierderile de căldură la transfer, capacitatea termică a calorimetrului, schimbul cu mediul, rezoluția termometrului, măsurarea maselor."
+></textarea>
+
+</label>
+
+
+<label class="choice">
+
+<input
+    type="checkbox"
+    data-individual-confirmation
+    required
+>
+
+<span>
+Confirm că am realizat individual măsurările,
+calculele, interpretarea și concluziile.
+</span>
+
+</label>
+
+
+<button
+    class="btn"
+    type="submit"
+    data-finalize-button
+>
+Finalizează experimentul și trimite raportul
+</button>
+
+</form>
+
+
+<div
+    data-final-result
+    hidden
+>
+
+<h3>
+Raportul experimentului
+</h3>
+
+
+<div
+    class="result-grid"
+    data-result-grid
+></div>
+
+
+<div class="report-status">
+
+<p>
+<strong>ID raport:</strong>
+<span data-report-id>—</span>
+</p>
+
+<p>
+<strong>Copie locală:</strong>
+<span data-local-save-status>—</span>
+</p>
+
+<p>
+<strong>Transmitere:</strong>
+
+<span
+    data-submission-status
+    aria-live="polite"
+>
+Raportul nu a fost încă trimis.
+</span>
+
+</p>
+
+</div>
+
+
+<div class="actions report-actions">
+
+<button
+    class="btn success"
+    data-submit-report
+    type="button"
+>
+Trimite datele
+</button>
+
+<button
+    class="btn warning"
+    data-resubmit-report
+    type="button"
+>
+Retrimite datele
+</button>
+
+<button
+    class="btn secondary"
+    data-download-pdf
+    type="button"
+>
+Salvează PDF pentru portofoliu
+</button>
+
+<button
+    class="btn secondary"
+    type="button"
+    onclick="window.print()"
+>
+Tipărește
+</button>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+    class="btn secondary"
+    data-previous
+    type="button"
+>
+Înapoi
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+"use strict";
+
+
+const CONFIG =
+    globalThis.LAB_EXPERIMENT_CONFIG;
+
+
+const root =
+    document.querySelector(
+        "[data-experiment-app]"
+    );
+
+
+const qs = (
+    selector,
+    scope=root
+) =>
+    scope.querySelector(
+        selector
+    );
+
+
+const qsa = (
+    selector,
+    scope=root
+) =>
+    [
+        ...scope.querySelectorAll(
+            selector
+        )
+    ];
+
+
+/* =========================================================
+   UTILITARE
+========================================================= */
+
+function clone(
+    value
+){
+
+    if(
+        value ===
+        undefined
+    ){
+        return undefined;
+    }
+
+
+    if(
+        typeof globalThis
+            .structuredClone ===
+        "function"
+    ){
+
+        return globalThis
+            .structuredClone(
+                value
+            );
+
+    }
+
+
+    return JSON.parse(
+        JSON.stringify(
+            value
+        )
+    );
+
+}
+
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function numeric(
+    value
+){
+
+    const text =
+        String(
+            value ??
+            ""
+        )
+            .trim()
+            .replace(/\s+/g,"")
+            .replace("%","")
+            .replace(",",".");
+
+
+    if(
+        text ===
+        ""
+    ){
+        return NaN;
+    }
+
+
+    return Number(
+        text
+    );
+
+}
+
+
+function round(
+    value,
+    decimals=2
+){
+
+    const factor =
+        10 ** decimals;
+
+
+    return (
+        Math.round(
+            (
+                value +
+                Number.EPSILON
+            ) *
+            factor
+        ) /
+        factor
+    );
+
+}
+
+
+function truncate(
+    value,
+    decimals
+){
+
+    const factor =
+        10 ** decimals;
+
+
+    return (
+        Math.trunc(
+            value *
+            factor
+        ) /
+        factor
+    );
+
+}
+
+
+function acceptedPresentation(
+    value,
+    expectedValues,
+    decimals
+){
+
+    if(
+        !Number.isFinite(
+            value
+        )
+    ){
+        return false;
+    }
+
+
+    const list =
+        Array.isArray(
+            expectedValues
+        )
+            ? expectedValues
+            : [expectedValues];
+
+
+    return list.some(
+        expected => {
+
+            if(
+                !Number.isFinite(
+                    expected
+                )
+            ){
+                return false;
+            }
+
+
+            return (
+                Math.abs(
+                    value -
+                    round(
+                        expected,
+                        decimals
+                    )
+                ) <
+                1e-9 ||
+
+                Math.abs(
+                    value -
+                    truncate(
+                        expected,
+                        decimals
+                    )
+                ) <
+                1e-9
+            );
+
+        }
+    );
+
+}
+
+
+function near(
+    value,
+    target,
+    tolerance
+){
+
+    return (
+        Number.isFinite(
+            value
+        ) &&
+        Number.isFinite(
+            target
+        ) &&
+        Math.abs(
+            value -
+            target
+        ) <=
+        tolerance
+    );
+
+}
+
+
+function quantize(
+    value,
+    step
+){
+
+    return (
+        Math.round(
+            value /
+            step
+        ) *
+        step
+    );
+
+}
+
+
+function wait(
+    milliseconds
+){
+
+    return new Promise(
+        resolve =>
+            globalThis.setTimeout(
+                resolve,
+                milliseconds
+            )
+    );
+
+}
+
+
+const now =
+    () =>
+        new Date()
+            .toISOString();
+
+
+function makeId(
+    prefix
+){
+
+    if(
+        globalThis.crypto
+            ?.randomUUID
+    ){
+
+        return (
+            `${prefix}-` +
+            globalThis.crypto
+                .randomUUID()
+        );
+
+    }
+
+
+    return (
+        `${prefix}-` +
+        Date.now()
+            .toString(36)
+            .toUpperCase() +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2,10)
+            .toUpperCase()
+    );
+
+}
+
+
+/* =========================================================
+   STARE
+========================================================= */
+
+const state = {
+
+    step:0,
+
+    completed:
+        new Set(),
+
+    session:null,
+
+    set:null,
+
+    safety:null,
+
+    equipment:null,
+
+    predictions:null,
+
+    measurements:{
+
+        bodyMass:null,
+
+        waterMass:null,
+
+        waterTemperature:null,
+
+        bodyTemperature:null,
+
+        equilibriumTemperature:null
+
+    },
+
+    heating:{
+
+        expected:[
+            "immerse",
+            "wait"
+        ],
+
+        index:0,
+
+        attempts:0,
+
+        errors:0,
+
+        transferActions:0,
+
+        transferred:false
+
+    },
+
+    mixing:{
+
+        expected:[
+            "stir",
+            "wait"
+        ],
+
+        index:0,
+
+        attempts:0,
+
+        errors:0
+
+    },
+
+    activity:{
+
+        equipmentChecks:0,
+
+        calculationChecks:0,
+
+        calculationAttempts:{
+
+            "body-mass-kg":0,
+
+            "water-mass-kg":0,
+
+            "water-delta":0,
+
+            "body-delta":0,
+
+            "water-heat":0,
+
+            "specific-heat":0,
+
+            "relative-error":0
+
+        },
+
+        correctedFields:[]
+
+    },
+
+    calculationVerified:{
+
+        "body-mass-kg":false,
+
+        "water-mass-kg":false,
+
+        "water-delta":false,
+
+        "body-delta":false,
+
+        "water-heat":false,
+
+        "specific-heat":false,
+
+        "relative-error":false
+
+    },
+
+    analysisVerified:false,
+
+    instruments:{},
+
+    notebook:null,
+
+    evaluation:null,
+
+    reportId:null,
+
+    reportPayload:null,
+
+    reportConfirmed:false,
+
+    finalized:false
+
+};
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function feedback(
+    name,
+    message,
+    type="bad"
+){
+
+    const element =
+        qs(
+            `[data-feedback="${name}"]`
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "ok",
+        "bad",
+        "warn"
+    );
+
+
+    if(message){
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NAVIGARE
+========================================================= */
+
+const panels =
+    qsa(
+        "[data-panel]"
+    );
+
+
+const labels = [
+
+    "Identificare",
+
+    "Securitate",
+
+    "Echipamente",
+
+    "Date inițiale",
+
+    "Încălzire",
+
+    "Echilibru",
+
+    "Calcule",
+
+    "Concluzii"
+
+];
+
+
+function showStep(
+    step
+){
+
+    state.step =
+        step;
+
+
+    panels.forEach(
+        (
+            panel,
+            index
+        ) => {
+
+            panel.hidden =
+                index !==
+                step;
+
+        }
+    );
+
+
+    qsa(
+        ".step-tab"
+    ).forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "is-active",
+                index ===
+                step
+            );
+
+
+            button.classList.toggle(
+                "is-done",
+                state.completed.has(
+                    index
+                )
+            );
+
+        }
+    );
+
+
+    qs(
+        "[data-progress-text]"
+    ).textContent =
+        `Etapa ${step + 1} din 8`;
+
+
+    qs(
+        "[data-progress-fill]"
+    ).style.width =
+        `${
+            (
+                step +
+                1
+            ) /
+            8 *
+            100
+        }%`;
+
+
+    globalThis.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+labels.forEach(
+    (
+        label,
+        index
+    ) => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "step-tab";
+
+
+        button.textContent =
+            `${index + 1}. ${label}`;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    index <=
+                        state.step ||
+                    state.completed.has(
+                        index -
+                        1
+                    )
+                ){
+
+                    showStep(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        qs(
+            "[data-step-tabs]"
+        ).append(
+            button
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-previous]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                showStep(
+                    Math.max(
+                        0,
+                        state.step -
+                        1
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET EXPERIMENTAL
+========================================================= */
+
+const MATERIALS = [
+
+    {
+        id:"aluminium",
+        name:"Aluminiu",
+        cRef:900,
+        color:"#aeb8bd"
+    },
+
+    {
+        id:"iron",
+        name:"Fier",
+        cRef:450,
+        color:"#777f84"
+    },
+
+    {
+        id:"copper",
+        name:"Cupru",
+        cRef:385,
+        color:"#b87333"
+    },
+
+    {
+        id:"brass",
+        name:"Alamă",
+        cRef:380,
+        color:"#b99a42"
+    }
+
+];
+
+
+function normalizeClass(
+    value
+){
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(/^10/,"X")
+        .replace(/^(X)([A-D])$/,"$1 $2")
+        .replace(/\s+/g," ");
+
+}
+
+
+function classIndex(
+    className
+){
+
+    const section =
+        normalizeClass(
+            className
+        )
+            .match(
+                /[A-D]$/
+            )?.[0];
+
+
+    return ({
+        A:0,
+        B:1,
+        C:2,
+        D:3
+    })[section] ??
+    0;
+
+}
+
+
+function generateSet(
+    className,
+    catalogNumber
+){
+
+    const ci =
+        classIndex(
+            className
+        );
+
+
+    const number =
+        Number(
+            catalogNumber
+        );
+
+
+    const slot =
+        (
+            (
+                number -
+                1
+            ) *
+            11 +
+            ci *
+            7
+        ) %
+        120;
+
+
+    const material =
+        MATERIALS[
+            (
+                slot +
+                ci
+            ) %
+            MATERIALS.length
+        ];
+
+
+    const bodyMass_g =
+        140 +
+        (
+            (
+                slot *
+                7 +
+                ci
+            ) %
+            7
+        ) *
+        10;
+
+
+    const waterMass_g =
+        120 +
+        (
+            (
+                slot *
+                11 +
+                ci *
+                2
+            ) %
+            6
+        ) *
+        10;
+
+
+    const waterTemperature_C =
+        16 +
+        (
+            (
+                slot *
+                5 +
+                ci
+            ) %
+            9
+        );
+
+
+    const bodyTemperature_C =
+        82 +
+        (
+            (
+                slot *
+                13 +
+                ci
+            ) %
+            13
+        );
+
+
+    /*
+       Efectul calorimetrului este folosit doar intern
+       pentru obținerea unei măsurări realiste.
+       Elevului nu îi este dezvăluită această valoare.
+    */
+    const calorimeterHeatCapacity_J_K =
+        16 +
+        (
+            (
+                slot *
+                17 +
+                ci
+            ) %
+            6
+        ) *
+        4;
+
+
+    const bodyHeatCapacity =
+        (
+            bodyMass_g /
+            1000
+        ) *
+        material.cRef;
+
+
+    const waterHeatCapacity =
+        (
+            waterMass_g /
+            1000
+        ) *
+        4180;
+
+
+    const physicalEquilibrium_C =
+        (
+            bodyHeatCapacity *
+            bodyTemperature_C +
+
+            (
+                waterHeatCapacity +
+                calorimeterHeatCapacity_J_K
+            ) *
+            waterTemperature_C
+        ) /
+        (
+            bodyHeatCapacity +
+            waterHeatCapacity +
+            calorimeterHeatCapacity_J_K
+        );
+
+
+    const measuredEquilibrium_C =
+        round(
+            quantize(
+                physicalEquilibrium_C,
+                .2
+            ),
+            1
+        );
+
+
+    const compactClass =
+        normalizeClass(
+            className
+        )
+            .replace(
+                /\s/g,
+                "-"
+            );
+
+
+    return {
+
+        id:
+            `${compactClass}-${String(number).padStart(2,"0")}-EXP02`,
+
+        visible:{
+
+            materialId:
+                material.id,
+
+            materialName:
+                material.name,
+
+            materialColor:
+                material.color,
+
+            waterSpecificHeat_J_kgK:
+                4180
+
+        },
+
+        reference:{
+
+            bodySpecificHeat_J_kgK:
+                material.cRef
+
+        },
+
+        instrumentValues:{
+
+            bodyMass_g,
+
+            waterMass_g,
+
+            waterTemperature_C,
+
+            bodyTemperature_C,
+
+            measuredEquilibrium_C
+
+        },
+
+        hidden:{
+
+            calorimeterHeatCapacity_J_K,
+
+            physicalEquilibrium_C
+
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   IDENTIFICARE
+========================================================= */
+
+qs(
+    "[data-session-date]"
+).value =
+    new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            dateStyle:"long",
+            timeStyle:"medium"
+        }
+    ).format(
+        new Date()
+    );
+
+
+qs(
+    "[data-identification-form]"
+).addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const studentName =
+            String(
+                form.get(
+                    "studentName"
+                ) ||
+                ""
+            ).trim();
+
+
+        const studentClass =
+            normalizeClass(
+                form.get(
+                    "studentClass"
+                )
+            );
+
+
+        const catalogNumber =
+            Number(
+                form.get(
+                    "catalogNumber"
+                )
+            );
+
+
+        if(
+            studentName.length <
+                3 ||
+            !/^X [A-D]$/.test(
+                studentClass
+            ) ||
+            !Number.isInteger(
+                catalogNumber
+            ) ||
+            catalogNumber <
+                1 ||
+            catalogNumber >
+                30 ||
+            !form.get(
+                "monitorConsent"
+            ) ||
+            !form.get(
+                "identityConfirmed"
+            )
+        ){
+
+            feedback(
+                "identification",
+                "Completează corect numele, clasa, numărul din catalog și confirmările."
+            );
+
+
+            return;
+
+        }
+
+
+        state.set =
+            generateSet(
+                studentClass,
+                catalogNumber
+            );
+
+
+        state.session = {
+
+            sessionId:
+                makeId(
+                    "FIZ"
+                ),
+
+            studentName,
+
+            studentClass,
+
+            catalogNumber,
+
+            experimentTitle:
+                CONFIG.title,
+
+            experimentId:
+                CONFIG.id,
+
+            dataSetId:
+                state.set.id,
+
+            startedAt:
+                now(),
+
+            experimentDate:
+                new Intl.DateTimeFormat(
+                    "ro-RO",
+                    {
+                        dateStyle:"long"
+                    }
+                ).format(
+                    new Date()
+                ),
+
+            identityConfirmed:
+                true,
+
+            monitoringAcknowledged:
+                true
+
+        };
+
+
+        globalThis.LAB_SESSION =
+            clone(
+                state.session
+            );
+
+
+        qs(
+            "[data-session-set]"
+        ).value =
+            state.set.id;
+
+
+        qs(
+            "[data-header-student]"
+        ).textContent =
+            studentName;
+
+
+        qs(
+            "[data-header-class]"
+        ).textContent =
+            `Clasa ${studentClass}`;
+
+
+        qs(
+            "[data-header-catalog]"
+        ).textContent =
+            `Nr. ${catalogNumber}`;
+
+
+        qs(
+            "[data-header-date]"
+        ).textContent =
+            state.session
+                .experimentDate;
+
+
+        qs(
+            "[data-monitoring-status]"
+        ).textContent =
+            "activă";
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:identification-complete",
+                {
+                    detail:
+                        clone(
+                            state.session
+                        )
+                }
+            )
+
+        );
+
+
+        state.completed.add(
+            0
+        );
+
+
+        showStep(
+            1
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SECURITATE
+========================================================= */
+
+qs(
+    "[data-complete-safety]"
+).addEventListener(
+    "click",
+    () => {
+
+        const answer =
+            qs(
+                'input[name="safetyQuiz"]:checked'
+            )?.value;
+
+
+        if(
+            answer !==
+                "tongs" ||
+            !qs(
+                "[data-safety-commitment]"
+            ).checked
+        ){
+
+            feedback(
+                "safety",
+                "Alege modalitatea sigură de transfer și confirmă instructajul."
+            );
+
+
+            return;
+
+        }
+
+
+        state.safety = {
+
+            accepted:true,
+
+            acceptedAt:
+                now(),
+
+            activeDomains:[
+                "thermal",
+                "glass",
+                "fire"
+            ]
+
+        };
+
+
+        globalThis.LAB_SAFETY_STATE =
+            clone(
+                state.safety
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:safety-complete",
+                {
+                    detail:
+                        clone(
+                            state.safety
+                        )
+                }
+            )
+
+        );
+
+
+        feedback(
+            "safety",
+            "Instructaj acceptat.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            1
+        );
+
+
+        showStep(
+            2
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ECHIPAMENTE
+========================================================= */
+
+const equipment = [
+
+    [
+        "lab-coat",
+        "Halat de laborator"
+    ],
+
+    [
+        "safety-glasses",
+        "Ochelari de protecție"
+    ],
+
+    [
+        "thermal-gloves",
+        "Mănuși termoizolante"
+    ],
+
+    [
+        "laboratory-balance",
+        "Balanță de laborator"
+    ],
+
+    [
+        "thermometer",
+        "Termometru"
+    ],
+
+    [
+        "calorimeter",
+        "Calorimetru"
+    ],
+
+    [
+        "heat-source",
+        "Sursă de încălzire"
+    ],
+
+    [
+        "laboratory-tongs",
+        "Clește de laborator"
+    ],
+
+    [
+        "beaker",
+        "Pahar Berzelius"
+    ],
+
+    [
+        "glass-stirring-rod",
+        "Baghetă de sticlă"
+    ],
+
+    [
+        "water",
+        "Apă"
+    ],
+
+    [
+        "slotted-masses",
+        "Corp metalic din setul de mase"
+    ],
+
+    [
+        "dynamometer",
+        "Dinamometru"
+    ],
+
+    [
+        "multimeter",
+        "Multimetru"
+    ],
+
+    [
+        "optical-prism",
+        "Prismă optică"
+    ],
+
+    [
+        "spring",
+        "Resort"
+    ]
+
+];
+
+
+const requiredEquipment =
+    new Set(
+        CONFIG.requiredEquipment
+    );
+
+
+equipment.forEach(
+    (
+        [
+            id,
+            name
+        ]
+    ) => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "choice";
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "checkbox";
+
+
+        input.value =
+            id;
+
+
+        const span =
+            document.createElement(
+                "span"
+            );
+
+
+        span.textContent =
+            name;
+
+
+        label.append(
+            input,
+            span
+        );
+
+
+        qs(
+            "[data-equipment-list]"
+        ).append(
+            label
+        );
+
+    }
+);
+
+
+qs(
+    "[data-check-equipment]"
+).addEventListener(
+    "click",
+    () => {
+
+        state.activity
+            .equipmentChecks +=
+            1;
+
+
+        const selected =
+            new Set(
+                qsa(
+                    "[data-equipment-list] input:checked"
+                ).map(
+                    input =>
+                        input.value
+                )
+            );
+
+
+        const missing =
+            [...requiredEquipment]
+                .filter(
+                    id =>
+                        !selected.has(
+                            id
+                        )
+                );
+
+
+        const extra =
+            [...selected]
+                .filter(
+                    id =>
+                        !requiredEquipment.has(
+                            id
+                        )
+                );
+
+
+        if(
+            missing.length ||
+            extra.length
+        ){
+
+            feedback(
+                "equipment",
+                missing.length
+                    ? `Mai lipsesc ${missing.length} elemente necesare.`
+                    : `Ai selectat ${extra.length} elemente care nu sunt necesare.`
+            );
+
+
+            return;
+
+        }
+
+
+        state.equipment = {
+
+            completed:true,
+
+            selectedAt:
+                now(),
+
+            selectionAttempts:
+                state.activity
+                    .equipmentChecks,
+
+            selectedIds:
+                [...selected],
+
+            items:
+                [...selected]
+                    .map(
+                        id => ({
+
+                            id,
+
+                            name:
+                                equipment.find(
+                                    item =>
+                                        item[0] ===
+                                        id
+                                )?.[1] ||
+                                id
+
+                        })
+                    )
+
+        };
+
+
+        globalThis.LAB_EQUIPMENT_STATE =
+            clone(
+                state.equipment
+            );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:equipment-complete",
+                {
+                    detail:
+                        clone(
+                            state.equipment
+                        )
+                }
+            )
+
+        );
+
+
+        renderInitialStage();
+
+
+        feedback(
+            "equipment",
+            "Trusa este corectă.",
+            "ok"
+        );
+
+
+        state.completed.add(
+            2
+        );
+
+
+        showStep(
+            3
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REZULTAT INSTRUMENT FĂRĂ VALOAREA ASCUNSĂ
+========================================================= */
+
+function sanitizeInstrumentResult(
+    result
+){
+
+    return {
+
+        instrumentId:
+            result.instrumentId,
+
+        instrumentType:
+            result.instrumentType,
+
+        label:
+            result.label,
+
+        unit:
+            result.unit,
+
+        resolution:
+            result.resolution,
+
+        studentReading:
+            result.studentReading,
+
+        attempts:
+            result.attempts,
+
+        verifiedAt:
+            result.verifiedAt
+
+    };
+
+}
+
+
+/* =========================================================
+   BALANȚĂ
+========================================================= */
+
+function createBalanceMeasurement({
+
+    target,
+    key,
+    label,
+    value,
+    objectType
+
+}){
+
+    target.innerHTML = `
+
+        <h3>
+            ${escapeHtml(label)}
+        </h3>
+
+        <div class="balance">
+
+            <div class="balance-pan"></div>
+
+            <div
+                class="${objectType === "water" ? "balance-water" : "balance-object"}"
+                style="${
+                    objectType === "body"
+                        ? `background:${escapeHtml(state.set.visible.materialColor)}`
+                        : ""
+                }"
+            ></div>
+
+            <div class="balance-display">
+                ${value.toFixed(0)} g
+            </div>
+
+        </div>
+
+        <p class="balance-label">
+            Balanță digitală • rezoluție 1 g
+        </p>
+
+        <div class="instrument-answer">
+
+            <label class="field">
+
+                Valoarea citită (g)
+
+                <input
+                    type="text"
+                    inputmode="decimal"
+                    data-balance-answer
+                >
+
+            </label>
+
+
+            <label class="choice">
+
+                <input
+                    type="checkbox"
+                    data-balance-notebook
+                >
+
+                <span>
+                    Am trecut această citire în caiet.
+                </span>
+
+            </label>
+
+
+            <button
+                class="btn"
+                type="button"
+                data-balance-verify
+            >
+                Verifică citirea
+            </button>
+
+
+            <p
+                class="instrument-feedback"
+                data-balance-feedback
+            ></p>
+
+        </div>
+
+    `;
+
+
+    let attempts =
+        0;
+
+
+    const input =
+        qs(
+            "[data-balance-answer]",
+            target
+        );
+
+
+    const notebook =
+        qs(
+            "[data-balance-notebook]",
+            target
+        );
+
+
+    const verify =
+        qs(
+            "[data-balance-verify]",
+            target
+        );
+
+
+    const output =
+        qs(
+            "[data-balance-feedback]",
+            target
+        );
+
+
+    verify.addEventListener(
+        "click",
+        () => {
+
+            if(
+                !notebook.checked
+            ){
+
+                output.textContent =
+                    "Confirmă mai întâi că ai notat citirea în caiet.";
+
+
+                output.className =
+                    "instrument-feedback is-error";
+
+
+                return;
+
+            }
+
+
+            const reading =
+                numeric(
+                    input.value
+                );
+
+
+            if(
+                !Number.isFinite(
+                    reading
+                )
+            ){
+
+                output.textContent =
+                    "Introdu o valoare numerică validă.";
+
+
+                output.className =
+                    "instrument-feedback is-error";
+
+
+                return;
+
+            }
+
+
+            attempts +=
+                1;
+
+
+            if(
+                Math.abs(
+                    reading -
+                    value
+                ) >
+                .51
+            ){
+
+                output.textContent =
+                    "Citirea nu corespunde afișajului balanței. Verifică din nou cifrele și unitatea.";
+
+
+                output.className =
+                    "instrument-feedback is-error";
+
+
+                return;
+
+            }
+
+
+            state.measurements[
+                key
+            ] = {
+
+                instrumentId:
+                    `exp02-balance-${key}`,
+
+                instrumentType:
+                    "digital-balance",
+
+                label,
+
+                unit:
+                    "g",
+
+                resolution:
+                    1,
+
+                studentReading:
+                    reading,
+
+                attempts,
+
+                verifiedAt:
+                    now()
+
+            };
+
+
+            output.textContent =
+                "Citirea este corectă.";
+
+
+            output.className =
+                "instrument-feedback is-success";
+
+
+            input.disabled =
+                true;
+
+
+            notebook.disabled =
+                true;
+
+
+            verify.disabled =
+                true;
+
+
+            checkInitialStageComplete();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   TERMOMETRE
+========================================================= */
+
+function createThermometer({
+
+    key,
+    target,
+    value,
+    minimum,
+    maximum,
+    minorDivision,
+    majorDivision,
+    label,
+    answerInput,
+    feedbackTarget,
+    verifyButton,
+    notebookCheckbox,
+    onCorrect
+
+}){
+
+    const instance =
+        globalThis
+            .LaboratorInstrumente
+            .afiseaza({
+
+                id:
+                    `exp02-${key}`,
+
+                target,
+
+                type:
+                    "thermometer",
+
+                label,
+
+                instruction:
+                    "Citește capătul superior al coloanei termometrice.",
+
+                minimum,
+
+                maximum,
+
+                value,
+
+                minorDivision,
+
+                majorDivision,
+
+                decimals:
+                    1,
+
+                unit:
+                    "°C",
+
+                tolerance:
+                    minorDivision /
+                    2 +
+                    .01,
+
+                showNumericValue:
+                    false,
+
+                answerInput,
+
+                feedbackTarget,
+
+                verifyButton,
+
+                requireNotebookConfirmation:
+                    true,
+
+                notebookConfirmation:
+                    notebookCheckbox
+
+            });
+
+
+    state.instruments[
+        key
+    ] =
+        instance;
+
+
+    target.addEventListener(
+        "laborator:instrument-reading",
+        event => {
+
+            const result =
+                event.detail;
+
+
+            if(
+                !result?.correct
+            ){
+                return;
+            }
+
+
+            state.measurements[
+                key
+            ] =
+                sanitizeInstrumentResult(
+                    result
+                );
+
+
+            answerInput.disabled =
+                true;
+
+
+            notebookCheckbox.disabled =
+                true;
+
+
+            verifyButton.disabled =
+                true;
+
+
+            onCorrect?.(
+                result
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ETAPA 4
+========================================================= */
+
+function renderInitialStage(){
+
+    const p =
+        state.set.visible;
+
+
+    qs(
+        "[data-known-parameters]"
+    ).innerHTML = `
+
+        <div class="parameter-grid">
+
+            <div class="parameter">
+
+                <span>
+                    Material
+                </span>
+
+                <strong>
+                    ${escapeHtml(p.materialName)}
+                </strong>
+
+            </div>
+
+
+            <div class="parameter">
+
+                <span>
+                    c apă
+                </span>
+
+                <strong>
+                    4180 J/(kg·K)
+                </strong>
+
+            </div>
+
+
+            <div class="parameter">
+
+                <span>
+                    Set
+                </span>
+
+                <strong>
+                    ${escapeHtml(state.set.id)}
+                </strong>
+
+            </div>
+
+
+            <div class="parameter">
+
+                <span>
+                    Metodă
+                </span>
+
+                <strong>
+                    calorimetrică
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    createBalanceMeasurement({
+
+        target:
+            qs(
+                '[data-balance-card="body"]'
+            ),
+
+        key:
+            "bodyMass",
+
+        label:
+            "Masa corpului m₍c₎",
+
+        value:
+            state.set
+                .instrumentValues
+                .bodyMass_g,
+
+        objectType:
+            "body"
+
+    });
+
+
+    createBalanceMeasurement({
+
+        target:
+            qs(
+                '[data-balance-card="water"]'
+            ),
+
+        key:
+            "waterMass",
+
+        label:
+            "Masa apei m₍a₎",
+
+        value:
+            state.set
+                .instrumentValues
+                .waterMass_g,
+
+        objectType:
+            "water"
+
+    });
+
+
+    createThermometer({
+
+        key:
+            "waterTemperature",
+
+        target:
+            qs(
+                "[data-water-temperature-instrument]"
+            ),
+
+        value:
+            state.set
+                .instrumentValues
+                .waterTemperature_C,
+
+        minimum:
+            10,
+
+        maximum:
+            30,
+
+        minorDivision:
+            .5,
+
+        majorDivision:
+            5,
+
+        label:
+            "Temperatura inițială a apei",
+
+        answerInput:
+            qs(
+                "[data-water-temperature-answer]"
+            ),
+
+        feedbackTarget:
+            qs(
+                "[data-water-temperature-feedback]"
+            ),
+
+        verifyButton:
+            qs(
+                "[data-verify-water-temperature]"
+            ),
+
+        notebookCheckbox:
+            qs(
+                "[data-water-temperature-notebook]"
+            ),
+
+        onCorrect:
+            checkInitialStageComplete
+
+    });
+
+}
+
+
+/* =========================================================
+   PREDICȚII
+========================================================= */
+
+qs(
+    "[data-check-predictions]"
+).addEventListener(
+    "click",
+    () => {
+
+        const direction =
+            qs(
+                'input[name="predictionDirection"]:checked'
+            )?.value;
+
+
+        const temperature =
+            qs(
+                'input[name="predictionTemperature"]:checked'
+            )?.value;
+
+
+        if(
+            !direction ||
+            !temperature ||
+            !qs(
+                "[data-model-notebook]"
+            ).checked
+        ){
+
+            feedback(
+                "predictions",
+                "Completează predicțiile și confirmă notarea în caiet."
+            );
+
+
+            return;
+
+        }
+
+
+        state.predictions = {
+
+            direction,
+
+            temperature,
+
+            recordedAt:
+                now()
+
+        };
+
+
+        feedback(
+            "predictions",
+            "Predicțiile au fost înregistrate.",
+            "ok"
+        );
+
+
+        qs(
+            "[data-check-predictions]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-model-notebook]"
+        ).disabled =
+            true;
+
+
+        checkInitialStageComplete();
+
+    }
+);
+
+
+function checkInitialStageComplete(){
+
+    if(
+        !state.measurements
+            .bodyMass ||
+        !state.measurements
+            .waterMass ||
+        !state.measurements
+            .waterTemperature ||
+        !state.predictions
+    ){
+        return;
+    }
+
+
+    state.completed.add(
+        3
+    );
+
+
+    feedback(
+        "initial",
+        "Măsurările inițiale și predicțiile sunt complete.",
+        "ok"
+    );
+
+
+    qs(
+        "[data-next-heating]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   ETAPA 5 — ÎNCĂLZIRE
+========================================================= */
+
+qs(
+    "[data-next-heating]"
+).addEventListener(
+    "click",
+    () => {
+
+        const color =
+            state.set.visible
+                .materialColor;
+
+
+        qs(
+            "[data-solid-sample]"
+        ).style.background =
+            color;
+
+
+        qs(
+            "[data-heating-solid]"
+        ).style.background =
+            color;
+
+
+        qs(
+            "[data-calorimeter-solid]"
+        ).style.background =
+            color;
+
+
+        showStep(
+            4
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-heating-action]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            async () => {
+
+                state.heating
+                    .attempts +=
+                    1;
+
+
+                const action =
+                    button.dataset
+                        .heatingAction;
+
+
+                const expected =
+                    state.heating
+                        .expected[
+                            state.heating
+                                .index
+                        ];
+
+
+                if(
+                    action !==
+                    expected
+                ){
+
+                    state.heating
+                        .errors +=
+                        1;
+
+
+                    feedback(
+                        "heating",
+                        "Ordinea nu este corectă. Corpul trebuie mai întâi introdus în baie, apoi lăsat să ajungă la echilibru termic.",
+                        "warn"
+                    );
+
+
+                    return;
+
+                }
+
+
+                button.disabled =
+                    true;
+
+
+                button.classList.add(
+                    "is-done"
+                );
+
+
+                if(
+                    action ===
+                    "immerse"
+                ){
+
+                    qs(
+                        "[data-solid-sample]"
+                    ).style.opacity =
+                        ".15";
+
+
+                    qs(
+                        "[data-heating-solid]"
+                    ).style.opacity =
+                        "1";
+
+
+                    qs(
+                        "[data-heating-phase]"
+                    ).textContent =
+                        "Corpul a fost introdus în baia de încălzire.";
+
+                }
+
+
+                if(
+                    action ===
+                    "wait"
+                ){
+
+                    qs(
+                        "[data-heating-phase]"
+                    ).textContent =
+                        "Se așteaptă egalarea temperaturii corpului cu temperatura băii…";
+
+
+                    await wait(
+                        700
+                    );
+
+
+                    qs(
+                        "[data-heating-solid]"
+                    ).style.filter =
+                        "brightness(1.18) saturate(1.25)";
+
+
+                    qs(
+                        "[data-heating-phase]"
+                    ).textContent =
+                        "Corpul este în echilibru termic cu baia. Măsoară temperatura.";
+
+                }
+
+
+                state.heating
+                    .index +=
+                    1;
+
+
+                if(
+                    state.heating
+                        .index ===
+                    state.heating
+                        .expected
+                        .length
+                ){
+
+                    showBodyThermometer();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+function showBodyThermometer(){
+
+    const card =
+        qs(
+            "[data-body-temperature-card]"
+        );
+
+
+    card.hidden =
+        false;
+
+
+    if(
+        state.instruments
+            .bodyTemperature
+    ){
+        return;
+    }
+
+
+    createThermometer({
+
+        key:
+            "bodyTemperature",
+
+        target:
+            qs(
+                "[data-body-temperature-instrument]"
+            ),
+
+        value:
+            state.set
+                .instrumentValues
+                .bodyTemperature_C,
+
+        minimum:
+            70,
+
+        maximum:
+            100,
+
+        minorDivision:
+            .5,
+
+        majorDivision:
+            5,
+
+        label:
+            "Temperatura băii și a corpului",
+
+        answerInput:
+            qs(
+                "[data-body-temperature-answer]"
+            ),
+
+        feedbackTarget:
+            qs(
+                "[data-body-temperature-feedback]"
+            ),
+
+        verifyButton:
+            qs(
+                "[data-verify-body-temperature]"
+            ),
+
+        notebookCheckbox:
+            qs(
+                "[data-body-temperature-notebook]"
+            ),
+
+        onCorrect:
+            () => {
+
+                qs(
+                    "[data-transfer-body]"
+                ).disabled =
+                    false;
+
+
+                feedback(
+                    "heating",
+                    "Temperatura corpului a fost citită. Transferă corpul rapid în calorimetru.",
+                    "ok"
+                );
+
+            }
+
+    });
+
+}
+
+
+qs(
+    "[data-transfer-body]"
+).addEventListener(
+    "click",
+    async () => {
+
+        if(
+            !state.measurements
+                .bodyTemperature
+        ){
+            return;
+        }
+
+
+        state.heating
+            .transferActions +=
+            1;
+
+
+        qs(
+            "[data-transfer-body]"
+        ).disabled =
+            true;
+
+
+        qs(
+            "[data-heating-phase]"
+        ).textContent =
+            "Corpul este transferat cu cleștele…";
+
+
+        qs(
+            "[data-heating-solid]"
+        ).style.opacity =
+            "0";
+
+
+        await wait(
+            600
+        );
+
+
+        qs(
+            "[data-calorimeter-solid]"
+        ).style.opacity =
+            "1";
+
+
+        state.heating
+            .transferred =
+            true;
+
+
+        qs(
+            "[data-transfer-notebook]"
+        ).disabled =
+            false;
+
+
+        qs(
+            "[data-heating-phase]"
+        ).textContent =
+            "Corpul a fost introdus în calorimetru.";
+
+
+        feedback(
+            "heating",
+            "Transfer realizat. Confirmă observația în caiet.",
+            "ok"
+        );
+
+    }
+);
+
+
+qs(
+    "[data-transfer-notebook]"
+).addEventListener(
+    "change",
+    () => {
+
+        if(
+            !state.heating
+                .transferred ||
+            !qs(
+                "[data-transfer-notebook]"
+            ).checked
+        ){
+            return;
+        }
+
+
+        qs(
+            "[data-transfer-notebook]"
+        ).disabled =
+            true;
+
+
+        state.completed.add(
+            4
+        );
+
+
+        qs(
+            "[data-next-equilibrium]"
+        ).disabled =
+            false;
+
+    }
+);
+
+
+/* =========================================================
+   ETAPA 6 — ECHILIBRU
+========================================================= */
+
+qs(
+    "[data-next-equilibrium]"
+).addEventListener(
+    "click",
+    () => {
+
+        showStep(
+            5
+        );
+
+    }
+);
+
+
+qsa(
+    "[data-mixing-action]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            async () => {
+
+                state.mixing
+                    .attempts +=
+                    1;
+
+
+                const action =
+                    button.dataset
+                        .mixingAction;
+
+
+                const expected =
+                    state.mixing
+                        .expected[
+                            state.mixing
+                                .index
+                        ];
+
+
+                if(
+                    action !==
+                    expected
+                ){
+
+                    state.mixing
+                        .errors +=
+                        1;
+
+
+                    feedback(
+                        "equilibrium",
+                        "Respectă ordinea: mai întâi amestecă ușor, apoi așteaptă stabilizarea temperaturii.",
+                        "warn"
+                    );
+
+
+                    return;
+
+                }
+
+
+                button.disabled =
+                    true;
+
+
+                button.classList.add(
+                    "is-done"
+                );
+
+
+                if(
+                    action ===
+                    "stir"
+                ){
+
+                    qs(
+                        "[data-equilibrium-phase]"
+                    ).textContent =
+                        "Amestecul este agitat ușor.";
+
+                }
+
+
+                if(
+                    action ===
+                    "wait"
+                ){
+
+                    qs(
+                        "[data-equilibrium-phase]"
+                    ).textContent =
+                        "Se așteaptă stabilizarea temperaturii…";
+
+
+                    await wait(
+                        750
+                    );
+
+
+                    qs(
+                        "[data-equilibrium-phase]"
+                    ).textContent =
+                        "Temperatura s-a stabilizat. Citește termometrul.";
+
+                }
+
+
+                state.mixing
+                    .index +=
+                    1;
+
+
+                if(
+                    state.mixing
+                        .index ===
+                    state.mixing
+                        .expected
+                        .length
+                ){
+
+                    showEquilibriumThermometer();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+function showEquilibriumThermometer(){
+
+    const card =
+        qs(
+            "[data-equilibrium-card]"
+        );
+
+
+    card.hidden =
+        false;
+
+
+    if(
+        state.instruments
+            .equilibriumTemperature
+    ){
+        return;
+    }
+
+
+    const value =
+        state.set
+            .instrumentValues
+            .measuredEquilibrium_C;
+
+
+    const minimum =
+        Math.floor(
+            (
+                value -
+                5
+            ) /
+            5
+        ) *
+        5;
+
+
+    const maximum =
+        Math.ceil(
+            (
+                value +
+                5
+            ) /
+            5
+        ) *
+        5;
+
+
+    createThermometer({
+
+        key:
+            "equilibriumTemperature",
+
+        target:
+            qs(
+                "[data-equilibrium-instrument]"
+            ),
+
+        value,
+
+        minimum,
+
+        maximum,
+
+        minorDivision:
+            .2,
+
+        majorDivision:
+            2,
+
+        label:
+            "Temperatura de echilibru",
+
+        answerInput:
+            qs(
+                "[data-equilibrium-answer]"
+            ),
+
+        feedbackTarget:
+            qs(
+                "[data-equilibrium-feedback]"
+            ),
+
+        verifyButton:
+            qs(
+                "[data-verify-equilibrium]"
+            ),
+
+        notebookCheckbox:
+            qs(
+                "[data-equilibrium-notebook]"
+            ),
+
+        onCorrect:
+            () => {
+
+                state.completed.add(
+                    5
+                );
+
+
+                feedback(
+                    "equilibrium",
+                    "Temperatura de echilibru a fost citită și notată.",
+                    "ok"
+                );
+
+
+                qs(
+                    "[data-next-calculation]"
+                ).disabled =
+                    false;
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   REZUMAT MĂSURĂRI
+========================================================= */
+
+qs(
+    "[data-next-calculation]"
+).addEventListener(
+    "click",
+    () => {
+
+        renderMeasurementSummary();
+
+        updateCalculationDependencies();
+
+        updateCalculationProgress();
+
+
+        showStep(
+            6
+        );
+
+    }
+);
+
+
+function measurementValue(
+    key
+){
+
+    return Number(
+        state.measurements[
+            key
+        ].studentReading
+    );
+
+}
+
+
+function renderMeasurementSummary(){
+
+    const measurements =
+        state.measurements;
+
+
+    qs(
+        "[data-measurement-summary]"
+    ).innerHTML = `
+
+        <table class="measurements-table">
+
+            <thead>
+
+                <tr>
+                    <th>Mărime</th>
+                    <th>Valoare</th>
+                    <th>Rezoluție</th>
+                    <th>Încercări</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+                    <td>m corp</td>
+                    <td>${measurementValue("bodyMass").toFixed(0)} g</td>
+                    <td>${measurements.bodyMass.resolution} g</td>
+                    <td>${measurements.bodyMass.attempts}</td>
+                </tr>
+
+                <tr>
+                    <td>m apă</td>
+                    <td>${measurementValue("waterMass").toFixed(0)} g</td>
+                    <td>${measurements.waterMass.resolution} g</td>
+                    <td>${measurements.waterMass.attempts}</td>
+                </tr>
+
+                <tr>
+                    <td>T apă</td>
+                    <td>${measurementValue("waterTemperature").toFixed(1)} °C</td>
+                    <td>${measurements.waterTemperature.resolution} °C</td>
+                    <td>${measurements.waterTemperature.attempts}</td>
+                </tr>
+
+                <tr>
+                    <td>T corp</td>
+                    <td>${measurementValue("bodyTemperature").toFixed(1)} °C</td>
+                    <td>${measurements.bodyTemperature.resolution} °C</td>
+                    <td>${measurements.bodyTemperature.attempts}</td>
+                </tr>
+
+                <tr>
+                    <td>T echilibru</td>
+                    <td>${measurementValue("equilibriumTemperature").toFixed(1)} °C</td>
+                    <td>${measurements.equilibriumTemperature.resolution} °C</td>
+                    <td>${measurements.equilibriumTemperature.attempts}</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    `;
+
+}
+
+
+/* =========================================================
+   CALCULE AȘTEPTATE
+========================================================= */
+
+function expectedCalculations(){
+
+    const bodyMass_g =
+        measurementValue(
+            "bodyMass"
+        );
+
+
+    const waterMass_g =
+        measurementValue(
+            "waterMass"
+        );
+
+
+    const Ta =
+        measurementValue(
+            "waterTemperature"
+        );
+
+
+    const Tc =
+        measurementValue(
+            "bodyTemperature"
+        );
+
+
+    const Te =
+        measurementValue(
+            "equilibriumTemperature"
+        );
+
+
+    const bodyMass_kg =
+        bodyMass_g /
+        1000;
+
+
+    const waterMass_kg =
+        waterMass_g /
+        1000;
+
+
+    const waterDelta =
+        Te -
+        Ta;
+
+
+    const bodyDelta =
+        Tc -
+        Te;
+
+
+    const waterHeat =
+        waterMass_kg *
+        4180 *
+        waterDelta;
+
+
+    const specificHeat =
+        waterHeat /
+        (
+            bodyMass_kg *
+            bodyDelta
+        );
+
+
+    const reference =
+        state.set.reference
+            .bodySpecificHeat_J_kgK;
+
+
+    const relativeError =
+        Math.abs(
+            specificHeat -
+            reference
+        ) /
+        reference *
+        100;
+
+
+    return {
+
+        bodyMass_g,
+
+        waterMass_g,
+
+        bodyMass_kg,
+
+        waterMass_kg,
+
+        Ta,
+
+        Tc,
+
+        Te,
+
+        waterDelta,
+
+        bodyDelta,
+
+        waterHeat,
+
+        specificHeat,
+
+        reference,
+
+        relativeError
+
+    };
+
+}
+
+
+/* =========================================================
+   REGULI DE ROTUNJIRE
+========================================================= */
+
+const CALC_RULES = {
+
+    "body-mass-kg":{
+        label:
+            "masa corpului în kg",
+        decimals:
+            3
+    },
+
+    "water-mass-kg":{
+        label:
+            "masa apei în kg",
+        decimals:
+            3
+    },
+
+    "water-delta":{
+        label:
+            "creșterea temperaturii apei",
+        decimals:
+            1
+    },
+
+    "body-delta":{
+        label:
+            "scăderea temperaturii corpului",
+        decimals:
+            1
+    },
+
+    "water-heat":{
+        label:
+            "căldura primită de apă",
+        decimals:
+            0
+    },
+
+    "specific-heat":{
+        label:
+            "căldura specifică determinată",
+        decimals:
+            0
+    },
+
+    "relative-error":{
+        label:
+            "eroarea relativă",
+        decimals:
+            2
+    }
+
+};
+
+
+/* =========================================================
+   DEPENDENȚE
+========================================================= */
+
+const CALC_DEPENDENCIES = {
+
+    "body-mass-kg":[
+        "specific-heat",
+        "relative-error"
+    ],
+
+    "water-mass-kg":[
+        "water-heat",
+        "specific-heat",
+        "relative-error"
+    ],
+
+    "water-delta":[
+        "water-heat",
+        "specific-heat",
+        "relative-error"
+    ],
+
+    "body-delta":[
+        "specific-heat",
+        "relative-error"
+    ],
+
+    "water-heat":[
+        "specific-heat",
+        "relative-error"
+    ],
+
+    "specific-heat":[
+        "relative-error"
+    ],
+
+    "relative-error":[]
+};
+
+
+function calcValue(
+    key
+){
+
+    return numeric(
+        qs(
+            `[data-calc="${key}"]`
+        ).value
+    );
+
+}
+
+
+function allCalculationsVerified(){
+
+    return Object.values(
+        state.calculationVerified
+    ).every(
+        value =>
+            value ===
+            true
+    );
+
+}
+
+
+function rememberWrongField(
+    key
+){
+
+    if(
+        !state.activity
+            .correctedFields
+            .includes(
+                key
+            )
+    ){
+
+        state.activity
+            .correctedFields
+            .push(
+                key
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   STARE BUTON CALCUL
+========================================================= */
+
+function setCalcButtonState(
+    key,
+    correct
+){
+
+    const button =
+        qs(
+            `[data-check-calc="${key}"]`
+        );
+
+
+    if(!button){
+        return;
+    }
+
+
+    if(correct){
+
+        button.textContent =
+            "Corect ✓";
+
+
+        button.classList.remove(
+            "secondary"
+        );
+
+
+        button.classList.add(
+            "success"
+        );
+
+    }
+    else{
+
+        button.textContent =
+            "Verifică";
+
+
+        button.classList.remove(
+            "success"
+        );
+
+
+        button.classList.add(
+            "secondary"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DEPENDENȚE UI
+========================================================= */
+
+function updateCalculationDependencies(){
+
+    const waterHeatButton =
+        qs(
+            '[data-check-calc="water-heat"]'
+        );
+
+
+    const waterHeatReady =
+        state.calculationVerified[
+            "water-mass-kg"
+        ] &&
+        state.calculationVerified[
+            "water-delta"
+        ];
+
+
+    waterHeatButton.disabled =
+        !waterHeatReady;
+
+
+    if(
+        !waterHeatReady &&
+        !state.calculationVerified[
+            "water-heat"
+        ]
+    ){
+
+        const output =
+            qs(
+                '[data-calc-feedback="water-heat"]'
+            );
+
+
+        output.textContent =
+            "Verifică mai întâi masa apei în kg și creșterea temperaturii apei.";
+
+
+        output.className =
+            "calc-feedback info";
+
+    }
+
+
+    const specificHeatButton =
+        qs(
+            '[data-check-calc="specific-heat"]'
+        );
+
+
+    const specificHeatReady =
+        state.calculationVerified[
+            "water-heat"
+        ] &&
+        state.calculationVerified[
+            "body-mass-kg"
+        ] &&
+        state.calculationVerified[
+            "body-delta"
+        ];
+
+
+    specificHeatButton.disabled =
+        !specificHeatReady;
+
+
+    if(
+        !specificHeatReady &&
+        !state.calculationVerified[
+            "specific-heat"
+        ]
+    ){
+
+        const output =
+            qs(
+                '[data-calc-feedback="specific-heat"]'
+            );
+
+
+        output.textContent =
+            "Verifică mai întâi Qₐ, masa corpului în kg și scăderea temperaturii corpului.";
+
+
+        output.className =
+            "calc-feedback info";
+
+    }
+
+
+    const relativeInput =
+        qs(
+            '[data-calc="relative-error"]'
+        );
+
+
+    const relativeButton =
+        qs(
+            '[data-check-calc="relative-error"]'
+        );
+
+
+    const relativeReady =
+        state.calculationVerified[
+            "specific-heat"
+        ];
+
+
+    relativeInput.disabled =
+        !relativeReady;
+
+
+    relativeButton.disabled =
+        !relativeReady;
+
+
+    qs(
+        "[data-reference-card]"
+    ).hidden =
+        !relativeReady;
+
+
+    if(relativeReady){
+
+        qs(
+            "[data-reference-value]"
+        ).innerHTML = `
+
+            <strong>
+                ${escapeHtml(state.set.visible.materialName)}
+            </strong>:
+
+            c<sub>ref</sub> =
+
+            <strong>
+                ${state.set.reference.bodySpecificHeat_J_kgK}
+                J/(kg·K)
+            </strong>
+
+        `;
+
+    }
+    else if(
+        !state.calculationVerified[
+            "relative-error"
+        ]
+    ){
+
+        const output =
+            qs(
+                '[data-calc-feedback="relative-error"]'
+            );
+
+
+        output.textContent =
+            "Determină mai întâi corect căldura specifică experimentală.";
+
+
+        output.className =
+            "calc-feedback info";
+
+    }
+
+}
+
+
+/* =========================================================
+   PROGRES CALCULE
+========================================================= */
+
+function updateCalculationProgress(){
+
+    const verified =
+        Object.values(
+            state.calculationVerified
+        ).filter(
+            Boolean
+        ).length;
+
+
+    const total =
+        Object.keys(
+            state.calculationVerified
+        ).length;
+
+
+    qs(
+        "[data-calculation-progress]"
+    ).textContent =
+        `Calcule verificate: ${verified}/${total}`;
+
+
+    if(
+        verified ===
+        total
+    ){
+
+        feedback(
+            "calculation",
+            state.analysisVerified
+                ? "Toate calculele, interpretarea și caietul au fost verificate."
+                : "Toate calculele numerice sunt corecte. Verifică acum interpretarea și caietul.",
+            state.analysisVerified
+                ? "ok"
+                : "warn"
+        );
+
+    }
+    else{
+
+        feedback(
+            "calculation",
+            `Calcule numerice verificate: ${verified}/${total}.`,
+            verified
+                ? "warn"
+                : "bad"
+        );
+
+    }
+
+
+    qs(
+        "[data-next-evaluation]"
+    ).disabled =
+        !(
+            allCalculationsVerified() &&
+            state.analysisVerified &&
+            state.notebook
+        );
+
+}
+
+
+/* =========================================================
+   MARCARE CALCUL
+========================================================= */
+
+function markCalc(
+    key,
+    status,
+    message
+){
+
+    const input =
+        qs(
+            `[data-calc="${key}"]`
+        );
+
+
+    const output =
+        qs(
+            `[data-calc-feedback="${key}"]`
+        );
+
+
+    input.classList.remove(
+        "calc-ok",
+        "calc-error"
+    );
+
+
+    input.classList.add(
+        status ===
+            "ok"
+            ? "calc-ok"
+            : "calc-error"
+    );
+
+
+    input.setAttribute(
+        "aria-invalid",
+        status ===
+            "ok"
+            ? "false"
+            : "true"
+    );
+
+
+    output.textContent =
+        message;
+
+
+    output.className =
+        `calc-feedback ${status}`;
+
+}
+
+
+/* =========================================================
+   VALIDATOR GENERAL
+========================================================= */
+
+function validateCalc({
+
+    key,
+    expectedValues,
+    hint,
+    specialHint=null
+
+}){
+
+    const rule =
+        CALC_RULES[
+            key
+        ];
+
+
+    const input =
+        qs(
+            `[data-calc="${key}"]`
+        );
+
+
+    const raw =
+        input.value.trim();
+
+
+    if(!raw){
+
+        rememberWrongField(
+            key
+        );
+
+
+        markCalc(
+            key,
+            "bad",
+            "Completează acest rezultat."
+        );
+
+
+        return {
+            ok:false,
+            value:NaN
+        };
+
+    }
+
+
+    const value =
+        numeric(
+            raw
+        );
+
+
+    if(
+        !Number.isFinite(
+            value
+        )
+    ){
+
+        rememberWrongField(
+            key
+        );
+
+
+        markCalc(
+            key,
+            "bad",
+            "Introdu numai valoarea numerică. Poți folosi virgulă sau punct zecimal."
+        );
+
+
+        return {
+            ok:false,
+            value
+        };
+
+    }
+
+
+    if(
+        acceptedPresentation(
+            value,
+            expectedValues,
+            rule.decimals
+        )
+    ){
+
+        markCalc(
+            key,
+            "ok",
+            `Corect. Se acceptă rotunjirea sau trunchierea la ${rule.decimals} ${
+                rule.decimals ===
+                    1
+                    ? "zecimală"
+                    : "zecimale"
+            }.`
+        );
+
+
+        return {
+            ok:true,
+            value
+        };
+
+    }
+
+
+    rememberWrongField(
+        key
+    );
+
+
+    const custom =
+        typeof specialHint ===
+            "function"
+            ? specialHint(
+                value
+            ) ||
+            ""
+            : "";
+
+
+    markCalc(
+        key,
+        "bad",
+        custom ||
+        hint
+    );
+
+
+    return {
+        ok:false,
+        value
+    };
+
+}
+
+
+/* =========================================================
+   INVALIDARE CALCULE DEPENDENTE
+========================================================= */
+
+function invalidateCalculation(
+    key,
+    visited=new Set()
+){
+
+    if(
+        visited.has(
+            key
+        )
+    ){
+        return;
+    }
+
+
+    visited.add(
+        key
+    );
+
+
+    state.calculationVerified[
+        key
+    ] =
+        false;
+
+
+    setCalcButtonState(
+        key,
+        false
+    );
+
+
+    CALC_DEPENDENCIES[
+        key
+    ]?.forEach(
+        dependency => {
+
+            state.calculationVerified[
+                dependency
+            ] =
+                false;
+
+
+            setCalcButtonState(
+                dependency,
+                false
+            );
+
+
+            const input =
+                qs(
+                    `[data-calc="${dependency}"]`
+                );
+
+
+            const output =
+                qs(
+                    `[data-calc-feedback="${dependency}"]`
+                );
+
+
+            input?.classList.remove(
+                "calc-ok",
+                "calc-error"
+            );
+
+
+            if(output){
+
+                output.textContent =
+                    "Reverifică acest rezultat deoarece ai modificat o mărime utilizată în calcul.";
+
+
+                output.className =
+                    "calc-feedback bad";
+
+            }
+
+
+            invalidateCalculation(
+                dependency,
+                visited
+            );
+
+        }
+    );
+
+
+    state.analysisVerified =
+        false;
+
+
+    state.notebook =
+        null;
+
+
+    state.completed.delete(
+        6
+    );
+
+
+    qs(
+        "[data-next-evaluation]"
+    ).disabled =
+        true;
+
+
+    updateCalculationDependencies();
+
+}
+
+
+/* =========================================================
+   VERIFICARE UN SINGUR CALCUL
+========================================================= */
+
+function verifySingleCalculation(
+    key
+){
+
+    state.activity
+        .calculationChecks +=
+        1;
+
+
+    state.activity
+        .calculationAttempts[
+            key
+        ] +=
+        1;
+
+
+    const expected =
+        expectedCalculations();
+
+
+    let result;
+
+
+    switch(key){
+
+
+/* ---------------------------------------------------------
+   MASA CORPULUI
+--------------------------------------------------------- */
+
+        case "body-mass-kg":
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.bodyMass_kg
+                    ],
+
+                    hint:
+                        "Transformă masa corpului din grame în kilograme: împarte la 1000.",
+
+                    specialHint:
+                        value => {
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    expected.bodyMass_g,
+                                    3
+                                )
+                            ){
+
+                                return "Ai introdus masa în grame. Câmpul cere kilograme.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+
+/* ---------------------------------------------------------
+   MASA APEI
+--------------------------------------------------------- */
+
+        case "water-mass-kg":
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.waterMass_kg
+                    ],
+
+                    hint:
+                        "Transformă masa apei din grame în kilograme: împarte la 1000.",
+
+                    specialHint:
+                        value => {
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    expected.waterMass_g,
+                                    3
+                                )
+                            ){
+
+                                return "Ai introdus masa apei în grame. Câmpul cere kilograme.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+
+/* ---------------------------------------------------------
+   DELTA T APĂ
+--------------------------------------------------------- */
+
+        case "water-delta":
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.waterDelta
+                    ],
+
+                    hint:
+                        "Reverifică ΔTₐ = Tₑ − Tₐ.",
+
+                    specialHint:
+                        value => {
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    -expected.waterDelta,
+                                    1
+                                )
+                            ){
+
+                                return "Ai inversat ordinea temperaturilor. Apa se încălzește, deci folosește Tₑ − Tₐ.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+
+/* ---------------------------------------------------------
+   DELTA T CORP
+--------------------------------------------------------- */
+
+        case "body-delta":
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.bodyDelta
+                    ],
+
+                    hint:
+                        "Reverifică ΔT꜀ = T꜀ − Tₑ.",
+
+                    specialHint:
+                        value => {
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    -expected.bodyDelta,
+                                    1
+                                )
+                            ){
+
+                                return "Ai inversat ordinea temperaturilor. Corpul se răcește, deci folosește T꜀ − Tₑ.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+
+/* ---------------------------------------------------------
+   CĂLDURA PRIMITĂ DE APĂ
+--------------------------------------------------------- */
+
+        case "water-heat":{
+
+            if(
+                !state.calculationVerified[
+                    "water-mass-kg"
+                ] ||
+                !state.calculationVerified[
+                    "water-delta"
+                ]
+            ){
+
+                return;
+
+            }
+
+
+            const propagated =
+                calcValue(
+                    "water-mass-kg"
+                ) *
+                4180 *
+                calcValue(
+                    "water-delta"
+                );
+
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.waterHeat,
+                        propagated
+                    ],
+
+                    hint:
+                        "Reverifică Qₐ = mₐ·4180·ΔTₐ. Masa trebuie exprimată în kilograme.",
+
+                    specialHint:
+                        value => {
+
+                            const usingGrams =
+                                expected.waterMass_g *
+                                4180 *
+                                expected.waterDelta;
+
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    usingGrams,
+                                    0
+                                )
+                            ){
+
+                                return "Ai folosit masa apei în grame. În formula Q = mcΔT, masa trebuie exprimată în kilograme.";
+
+                            }
+
+
+                            if(
+                                value <
+                                0
+                            ){
+
+                                return "Căldura primită de apă trebuie să fie pozitivă. Verifică semnul diferenței de temperatură.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+        }
+
+
+/* ---------------------------------------------------------
+   CĂLDURA SPECIFICĂ
+--------------------------------------------------------- */
+
+        case "specific-heat":{
+
+            if(
+                !state.calculationVerified[
+                    "water-heat"
+                ] ||
+                !state.calculationVerified[
+                    "body-mass-kg"
+                ] ||
+                !state.calculationVerified[
+                    "body-delta"
+                ]
+            ){
+
+                return;
+
+            }
+
+
+            const propagated =
+                calcValue(
+                    "water-heat"
+                ) /
+                (
+                    calcValue(
+                        "body-mass-kg"
+                    ) *
+                    calcValue(
+                        "body-delta"
+                    )
+                );
+
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.specificHeat,
+                        propagated
+                    ],
+
+                    hint:
+                        "Reverifică c = Qₐ/(m꜀·ΔT꜀). Masa corpului trebuie exprimată în kg.",
+
+                    specialHint:
+                        value => {
+
+                            const usingGrams =
+                                expected.waterHeat /
+                                (
+                                    expected.bodyMass_g *
+                                    expected.bodyDelta
+                                );
+
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    usingGrams,
+                                    0
+                                )
+                            ){
+
+                                return "Ai folosit masa corpului în grame. Pentru J/(kg·K), masa trebuie exprimată în kilograme.";
+
+                            }
+
+
+                            if(
+                                value <=
+                                0
+                            ){
+
+                                return "Căldura specifică trebuie să fie pozitivă. Verifică masele și diferențele de temperatură.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+        }
+
+
+/* ---------------------------------------------------------
+   EROAREA RELATIVĂ
+--------------------------------------------------------- */
+
+        case "relative-error":{
+
+            if(
+                !state.calculationVerified[
+                    "specific-heat"
+                ]
+            ){
+
+                return;
+
+            }
+
+
+            const studentSpecificHeat =
+                calcValue(
+                    "specific-heat"
+                );
+
+
+            const propagated =
+                Math.abs(
+                    studentSpecificHeat -
+                    expected.reference
+                ) /
+                expected.reference *
+                100;
+
+
+            result =
+                validateCalc({
+
+                    key,
+
+                    expectedValues:[
+                        expected.relativeError,
+                        propagated
+                    ],
+
+                    hint:
+                        "Reverifică ε = |cₑₓₚ − cᵣₑ𝒻|/cᵣₑ𝒻 ·100%.",
+
+                    specialHint:
+                        value => {
+
+                            if(
+                                near(
+                                    value,
+                                    propagated /
+                                    100,
+                                    .002
+                                )
+                            ){
+
+                                return "Ai uitat înmulțirea cu 100 pentru exprimarea în procente.";
+
+                            }
+
+
+                            const wrongDenominator =
+                                Math.abs(
+                                    studentSpecificHeat -
+                                    expected.reference
+                                ) /
+                                studentSpecificHeat *
+                                100;
+
+
+                            if(
+                                acceptedPresentation(
+                                    value,
+                                    wrongDenominator,
+                                    2
+                                )
+                            ){
+
+                                return "Ai folosit valoarea experimentală la numitor. Raportează diferența la valoarea de referință.";
+
+                            }
+
+
+                            if(
+                                value <
+                                0
+                            ){
+
+                                return "Eroarea relativă nu poate fi negativă. Folosește modulul diferenței.";
+
+                            }
+
+
+                            return "";
+
+                        }
+
+                });
+
+            break;
+
+        }
+
+
+        default:
+
+            return;
+
+    }
+
+
+    state.calculationVerified[
+        key
+    ] =
+        Boolean(
+            result?.ok
+        );
+
+
+    setCalcButtonState(
+        key,
+        Boolean(
+            result?.ok
+        )
+    );
+
+
+    updateCalculationDependencies();
+
+    updateCalculationProgress();
+
+}
+
+
+/* =========================================================
+   BUTOANE INDIVIDUALE
+========================================================= */
+
+qsa(
+    "[data-check-calc]"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                verifySingleCalculation(
+                    button.dataset
+                        .checkCalc
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   EDITAREA UNUI CALCUL
+========================================================= */
+
+Object.keys(
+    CALC_RULES
+).forEach(
+    key => {
+
+        qs(
+            `[data-calc="${key}"]`
+        ).addEventListener(
+            "input",
+            event => {
+
+                if(
+                    state.finalized
+                ){
+                    return;
+                }
+
+
+                event.currentTarget
+                    .classList
+                    .remove(
+                        "calc-ok",
+                        "calc-error"
+                    );
+
+
+                const output =
+                    qs(
+                        `[data-calc-feedback="${key}"]`
+                    );
+
+
+                output.textContent =
+                    "";
+
+
+                output.className =
+                    "calc-feedback";
+
+
+                invalidateCalculation(
+                    key
+                );
+
+
+                updateCalculationDependencies();
+
+                updateCalculationProgress();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ANALIZĂ / CAIET
+========================================================= */
+
+function invalidateAnalysis(){
+
+    if(
+        state.finalized
+    ){
+        return;
+    }
+
+
+    state.analysisVerified =
+        false;
+
+
+    state.notebook =
+        null;
+
+
+    state.completed.delete(
+        6
+    );
+
+
+    qs(
+        "[data-next-evaluation]"
+    ).disabled =
+        true;
+
+
+    updateCalculationProgress();
+
+}
+
+
+[
+    "[data-student-steps]",
+    "[data-comparison]"
+].forEach(
+    selector => {
+
+        qs(
+            selector
+        ).addEventListener(
+            "input",
+            invalidateAnalysis
+        );
+
+    }
+);
+
+
+qs(
+    "[data-calculation-notebook]"
+).addEventListener(
+    "change",
+    invalidateAnalysis
+);
+
+
+/* =========================================================
+   CONSTRUIRE CAIET FINAL
+========================================================= */
+
+function finalizeNotebook(){
+
+    if(
+        !allCalculationsVerified() ||
+        !state.analysisVerified
+    ){
+        return;
+    }
+
+
+    const expected =
+        expectedCalculations();
+
+
+    state.notebook = {
+
+        dataSetId:
+            state.set.id,
+
+        measurements:{
+
+            bodyMass:
+                clone(
+                    state.measurements
+                        .bodyMass
+                ),
+
+            waterMass:
+                clone(
+                    state.measurements
+                        .waterMass
+                ),
+
+            waterTemperature:
+                clone(
+                    state.measurements
+                        .waterTemperature
+                ),
+
+            bodyTemperature:
+                clone(
+                    state.measurements
+                        .bodyTemperature
+                ),
+
+            equilibriumTemperature:
+                clone(
+                    state.measurements
+                        .equilibriumTemperature
+                )
+
+        },
+
+        calculations:{
+
+            bodyMass_kg:
+                calcValue(
+                    "body-mass-kg"
+                ),
+
+            waterMass_kg:
+                calcValue(
+                    "water-mass-kg"
+                ),
+
+            waterTemperatureRise_K:
+                calcValue(
+                    "water-delta"
+                ),
+
+            bodyTemperatureDrop_K:
+                calcValue(
+                    "body-delta"
+                ),
+
+            waterHeat_J:
+                calcValue(
+                    "water-heat"
+                ),
+
+            specificHeat_J_kgK:
+                calcValue(
+                    "specific-heat"
+                ),
+
+            referenceSpecificHeat_J_kgK:
+                expected.reference,
+
+            relativeError_percent:
+                calcValue(
+                    "relative-error"
+                ),
+
+            studentSteps:
+                qs(
+                    "[data-student-steps]"
+                )
+                    .value
+                    .trim()
+
+        },
+
+        comparison:{
+
+            material:
+                state.set.visible
+                    .materialName,
+
+            interpretation:
+                qs(
+                    "[data-comparison]"
+                )
+                    .value
+                    .trim(),
+
+            idealModel:
+                "Se consideră căldura cedată de corp egală cu căldura primită de apă; efectul calorimetrului și schimbul cu mediul sunt neglijate în formula utilizată."
+
+        },
+
+        activity:{
+
+            equipmentChecks:
+                state.activity
+                    .equipmentChecks,
+
+            heatingProcedureAttempts:
+                state.heating
+                    .attempts,
+
+            heatingProcedureErrors:
+                state.heating
+                    .errors,
+
+            transferActions:
+                state.heating
+                    .transferActions,
+
+            mixingProcedureAttempts:
+                state.mixing
+                    .attempts,
+
+            mixingProcedureErrors:
+                state.mixing
+                    .errors,
+
+            calculationChecks:
+                state.activity
+                    .calculationChecks,
+
+            calculationAttemptsByField:
+                clone(
+                    state.activity
+                        .calculationAttempts
+                ),
+
+            fieldsRequiringCorrection:
+                clone(
+                    state.activity
+                        .correctedFields
+                )
+
+        },
+
+        completed:true,
+
+        completedAt:
+            now()
+
+    };
+
+
+    globalThis.LAB_NOTEBOOK_STATE =
+        clone(
+            state.notebook
+        );
+
+
+    document.dispatchEvent(
+
+        new CustomEvent(
+            "laborator:notebook-complete",
+            {
+                detail:
+                    clone(
+                        state.notebook
+                    )
+            }
+        )
+
+    );
+
+
+    state.completed.add(
+        6
+    );
+
+
+    feedback(
+        "calculation",
+        "Toate calculele, interpretarea și caietul au fost verificate. Poți continua.",
+        "ok"
+    );
+
+
+    qs(
+        "[data-next-evaluation]"
+    ).disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   VERIFICARE INTERPRETARE ȘI CAIET
+========================================================= */
+
+qs(
+    "[data-check-analysis]"
+).addEventListener(
+    "click",
+    () => {
+
+        const errors =
+            [];
+
+
+        let firstInvalid =
+            null;
+
+
+/* ---------------------------------------------------------
+   CALCUL TRANSCRIS
+--------------------------------------------------------- */
+
+        const stepsElement =
+            qs(
+                "[data-student-steps]"
+            );
+
+
+        const steps =
+            stepsElement
+                .value
+                .trim();
+
+
+        const stepsFeedback =
+            qs(
+                '[data-calc-feedback="student-steps"]'
+            );
+
+
+        stepsElement
+            .classList
+            .remove(
+                "calc-ok",
+                "calc-error"
+            );
+
+
+        if(
+            steps.length <
+            70
+        ){
+
+            stepsElement
+                .classList
+                .add(
+                    "calc-error"
+                );
+
+
+            stepsFeedback.textContent =
+                "Transcrie mai clar pașii de calcul: transformarea maselor, diferențele de temperatură, calculul lui Q și determinarea lui c.";
+
+
+            stepsFeedback.className =
+                "calc-feedback bad";
+
+
+            errors.push(
+                "calculul din caiet"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                stepsElement;
+
+        }
+        else{
+
+            stepsElement
+                .classList
+                .add(
+                    "calc-ok"
+                );
+
+
+            stepsFeedback.textContent =
+                "Calculul transcris este suficient de detaliat.";
+
+
+            stepsFeedback.className =
+                "calc-feedback ok";
+
+        }
+
+
+/* ---------------------------------------------------------
+   INTERPRETARE
+--------------------------------------------------------- */
+
+        const comparisonElement =
+            qs(
+                "[data-comparison]"
+            );
+
+
+        const comparison =
+            comparisonElement
+                .value
+                .trim();
+
+
+        const comparisonFeedback =
+            qs(
+                '[data-calc-feedback="comparison"]'
+            );
+
+
+        comparisonElement
+            .classList
+            .remove(
+                "calc-ok",
+                "calc-error"
+            );
+
+
+        if(
+            comparison.length <
+            110
+        ){
+
+            comparisonElement
+                .classList
+                .add(
+                    "calc-error"
+                );
+
+
+            comparisonFeedback.textContent =
+                "Dezvoltă explicația. Discută pierderile de căldură, capacitatea termică a calorimetrului, transferul corpului și rezoluția instrumentelor.";
+
+
+            comparisonFeedback.className =
+                "calc-feedback bad";
+
+
+            errors.push(
+                "interpretarea fizică"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                comparisonElement;
+
+        }
+        else{
+
+            comparisonElement
+                .classList
+                .add(
+                    "calc-ok"
+                );
+
+
+            comparisonFeedback.textContent =
+                "Interpretarea este suficient dezvoltată.";
+
+
+            comparisonFeedback.className =
+                "calc-feedback ok";
+
+        }
+
+
+/* ---------------------------------------------------------
+   CAIET
+--------------------------------------------------------- */
+
+        const notebook =
+            qs(
+                "[data-calculation-notebook]"
+            );
+
+
+        const notebookFeedback =
+            qs(
+                '[data-calc-feedback="notebook"]'
+            );
+
+
+        if(
+            !notebook.checked
+        ){
+
+            notebookFeedback.textContent =
+                "Confirmă că ai trecut formulele, calculele, unitățile și interpretarea în caiet.";
+
+
+            notebookFeedback.className =
+                "calc-feedback bad";
+
+
+            errors.push(
+                "confirmarea caietului"
+            );
+
+
+            firstInvalid =
+                firstInvalid ||
+                notebook;
+
+        }
+        else{
+
+            notebookFeedback.textContent =
+                "Confirmarea caietului a fost înregistrată.";
+
+
+            notebookFeedback.className =
+                "calc-feedback ok";
+
+        }
+
+
+        if(
+            errors.length
+        ){
+
+            state.analysisVerified =
+                false;
+
+
+            feedback(
+                "calculation",
+                `Mai trebuie verificat: ${errors.join("; ")}.`,
+                "bad"
+            );
+
+
+            qs(
+                "[data-next-evaluation]"
+            ).disabled =
+                true;
+
+
+            firstInvalid?.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+
+
+            return;
+
+        }
+
+
+        state.analysisVerified =
+            true;
+
+
+        if(
+            !allCalculationsVerified()
+        ){
+
+            feedback(
+                "calculation",
+                "Interpretarea și caietul sunt corecte, dar mai există calcule numerice neverificate.",
+                "warn"
+            );
+
+
+            qs(
+                "[data-next-evaluation]"
+            ).disabled =
+                true;
+
+
+            updateCalculationProgress();
+
+
+            return;
+
+        }
+
+
+        finalizeNotebook();
+
+        updateCalculationProgress();
+
+    }
+);
+
+
+/* =========================================================
+   EVALUARE
+========================================================= */
+
+qs(
+    "[data-next-evaluation]"
+).addEventListener(
+    "click",
+    () => {
+
+        if(
+            !state.notebook ||
+            !allCalculationsVerified() ||
+            !state.analysisVerified
+        ){
+
+            return;
+
+        }
+
+
+        showStep(
+            7
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PAYLOAD
+========================================================= */
+
+function buildReportPayload(){
+
+    const monitoring =
+        globalThis
+            .LaboratorMonitorizare
+            ?.getState?.() ||
+        {};
+
+
+    const base = {
+
+        reportId:
+            state.reportId,
+
+        student:{
+
+            name:
+                state.session
+                    .studentName,
+
+            className:
+                state.session
+                    .studentClass,
+
+            catalogNumber:
+                state.session
+                    .catalogNumber,
+
+            identityConfirmed:
+                true
+
+        },
+
+        experiment:{
+
+            id:
+                CONFIG.id,
+
+            code:
+                CONFIG.code,
+
+            title:
+                CONFIG.title,
+
+            classLevel:
+                CONFIG.classLevel,
+
+            domain:
+                CONFIG.domain,
+
+            dataSetId:
+                state.set.id,
+
+            /*
+               Sunt incluse numai date vizibile elevului.
+               Parametrii ascunși ai simulatorului nu intră în raport.
+            */
+            generatedData:{
+
+                material:
+                    state.set.visible
+                        .materialName,
+
+                waterSpecificHeat_J_kgK:
+                    4180
+
+            }
+
+        },
+
+        session:{
+
+            sessionId:
+                state.session
+                    .sessionId,
+
+            startedAt:
+                state.session
+                    .startedAt,
+
+            finishedAt:
+                state.evaluation
+                    .finishedAt,
+
+            durationSeconds:
+                Math.max(
+                    0,
+                    Math.round(
+                        (
+                            Date.parse(
+                                state.evaluation
+                                    .finishedAt
+                            ) -
+                            Date.parse(
+                                state.session
+                                    .startedAt
+                            )
+                        ) /
+                        1000
+                    )
+                ),
+
+            dateDisplay:
+                state.session
+                    .experimentDate,
+
+            completed:true,
+
+            totalSteps:
+                8
+
+        },
+
+        safety:
+            state.safety,
+
+        equipment:
+            state.equipment,
+
+        notebook:
+            state.notebook,
+
+        measurements:
+            state.notebook
+                .measurements,
+
+        calculations:
+            state.notebook
+                .calculations,
+
+        comparison:
+            state.notebook
+                .comparison,
+
+        activity:
+            state.notebook
+                .activity,
+
+        evaluation:
+            state.evaluation,
+
+        monitoring,
+
+        completed:true,
+
+        completedSteps:
+            [...state.completed]
+                .sort(
+                    (
+                        a,
+                        b
+                    ) =>
+                        a -
+                        b
+                ),
+
+        totalSteps:
+            8,
+
+        report:{
+
+            reportId:
+                state.reportId,
+
+            finishedAt:
+                state.evaluation
+                    .finishedAt
+
+        }
+
+    };
+
+
+    if(
+        globalThis
+            .LaboratorGoogleSheets
+            ?.buildPayload
+    ){
+
+        return globalThis
+            .LaboratorGoogleSheets
+            .buildPayload(
+                base
+            );
+
+    }
+
+
+    return base;
+
+}
+
+
+/* =========================================================
+   BLOCARE FINALĂ
+========================================================= */
+
+function lockFinalReport(){
+
+    state.finalized =
+        true;
+
+
+    qsa(
+        "[data-calc]"
+    ).forEach(
+        input => {
+
+            input.disabled =
+                true;
+
+        }
+    );
+
+
+    qsa(
+        "[data-check-calc]"
+    ).forEach(
+        button => {
+
+            button.disabled =
+                true;
+
+        }
+    );
+
+
+    qs(
+        "[data-student-steps]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-comparison]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-calculation-notebook]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-check-analysis]"
+    ).disabled =
+        true;
+
+}
+
+
+/* =========================================================
+   FINALIZARE
+========================================================= */
+
+qs(
+    "[data-evaluation-form]"
+).addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        if(
+            state.evaluation &&
+            state.reportId
+        ){
+
+            qs(
+                "[data-final-result]"
+            ).hidden =
+                false;
+
+
+            return;
+
+        }
+
+
+        if(
+            !state.notebook ||
+            !allCalculationsVerified() ||
+            !state.analysisVerified
+        ){
+
+            alert(
+                "Revenirea la etapa de calcule este necesară. Toate calculele, interpretarea și caietul trebuie verificate."
+            );
+
+
+            return;
+
+        }
+
+
+        const form =
+            new FormData(
+                event.currentTarget
+            );
+
+
+        const answers = {
+
+            q1:
+                form.get(
+                    "q1"
+                ),
+
+            q2:
+                form.get(
+                    "q2"
+                ),
+
+            q3:
+                form.get(
+                    "q3"
+                ),
+
+            q4:
+                form.get(
+                    "q4"
+                )
+
+        };
+
+
+        const conclusion =
+            qs(
+                "[data-final-conclusion]"
+            )
+                .value
+                .trim();
+
+
+        const errorSources =
+            qs(
+                "[data-error-sources]"
+            )
+                .value
+                .trim();
+
+
+        if(
+            !answers.q1 ||
+            !answers.q2 ||
+            !answers.q3 ||
+            !answers.q4 ||
+            conclusion.length <
+                120 ||
+            errorSources.length <
+                40 ||
+            !qs(
+                "[data-individual-confirmation]"
+            ).checked
+        ){
+
+            alert(
+                "Completează toate întrebările, concluzia, sursele de eroare și confirmarea finală."
+            );
+
+
+            return;
+
+        }
+
+
+        const correct = {
+
+            q1:
+                "correct",
+
+            q2:
+                "gives",
+
+            q3:
+                "ideal",
+
+            q4:
+                "losses"
+
+        };
+
+
+        const score =
+            Object.keys(
+                correct
+            )
+                .filter(
+                    key =>
+                        answers[
+                            key
+                        ] ===
+                        correct[
+                            key
+                        ]
+                )
+                .length;
+
+
+        state.evaluation = {
+
+            score,
+
+            maximumScore:
+                4,
+
+            percent:
+                round(
+                    score /
+                    4 *
+                    100,
+                    2
+                ),
+
+            answers,
+
+            initialPredictions:
+                state.predictions,
+
+            conclusion,
+
+            errorSources,
+
+            individualWorkConfirmed:
+                true,
+
+            finishedAt:
+                now()
+
+        };
+
+
+        globalThis.LAB_EVALUATION_STATE =
+            clone(
+                state.evaluation
+            );
+
+
+        state.reportId =
+            state.reportId ||
+            makeId(
+                "RAP"
+            );
+
+
+        state.completed.add(
+            7
+        );
+
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+                "laborator:evaluation-complete",
+                {
+                    detail:
+                        clone(
+                            state.evaluation
+                        )
+                }
+            )
+
+        );
+
+
+        const calculations =
+            state.notebook
+                .calculations;
+
+
+        qs(
+            "[data-result-grid]"
+        ).innerHTML = `
+
+            <div class="result-card">
+
+                <span>
+                    Elev
+                </span>
+
+                <strong>
+                    ${escapeHtml(state.session.studentName)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Clasa / nr. catalog
+                </span>
+
+                <strong>
+                    ${escapeHtml(state.session.studentClass)}
+                    /
+                    ${state.session.catalogNumber}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Material
+                </span>
+
+                <strong>
+                    ${escapeHtml(state.set.visible.materialName)}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    c determinat
+                </span>
+
+                <strong>
+                    ${Number(calculations.specificHeat_J_kgK).toFixed(0)}
+                    J/(kg·K)
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    c referință
+                </span>
+
+                <strong>
+                    ${Number(calculations.referenceSpecificHeat_J_kgK).toFixed(0)}
+                    J/(kg·K)
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Eroare relativă
+                </span>
+
+                <strong>
+                    ${Number(calculations.relativeError_percent).toFixed(2)}
+                    %
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Verificări calcule
+                </span>
+
+                <strong>
+                    ${state.activity.calculationChecks}
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Verificare conceptuală
+                </span>
+
+                <strong>
+                    ${score}/4
+                </strong>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <span>
+                    Set experimental
+                </span>
+
+                <strong>
+                    ${escapeHtml(state.set.id)}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        qs(
+            "[data-report-id]"
+        ).textContent =
+            state.reportId;
+
+
+        qs(
+            "[data-final-result]"
+        ).hidden =
+            false;
+
+
+        qsa(
+            "input, textarea, button",
+            event.currentTarget
+        ).forEach(
+            element => {
+
+                element.disabled =
+                    true;
+
+            }
+        );
+
+
+        lockFinalReport();
+
+
+        try{
+
+            const api =
+                globalThis
+                    .LaboratorGoogleSheets;
+
+
+            state.reportPayload =
+                buildReportPayload();
+
+
+            if(
+                !api
+                    ?.savePending
+            ){
+
+                throw new Error(
+                    "Modulul de salvare locală nu este disponibil."
+                );
+
+            }
+
+
+            /*
+               1. Raportul final se păstrează local.
+            */
+            state.reportPayload =
+                await api.savePending(
+                    state.reportPayload
+                );
+
+
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv";
+
+
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
+
+
+            setSubmissionStatus(
+                "Raport salvat local. Se încearcă transmiterea..."
+            );
+
+
+            /*
+               2. Punct central pentru sistemul comun de
+               certificare / semnătură / QR.
+            */
+            document.dispatchEvent(
+
+                new CustomEvent(
+                    "laborator:report-ready",
+                    {
+                        detail:{
+
+                            reportId:
+                                state.reportId,
+
+                            finishedAt:
+                                state.evaluation
+                                    .finishedAt
+
+                        }
+                    }
+                )
+
+            );
+
+
+            /*
+               3. Se retransmite exact raportul local.
+            */
+            await sendReport(
+                true
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            setSubmissionStatus(
+                `Raportul este finalizat, dar transmiterea nu a fost confirmată: ${error.message}`,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TRANSMITERE
+========================================================= */
+
+function setSubmissionStatus(
+    message,
+    type=""
+){
+
+    const element =
+        qs(
+            "[data-submission-status]"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        type
+            ? `status-${type}`
+            : "";
+
+}
+
+
+function markReportConfirmed(
+    status="stored"
+){
+
+    state.reportConfirmed =
+        true;
+
+
+    qs(
+        "[data-submit-report]"
+    ).disabled =
+        true;
+
+
+    qs(
+        "[data-resubmit-report]"
+    ).disabled =
+        true;
+
+
+    setSubmissionStatus(
+        status ===
+            "duplicate"
+            ? "Raportul există deja în registru; nu a fost duplicat."
+            : "Raport transmis și confirmat.",
+        "success"
+    );
+
+
+    qs(
+        "[data-local-save-status]"
+    ).textContent =
+        "confirmat de server";
+
+
+    qs(
+        "[data-local-save-status]"
+    ).className =
+        "status-success";
+
+}
+
+
+function handleSubmissionResult(
+    result
+){
+
+    const status =
+        result?.status;
+
+
+    if(
+        status ===
+            "stored" ||
+        status ===
+            "duplicate"
+    ){
+
+        markReportConfirmed(
+            status
+        );
+
+
+        return;
+
+    }
+
+
+    if(
+        status ===
+        "unconfirmed"
+    ){
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local și poate fi retransmis.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function sendReport(
+    preferSaved=false
+){
+
+    if(
+        state.reportConfirmed
+    ){
+        return;
+    }
+
+
+    const sendButton =
+        qs(
+            "[data-submit-report]"
+        );
+
+
+    const retryButton =
+        qs(
+            "[data-resubmit-report]"
+        );
+
+
+    sendButton.disabled =
+        true;
+
+
+    retryButton.disabled =
+        true;
+
+
+    try{
+
+        const api =
+            globalThis
+                .LaboratorGoogleSheets;
+
+
+        if(!api){
+
+            throw new Error(
+                "Modulul Google Sheets nu este disponibil."
+            );
+
+        }
+
+
+        if(
+            !state.reportId
+        ){
+
+            throw new Error(
+                "Raportul nu a fost încă finalizat."
+            );
+
+        }
+
+
+        setSubmissionStatus(
+            preferSaved
+                ? "Se transmite raportul salvat local..."
+                : "Se transmite raportul..."
+        );
+
+
+        const pending =
+            api.getPendingReport?.(
+                state.reportId
+            );
+
+
+        let result;
+
+
+        if(
+            pending &&
+            api.retryReport
+        ){
+
+            result =
+                await api.retryReport(
+                    state.reportId
+                );
+
+        }
+        else{
+
+            if(
+                !state.reportPayload
+            ){
+
+                state.reportPayload =
+                    buildReportPayload();
+
+            }
+
+
+            result =
+                await api.submit(
+                    state.reportPayload
+                );
+
+        }
+
+
+        handleSubmissionResult(
+            result
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+    finally{
+
+        if(
+            !state.reportConfirmed
+        ){
+
+            const alreadySent =
+                globalThis
+                    .LaboratorGoogleSheets
+                    ?.hasBeenSent?.(
+                        state.reportId
+                    );
+
+
+            if(alreadySent){
+
+                markReportConfirmed(
+                    "stored"
+                );
+
+            }
+            else{
+
+                sendButton.disabled =
+                    false;
+
+
+                retryButton.disabled =
+                    false;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+qs(
+    "[data-submit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            false
+        );
+
+    }
+);
+
+
+qs(
+    "[data-resubmit-report]"
+).addEventListener(
+    "click",
+    () => {
+
+        sendReport(
+            true
+        );
+
+    }
+);
+
+
+/* =========================================================
+   EVENIMENTE GOOGLE SHEETS
+========================================================= */
+
+document.addEventListener(
+    "laborator:submission-sent",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        const status =
+            event.detail
+                ?.status;
+
+
+        if(
+            status ===
+                "stored" ||
+            status ===
+                "duplicate"
+        ){
+
+            markReportConfirmed(
+                status
+            );
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-unconfirmed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
+            "error"
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "laborator:submission-failed",
+    event => {
+
+        if(
+            event.detail
+                ?.reportId !==
+            state.reportId
+        ){
+            return;
+        }
+
+
+        setSubmissionStatus(
+            `Transmiterea nu a reușit${
+                event.detail?.message
+                    ? `: ${event.detail.message}`
+                    : "."
+            } Raportul rămâne salvat local.`,
+            "error"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PDF PENTRU PORTOFOLIU
+========================================================= */
+
+function savePortfolioPdf(){
+
+    if(
+        !state.evaluation ||
+        !state.notebook
+    ){
+
+        alert(
+            "Finalizează mai întâi experimentul."
+        );
+
+
+        return;
+
+    }
+
+
+    const reportWindow =
+        globalThis.open(
+            "",
+            "_blank"
+        );
+
+
+    if(!reportWindow){
+
+        alert(
+            "Browserul a blocat fereastra raportului. Permite ferestrele pop-up și încearcă din nou."
+        );
+
+
+        return;
+
+    }
+
+
+    const student =
+        escapeHtml(
+            state.session
+                .studentName
+        );
+
+
+    const className =
+        escapeHtml(
+            state.session
+                .studentClass
+        );
+
+
+    const reportId =
+        escapeHtml(
+            state.reportId
+        );
+
+
+    const measurements =
+        state.notebook
+            .measurements;
+
+
+    const calculations =
+        state.notebook
+            .calculations;
+
+
+    const activity =
+        state.notebook
+            .activity;
+
+
+    const attempts =
+        activity
+            .calculationAttemptsByField;
+
+
+    const durationMinutes =
+        Math.max(
+            1,
+            Math.round(
+                (
+                    Date.parse(
+                        state.evaluation
+                            .finishedAt
+                    ) -
+                    Date.parse(
+                        state.session
+                            .startedAt
+                    )
+                ) /
+                60000
+            )
+        );
+
+
+    reportWindow.document.open();
+
+
+    reportWindow.document.write(`
+
+<!doctype html>
+
+<html lang="ro">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>
+EXP02 - ${student}
+</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    color:#172b3a;
+    margin:28px;
+    line-height:1.45;
+}
+
+h1{
+    font-size:22px;
+}
+
+h2{
+    margin-top:24px;
+    padding-bottom:5px;
+    font-size:17px;
+    border-bottom:1px solid #aaa;
+}
+
+.identity{
+    padding:12px;
+    margin:16px 0;
+    border:2px solid #28637b;
+}
+
+.formula{
+    padding:10px;
+    margin:10px 0;
+    border-left:4px solid #28637b;
+    background:#eef6f9;
+}
+
+.status{
+    padding:12px;
+    margin:18px 0;
+    border:2px solid #16794b;
+    background:#eefaf4;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    margin:12px 0;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:7px;
+    border:1px solid #aaa;
+}
+
+th{
+    background:#eef4f7;
+}
+
+.id{
+    font-family:monospace;
+    overflow-wrap:anywhere;
+}
+
+@page{
+    size:A4;
+    margin:15mm;
+}
+
+@media print{
+
+    button{
+        display:none;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+Portofoliu de laborator – Fizică
+</h1>
+
+
+<p>
+
+<strong>
+EXP02
+</strong>
+
+<br>
+
+Determinarea căldurii specifice a unui corp
+
+</p>
+
+
+<div class="identity">
+
+<strong>
+Nume și prenume:
+</strong>
+
+${student}
+
+<br>
+
+<strong>
+Clasa:
+</strong>
+
+${className}
+
+<br>
+
+<strong>
+Număr în catalog:
+</strong>
+
+${state.session.catalogNumber}
+
+<br>
+
+<strong>
+Data:
+</strong>
+
+${escapeHtml(state.session.experimentDate)}
+
+<br>
+
+<strong>
+Set experimental:
+</strong>
+
+${escapeHtml(state.set.id)}
+
+<br>
+
+<strong>
+ID raport:
+</strong>
+
+<span class="id">
+${reportId}
+</span>
+
+</div>
+
+
+<div class="status">
+STATUS PORTOFOLIU: REALIZAT
+</div>
+
+
+<h2>
+Scop
+</h2>
+
+<p>
+Determinarea căldurii specifice a unui corp metalic
+prin metoda calorimetrică și compararea rezultatului experimental
+cu valoarea de referință.
+</p>
+
+
+<h2>
+Relații utilizate
+</h2>
+
+
+<div class="formula">
+
+m<sub>c</sub>c<sub>c</sub>
+(T<sub>c</sub>−T<sub>e</sub>)
+
+=
+
+m<sub>a</sub>c<sub>a</sub>
+(T<sub>e</sub>−T<sub>a</sub>)
+
+<br><br>
+
+Q<sub>a</sub> =
+m<sub>a</sub>c<sub>a</sub>
+(T<sub>e</sub>−T<sub>a</sub>)
+
+<br><br>
+
+c<sub>c</sub> =
+Q<sub>a</sub> /
+[
+m<sub>c</sub>
+(T<sub>c</sub>−T<sub>e</sub>)
+]
+
+<br><br>
+
+ε =
+|c<sub>exp</sub>−c<sub>ref</sub>|
+/c<sub>ref</sub> ·100%
+
+</div>
+
+
+<h2>
+Materialul studiat
+</h2>
+
+<p>
+
+<strong>
+${escapeHtml(state.set.visible.materialName)}
+</strong>
+
+— c<sub>ref</sub> =
+${Number(calculations.referenceSpecificHeat_J_kgK).toFixed(0)}
+J/(kg·K)
+
+</p>
+
+
+<h2>
+Măsurări
+</h2>
+
+
+<table>
+
+<tr>
+<th>Mărime</th>
+<th>Valoare</th>
+<th>Rezoluție</th>
+<th>Încercări</th>
+</tr>
+
+<tr>
+<td>m corp</td>
+<td>${Number(measurements.bodyMass.studentReading).toFixed(0)} g</td>
+<td>${measurements.bodyMass.resolution} g</td>
+<td>${measurements.bodyMass.attempts}</td>
+</tr>
+
+<tr>
+<td>m apă</td>
+<td>${Number(measurements.waterMass.studentReading).toFixed(0)} g</td>
+<td>${measurements.waterMass.resolution} g</td>
+<td>${measurements.waterMass.attempts}</td>
+</tr>
+
+<tr>
+<td>T apă</td>
+<td>${Number(measurements.waterTemperature.studentReading).toFixed(1)} °C</td>
+<td>${measurements.waterTemperature.resolution} °C</td>
+<td>${measurements.waterTemperature.attempts}</td>
+</tr>
+
+<tr>
+<td>T corp</td>
+<td>${Number(measurements.bodyTemperature.studentReading).toFixed(1)} °C</td>
+<td>${measurements.bodyTemperature.resolution} °C</td>
+<td>${measurements.bodyTemperature.attempts}</td>
+</tr>
+
+<tr>
+<td>T echilibru</td>
+<td>${Number(measurements.equilibriumTemperature.studentReading).toFixed(1)} °C</td>
+<td>${measurements.equilibriumTemperature.resolution} °C</td>
+<td>${measurements.equilibriumTemperature.attempts}</td>
+</tr>
+
+</table>
+
+
+<h2>
+Rezultate
+</h2>
+
+
+<table>
+
+<tr>
+<td>m corp</td>
+<td>${Number(calculations.bodyMass_kg).toFixed(3)} kg</td>
+</tr>
+
+<tr>
+<td>m apă</td>
+<td>${Number(calculations.waterMass_kg).toFixed(3)} kg</td>
+</tr>
+
+<tr>
+<td>ΔT apă</td>
+<td>${Number(calculations.waterTemperatureRise_K).toFixed(1)} K</td>
+</tr>
+
+<tr>
+<td>ΔT corp</td>
+<td>${Number(calculations.bodyTemperatureDrop_K).toFixed(1)} K</td>
+</tr>
+
+<tr>
+<td>Q apă</td>
+<td>${Number(calculations.waterHeat_J).toFixed(0)} J</td>
+</tr>
+
+<tr>
+<td>c determinat</td>
+<td>${Number(calculations.specificHeat_J_kgK).toFixed(0)} J/(kg·K)</td>
+</tr>
+
+<tr>
+<td>c referință</td>
+<td>${Number(calculations.referenceSpecificHeat_J_kgK).toFixed(0)} J/(kg·K)</td>
+</tr>
+
+<tr>
+<td>Eroare relativă</td>
+<td>${Number(calculations.relativeError_percent).toFixed(2)} %</td>
+</tr>
+
+</table>
+
+
+<h2>
+Verificarea individuală a calculelor
+</h2>
+
+
+<table>
+
+<tr>
+<th>Calcul</th>
+<th>Număr verificări</th>
+</tr>
+
+<tr>
+<td>m corp în kg</td>
+<td>${attempts["body-mass-kg"]}</td>
+</tr>
+
+<tr>
+<td>m apă în kg</td>
+<td>${attempts["water-mass-kg"]}</td>
+</tr>
+
+<tr>
+<td>ΔT apă</td>
+<td>${attempts["water-delta"]}</td>
+</tr>
+
+<tr>
+<td>ΔT corp</td>
+<td>${attempts["body-delta"]}</td>
+</tr>
+
+<tr>
+<td>Q apă</td>
+<td>${attempts["water-heat"]}</td>
+</tr>
+
+<tr>
+<td>c corp</td>
+<td>${attempts["specific-heat"]}</td>
+</tr>
+
+<tr>
+<td>eroarea relativă</td>
+<td>${attempts["relative-error"]}</td>
+</tr>
+
+</table>
+
+
+<h2>
+Parcurs experimental
+</h2>
+
+
+<table>
+
+<tr>
+<td>Instructaj de securitate</td>
+<td>finalizat</td>
+</tr>
+
+<tr>
+<td>Echipamente selectate corect</td>
+<td>da</td>
+</tr>
+
+<tr>
+<td>Verificări selectare echipamente</td>
+<td>${activity.equipmentChecks}</td>
+</tr>
+
+<tr>
+<td>Încercări procedură de încălzire</td>
+<td>${activity.heatingProcedureAttempts}</td>
+</tr>
+
+<tr>
+<td>Erori de ordine la încălzire</td>
+<td>${activity.heatingProcedureErrors}</td>
+</tr>
+
+<tr>
+<td>Transferuri ale corpului</td>
+<td>${activity.transferActions}</td>
+</tr>
+
+<tr>
+<td>Încercări procedură de amestecare</td>
+<td>${activity.mixingProcedureAttempts}</td>
+</tr>
+
+<tr>
+<td>Erori de ordine la amestecare</td>
+<td>${activity.mixingProcedureErrors}</td>
+</tr>
+
+<tr>
+<td>Total apăsări „Verifică” la calcule</td>
+<td>${activity.calculationChecks}</td>
+</tr>
+
+<tr>
+<td>Calcule care au necesitat corectare</td>
+<td>${activity.fieldsRequiringCorrection.length}</td>
+</tr>
+
+<tr>
+<td>Durata aproximativă</td>
+<td>${durationMinutes} min</td>
+</tr>
+
+<tr>
+<td>Verificare conceptuală</td>
+<td>${state.evaluation.score}/4</td>
+</tr>
+
+</table>
+
+
+<h2>
+Interpretare
+</h2>
+
+<p>
+${escapeHtml(state.notebook.comparison.interpretation)}
+</p>
+
+
+<h2>
+Concluzie
+</h2>
+
+<p>
+${escapeHtml(state.evaluation.conclusion)}
+</p>
+
+
+<h2>
+Surse de eroare și limitări
+</h2>
+
+<p>
+${escapeHtml(state.evaluation.errorSources)}
+</p>
+
+
+<h2>
+Identificarea raportului
+</h2>
+
+
+<p>
+
+Experiment realizat individual de
+
+<strong>
+${student}
+</strong>,
+
+clasa
+
+<strong>
+${className}
+</strong>,
+
+numărul în catalog
+
+<strong>
+${state.session.catalogNumber}
+</strong>.
+
+</p>
+
+
+<p>
+
+<strong>
+Set:
+</strong>
+
+${escapeHtml(state.set.id)}
+
+<br>
+
+<strong>
+ID unic raport:
+</strong>
+
+<span class="id">
+${reportId}
+</span>
+
+</p>
+
+
+<button onclick="window.print()">
+Salvează ca PDF
+</button>
+
+
+<script>
+
+window.addEventListener(
+    "load",
+    () => {
+
+        setTimeout(
+            () => window.print(),
+            300
+        );
+
+    }
+);
+
+<\/script>
+
+</body>
+
+</html>
+
+    `);
+
+
+    reportWindow.document.close();
+
+}
+
+
+qs(
+    "[data-download-pdf]"
+).addEventListener(
+    "click",
+    savePortfolioPdf
+);
+
+
+/* =========================================================
+   GOOGLE SHEETS
+========================================================= */
+
+try{
+
+    globalThis
+        .LaboratorGoogleSheets
+        ?.init?.();
+
+}
+catch(error){
+
+    console.warn(
+        "Inițializarea Google Sheets:",
+        error
+    );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+showStep(
+    0
+);
+
+    }
+);
+
+</script>
+
 </body>
 </html>
