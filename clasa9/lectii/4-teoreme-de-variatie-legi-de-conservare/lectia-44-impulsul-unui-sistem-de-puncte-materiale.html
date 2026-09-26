@@ -1,1 +1,5761 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta
+    name="description"
+    content="Impulsul unui sistem de puncte materiale. Impuls total, compunerea vectorială a impulsurilor, forțe interne și externe, teorema variației impulsului pentru un sistem, aplicații și simulator. Fizică, clasa a IX-a."
+  >
+
+  <meta
+    name="author"
+    content="Prof. Dănuț Andronie"
+  >
+
+  <meta
+    name="lesson-id"
+    content="L09-T04-044"
+  >
+
+  <title>
+    Impulsul unui sistem de puncte materiale
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="../../../assets/css/main.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../../../assets/css/lesson.css"
+  >
+
+
+  <style>
+    .formula-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .formula-mini-card {
+      padding: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .formula-mini-card h3 {
+      margin-top: 0;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .compare-card {
+      padding: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .compare-card.blue {
+      border-top: 6px solid #2563eb;
+    }
+
+    .compare-card.green {
+      border-top: 6px solid #16a34a;
+    }
+
+    .compare-card.orange {
+      border-top: 6px solid #f59e0b;
+    }
+
+    .compare-card.red {
+      border-top: 6px solid #dc2626;
+    }
+
+    .system-card {
+      padding: 1rem;
+      border-left: 6px solid #2563eb;
+      border-radius: 12px;
+      background: #eff6ff;
+    }
+
+    .external-card {
+      padding: 1rem;
+      border-left: 6px solid #16a34a;
+      border-radius: 12px;
+      background: #f0fdf4;
+    }
+
+    .internal-card {
+      padding: 1rem;
+      border-left: 6px solid #7c3aed;
+      border-radius: 12px;
+      background: #f5f3ff;
+    }
+
+    .warning-physics {
+      padding: 1rem;
+      border-left: 6px solid #f59e0b;
+      border-radius: 12px;
+      background: #fffbeb;
+    }
+
+    .danger-card {
+      padding: 1rem;
+      border-left: 6px solid #dc2626;
+      border-radius: 12px;
+      background: #fef2f2;
+    }
+
+    .success-card {
+      padding: 1rem;
+      border-left: 6px solid #16a34a;
+      border-radius: 12px;
+      background: #f0fdf4;
+    }
+
+    .concept-chain {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.55rem;
+      margin: 1rem 0;
+    }
+
+    .concept-chain span {
+      padding: 0.55rem 0.8rem;
+      border-radius: 11px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .concept-chain b {
+      color: #64748b;
+      font-size: 1.2rem;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .step-card {
+      padding: 0.9rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .step-card strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: #1d4ed8;
+    }
+
+    .application-tag {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+      font-weight: 800;
+    }
+
+    .vector-rule {
+      padding: 1rem;
+      border: 2px dashed #2563eb;
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .vector-canvas {
+      max-width: 900px;
+      margin: 1rem auto;
+    }
+
+    .component-table th,
+    .component-table td,
+    .experiment-table th,
+    .experiment-table td {
+      text-align: center;
+    }
+
+    .sim-controls {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .sim-field {
+      padding: 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .sim-field label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 800;
+    }
+
+    .sim-field input {
+      width: 100%;
+    }
+
+    .sim-readout {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(145px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .sim-readout > div {
+      padding: 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .sim-readout strong {
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .sim-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin: 1rem 0;
+    }
+
+    .cause-effect {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.7rem;
+      margin: 1rem 0;
+    }
+
+    .cause-effect div {
+      padding: 0.85rem;
+      border-radius: 12px;
+      text-align: center;
+      background: #e0f2fe;
+      color: #075985;
+      font-weight: 800;
+    }
+  </style>
+
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [
+          ["\\(", "\\)"],
+          ["$", "$"]
+        ],
+
+        displayMath: [
+          ["\\[", "\\]"],
+          ["$$", "$$"]
+        ],
+
+        processEscapes: true
+      },
+
+      svg: {
+        fontCache: "global"
+      },
+
+      options: {
+        skipHtmlTags: [
+          "script",
+          "noscript",
+          "style",
+          "textarea",
+          "pre",
+          "code"
+        ]
+      }
+    };
+  </script>
+
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+  ></script>
+</head>
+
+
+<body class="lesson-body">
+
+
+  <!-- =========================================================
+       PROGRES
+       ========================================================= -->
+
+  <div
+    class="lesson-progress no-print"
+    aria-label="Progresul lecției"
+  >
+
+    <div
+      id="lessonProgressText"
+      class="lesson-progress-text"
+    >
+      Pagina 1 din 9
+    </div>
+
+    <div
+      id="lessonProgressTrack"
+      class="lesson-progress-track"
+      role="progressbar"
+      aria-valuemin="1"
+      aria-valuemax="9"
+      aria-valuenow="1"
+    >
+
+      <div
+        id="lessonProgressBar"
+        class="lesson-progress-bar"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <main
+    id="lesson"
+    class="lesson-shell"
+    data-lesson-id="L09-T04-044"
+  >
+
+
+    <!-- =======================================================
+         PAGINA 1
+         ======================================================= -->
+
+    <section
+      id="pagina-1"
+      class="lesson-page is-active"
+      data-page="1"
+      aria-hidden="false"
+    >
+
+      <header class="lesson-header">
+
+        <p class="lesson-kicker">
+          Fizică • Clasa a IX-a • Teoreme de variație și legi de conservare • Lecția 44
+        </p>
+
+        <h1>
+          Impulsul unui sistem de puncte materiale
+        </h1>
+
+        <p>
+          Impuls total • Sumă vectorială • Forțe interne • Forțe externe
+        </p>
+
+
+        <div class="lesson-meta">
+
+          <span>
+            <strong>
+              Prof. Dănuț Andronie
+            </strong>
+          </span>
+
+          <span>
+            <a href="mailto:danutmg@gmail.com">
+              e-Mail: danutmg@gmail.com
+            </a>
+          </span>
+
+        </div>
+
+
+        <div class="lesson-actions no-print">
+
+          <button
+            type="button"
+            class="lesson-button pdf-button"
+            data-pdf-button
+          >
+            Descarcă PDF
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <div class="lesson-banner">
+
+        <h2>
+          De la un singur corp la un sistem
+        </h2>
+
+        <p>
+          În Lecția 43 am studiat impulsul mecanic al unui singur corp:
+        </p>
+
+        \[
+          \vec p=m\vec v.
+        \]
+
+        <p>
+          Dar multe fenomene implică simultan două sau mai multe corpuri:
+          două cărucioare, doi patinatori sau două bile care
+          interacționează.
+        </p>
+
+        <p>
+          Avem nevoie de o mărime care să caracterizeze
+          <strong>întregul sistem</strong>.
+        </p>
+
+      </div>
+
+
+      <div class="formula-grid">
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Corpul 1
+          </h3>
+
+          \[
+            \vec p_1=
+            m_1\vec v_1
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Corpul 2
+          </h3>
+
+          \[
+            \vec p_2=
+            m_2\vec v_2
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Sistemul
+          </h3>
+
+          \[
+            \boxed{
+              \vec P=
+              \vec p_1+
+              \vec p_2
+            }
+          \]
+
+        </div>
+
+      </div>
+
+
+      <div class="system-card">
+
+        <h3>
+          Impulsul mecanic total
+        </h3>
+
+        <p>
+          Pentru un sistem format din \(n\) puncte materiale:
+        </p>
+
+        \[
+          \boxed{
+            \vec P=
+            \sum_{i=1}^{n}
+            \vec p_i
+          }
+        \]
+
+        <p>
+          adică:
+        </p>
+
+        \[
+          \boxed{
+            \vec P=
+            \sum_{i=1}^{n}
+            m_i\vec v_i
+          }.
+        \]
+
+      </div>
+
+
+      <div class="danger-card">
+
+        <h3>
+          Este o sumă vectorială
+        </h3>
+
+        <p>
+          Nu adunăm automat modulele impulsurilor.
+        </p>
+
+        <p>
+          Trebuie să ținem seama de:
+        </p>
+
+        <ul class="lesson-list">
+
+          <li>direcția fiecărui impuls;</li>
+          <li>sensul fiecărui impuls;</li>
+          <li>modulul fiecărui impuls.</li>
+
+        </ul>
+
+      </div>
+
+
+      <div class="concept-chain">
+
+        <span>
+          \(\vec p_1\)
+        </span>
+
+        <b>+</b>
+
+        <span>
+          \(\vec p_2\)
+        </span>
+
+        <b>+</b>
+
+        <span>
+          ...
+        </span>
+
+        <b>→</b>
+
+        <span>
+          \(\vec P\)
+        </span>
+
+      </div>
+
+
+      <div class="lesson-card">
+
+        <h3>
+          La final vei putea:
+        </h3>
+
+        <ul class="lesson-list">
+
+          <li>
+            să definești impulsul mecanic total al unui sistem;
+          </li>
+
+          <li>
+            să compui vectorial impulsurile corpurilor;
+          </li>
+
+          <li>
+            să rezolvi situații cu mișcări în același sens și în sensuri
+            opuse;
+          </li>
+
+          <li>
+            să compui impulsuri pe două direcții perpendiculare;
+          </li>
+
+          <li>
+            să diferențiezi forțele interne de cele externe;
+          </li>
+
+          <li>
+            să explici de ce forțele interne se compensează în bilanțul
+            impulsului total;
+          </li>
+
+          <li>
+            să utilizezi teorema variației impulsului pentru un sistem;
+          </li>
+
+          <li>
+            să pregătești legea conservării impulsului.
+          </li>
+
+        </ul>
+
+      </div>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+          disabled
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 1 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Compunerea impulsurilor →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 2
+         ======================================================= -->
+
+    <section
+      id="pagina-2"
+      class="lesson-page"
+      data-page="2"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        1. Sistemul pe o singură axă
+      </span>
+
+      <h2>
+        Sensul mișcării contează
+      </h2>
+
+
+      <p>
+        Considerăm două corpuri care se deplasează pe aceeași dreaptă.
+      </p>
+
+      <p>
+        Alegem sensul spre dreapta ca sens pozitiv.
+      </p>
+
+
+      <div class="vector-rule">
+
+        \[
+          p_1=m_1v_1,
+          \qquad
+          p_2=m_2v_2
+        \]
+
+        <p>
+          iar impulsul total este:
+        </p>
+
+        \[
+          \boxed{
+            P=p_1+p_2
+          }.
+        \]
+
+        <p>
+          Vitezele și impulsurile sunt scrise cu semn.
+        </p>
+
+      </div>
+
+
+      <h2>
+        Cazul 1 – corpurile se deplasează în același sens
+      </h2>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplul 1
+        </span>
+
+        <p>
+          Avem:
+        </p>
+
+        \[
+          m_1=
+          2\,\mathrm{kg},
+          \qquad
+          v_1=
+          +3\,\mathrm{m/s},
+        \]
+
+        \[
+          m_2=
+          1\,\mathrm{kg},
+          \qquad
+          v_2=
+          +4\,\mathrm{m/s}.
+        \]
+
+        <p>
+          Impulsurile individuale:
+        </p>
+
+        \[
+          p_1=
+          2\cdot3=
+          6\,\mathrm{kg\,m/s},
+        \]
+
+        \[
+          p_2=
+          1\cdot4=
+          4\,\mathrm{kg\,m/s}.
+        \]
+
+        <p>
+          Impulsul total:
+        </p>
+
+        \[
+          P=
+          6+4.
+        \]
+
+        \[
+          \boxed{
+            P=
+            +10\,\mathrm{kg\,m/s}
+          }.
+        \]
+
+        <p>
+          Sistemul are impulsul total orientat spre dreapta.
+        </p>
+
+      </div>
+
+
+      <h2>
+        Cazul 2 – corpurile se deplasează în sensuri opuse
+      </h2>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplul 2
+        </span>
+
+        <p>
+          Considerăm:
+        </p>
+
+        \[
+          p_1=
+          +6\,\mathrm{kg\,m/s},
+        \]
+
+        \[
+          p_2=
+          -4\,\mathrm{kg\,m/s}.
+        \]
+
+        <p>
+          Impulsul total:
+        </p>
+
+        \[
+          P=
+          6-4.
+        \]
+
+        \[
+          \boxed{
+            P=
+            +2\,\mathrm{kg\,m/s}
+          }.
+        \]
+
+      </div>
+
+
+      <div class="compare-grid">
+
+        <div class="compare-card green">
+
+          <h3>
+            Același sens
+          </h3>
+
+          \[
+            p_1>0,
+            \qquad
+            p_2>0
+          \]
+
+          <p>
+            Modulele contribuie în același sens.
+          </p>
+
+        </div>
+
+
+        <div class="compare-card orange">
+
+          <h3>
+            Sensuri opuse
+          </h3>
+
+          \[
+            p_1>0,
+            \qquad
+            p_2<0
+          \]
+
+          <p>
+            Contribuțiile se compensează parțial sau total.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="danger-card">
+
+        <h3>
+          Impuls total zero nu înseamnă repaus
+        </h3>
+
+        <p>
+          Este posibil ca:
+        </p>
+
+        \[
+          \vec P=\vec 0
+        \]
+
+        <p>
+          chiar dacă toate corpurile sistemului sunt în mișcare.
+        </p>
+
+        <p>
+          De exemplu:
+        </p>
+
+        \[
+          p_1=
+          +5\,\mathrm{kg\,m/s},
+        \]
+
+        \[
+          p_2=
+          -5\,\mathrm{kg\,m/s}.
+        \]
+
+        <p>
+          Atunci:
+        </p>
+
+        \[
+          \boxed{
+            P=0
+          },
+        \]
+
+        <p>
+          dar niciun corp nu trebuie să fie în repaus.
+        </p>
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="number"
+        data-answer="2"
+        data-tolerance="0.001"
+      >
+
+        <h3>
+          Două corpuri au impulsurile
+          \(p_1=+6\,\mathrm{kg\,m/s}\)
+          și
+          \(p_2=-4\,\mathrm{kg\,m/s}\).
+          Determină impulsul total.
+        </h3>
+
+        <div class="quiz-number-row">
+
+          <input
+            type="text"
+            inputmode="decimal"
+            class="quiz-number-input"
+            data-number-input
+            aria-label="Impulsul total"
+          >
+
+          <span>kg·m/s</span>
+
+          <button
+            type="button"
+            class="quiz-check-button"
+            data-check-number
+          >
+            Verifică
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. P = 6 − 4 = +2 kg·m/s."
+          data-wrong-feedback="Ține seama de semnul fiecărui impuls."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 2 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Compunere vectorială →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 3
+         ======================================================= -->
+
+    <section
+      id="pagina-3"
+      class="lesson-page"
+      data-page="3"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        2. Impulsuri pe direcții diferite
+      </span>
+
+      <h2>
+        Impulsul total este rezultanta vectorială
+      </h2>
+
+
+      <p>
+        Dacă particulele nu se deplasează pe aceeași dreaptă, nu mai
+        putem lucra doar cu semnele \(+\) și \(-\).
+      </p>
+
+      <p>
+        Trebuie să adunăm vectorial impulsurile:
+      </p>
+
+
+      <div class="system-card">
+
+        \[
+          \boxed{
+            \vec P=
+            \vec p_1+
+            \vec p_2+
+            \ldots
+          }
+        \]
+
+      </div>
+
+
+      <div
+        class="problem-card vector-canvas"
+        role="img"
+        aria-label="Compunerea a două impulsuri perpendiculare"
+      >
+
+        <svg
+          viewBox="0 0 900 600"
+          width="100%"
+          aria-hidden="true"
+        >
+
+          <rect
+            x="5"
+            y="5"
+            width="890"
+            height="590"
+            rx="24"
+            fill="#f8fafc"
+          />
+
+
+          <!-- axe -->
+
+          <line
+            x1="180"
+            y1="470"
+            x2="760"
+            y2="470"
+            stroke="#94a3b8"
+            stroke-width="3"
+          />
+
+          <polygon
+            points="785,470 750,453 750,487"
+            fill="#64748b"
+          />
+
+          <line
+            x1="180"
+            y1="510"
+            x2="180"
+            y2="90"
+            stroke="#94a3b8"
+            stroke-width="3"
+          />
+
+          <polygon
+            points="180,65 163,100 197,100"
+            fill="#64748b"
+          />
+
+
+          <!-- p1 -->
+
+          <line
+            x1="180"
+            y1="470"
+            x2="500"
+            y2="470"
+            stroke="#2563eb"
+            stroke-width="9"
+          />
+
+          <polygon
+            points="525,470 488,450 488,490"
+            fill="#2563eb"
+          />
+
+          <text
+            x="325"
+            y="445"
+            font-size="28"
+            font-family="Arial"
+            fill="#1d4ed8"
+          >
+            p₁ = 3
+          </text>
+
+
+          <!-- p2 -->
+
+          <line
+            x1="180"
+            y1="470"
+            x2="180"
+            y2="170"
+            stroke="#f59e0b"
+            stroke-width="9"
+          />
+
+          <polygon
+            points="180,145 160,182 200,182"
+            fill="#f59e0b"
+          />
+
+          <text
+            x="205"
+            y="300"
+            font-size="28"
+            font-family="Arial"
+            fill="#b45309"
+          >
+            p₂ = 4
+          </text>
+
+
+          <!-- resultant -->
+
+          <line
+            x1="180"
+            y1="470"
+            x2="500"
+            y2="170"
+            stroke="#16a34a"
+            stroke-width="10"
+          />
+
+          <polygon
+            points="520,151 503,194 478,167"
+            fill="#16a34a"
+          />
+
+          <text
+            x="350"
+            y="285"
+            font-size="30"
+            font-family="Arial"
+            fill="#15803d"
+          >
+            P = 5
+          </text>
+
+
+          <!-- dashed -->
+
+          <line
+            x1="500"
+            y1="470"
+            x2="500"
+            y2="170"
+            stroke="#cbd5e1"
+            stroke-width="3"
+            stroke-dasharray="10 8"
+          />
+
+          <line
+            x1="180"
+            y1="170"
+            x2="500"
+            y2="170"
+            stroke="#cbd5e1"
+            stroke-width="3"
+            stroke-dasharray="10 8"
+          />
+
+        </svg>
+
+      </div>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplu – impulsuri perpendiculare
+        </span>
+
+        <p>
+          Presupunem:
+        </p>
+
+        \[
+          p_1=
+          3\,\mathrm{kg\,m/s}
+        \]
+
+        <p>
+          pe direcția \(Ox\) și:
+        </p>
+
+        \[
+          p_2=
+          4\,\mathrm{kg\,m/s}
+        \]
+
+        <p>
+          pe direcția \(Oy\).
+        </p>
+
+        <p>
+          Componentele impulsului total sunt:
+        </p>
+
+        \[
+          P_x=3,
+          \qquad
+          P_y=4.
+        \]
+
+        <p>
+          Modulul impulsului total:
+        </p>
+
+        \[
+          P=
+          \sqrt{
+            P_x^2+
+            P_y^2
+          }.
+        \]
+
+        \[
+          P=
+          \sqrt{
+            3^2+4^2
+          }.
+        \]
+
+        \[
+          \boxed{
+            P=
+            5\,\mathrm{kg\,m/s}
+          }.
+        \]
+
+      </div>
+
+
+      <div class="responsive-table">
+
+        <table class="component-table">
+
+          <thead>
+
+            <tr>
+              <th>Mărime</th>
+              <th>Componenta \(x\)</th>
+              <th>Componenta \(y\)</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td>\(\vec p_1\)</td>
+              <td>\(3\)</td>
+              <td>\(0\)</td>
+            </tr>
+
+            <tr>
+              <td>\(\vec p_2\)</td>
+              <td>\(0\)</td>
+              <td>\(4\)</td>
+            </tr>
+
+            <tr>
+              <td>\(\vec P\)</td>
+              <td>\(3\)</td>
+              <td>\(4\)</td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="warning-physics">
+
+        <h3>
+          Nu adunăm \(3+4=7\)
+        </h3>
+
+        <p>
+          Cele două impulsuri sunt perpendiculare, deci modulul
+          rezultantei este:
+        </p>
+
+        \[
+          \sqrt{3^2+4^2}=5,
+        \]
+
+        <p>
+          nu \(7\).
+        </p>
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="number"
+        data-answer="5"
+        data-tolerance="0.001"
+      >
+
+        <h3>
+          Două impulsuri perpendiculare au modulele
+          \(3\,\mathrm{kg\,m/s}\)
+          și
+          \(4\,\mathrm{kg\,m/s}\).
+          Determină modulul impulsului total.
+        </h3>
+
+        <div class="quiz-number-row">
+
+          <input
+            type="text"
+            inputmode="decimal"
+            class="quiz-number-input"
+            data-number-input
+            aria-label="Modulul impulsului total"
+          >
+
+          <span>kg·m/s</span>
+
+          <button
+            type="button"
+            class="quiz-check-button"
+            data-check-number
+          >
+            Verifică
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. P = √(3² + 4²) = 5 kg·m/s."
+          data-wrong-feedback="Impulsurile sunt perpendiculare; aplică teorema lui Pitagora."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 3 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Forțe interne și externe →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 4
+         ======================================================= -->
+
+    <section
+      id="pagina-4"
+      class="lesson-page"
+      data-page="4"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        3. Forțe interne și forțe externe
+      </span>
+
+      <h2>
+        Mai întâi alegem sistemul
+      </h2>
+
+
+      <p>
+        Clasificarea unei forțe drept internă sau externă depinde de
+        <strong>sistemul ales</strong>.
+      </p>
+
+
+      <div class="compare-grid">
+
+        <div class="compare-card blue">
+
+          <h3>
+            Forță internă
+          </h3>
+
+          <p>
+            Este o forță de interacțiune între două corpuri care aparțin
+            sistemului.
+          </p>
+
+        </div>
+
+
+        <div class="compare-card orange">
+
+          <h3>
+            Forță externă
+          </h3>
+
+          <p>
+            Este exercitată asupra unui corp din sistem de către un corp
+            care nu face parte din sistem.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Doi patinatori
+        </span>
+
+        <p>
+          Alegem drept sistem:
+        </p>
+
+        \[
+          \boxed{
+            A+B
+          }.
+        \]
+
+        <p>
+          Când patinatorul \(A\) îl împinge pe \(B\):
+        </p>
+
+        \[
+          \vec F_{A\to B}
+        \]
+
+        <p>
+          și:
+        </p>
+
+        \[
+          \vec F_{B\to A}
+        \]
+
+        <p>
+          sunt forțe
+          <strong>interne sistemului</strong>.
+        </p>
+
+      </div>
+
+
+      <div class="internal-card">
+
+        <h3>
+          Principiul acțiunii și reacțiunii
+        </h3>
+
+        \[
+          \vec F_{A\to B}
+          =
+          -\vec F_{B\to A}.
+        \]
+
+        <p>
+          Pentru același interval de timp, impulsurile acestor forțe
+          interne sunt opuse:
+        </p>
+
+        \[
+          \vec I_{A\to B}
+          =
+          -\vec I_{B\to A}.
+        \]
+
+        <p>
+          În suma pentru întregul sistem:
+        </p>
+
+        \[
+          \boxed{
+            \vec I_{\mathrm{int,total}}
+            =
+            \vec 0
+          }.
+        \]
+
+      </div>
+
+
+      <div class="danger-card">
+
+        <h3>
+          Aceasta nu înseamnă că forțele interne sunt zero
+        </h3>
+
+        <p>
+          Fiecare forță internă poate modifica impulsul unui corp din
+          sistem.
+        </p>
+
+        <p>
+          Dar perechile acțiune–reacțiune se compensează atunci când
+          calculăm variația impulsului
+          <strong>întregului sistem</strong>.
+        </p>
+
+      </div>
+
+
+      <h2>
+        Exemplu: două cărucioare care se împing
+      </h2>
+
+
+      <div class="cause-effect">
+
+        <div>
+          forța internă modifică
+          <br>
+          \(\vec p_1\)
+        </div>
+
+        <div>
+          forța internă opusă modifică
+          <br>
+          \(\vec p_2\)
+        </div>
+
+        <div>
+          modificările interne se compensează
+        </div>
+
+        <div>
+          impulsul total este controlat de acțiunile externe
+        </div>
+
+      </div>
+
+
+      <div class="warning-physics">
+
+        <h3>
+          Forțele externe pot exista chiar dacă mișcarea este orizontală
+        </h3>
+
+        <p>
+          De exemplu, greutatea și reacțiunea normală sunt forțe externe
+          pentru sistemul celor două cărucioare.
+        </p>
+
+        <p>
+          Pe direcția verticală, impulsurile lor se pot compensa.
+          Pentru studiul mișcării orizontale ne interesează în special
+          rezultanta externă pe direcția respectivă.
+        </p>
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="choice"
+        data-answer="1"
+      >
+
+        <h3>
+          Pentru sistemul format din doi patinatori \(A+B\), forțele cu
+          care cei doi se împing reciproc sunt:
+        </h3>
+
+        <div class="quiz-options">
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="0"
+          >
+            ambele externe
+          </button>
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="1"
+          >
+            forțe interne sistemului
+          </button>
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="2"
+          >
+            inexistente deoarece se compensează
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. Ambele forțe sunt interacțiuni între corpuri care fac parte din sistem."
+          data-wrong-feedback="Clasificarea se face în raport cu sistemul ales."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 4 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Teorema pentru sistem →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 5
+         ======================================================= -->
+
+    <section
+      id="pagina-5"
+      class="lesson-page"
+      data-page="5"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        4. Teorema variației impulsului pentru un sistem
+      </span>
+
+      <h2>
+        Ce poate modifica impulsul total?
+      </h2>
+
+
+      <p>
+        Pentru fiecare corp al sistemului putem aplica teorema variației
+        impulsului:
+      </p>
+
+      \[
+        \Delta\vec p_i
+        =
+        \vec I_i.
+      \]
+
+
+      <p>
+        Adunăm variațiile tuturor corpurilor:
+      </p>
+
+      \[
+        \Delta\vec P
+        =
+        \Delta\vec p_1+
+        \Delta\vec p_2+
+        \ldots
+      \]
+
+
+      <p>
+        Impulsurile forțelor interne se compensează în perechi.
+      </p>
+
+      <p>
+        Rămâne contribuția forțelor externe.
+      </p>
+
+
+      <div class="external-card">
+
+        <h3>
+          Teorema variației impulsului pentru un sistem
+        </h3>
+
+        \[
+          \boxed{
+            \Delta\vec P
+            =
+            \vec I_{\mathrm{ext}}
+          }
+        \]
+
+      </div>
+
+
+      <p>
+        Pentru o rezultantă externă medie:
+      </p>
+
+      \[
+        \boxed{
+          \Delta\vec P
+          =
+          \vec F_{\mathrm{ext,med}}
+          \Delta t
+        }.
+      \]
+
+
+      <p>
+        Echivalent:
+      </p>
+
+      \[
+        \boxed{
+          \vec P_2
+          =
+          \vec P_1+
+          \vec I_{\mathrm{ext}}
+        }.
+      \]
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplul 1
+        </span>
+
+        <p>
+          Un sistem are inițial:
+        </p>
+
+        \[
+          P_1=
+          +5\,\mathrm{kg\,m/s}.
+        \]
+
+        <p>
+          Asupra sistemului acționează un impuls extern:
+        </p>
+
+        \[
+          I_{\mathrm{ext}}
+          =
+          -8\,\mathrm{N\,s}.
+        \]
+
+        <p>
+          Impulsul final al sistemului:
+        </p>
+
+        \[
+          P_2=
+          P_1+
+          I_{\mathrm{ext}}.
+        \]
+
+        \[
+          P_2=
+          5-8.
+        \]
+
+        \[
+          \boxed{
+            P_2=
+            -3\,\mathrm{kg\,m/s}
+          }.
+        \]
+
+        <p>
+          Semnul negativ arată că impulsul total final este orientat în
+          sens opus axei pozitive.
+        </p>
+
+      </div>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplul 2
+        </span>
+
+        <p>
+          O rezultantă externă medie:
+        </p>
+
+        \[
+          F_{\mathrm{ext,med}}
+          =
+          +6\,\mathrm N
+        \]
+
+        <p>
+          acționează timp de:
+        </p>
+
+        \[
+          \Delta t=
+          0{,}50\,\mathrm s.
+        \]
+
+        <p>
+          Atunci:
+        </p>
+
+        \[
+          \Delta P=
+          6\cdot0{,}50.
+        \]
+
+        \[
+          \boxed{
+            \Delta P=
+            +3\,\mathrm{kg\,m/s}
+          }.
+        \]
+
+      </div>
+
+
+      <div class="success-card">
+
+        <h3>
+          Un caz foarte important
+        </h3>
+
+        <p>
+          Dacă impulsul exterior total este nul:
+        </p>
+
+        \[
+          \vec I_{\mathrm{ext}}
+          =
+          \vec 0,
+        \]
+
+        <p>
+          atunci:
+        </p>
+
+        \[
+          \Delta\vec P=
+          \vec 0.
+        \]
+
+        <p>
+          Prin urmare:
+        </p>
+
+        \[
+          \boxed{
+            \vec P_2=
+            \vec P_1
+          }.
+        \]
+
+        <p>
+          Această idee va deveni tema centrală a Lecției 45.
+        </p>
+
+      </div>
+
+
+      <div class="warning-physics">
+
+        <h3>
+          Nu este suficient să spunem „forțele interne se anulează”
+        </h3>
+
+        <p>
+          Forțele interne nu dispar din mișcarea corpurilor individuale.
+        </p>
+
+        <p>
+          Corect este:
+        </p>
+
+        <p>
+          <strong>
+            contribuția totală a perechilor de forțe interne la variația
+            impulsului întregului sistem se compensează.
+          </strong>
+        </p>
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="number"
+        data-answer="-3"
+        data-tolerance="0.001"
+      >
+
+        <h3>
+          Un sistem are
+          \(P_1=+5\,\mathrm{kg\,m/s}\).
+          Primește impulsul exterior
+          \(I_{\mathrm{ext}}=-8\,\mathrm{N\,s}\).
+          Determină \(P_2\).
+        </h3>
+
+        <div class="quiz-number-row">
+
+          <input
+            type="text"
+            inputmode="decimal"
+            class="quiz-number-input"
+            data-number-input
+            aria-label="Impulsul total final"
+          >
+
+          <span>kg·m/s</span>
+
+          <button
+            type="button"
+            class="quiz-check-button"
+            data-check-number
+          >
+            Verifică
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. P2 = P1 + Iext = 5 − 8 = −3 kg·m/s."
+          data-wrong-feedback="Folosește P2 = P1 + Iext."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 5 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Simulator →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 6 – SIMULATOR
+         ======================================================= -->
+
+    <section
+      id="pagina-6"
+      class="lesson-page"
+      data-page="6"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        5. Explorează
+      </span>
+
+      <h2>
+        Simulator – impulsul total al unui sistem
+      </h2>
+
+
+      <div class="lesson-banner">
+
+        <p>
+          Sistemul este format din două corpuri care se deplasează pe
+          aceeași axă.
+        </p>
+
+        <p>
+          Dreapta este sensul pozitiv.
+        </p>
+
+        <p>
+          Modifică masele, vitezele și impulsul extern.
+        </p>
+
+      </div>
+
+
+      <div
+        id="systemMomentumSimulator"
+        class="problem-card"
+      >
+
+        <div
+          class="vector-canvas"
+          role="img"
+          aria-label="Reprezentarea impulsurilor celor două corpuri și a impulsului total"
+        >
+
+          <svg
+            viewBox="0 0 1000 600"
+            width="100%"
+            aria-hidden="true"
+          >
+
+            <rect
+              x="5"
+              y="5"
+              width="990"
+              height="590"
+              rx="24"
+              fill="#f8fafc"
+            />
+
+
+            <!-- axe -->
+
+            <line
+              x1="100"
+              y1="500"
+              x2="900"
+              y2="500"
+              stroke="#94a3b8"
+              stroke-width="4"
+            />
+
+            <polygon
+              points="925,500 890,483 890,517"
+              fill="#64748b"
+            />
+
+
+            <line
+              x1="500"
+              y1="70"
+              x2="500"
+              y2="540"
+              stroke="#cbd5e1"
+              stroke-width="3"
+              stroke-dasharray="10 8"
+            />
+
+            <text
+              x="515"
+              y="535"
+              font-size="23"
+              font-family="Arial"
+              fill="#64748b"
+            >
+              0
+            </text>
+
+
+            <!-- p1 -->
+
+            <line
+              id="simP1Arrow"
+              x1="500"
+              y1="135"
+              x2="650"
+              y2="135"
+              stroke="#2563eb"
+              stroke-width="9"
+            />
+
+            <polygon
+              id="simP1Head"
+              points="675,135 640,117 640,153"
+              fill="#2563eb"
+            />
+
+            <text
+              id="simP1Label"
+              x="530"
+              y="105"
+              font-size="25"
+              font-family="Arial"
+              fill="#1d4ed8"
+            >
+              p₁
+            </text>
+
+
+            <!-- p2 -->
+
+            <line
+              id="simP2Arrow"
+              x1="500"
+              y1="235"
+              x2="350"
+              y2="235"
+              stroke="#f59e0b"
+              stroke-width="9"
+            />
+
+            <polygon
+              id="simP2Head"
+              points="325,235 360,217 360,253"
+              fill="#f59e0b"
+            />
+
+            <text
+              id="simP2Label"
+              x="380"
+              y="205"
+              font-size="25"
+              font-family="Arial"
+              fill="#b45309"
+            >
+              p₂
+            </text>
+
+
+            <!-- P initial -->
+
+            <line
+              id="simPiArrow"
+              x1="500"
+              y1="340"
+              x2="600"
+              y2="340"
+              stroke="#7c3aed"
+              stroke-width="10"
+            />
+
+            <polygon
+              id="simPiHead"
+              points="625,340 590,322 590,358"
+              fill="#7c3aed"
+            />
+
+            <text
+              id="simPiLabel"
+              x="530"
+              y="310"
+              font-size="25"
+              font-family="Arial"
+              fill="#6d28d9"
+            >
+              P inițial
+            </text>
+
+
+            <!-- P final -->
+
+            <line
+              id="simPfArrow"
+              x1="500"
+              y1="440"
+              x2="600"
+              y2="440"
+              stroke="#16a34a"
+              stroke-width="10"
+            />
+
+            <polygon
+              id="simPfHead"
+              points="625,440 590,422 590,458"
+              fill="#16a34a"
+            />
+
+            <text
+              id="simPfLabel"
+              x="530"
+              y="410"
+              font-size="25"
+              font-family="Arial"
+              fill="#15803d"
+            >
+              P final
+            </text>
+
+          </svg>
+
+        </div>
+
+
+        <div class="sim-controls">
+
+          <div class="sim-field">
+
+            <label for="simM1">
+              Masa \(m_1\):
+              <span id="simM1Value">
+                2,0 kg
+              </span>
+            </label>
+
+            <input
+              id="simM1"
+              type="range"
+              min="0.5"
+              max="5"
+              step="0.5"
+              value="2"
+            >
+
+          </div>
+
+
+          <div class="sim-field">
+
+            <label for="simV1">
+              Viteza \(v_1\):
+              <span id="simV1Value">
+                +3,0 m/s
+              </span>
+            </label>
+
+            <input
+              id="simV1"
+              type="range"
+              min="-8"
+              max="8"
+              step="0.5"
+              value="3"
+            >
+
+          </div>
+
+
+          <div class="sim-field">
+
+            <label for="simM2">
+              Masa \(m_2\):
+              <span id="simM2Value">
+                1,0 kg
+              </span>
+            </label>
+
+            <input
+              id="simM2"
+              type="range"
+              min="0.5"
+              max="5"
+              step="0.5"
+              value="1"
+            >
+
+          </div>
+
+
+          <div class="sim-field">
+
+            <label for="simV2">
+              Viteza \(v_2\):
+              <span id="simV2Value">
+                −4,0 m/s
+              </span>
+            </label>
+
+            <input
+              id="simV2"
+              type="range"
+              min="-8"
+              max="8"
+              step="0.5"
+              value="-4"
+            >
+
+          </div>
+
+
+          <div class="sim-field">
+
+            <label for="simIext">
+              Impuls exterior \(I_{\mathrm{ext}}\):
+              <span id="simIextValue">
+                0,0 N·s
+              </span>
+            </label>
+
+            <input
+              id="simIext"
+              type="range"
+              min="-20"
+              max="20"
+              step="0.5"
+              value="0"
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="sim-readout">
+
+          <div>
+            <strong>\(p_1\)</strong>
+            <span id="simP1Output">
+              +6,00 kg·m/s
+            </span>
+          </div>
+
+          <div>
+            <strong>\(p_2\)</strong>
+            <span id="simP2Output">
+              −4,00 kg·m/s
+            </span>
+          </div>
+
+          <div>
+            <strong>\(P_1\)</strong>
+            <span id="simPiOutput">
+              +2,00 kg·m/s
+            </span>
+          </div>
+
+          <div>
+            <strong>\(\Delta P\)</strong>
+            <span id="simDeltaOutput">
+              0,00 kg·m/s
+            </span>
+          </div>
+
+          <div>
+            <strong>\(P_2\)</strong>
+            <span id="simPfOutput">
+              +2,00 kg·m/s
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="sim-actions no-print">
+
+          <button
+            type="button"
+            id="simSameDirection"
+            class="lesson-button secondary"
+          >
+            Același sens
+          </button>
+
+          <button
+            type="button"
+            id="simOpposite"
+            class="lesson-button secondary"
+          >
+            Sensuri opuse
+          </button>
+
+          <button
+            type="button"
+            id="simZeroTotal"
+            class="lesson-button secondary"
+          >
+            \(P=0\)
+          </button>
+
+          <button
+            type="button"
+            id="simExternal"
+            class="lesson-button secondary"
+          >
+            Adaugă impuls extern
+          </button>
+
+          <button
+            type="button"
+            id="simReset"
+            class="lesson-button secondary"
+          >
+            Reset
+          </button>
+
+        </div>
+
+
+        <div
+          id="simObservation"
+          class="lesson-highlight"
+          aria-live="polite"
+        ></div>
+
+      </div>
+
+
+      <div class="warning-physics">
+
+        <h3>
+          Ce nu poate determina simulatorul doar din impulsul total?
+        </h3>
+
+        <p>
+          Relația:
+        </p>
+
+        \[
+          P_2=
+          P_1+
+          I_{\mathrm{ext}}
+        \]
+
+        <p>
+          determină impulsul
+          <strong>total final</strong>.
+        </p>
+
+        <p>
+          Ea nu este suficientă, singură, pentru a determina separat
+          impulsurile finale ale celor două corpuri.
+        </p>
+
+        <p>
+          Pentru aceasta ar fi necesare informații suplimentare despre
+          interacțiune.
+        </p>
+
+      </div>
+
+
+      <div class="success-card">
+
+        <h3>
+          Testează cazul \(P=0\)
+        </h3>
+
+        <p>
+          Apasă butonul \(P=0\).
+        </p>
+
+        <p>
+          Vei avea două corpuri aflate în mișcare, dar:
+        </p>
+
+        \[
+          \boxed{
+            \vec p_1+
+            \vec p_2=
+            \vec 0
+          }.
+        \]
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="choice"
+        data-answer="2"
+      >
+
+        <h3>
+          Dacă impulsul exterior total aplicat sistemului este zero,
+          simulatorul arată că:
+        </h3>
+
+        <div class="quiz-options">
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="0"
+          >
+            fiecare corp trebuie să se oprească
+          </button>
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="1"
+          >
+            impulsul total devine obligatoriu zero
+          </button>
+
+          <button
+            type="button"
+            class="quiz-option"
+            data-option="2"
+          >
+            impulsul total final este egal cu impulsul total inițial
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. Din ΔP = Iext, dacă Iext = 0 rezultă P2 = P1."
+          data-wrong-feedback="Iext = 0 înseamnă variație zero a impulsului total, nu neapărat impuls total zero."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 6 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Activitate practică →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 7
+         ======================================================= -->
+
+    <section
+      id="pagina-7"
+      class="lesson-page"
+      data-page="7"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        6. Activitate practică
+      </span>
+
+      <h2>
+        Două cărucioare care se împing reciproc
+      </h2>
+
+
+      <div class="lesson-banner">
+
+        <h3>
+          Scop
+        </h3>
+
+        <p>
+          Observăm cum se modifică impulsurile individuale ale două
+          corpuri în urma unei interacțiuni interne și comparăm suma lor.
+        </p>
+
+      </div>
+
+
+      <div class="step-grid">
+
+        <div class="step-card">
+
+          <strong>
+            1. Montaj
+          </strong>
+
+          Așază două cărucioare pe o suprafață orizontală cu frecare cât
+          mai redusă.
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            2. Pregătire
+          </strong>
+
+          Plasează între ele un resort comprimat sau un mecanism elastic
+          sigur.
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            3. Măsoară masele
+          </strong>
+
+          Notează:
+
+          \[
+            m_1,\quad m_2.
+          \]
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            4. Acțiune
+          </strong>
+
+          Eliberează sistemul fără a împinge unul dintre cărucioare din
+          exterior.
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            5. Măsurare
+          </strong>
+
+          Determină aproximativ vitezele imediat după separare:
+          \(v_1\) și \(v_2\).
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            6. Notare
+          </strong>
+
+          Alege dreapta pozitiv și scrie vitezele cu semn.
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            7. Calcul
+          </strong>
+
+          Calculează:
+
+          \[
+            p_1=m_1v_1,
+            \qquad
+            p_2=m_2v_2.
+          \]
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            8. Verificare
+          </strong>
+
+          Calculează:
+
+          \[
+            P=p_1+p_2.
+          \]
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            9. Repetare
+          </strong>
+
+          Adaugă o masă pe unul dintre cărucioare și repetă.
+        </div>
+
+
+        <div class="step-card">
+
+          <strong>
+            10. Concluzie
+          </strong>
+
+          Compară impulsurile individuale și impulsul total.
+        </div>
+
+      </div>
+
+
+      <div class="responsive-table">
+
+        <table class="experiment-table">
+
+          <thead>
+
+            <tr>
+              <th>Det.</th>
+              <th>\(m_1\) (kg)</th>
+              <th>\(v_1\) (m/s)</th>
+              <th>\(p_1\) (kg·m/s)</th>
+              <th>\(m_2\) (kg)</th>
+              <th>\(v_2\) (m/s)</th>
+              <th>\(p_2\) (kg·m/s)</th>
+              <th>\(P\) (kg·m/s)</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td>1</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>calculat</td>
+            </tr>
+
+            <tr>
+              <td>2</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>calculat</td>
+            </tr>
+
+            <tr>
+              <td>3</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>măsurat</td>
+              <td>măsurat</td>
+              <td>calculat</td>
+              <td>calculat</td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="warning-physics">
+
+        <h3>
+          Cum măsurăm vitezele simplu?
+        </h3>
+
+        <p>
+          Marchează o distanță scurtă după zona de interacțiune și
+          măsoară timpul de parcurgere sau folosește o filmare la
+          frecvență cunoscută.
+        </p>
+
+        <p>
+          Pentru fiecare cărucior:
+        </p>
+
+        \[
+          v\approx
+          \frac{\Delta s}{\Delta t}.
+        \]
+
+      </div>
+
+
+      <div class="danger-card">
+
+        <h3>
+          Siguranță
+        </h3>
+
+        <p>
+          Folosește cărucioare ușoare, nu comprima excesiv resortul și
+          împiedică ieșirea corpurilor de pe masa de lucru.
+        </p>
+
+      </div>
+
+
+      <div class="success-card">
+
+        <h3>
+          Situația ideală anticipată
+        </h3>
+
+        <p>
+          Dacă sistemul pornește din repaus:
+        </p>
+
+        \[
+          P_{\mathrm{inițial}}=0.
+        \]
+
+        <p>
+          Dacă impulsul exterior pe direcția mișcării este foarte mic,
+          experimentul sugerează:
+        </p>
+
+        \[
+          p_1+p_2\approx0.
+        \]
+
+        <p>
+          Deci:
+        </p>
+
+        \[
+          p_1\approx-p_2.
+        \]
+
+        <p>
+          În Lecția 45 vom transforma această observație într-o lege de
+          conservare.
+        </p>
+
+      </div>
+
+
+      <div class="problem-card">
+
+        <span class="application-tag">
+          Exemplu experimental
+        </span>
+
+        <p>
+          După separare:
+        </p>
+
+        \[
+          m_1=
+          1\,\mathrm{kg},
+          \qquad
+          v_1=
+          +2\,\mathrm{m/s}.
+        \]
+
+        <p>
+          Al doilea cărucior are:
+        </p>
+
+        \[
+          m_2=
+          2\,\mathrm{kg}.
+        \]
+
+        <p>
+          Dacă impulsul total este aproximativ zero:
+        </p>
+
+        \[
+          1\cdot2+
+          2v_2=
+          0.
+        \]
+
+        \[
+          2+
+          2v_2=
+          0.
+        \]
+
+        \[
+          \boxed{
+            v_2=
+            -1\,\mathrm{m/s}
+          }.
+        \]
+
+        <p>
+          Căruciorul mai greu se deplasează cu viteză mai mică în sens
+          opus.
+        </p>
+
+      </div>
+
+
+      <article
+        class="quiz-question"
+        data-interactive-question
+        data-type="number"
+        data-answer="-1"
+        data-tolerance="0.001"
+      >
+
+        <h3>
+          Un sistem are impulsul total zero.
+          Pentru
+          \(m_1=1\,\mathrm{kg}\),
+          \(v_1=+2\,\mathrm{m/s}\)
+          și
+          \(m_2=2\,\mathrm{kg}\),
+          determină \(v_2\).
+        </h3>
+
+        <div class="quiz-number-row">
+
+          <input
+            type="text"
+            inputmode="decimal"
+            class="quiz-number-input"
+            data-number-input
+            aria-label="Viteza corpului 2"
+          >
+
+          <span>m/s</span>
+
+          <button
+            type="button"
+            class="quiz-check-button"
+            data-check-number
+          >
+            Verifică
+          </button>
+
+        </div>
+
+        <div
+          class="quiz-feedback"
+          aria-live="polite"
+          data-correct-feedback="Corect. 1·2 + 2·v2 = 0, deci v2 = −1 m/s."
+          data-wrong-feedback="Scrie P = m1v1 + m2v2 = 0 și ține seama de sens."
+        ></div>
+
+      </article>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 7 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Test final →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 8 – TEST
+         ======================================================= -->
+
+    <section
+      id="pagina-8"
+      class="lesson-page"
+      data-page="8"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        Evaluare
+      </span>
+
+      <h2>
+        Test – Impulsul unui sistem de puncte materiale
+      </h2>
+
+      <p>
+        Rezolvă cei 10 itemi.
+      </p>
+
+
+      <div
+        id="lessonQuiz"
+        class="quiz-list"
+      >
+
+
+        <!-- 1 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="choice"
+          data-answer="1"
+        >
+
+          <h3>
+            1. Impulsul mecanic total al unui sistem este:
+          </h3>
+
+          <div class="quiz-options">
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="0"
+            >
+              produsul impulsurilor individuale
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="1"
+            >
+              suma vectorială a impulsurilor corpurilor
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="2"
+            >
+              suma energiilor cinetice
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P = Σpi."
+            data-wrong-feedback="Impulsul total se obține prin compunerea vectorială a impulsurilor individuale."
+          ></div>
+
+        </article>
+
+
+        <!-- 2 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="number"
+          data-answer="10"
+          data-tolerance="0.001"
+        >
+
+          <h3>
+            2. \(m_1=2\,\mathrm{kg}\),
+            \(v_1=+3\,\mathrm{m/s}\),
+            \(m_2=1\,\mathrm{kg}\),
+            \(v_2=+4\,\mathrm{m/s}\).
+            Determină \(P\).
+          </h3>
+
+          <div class="quiz-number-row">
+
+            <input
+              type="text"
+              inputmode="decimal"
+              class="quiz-number-input"
+              data-number-input
+            >
+
+            <span>kg·m/s</span>
+
+            <button
+              type="button"
+              class="quiz-check-button"
+              data-check-number
+            >
+              Verifică
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P = 2·3 + 1·4 = 10 kg·m/s."
+            data-wrong-feedback="Calculează p1 și p2 și apoi adună-le cu semn."
+          ></div>
+
+        </article>
+
+
+        <!-- 3 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="number"
+          data-answer="2"
+          data-tolerance="0.001"
+        >
+
+          <h3>
+            3. \(p_1=+6\,\mathrm{kg\,m/s}\) și
+            \(p_2=-4\,\mathrm{kg\,m/s}\).
+            Determină \(P\).
+          </h3>
+
+          <div class="quiz-number-row">
+
+            <input
+              type="text"
+              inputmode="decimal"
+              class="quiz-number-input"
+              data-number-input
+            >
+
+            <span>kg·m/s</span>
+
+            <button
+              type="button"
+              class="quiz-check-button"
+              data-check-number
+            >
+              Verifică
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P = 6 − 4 = 2 kg·m/s."
+            data-wrong-feedback="Impulsurile au sensuri opuse."
+          ></div>
+
+        </article>
+
+
+        <!-- 4 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="choice"
+          data-answer="2"
+        >
+
+          <h3>
+            4. Dacă impulsul total al unui sistem este zero:
+          </h3>
+
+          <div class="quiz-options">
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="0"
+            >
+              toate corpurile trebuie să fie în repaus
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="1"
+            >
+              toate vitezele trebuie să fie egale
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="2"
+            >
+              impulsurile individuale se pot compensa vectorial
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P = 0 poate rezulta din impulsuri nenule și opuse."
+            data-wrong-feedback="Impuls total zero nu implică repausul fiecărui corp."
+          ></div>
+
+        </article>
+
+
+        <!-- 5 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="number"
+          data-answer="5"
+          data-tolerance="0.001"
+        >
+
+          <h3>
+            5. Două impulsuri perpendiculare au modulele
+            \(3\,\mathrm{kg\,m/s}\) și
+            \(4\,\mathrm{kg\,m/s}\).
+            Determină modulul impulsului total.
+          </h3>
+
+          <div class="quiz-number-row">
+
+            <input
+              type="text"
+              inputmode="decimal"
+              class="quiz-number-input"
+              data-number-input
+            >
+
+            <span>kg·m/s</span>
+
+            <button
+              type="button"
+              class="quiz-check-button"
+              data-check-number
+            >
+              Verifică
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P = √(3² + 4²) = 5 kg·m/s."
+            data-wrong-feedback="Impulsurile sunt perpendiculare."
+          ></div>
+
+        </article>
+
+
+        <!-- 6 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="choice"
+          data-answer="1"
+        >
+
+          <h3>
+            6. Pentru un sistem, perechile de forțe interne:
+          </h3>
+
+          <div class="quiz-options">
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="0"
+            >
+              nu acționează asupra corpurilor
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="1"
+            >
+              se compensează în bilanțul variației impulsului total
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="2"
+            >
+              sunt întotdeauna mai mici decât forțele externe
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. Ele pot modifica impulsurile individuale, dar contribuția lor totală se compensează."
+            data-wrong-feedback="Folosește principiul acțiunii și reacțiunii pentru întregul sistem."
+          ></div>
+
+        </article>
+
+
+        <!-- 7 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="choice"
+          data-answer="0"
+        >
+
+          <h3>
+            7. Teorema variației impulsului pentru un sistem se scrie:
+          </h3>
+
+          <div class="quiz-options">
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="0"
+            >
+              \(\Delta\vec P=\vec I_{\mathrm{ext}}\)
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="1"
+            >
+              \(\Delta\vec P=\vec I_{\mathrm{int}}\)
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="2"
+            >
+              \(\Delta\vec P=\vec 0\) în orice situație
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect."
+            data-wrong-feedback="Impulsul total este modificat de impulsul forțelor externe."
+          ></div>
+
+        </article>
+
+
+        <!-- 8 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="number"
+          data-answer="-3"
+          data-tolerance="0.001"
+        >
+
+          <h3>
+            8. Un sistem are
+            \(P_1=+5\,\mathrm{kg\,m/s}\).
+            Impulsul exterior este
+            \(-8\,\mathrm{N\,s}\).
+            Determină \(P_2\).
+          </h3>
+
+          <div class="quiz-number-row">
+
+            <input
+              type="text"
+              inputmode="decimal"
+              class="quiz-number-input"
+              data-number-input
+            >
+
+            <span>kg·m/s</span>
+
+            <button
+              type="button"
+              class="quiz-check-button"
+              data-check-number
+            >
+              Verifică
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. P2 = 5 − 8 = −3 kg·m/s."
+            data-wrong-feedback="Aplică P2 = P1 + Iext."
+          ></div>
+
+        </article>
+
+
+        <!-- 9 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="choice"
+          data-answer="2"
+        >
+
+          <h3>
+            9. Dacă
+            \(\vec I_{\mathrm{ext}}=\vec 0\),
+            atunci:
+          </h3>
+
+          <div class="quiz-options">
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="0"
+            >
+              \(\vec P_2=\vec 0\)
+              obligatoriu
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="1"
+            >
+              toate impulsurile individuale rămân constante
+            </button>
+
+            <button
+              type="button"
+              class="quiz-option"
+              data-option="2"
+            >
+              \(\vec P_2=\vec P_1\)
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. Impulsul total nu se modifică."
+            data-wrong-feedback="Din ΔP = Iext, dacă Iext = 0 rezultă ΔP = 0."
+          ></div>
+
+        </article>
+
+
+        <!-- 10 -->
+
+        <article
+          class="quiz-question"
+          data-interactive-question
+          data-quiz-question
+          data-type="number"
+          data-answer="-1"
+          data-tolerance="0.001"
+        >
+
+          <h3>
+            10. Un sistem are \(P=0\).
+            \(m_1=1\,\mathrm{kg}\),
+            \(v_1=+2\,\mathrm{m/s}\),
+            \(m_2=2\,\mathrm{kg}\).
+            Determină \(v_2\).
+          </h3>
+
+          <div class="quiz-number-row">
+
+            <input
+              type="text"
+              inputmode="decimal"
+              class="quiz-number-input"
+              data-number-input
+            >
+
+            <span>m/s</span>
+
+            <button
+              type="button"
+              class="quiz-check-button"
+              data-check-number
+            >
+              Verifică
+            </button>
+
+          </div>
+
+          <div
+            class="quiz-feedback"
+            aria-live="polite"
+            data-correct-feedback="Corect. 1·2 + 2v2 = 0, deci v2 = −1 m/s."
+            data-wrong-feedback="Scrie m1v1 + m2v2 = 0."
+          ></div>
+
+        </article>
+
+      </div>
+
+
+      <div class="quiz-controls no-print">
+
+        <button
+          type="button"
+          id="quizScoreButton"
+          class="lesson-button"
+        >
+          Vezi rezultatul
+        </button>
+
+        <button
+          type="button"
+          id="quizResetButton"
+          class="lesson-button secondary"
+        >
+          Reia testul
+        </button>
+
+      </div>
+
+
+      <div
+        id="quizResult"
+        class="quiz-result"
+        aria-live="polite"
+        hidden
+      ></div>
+
+
+      <nav class="lesson-page-nav no-print">
+
+        <button
+          type="button"
+          class="lesson-button secondary"
+          data-prev
+        >
+          ← Anterior
+        </button>
+
+        <span class="lesson-page-indicator">
+          Pagina 8 din 9
+        </span>
+
+        <button
+          type="button"
+          class="lesson-button"
+          data-next
+        >
+          Sinteză →
+        </button>
+
+      </nav>
+
+    </section>
+
+
+    <!-- =======================================================
+         PAGINA 9
+         ======================================================= -->
+
+    <section
+      id="pagina-9"
+      class="lesson-page"
+      data-page="9"
+      hidden
+      aria-hidden="true"
+    >
+
+      <span class="lesson-page-label">
+        Sinteză
+      </span>
+
+      <h2>
+        Ce trebuie să reții
+      </h2>
+
+
+      <div class="formula-grid">
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Impuls individual
+          </h3>
+
+          \[
+            \boxed{
+              \vec p_i=
+              m_i\vec v_i
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Impuls total
+          </h3>
+
+          \[
+            \boxed{
+              \vec P=
+              \sum_i\vec p_i
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Pentru două corpuri
+          </h3>
+
+          \[
+            \boxed{
+              \vec P=
+              \vec p_1+
+              \vec p_2
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Variația impulsului total
+          </h3>
+
+          \[
+            \boxed{
+              \Delta\vec P
+              =
+              \vec P_2-\vec P_1
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Teorema pentru sistem
+          </h3>
+
+          \[
+            \boxed{
+              \Delta\vec P
+              =
+              \vec I_{\mathrm{ext}}
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Rezultantă externă medie
+          </h3>
+
+          \[
+            \boxed{
+              \Delta\vec P
+              =
+              \vec F_{\mathrm{ext,med}}
+              \Delta t
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Forma finală
+          </h3>
+
+          \[
+            \boxed{
+              \vec P_2
+              =
+              \vec P_1+
+              \vec I_{\mathrm{ext}}
+            }
+          \]
+
+        </div>
+
+
+        <div class="formula-mini-card">
+
+          <h3>
+            Caz particular
+          </h3>
+
+          \[
+            \boxed{
+              \vec I_{\mathrm{ext}}=\vec 0
+              \Rightarrow
+              \vec P_2=\vec P_1
+            }
+          \]
+
+        </div>
+
+      </div>
+
+
+      <div class="concept-chain">
+
+        <span>
+          impulsuri individuale
+        </span>
+
+        <b>→</b>
+
+        <span>
+          sumă vectorială
+        </span>
+
+        <b>→</b>
+
+        <span>
+          impuls total
+        </span>
+
+        <b>→</b>
+
+        <span>
+          impuls exterior
+        </span>
+
+        <b>→</b>
+
+        <span>
+          variația lui \(\vec P\)
+        </span>
+
+      </div>
+
+
+      <div class="compare-grid">
+
+        <div class="compare-card blue">
+
+          <h3>
+            Forțe interne
+          </h3>
+
+          <p>
+            Acționează între corpurile sistemului.
+          </p>
+
+          <p>
+            Pot modifica impulsurile individuale.
+          </p>
+
+          <p>
+            Contribuțiile lor totale se compensează în perechi.
+          </p>
+
+        </div>
+
+
+        <div class="compare-card orange">
+
+          <h3>
+            Forțe externe
+          </h3>
+
+          <p>
+            Provin din afara sistemului.
+          </p>
+
+          <p>
+            Impulsul lor total poate modifica:
+          </p>
+
+          \[
+            \vec P.
+          \]
+
+        </div>
+
+      </div>
+
+
+      <div class="danger-card">
+
+        <h3>
+          Greșeli de evitat
+        </h3>
+
+        <ul class="lesson-list">
+
+          <li>
+            nu aduna modulele impulsurilor dacă vectorii au direcții sau
+            sensuri diferite;
+          </li>
+
+          <li>
+            nu confunda impulsul total zero cu repausul tuturor
+            corpurilor;
+          </li>
+
+          <li>
+            scrie vitezele cu semn într-o problemă unidimensională;
+          </li>
+
+          <li>
+            stabilește sistemul înainte de a clasifica forțele drept
+            interne sau externe;
+          </li>
+
+          <li>
+            nu spune că forțele interne „nu există” deoarece se
+            compensează;
+          </li>
+
+          <li>
+            nu presupune că impulsurile individuale rămân constante
+            când impulsul total rămâne constant;
+          </li>
+
+          <li>
+            impulsul exterior nul înseamnă
+            \(\Delta\vec P=\vec0\), nu neapărat
+            \(\vec P=\vec0\).
+          </li>
+
+        </ul>
+
+      </div>
+
+
+      <div class="lesson-highlight">
+
+        <h3>
+          Algoritm de rezolvare
+        </h3>
+
+        <ol class="lesson-list">
+
+          <li>
+            precizează corpurile care formează sistemul;
+          </li>
+
+          <li>
+            alege axa sau sistemul de axe;
+          </li>
+
+          <li>
+            calculează
+            \(\vec p_i=m_i\vec v_i\);
+          </li>
+
+          <li>
+            adună vectorial impulsurile;
+          </li>
+
+          <li>
+            obține impulsul total
+            \(\vec P\);
+          </li>
+
+          <li>
+            identifică forțele externe;
+          </li>
+
+          <li>
+            calculează impulsul lor total;
+          </li>
+
+          <li>
+            aplică
+            \(\Delta\vec P=\vec I_{\mathrm{ext}}\).
+          </li>
+
+        </ol>
+
+      </div>
+
+
+      <div class="lesson-banner">
+
+        <h3>
+          Lecția 45 – Conservarea impulsului. Ciocniri
+        </h3>
+
+        <p>
+          Am obținut:
+        </p>
+
+        \[
+          \Delta\vec P
+          =
+          \vec I_{\mathrm{ext}}.
+        \]
+
+        <p>
+          Dacă sistemul este izolat sau impulsul total al forțelor
+          externe este neglijabil:
+        </p>
+
+        \[
+          \vec I_{\mathrm{ext}}
+          =
+          \vec0.
+        \]
+
+        <p>
+          Atunci:
+        </p>
+
+        \[
+          \boxed{
+            \vec P_{\mathrm{inițial}}
+            =
+            \vec P_{\mathrm{final}}
+          }.
+        \]
+
+        <p>
+          În lecția următoare vom folosi această lege pentru studiul
+          ciocnirilor.
+        </p>
+
+      </div>
+
+
+      <div class="lesson-actions no-print">
+
+        <button
+          type="button"
+          class="lesson-button pdf-button"
+          data-pdf-button
+        >
+          Descarcă PDF
+        </button>
+
+        <a
+          class="lesson-button secondary"
+          href="lectia-43-impulsul-mecanic-teorema-variatiei-impulsului.html"
+        >
+          ← Lecția 43
+        </a>
+
+        <a
+          class="lesson-button"
+          href="lectia-45-conservarea-impulsului-ciocniri.html"
+        >
+          Lecția 45 →
+        </a>
+
+      </div>
+
+
+      <nav
+        class="lesson-page-nav no-print"
+        aria-label="Navigare între lecții"
+      >
+
+        <a
+          class="lesson-button secondary"
+          href="lectia-43-impulsul-mecanic-teorema-variatiei-impulsului.html"
+        >
+          ← Lecția 43
+        </a>
+
+        <span class="lesson-page-indicator">
+          Pagina 9 din 9
+        </span>
+
+        <a
+          class="lesson-button"
+          href="lectia-45-conservarea-impulsului-ciocniri.html"
+        >
+          Lecția 45 →
+        </a>
+
+      </nav>
+
+
+      <div class="back-to-lessons no-print">
+
+        <a
+          class="lesson-button secondary"
+          href="index.html"
+        >
+          ← Cuprinsul unității
+        </a>
+
+      </div>
+
+
+      <footer class="lesson-footer">
+
+        <p>
+          <strong>
+            Prof. Dănuț Andronie
+          </strong>
+        </p>
+
+        <p>
+          <a href="mailto:danutmg@gmail.com">
+            e-Mail: danutmg@gmail.com
+          </a>
+        </p>
+
+        <p>
+          Fizică • Clasa a IX-a • Teoreme de variație și legi de conservare • Lecția 44
+        </p>
+
+      </footer>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       PDF
+       ========================================================= -->
+
+  <script src="../../../assets/js/pdf-helper.js"></script>
+
+
+  <!-- =========================================================
+       NAVIGARE
+       ========================================================= -->
+
+  <script>
+    (function () {
+      "use strict";
+
+
+      const pages =
+        Array.from(
+          document.querySelectorAll(
+            ".lesson-page"
+          )
+        );
+
+
+      if (!pages.length) {
+        return;
+      }
+
+
+      const total =
+        pages.length;
+
+
+      let currentPage =
+        1;
+
+
+      const progressText =
+        document.getElementById(
+          "lessonProgressText"
+        );
+
+
+      const progressTrack =
+        document.getElementById(
+          "lessonProgressTrack"
+        );
+
+
+      const progressBar =
+        document.getElementById(
+          "lessonProgressBar"
+        );
+
+
+      function getPageFromHash() {
+
+        const match =
+          window.location.hash.match(
+            /^#pagina-(\d+)$/
+          );
+
+
+        if (!match) {
+          return 1;
+        }
+
+
+        const value =
+          Number(
+            match[1]
+          );
+
+
+        if (
+          !Number.isInteger(value) ||
+          value < 1 ||
+          value > total
+        ) {
+          return 1;
+        }
+
+
+        return value;
+      }
+
+
+      function refreshMathJax(
+        page
+      ) {
+
+        if (
+          !window.MathJax ||
+          !window.MathJax.typesetPromise
+        ) {
+          return;
+        }
+
+
+        window.MathJax
+          .typesetPromise(
+            [page]
+          )
+          .catch(
+            function (error) {
+
+              console.warn(
+                "MathJax:",
+                error
+              );
+
+            }
+          );
+      }
+
+
+      function showPage(
+        pageNumber,
+        updateHash = true,
+        moveFocus = true
+      ) {
+
+        if (
+          pageNumber < 1 ||
+          pageNumber > total
+        ) {
+          return;
+        }
+
+
+        currentPage =
+          pageNumber;
+
+
+        pages.forEach(
+          function (
+            page,
+            index
+          ) {
+
+            const active =
+              index ===
+              pageNumber - 1;
+
+
+            page.hidden =
+              !active;
+
+
+            page.classList.toggle(
+              "is-active",
+              active
+            );
+
+
+            page.setAttribute(
+              "aria-hidden",
+              active
+                ? "false"
+                : "true"
+            );
+
+          }
+        );
+
+
+        const activePage =
+          pages[
+            pageNumber - 1
+          ];
+
+
+        const percentage =
+          Math.round(
+            pageNumber /
+            total *
+            100
+          );
+
+
+        if (progressText) {
+
+          progressText.textContent =
+            `Pagina ${pageNumber} din ${total}`;
+
+        }
+
+
+        if (progressTrack) {
+
+          progressTrack.setAttribute(
+            "aria-valuenow",
+            String(pageNumber)
+          );
+
+
+          progressTrack.setAttribute(
+            "aria-valuemax",
+            String(total)
+          );
+
+        }
+
+
+        if (progressBar) {
+
+          progressBar.style.width =
+            `${percentage}%`;
+
+        }
+
+
+        activePage
+          .querySelectorAll(
+            ".lesson-page-indicator"
+          )
+          .forEach(
+            function (indicator) {
+
+              indicator.textContent =
+                `Pagina ${pageNumber} din ${total}`;
+
+            }
+          );
+
+
+        if (updateHash) {
+
+          history.replaceState(
+            null,
+            "",
+            `#pagina-${pageNumber}`
+          );
+
+        }
+
+
+        refreshMathJax(
+          activePage
+        );
+
+
+        window.scrollTo({
+          top: 0,
+          behavior: "auto"
+        });
+
+
+        if (moveFocus) {
+
+          const heading =
+            activePage.querySelector(
+              "h1, h2"
+            );
+
+
+          if (heading) {
+
+            heading.setAttribute(
+              "tabindex",
+              "-1"
+            );
+
+
+            heading.focus({
+              preventScroll: true
+            });
+
+          }
+
+        }
+
+      }
+
+
+      document.addEventListener(
+        "click",
+        function (event) {
+
+          const next =
+            event.target.closest(
+              "[data-next]"
+            );
+
+
+          if (next) {
+
+            showPage(
+              currentPage + 1
+            );
+
+            return;
+          }
+
+
+          const previous =
+            event.target.closest(
+              "[data-prev]"
+            );
+
+
+          if (previous) {
+
+            showPage(
+              currentPage - 1
+            );
+
+          }
+
+        }
+      );
+
+
+      window.addEventListener(
+        "hashchange",
+        function () {
+
+          showPage(
+            getPageFromHash(),
+            false,
+            false
+          );
+
+        }
+      );
+
+
+      showPage(
+        getPageFromHash(),
+        true,
+        false
+      );
+
+    })();
+  </script>
+
+
+  <!-- =========================================================
+       UTILITARE
+       ========================================================= -->
+
+  <script>
+    function lessonParseNumber(
+      value
+    ) {
+
+      if (
+        typeof value !==
+        "string"
+      ) {
+        return null;
+      }
+
+
+      const normalized =
+        value
+          .trim()
+          .replace(/\s+/g, "")
+          .replace(",", ".");
+
+
+      if (!normalized) {
+        return null;
+      }
+
+
+      const number =
+        Number(
+          normalized
+        );
+
+
+      return Number.isFinite(
+        number
+      )
+        ? number
+        : null;
+    }
+
+
+    function lessonFormatNumber(
+      value,
+      decimals = 2
+    ) {
+
+      const threshold =
+        Math.pow(
+          10,
+          -decimals
+        ) /
+        2;
+
+
+      const safeValue =
+        Math.abs(value) <
+        threshold
+          ? 0
+          : value;
+
+
+      return Number(
+        safeValue
+      )
+        .toFixed(decimals)
+        .replace(".", ",");
+    }
+
+
+    function lessonSignedNumber(
+      value,
+      decimals = 2
+    ) {
+
+      const threshold =
+        Math.pow(
+          10,
+          -decimals
+        ) /
+        2;
+
+
+      if (
+        Math.abs(value) <
+        threshold
+      ) {
+
+        return lessonFormatNumber(
+          0,
+          decimals
+        );
+
+      }
+
+
+      const formatted =
+        lessonFormatNumber(
+          value,
+          decimals
+        );
+
+
+      if (
+        value >
+        0
+      ) {
+        return `+${formatted}`;
+      }
+
+
+      return formatted;
+    }
+  </script>
+
+
+  <!-- =========================================================
+       SIMULATOR IMPULS TOTAL
+       ========================================================= -->
+
+  <script>
+    (function () {
+      "use strict";
+
+
+      const m1Slider =
+        document.getElementById(
+          "simM1"
+        );
+
+
+      const v1Slider =
+        document.getElementById(
+          "simV1"
+        );
+
+
+      const m2Slider =
+        document.getElementById(
+          "simM2"
+        );
+
+
+      const v2Slider =
+        document.getElementById(
+          "simV2"
+        );
+
+
+      const impulseSlider =
+        document.getElementById(
+          "simIext"
+        );
+
+
+      if (
+        !m1Slider ||
+        !v1Slider ||
+        !m2Slider ||
+        !v2Slider ||
+        !impulseSlider
+      ) {
+        return;
+      }
+
+
+      const m1Value =
+        document.getElementById(
+          "simM1Value"
+        );
+
+
+      const v1Value =
+        document.getElementById(
+          "simV1Value"
+        );
+
+
+      const m2Value =
+        document.getElementById(
+          "simM2Value"
+        );
+
+
+      const v2Value =
+        document.getElementById(
+          "simV2Value"
+        );
+
+
+      const impulseValue =
+        document.getElementById(
+          "simIextValue"
+        );
+
+
+      const p1Output =
+        document.getElementById(
+          "simP1Output"
+        );
+
+
+      const p2Output =
+        document.getElementById(
+          "simP2Output"
+        );
+
+
+      const piOutput =
+        document.getElementById(
+          "simPiOutput"
+        );
+
+
+      const deltaOutput =
+        document.getElementById(
+          "simDeltaOutput"
+        );
+
+
+      const pfOutput =
+        document.getElementById(
+          "simPfOutput"
+        );
+
+
+      const observation =
+        document.getElementById(
+          "simObservation"
+        );
+
+
+      const p1Arrow =
+        document.getElementById(
+          "simP1Arrow"
+        );
+
+
+      const p1Head =
+        document.getElementById(
+          "simP1Head"
+        );
+
+
+      const p1Label =
+        document.getElementById(
+          "simP1Label"
+        );
+
+
+      const p2Arrow =
+        document.getElementById(
+          "simP2Arrow"
+        );
+
+
+      const p2Head =
+        document.getElementById(
+          "simP2Head"
+        );
+
+
+      const p2Label =
+        document.getElementById(
+          "simP2Label"
+        );
+
+
+      const piArrow =
+        document.getElementById(
+          "simPiArrow"
+        );
+
+
+      const piHead =
+        document.getElementById(
+          "simPiHead"
+        );
+
+
+      const piLabel =
+        document.getElementById(
+          "simPiLabel"
+        );
+
+
+      const pfArrow =
+        document.getElementById(
+          "simPfArrow"
+        );
+
+
+      const pfHead =
+        document.getElementById(
+          "simPfHead"
+        );
+
+
+      const pfLabel =
+        document.getElementById(
+          "simPfLabel"
+        );
+
+
+      const sameDirectionButton =
+        document.getElementById(
+          "simSameDirection"
+        );
+
+
+      const oppositeButton =
+        document.getElementById(
+          "simOpposite"
+        );
+
+
+      const zeroButton =
+        document.getElementById(
+          "simZeroTotal"
+        );
+
+
+      const externalButton =
+        document.getElementById(
+          "simExternal"
+        );
+
+
+      const resetButton =
+        document.getElementById(
+          "simReset"
+        );
+
+
+      function drawVector(
+        line,
+        head,
+        label,
+        value,
+        y,
+        text
+      ) {
+
+        const center =
+          500;
+
+
+        const magnitude =
+          Math.abs(
+            value
+          );
+
+
+        line.setAttribute(
+          "x1",
+          center
+        );
+
+
+        line.setAttribute(
+          "y1",
+          y
+        );
+
+
+        line.setAttribute(
+          "y2",
+          y
+        );
+
+
+        if (
+          magnitude <
+          0.001
+        ) {
+
+          line.setAttribute(
+            "x2",
+            center
+          );
+
+
+          head.setAttribute(
+            "points",
+            `${center},${y} ${center},${y} ${center},${y}`
+          );
+
+
+          label.setAttribute(
+            "x",
+            center -
+            35
+          );
+
+
+          label.textContent =
+            `${text} = 0`;
+
+          return;
+        }
+
+
+        const length =
+          Math.min(
+            55 +
+            magnitude *
+            18,
+            330
+          );
+
+
+        if (
+          value >
+          0
+        ) {
+
+          const end =
+            center +
+            length;
+
+
+          line.setAttribute(
+            "x2",
+            end
+          );
+
+
+          head.setAttribute(
+            "points",
+            `${end + 24},${y} ` +
+            `${end - 10},${y - 18} ` +
+            `${end - 10},${y + 18}`
+          );
+
+
+          label.setAttribute(
+            "x",
+            center +
+            25
+          );
+
+        } else {
+
+          const end =
+            center -
+            length;
+
+
+          line.setAttribute(
+            "x2",
+            end
+          );
+
+
+          head.setAttribute(
+            "points",
+            `${end - 24},${y} ` +
+            `${end + 10},${y - 18} ` +
+            `${end + 10},${y + 18}`
+          );
+
+
+          label.setAttribute(
+            "x",
+            end
+          );
+
+        }
+
+
+        label.textContent =
+          text;
+
+      }
+
+
+      function render() {
+
+        const m1 =
+          Number(
+            m1Slider.value
+          );
+
+
+        const v1 =
+          Number(
+            v1Slider.value
+          );
+
+
+        const m2 =
+          Number(
+            m2Slider.value
+          );
+
+
+        const v2 =
+          Number(
+            v2Slider.value
+          );
+
+
+        const externalImpulse =
+          Number(
+            impulseSlider.value
+          );
+
+
+        const p1 =
+          m1 *
+          v1;
+
+
+        const p2 =
+          m2 *
+          v2;
+
+
+        const initialTotal =
+          p1 +
+          p2;
+
+
+        const deltaTotal =
+          externalImpulse;
+
+
+        const finalTotal =
+          initialTotal +
+          externalImpulse;
+
+
+        m1Value.textContent =
+          `${lessonFormatNumber(
+            m1,
+            1
+          )} kg`;
+
+
+        v1Value.textContent =
+          `${lessonSignedNumber(
+            v1,
+            1
+          )} m/s`;
+
+
+        m2Value.textContent =
+          `${lessonFormatNumber(
+            m2,
+            1
+          )} kg`;
+
+
+        v2Value.textContent =
+          `${lessonSignedNumber(
+            v2,
+            1
+          )} m/s`;
+
+
+        impulseValue.textContent =
+          `${lessonSignedNumber(
+            externalImpulse,
+            1
+          )} N·s`;
+
+
+        p1Output.textContent =
+          `${lessonSignedNumber(
+            p1,
+            2
+          )} kg·m/s`;
+
+
+        p2Output.textContent =
+          `${lessonSignedNumber(
+            p2,
+            2
+          )} kg·m/s`;
+
+
+        piOutput.textContent =
+          `${lessonSignedNumber(
+            initialTotal,
+            2
+          )} kg·m/s`;
+
+
+        deltaOutput.textContent =
+          `${lessonSignedNumber(
+            deltaTotal,
+            2
+          )} kg·m/s`;
+
+
+        pfOutput.textContent =
+          `${lessonSignedNumber(
+            finalTotal,
+            2
+          )} kg·m/s`;
+
+
+        drawVector(
+          p1Arrow,
+          p1Head,
+          p1Label,
+          p1,
+          135,
+          "p₁"
+        );
+
+
+        drawVector(
+          p2Arrow,
+          p2Head,
+          p2Label,
+          p2,
+          235,
+          "p₂"
+        );
+
+
+        drawVector(
+          piArrow,
+          piHead,
+          piLabel,
+          initialTotal,
+          340,
+          "P inițial"
+        );
+
+
+        drawVector(
+          pfArrow,
+          pfHead,
+          pfLabel,
+          finalTotal,
+          440,
+          "P final"
+        );
+
+
+        if (
+          Math.abs(
+            externalImpulse
+          ) <
+          0.001
+        ) {
+
+          if (
+            Math.abs(
+              initialTotal
+            ) <
+            0.001
+          ) {
+
+            observation.innerHTML =
+              "<strong>Impuls total nul.</strong> " +
+              "Corpurile pot fi în mișcare, dar impulsurile lor se compensează vectorial. Fără impuls extern, și impulsul total final rămâne zero.";
+
+            return;
+          }
+
+
+          observation.innerHTML =
+            "<strong>Impuls exterior nul.</strong> " +
+            "Impulsul total final este egal cu impulsul total inițial: P₂ = P₁.";
+
+          return;
+        }
+
+
+        if (
+          initialTotal *
+          finalTotal <
+          0
+        ) {
+
+          observation.innerHTML =
+            "<strong>Impulsul total și-a schimbat sensul.</strong> " +
+            "Impulsul exterior a fost suficient pentru anularea impulsului inițial și apariția unui impuls total în sens opus.";
+
+          return;
+        }
+
+
+        if (
+          Math.abs(
+            finalTotal
+          ) >
+          Math.abs(
+            initialTotal
+          )
+        ) {
+
+          observation.innerHTML =
+            "<strong>Modulul impulsului total a crescut.</strong> " +
+            "Variația este exact egală cu impulsul exterior aplicat sistemului.";
+
+          return;
+        }
+
+
+        observation.innerHTML =
+          "<strong>Modulul impulsului total a scăzut.</strong> " +
+          "Impulsul exterior s-a opus parțial impulsului total inițial.";
+
+      }
+
+
+      [
+        m1Slider,
+        v1Slider,
+        m2Slider,
+        v2Slider,
+        impulseSlider
+      ].forEach(
+        function (control) {
+
+          control.addEventListener(
+            "input",
+            render
+          );
+
+        }
+      );
+
+
+      sameDirectionButton.addEventListener(
+        "click",
+        function () {
+
+          m1Slider.value =
+            "2";
+
+          v1Slider.value =
+            "3";
+
+          m2Slider.value =
+            "1";
+
+          v2Slider.value =
+            "4";
+
+          impulseSlider.value =
+            "0";
+
+          render();
+
+        }
+      );
+
+
+      oppositeButton.addEventListener(
+        "click",
+        function () {
+
+          m1Slider.value =
+            "2";
+
+          v1Slider.value =
+            "3";
+
+          m2Slider.value =
+            "1";
+
+          v2Slider.value =
+            "-4";
+
+          impulseSlider.value =
+            "0";
+
+          render();
+
+        }
+      );
+
+
+      zeroButton.addEventListener(
+        "click",
+        function () {
+
+          m1Slider.value =
+            "1";
+
+          v1Slider.value =
+            "4";
+
+          m2Slider.value =
+            "2";
+
+          v2Slider.value =
+            "-2";
+
+          impulseSlider.value =
+            "0";
+
+          render();
+
+        }
+      );
+
+
+      externalButton.addEventListener(
+        "click",
+        function () {
+
+          m1Slider.value =
+            "2";
+
+          v1Slider.value =
+            "3";
+
+          m2Slider.value =
+            "1";
+
+          v2Slider.value =
+            "-1";
+
+          impulseSlider.value =
+            "-8";
+
+          render();
+
+        }
+      );
+
+
+      resetButton.addEventListener(
+        "click",
+        function () {
+
+          m1Slider.value =
+            "2";
+
+          v1Slider.value =
+            "3";
+
+          m2Slider.value =
+            "1";
+
+          v2Slider.value =
+            "-4";
+
+          impulseSlider.value =
+            "0";
+
+          render();
+
+        }
+      );
+
+
+      render();
+
+    })();
+  </script>
+
+
+  <!-- =========================================================
+       QUIZURI
+       ========================================================= -->
+
+  <script>
+    (function () {
+      "use strict";
+
+
+      function setResult(
+        question,
+        correct,
+        feedback
+      ) {
+
+        question.dataset.correct =
+          correct
+            ? "true"
+            : "false";
+
+
+        feedback.textContent =
+          correct
+            ? feedback.dataset.correctFeedback
+            : feedback.dataset.wrongFeedback;
+
+
+        feedback.className =
+          correct
+            ? "quiz-feedback is-correct"
+            : "quiz-feedback is-wrong";
+
+      }
+
+
+      const questions =
+        Array.from(
+          document.querySelectorAll(
+            "[data-interactive-question]"
+          )
+        );
+
+
+      questions.forEach(
+        function (question) {
+
+          const type =
+            question.dataset.type;
+
+
+          const feedback =
+            question.querySelector(
+              ".quiz-feedback"
+            );
+
+
+          if (!feedback) {
+            return;
+          }
+
+
+          if (
+            type ===
+            "choice"
+          ) {
+
+            const expected =
+              Number(
+                question.dataset.answer
+              );
+
+
+            const options =
+              Array.from(
+                question.querySelectorAll(
+                  "[data-option]"
+                )
+              );
+
+
+            options.forEach(
+              function (option) {
+
+                option.addEventListener(
+                  "click",
+                  function () {
+
+                    options.forEach(
+                      function (item) {
+
+                        item.classList.remove(
+                          "is-correct",
+                          "is-wrong"
+                        );
+
+                      }
+                    );
+
+
+                    const selected =
+                      Number(
+                        option.dataset.option
+                      );
+
+
+                    const correct =
+                      selected ===
+                      expected;
+
+
+                    option.classList.add(
+                      correct
+                        ? "is-correct"
+                        : "is-wrong"
+                    );
+
+
+                    setResult(
+                      question,
+                      correct,
+                      feedback
+                    );
+
+                  }
+                );
+
+              }
+            );
+
+          }
+
+
+          if (
+            type ===
+            "number"
+          ) {
+
+            const expected =
+              Number(
+                question.dataset.answer
+              );
+
+
+            const tolerance =
+              Number(
+                question.dataset.tolerance ||
+                "0"
+              );
+
+
+            const input =
+              question.querySelector(
+                "[data-number-input]"
+              );
+
+
+            const button =
+              question.querySelector(
+                "[data-check-number]"
+              );
+
+
+            if (
+              !input ||
+              !button
+            ) {
+              return;
+            }
+
+
+            function check() {
+
+              const value =
+                lessonParseNumber(
+                  input.value
+                );
+
+
+              if (
+                value ===
+                null
+              ) {
+
+                question.dataset.correct =
+                  "false";
+
+
+                feedback.textContent =
+                  "Introdu o valoare numerică. Poți folosi virgulă sau punct zecimal.";
+
+
+                feedback.className =
+                  "quiz-feedback is-wrong";
+
+                return;
+              }
+
+
+              const correct =
+                Math.abs(
+                  value -
+                  expected
+                ) <=
+                tolerance;
+
+
+              setResult(
+                question,
+                correct,
+                feedback
+              );
+
+            }
+
+
+            button.addEventListener(
+              "click",
+              check
+            );
+
+
+            input.addEventListener(
+              "keydown",
+              function (event) {
+
+                if (
+                  event.key ===
+                  "Enter"
+                ) {
+
+                  event.preventDefault();
+
+                  check();
+
+                }
+
+              }
+            );
+
+          }
+
+        }
+      );
+
+
+      const quiz =
+        document.getElementById(
+          "lessonQuiz"
+        );
+
+
+      const scoreButton =
+        document.getElementById(
+          "quizScoreButton"
+        );
+
+
+      const resetButton =
+        document.getElementById(
+          "quizResetButton"
+        );
+
+
+      const resultBox =
+        document.getElementById(
+          "quizResult"
+        );
+
+
+      if (
+        !quiz ||
+        !scoreButton ||
+        !resetButton ||
+        !resultBox
+      ) {
+        return;
+      }
+
+
+      const quizQuestions =
+        Array.from(
+          quiz.querySelectorAll(
+            "[data-quiz-question]"
+          )
+        );
+
+
+      scoreButton.addEventListener(
+        "click",
+        function () {
+
+          const answered =
+            quizQuestions.filter(
+              function (question) {
+
+                return (
+                  question.dataset.correct ===
+                    "true" ||
+                  question.dataset.correct ===
+                    "false"
+                );
+
+              }
+            ).length;
+
+
+          const correct =
+            quizQuestions.filter(
+              function (question) {
+
+                return (
+                  question.dataset.correct ===
+                  "true"
+                );
+
+              }
+            ).length;
+
+
+          const total =
+            quizQuestions.length;
+
+
+          resultBox.hidden =
+            false;
+
+
+          if (
+            answered <
+            total
+          ) {
+
+            resultBox.innerHTML =
+              `<strong>Ai răspuns la ${answered} din ${total} itemi.</strong>` +
+              "<br>Rezolvă toți itemii pentru rezultatul final.";
+
+            return;
+          }
+
+
+          const percentage =
+            Math.round(
+              correct /
+              total *
+              100
+            );
+
+
+          let message;
+
+
+          if (
+            percentage >=
+            90
+          ) {
+
+            message =
+              "Foarte bine. Stăpânești impulsul total al unui sistem și rolul forțelor externe.";
+
+          } else if (
+            percentage >=
+            70
+          ) {
+
+            message =
+              "Bază bună. Revizuiește compunerea vectorială și diferența dintre forțele interne și externe.";
+
+          } else if (
+            percentage >=
+            50
+          ) {
+
+            message =
+              "Mai exersează P = Σpi și ΔP = Iext.";
+
+          } else {
+
+            message =
+              "Reia paginile 2–7 și apoi încearcă din nou testul.";
+
+          }
+
+
+          resultBox.innerHTML =
+            `<strong>${correct}/${total} răspunsuri corecte – ${percentage}%</strong>` +
+            `<br>${message}`;
+
+        }
+      );
+
+
+      resetButton.addEventListener(
+        "click",
+        function () {
+
+          quizQuestions.forEach(
+            function (question) {
+
+              delete question.dataset.correct;
+
+
+              question
+                .querySelectorAll(
+                  ".quiz-option"
+                )
+                .forEach(
+                  function (option) {
+
+                    option.classList.remove(
+                      "is-correct",
+                      "is-wrong"
+                    );
+
+                  }
+                );
+
+
+              const input =
+                question.querySelector(
+                  "[data-number-input]"
+                );
+
+
+              if (input) {
+
+                input.value =
+                  "";
+
+              }
+
+
+              const feedback =
+                question.querySelector(
+                  ".quiz-feedback"
+                );
+
+
+              if (feedback) {
+
+                feedback.textContent =
+                  "";
+
+                feedback.className =
+                  "quiz-feedback";
+
+              }
+
+            }
+          );
+
+
+          resultBox.hidden =
+            true;
+
+
+          resultBox.textContent =
+            "";
+
+        }
+      );
+
+    })();
+  </script>
+
+</body>
+</html>
