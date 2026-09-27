@@ -1,1 +1,5889 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+1. Rețea electrică. Nod, latură și ochi de rețea | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Rețea electrică, nod de rețea, latură și ochi de rețea. Identificarea topologiei circuitelor electrice și simulator interactiv pentru pregătirea legilor lui Kirchhoff – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+.class-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(250,204,21,.13);
+
+  color:#fef08a;
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+.chapter-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(34,197,94,.14);
+
+  color:#bbf7d0;
+
+  border:
+    1px solid rgba(134,239,172,.3);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:930px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+
+}
+
+
+/* =========================================================
+   DEFINITIONS
+========================================================= */
+
+.definition-card{
+
+  position:relative;
+
+  padding:22px;
+
+  background:#fff;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.definition-node{
+  border-color:#ef4444;
+}
+
+.definition-branch{
+  border-color:#2563eb;
+}
+
+.definition-loop{
+  border-color:#16a34a;
+}
+
+.definition-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:54px;
+  height:54px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-size:1.55rem;
+  font-weight:950;
+
+}
+
+.definition-node .definition-icon{
+
+  color:#991b1b;
+  background:#fee2e2;
+
+}
+
+.definition-branch .definition-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.definition-loop .definition-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+
+/* =========================================================
+   CIRCUIT VS NETWORK
+========================================================= */
+
+.compare-box{
+
+  min-height:245px;
+
+  padding:20px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.compare-visual{
+
+  display:grid;
+  place-items:center;
+
+  min-height:115px;
+
+  margin:12px 0;
+
+}
+
+.simple-loop{
+
+  position:relative;
+
+  width:220px;
+  height:95px;
+
+  border:
+    4px solid #334155;
+
+  border-radius:12px;
+
+}
+
+.simple-loop::before{
+
+  content:"R";
+
+  position:absolute;
+
+  right:-19px;
+  top:27px;
+
+  display:grid;
+  place-items:center;
+
+  width:38px;
+  height:38px;
+
+  color:#92400e;
+  background:#fef3c7;
+
+  border:
+    3px solid #f59e0b;
+
+  font-weight:900;
+
+}
+
+.simple-loop::after{
+
+  content:"ℰ";
+
+  position:absolute;
+
+  left:-19px;
+  top:27px;
+
+  display:grid;
+  place-items:center;
+
+  width:38px;
+  height:38px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border:
+    3px solid #2563eb;
+
+  font-weight:900;
+
+}
+
+.network-mini{
+
+  position:relative;
+
+  width:245px;
+  height:120px;
+
+}
+
+.network-mini .rail-left,
+.network-mini .rail-right{
+
+  position:absolute;
+
+  top:10px;
+  bottom:10px;
+
+  width:5px;
+
+  background:#334155;
+
+}
+
+.network-mini .rail-left{
+  left:20px;
+}
+
+.network-mini .rail-right{
+  right:20px;
+}
+
+.network-mini .mini-branch{
+
+  position:absolute;
+
+  left:20px;
+  right:20px;
+
+  height:4px;
+
+  background:#334155;
+
+}
+
+.network-mini .b1{
+  top:20px;
+}
+
+.network-mini .b2{
+  top:58px;
+}
+
+.network-mini .b3{
+  top:96px;
+}
+
+.network-mini .mini-element{
+
+  position:absolute;
+
+  left:50%;
+
+  width:42px;
+  height:22px;
+
+  background:#fef3c7;
+
+  border:
+    2px solid #f59e0b;
+
+  transform:
+    translate(-50%,-9px);
+
+}
+
+.network-mini .e1{
+  top:20px;
+}
+
+.network-mini .e2{
+  top:58px;
+}
+
+.network-mini .e3{
+  top:96px;
+}
+
+
+/* =========================================================
+   MAIN NETWORK FIGURE
+========================================================= */
+
+.network-figure{
+
+  min-height:430px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.network-figure svg{
+
+  width:100%;
+  max-width:780px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:5;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-resistor{
+
+  fill:#fff;
+
+  stroke:#334155;
+
+  stroke-width:4;
+
+}
+
+.svg-node{
+
+  fill:#dc2626;
+
+  stroke:#7f1d1d;
+
+  stroke-width:3;
+
+}
+
+.svg-point{
+
+  fill:#94a3b8;
+
+  stroke:#475569;
+
+  stroke-width:2;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:22px;
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:15px;
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   IDENTIFICATION METHOD
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+.control select,
+.control input{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.canvas-wrap{
+
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#networkCanvas{
+
+  display:block;
+
+  width:100%;
+  height:610px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.05rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   CHALLENGE
+========================================================= */
+
+.challenge-panel{
+
+  margin-top:20px;
+
+  padding:20px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.challenge-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:12px;
+
+}
+
+.challenge-box{
+
+  padding:14px;
+
+  background:#f8fafc;
+
+  border-radius:10px;
+
+}
+
+.challenge-box label{
+
+  display:block;
+
+  margin-bottom:6px;
+
+  font-size:.88rem;
+  font-weight:800;
+
+}
+
+.challenge-box input{
+
+  width:100%;
+
+  padding:10px;
+
+  border:
+    2px solid #94a3b8;
+
+  border-radius:8px;
+
+  font:inherit;
+
+}
+
+.challenge-feedback{
+
+  margin-top:14px;
+
+  padding:14px;
+
+  background:#eff6ff;
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+.feedback-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.feedback-bad{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   MISCONCEPTION
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:850px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results,
+  .challenge-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #networkCanvas{
+    height:700px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 1
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Capitol nou
+</span>
+
+</div>
+
+
+<h1>
+Rețea electrică. Nod, latură și ochi de rețea
+</h1>
+
+
+<p class="subtitle">
+Înainte de a aplica legile lui Kirchhoff trebuie să putem „citi”
+topologia unei scheme electrice:
+unde se poate ramifica un curent,
+ce elemente aparțin aceleiași laturi
+și ce trasee formează contururi închise.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să diferențiezi un circuit simplu de o rețea electrică;
+</li>
+
+<li>
+să identifici un nod de rețea;
+</li>
+
+<li>
+să identifici o latură;
+</li>
+
+<li>
+să identifici un ochi de rețea;
+</li>
+
+<li>
+să recunoști un ochi elementar;
+</li>
+
+<li>
+să explici de ce intensitatea este aceeași de-a lungul unei laturi;
+</li>
+
+<li>
+să observi că forma geometrică a desenului nu schimbă topologia;
+</li>
+
+<li>
+să pregătești o schemă pentru aplicarea legilor lui Kirchhoff.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+Într-o rețea nu ne interesează doar
+<strong>ce componente există</strong>,
+ci și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{cum sunt conectate între ele}
+}
+\]
+
+</div>
+
+<p>
+Această structură a conexiunilor
+reprezintă topologia rețelei.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 De la circuitul simplu la rețea</h2>
+
+<div class="grid-2">
+
+
+<div class="compare-box">
+
+<h3>Circuit electric simplu</h3>
+
+<div class="compare-visual">
+
+<div class="simple-loop"></div>
+
+</div>
+
+<p>
+Există un singur traseu principal pentru curent.
+Nu apare o ramificare a circuitului.
+</p>
+
+</div>
+
+
+<div class="compare-box">
+
+<h3>Rețea electrică</h3>
+
+<div class="compare-visual">
+
+<div class="network-mini">
+
+<div class="rail-left"></div>
+<div class="rail-right"></div>
+
+<div class="mini-branch b1"></div>
+<div class="mini-branch b2"></div>
+<div class="mini-branch b3"></div>
+
+<div class="mini-element e1"></div>
+<div class="mini-element e2"></div>
+<div class="mini-element e3"></div>
+
+</div>
+
+</div>
+
+<p>
+Apar mai multe căi posibile între anumite puncte ale circuitului.
+Curentul se poate ramifica.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+<strong>Rețea electrică</strong> =
+ansamblu de elemente de circuit interconectate,
+în care putem identifica noduri,
+laturi și trasee închise.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHY KIRCHHOFF
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De ce avem nevoie de noțiuni noi?</h2>
+
+<p>
+În circuitul simplu studiat anterior puteam scrie direct:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+<p>
+Dar într-o rețea,
+curentul poate ajunge într-o zonă în care
+<strong>există mai multe căi</strong>.
+</p>
+
+<div class="orange-box">
+
+Încep să apară întrebări noi:
+
+<ul>
+
+<li>
+Unde se ramifică intensitatea curentului?
+</li>
+
+<li>
+Ce curent străbate fiecare traseu?
+</li>
+
+<li>
+Ce elemente fac parte din același traseu?
+</li>
+
+<li>
+Ce contururi închise putem parcurge în rețea?
+</li>
+
+</ul>
+
+</div>
+
+<p>
+Pentru a răspunde,
+introducem mai întâi vocabularul topologic al rețelei.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     DEFINITIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Nod, latură și ochi de rețea</h2>
+
+<div class="grid-3">
+
+
+<div class="definition-card definition-node">
+
+<div class="definition-icon">
+●
+</div>
+
+<h3>Nod de rețea</h3>
+
+<p>
+În convenția școlară utilizată la legile lui Kirchhoff,
+un <strong>nod de rețea</strong>
+este o joncțiune în care se întâlnesc
+<strong>cel puțin trei laturi</strong>.
+</p>
+
+</div>
+
+
+<div class="definition-card definition-branch">
+
+<div class="definition-icon">
+━
+</div>
+
+<h3>Latură</h3>
+
+<p>
+O <strong>latură</strong>
+este porțiunea de rețea cuprinsă între
+<strong>două noduri consecutive</strong>.
+</p>
+
+<p>
+Ea poate conține unul sau mai multe elemente electrice.
+</p>
+
+</div>
+
+
+<div class="definition-card definition-loop">
+
+<div class="definition-icon">
+↻
+</div>
+
+<h3>Ochi de rețea</h3>
+
+<p>
+Un <strong>ochi de rețea</strong>
+este un traseu închis format din laturi,
+care pornește dintr-un nod și revine în același nod.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+<strong>Precizare de terminologie:</strong>
+
+în teoria generală a circuitelor,
+cuvântul „nod” poate desemna orice regiune conductoare
+aflată la același potențial.
+
+În această lecție folosim convenția școlară pentru Kirchhoff:
+
+\[
+\boxed{
+\text{nod de rețea}
+=
+\text{joncțiune a cel puțin trei laturi}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THE NETWORK
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Să citim o rețea electrică</h2>
+
+<p>
+Analizăm schema următoare:
+</p>
+
+
+<div class="network-figure">
+
+<svg
+  viewBox="0 0 760 520"
+  role="img"
+  aria-label="Rețea electrică în formă de punte cu două noduri și trei laturi">
+
+<!-- LEFT PATH B-A-D -->
+
+<path
+  class="svg-wire"
+  d="M380 60 L155 260 L380 460"/>
+
+<!-- RIGHT PATH B-C-D -->
+
+<path
+  class="svg-wire"
+  d="M380 60 L605 260 L380 460"/>
+
+<!-- CENTRAL BRANCH -->
+
+<path
+  class="svg-wire"
+  d="M380 60 V460"/>
+
+<!-- LEFT RESISTORS -->
+
+<rect
+  class="svg-resistor"
+  x="228"
+  y="133"
+  width="80"
+  height="42"
+  rx="6"
+  transform="rotate(-42 268 154)"/>
+
+<rect
+  class="svg-resistor"
+  x="228"
+  y="345"
+  width="80"
+  height="42"
+  rx="6"
+  transform="rotate(42 268 366)"/>
+
+<!-- RIGHT RESISTORS -->
+
+<rect
+  class="svg-resistor"
+  x="452"
+  y="133"
+  width="80"
+  height="42"
+  rx="6"
+  transform="rotate(42 492 154)"/>
+
+<rect
+  class="svg-resistor"
+  x="452"
+  y="345"
+  width="80"
+  height="42"
+  rx="6"
+  transform="rotate(-42 492 366)"/>
+
+<!-- CENTRAL RESISTOR -->
+
+<rect
+  class="svg-resistor"
+  x="340"
+  y="238"
+  width="80"
+  height="44"
+  rx="6"/>
+
+<!-- NODES B/D -->
+
+<circle
+  class="svg-node"
+  cx="380"
+  cy="60"
+  r="13"/>
+
+<circle
+  class="svg-node"
+  cx="380"
+  cy="460"
+  r="13"/>
+
+<!-- SIMPLE CONNECTION POINTS A/C -->
+
+<circle
+  class="svg-point"
+  cx="155"
+  cy="260"
+  r="8"/>
+
+<circle
+  class="svg-point"
+  cx="605"
+  cy="260"
+  r="8"/>
+
+<!-- LABELS -->
+
+<text
+  class="svg-text"
+  x="398"
+  y="53">
+B
+</text>
+
+<text
+  class="svg-text"
+  x="398"
+  y="487">
+D
+</text>
+
+<text
+  class="svg-text"
+  x="120"
+  y="252">
+A
+</text>
+
+<text
+  class="svg-text"
+  x="625"
+  y="252">
+C
+</text>
+
+<text
+  class="svg-small"
+  x="185"
+  y="75">
+latura 1
+</text>
+
+<text
+  class="svg-small"
+  x="395"
+  y="220">
+latura 2
+</text>
+
+<text
+  class="svg-small"
+  x="520"
+  y="75">
+latura 3
+</text>
+
+<text
+  class="svg-small"
+  x="205"
+  y="270">
+ochiul stâng
+</text>
+
+<text
+  class="svg-small"
+  x="465"
+  y="270">
+ochiul drept
+</text>
+
+</svg>
+
+</div>
+
+
+<h3>Nodurile</h3>
+
+<p>
+În punctul \(B\) se întâlnesc trei trasee:
+</p>
+
+<div class="formula">
+
+\[
+B\rightarrow A,
+\qquad
+B\rightarrow D,
+\qquad
+B\rightarrow C
+\]
+
+</div>
+
+<p>
+Deci \(B\) este nod.
+</p>
+
+<p>
+Același lucru este valabil pentru \(D\).
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+N=2
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Punctele \(A\) și \(C\)
+<strong>nu sunt noduri de rețea în convenția folosită aici</strong>.
+
+În fiecare dintre ele traseul doar continuă:
+nu există o ramificare în trei sau mai multe laturi.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BRANCHES
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Identificarea laturilor</h2>
+
+<p>
+Cele două noduri consecutive sunt:
+</p>
+
+<div class="formula">
+
+\[
+B
+\quad\text{și}\quad
+D
+\]
+
+</div>
+
+<p>
+Între ele există trei căi distincte.
+</p>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Latura 1</h3>
+
+<div class="formula">
+
+\[
+B\rightarrow A\rightarrow D
+\]
+
+</div>
+
+<p>
+Conține două rezistoare,
+dar este o singură latură.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Latura 2</h3>
+
+<div class="formula">
+
+\[
+B\rightarrow D
+\]
+
+</div>
+
+<p>
+Este traseul central.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Latura 3</h3>
+
+<div class="formula">
+
+\[
+B\rightarrow C\rightarrow D
+\]
+
+</div>
+
+<p>
+Conține două rezistoare,
+dar rămâne o singură latură.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+L=3
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+<strong>Important:</strong>
+
+numărul laturilor nu este egal cu numărul rezistoarelor.
+
+O latură poate conține:
+
+<ul>
+
+<li>un rezistor;</li>
+
+<li>mai mulți rezistori;</li>
+
+<li>o sursă;</li>
+
+<li>mai multe elemente conectate succesiv.</li>
+
+</ul>
+
+Ceea ce definește latura sunt
+<strong>nodurile dintre care se întinde</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CURRENT ON BRANCH
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Ce se întâmplă cu intensitatea pe aceeași latură?</h2>
+
+<p>
+Pe o latură nu există un nod intermediar
+în care curentul să se poată ramifica.
+</p>
+
+<p>
+De aceea,
+în regim staționar,
+toate elementele acelei laturi sunt străbătute de
+<strong>aceeași intensitate</strong>.
+</p>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_{\text{latură}}
+=
+\text{aceeași în toate punctele laturii}
+}
+\]
+
+</div>
+
+
+<p>
+De exemplu,
+pe latura:
+</p>
+
+<div class="formula">
+
+\[
+B\rightarrow A\rightarrow D
+\]
+
+</div>
+
+cei doi rezistori sunt străbătuți de aceeași intensitate,
+pe care o putem nota:
+</p>
+
+<div class="formula">
+
+\[
+I_1
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Această observație va fi esențială
+atunci când vom atribui curenți laturilor
+în problemele cu legile lui Kirchhoff.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LOOPS
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Ochiurile rețelei</h2>
+
+<p>
+Un traseu trebuie să fie
+<strong>închis</strong>:
+după parcurgerea unor laturi
+revenim în punctul de plecare.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Ochiul elementar stâng</h3>
+
+<div class="formula">
+
+\[
+B\rightarrow A\rightarrow D\rightarrow B
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ochiul elementar drept</h3>
+
+<div class="formula">
+
+\[
+B\rightarrow C\rightarrow D\rightarrow B
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+2\text{ ochiuri elementare}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Există și conturul exterior:
+</p>
+
+<div class="formula">
+
+\[
+B\rightarrow A\rightarrow D\rightarrow C\rightarrow B
+\]
+
+</div>
+
+<p>
+Acesta este un traseu închis,
+dar nu este un
+<strong>ochi elementar</strong>,
+deoarece în interiorul său se află latura centrală.
+</p>
+
+</div>
+
+
+<div class="blue-box">
+
+Pentru aplicarea ulterioară a legii a II-a a lui Kirchhoff
+vom alege sensuri de parcurgere ale ochiurilor.
+
+Sensul ales poate fi:
+
+\[
+\circlearrowright
+\]
+
+sau:
+
+\[
+\circlearrowleft
+\]
+
+Alegerea sensului este o convenție de calcul.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TOPOLOGY
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Forma desenului nu schimbă rețeaua</h2>
+
+<p>
+Două scheme pot arăta diferit pe hârtie
+și totuși să reprezinte aceeași rețea.
+</p>
+
+<div class="purple-box">
+
+Dacă aceleași elemente sunt conectate
+între aceleași noduri,
+topologia este aceeași,
+chiar dacă firele sunt:
+
+<ul>
+
+<li>drepte sau curbate;</li>
+
+<li>mai lungi sau mai scurte;</li>
+
+<li>desenate în altă poziție;</li>
+
+<li>rotite pe pagină.</li>
+
+</ul>
+</div>
+
+
+<p>
+În analiza Kirchhoff contează:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{conexiunile}
+\neq
+\text{forma geometrică a desenului}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CROSSING
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Intersecție geometrică sau conexiune electrică?</h2>
+
+<p>
+Două conductoare desenate astfel încât să se intersecteze
+nu sunt automat conectate electric.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Cu punct de conexiune</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{●}
+}
+\]
+
+</div>
+
+<p>
+Conductoarele sunt conectate.
+Poate apărea un nod dacă sunt îndeplinite condițiile topologice.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Fără conexiune</h3>
+
+<p>
+Dacă schema arată explicit trecerea unui conductor
+peste altul fără contact,
+nu există conexiune electrică.
+</p>
+
+<p>
+Curentul nu poate trece dintr-un conductor în celălalt
+prin acea intersecție.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+Nu decide existența unui nod doar pentru că două linii
+se intersectează pe desen.
+
+Trebuie verificat dacă schema indică
+<strong>o conexiune electrică reală</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Algoritm pentru citirea unei rețele</h2>
+
+<ol class="steps">
+
+<li>
+
+<strong>Ignoră pentru moment valorile componentelor.</strong>
+
+<p>
+Privește numai conexiunile.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Identifică joncțiunile.</strong>
+
+<p>
+Caută locurile în care apar cel puțin trei trasee.
+Acestea sunt nodurile de rețea în convenția utilizată aici.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Marchează nodurile.</strong>
+
+<p>
+Poți folosi litere:
+</p>
+
+<div class="formula">
+
+\[
+A,\ B,\ C,\ldots
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Urmărește fiecare cale de la un nod la următorul nod.</strong>
+
+<p>
+Fiecare astfel de cale formează o latură.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Atribuie un curent fiecărei laturi.</strong>
+
+<p>
+De exemplu:
+</p>
+
+<div class="formula">
+
+\[
+I_1,\quad
+I_2,\quad
+I_3
+\]
+
+</div>
+
+<p>
+Sensul poate fi ales inițial convențional.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Caută trasee închise.</strong>
+
+<p>
+Identifică mai întâi ochiurile elementare.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Abia apoi începe calculul.</strong>
+
+<p>
+Această organizare va pregăti aplicarea
+legilor lui Kirchhoff.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     INTERACTIVE
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Explorator interactiv – Anatomia unei rețele</h2>
+
+<p>
+Folosește butoanele pentru a evidenția
+nodurile,
+laturile
+și ochiurile elementare ale rețelei.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="viewMode">
+Ce vrei să evidențiezi?
+</label>
+
+<select id="viewMode">
+
+<option value="normal">
+Rețeaua completă
+</option>
+
+<option value="nodes">
+Nodurile
+</option>
+
+<option value="branch1">
+Latura 1
+</option>
+
+<option value="branch2">
+Latura 2
+</option>
+
+<option value="branch3">
+Latura 3
+</option>
+
+<option value="loopLeft">
+Ochiul elementar stâng
+</option>
+
+<option value="loopRight">
+Ochiul elementar drept
+</option>
+
+<option value="outer">
+Conturul exterior
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="labelMode">
+Etichete
+</label>
+
+<select id="labelMode">
+
+<option value="all">
+Afișează toate etichetele
+</option>
+
+<option value="nodes">
+Doar punctele
+</option>
+
+<option value="none">
+Fără etichete – exercițiu
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="currentMode">
+Curenții laturilor
+</label>
+
+<select id="currentMode">
+
+<option value="show">
+Afișează \(I_1,I_2,I_3\)
+</option>
+
+<option value="hide">
+Ascunde curenții
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="red-button"
+  data-view="nodes">
+
+● Noduri
+
+</button>
+
+
+<button
+  class="primary"
+  data-view="branch1">
+
+Latura 1
+
+</button>
+
+
+<button
+  class="primary"
+  data-view="branch2">
+
+Latura 2
+
+</button>
+
+
+<button
+  class="primary"
+  data-view="branch3">
+
+Latura 3
+
+</button>
+
+
+<button
+  class="green-button"
+  data-view="loopLeft">
+
+↻ Ochi stâng
+
+</button>
+
+
+<button
+  class="green-button"
+  data-view="loopRight">
+
+↻ Ochi drept
+
+</button>
+
+
+<button
+  class="orange-button"
+  data-view="outer">
+
+Contur exterior
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetViewBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="networkCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Noduri de rețea
+</span>
+
+<strong>
+2
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Laturi
+</span>
+
+<strong>
+3
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Ochiuri elementare
+</span>
+
+<strong>
+2
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Puncte A și C
+</span>
+
+<strong>
+nu sunt noduri de ramificare
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="networkStatus">
+
+Rețeaua are două noduri de ramificare,
+trei laturi și două ochiuri elementare.
+</div>
+
+
+<div class="challenge-panel">
+
+<h3>🧠 Verifică dacă poți număra fără ajutor</h3>
+
+<p>
+Selectează „Fără etichete – exercițiu”,
+apoi completează:
+</p>
+
+
+<div class="challenge-grid">
+
+
+<div class="challenge-box">
+
+<label for="answerNodes">
+Număr noduri
+</label>
+
+<input
+  id="answerNodes"
+  type="number"
+  min="0"
+  max="10"
+  placeholder="?">
+
+</div>
+
+
+<div class="challenge-box">
+
+<label for="answerBranches">
+Număr laturi
+</label>
+
+<input
+  id="answerBranches"
+  type="number"
+  min="0"
+  max="10"
+  placeholder="?">
+
+</div>
+
+
+<div class="challenge-box">
+
+<label for="answerLoops">
+Număr ochiuri elementare
+</label>
+
+<input
+  id="answerLoops"
+  type="number"
+  min="0"
+  max="10"
+  placeholder="?">
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="checkTopologyBtn">
+
+✓ Verifică
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="hintTopologyBtn">
+
+💡 Indiciu
+
+</button>
+
+</div>
+
+
+<div
+  class="challenge-feedback"
+  id="challengeFeedback">
+
+Identifică mai întâi punctele în care curentul se poate ramifica.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     INTERACTIVE TASKS
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Misiuni în explorator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Evidențiază nodurile</h3>
+
+<p>
+Selectează:
+<strong>Nodurile</strong>.
+</p>
+
+<p>
+Explică de ce \(B\) și \(D\) sunt noduri,
+dar \(A\) și \(C\) nu sunt,
+în convenția acestei lecții.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Urmărește latura 1</h3>
+
+<p>
+Observă că traseul:
+</p>
+
+<div class="formula">
+
+\[
+B-A-D
+\]
+
+</div>
+
+<p>
+conține două rezistoare,
+dar un singur curent:
+</p>
+
+<div class="formula">
+
+\[
+I_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Compară laturile</h3>
+
+<p>
+Evidențiază succesiv laturile 1, 2 și 3.
+</p>
+
+<p>
+Ce au toate în comun?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Identifică ochiul stâng</h3>
+
+<p>
+Parcurge:
+</p>
+
+<div class="formula">
+
+\[
+B-A-D-B
+\]
+
+</div>
+
+<p>
+Ai revenit în punctul de plecare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Ochiul drept</h3>
+
+<p>
+Parcurge:
+</p>
+
+<div class="formula">
+
+\[
+B-C-D-B
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Conturul exterior</h3>
+
+<p>
+Compară conturul:
+</p>
+
+<div class="formula">
+
+\[
+B-A-D-C-B
+\]
+
+</div>
+
+<p>
+cu ochiurile elementare.
+Ce se află în interiorul său?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Ascunde etichetele</h3>
+
+<p>
+Poți identifica singur nodurile
+și laturile doar din conexiuni?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>H. Anticipează lecția următoare</h3>
+
+<p>
+Privește nodul \(B\).
+</p>
+
+<p>
+Dacă prin cele trei laturi circulă:
+</p>
+
+<div class="formula">
+
+\[
+I_1,\ I_2,\ I_3
+\]
+
+</div>
+
+<p>
+ce relație crezi că trebuie să existe între curenții
+care ajung în nod și cei care pleacă?
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – Construiește topologia fără curent</h2>
+
+<p>
+Pentru această activitate nu este necesară alimentarea circuitului.
+Scopul este strict identificarea conexiunilor.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>conductoare sau fire colorate;</li>
+
+<li>3–5 rezistoare;</li>
+
+<li>cleme crocodil;</li>
+
+<li>două puncte comune de conexiune;</li>
+
+<li>foaie pentru desenarea schemei.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Sarcina</h3>
+
+<p>
+Construiește trei căi diferite
+între două joncțiuni comune.
+</p>
+
+<p>
+Apoi identifică:
+</p>
+
+<ul>
+
+<li>nodurile;</li>
+
+<li>laturile;</li>
+
+<li>ochiurile elementare.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Realizează două joncțiuni comune.
+</li>
+
+<li>
+Leagă între ele prima cale, folosind unul sau două rezistoare.
+</li>
+
+<li>
+Construiește o a doua cale între aceleași două joncțiuni.
+</li>
+
+<li>
+Adaugă a treia cale.
+</li>
+
+<li>
+Marchează joncțiunile cu litere.
+</li>
+
+<li>
+Colorează diferit fiecare latură.
+</li>
+
+<li>
+Desenează schema echivalentă pe hârtie.
+</li>
+
+<li>
+Compară desenul cu montajul fizic:
+numărul de noduri și laturi trebuie să rămână același.
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+Activitatea evidențiază o idee importantă:
+
+<strong>
+topologia nu depinde de forma fizică sau de lungimea firelor,
+ci de modul în care elementele sunt conectate.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Exemple de identificare</h2>
+
+
+<div class="problem">
+
+<h3>Exemplul 1 – Două rezistoare pe același traseu</h3>
+
+<p>
+Între două noduri \(A\) și \(B\)
+se găsesc succesiv doi rezistori:
+</p>
+
+<div class="formula">
+
+\[
+A-R_1-R_2-B
+\]
+
+</div>
+
+<p>
+Câte laturi reprezintă acest traseu?
+</p>
+
+<details>
+
+<summary>
+Răspuns
+</summary>
+
+<div class="solution">
+
+O singură latură.
+
+Între \(R_1\) și \(R_2\)
+nu există un nod de ramificare.
+
+\[
+\boxed{
+L=1
+}
+\]
+
+pentru acest traseu între cele două noduri.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Exemplul 2 – Trei căi între aceleași două noduri</h3>
+
+<p>
+Între nodurile \(A\) și \(B\)
+există trei căi distincte.
+</p>
+
+<p>
+Câte laturi există?
+</p>
+
+<details>
+
+<summary>
+Răspuns
+</summary>
+
+<div class="solution">
+
+Fiecare cale între cele două noduri reprezintă o latură.
+
+\[
+\boxed{
+L=3
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Exemplul 3 – Traseu deschis</h3>
+
+<p>
+Pornim dintr-un nod,
+parcurgem două laturi,
+dar ne oprim într-un alt nod.
+</p>
+
+<p>
+Este un ochi?
+</p>
+
+<details>
+
+<summary>
+Răspuns
+</summary>
+
+<div class="solution">
+
+Nu.
+
+Un ochi trebuie să fie un traseu
+<strong>închis</strong>.
+
+Trebuie să revenim la punctul de plecare.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Exemplul 4 – Mai multe elemente într-o latură</h3>
+
+<p>
+O latură conține:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E,\quad r,\quad R_1,\quad R_2
+\]
+
+</div>
+
+<p>
+Câte valori ale intensității trebuie asociate acestei laturi
+în regim staționar?
+</p>
+
+<details>
+
+<summary>
+Răspuns
+</summary>
+
+<div class="solution">
+
+Una singură:
+
+\[
+\boxed{
+I_{\text{latură}}
+}
+\]
+
+Toate elementele laturii sunt străbătute
+de același curent.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMON ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Fiecare rezistor este o latură.”</h3>
+
+<p>
+Fals.
+</p>
+
+<p>
+Mai mulți rezistori pot aparține aceleiași laturi
+dacă între ei nu există noduri de ramificare.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Orice punct de legătură este nod de rețea.”</h3>
+
+<p>
+În convenția școlară folosită aici,
+nodul de rețea este joncțiunea
+a cel puțin trei laturi.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Orice intersecție de linii este nod.”</h3>
+
+<p>
+Nu.
+Trebuie să existe conexiune electrică.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Ochiul trebuie să fie desenat ca un cerc.”</h3>
+
+<p>
+Forma geometrică nu contează.
+</p>
+
+<p>
+Traseul trebuie doar să fie închis.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Curentul se schimbă între două rezistoare ale aceleiași laturi.”</h3>
+
+<p>
+În regim staționar,
+fără ramificare intermediară,
+intensitatea este aceeași pe întreaga latură.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Conturul exterior și ochiul elementar sunt întotdeauna același lucru.”</h3>
+
+<p>
+Nu.
+Un contur exterior poate conține alte laturi în interior.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Sensul curentului trebuie cunoscut înainte de rezolvare.”</h3>
+
+<p>
+În problemele de rețea,
+sensurile curenților necunoscuți pot fi alese convențional.
+</p>
+
+<p>
+Semnul rezultatului va permite ulterior interpretarea sensului real.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Poziția unei componente pe desen îi schimbă rolul topologic.”</h3>
+
+<p>
+Nu.
+Contează nodurile la care este conectată.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce introducem noțiunea de nod atunci când circuitul începe să se ramifice?
+</li>
+
+<li>
+De ce două rezistoare succesive fără ramificare pot aparține aceleiași laturi?
+</li>
+
+<li>
+De ce intensitatea este aceeași de-a lungul unei laturi?
+</li>
+
+<li>
+De ce un punct în care se întâlnesc doar două segmente nu este tratat aici drept nod de ramificare?
+</li>
+
+<li>
+Ce condiție trebuie să îndeplinească un traseu pentru a fi ochi?
+</li>
+
+<li>
+De ce conturul exterior al rețelei analizate nu este un ochi elementar?
+</li>
+
+<li>
+Poate aceeași rețea să fie desenată în două moduri geometrice foarte diferite?
+</li>
+
+<li>
+Cum verifici dacă două conductoare care se intersectează pe schemă sunt conectate?
+</li>
+
+<li>
+De ce este util să atribuim un singur curent fiecărei laturi?
+</li>
+
+<li>
+Ce crezi că se întâmplă cu curentul total atunci când ajunge într-un nod și se ramifică?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+În convenția acestei lecții,
+un nod de rețea este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+orice punct desenat pe un fir
+</button>
+
+<button class="answer-btn">
+o joncțiune în care se întâlnesc cel puțin trei laturi
+</button>
+
+<button class="answer-btn">
+obligatoriu un rezistor
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+O latură este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+porțiunea de rețea dintre două noduri consecutive
+</button>
+
+<button class="answer-btn">
+doar un singur rezistor
+</button>
+
+<button class="answer-btn">
+orice contur închis
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Pe aceeași latură,
+în regim staționar:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+intensitatea trebuie să fie zero
+</button>
+
+<button class="answer-btn">
+fiecare rezistor are obligatoriu alt curent
+</button>
+
+<button class="answer-btn">
+intensitatea este aceeași în toate elementele laturii
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Un ochi de rețea este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+un traseu care se termină într-un alt nod
+</button>
+
+<button class="answer-btn">
+un traseu închis format din laturi
+</button>
+
+<button class="answer-btn">
+o singură componentă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+În rețeaua analizată în lecție,
+nodurile de ramificare sunt:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+B și D
+</button>
+
+<button class="answer-btn">
+A și C
+</button>
+
+<button class="answer-btn">
+A, B, C și D
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+În aceeași rețea există:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+5 laturi
+</button>
+
+<button class="answer-btn">
+2 laturi
+</button>
+
+<button class="answer-btn">
+3 laturi
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Două conductoare se intersectează grafic.
+Putem afirma automat că formează o conexiune?
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+da, întotdeauna
+</button>
+
+<button class="answer-btn">
+nu; trebuie verificat simbolul conexiunii
+</button>
+
+<button class="answer-btn">
+numai dacă ambele sunt verticale
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+Doi rezistori succesivi situați între aceleași două noduri,
+fără ramificare între ei:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+pot aparține aceleiași laturi
+</button>
+
+<button class="answer-btn">
+formează obligatoriu două laturi
+</button>
+
+<button class="answer-btn">
+nu pot fi conectați în aceeași rețea
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Dacă redesenăm firele,
+dar păstrăm aceleași conexiuni:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+se schimbă automat numărul nodurilor
+</button>
+
+<button class="answer-btn">
+se schimbă legile fizicii
+</button>
+
+<button class="answer-btn">
+topologia rețelei rămâne aceeași
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Noțiunile de nod și latură sunt necesare în special pentru:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+a calcula masa rezistoarelor
+</button>
+
+<button class="answer-btn">
+a organiza analiza curenților într-o rețea ramificată
+</button>
+
+<button class="answer-btn">
+a transforma tensiunea în temperatură
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Rețea electrică</h3>
+
+<p>
+Ansamblu de elemente electrice interconectate,
+cu posibilitatea existenței mai multor căi pentru curent.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Nod</h3>
+
+<p>
+În convenția școlară folosită:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\ge 3\text{ laturi}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Latură</h3>
+
+<p>
+Porțiune cuprinsă între două noduri consecutive.
+</p>
+
+<p>
+Pe aceeași latură:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I=\text{constant de-a lungul laturii}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ochi</h3>
+
+<p>
+Traseu închis alcătuit din laturi.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Pentru rețeaua studiată:</strong>
+
+\[
+\boxed{
+2\text{ noduri}
+}
+\]
+
+\[
+\boxed{
+3\text{ laturi}
+}
+\]
+
+\[
+\boxed{
+2\text{ ochiuri elementare}
+}
+\]
+
+Aceste trei noțiuni vor constitui limbajul de bază
+pentru legile lui Kirchhoff.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Privește din nou un nod în care se întâlnesc trei laturi.
+</p>
+
+<p>
+Pe ele circulă, de exemplu:
+</p>
+
+<div class="formula">
+
+\[
+I_1,\qquad I_2,\qquad I_3
+\]
+
+</div>
+
+<p>
+Unele curente pot fi orientate spre nod,
+iar altele dinspre nod.
+</p>
+
+<div class="blue-box">
+
+Întrebarea centrală a lecției următoare va fi:
+
+<strong>
+„Ce relație există între intensitățile curenților
+care intră într-un nod și cele care ies din nod?”
+</strong>
+</div>
+
+<p>
+Răspunsul este formulat de:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{Legea I a lui Kirchhoff}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="../06-curent-electric-continuu-legea-lui-ohm/12-legea-lui-ohm-pentru-circuitul-intreg-aplicatii-si-regimuri-de-functionare.html">
+
+← Capitolul anterior<br>
+Circuitul întreg – aplicații și regimuri
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="02-legea-i-a-lui-kirchhoff.html">
+
+Lecția 2<br>
+Legea I a lui Kirchhoff →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const canvas=
+  document.getElementById(
+    "networkCanvas"
+  );
+
+
+const ctx=
+  canvas.getContext(
+    "2d"
+  );
+
+
+const viewMode=
+  document.getElementById(
+    "viewMode"
+  );
+
+
+const labelMode=
+  document.getElementById(
+    "labelMode"
+  );
+
+
+const currentMode=
+  document.getElementById(
+    "currentMode"
+  );
+
+
+const networkStatus=
+  document.getElementById(
+    "networkStatus"
+  );
+
+
+const answerNodes=
+  document.getElementById(
+    "answerNodes"
+  );
+
+
+const answerBranches=
+  document.getElementById(
+    "answerBranches"
+  );
+
+
+const answerLoops=
+  document.getElementById(
+    "answerLoops"
+  );
+
+
+const challengeFeedback=
+  document.getElementById(
+    "challengeFeedback"
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let animationTime=0;
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   GEOMETRY
+========================================================= */
+
+function geometry(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  return{
+
+    W,
+    H,
+
+    B:{
+      x:W*.50,
+      y:H*.14
+    },
+
+    D:{
+      x:W*.50,
+      y:H*.86
+    },
+
+    A:{
+      x:W*.16,
+      y:H*.50
+    },
+
+    C:{
+      x:W*.84,
+      y:H*.50
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawBackground(
+  W,
+  H
+){
+
+  const gradient=
+    ctx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  ctx.fillStyle=
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /*
+  Faint grid.
+  */
+
+  ctx.strokeStyle=
+    "rgba(148,163,184,.08)";
+
+
+  ctx.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      x,
+      0
+    );
+
+
+    ctx.lineTo(
+      x,
+      H
+    );
+
+
+    ctx.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      0,
+      y
+    );
+
+
+    ctx.lineTo(
+      W,
+      y
+    );
+
+
+    ctx.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   PATH UTILITIES
+========================================================= */
+
+function pathLeft(
+  g
+){
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    g.B.x,
+    g.B.y
+  );
+
+
+  ctx.lineTo(
+    g.A.x,
+    g.A.y
+  );
+
+
+  ctx.lineTo(
+    g.D.x,
+    g.D.y
+  );
+
+}
+
+
+function pathRight(
+  g
+){
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    g.B.x,
+    g.B.y
+  );
+
+
+  ctx.lineTo(
+    g.C.x,
+    g.C.y
+  );
+
+
+  ctx.lineTo(
+    g.D.x,
+    g.D.y
+  );
+
+}
+
+
+function pathCenter(
+  g
+){
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    g.B.x,
+    g.B.y
+  );
+
+
+  ctx.lineTo(
+    g.D.x,
+    g.D.y
+  );
+
+}
+
+
+/* =========================================================
+   LOOP FILLS
+========================================================= */
+
+function fillLoop(
+  g,
+  side,
+  color
+){
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    g.B.x,
+    g.B.y
+  );
+
+
+  if(
+    side==="left"
+  ){
+
+    ctx.lineTo(
+      g.A.x,
+      g.A.y
+    );
+
+  }
+
+  else{
+
+    ctx.lineTo(
+      g.C.x,
+      g.C.y
+    );
+
+  }
+
+
+  ctx.lineTo(
+    g.D.x,
+    g.D.y
+  );
+
+
+  ctx.closePath();
+
+
+  ctx.fillStyle=
+    color;
+
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   RESISTOR ON SEGMENT
+========================================================= */
+
+function drawResistorOnSegment(
+  p1,
+  p2,
+  t,
+  label,
+  active=false
+){
+
+  const x=
+    p1.x+
+    (
+      p2.x-
+      p1.x
+    )*
+    t;
+
+
+  const y=
+    p1.y+
+    (
+      p2.y-
+      p1.y
+    )*
+    t;
+
+
+  const angle=
+    Math.atan2(
+      p2.y-
+      p1.y,
+      p2.x-
+      p1.x
+    );
+
+
+  ctx.save();
+
+
+  ctx.translate(
+    x,
+    y
+  );
+
+
+  ctx.rotate(
+    angle
+  );
+
+
+  ctx.fillStyle=
+    active
+      ? "#fef08a"
+      : "#f8fafc";
+
+
+  ctx.strokeStyle=
+    active
+      ? "#facc15"
+      : "#94a3b8";
+
+
+  ctx.lineWidth=3;
+
+
+  ctx.fillRect(
+    -30,
+    -16,
+    60,
+    32
+  );
+
+
+  ctx.strokeRect(
+    -30,
+    -16,
+    60,
+    32
+  );
+
+
+  ctx.fillStyle=
+    "#0f172a";
+
+
+  ctx.font=
+    "bold 12px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.textBaseline=
+    "middle";
+
+
+  ctx.fillText(
+    label,
+    0,
+    1
+  );
+
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   ARROW ON SEGMENT
+========================================================= */
+
+function drawArrowOnSegment(
+  p1,
+  p2,
+  t,
+  label,
+  color
+){
+
+  const x=
+    p1.x+
+    (
+      p2.x-
+      p1.x
+    )*
+    t;
+
+
+  const y=
+    p1.y+
+    (
+      p2.y-
+      p1.y
+    )*
+    t;
+
+
+  const angle=
+    Math.atan2(
+      p2.y-
+      p1.y,
+      p2.x-
+      p1.x
+    );
+
+
+  const length=38;
+
+
+  ctx.save();
+
+
+  ctx.translate(
+    x,
+    y
+  );
+
+
+  ctx.rotate(
+    angle
+  );
+
+
+  ctx.strokeStyle=
+    color;
+
+
+  ctx.fillStyle=
+    color;
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    -length/2,
+    -24
+  );
+
+
+  ctx.lineTo(
+    length/2,
+    -24
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    length/2,
+    -24
+  );
+
+
+  ctx.lineTo(
+    length/2-10,
+    -30
+  );
+
+
+  ctx.lineTo(
+    length/2-10,
+    -18
+  );
+
+
+  ctx.closePath();
+
+
+  ctx.fill();
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 12px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    label,
+    0,
+    -37
+  );
+
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   NODES
+========================================================= */
+
+function drawPoint(
+  point,
+  label,
+  major,
+  highlighted
+){
+
+  const radius=
+    major
+      ? 12
+      : 7;
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    point.x,
+    point.y,
+    highlighted
+      ? radius+6
+      : radius,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    major
+      ? highlighted
+        ? "#f87171"
+        : "#dc2626"
+      : "#94a3b8";
+
+
+  ctx.fill();
+
+
+  if(
+    major
+  ){
+
+    ctx.strokeStyle=
+      "#fecaca";
+
+
+    ctx.lineWidth=
+      highlighted
+        ? 4
+        : 2;
+
+
+    ctx.stroke();
+
+  }
+
+
+  if(
+    labelMode.value!==
+    "none"
+  ){
+
+    ctx.fillStyle=
+      major
+        ? "#fecaca"
+        : "#cbd5e1";
+
+
+    ctx.font=
+      major
+        ? "bold 18px system-ui"
+        : "bold 15px system-ui";
+
+
+    ctx.textAlign=
+      point.x<
+      geometry().W*.5
+        ? "right"
+        : "left";
+
+
+    ctx.fillText(
+      label,
+      point.x+
+      (
+        point.x<
+        geometry().W*.5
+          ? -16
+          : 16
+      ),
+      point.y-8
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW NETWORK
+========================================================= */
+
+function drawNetwork(){
+
+  const g=
+    geometry();
+
+
+  drawBackground(
+    g.W,
+    g.H
+  );
+
+
+  const mode=
+    viewMode.value;
+
+
+  /*
+  Loop background highlights.
+  */
+
+  if(
+    mode==="loopLeft"
+  ){
+
+    fillLoop(
+      g,
+      "left",
+      "rgba(34,197,94,.16)"
+    );
+
+  }
+
+
+  if(
+    mode==="loopRight"
+  ){
+
+    fillLoop(
+      g,
+      "right",
+      "rgba(34,197,94,.16)"
+    );
+
+  }
+
+
+  /*
+  Base wires.
+  */
+
+  const branch1Active=
+    mode==="branch1" ||
+    mode==="loopLeft" ||
+    mode==="outer";
+
+
+  const branch2Active=
+    mode==="branch2" ||
+    mode==="loopLeft" ||
+    mode==="loopRight";
+
+
+  const branch3Active=
+    mode==="branch3" ||
+    mode==="loopRight" ||
+    mode==="outer";
+
+
+  pathLeft(
+    g
+  );
+
+
+  ctx.strokeStyle=
+    branch1Active
+      ? mode==="outer"
+        ? "#fb923c"
+        : "#38bdf8"
+      : "#94a3b8";
+
+
+  ctx.lineWidth=
+    branch1Active
+      ? 8
+      : 5;
+
+
+  ctx.stroke();
+
+
+  pathCenter(
+    g
+  );
+
+
+  ctx.strokeStyle=
+    branch2Active
+      ? "#38bdf8"
+      : "#94a3b8";
+
+
+  ctx.lineWidth=
+    branch2Active
+      ? 8
+      : 5;
+
+
+  ctx.stroke();
+
+
+  pathRight(
+    g
+  );
+
+
+  ctx.strokeStyle=
+    branch3Active
+      ? mode==="outer"
+        ? "#fb923c"
+        : "#38bdf8"
+      : "#94a3b8";
+
+
+  ctx.lineWidth=
+    branch3Active
+      ? 8
+      : 5;
+
+
+  ctx.stroke();
+
+
+  /*
+  Components.
+  */
+
+  drawResistorOnSegment(
+    g.B,
+    g.A,
+    .52,
+    "R₁",
+    branch1Active
+  );
+
+
+  drawResistorOnSegment(
+    g.A,
+    g.D,
+    .52,
+    "R₂",
+    branch1Active
+  );
+
+
+  drawResistorOnSegment(
+    g.B,
+    g.D,
+    .50,
+    "R₃",
+    branch2Active
+  );
+
+
+  drawResistorOnSegment(
+    g.B,
+    g.C,
+    .52,
+    "R₄",
+    branch3Active
+  );
+
+
+  drawResistorOnSegment(
+    g.C,
+    g.D,
+    .52,
+    "R₅",
+    branch3Active
+  );
+
+
+  /*
+  Currents.
+  */
+
+  if(
+    currentMode.value===
+    "show"
+  ){
+
+    drawArrowOnSegment(
+      g.B,
+      g.A,
+      .30,
+      "I₁",
+      "#60a5fa"
+    );
+
+
+    drawArrowOnSegment(
+      g.B,
+      g.D,
+      .27,
+      "I₂",
+      "#f59e0b"
+    );
+
+
+    drawArrowOnSegment(
+      g.B,
+      g.C,
+      .30,
+      "I₃",
+      "#c084fc"
+    );
+
+  }
+
+
+  /*
+  Points.
+  */
+
+  drawPoint(
+    g.B,
+    "B",
+    true,
+    mode==="nodes"
+  );
+
+
+  drawPoint(
+    g.D,
+    "D",
+    true,
+    mode==="nodes"
+  );
+
+
+  drawPoint(
+    g.A,
+    "A",
+    false,
+    false
+  );
+
+
+  drawPoint(
+    g.C,
+    "C",
+    false,
+    false
+  );
+
+
+  /*
+  Labels.
+  */
+
+  if(
+    labelMode.value===
+    "all"
+  ){
+
+    ctx.font=
+      "bold 12px system-ui";
+
+
+    ctx.textAlign=
+      "center";
+
+
+    ctx.fillStyle=
+      "#7dd3fc";
+
+
+    ctx.fillText(
+      "LATURA 1",
+      g.W*.23,
+      g.H*.16
+    );
+
+
+    ctx.fillText(
+      "LATURA 2",
+      g.W*.50,
+      g.H*.37
+    );
+
+
+    ctx.fillText(
+      "LATURA 3",
+      g.W*.77,
+      g.H*.16
+    );
+
+
+    ctx.fillStyle=
+      "#86efac";
+
+
+    ctx.fillText(
+      "OCHI ELEMENTAR STÂNG",
+      g.W*.30,
+      g.H*.55
+    );
+
+
+    ctx.fillText(
+      "OCHI ELEMENTAR DREPT",
+      g.W*.70,
+      g.H*.55
+    );
+
+  }
+
+
+  /*
+  Header.
+  */
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 16px system-ui";
+
+
+  ctx.textAlign=
+    "left";
+
+
+  ctx.fillText(
+    "Explorator topologic al rețelei",
+    18,
+    28
+  );
+
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.font=
+    "12px system-ui";
+
+
+  ctx.fillText(
+    "Roșu = noduri de ramificare • albastru = laturi • verde = ochiuri",
+    18,
+    49
+  );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function updateStatus(){
+
+  const mode=
+    viewMode.value;
+
+
+  const messages={
+
+    normal:
+      `Rețeaua are două noduri de ramificare
+       (B și D),
+       trei laturi și două ochiuri elementare.`,
+
+    nodes:
+      `<strong>Nodurile sunt B și D.</strong>
+       În fiecare se întâlnesc cele trei laturi.
+       A și C sunt doar puncte intermediare pe laturile laterale.`,
+
+    branch1:
+      `<strong>Latura 1:</strong>
+       B → A → D.
+       Deși conține două rezistoare,
+       nu există ramificare intermediară,
+       deci este o singură latură.`,
+
+    branch2:
+      `<strong>Latura 2:</strong>
+       B → D.
+       Este traseul central dintre cele două noduri.`,
+
+    branch3:
+      `<strong>Latura 3:</strong>
+       B → C → D.
+       Cei doi rezistori ai traseului aparțin aceleiași laturi.`,
+
+    loopLeft:
+      `<strong>Ochiul elementar stâng:</strong>
+       B → A → D → B.
+       Este un traseu închis format din laturile 1 și 2.`,
+
+    loopRight:
+      `<strong>Ochiul elementar drept:</strong>
+       B → C → D → B.
+       Este un traseu închis format din laturile 3 și 2.`,
+
+    outer:
+      `<strong>Conturul exterior:</strong>
+       B → A → D → C → B.
+       Este un traseu închis,
+       dar nu un ochi elementar,
+       deoarece latura centrală se află în interior.`
+
+  };
+
+
+  networkStatus.innerHTML=
+    messages[
+      mode
+    ] ||
+    messages.normal;
+
+}
+
+
+/* =========================================================
+   VIEW EVENTS
+========================================================= */
+
+[
+  viewMode,
+  labelMode,
+  currentMode
+].forEach(
+  element=>{
+
+    element.addEventListener(
+      "change",
+      ()=>{
+
+        updateStatus();
+
+        drawNetwork();
+
+      }
+    );
+
+  }
+);
+
+
+document
+  .querySelectorAll(
+    "[data-view]"
+  )
+  .forEach(
+    button=>{
+
+      button.addEventListener(
+        "click",
+        ()=>{
+
+          viewMode.value=
+            button.dataset.view;
+
+
+          updateStatus();
+
+          drawNetwork();
+
+        }
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "resetViewBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      viewMode.value=
+        "normal";
+
+
+      labelMode.value=
+        "all";
+
+
+      currentMode.value=
+        "show";
+
+
+      updateStatus();
+
+      drawNetwork();
+
+    }
+  );
+
+
+/* =========================================================
+   TOPOLOGY CHALLENGE
+========================================================= */
+
+document
+  .getElementById(
+    "checkTopologyBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      const n=
+        Number(
+          answerNodes.value
+        );
+
+
+      const l=
+        Number(
+          answerBranches.value
+        );
+
+
+      const o=
+        Number(
+          answerLoops.value
+        );
+
+
+      if(
+        !Number.isFinite(
+          n
+        ) ||
+        !Number.isFinite(
+          l
+        ) ||
+        !Number.isFinite(
+          o
+        )
+      ){
+
+        challengeFeedback.className=
+          "challenge-feedback feedback-bad";
+
+
+        challengeFeedback.textContent=
+          "Completează toate cele trei valori.";
+
+        return;
+
+      }
+
+
+      const okN=
+        n===2;
+
+
+      const okL=
+        l===3;
+
+
+      const okO=
+        o===2;
+
+
+      if(
+        okN &&
+        okL &&
+        okO
+      ){
+
+        challengeFeedback.className=
+          "challenge-feedback feedback-good";
+
+
+        challengeFeedback.innerHTML=
+          `✓ Corect:
+           <strong>2 noduri,
+           3 laturi,
+           2 ochiuri elementare.</strong>`;
+
+      }
+
+      else{
+
+        const issues=[];
+
+
+        if(
+          !okN
+        ){
+          issues.push(
+            "nodurile"
+          );
+        }
+
+
+        if(
+          !okL
+        ){
+          issues.push(
+            "laturile"
+          );
+        }
+
+
+        if(
+          !okO
+        ){
+          issues.push(
+            "ochiurile elementare"
+          );
+        }
+
+
+        challengeFeedback.className=
+          "challenge-feedback feedback-bad";
+
+
+        challengeFeedback.innerHTML=
+          `Mai verifică:
+           <strong>${issues.join(", ")}</strong>.
+           Începe prin a marca B și D,
+           apoi urmărește căile distincte dintre ele.`;
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "hintTopologyBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      challengeFeedback.className=
+        "challenge-feedback";
+
+
+      challengeFeedback.innerHTML=
+        `Indiciu:
+         există <strong>două puncte în care curentul se poate ramifica</strong>.
+         Între acestea găsește toate căile distincte,
+         apoi caută regiunile închise care nu conțin alte laturi în interior.`;
+
+    }
+  );
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește definițiile de nod, latură și ochi de rețea.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Poți citi topologia unei rețele și ești pregătit pentru Legea I a lui Kirchhoff.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar noțiunile la care ai greșit.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun de bază. Exersează încă o dată identificarea laturilor și ochiurilor.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia definițiile și exploratorul înainte de lecția despre Legea I a lui Kirchhoff.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  animationTime=
+    timestamp/
+    1000;
+
+
+  /*
+  Redraw continuously so highlighted current arrows
+  and responsive rendering stay smooth.
+  */
+
+  drawNetwork();
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE + INIT
+========================================================= */
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    resizeCanvas();
+
+    drawNetwork();
+
+  }
+);
+
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas();
+
+    updateStatus();
+
+    drawNetwork();
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
