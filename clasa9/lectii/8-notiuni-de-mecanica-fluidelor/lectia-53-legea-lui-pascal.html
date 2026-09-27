@@ -1,1 +1,5610 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>53. Legea lui Pascal | Fizică – Clasa a IX-a</title>
+
+<meta name="description"
+content="Legea lui Pascal, transmiterea presiunii în lichide, presa hidraulică, cricul hidraulic și frânele hidraulice. Lecție interactivă de fizică pentru clasa a IX-a.">
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  options: {
+    skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+  }
+};
+</script>
+
+<script async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+
+:root{
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+}
+
+a{
+  color:var(--blue);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 52px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(34,211,238,.22),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 17% 0%,
+      rgba(59,130,246,.42),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #082f49,
+      #075985 55%,
+      #1e3a8a
+    );
+}
+
+.topbar::after{
+  content:"";
+
+  position:absolute;
+
+  left:-5%;
+  right:-5%;
+  bottom:-50px;
+
+  height:90px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+}
+
+.topbar-inner{
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+  margin:auto;
+}
+
+.breadcrumb{
+  margin-bottom:16px;
+  font-size:.9rem;
+  opacity:.86;
+}
+
+.breadcrumb a{
+  color:white;
+  text-decoration:none;
+}
+
+.lesson-number{
+  display:inline-block;
+
+  padding:6px 12px;
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+}
+
+h1{
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.4rem);
+
+  line-height:1.08;
+}
+
+.subtitle{
+  max-width:900px;
+
+  margin:18px 0 0;
+
+  color:#cffafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.25rem);
+}
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+}
+
+.card{
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+}
+
+.card h2{
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+}
+
+.card h3{
+  margin-top:28px;
+  line-height:1.25;
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+
+.mini-card{
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+.badge{
+  display:inline-block;
+
+  padding:5px 10px;
+
+  background:#e2e8f0;
+  color:#334155;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+  font-weight:800;
+}
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+  margin:18px 0;
+  padding:16px 18px;
+
+  border-left:5px solid;
+  border-radius:12px;
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+/* =========================================================
+   FORMULE
+========================================================= */
+
+.formula{
+  margin:18px 0;
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+}
+
+.big-formula{
+  background:var(--blue-soft);
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+table{
+  width:100%;
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+}
+
+th,
+td{
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+}
+
+th{
+  background:#eaf2ff;
+}
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+}
+
+.steps li{
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+}
+
+.steps li::before{
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  background:var(--blue);
+  color:white;
+
+  border-radius:50%;
+
+  font-weight:900;
+}
+
+/* =========================================================
+   DIAGRAMĂ PASCAL
+========================================================= */
+
+.pascal-demo{
+  position:relative;
+
+  max-width:760px;
+  height:330px;
+
+  margin:25px auto;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #e0f2fe
+    );
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+}
+
+.vessel{
+  position:absolute;
+
+  left:15%;
+  right:15%;
+  bottom:45px;
+
+  height:190px;
+
+  border:
+    7px solid #475569;
+
+  border-top:0;
+
+  border-radius:
+    0 0 20px 20px;
+
+  background:
+    rgba(56,189,248,.42);
+}
+
+.piston-top{
+  position:absolute;
+
+  left:37%;
+  top:42px;
+
+  width:26%;
+  height:24px;
+
+  background:#64748b;
+
+  border-radius:5px;
+}
+
+.piston-rod{
+  position:absolute;
+
+  left:50%;
+  top:5px;
+
+  width:10px;
+  height:43px;
+
+  transform:
+    translateX(-50%);
+
+  background:#334155;
+}
+
+.center-point{
+  position:absolute;
+
+  left:50%;
+  top:60%;
+
+  width:18px;
+  height:18px;
+
+  transform:
+    translate(-50%,-50%);
+
+  background:#dc2626;
+
+  border:
+    3px solid white;
+
+  border-radius:50%;
+}
+
+.p-arrow{
+  position:absolute;
+
+  left:50%;
+  top:60%;
+
+  width:68px;
+
+  border-top:
+    4px solid #dc2626;
+
+  transform-origin:left center;
+}
+
+.p-arrow::after{
+  content:"";
+
+  position:absolute;
+
+  right:-2px;
+  top:-8px;
+
+  border-left:
+    13px solid #dc2626;
+
+  border-top:
+    6px solid transparent;
+
+  border-bottom:
+    6px solid transparent;
+}
+
+.p1{transform:rotate(0deg)}
+.p2{transform:rotate(45deg)}
+.p3{transform:rotate(90deg)}
+.p4{transform:rotate(135deg)}
+.p5{transform:rotate(180deg)}
+.p6{transform:rotate(225deg)}
+.p7{transform:rotate(270deg)}
+.p8{transform:rotate(315deg)}
+
+.force-arrow-demo{
+  position:absolute;
+
+  left:50%;
+  top:0;
+
+  height:65px;
+
+  border-left:
+    5px solid #2563eb;
+}
+
+.force-arrow-demo::after{
+  content:"";
+
+  position:absolute;
+
+  left:-10px;
+  bottom:-2px;
+
+  border-left:
+    8px solid transparent;
+
+  border-right:
+    8px solid transparent;
+
+  border-top:
+    15px solid #2563eb;
+}
+
+.force-label-demo{
+  position:absolute;
+
+  left:52%;
+  top:5px;
+
+  color:#1d4ed8;
+
+  font-weight:900;
+}
+
+/* =========================================================
+   HYDRAULIC PRESS STATIC
+========================================================= */
+
+.press-visual{
+  position:relative;
+
+  max-width:800px;
+  height:360px;
+
+  margin:25px auto;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid var(--border);
+
+  border-radius:16px;
+
+  overflow:hidden;
+}
+
+.small-cylinder,
+.large-cylinder{
+  position:absolute;
+
+  bottom:65px;
+
+  background:
+    rgba(14,165,233,.38);
+
+  border:
+    5px solid #475569;
+
+  border-top:0;
+}
+
+.small-cylinder{
+  left:14%;
+  width:90px;
+  height:170px;
+}
+
+.large-cylinder{
+  right:12%;
+  width:180px;
+  height:170px;
+}
+
+.pipe{
+  position:absolute;
+
+  left:
+    calc(14% + 42px);
+
+  right:
+    calc(12% + 85px);
+
+  bottom:65px;
+
+  height:32px;
+
+  background:#38bdf8;
+
+  border:
+    5px solid #475569;
+
+  border-left:0;
+  border-right:0;
+}
+
+.small-piston{
+  position:absolute;
+
+  left:
+    calc(14% - 4px);
+
+  bottom:225px;
+
+  width:98px;
+  height:18px;
+
+  background:#64748b;
+}
+
+.large-piston{
+  position:absolute;
+
+  right:
+    calc(12% - 4px);
+
+  bottom:225px;
+
+  width:188px;
+  height:18px;
+
+  background:#64748b;
+}
+
+.load-box{
+  position:absolute;
+
+  right:
+    calc(12% + 31px);
+
+  bottom:243px;
+
+  width:120px;
+  height:65px;
+
+  display:grid;
+  place-items:center;
+
+  background:#f97316;
+  color:white;
+
+  border-radius:8px;
+
+  font-weight:900;
+}
+
+.press-label-left{
+  position:absolute;
+
+  left:12%;
+  bottom:24px;
+
+  color:#334155;
+  font-weight:800;
+}
+
+.press-label-right{
+  position:absolute;
+
+  right:12%;
+  bottom:24px;
+
+  color:#334155;
+  font-weight:800;
+}
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+}
+
+.controls{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+}
+
+.control{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.control label{
+  font-size:.9rem;
+  font-weight:750;
+}
+
+.control input{
+  width:100%;
+
+  padding:10px 11px;
+
+  background:white;
+  color:var(--text);
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+}
+
+.button-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+
+  margin:18px 0;
+}
+
+button{
+  padding:11px 18px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  filter:brightness(.97);
+}
+
+.primary{
+  background:var(--blue);
+  color:white;
+}
+
+.secondary{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+
+.green-button{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.orange-button{
+  background:#ffedd5;
+  color:#9a3412;
+}
+
+.purple-button{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+.canvas-wrap{
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:white;
+
+  border:
+    1px solid #bfd0e5;
+
+  border-radius:14px;
+}
+
+#hydraulicCanvas{
+  display:block;
+
+  width:100%;
+  height:510px;
+}
+
+.results{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+}
+
+.result-box{
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+}
+
+.result-box span{
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+  margin-top:16px;
+
+  padding:16px;
+
+  background:var(--cyan-soft);
+
+  color:#155e75;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+}
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+  display:grid;
+  gap:8px;
+
+  margin-top:12px;
+}
+
+.answer-btn{
+  text-align:left;
+
+  background:#f1f5f9;
+  color:#0f172a;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+}
+
+.answer-btn.correct{
+  background:#dcfce7;
+  border-color:#22c55e;
+}
+
+.answer-btn.wrong{
+  background:#fee2e2;
+  border-color:#ef4444;
+}
+
+.feedback{
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+}
+
+.quiz-score{
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+}
+
+.nav-link{
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:780px){
+
+  .grid-2,
+  .grid-3,
+  .controls,
+  .results{
+    grid-template-columns:1fr;
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #hydraulicCanvas{
+    height:560px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .quiz,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+  <div class="breadcrumb">
+
+    <a href="../../index.html">
+      Clasa a IX-a
+    </a>
+
+    &nbsp;›&nbsp;
+
+    <a href="../index.html">
+      Lecții
+    </a>
+
+    &nbsp;›&nbsp;
+
+    Noțiuni de mecanica fluidelor
+
+  </div>
+
+
+  <div class="lesson-number">
+    Lecția 53 • Clasa a IX-a
+  </div>
+
+
+  <h1>
+    Legea lui Pascal
+  </h1>
+
+
+  <p class="subtitle">
+    Cum poate o forță relativ mică exercitată asupra unui piston
+    să contribuie la ridicarea unui automobil?
+    Răspunsul pornește de la modul în care se transmite
+    o variație de presiune într-un fluid închis.
+  </p>
+
+</div>
+
+</header>
+
+
+<main>
+
+<!-- =========================================================
+     OBIECTIVE
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să formulezi legea lui Pascal;
+</li>
+
+<li>
+să explici transmiterea unei variații de presiune într-un lichid închis;
+</li>
+
+<li>
+să aplici relația \(p=F/S\) într-un sistem hidraulic;
+</li>
+
+<li>
+să deduci relația presei hidraulice;
+</li>
+
+<li>
+să calculezi forța produsă de un piston hidraulic;
+</li>
+
+<li>
+să explici de ce multiplicarea forței este însoțită de o deplasare mai mică;
+</li>
+
+<li>
+să explici funcționarea cricului și a frânei hidraulice;
+</li>
+
+<li>
+să diferențiezi presiunea de forța exercitată de fluid.
+
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+Dacă mărim presiunea într-un lichid închis,
+această
+<strong>creștere de presiune</strong>
+se transmite în întregul lichid.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\Delta p_1=\Delta p_2
+}
+\]
+
+</div>
+
+<p>
+Dacă aceeași presiune acționează pe suprafețe diferite,
+forțele rezultate pot fi diferite.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SITUATIE PROBLEMA
+========================================================= -->
+
+<section class="card">
+
+<h2>🚗 Situație-problemă</h2>
+
+<p class="lead">
+Un mecanic acționează mânerul unui cric hidraulic
+și reușește să ridice un automobil care cântărește
+mii de newtoni.
+</p>
+
+<p>
+Forța exercitată de mecanic este mult mai mică
+decât greutatea automobilului.
+</p>
+
+<div class="orange-box">
+
+<strong>Întrebarea:</strong>
+
+de unde apare forța mai mare?
+
+Sistemul „creează” energie sau există un compromis
+între forță și deplasare?
+
+</div>
+
+<p>
+Pentru a răspunde,
+revenim la noțiunea de presiune.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     RECAPITULARE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Recapitulare – presiunea</h2>
+
+<p>
+Pentru o forță perpendiculară pe o suprafață:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+p=
+\frac{F}{S}
+}
+\]
+
+</div>
+
+de unde:
+
+<div class="formula">
+
+\[
+\boxed{
+F=pS
+}
+\]
+
+</div>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Aceeași forță</h3>
+
+<p>
+Dacă suprafața scade,
+presiunea crește.
+</p>
+
+<div class="formula">
+
+\[
+p\sim\frac1S
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Aceeași presiune</h3>
+
+<p>
+Dacă suprafața crește,
+forța exercitată crește.
+</p>
+
+<div class="formula">
+
+\[
+F\sim S
+\]
+
+</div>
+
+</div>
+
+</div>
+
+<p>
+A doua observație este cheia sistemelor hidraulice.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT MENTAL
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Ce se întâmplă când apăsăm un piston?</h2>
+
+<div class="pascal-demo">
+
+  <div class="vessel"></div>
+
+  <div class="piston-rod"></div>
+
+  <div class="piston-top"></div>
+
+  <div class="force-arrow-demo"></div>
+
+  <div class="force-label-demo">
+    \(F\)
+  </div>
+
+  <div class="center-point"></div>
+
+  <div class="p-arrow p1"></div>
+  <div class="p-arrow p2"></div>
+  <div class="p-arrow p3"></div>
+  <div class="p-arrow p4"></div>
+  <div class="p-arrow p5"></div>
+  <div class="p-arrow p6"></div>
+  <div class="p-arrow p7"></div>
+  <div class="p-arrow p8"></div>
+
+</div>
+
+<p>
+Pistonul exercită asupra lichidului o forță.
+</p>
+
+<p>
+Aceasta produce o creștere a presiunii:
+</p>
+
+<div class="formula">
+
+\[
+\Delta p=
+\frac{F}{S}
+\]
+
+</div>
+
+<p>
+Creșterea de presiune nu rămâne doar sub piston.
+Ea se transmite prin lichid.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     LEGE PASCAL
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Legea lui Pascal</h2>
+
+<div class="green-box">
+
+<strong>Legea lui Pascal:</strong>
+
+O variație de presiune produsă într-un fluid închis,
+aflat în echilibru,
+se transmite nediminuată în toate punctele fluidului
+și asupra pereților recipientului.
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\Delta p=
+\text{aceeași în întregul fluid}
+}
+\]
+
+</div>
+
+sau, pentru două pistoane aflate în același model hidraulic:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\Delta p_1=
+\Delta p_2
+}
+\]
+
+</div>
+
+<div class="yellow-box">
+
+Formularea se referă la
+<strong>variația de presiune</strong>
+produsă suplimentar.
+
+Dacă două puncte ale fluidului se află la înălțimi diferite,
+presiunile lor absolute pot diferi și din cauza termenului hidrostatic
+\(\rho gh\).
+
+În modelul elementar al presei hidraulice,
+pistoanele sunt considerate la aproximativ aceeași înălțime.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DE CE LICHIDE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. De ce sunt utile lichidele?</h2>
+
+<p>
+Lichidele sunt foarte puțin compresibile în condiții obișnuite.
+</p>
+
+<p>
+Când un piston este deplasat,
+volumul de lichid pe care îl împinge trebuie să se regăsească
+în deplasarea lichidului din altă parte a sistemului.
+</p>
+
+<div class="blue-box">
+
+În modelul hidraulic ideal considerăm:
+
+<ul>
+<li>lichid practic incompresibil;</li>
+<li>conducte și cilindri rigizi;</li>
+<li>fără pierderi prin frecare;</li>
+<li>fără scurgeri;</li>
+<li>pistoane aflate la același nivel.</li>
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRESA
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Presa hidraulică</h2>
+
+<div class="press-visual">
+
+  <div class="pipe"></div>
+
+  <div class="small-cylinder"></div>
+  <div class="large-cylinder"></div>
+
+  <div class="small-piston"></div>
+  <div class="large-piston"></div>
+
+  <div class="load-box">
+    SARCINĂ
+  </div>
+
+  <div class="press-label-left">
+    piston mic \(S_1\)
+  </div>
+
+  <div class="press-label-right">
+    piston mare \(S_2\)
+  </div>
+
+</div>
+
+<p>
+Considerăm două pistoane:
+</p>
+
+<ul>
+<li>pistonul mic, de arie \(S_1\);</li>
+<li>pistonul mare, de arie \(S_2\).</li>
+</ul>
+
+<p>
+Pe pistonul mic acționăm cu forța \(F_1\).
+</p>
+
+Presiunea suplimentară produsă este:
+
+<div class="formula">
+
+\[
+\Delta p_1=
+\frac{F_1}{S_1}
+\]
+
+</div>
+
+Conform legii lui Pascal:
+
+<div class="formula">
+
+\[
+\Delta p_2=
+\Delta p_1
+\]
+
+</div>
+
+dar:
+
+<div class="formula">
+
+\[
+\Delta p_2=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+Prin urmare:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MULTIPLICARE FORTA
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Multiplicarea forței</h2>
+
+Din:
+
+<div class="formula">
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+obținem:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_2=
+F_1
+\frac{S_2}{S_1}
+}
+\]
+
+</div>
+
+Definim avantajul mecanic ideal:
+
+<div class="formula">
+
+\[
+\boxed{
+K=
+\frac{F_2}{F_1}
+=
+\frac{S_2}{S_1}
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+Dacă:
+
+\[
+S_2>S_1
+\]
+
+atunci:
+
+\[
+F_2>F_1
+\]
+
+Un piston mare poate exercita o forță mult mai mare
+decât forța aplicată pistonului mic.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU 1
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 1 – Presă hidraulică</h2>
+
+<p>
+O presă are:
+</p>
+
+<div class="formula">
+
+\[
+S_1=5\,\mathrm{cm^2}
+\]
+
+\[
+S_2=200\,\mathrm{cm^2}
+\]
+
+</div>
+
+Pe pistonul mic acționează:
+
+<div class="formula">
+
+\[
+F_1=150\,\mathrm N
+\]
+
+</div>
+
+Determinați forța exercitată de pistonul mare.
+</p>
+
+<h3>1. Scriem relația</h3>
+
+<div class="formula">
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+<h3>2. Determinăm \(F_2\)</h3>
+
+<div class="formula">
+
+\[
+F_2=
+F_1
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+F_2=
+150
+\cdot
+\frac{200}{5}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+F_2=
+150\cdot40
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_2=6000\,\mathrm N
+}
+\]
+
+</div>
+
+<div class="blue-box">
+
+Raportul ariilor este:
+
+\[
+\frac{S_2}{S_1}=40
+\]
+
+deci, în modelul ideal,
+forța este multiplicată de 40 de ori.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRESIUNE EXEMPLU
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Aceeași presiune, forțe diferite</h2>
+
+În exemplul precedent:
+
+<div class="formula">
+
+\[
+S_1=
+5\,\mathrm{cm^2}
+=
+5\cdot10^{-4}\,\mathrm{m^2}
+\]
+
+</div>
+
+Presiunea suplimentară este:
+
+<div class="formula">
+
+\[
+\Delta p=
+\frac{150}
+{5\cdot10^{-4}}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\Delta p=
+300\,000\,\mathrm{Pa}
+=
+300\,\mathrm{kPa}
+}
+\]
+
+</div>
+
+Aceeași creștere de presiune acționează pe pistonul mare:
+
+<div class="formula">
+
+\[
+F_2=
+\Delta p S_2
+\]
+
+</div>
+
+<div class="purple-box">
+
+Presa hidraulică nu „multiplică presiunea”.
+
+În modelul ideal,
+<strong>presiunea suplimentară transmisă este aceeași</strong>.
+
+Forța este mai mare deoarece aceeași presiune acționează
+pe o suprafață mai mare.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLUM
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Dar deplasările pistoanelor?</h2>
+
+<p>
+Lichidul este considerat incompresibil.
+</p>
+
+<p>
+Dacă pistonul mic coboară cu \(d_1\),
+volumul deplasat este:
+</p>
+
+<div class="formula">
+
+\[
+\Delta V_1=
+S_1d_1
+\]
+
+</div>
+
+Pistonul mare se ridică cu \(d_2\):
+
+<div class="formula">
+
+\[
+\Delta V_2=
+S_2d_2
+\]
+
+</div>
+
+Conservarea volumului impune:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+S_1d_1=
+S_2d_2
+}
+\]
+
+</div>
+
+de unde:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+d_2=
+d_1
+\frac{S_1}{S_2}
+}
+\]
+
+</div>
+
+<div class="orange-box">
+
+Dacă pistonul mare are aria de 40 de ori mai mare,
+el se deplasează de 40 de ori mai puțin
+decât pistonul mic.
+
+Multiplicarea forței este „plătită”
+prin reducerea deplasării.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LUCRU
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Presa hidraulică nu creează energie</h2>
+
+În sistemul ideal:
+
+<div class="formula">
+
+\[
+F_2=
+F_1
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+și:
+
+<div class="formula">
+
+\[
+d_2=
+d_1
+\frac{S_1}{S_2}
+\]
+
+</div>
+
+Înmulțind:
+
+<div class="formula">
+
+\[
+F_2d_2
+=
+F_1
+\frac{S_2}{S_1}
+\cdot
+d_1
+\frac{S_1}{S_2}
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_1d_1=
+F_2d_2
+}
+\]
+
+</div>
+
+sau:
+
+<div class="formula">
+
+\[
+\boxed{
+L_1=L_2
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+Într-o presă hidraulică ideală:
+
+<strong>câștigăm forță, dar pierdem deplasare.</strong>
+
+Nu există câștig de lucru mecanic sau energie.
+
+</div>
+
+<div class="yellow-box">
+
+Într-un sistem real apar pierderi:
+frecare, deformări, turbulențe și alte efecte.
+
+De aceea lucrul mecanic util la ieșire
+este mai mic decât lucrul mecanic furnizat la intrare.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU DEPLASARE
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 2 – Cât se ridică pistonul mare?</h2>
+
+Considerăm din nou:
+
+<div class="formula">
+
+\[
+S_1=5\,\mathrm{cm^2}
+\]
+
+\[
+S_2=200\,\mathrm{cm^2}
+\]
+
+</div>
+
+Pistonul mic este apăsat cu:
+
+<div class="formula">
+
+\[
+d_1=40\,\mathrm{cm}
+\]
+
+</div>
+
+Conservarea volumului:
+
+<div class="formula">
+
+\[
+S_1d_1=
+S_2d_2
+\]
+
+</div>
+
+deci:
+
+<div class="formula">
+
+\[
+d_2=
+d_1
+\frac{S_1}{S_2}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+d_2=
+40
+\cdot
+\frac5{200}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+d_2=1\,\mathrm{cm}
+}
+\]
+
+</div>
+
+<div class="blue-box">
+
+Pistonul mare furnizează o forță de 40 de ori mai mare,
+dar se deplasează de 40 de ori mai puțin.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CRIC
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Cricul hidraulic</h2>
+
+<p>
+Cricul hidraulic utilizează aceeași idee:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\Delta p=
+\frac{F_1}{S_1}
+}
+\]
+
+</div>
+
+iar pe pistonul mare:
+
+<div class="formula">
+
+\[
+\boxed{
+F_2=
+\Delta p\,S_2
+}
+\]
+
+</div>
+
+<p>
+Într-un cric real,
+mânerul acționează de obicei și ca o
+<strong>pârghie</strong>,
+iar supapele permit pomparea succesivă a lichidului.
+</p>
+
+<div class="cyan-box">
+
+Cricul real poate combina două avantaje mecanice:
+
+<ul>
+<li>avantajul pârghiei;</li>
+<li>avantajul sistemului hidraulic.</li>
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FRANE
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Frânele hidraulice</h2>
+
+<p>
+La apăsarea pedalei,
+pistonul cilindrului principal produce o variație de presiune
+în lichidul de frână.
+</p>
+
+<div class="formula">
+
+\[
+\Delta p=
+\frac{F}{S}
+\]
+
+</div>
+
+<p>
+Această variație de presiune se transmite prin conductele
+circuitului hidraulic spre mecanismele de frânare.
+</p>
+
+<div class="green-box">
+
+Legea lui Pascal permite transmiterea
+<strong>presiunii</strong>
+prin lichid de la cilindrul principal
+către mecanismele de frânare.
+
+Forțele finale depind apoi de ariile pistoanelor
+și de geometria mecanismului.
+
+</div>
+
+<div class="yellow-box">
+
+În instalațiile reale,
+lichidul de frână trebuie să aibă proprietăți bine controlate,
+iar sistemul trebuie întreținut corespunzător.
+
+O instalație hidraulică de frânare nu este un experiment
+de realizat sau modificat la clasă.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APLICATII
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Aplicații ale legii lui Pascal</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>🚗 Cric hidraulic</h3>
+
+<p>
+Permite ridicarea sarcinilor mari prin aplicarea repetată
+a unei forțe mai mici.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>🏭 Presă hidraulică</h3>
+
+<p>
+Poate produce forțe mari pentru deformarea sau comprimarea
+materialelor.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>🛞 Frâne hidraulice</h3>
+
+<p>
+Transmit o variație de presiune prin circuitul de lichid.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>🚙 Elevator auto</h3>
+
+<p>
+Ridică vehicule în ateliere utilizând cilindri hidraulici.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>🚜 Utilaje</h3>
+
+<p>
+Excavatoare, încărcătoare și alte utilaje folosesc
+sisteme hidraulice pentru acționare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>✈️ Sisteme de acționare</h3>
+
+<p>
+Numeroase instalații tehnice utilizează
+transmiterea presiunii prin fluide.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Experiment – Două seringi conectate</h2>
+
+<div class="grid-2">
+
+
+<div>
+
+<h3>Materiale</h3>
+
+<ul>
+<li>două seringi de dimensiuni diferite, fără ace;</li>
+<li>tub flexibil care se potrivește etanș;</li>
+<li>apă;</li>
+<li>colorant alimentar, opțional;</li>
+<li>recipient pentru eventualele scurgeri.</li>
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>Scop</h3>
+
+<p>
+Observarea calitativă a transmiterii presiunii
+și a relației dintre ariile pistoanelor,
+forțe și deplasări.
+</p>
+
+</div>
+
+</div>
+
+<h3>Mod de lucru</h3>
+
+<ol class="steps">
+
+<li>
+Umple tubul și seringile cu apă,
+încercând să elimini cât mai mult aerul.
+</li>
+
+<li>
+Conectează seringile prin tub.
+</li>
+
+<li>
+Apasă încet pistonul seringii mici.
+</li>
+
+<li>
+Observă deplasarea pistonului seringii mari.
+</li>
+
+<li>
+Inversează rolurile seringilor.
+</li>
+
+<li>
+Compară senzația de forță și deplasările pistoanelor.
+</li>
+
+</ol>
+
+<div class="blue-box">
+
+<strong>Observație așteptată:</strong>
+
+pistonul cu secțiune mai mare poate produce o forță mai mare,
+dar deplasarea sa este mai mică.
+
+</div>
+
+<div class="red-box">
+
+<strong>Siguranță:</strong>
+
+se folosesc numai seringi fără ace.
+Nu se blochează complet sistemul și nu se aplică forțe mari,
+deoarece tubul se poate desprinde și lichidul poate fi proiectat.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AER
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Ce se întâmplă dacă rămâne aer în sistem?</h2>
+
+<p>
+Aerul este mult mai compresibil decât lichidul.
+</p>
+
+<p>
+Dacă în tub există o bulă de aer,
+o parte din deplasarea pistonului poate fi utilizată
+pentru comprimarea acelei bule.
+</p>
+
+<div class="orange-box">
+
+În experiment,
+prezența aerului face sistemul să pară mai
+<strong>„elastic”</strong>.
+
+Acesta este un bun indiciu experimental
+al diferenței dintre compresibilitatea gazelor
+și cea foarte redusă a lichidelor.
+
+</div>
+
+<p>
+În instalațiile hidraulice tehnice,
+bulele de gaz pot afecta funcționarea sistemului.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     SISTEME CU NIVEL DIFERIT
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Pascal și presiunea hidrostatică</h2>
+
+<p>
+Legea lui Pascal nu anulează legea hidrostaticii.
+</p>
+
+Într-un lichid aflat în repaus:
+
+<div class="formula">
+
+\[
+p=
+p_0+\rho gh
+\]
+
+</div>
+
+Dacă mărim presiunea la suprafață cu \(\Delta p\):
+
+<div class="formula">
+
+\[
+p'=
+p_0+\Delta p+\rho gh
+\]
+
+</div>
+
+Prin urmare:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+p'-p=
+\Delta p
+}
+\]
+
+</div>
+
+<div class="purple-box">
+
+Termenul hidrostatic \(\rho gh\)
+poate produce diferențe de presiune între puncte aflate
+la niveluri diferite.
+
+Dar
+<strong>creșterea suplimentară de presiune</strong>
+se transmite în întregul fluid.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU 3
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 3 – Ridicarea unei sarcini</h2>
+
+<p>
+Pistonul mare trebuie să susțină o sarcină de:
+</p>
+
+<div class="formula">
+
+\[
+F_2=12\,000\,\mathrm N
+\]
+
+</div>
+
+Ariile sunt:
+
+<div class="formula">
+
+\[
+S_1=8\,\mathrm{cm^2}
+\]
+
+\[
+S_2=240\,\mathrm{cm^2}
+\]
+
+</div>
+
+Ce forță trebuie aplicată pistonului mic?
+</p>
+
+Din:
+
+<div class="formula">
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+obținem:
+
+<div class="formula">
+
+\[
+F_1=
+F_2
+\frac{S_1}{S_2}
+\]
+
+</div>
+
+Înlocuim:
+
+<div class="formula">
+
+\[
+F_1=
+12\,000
+\cdot
+\frac8{240}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_1=400\,\mathrm N
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+Avantajul mecanic ideal este:
+
+\[
+K=
+\frac{240}{8}
+=
+30
+\]
+
+deci forța de intrare este de 30 de ori mai mică
+decât forța de ieșire.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Laborator virtual – Presa hidraulică</h2>
+
+<p>
+Modifică forța de intrare,
+ariile pistoanelor și deplasarea pistonului mic.
+</p>
+
+<p>
+Simulatorul folosește un sistem
+<strong>ideal</strong>:
+lichid incompresibil, fără frecare și fără pierderi.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="force1Input">
+Forța \(F_1\) [N]
+</label>
+
+<input
+  id="force1Input"
+  type="number"
+  min="0"
+  max="10000"
+  step="10"
+  value="200">
+
+</div>
+
+
+<div class="control">
+
+<label for="area1Input">
+Aria \(S_1\) [cm²]
+</label>
+
+<input
+  id="area1Input"
+  type="number"
+  min="0.1"
+  max="1000"
+  step="0.5"
+  value="10">
+
+</div>
+
+
+<div class="control">
+
+<label for="area2Input">
+Aria \(S_2\) [cm²]
+</label>
+
+<input
+  id="area2Input"
+  type="number"
+  min="0.1"
+  max="5000"
+  step="1"
+  value="200">
+
+</div>
+
+
+<div class="control">
+
+<label for="distance1Input">
+Deplasarea \(d_1\) [cm]
+</label>
+
+<input
+  id="distance1Input"
+  type="number"
+  min="0"
+  max="200"
+  step="1"
+  value="30">
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="calculateBtn">
+
+Calculează
+
+</button>
+
+
+<button
+  class="green-button"
+  id="jackPresetBtn">
+
+🚗 Cric auto
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="equalPresetBtn">
+
+⚖️ Pistoane egale
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="reversePresetBtn">
+
+↔ Inversează ariile
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="hydraulicCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Presiunea transmisă
+</span>
+
+<strong id="pressureValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Forța \(F_2\)
+</span>
+
+<strong id="force2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Avantaj mecanic
+</span>
+
+<strong id="ratioValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Deplasarea \(d_2\)
+</span>
+
+<strong id="distance2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Volumul deplasat
+</span>
+
+<strong id="volumeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Lucrul de intrare
+</span>
+
+<strong id="work1Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Lucrul de ieșire
+</span>
+
+<strong id="work2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Raport deplasări \(d_1/d_2\)
+</span>
+
+<strong id="distanceRatioValue">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="statusBox">
+
+Modifică ariile și observă simultan
+cum se schimbă forța și deplasarea.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM EXPERIMENTE
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Experimentează în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Experiment A – dublează \(S_2\)</h3>
+
+<p>
+Păstrează \(F_1\) și \(S_1\) constante.
+</p>
+
+<p>
+Dublează aria pistonului mare.
+</p>
+
+<p>
+Ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+F_2
+\]
+
+și
+
+\[
+d_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment B – pistoane egale</h3>
+
+Alege:
+
+<div class="formula">
+
+\[
+S_1=S_2
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+F_1=F_2
+\]
+
+și
+
+\[
+d_1=d_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment C – piston mare</h3>
+
+Alege:
+
+<div class="formula">
+
+\[
+S_2=20S_1
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+F_2=20F_1
+\]
+
+</div>
+
+și:
+
+<div class="formula">
+
+\[
+d_2=\frac{d_1}{20}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment D – inversează pistoanele</h3>
+
+<p>
+Fă pistonul de intrare mai mare decât pistonul de ieșire.
+</p>
+
+<p>
+Mai există multiplicare a forței?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment E – schimbă numai \(F_1\)</h3>
+
+<p>
+Ariile rămân constante.
+</p>
+
+<p>
+Observă că:
+</p>
+
+<div class="formula">
+
+\[
+F_2\sim F_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment F – verifică energia</h3>
+
+<p>
+Compară:
+</p>
+
+<div class="formula">
+
+\[
+F_1d_1
+\]
+
+cu:
+
+\[
+F_2d_2
+\]
+
+</div>
+
+<p>
+În modelul ideal trebuie să coincidă.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRESIUNE VS FORTA
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Presiunea nu este forța</h2>
+
+<div style="overflow-x:auto">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Mărime</th>
+<th>Relație</th>
+<th>Unitate SI</th>
+<th>Semnificație</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>Forță</td>
+<td>\(F\)</td>
+<td>N</td>
+<td>mărime vectorială care descrie o interacțiune</td>
+</tr>
+
+<tr>
+<td>Presiune</td>
+<td>\(p=F_\perp/S\)</td>
+<td>Pa</td>
+<td>forță normală raportată la suprafață</td>
+</tr>
+
+<tr>
+<td>Forță de presiune</td>
+<td>\(F=pS\)</td>
+<td>N</td>
+<td>forța rezultată pe o suprafață la presiune uniformă</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="red-box">
+
+Într-o presă hidraulică ideală
+nu spunem că „forța se transmite egal”.
+
+Se transmite egal
+<strong>variația de presiune</strong>.
+
+Forțele pot fi diferite deoarece ariile pistoanelor sunt diferite.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITM
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Algoritm pentru probleme cu presa hidraulică</h2>
+
+<ol class="steps">
+
+
+<li>
+
+<strong>
+Notează ariile pistoanelor.
+</strong>
+
+<div class="formula">
+
+\[
+S_1,\quad S_2
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Identifică forța cunoscută.
+</strong>
+
+<p>
+De exemplu \(F_1\).
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Aplică legea lui Pascal.
+</strong>
+
+<div class="formula">
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Determină necunoscuta.
+</strong>
+
+<div class="formula">
+
+\[
+F_2=
+F_1
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Dacă sunt implicate deplasări,
+folosește conservarea volumului.
+</strong>
+
+<div class="formula">
+
+\[
+S_1d_1=
+S_2d_2
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Verifică sensul rezultatului.
+</strong>
+
+<p>
+Dacă \(S_2>S_1\),
+forța de ieșire trebuie să fie mai mare,
+iar deplasarea pistonului 2 mai mică.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     GRESELI
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. „Se transmit forțe egale.”</h3>
+
+<p>
+Nu.
+</p>
+
+<p>
+Se transmite aceeași
+<strong>variație de presiune</strong>.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. „Presa multiplică energia.”</h3>
+
+<p>
+Nu.
+În modelul ideal:
+</p>
+
+<div class="formula">
+
+\[
+F_1d_1=
+F_2d_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. Inversarea raportului ariilor</h3>
+
+Relația corectă este:
+
+<div class="formula">
+
+\[
+\frac{F_2}{F_1}
+=
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. Ignorarea deplasărilor</h3>
+
+<p>
+O forță mai mare nu vine gratuit.
+</p>
+
+<div class="formula">
+
+\[
+\frac{d_1}{d_2}
+=
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. Confuzia între diametru și arie</h3>
+
+<p>
+Pentru un piston circular:
+</p>
+
+<div class="formula">
+
+\[
+S=
+\pi r^2
+=
+\frac{\pi D^2}{4}
+\]
+
+</div>
+
+<p>
+Dublarea diametrului înseamnă
+cvadruplarea ariei.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. Conversia inutilă a ariilor în raport</h3>
+
+<p>
+Dacă avem doar:
+</p>
+
+<div class="formula">
+
+\[
+\frac{S_2}{S_1}
+\]
+
+</div>
+
+și ambele arii sunt exprimate în aceeași unitate,
+raportul poate fi calculat direct.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. Ignorarea diferenței de nivel</h3>
+
+<p>
+În sisteme cu diferențe mari de înălțime
+poate interveni și:
+</p>
+
+<div class="formula">
+
+\[
+\rho gh
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. „Lichidele sunt perfect incompresibile.”</h3>
+
+<p>
+Aceasta este o idealizare foarte bună pentru multe aplicații,
+nu o proprietate absolută.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUZA-EFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic</h2>
+
+<ol>
+
+<li>
+De ce într-o presă hidraulică forța poate crește
+fără ca presiunea suplimentară să crească?
+</li>
+
+<li>
+Dacă aria pistonului mare este de 50 de ori mai mare,
+de câte ori poate fi mai mare forța ideală de ieșire?
+</li>
+
+<li>
+În situația precedentă,
+cum se compară deplasarea pistonului mare
+cu deplasarea pistonului mic?
+</li>
+
+<li>
+De ce prezența aerului într-un sistem hidraulic
+modifică răspunsul sistemului?
+</li>
+
+<li>
+De ce două pistoane cu arii egale nu produc multiplicarea forței?
+</li>
+
+<li>
+Cum poate un cric ridica un automobil
+fără să încalce conservarea energiei?
+</li>
+
+<li>
+Dacă dublăm simultan ambele arii,
+dar păstrăm același raport \(S_2/S_1\),
+se schimbă avantajul mecanic ideal?
+</li>
+
+<li>
+Dacă aceeași presiune acționează pe două suprafețe,
+care dintre ele este supusă unei forțe mai mari?
+</li>
+
+<li>
+De ce legea lui Pascal se formulează mai riguros
+în termenii unei variații de presiune?
+</li>
+
+<li>
+Cum coexistă legea lui Pascal cu relația hidrostatică
+\(p=p_0+\rho gh\)?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card quiz">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>1.</strong>
+Legea lui Pascal se referă la transmiterea:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+aceleiași forțe în orice situație
+</button>
+
+<button class="answer-btn">
+unei variații de presiune într-un fluid închis
+</button>
+
+<button class="answer-btn">
+aceleiași viteze în întregul lichid
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>2.</strong>
+Relația fundamentală pentru presa hidraulică ideală este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F_1S_1=F_2S_2\)
+</button>
+
+<button class="answer-btn">
+\(F_1/F_2=S_2/S_1\)
+</button>
+
+<button class="answer-btn">
+\(F_1/S_1=F_2/S_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>3.</strong>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+S_2=10S_1
+\]
+
+</div>
+
+în sistemul ideal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F_2=10F_1\)
+</button>
+
+<button class="answer-btn">
+\(F_2=F_1/10\)
+</button>
+
+<button class="answer-btn">
+\(F_2=F_1\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>4.</strong>
+Pentru un lichid incompresibil:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(S_1/d_1=S_2/d_2\)
+</button>
+
+<button class="answer-btn">
+\(S_1d_1=S_2d_2\)
+</button>
+
+<button class="answer-btn">
+\(S_1S_2=d_1d_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>5.</strong>
+Dacă forța este multiplicată de 20 de ori,
+în sistemul ideal deplasarea de ieșire este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+de 20 de ori mai mare
+</button>
+
+<button class="answer-btn">
+aceeași
+</button>
+
+<button class="answer-btn">
+de 20 de ori mai mică
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>6.</strong>
+În presa hidraulică ideală:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F_1d_1=F_2d_2\)
+</button>
+
+<button class="answer-btn">
+\(F_1=F_2\) în orice situație
+</button>
+
+<button class="answer-btn">
+energia de ieșire este mai mare decât energia de intrare
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă două pistoane au aceeași arie,
+atunci ideal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F_2=2F_1\)
+</button>
+
+<button class="answer-btn">
+\(F_2=F_1\)
+</button>
+
+<button class="answer-btn">
+\(F_2=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>8.</strong>
+De ce aerul nedorit într-o instalație hidraulică poate modifica funcționarea?
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+deoarece aerul nu are presiune
+</button>
+
+<button class="answer-btn">
+deoarece aerul are densitate infinită
+</button>
+
+<button class="answer-btn">
+deoarece aerul este mult mai compresibil decât lichidul
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>9.</strong>
+Aceeași presiune acționând pe o suprafață mai mare produce:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+o forță mai mare
+</button>
+
+<button class="answer-btn">
+o forță mai mică în orice caz
+</button>
+
+<button class="answer-btn">
+presiune zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>10.</strong>
+Care aplicație utilizează direct principiul lui Pascal?
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+pendulul gravitațional
+</button>
+
+<button class="answer-btn">
+presa hidraulică
+</button>
+
+<button class="answer-btn">
+lentila convergentă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="quiz-score" id="quizScore">
+Scor: 0 / 10
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SINTEZA
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Legea lui Pascal</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\Delta p_1=
+\Delta p_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Presiunea</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+p=
+\frac{F}{S}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Presa hidraulică</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Multiplicarea forței</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{F_2}{F_1}
+=
+\frac{S_2}{S_1}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Conservarea volumului</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+S_1d_1=
+S_2d_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Lucru mecanic ideal</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+F_1d_1=
+F_2d_2
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+sistemul hidraulic nu creează o presiune mai mare
+la pistonul mare.
+
+El transmite variația de presiune,
+iar suprafața mai mare transformă aceeași presiune
+într-o forță mai mare:
+
+\[
+\boxed{
+F=pS
+}
+\]
+
+Câștigul de forță este compensat de o deplasare mai mică.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LEGATURA URMATOARE
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Până acum am analizat forțele produse de presiune
+asupra suprafețelor.
+</p>
+
+<p>
+Dar asupra unui corp introdus într-un lichid,
+presiunea este mai mare în partea inferioară
+decât în partea superioară.
+</p>
+
+<div class="blue-box">
+
+Ce rezultantă produc aceste forțe de presiune?
+
+De ce unele corpuri plutesc,
+iar altele se scufundă?
+
+</div>
+
+<p>
+Răspunsul este dat de
+<strong>legea lui Arhimede</strong>,
+subiectul lecției 54.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+<a
+  class="nav-link"
+  href="lectia-52-presiunea-presiunea-hidrostatica-presiunea-atmosferica.html">
+
+← Lecția 52<br>
+Presiunea. Presiunea hidrostatică. Presiunea atmosferică
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="lectia-54-legea-lui-arhimede.html">
+
+Lecția 54<br>
+Legea lui Arhimede →
+
+</a>
+
+</nav>
+
+</main>
+
+
+<footer>
+Fizică – Clasa a IX-a • Noțiuni de mecanica fluidelor
+</footer>
+
+
+<script>
+
+/* =========================================================
+   ELEMENTE SIMULATOR
+========================================================= */
+
+const force1Input =
+  document.getElementById(
+    "force1Input"
+  );
+
+const area1Input =
+  document.getElementById(
+    "area1Input"
+  );
+
+const area2Input =
+  document.getElementById(
+    "area2Input"
+  );
+
+const distance1Input =
+  document.getElementById(
+    "distance1Input"
+  );
+
+
+const pressureValue =
+  document.getElementById(
+    "pressureValue"
+  );
+
+const force2Value =
+  document.getElementById(
+    "force2Value"
+  );
+
+const ratioValue =
+  document.getElementById(
+    "ratioValue"
+  );
+
+const distance2Value =
+  document.getElementById(
+    "distance2Value"
+  );
+
+const volumeValue =
+  document.getElementById(
+    "volumeValue"
+  );
+
+const work1Value =
+  document.getElementById(
+    "work1Value"
+  );
+
+const work2Value =
+  document.getElementById(
+    "work2Value"
+  );
+
+const distanceRatioValue =
+  document.getElementById(
+    "distanceRatioValue"
+  );
+
+const statusBox =
+  document.getElementById(
+    "statusBox"
+  );
+
+
+const canvas =
+  document.getElementById(
+    "hydraulicCanvas"
+  );
+
+const ctx =
+  canvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   UTILITĂȚI
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits = 2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+function formatPressure(
+  value
+){
+
+  if(
+    value >=
+    1e6
+  ){
+
+    return `${formatRo(
+      value / 1e6,
+      3
+    )} MPa`;
+
+  }
+
+  if(
+    value >=
+    1000
+  ){
+
+    return `${formatRo(
+      value / 1000,
+      2
+    )} kPa`;
+
+  }
+
+  return `${formatRo(
+    value,
+    1
+  )} Pa`;
+
+}
+
+
+function formatForce(
+  value
+){
+
+  if(
+    value >=
+    1000000
+  ){
+
+    return `${formatRo(
+      value / 1000000,
+      2
+    )} MN`;
+
+  }
+
+  if(
+    value >=
+    1000
+  ){
+
+    return `${formatRo(
+      value / 1000,
+      2
+    )} kN`;
+
+  }
+
+  return `${formatRo(
+    value,
+    1
+  )} N`;
+
+}
+
+
+function formatWork(
+  value
+){
+
+  if(
+    value >=
+    1000
+  ){
+
+    return `${formatRo(
+      value / 1000,
+      2
+    )} kJ`;
+
+  }
+
+  return `${formatRo(
+    value,
+    2
+  )} J`;
+
+}
+
+
+/* =========================================================
+   CITIRE
+========================================================= */
+
+function readValues(){
+
+  let F1 =
+    Number(
+      force1Input.value
+    );
+
+  let S1cm =
+    Number(
+      area1Input.value
+    );
+
+  let S2cm =
+    Number(
+      area2Input.value
+    );
+
+  let d1cm =
+    Number(
+      distance1Input.value
+    );
+
+
+  if(
+    !Number.isFinite(F1)
+  ){
+    F1 = 200;
+  }
+
+  if(
+    !Number.isFinite(S1cm)
+  ){
+    S1cm = 10;
+  }
+
+  if(
+    !Number.isFinite(S2cm)
+  ){
+    S2cm = 200;
+  }
+
+  if(
+    !Number.isFinite(d1cm)
+  ){
+    d1cm = 30;
+  }
+
+
+  F1 =
+    clamp(
+      F1,
+      0,
+      10000
+    );
+
+  S1cm =
+    clamp(
+      S1cm,
+      .1,
+      1000
+    );
+
+  S2cm =
+    clamp(
+      S2cm,
+      .1,
+      5000
+    );
+
+  d1cm =
+    clamp(
+      d1cm,
+      0,
+      200
+    );
+
+
+  force1Input.value =
+    F1;
+
+  area1Input.value =
+    S1cm;
+
+  area2Input.value =
+    S2cm;
+
+  distance1Input.value =
+    d1cm;
+
+
+  return{
+    F1,
+    S1cm,
+    S2cm,
+    d1cm
+  };
+
+}
+
+
+/* =========================================================
+   CALCUL
+========================================================= */
+
+function calculateHydraulic(){
+
+  const data =
+    readValues();
+
+
+  /*
+  Conversii:
+  1 cm² = 10^-4 m²
+  1 cm  = 10^-2 m
+  */
+
+  const S1 =
+    data.S1cm *
+    1e-4;
+
+  const S2 =
+    data.S2cm *
+    1e-4;
+
+  const d1 =
+    data.d1cm /
+    100;
+
+
+  const pressure =
+    data.F1 /
+    S1;
+
+
+  const F2 =
+    pressure *
+    S2;
+
+
+  const ratio =
+    S2 /
+    S1;
+
+
+  const d2 =
+    d1 *
+    S1 /
+    S2;
+
+
+  const volume =
+    S1 *
+    d1;
+
+
+  const work1 =
+    data.F1 *
+    d1;
+
+
+  const work2 =
+    F2 *
+    d2;
+
+
+  const distanceRatio =
+    d2 > 0
+      ? d1 / d2
+      : ratio;
+
+
+  const result = {
+
+    ...data,
+
+    S1,
+    S2,
+    d1,
+    d2,
+    pressure,
+    F2,
+    ratio,
+    volume,
+    work1,
+    work2,
+    distanceRatio
+
+  };
+
+
+  updateResults(
+    result
+  );
+
+
+  drawHydraulic(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+function updateResults(
+  r
+){
+
+  pressureValue.textContent =
+    formatPressure(
+      r.pressure
+    );
+
+
+  force2Value.textContent =
+    formatForce(
+      r.F2
+    );
+
+
+  ratioValue.textContent =
+    `${formatRo(
+      r.ratio,
+      2
+    )} ×`;
+
+
+  distance2Value.textContent =
+    `${formatRo(
+      r.d2 * 100,
+      3
+    )} cm`;
+
+
+  volumeValue.textContent =
+    `${formatRo(
+      r.volume *
+      1e6,
+      2
+    )} cm³`;
+
+
+  work1Value.textContent =
+    formatWork(
+      r.work1
+    );
+
+
+  work2Value.textContent =
+    formatWork(
+      r.work2
+    );
+
+
+  distanceRatioValue.textContent =
+    `${formatRo(
+      r.distanceRatio,
+      2
+    )} ×`;
+
+
+  if(
+    Math.abs(
+      r.ratio -
+      1
+    ) <
+    .001
+  ){
+
+    statusBox.innerHTML =
+      `Pistoanele au aceeași arie.
+       <strong>Nu există multiplicare a forței:</strong>
+       \(F_2=F_1\), iar deplasările sunt egale.`;
+
+    return;
+
+  }
+
+
+  if(
+    r.ratio >
+    1
+  ){
+
+    statusBox.innerHTML =
+      `Pistonul 2 are aria de
+       <strong>${formatRo(r.ratio,2)} ori mai mare</strong>.
+       În modelul ideal, forța este multiplicată cu același factor,
+       iar deplasarea pistonului 2 este de
+       ${formatRo(r.ratio,2)} ori mai mică.`;
+
+    return;
+
+  }
+
+
+  const inverse =
+    1 /
+    r.ratio;
+
+
+  statusBox.innerHTML =
+    `Pistonul de ieșire este mai mic.
+     Forța de ieșire este
+     <strong>${formatRo(inverse,2)} ori mai mică</strong>,
+     dar deplasarea sa este mai mare.
+     Sistemul funcționează acum în sensul unui câștig de deplasare,
+     nu de forță.`;
+
+}
+
+
+/* =========================================================
+   SĂGEATĂ
+========================================================= */
+
+function drawArrow(
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width = 4
+){
+
+  const angle =
+    Math.atan2(
+      y2 - y1,
+      x2 - x1
+    );
+
+
+  const head =
+    12;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    y1
+  );
+
+  ctx.lineTo(
+    x2,
+    y2
+  );
+
+  ctx.strokeStyle =
+    color;
+
+  ctx.lineWidth =
+    width;
+
+  ctx.lineCap =
+    "round";
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x2,
+    y2
+  );
+
+  ctx.lineTo(
+    x2 -
+    head *
+    Math.cos(
+      angle -
+      Math.PI / 6
+    ),
+
+    y2 -
+    head *
+    Math.sin(
+      angle -
+      Math.PI / 6
+    )
+  );
+
+  ctx.lineTo(
+    x2 -
+    head *
+    Math.cos(
+      angle +
+      Math.PI / 6
+    ),
+
+    y2 -
+    head *
+    Math.sin(
+      angle +
+      Math.PI / 6
+    )
+  );
+
+  ctx.closePath();
+
+  ctx.fillStyle =
+    color;
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+function drawHydraulic(
+  r
+){
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const W =
+    rect.width;
+
+  const H =
+    rect.height;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /*
+  Fundal
+  */
+
+  const bg =
+    ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      H
+    );
+
+  bg.addColorStop(
+    0,
+    "#f8fbff"
+  );
+
+  bg.addColorStop(
+    1,
+    "#e0f2fe"
+  );
+
+  ctx.fillStyle =
+    bg;
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /*
+  Dimensiuni vizuale ale pistoanelor.
+  Folosim rădăcina ariei,
+  deoarece diametrul ~ sqrt(S).
+  */
+
+  const maxArea =
+    Math.max(
+      r.S1cm,
+      r.S2cm
+    );
+
+
+  const widthScale =
+    Math.sqrt(
+      maxArea
+    );
+
+
+  const piston1Width =
+    55 +
+    105 *
+    Math.sqrt(
+      r.S1cm
+    ) /
+    widthScale;
+
+
+  const piston2Width =
+    55 +
+    105 *
+    Math.sqrt(
+      r.S2cm
+    ) /
+    widthScale;
+
+
+  const leftX =
+    W * .24;
+
+
+  const rightX =
+    W * .72;
+
+
+  const baseY =
+    H * .75;
+
+
+  const liquidTop =
+    H * .43;
+
+
+  const cylinderHeight =
+    baseY -
+    liquidTop;
+
+
+  /*
+  Conductă
+  */
+
+  ctx.fillStyle =
+    "#38bdf8";
+
+
+  ctx.fillRect(
+    leftX,
+    baseY - 33,
+    rightX - leftX,
+    32
+  );
+
+
+  ctx.strokeStyle =
+    "#475569";
+
+  ctx.lineWidth =
+    5;
+
+
+  ctx.strokeRect(
+    leftX,
+    baseY - 33,
+    rightX - leftX,
+    32
+  );
+
+
+  /*
+  Cilindrul 1
+  */
+
+  const x1 =
+    leftX -
+    piston1Width / 2;
+
+
+  ctx.fillStyle =
+    "rgba(56,189,248,.48)";
+
+
+  ctx.fillRect(
+    x1,
+    liquidTop,
+    piston1Width,
+    cylinderHeight
+  );
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    liquidTop - 5
+  );
+
+  ctx.lineTo(
+    x1,
+    baseY
+  );
+
+  ctx.lineTo(
+    x1 +
+    piston1Width,
+    baseY
+  );
+
+  ctx.lineTo(
+    x1 +
+    piston1Width,
+    liquidTop - 5
+  );
+
+  ctx.strokeStyle =
+    "#475569";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.stroke();
+
+
+  /*
+  Cilindrul 2
+  */
+
+  const x2 =
+    rightX -
+    piston2Width / 2;
+
+
+  ctx.fillStyle =
+    "rgba(56,189,248,.48)";
+
+
+  ctx.fillRect(
+    x2,
+    liquidTop,
+    piston2Width,
+    cylinderHeight
+  );
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x2,
+    liquidTop - 5
+  );
+
+  ctx.lineTo(
+    x2,
+    baseY
+  );
+
+  ctx.lineTo(
+    x2 +
+    piston2Width,
+    baseY
+  );
+
+  ctx.lineTo(
+    x2 +
+    piston2Width,
+    liquidTop - 5
+  );
+
+  ctx.strokeStyle =
+    "#475569";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.stroke();
+
+
+  /*
+  Pistoane
+  */
+
+  ctx.fillStyle =
+    "#64748b";
+
+
+  ctx.fillRect(
+    x1 - 4,
+    liquidTop - 12,
+    piston1Width + 8,
+    18
+  );
+
+
+  ctx.fillRect(
+    x2 - 4,
+    liquidTop - 12,
+    piston2Width + 8,
+    18
+  );
+
+
+  /*
+  Tije
+  */
+
+  ctx.fillStyle =
+    "#334155";
+
+
+  ctx.fillRect(
+    leftX - 6,
+    liquidTop - 78,
+    12,
+    66
+  );
+
+
+  ctx.fillRect(
+    rightX - 7,
+    liquidTop - 70,
+    14,
+    58
+  );
+
+
+  /*
+  Sarcină
+  */
+
+  const loadWidth =
+    Math.min(
+      140,
+      piston2Width *
+      .9
+    );
+
+
+  ctx.fillStyle =
+    "#f97316";
+
+
+  ctx.fillRect(
+    rightX -
+    loadWidth / 2,
+    liquidTop - 120,
+    loadWidth,
+    50
+  );
+
+
+  ctx.fillStyle =
+    "white";
+
+
+  ctx.font =
+    "bold 13px system-ui";
+
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.fillText(
+    "SARCINĂ",
+    rightX,
+    liquidTop - 89
+  );
+
+
+  /*
+  Forța de intrare
+  */
+
+  drawArrow(
+    leftX,
+    liquidTop - 138,
+    leftX,
+    liquidTop - 82,
+    "#2563eb",
+    5
+  );
+
+
+  ctx.fillStyle =
+    "#1d4ed8";
+
+
+  ctx.font =
+    "bold 14px system-ui";
+
+
+  ctx.fillText(
+    `F₁ = ${formatForce(r.F1)}`,
+    leftX,
+    liquidTop - 151
+  );
+
+
+  /*
+  Forța de ieșire
+  */
+
+  drawArrow(
+    rightX,
+    liquidTop - 70,
+    rightX,
+    liquidTop - 135,
+    "#16a34a",
+    5
+  );
+
+
+  ctx.fillStyle =
+    "#166534";
+
+
+  ctx.fillText(
+    `F₂ = ${formatForce(r.F2)}`,
+    rightX,
+    liquidTop - 151
+  );
+
+
+  /*
+  Săgeți presiune în lichid
+  */
+
+  const centerY =
+    baseY -
+    18;
+
+
+  const pressureArrow =
+    Math.min(
+      48,
+      22 +
+      r.pressure /
+      100000
+    );
+
+
+  drawArrow(
+    W * .47,
+    centerY,
+    W * .47 -
+    pressureArrow,
+    centerY,
+    "#dc2626",
+    3
+  );
+
+
+  drawArrow(
+    W * .49,
+    centerY,
+    W * .49 +
+    pressureArrow,
+    centerY,
+    "#dc2626",
+    3
+  );
+
+
+  ctx.fillStyle =
+    "#991b1b";
+
+
+  ctx.font =
+    "bold 13px system-ui";
+
+
+  ctx.fillText(
+    `Δp = ${formatPressure(r.pressure)}`,
+    W * .48,
+    centerY - 20
+  );
+
+
+  /*
+  Etichete arii
+  */
+
+  ctx.fillStyle =
+    "#334155";
+
+
+  ctx.font =
+    "bold 13px system-ui";
+
+
+  ctx.fillText(
+    `S₁ = ${formatRo(r.S1cm,1)} cm²`,
+    leftX,
+    baseY + 35
+  );
+
+
+  ctx.fillText(
+    `S₂ = ${formatRo(r.S2cm,1)} cm²`,
+    rightX,
+    baseY + 35
+  );
+
+
+  /*
+  Relație
+  */
+
+  ctx.textAlign =
+    "left";
+
+
+  ctx.fillStyle =
+    "#0f172a";
+
+
+  ctx.font =
+    "bold 15px system-ui";
+
+
+  ctx.fillText(
+    "Legea lui Pascal:",
+    18,
+    28
+  );
+
+
+  ctx.font =
+    "14px system-ui";
+
+
+  ctx.fillText(
+    "F₁ / S₁ = F₂ / S₂",
+    18,
+    53
+  );
+
+
+  ctx.fillText(
+    "Conservarea volumului:",
+    18,
+    81
+  );
+
+
+  ctx.fillText(
+    "S₁ d₁ = S₂ d₂",
+    18,
+    105
+  );
+
+
+  /*
+  Deplasări
+  */
+
+  ctx.fillStyle =
+    "#7c3aed";
+
+
+  ctx.font =
+    "bold 13px system-ui";
+
+
+  ctx.fillText(
+    `d₁ = ${formatRo(r.d1 * 100,1)} cm`,
+    18,
+    H - 42
+  );
+
+
+  ctx.fillText(
+    `d₂ = ${formatRo(r.d2 * 100,3)} cm`,
+    18,
+    H - 20
+  );
+
+
+  ctx.textAlign =
+    "start";
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const dpr =
+    window.devicePixelRatio ||
+    1;
+
+
+  canvas.width =
+    Math.round(
+      rect.width *
+      dpr
+    );
+
+
+  canvas.height =
+    Math.round(
+      rect.height *
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  calculateHydraulic();
+
+}
+
+
+/* =========================================================
+   PRESETURI
+========================================================= */
+
+document.getElementById(
+  "calculateBtn"
+).addEventListener(
+  "click",
+  calculateHydraulic
+);
+
+
+document.getElementById(
+  "jackPresetBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    force1Input.value =
+      250;
+
+    area1Input.value =
+      5;
+
+    area2Input.value =
+      150;
+
+    distance1Input.value =
+      30;
+
+    calculateHydraulic();
+
+  }
+);
+
+
+document.getElementById(
+  "equalPresetBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    force1Input.value =
+      200;
+
+    area1Input.value =
+      50;
+
+    area2Input.value =
+      50;
+
+    distance1Input.value =
+      20;
+
+    calculateHydraulic();
+
+  }
+);
+
+
+document.getElementById(
+  "reversePresetBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    force1Input.value =
+      500;
+
+    area1Input.value =
+      200;
+
+    area2Input.value =
+      20;
+
+    distance1Input.value =
+      10;
+
+    calculateHydraulic();
+
+  }
+);
+
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    force1Input.value =
+      200;
+
+    area1Input.value =
+      10;
+
+    area2Input.value =
+      200;
+
+    distance1Input.value =
+      30;
+
+    calculateHydraulic();
+
+  }
+);
+
+
+/* =========================================================
+   LIVE UPDATE
+========================================================= */
+
+[
+  force1Input,
+  area1Input,
+  area2Input,
+  distance1Input
+].forEach(
+  element => {
+
+    element.addEventListener(
+      "input",
+      calculateHydraulic
+    );
+
+    element.addEventListener(
+      "change",
+      calculateHydraulic
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions =
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score =
+  0;
+
+let answered =
+  0;
+
+
+questions.forEach(
+  question => {
+
+    const correctIndex =
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons =
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback =
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      ) => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            if(
+              question.dataset.answered
+              ===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered =
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              btn => {
+
+                btn.disabled =
+                  true;
+
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index ===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent =
+                "✓ Corect.";
+
+
+              feedback.style.color =
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent =
+                "✗ Revizuiește transmiterea presiunii și relațiile presei hidraulice.";
+
+
+              feedback.style.color =
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox =
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent =
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered ===
+              questions.length
+            ){
+
+              if(
+                score ===
+                questions.length
+              ){
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Excelent! Ai înțeles legea lui Pascal și presa hidraulică.`;
+
+              }
+
+              else if(
+                score >=
+                7
+              ){
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește itemii greșiți.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Recapitulează relațiile p=F/S, F₁/S₁=F₂/S₂ și S₁d₁=S₂d₂.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZARE
+========================================================= */
+
+window.addEventListener(
+  "load",
+  resizeCanvas
+);
+
+</script>
+
+</body>
+</html>
