@@ -1,1 +1,8194 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+3. Transferul maxim de putere | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Transferul maxim de putere într-un circuit electric: dependența puterii utile de rezistența receptorului, condiția R=r, puterea maximă, randamentul la transfer maxim, aplicații și simulator interactiv.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.20),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROPERTY CARDS
+========================================================= */
+
+.property-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.property-low{
+  border-color:#ea580c;
+}
+
+.property-match{
+  border-color:#16a34a;
+}
+
+.property-high{
+  border-color:#7c3aed;
+}
+
+.property-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:58px;
+  height:58px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+.property-low .property-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+.property-match .property-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+.property-high .property-icon{
+
+  color:#6d28d9;
+  background:#ede9fe;
+
+}
+
+
+/* =========================================================
+   DERIVATION
+========================================================= */
+
+.derivation{
+
+  margin:22px 0;
+
+  padding:22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:15px;
+
+}
+
+.derivation-step{
+
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #cbd5e1;
+
+}
+
+.derivation-step:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    .92fr 1.08fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#circuitCanvas,
+#graphCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:620px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.status-warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+.status-danger{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   POWER BARS
+========================================================= */
+
+.power-bars{
+
+  display:grid;
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+.power-bar-row{
+
+  display:grid;
+
+  grid-template-columns:
+    130px 1fr 105px;
+
+  gap:10px;
+
+  align-items:center;
+
+}
+
+.power-track{
+
+  height:21px;
+
+  overflow:hidden;
+
+  background:#e2e8f0;
+
+  border-radius:999px;
+
+}
+
+.power-fill{
+
+  height:100%;
+
+  border-radius:999px;
+
+}
+
+
+/* =========================================================
+   MISCONCEPTIONS
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  .power-bar-row{
+    grid-template-columns:1fr;
+  }
+
+  #circuitCanvas,
+  #graphCanvas{
+    height:540px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Energia, puterea și efectele curentului electric
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 3
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Transfer de putere
+</span>
+
+</div>
+
+
+<h1>
+Transferul maxim de putere
+</h1>
+
+
+<p class="subtitle">
+Puterea primită de un receptor nu crește continuu
+nici când îi micșorăm rezistența,
+nici când o mărim.
+Pentru un generator real există o valoare specială a rezistenței exterioare
+pentru care puterea transferată receptorului este maximă.
+O vom determina și interpreta fizic.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să scrii puterea utilă în funcție de \(R\);</li>
+
+<li>să explici de ce \(P_u(R)\) are un maxim;</li>
+
+<li>să demonstrezi condiția transferului maxim de putere;</li>
+
+<li>să utilizezi condiția \(R=r\);</li>
+
+<li>să calculezi puterea utilă maximă;</li>
+
+<li>să calculezi curentul și tensiunea la transfer maxim;</li>
+
+<li>să determini randamentul în acest regim;</li>
+
+<li>să diferențiezi puterea maximă de randamentul maxim;</li>
+
+<li>să interpretezi grafic dependența \(P_u(R)\).</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezultatul central</h3>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R=r
+}
+\]
+
+</div>
+
+<p>
+la transfer maxim de putere.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+P_{u,max}
+=
+\frac{\mathcal E^2}{4r}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=50\%
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECALL
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 De unde pornim?</h2>
+
+<p>
+Pentru generatorul real:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+<p>
+Puterea transferată rezistenței exterioare este:
+</p>
+
+<div class="formula">
+
+\[
+P_u=
+I^2R
+\]
+
+</div>
+
+<p>
+Înlocuind curentul:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P_u(R)=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+În această lecție,
+\(\mathcal E\) și \(r\) sunt considerate constante.
+
+Variabila este:
+
+\[
+R
+\]
+
+adică rezistența receptorului conectat la sursă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     QUESTION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Situația-problemă</h2>
+
+<p class="lead">
+Ce trebuie să facem pentru ca receptorul să primească cea mai mare putere?
+</p>
+
+
+<div class="grid-3">
+
+
+<div class="property-card property-low">
+
+<div class="property-icon">
+\(R\ll r\)
+</div>
+
+<h3>Rezistență foarte mică</h3>
+
+<p>
+Curentul este mare,
+dar:
+</p>
+
+<div class="formula">
+
+\[
+P_u=I^2R
+\]
+
+</div>
+
+<p>
+conține un \(R\) foarte mic.
+</p>
+
+</div>
+
+
+<div class="property-card property-match">
+
+<div class="property-icon">
+\(R=r\)
+</div>
+
+<h3>Valoare intermediară</h3>
+
+<p>
+Curentul nu este maxim,
+dar nici rezistența receptorului nu este prea mică.
+</p>
+
+<p>
+Aici apare echilibrul optim pentru putere.
+</p>
+
+</div>
+
+
+<div class="property-card property-high">
+
+<div class="property-icon">
+\(R\gg r\)
+</div>
+
+<h3>Rezistență foarte mare</h3>
+
+<p>
+Randamentul este mare,
+dar curentul devine foarte mic.
+</p>
+
+<div class="formula">
+
+\[
+I\rightarrow0
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LIMITS
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Ce se întâmplă la extreme?</h2>
+
+<h3>Când \(R=0\)</h3>
+
+<div class="formula">
+
+\[
+P_u=
+\frac{
+\mathcal E^2\cdot0
+}{
+r^2
+}
+=
+0
+\]
+
+</div>
+
+
+<h3>Când \(R\rightarrow\infty\)</h3>
+
+<p>
+Putem scrie:
+</p>
+
+<div class="formula">
+
+\[
+P_u=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\]
+
+</div>
+
+<p>
+iar pentru \(R\) foarte mare,
+numitorul crește aproximativ ca \(R^2\),
+în timp ce numărătorul crește numai ca \(R\).
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+P_u\rightarrow0
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Puterea utilă este nulă la ambele extreme:
+
+\[
+R=0
+\]
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+R\rightarrow\infty
+\]
+
+</div>
+
+Prin urmare,
+între cele două extreme trebuie să existe o zonă
+în care puterea devine mai mare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGEBRAIC PROOF
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Demonstrarea condiției de maxim – fără derivate</h2>
+
+<p>
+Pornim de la o proprietate simplă:
+</p>
+
+<div class="formula">
+
+\[
+(R-r)^2\ge0
+\]
+
+</div>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>1. Dezvoltăm pătratul</strong>
+
+<div class="formula">
+
+\[
+R^2-2Rr+r^2\ge0
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>2. Adunăm \(4Rr\)</strong>
+
+<div class="formula">
+
+\[
+R^2+2Rr+r^2
+\ge
+4Rr
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>3. Recunoaștem un pătrat perfect</strong>
+
+<div class="formula">
+
+\[
+\boxed{
+(R+r)^2
+\ge
+4Rr
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>4. Împărțim la cantități pozitive</strong>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+R>0,
+\qquad
+r>0
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula">
+
+\[
+\frac{R}{(R+r)^2}
+\le
+\frac1{4r}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>5. Înmulțim cu \(\mathcal E^2\)</strong>
+
+<div class="formula">
+
+\[
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\le
+\frac{
+\mathcal E^2
+}{
+4r
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>6. Identificăm puterea utilă</strong>
+
+<div class="formula">
+
+\[
+\boxed{
+P_u
+\le
+\frac{
+\mathcal E^2
+}{
+4r
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<p>
+Egalitatea apare numai când:
+</p>
+
+<div class="formula">
+
+\[
+(R-r)^2=0
+\]
+
+</div>
+
+adică:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R=r
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Condiția transferului maxim de putere:</strong>
+
+pentru un generator real cu t.e.m. și rezistență internă constante,
+puterea transferată unui receptor rezistiv este maximă atunci când:
+
+\[
+\boxed{
+R=r
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MAX POWER
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Puterea utilă maximă</h2>
+
+<p>
+În formula:
+</p>
+
+<div class="formula">
+
+\[
+P_u=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\]
+
+</div>
+
+<p>
+punem:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+
+<div class="formula">
+
+\[
+P_{u,max}
+=
+\frac{
+\mathcal E^2r
+}{
+(r+r)^2
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+P_{u,max}
+=
+\frac{
+\mathcal E^2r
+}{
+4r^2
+}
+\]
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P_{u,max}
+=
+\frac{
+\mathcal E^2
+}{
+4r
+}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CURRENT AT MAX
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Curentul la transfer maxim</h2>
+
+<p>
+Curentul general este:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{
+\mathcal E
+}{
+R+r
+}
+\]
+
+</div>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+obținem:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_{maxP}
+=
+\frac{
+\mathcal E
+}{
+2r
+}
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Indicele „maxP” înseamnă
+<strong>curentul în regimul de putere utilă maximă</strong>.
+
+Nu înseamnă curent maxim al sursei.
+
+Curentul maxim al modelului apare la scurtcircuit:
+
+\[
+I_{sc}
+=
+\frac{\mathcal E}{r}
+\]
+
+Prin urmare:
+
+\[
+\boxed{
+I_{maxP}
+=
+\frac{I_{sc}}{2}
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTAGE AT MAX
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Tensiunea la borne în regimul optim</h2>
+
+<p>
+Tensiunea pe receptor este:
+</p>
+
+<div class="formula">
+
+\[
+U=IR
+\]
+
+</div>
+
+<p>
+La transfer maxim:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{2r},
+\qquad
+R=r
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\frac{\mathcal E}{2r}
+\cdot r
+\]
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U=
+\frac{\mathcal E}{2}
+}
+\]
+
+</div>
+
+
+<p>
+Căderea internă este:
+</p>
+
+<div class="formula">
+
+\[
+u=Ir
+=
+\frac{\mathcal E}{2}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+La transfer maxim de putere:
+
+\[
+\boxed{
+U=u=\frac{\mathcal E}{2}
+}
+\]
+
+Tensiunea electromotoare se „împarte” egal,
+în sensul bilanțului de tensiune,
+între rezistența exterioară și rezistența internă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POWER BALANCE MAX
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Bilanțul puterilor la \(R=r\)</h2>
+
+<p>
+Puterea utilă este:
+</p>
+
+<div class="formula">
+
+\[
+P_u=
+I^2R
+\]
+
+</div>
+
+<p>
+Puterea disipată intern:
+</p>
+
+<div class="formula">
+
+\[
+P_i=
+I^2r
+\]
+
+</div>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P_u=P_i
+}
+\]
+
+</div>
+
+
+<p>
+Fiecare are valoarea:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+P_u=P_i=
+\frac{
+\mathcal E^2
+}{
+4r
+}
+}
+\]
+
+</div>
+
+
+<p>
+Puterea totală furnizată este:
+</p>
+
+<div class="formula">
+
+\[
+P_s=
+P_u+P_i
+\]
+
+</div>
+
+adică:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+P_s=
+\frac{
+\mathcal E^2
+}{
+2r
+}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EFFICIENCY AT MAX
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Randamentul la transfer maxim</h2>
+
+<p>
+Din lecția precedentă:
+</p>
+
+<div class="formula">
+
+\[
+\eta=
+\frac{R}{R+r}
+\]
+
+</div>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula">
+
+\[
+\eta=
+\frac r{r+r}
+=
+\frac12
+\]
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\eta=50\%
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Transferul maxim de putere
+<strong>nu coincide cu randamentul maxim</strong>.
+
+La punctul de putere maximă:
+
+\[
+50\%
+\]
+
+din puterea furnizată ajunge receptorului,
+iar:
+
+\[
+50\%
+\]
+
+se disipă în rezistența internă a modelului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POWER VS EFFICIENCY
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Putere maximă sau randament mare?</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Regim
+</th>
+
+<th>
+Curent
+</th>
+
+<th>
+Putere utilă
+</th>
+
+<th>
+Randament
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+
+\[
+R\ll r
+\]
+
+</td>
+
+<td>
+mare
+</td>
+
+<td>
+mică
+</td>
+
+<td>
+mic
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+
+\[
+R=r
+\]
+
+</td>
+
+<td>
+
+\[
+\frac{\mathcal E}{2r}
+\]
+
+</td>
+
+<td>
+<strong>maximă</strong>
+</td>
+
+<td>
+50%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+
+\[
+R\gg r
+\]
+
+</td>
+
+<td>
+mic
+</td>
+
+<td>
+tinde spre 0
+</td>
+
+<td>
+tinde spre 100%
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="purple-box">
+
+Cele două obiective sunt diferite:
+
+<strong>maximizarea puterii transferate</strong>
+și
+<strong>maximizarea randamentului</strong>.
+
+Un sistem proiectat pentru economie de energie
+nu este neapărat proiectat în punctul de transfer maxim de putere.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NORMALIZED FORM
+========================================================= -->
+
+<section class="card">
+
+<h2>10. O formă universală a problemei</h2>
+
+<p>
+Definim raportul:
+</p>
+
+<div class="formula">
+
+\[
+x=
+\frac Rr
+\]
+
+</div>
+
+<p>
+și raportăm puterea utilă la puterea maximă:
+</p>
+
+<div class="formula">
+
+\[
+\frac{P_u}{P_{u,max}}
+\]
+
+</div>
+
+
+<p>
+Din:
+</p>
+
+<div class="formula">
+
+\[
+P_u=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+P_{u,max}
+=
+\frac{
+\mathcal E^2
+}{
+4r
+}
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{P_u}{P_{u,max}}
+=
+\frac{4x}{(1+x)^2}
+}
+\]
+
+</div>
+
+
+<p>
+Randamentul devine:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\eta=
+\frac{x}{1+x}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Aceste relații nu mai conțin explicit
+nici \(\mathcal E\),
+nici \(r\).
+
+Forma curbei este aceeași
+pentru orice generator descris de model,
+dacă reprezentăm rezultatul în funcție de raportul:
+
+\[
+R/r
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NORMALIZED TABLE
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Cum evoluează puterea și randamentul?</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+
+\[
+R/r
+\]
+
+</th>
+
+<th>
+
+\[
+P_u/P_{u,max}
+\]
+
+</th>
+
+<th>
+
+\[
+\eta
+\]
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+0,25
+</td>
+
+<td>
+64%
+</td>
+
+<td>
+20%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+0,50
+</td>
+
+<td>
+88,9%
+</td>
+
+<td>
+33,3%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+1
+</td>
+
+<td>
+<strong>100%</strong>
+</td>
+
+<td>
+50%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+2
+</td>
+
+<td>
+88,9%
+</td>
+
+<td>
+66,7%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+4
+</td>
+
+<td>
+64%
+</td>
+
+<td>
+80%
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="cyan-box">
+
+Observă perechile:
+
+\[
+R/r=0,5
+\]
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+R/r=2
+\]
+
+</div>
+
+Ele dau aceeași fracție din puterea maximă,
+dar randamente diferite.
+
+Aceasta arată din nou că
+<strong>puterea și randamentul nu descriu același lucru</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EQUAL POWER PAIRS
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Extensie – două rezistențe pot primi aceeași putere</h2>
+
+<p>
+Pentru aceeași sursă,
+două rezistențe:
+</p>
+
+<div class="formula">
+
+\[
+R_1
+\quad\text{și}\quad
+R_2
+\]
+
+</div>
+
+<p>
+situate de o parte și de alta a valorii optime
+pot primi aceeași putere.
+</p>
+
+<p>
+Condiția este:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_1R_2=r^2
+}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+r=2\,\Omega
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+R_1=1\,\Omega
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+R_2=4\,\Omega
+\]
+
+</div>
+
+satisfac:
+</p>
+
+<div class="formula">
+
+\[
+1\cdot4=2^2
+\]
+
+</div>
+
+și primesc aceeași putere utilă.
+
+<p>
+Dar randamentele lor sunt diferite:
+</p>
+
+<div class="formula">
+
+\[
+\eta_1=
+\frac1{1+2}
+=
+33,3\%
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\eta_2=
+\frac4{4+2}
+=
+66,7\%
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     OPTIONAL CALCULUS
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Extensie matematică – demonstrația prin derivată</h2>
+
+<div class="purple-box">
+
+Această metodă este opțională
+și poate fi folosită acolo unde elevii cunosc derivarea funcțiilor.
+Demonstrația algebrică anterioară este suficientă pentru concluzia fizică.
+</div>
+
+
+<p>
+Considerăm:
+</p>
+
+<div class="formula">
+
+\[
+P_u(R)
+=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\]
+
+</div>
+
+<p>
+Derivata este:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{dP_u}{dR}
+=
+\frac{
+\mathcal E^2(r-R)
+}{
+(R+r)^3
+}
+}
+\]
+
+</div>
+
+
+<p>
+Pentru extrem:
+</p>
+
+<div class="formula">
+
+\[
+\frac{dP_u}{dR}=0
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+r-R=0
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R=r
+}
+\]
+
+</div>
+
+
+<p>
+Semnul derivatei arată:
+</p>
+
+<ul>
+
+<li>
+pentru \(R<r\), \(dP_u/dR>0\) – puterea crește;
+</li>
+
+<li>
+pentru \(R>r\), \(dP_u/dR<0\) – puterea scade.
+</li>
+
+</ul>
+
+<p>
+Prin urmare,
+punctul \(R=r\) este un maxim.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     COMPLETE EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Exemplu complet</h2>
+
+<p>
+Un generator are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+r=2\,\Omega
+\]
+
+</div>
+
+
+<h3>a) Rezistența pentru putere maximă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=r=2\,\Omega
+}
+\]
+
+</div>
+
+
+<h3>b) Curentul</h3>
+
+<div class="formula">
+
+\[
+I=
+\frac{12}{2+2}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I=3\,A
+}
+\]
+
+</div>
+
+
+<h3>c) Tensiunea la borne</h3>
+
+<div class="formula">
+
+\[
+U=IR
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U=3\cdot2
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U=6\,V
+}
+\]
+
+</div>
+
+
+<h3>d) Puterea utilă maximă</h3>
+
+<div class="formula">
+
+\[
+P_{u,max}
+=
+\frac{
+12^2
+}{
+4\cdot2
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+P_{u,max}
+=
+\frac{144}{8}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+P_{u,max}=18\,W
+}
+\]
+
+</div>
+
+
+<h3>e) Puterea internă</h3>
+
+<div class="formula">
+
+\[
+P_i=
+I^2r
+=
+3^2\cdot2
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+P_i=18\,W
+}
+\]
+
+</div>
+
+
+<h3>f) Puterea furnizată</h3>
+
+<div class="formula">
+
+\[
+P_s=
+\mathcal E I
+=
+12\cdot3
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+P_s=36\,W
+}
+\]
+
+</div>
+
+
+<h3>g) Randamentul</h3>
+
+<div class="formula">
+
+\[
+\eta=
+\frac{18}{36}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=50\%
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMPARE EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Același generator, trei sarcini diferite</h2>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V,
+\qquad
+r=2\,\Omega
+\]
+
+</div>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+\(R\)
+</th>
+
+<th>
+\(I\)
+</th>
+
+<th>
+\(P_u\)
+</th>
+
+<th>
+\(\eta\)
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+\(1\,\Omega\)
+</td>
+
+<td>
+\(4\,A\)
+</td>
+
+<td>
+\(16\,W\)
+</td>
+
+<td>
+33,3%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+<strong>\(2\,\Omega\)</strong>
+</td>
+
+<td>
+\(3\,A\)
+</td>
+
+<td>
+<strong>\(18\,W\)</strong>
+</td>
+
+<td>
+50%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(4\,\Omega\)
+</td>
+
+<td>
+\(2\,A\)
+</td>
+
+<td>
+\(16\,W\)
+</td>
+
+<td>
+66,7%
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(8\,\Omega\)
+</td>
+
+<td>
+\(1,2\,A\)
+</td>
+
+<td>
+\(11,52\,W\)
+</td>
+
+<td>
+80%
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="yellow-box">
+
+Observă:
+
+\[
+R=4\,\Omega
+\]
+
+are randament mai mare decât:
+</p>
+
+<div class="formula">
+
+\[
+R=2\,\Omega
+\]
+
+</div>
+
+dar primește o putere mai mică.
+
+Din nou:
+
+<strong>
+randament maxim și transfer maxim de putere sunt obiective diferite.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APPLICATIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Unde este utilă ideea?</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Modelarea unei surse reale</h3>
+
+<p>
+O baterie sau o sursă poate fi reprezentată,
+într-un model simplificat,
+prin:
+</p>
+
+<ul>
+
+<li>t.e.m. \(\mathcal E\);</li>
+
+<li>rezistență internă \(r\).</li>
+
+</ul>
+
+<p>
+Sarcina \(R\) poate fi aleasă sau modificată,
+iar puterea primită de aceasta depinde de raportul \(R/r\).
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Circuite de semnal – extensie</h3>
+
+<p>
+În anumite sisteme electronice,
+transferul de putere și adaptarea dintre sursă și sarcină
+sunt importante.
+</p>
+
+<p>
+Pentru curent alternativ,
+situația generală implică impedanțe,
+nu doar rezistențe.
+Aceasta depășește modelul rezistiv al lecției.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="orange-box">
+
+În instalațiile de transport și utilizare a energiei electrice,
+obiectivul obișnuit nu este funcționarea permanentă la:
+
+\[
+R=r
+\]
+
+deoarece atunci randamentul este doar 50%.
+
+Transferul maxim de putere este o condiție matematică și fizică precisă,
+dar nu reprezintă automat punctul optim pentru orice aplicație practică.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Experiment – căutarea experimentală a puterii maxime</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă didactică de joasă tensiune;</li>
+
+<li>rezistor serie cunoscut \(r_m\), care modelează rezistența internă;</li>
+
+<li>cutie de rezistențe sau reostat adecvat;</li>
+
+<li>ampermetru;</li>
+
+<li>voltmetru;</li>
+
+<li>conductoare;</li>
+
+<li>întrerupător.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea experimentului</h3>
+
+<p>
+Nu este necesar să folosim rezistența internă reală a unei baterii.
+</p>
+
+<p>
+Construim o sursă-model cu o rezistență serie cunoscută:
+</p>
+
+<div class="formula">
+
+\[
+r_m
+\]
+
+</div>
+
+<p>
+și variem sarcina \(R\).
+</p>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Alege o sursă de joasă tensiune și conectează în serie rezistorul \(r_m\).
+</li>
+
+<li>
+Conectează sarcina variabilă \(R\).
+</li>
+
+<li>
+Pentru fiecare valoare a lui \(R\), măsoară tensiunea \(U\) pe sarcină.
+</li>
+
+<li>
+Măsoară intensitatea \(I\).
+</li>
+
+<li>
+Calculează:
+\[
+P_u=UI
+\]
+</li>
+
+<li>
+Repetă pentru valori ale lui \(R\) atât mai mici, cât și mai mari decât \(r_m\).
+</li>
+
+<li>
+Construiește un tabel:
+\[
+R,\quad U,\quad I,\quad P_u
+\]
+</li>
+
+<li>
+Identifică valoarea lui \(R\) pentru care \(P_u\) este cea mai mare.
+</li>
+
+<li>
+Compară experimental cu predicția:
+\[
+R=r_m
+\]
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Folosește numai surse de joasă tensiune,
+rezistoare cu putere nominală adecvată
+și evită valorile de sarcină care produc curenți excesivi.
+
+Nu căuta „puterea maximă” prin scurtcircuitarea unei baterii.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXERCISES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Identificarea sarcinii optime</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+r=4\,\Omega
+\]
+
+</div>
+
+<p>
+Ce rezistență trebuie să aibă receptorul
+pentru transfer maxim de putere?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Condiția este:
+
+\[
+R=r
+\]
+
+deci:
+
+\[
+\boxed{
+R=4\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Puterea maximă</h3>
+
+<p>
+Se dau:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=10\,V,
+\qquad
+r=2\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+P_{max}
+=
+\frac{
+\mathcal E^2
+}{
+4r
+}
+\]
+
+\[
+P_{max}
+=
+\frac{
+100
+}{
+8
+}
+\]
+
+\[
+\boxed{
+P_{max}=12,5\,W
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Curentul optim</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=9\,V,
+\qquad
+r=1,5\,\Omega
+\]
+
+</div>
+
+<p>
+determină curentul în regimul de transfer maxim.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_{maxP}
+=
+\frac{
+\mathcal E
+}{
+2r
+}
+\]
+
+\[
+I_{maxP}
+=
+\frac9{3}
+\]
+
+\[
+\boxed{
+I_{maxP}=3\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Determinarea rezistenței interne</h3>
+
+<p>
+O sursă cu:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V
+\]
+
+</div>
+
+<p>
+poate transfera cel mult:
+</p>
+
+<div class="formula">
+
+\[
+P_{max}=18\,W
+\]
+
+</div>
+
+<p>
+unui receptor rezistiv.
+Determină \(r\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+18=
+\frac{
+12^2
+}{
+4r
+}
+\]
+
+\[
+18=
+\frac{144}{4r}
+\]
+
+\[
+72r=144
+\]
+
+\[
+\boxed{
+r=2\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Verificarea unui punct de funcționare</h3>
+
+<p>
+Un generator are:
+</p>
+
+<div class="formula">
+
+\[
+r=3\,\Omega
+\]
+
+</div>
+
+<p>
+iar receptorul:
+</p>
+
+<div class="formula">
+
+\[
+R=9\,\Omega
+\]
+
+</div>
+
+<p>
+Funcționează circuitul la transfer maxim?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Condiția este:
+
+\[
+R=r
+\]
+
+Dar:
+
+\[
+9\,\Omega
+\neq
+3\,\Omega
+\]
+
+deci:
+
+\[
+\boxed{
+\text{nu}
+}
+\]
+
+Randamentul este:
+
+\[
+\eta=
+\frac9{9+3}
+=
+75\%
+\]
+
+Randamentul este mai mare de 50%,
+dar puterea nu este maximă.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 6 – Aceeași putere, alt randament</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+r=2\,\Omega
+\]
+
+</div>
+
+<p>
+Un receptor are:
+</p>
+
+<div class="formula">
+
+\[
+R_1=1\,\Omega
+\]
+
+</div>
+
+<p>
+Găsește cealaltă rezistență care primește aceeași putere.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Folosim:
+
+\[
+R_1R_2=r^2
+\]
+
+\[
+1\cdot R_2=4
+\]
+
+\[
+\boxed{
+R_2=4\,\Omega
+}
+\]
+
+Cele două puncte au aceeași putere utilă,
+dar randamente diferite.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Caută punctul de putere maximă</h2>
+
+<p>
+Modifică t.e.m.,
+rezistența internă și rezistența receptorului.
+Graficul construiește automat funcția:
+</p>
+
+<div class="formula">
+
+\[
+P_u(R)
+=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+\]
+
+</div>
+
+<p>
+Linia verde verticală marchează valoarea:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="emfSlider">
+T.e.m. \(\mathcal E\) [V]
+</label>
+
+<input
+  id="emfSlider"
+  type="range"
+  min="1"
+  max="24"
+  step="0.5"
+  value="12">
+
+<span
+  class="range-value"
+  id="emfLabel">
+12,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="internalSlider">
+Rezistența internă \(r\) [Ω]
+</label>
+
+<input
+  id="internalSlider"
+  type="range"
+  min="0.2"
+  max="10"
+  step="0.1"
+  value="2">
+
+<span
+  class="range-value"
+  id="internalLabel">
+2,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="loadSlider">
+Rezistența receptorului \(R\) [Ω]
+</label>
+
+<input
+  id="loadSlider"
+  type="range"
+  min="0"
+  max="40"
+  step="0.1"
+  value="2">
+
+<span
+  class="range-value"
+  id="loadLabel">
+2,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="timeSlider">
+Interval pentru energie [s]
+</label>
+
+<input
+  id="timeSlider"
+  type="range"
+  min="1"
+  max="120"
+  step="1"
+  value="10">
+
+<span
+  class="range-value"
+  id="timeLabel">
+10 s
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="matchBtn">
+
+R = r – maxim
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="halfBtn">
+
+R = r / 2
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="doubleBtn">
+
+R = 2r
+
+</button>
+
+
+<button
+  class="primary"
+  id="highEfficiencyBtn">
+
+R = 9r
+
+</button>
+
+
+<button
+  class="red-button"
+  id="shortBtn">
+
+R = 0
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="circuitCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="graphCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Raport \(R/r\)
+</span>
+
+<strong id="ratioValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent \(I\)
+</span>
+
+<strong id="currentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tensiune \(U\)
+</span>
+
+<strong id="voltageValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere utilă \(P_u\)
+</span>
+
+<strong id="usefulPowerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere maximă \(P_{max}\)
+</span>
+
+<strong id="maxPowerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Procent din \(P_{max}\)
+</span>
+
+<strong id="relativePowerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Randament \(\eta\)
+</span>
+
+<strong id="efficiencyValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Energie utilă în interval
+</span>
+
+<strong id="usefulEnergyValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Modifică rezistența receptorului și caută maximul curbei.
+</div>
+
+
+<div
+  class="power-bars"
+  id="powerBars">
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Găsește maximul fără buton</h3>
+
+<p>
+Setează:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V,
+\qquad
+r=2\,\Omega
+\]
+
+</div>
+
+<p>
+Modifică numai \(R\)
+și caută cea mai mare valoare a lui \(P_u\).
+</p>
+
+<p>
+Ce valoare obții pentru \(R\)?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Verifică punctul \(R=r\)</h3>
+
+<p>
+Apasă:
+<strong>R = r – maxim</strong>.
+</p>
+
+<p>
+Verifică simultan:
+</p>
+
+<div class="formula">
+
+\[
+U=\frac{\mathcal E}{2}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\eta=50\%
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Compară \(r/2\) și \(2r\)</h3>
+
+<p>
+Verifică dacă cele două sarcini primesc aceeași fracție
+din puterea maximă.
+</p>
+
+<p>
+Apoi compară randamentele.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Randament de 90%</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+R=9r
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+\eta=
+\frac9{10}
+=
+90\%
+\]
+
+</div>
+
+<p>
+Puterea utilă este însă maximă?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Modifică t.e.m.</h3>
+
+<p>
+Păstrează:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+<p>
+Dublează \(\mathcal E\).
+</p>
+
+<p>
+De câte ori se modifică:
+</p>
+
+<div class="formula">
+
+\[
+P_{max}
+\ ?
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Modifică rezistența internă</h3>
+
+<p>
+Păstrează \(\mathcal E\) constantă
+și mărește \(r\).
+</p>
+
+<p>
+Ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+P_{max}
+=
+\frac{\mathcal E^2}{4r}
+\ ?
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Puterea maximă apare la \(R=0\).”</h3>
+
+<p>
+Nu.
+</p>
+
+<p>
+La:
+</p>
+
+<div class="formula">
+
+\[
+R=0
+\]
+
+</div>
+
+avem:
+</p>
+
+<div class="formula">
+
+\[
+P_u=0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Curent maxim = putere utilă maximă.”</h3>
+
+<p>
+Nu.
+Curentul maxim apare la sarcină foarte mică,
+dar puterea utilă conține și factorul \(R\).
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Puterea maximă apare când randamentul este maxim.”</h3>
+
+<p>
+Nu.
+</p>
+
+<p>
+La putere maximă:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=50\%
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Dacă măresc mereu \(R\), puterea crește.”</h3>
+
+<p>
+Numai pentru:
+</p>
+
+<div class="formula">
+
+\[
+R<r
+\]
+
+</div>
+
+<p>
+După:
+</p>
+
+<div class="formula">
+
+\[
+R=r
+\]
+
+</div>
+
+puterea începe să scadă.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „La \(R=r\), tensiunea la borne este \(\mathcal E\).”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U=\frac{\mathcal E}{2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „La maxim, pierderile interne dispar.”</h3>
+
+<p>
+Dimpotrivă:
+</p>
+
+<div class="formula">
+
+\[
+P_i=P_u
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „\(R=r\) este întotdeauna regimul cel mai economic.”</h3>
+
+<p>
+Nu.
+Este condiția pentru
+<strong>putere transferată maximă</strong>,
+nu pentru randament maxim.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Formula este valabilă pentru orice sistem electric fără condiții.”</h3>
+
+<p>
+În lecție folosim un model de curent continuu
+cu generator liniar și receptor rezistiv.
+Alte sisteme pot necesita modele mai complexe.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce \(P_u=0\) pentru \(R=0\), deși curentul este mare?
+</li>
+
+<li>
+De ce \(P_u\rightarrow0\) când \(R\rightarrow\infty\)?
+</li>
+
+<li>
+De ce trebuie să existe o valoare intermediară care maximizează puterea?
+</li>
+
+<li>
+Ce semnificație fizică are condiția \(R=r\)?
+</li>
+
+<li>
+De ce tensiunea la borne devine \(\mathcal E/2\) la transfer maxim?
+</li>
+
+<li>
+De ce puterea disipată intern este egală cu puterea utilă în acest regim?
+</li>
+
+<li>
+De ce randamentul este numai 50%?</li>
+
+<li>
+Cum poate un circuit cu randament de 90% să transfere mai puțină putere decât unul cu randament de 50%?</li>
+
+<li>
+De ce dublarea t.e.m. produce o creștere de patru ori a puterii maxime, dacă \(r\) rămâne constant?</li>
+
+<li>
+De ce o rezistență internă mai mică permite o putere maximă disponibilă mai mare?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Puterea utilă transferată receptorului este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(
+P_u=
+\frac{\mathcal E^2}{R+r}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+P_u=
+\frac{\mathcal E^2R}{(R+r)^2}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+P_u=
+\mathcal E(R+r)
+\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Transferul maxim de putere apare când:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R=0\)
+</button>
+
+<button class="answer-btn">
+\(R\rightarrow\infty\)
+</button>
+
+<button class="answer-btn">
+\(R=r\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Puterea utilă maximă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(
+P_{max}=
+\frac{\mathcal E^2}{4r}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+P_{max}=
+\frac{\mathcal E}{4r}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+P_{max}=4\mathcal E^2r
+\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+La transfer maxim,
+tensiunea la borne este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U=\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(U=\mathcal E/2\)
+</button>
+
+<button class="answer-btn">
+\(U=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Randamentul la transfer maxim este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+100%
+</button>
+
+<button class="answer-btn">
+25%
+</button>
+
+<button class="answer-btn">
+50%
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+La \(R=r\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(P_u=P_i\)
+</button>
+
+<button class="answer-btn">
+\(P_i=0\)
+</button>
+
+<button class="answer-btn">
+\(P_u=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă \(R\gg r\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+puterea utilă tinde spre infinit
+</button>
+
+<button class="answer-btn">
+randamentul tinde spre 100%, dar puterea utilă tinde spre zero
+</button>
+
+<button class="answer-btn">
+randamentul tinde spre zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Dacă t.e.m. se dublează și \(r\) rămâne constantă,
+puterea maximă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+se dublează
+</button>
+
+<button class="answer-btn">
+rămâne constantă
+</button>
+
+<button class="answer-btn">
+crește de 4 ori
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+La transfer maxim,
+curentul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(
+I=
+\frac{\mathcal E}{2r}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+I=
+\frac{2\mathcal E}{r}
+\)
+</button>
+
+<button class="answer-btn">
+\(
+I=0
+\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Afirmația corectă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+puterea maximă și randamentul maxim apar obligatoriu în același regim
+</button>
+
+<button class="answer-btn">
+maximizarea puterii și maximizarea randamentului sunt obiective diferite
+</button>
+
+<button class="answer-btn">
+randamentul la transfer maxim este 100%
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Puterea utilă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P_u(R)=
+\frac{
+\mathcal E^2R
+}{
+(R+r)^2
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Condiția de maxim</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=r
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Puterea maximă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P_{u,max}
+=
+\frac{
+\mathcal E^2
+}{
+4r
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>În punctul optim</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{2r}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\frac{\mathcal E}{2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Bilanțul puterilor</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P_u=P_i
+}
+\]
+
+</div>
+
+<p>
+la \(R=r\).
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Randamentul</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=50\%
+}
+\]
+
+</div>
+
+<p>
+la transfer maxim.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema mentală:
+
+<strong>
+sursă reală → curentul depinde de sarcină → puterea utilă depinde de două efecte concurente → maxim la \(R=r\).
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+Până acum am calculat puterea pornind de la mărimi cunoscute.
+În lecția următoare vom trece la o situație experimentală concretă:
+un bec electric.
+</p>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Determinarea puterii unui bec electric – experiment
+</strong>
+
+vom măsura:
+</p>
+
+<div class="formula">
+
+\[
+U
+\quad\text{și}\quad
+I
+\]
+
+</div>
+
+și vom determina experimental:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P=UI
+}
+\]
+
+</div>
+
+<p>
+Vom putea discuta și de ce filamentul unui bec real
+nu se comportă ca un rezistor ohmic cu rezistență constantă
+pe un domeniu larg de temperatură.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="02-puterea-electrica-randamentul-circuitului.html">
+
+← Lecția 2<br>
+Puterea electrică. Randamentul circuitului
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="04-determinarea-puterii-unui-bec-electric-exp.html">
+
+Lecția 4<br>
+Determinarea puterii unui bec electric – experiment →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Energia, puterea și efectele curentului electric
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+function formatPower(
+  value
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  if(
+    Math.abs(value)>=1000
+  ){
+
+    return `${formatRo(
+      value/1000,
+      3
+    )} kW`;
+
+  }
+
+
+  return `${formatRo(
+    value,
+    3
+  )} W`;
+
+}
+
+
+function formatEnergy(
+  value
+){
+
+  if(
+    Math.abs(value)>=1000
+  ){
+
+    return `${formatRo(
+      value/1000,
+      3
+    )} kJ`;
+
+  }
+
+
+  return `${formatRo(
+    value,
+    2
+  )} J`;
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const emfSlider=
+  document.getElementById(
+    "emfSlider"
+  );
+
+
+const internalSlider=
+  document.getElementById(
+    "internalSlider"
+  );
+
+
+const loadSlider=
+  document.getElementById(
+    "loadSlider"
+  );
+
+
+const timeSlider=
+  document.getElementById(
+    "timeSlider"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const emfLabel=
+  document.getElementById(
+    "emfLabel"
+  );
+
+
+const internalLabel=
+  document.getElementById(
+    "internalLabel"
+  );
+
+
+const loadLabel=
+  document.getElementById(
+    "loadLabel"
+  );
+
+
+const timeLabel=
+  document.getElementById(
+    "timeLabel"
+  );
+
+
+const ratioValue=
+  document.getElementById(
+    "ratioValue"
+  );
+
+
+const currentValue=
+  document.getElementById(
+    "currentValue"
+  );
+
+
+const voltageValue=
+  document.getElementById(
+    "voltageValue"
+  );
+
+
+const usefulPowerValue=
+  document.getElementById(
+    "usefulPowerValue"
+  );
+
+
+const maxPowerValue=
+  document.getElementById(
+    "maxPowerValue"
+  );
+
+
+const relativePowerValue=
+  document.getElementById(
+    "relativePowerValue"
+  );
+
+
+const efficiencyValue=
+  document.getElementById(
+    "efficiencyValue"
+  );
+
+
+const usefulEnergyValue=
+  document.getElementById(
+    "usefulEnergyValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const powerBars=
+  document.getElementById(
+    "powerBars"
+  );
+
+
+const circuitCanvas=
+  document.getElementById(
+    "circuitCanvas"
+  );
+
+
+const circuitCtx=
+  circuitCanvas.getContext(
+    "2d"
+  );
+
+
+const graphCanvas=
+  document.getElementById(
+    "graphCanvas"
+  );
+
+
+const graphCtx=
+  graphCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const emf=
+    Number(
+      emfSlider.value
+    );
+
+
+  const r=
+    Number(
+      internalSlider.value
+    );
+
+
+  const R=
+    Number(
+      loadSlider.value
+    );
+
+
+  const t=
+    Number(
+      timeSlider.value
+    );
+
+
+  const I=
+    emf/
+    (
+      R+r
+    );
+
+
+  const U=
+    I*
+    R;
+
+
+  const usefulPower=
+    I*
+    I*
+    R;
+
+
+  const internalPower=
+    I*
+    I*
+    r;
+
+
+  const sourcePower=
+    emf*
+    I;
+
+
+  const maxPower=
+    emf*
+    emf/
+    (
+      4*r
+    );
+
+
+  const ratio=
+    R/r;
+
+
+  const efficiency=
+    R/
+    (
+      R+r
+    );
+
+
+  const relativePower=
+    maxPower>
+    0
+      ? usefulPower/
+        maxPower
+      : 0;
+
+
+  const usefulEnergy=
+    usefulPower*
+    t;
+
+
+  return{
+
+    emf,
+    r,
+    R,
+    t,
+
+    I,
+    U,
+
+    usefulPower,
+    internalPower,
+    sourcePower,
+
+    maxPower,
+
+    ratio,
+    efficiency,
+    relativePower,
+    usefulEnergy
+
+  };
+
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+function updateLabels(
+  m
+){
+
+  emfLabel.textContent=
+    `${formatRo(
+      m.emf,
+      1
+    )} V`;
+
+
+  internalLabel.textContent=
+    `${formatRo(
+      m.r,
+      1
+    )} Ω`;
+
+
+  loadLabel.textContent=
+    `${formatRo(
+      m.R,
+      1
+    )} Ω`;
+
+
+  timeLabel.textContent=
+    `${formatRo(
+      m.t,
+      0
+    )} s`;
+
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  updateLabels(
+    m
+  );
+
+
+  ratioValue.textContent=
+    formatRo(
+      m.ratio,
+      3
+    );
+
+
+  currentValue.textContent=
+    `${formatRo(
+      m.I,
+      3
+    )} A`;
+
+
+  voltageValue.textContent=
+    `${formatRo(
+      m.U,
+      3
+    )} V`;
+
+
+  usefulPowerValue.textContent=
+    formatPower(
+      m.usefulPower
+    );
+
+
+  maxPowerValue.textContent=
+    formatPower(
+      m.maxPower
+    );
+
+
+  relativePowerValue.textContent=
+    `${formatRo(
+      m.relativePower*
+      100,
+      1
+    )}%`;
+
+
+  efficiencyValue.textContent=
+    `${formatRo(
+      m.efficiency*
+      100,
+      1
+    )}%`;
+
+
+  usefulEnergyValue.textContent=
+    formatEnergy(
+      m.usefulEnergy
+    );
+
+
+  simStatus.className=
+    "status-box";
+
+
+  const difference=
+    Math.abs(
+      m.R-
+      m.r
+    );
+
+
+  if(
+    difference<
+    .051
+  ){
+
+    simStatus.classList.add(
+      "status-good"
+    );
+
+
+    simStatus.innerHTML=
+      `✓ <strong>Transfer maxim de putere.</strong>
+       R ≈ r =
+       ${formatRo(m.r,2)} Ω.
+       Receptorul primește
+       <strong>${formatPower(m.usefulPower)}</strong>,
+       adică aproximativ 100% din puterea maximă disponibilă.
+       Randamentul este
+       <strong>${formatRo(m.efficiency*100,1)}%</strong>.`;
+
+  }
+
+  else if(
+    m.R<
+    m.r
+  ){
+
+    simStatus.classList.add(
+      "status-danger"
+    );
+
+
+    simStatus.innerHTML=
+      `R < r.
+       Curentul este relativ mare,
+       dar o fracție importantă din putere se disipă intern.
+       Mărind R spre
+       <strong>${formatRo(m.r,2)} Ω</strong>,
+       puterea utilă crește.`;
+
+  }
+
+  else{
+
+    simStatus.classList.add(
+      "status-warning"
+    );
+
+
+    simStatus.innerHTML=
+      `R > r.
+       Randamentul este mai mare de 50%,
+       dar curentul scade.
+       Micșorând R spre
+       <strong>${formatRo(m.r,2)} Ω</strong>,
+       puterea utilă crește până la maxim.`;
+
+  }
+
+
+  renderPowerBars(
+    m
+  );
+
+
+  drawGraph(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   POWER BARS
+========================================================= */
+
+function renderPowerBars(
+  m
+){
+
+  powerBars.innerHTML="";
+
+
+  const rows=[
+
+    {
+      label:"Putere utilă",
+      value:m.usefulPower,
+      maximum:m.maxPower,
+      color:"#16a34a"
+    },
+
+    {
+      label:"Putere internă",
+      value:m.internalPower,
+      maximum:
+        Math.max(
+          m.sourcePower,
+          m.maxPower,
+          .001
+        ),
+      color:"#ea580c"
+    },
+
+    {
+      label:"Randament",
+      value:m.efficiency*100,
+      maximum:100,
+      color:"#7c3aed",
+      percent:true
+    }
+
+  ];
+
+
+  rows.forEach(
+    row=>{
+
+      const fraction=
+        row.maximum>
+        0
+          ? row.value/
+            row.maximum
+          : 0;
+
+
+      const div=
+        document.createElement(
+          "div"
+        );
+
+
+      div.className=
+        "power-bar-row";
+
+
+      div.innerHTML=
+        `
+        <strong>
+          ${row.label}
+        </strong>
+
+        <div class="power-track">
+
+          <div
+            class="power-fill"
+            style="
+              width:${clamp(fraction*100,0,100)}%;
+              background:${row.color};
+            ">
+          </div>
+
+        </div>
+
+        <span>
+          ${
+            row.percent
+              ? `${formatRo(row.value,1)}%`
+              : formatPower(row.value)
+          }
+        </span>
+        `;
+
+
+      powerBars.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   DARK BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW HELPERS
+========================================================= */
+
+function drawWire(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color="#cbd5e1",
+  width=6
+){
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=
+    width;
+
+
+  context.lineCap=
+    "round";
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+  context.stroke();
+
+}
+
+
+function drawResistor(
+  context,
+  x,
+  y,
+  width,
+  height,
+  label,
+  color="#fb923c"
+){
+
+  context.fillStyle=
+    "#fff7ed";
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=4;
+
+
+  context.fillRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.strokeRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.fillStyle=
+    "#7c2d12";
+
+
+  context.font=
+    "bold 12px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    label,
+    x,
+    y
+  );
+
+}
+
+
+/* =========================================================
+   CIRCUIT ANIMATION
+========================================================= */
+
+let particlePhase=0;
+
+
+/* =========================================================
+   CIRCUIT CANVAS
+========================================================= */
+
+function drawCircuit(
+  m
+){
+
+  const rect=
+    circuitCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    circuitCtx,
+    W,
+    H
+  );
+
+
+  const left=
+    W*.16;
+
+
+  const right=
+    W*.84;
+
+
+  const top=
+    H*.24;
+
+
+  const bottom=
+    H*.74;
+
+
+  drawWire(
+    circuitCtx,
+    left,
+    top,
+    right,
+    top
+  );
+
+
+  drawWire(
+    circuitCtx,
+    right,
+    top,
+    right,
+    bottom
+  );
+
+
+  drawWire(
+    circuitCtx,
+    right,
+    bottom,
+    left,
+    bottom
+  );
+
+
+  drawWire(
+    circuitCtx,
+    left,
+    bottom,
+    left,
+    top
+  );
+
+
+  /*
+  generator
+  */
+
+  const gx=
+    W*.38;
+
+
+  circuitCtx.fillStyle=
+    "rgba(37,99,235,.13)";
+
+
+  circuitCtx.strokeStyle=
+    "#60a5fa";
+
+
+  circuitCtx.lineWidth=2;
+
+
+  circuitCtx.setLineDash([
+    7,
+    6
+  ]);
+
+
+  circuitCtx.strokeRect(
+    gx-100,
+    top-70,
+    200,
+    140
+  );
+
+
+  circuitCtx.fillRect(
+    gx-100,
+    top-70,
+    200,
+    140
+  );
+
+
+  circuitCtx.setLineDash([]);
+
+
+  circuitCtx.strokeStyle=
+    "#93c5fd";
+
+
+  circuitCtx.lineWidth=5;
+
+
+  circuitCtx.beginPath();
+
+  circuitCtx.moveTo(
+    gx-34,
+    top-38
+  );
+
+  circuitCtx.lineTo(
+    gx-34,
+    top+38
+  );
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+  circuitCtx.moveTo(
+    gx+17,
+    top-25
+  );
+
+  circuitCtx.lineTo(
+    gx+17,
+    top+25
+  );
+
+  circuitCtx.stroke();
+
+
+  drawResistor(
+    circuitCtx,
+    gx+67,
+    top,
+    44,
+    28,
+    "r",
+    "#fb923c"
+  );
+
+
+  circuitCtx.fillStyle=
+    "#bfdbfe";
+
+
+  circuitCtx.font=
+    "bold 11px system-ui";
+
+
+  circuitCtx.textAlign=
+    "center";
+
+
+  circuitCtx.fillText(
+    `ℰ=${formatRo(m.emf,1)}V`,
+    gx-8,
+    top-50
+  );
+
+
+  /*
+  load
+  */
+
+  drawResistor(
+    circuitCtx,
+    right,
+    H*.49,
+    104,
+    48,
+    `R=${formatRo(m.R,1)}Ω`,
+    Math.abs(m.R-m.r)<.051
+      ? "#22c55e"
+      : "#a78bfa"
+  );
+
+
+  /*
+  labels
+  */
+
+  circuitCtx.fillStyle=
+    "#e2e8f0";
+
+
+  circuitCtx.font=
+    "bold 15px system-ui";
+
+
+  circuitCtx.textAlign=
+    "left";
+
+
+  circuitCtx.fillText(
+    "Generator real + receptor",
+    18,
+    28
+  );
+
+
+  circuitCtx.fillStyle=
+    "#bae6fd";
+
+
+  circuitCtx.font=
+    "11px system-ui";
+
+
+  circuitCtx.fillText(
+    `I=${formatRo(m.I,3)}A • U=${formatRo(m.U,2)}V`,
+    18,
+    50
+  );
+
+
+  /*
+  power information
+  */
+
+  circuitCtx.fillStyle=
+    "#86efac";
+
+
+  circuitCtx.font=
+    "bold 12px system-ui";
+
+
+  circuitCtx.textAlign=
+    "center";
+
+
+  circuitCtx.fillText(
+    `Pu = ${formatPower(m.usefulPower)}`,
+    W*.74,
+    H*.64
+  );
+
+
+  circuitCtx.fillStyle=
+    "#fdba74";
+
+
+  circuitCtx.fillText(
+    `Pi = ${formatPower(m.internalPower)}`,
+    W*.40,
+    H*.37
+  );
+
+
+  circuitCtx.fillStyle=
+    "#c4b5fd";
+
+
+  circuitCtx.fillText(
+    `η = ${formatRo(m.efficiency*100,1)}%`,
+    W*.70,
+    H*.82
+  );
+
+
+  /*
+  ratio visual
+  */
+
+  const barY=
+    H*.89;
+
+
+  const barX=
+    W*.12;
+
+
+  const totalWidth=
+    W*.76;
+
+
+  const rShare=
+    m.r/
+    (
+      m.R+
+      m.r
+    );
+
+
+  const RShare=
+    m.R/
+    (
+      m.R+
+      m.r
+    );
+
+
+  circuitCtx.fillStyle=
+    "#fb923c";
+
+
+  circuitCtx.fillRect(
+    barX,
+    barY,
+    totalWidth*
+    rShare,
+    32
+  );
+
+
+  circuitCtx.fillStyle=
+    "#22c55e";
+
+
+  circuitCtx.fillRect(
+    barX+
+    totalWidth*
+    rShare,
+    barY,
+    totalWidth*
+    RShare,
+    32
+  );
+
+
+  circuitCtx.fillStyle=
+    "#ffffff";
+
+
+  circuitCtx.font=
+    "bold 10px system-ui";
+
+
+  if(
+    rShare>
+    .12
+  ){
+
+    circuitCtx.fillText(
+      "r",
+      barX+
+      totalWidth*
+      rShare/
+      2,
+      barY+17
+    );
+
+  }
+
+
+  if(
+    RShare>
+    .12
+  ){
+
+    circuitCtx.fillText(
+      "R",
+      barX+
+      totalWidth*
+      rShare+
+      totalWidth*
+      RShare/
+      2,
+      barY+17
+    );
+
+  }
+
+
+  /*
+  particle
+  */
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.I>
+    1e-9
+  ){
+
+    const perimeter=
+      2*
+      (
+        right-left+
+        bottom-top
+      );
+
+
+    let distance=
+      particlePhase*
+      perimeter;
+
+
+    let px;
+    let py;
+
+
+    if(
+      distance<
+      right-left
+    ){
+
+      px=
+        left+
+        distance;
+
+      py=
+        top;
+
+    }
+
+    else{
+
+      distance-=
+        right-left;
+
+
+      if(
+        distance<
+        bottom-top
+      ){
+
+        px=
+          right;
+
+        py=
+          top+
+          distance;
+
+      }
+
+      else{
+
+        distance-=
+          bottom-top;
+
+
+        if(
+          distance<
+          right-left
+        ){
+
+          px=
+            right-
+            distance;
+
+          py=
+            bottom;
+
+        }
+
+        else{
+
+          distance-=
+            right-left;
+
+
+          px=
+            left;
+
+          py=
+            bottom-
+            distance;
+
+        }
+
+      }
+
+    }
+
+
+    circuitCtx.beginPath();
+
+    circuitCtx.arc(
+      px,
+      py,
+      5,
+      0,
+      Math.PI*2
+    );
+
+
+    circuitCtx.fillStyle=
+      "#fde68a";
+
+
+    circuitCtx.fill();
+
+  }
+
+}
+
+
+/* =========================================================
+   POWER FUNCTION
+========================================================= */
+
+function powerForR(
+  emf,
+  r,
+  R
+){
+
+  return (
+    emf*
+    emf*
+    R
+  )/
+  Math.pow(
+    R+r,
+    2
+  );
+
+}
+
+
+/* =========================================================
+   GRAPH
+========================================================= */
+
+function drawGraph(
+  m
+){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  graphCtx.fillStyle=
+    "#f8fafc";
+
+
+  graphCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 15px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    "Puterea utilă în funcție de R",
+    22,
+    29
+  );
+
+
+  graphCtx.fillStyle=
+    "#64748b";
+
+
+  graphCtx.font=
+    "11px system-ui";
+
+
+  graphCtx.fillText(
+    "verde: Pu(R) • mov punctat: randament • linie verticală: R = r",
+    22,
+    49
+  );
+
+
+  const left=
+    58;
+
+
+  const right=
+    W-48;
+
+
+  const top=
+    82;
+
+
+  const bottom=
+    H-65;
+
+
+  const plotW=
+    right-left;
+
+
+  const plotH=
+    bottom-top;
+
+
+  const xMax=
+    Math.max(
+      5*m.r,
+      m.R*1.25,
+      5
+    );
+
+
+  const yMax=
+    m.maxPower*
+    1.18;
+
+
+  function xFor(
+    R
+  ){
+
+    return left+
+      R/
+      xMax*
+      plotW;
+
+  }
+
+
+  function yForPower(
+    P
+  ){
+
+    return bottom-
+      P/
+      yMax*
+      plotH;
+
+  }
+
+
+  function yForEta(
+    eta
+  ){
+
+    return bottom-
+      eta*
+      plotH;
+
+  }
+
+
+  /*
+  Grid.
+  */
+
+  graphCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  graphCtx.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const x=
+      left+
+      plotW*
+      i/
+      5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      x,
+      top
+    );
+
+    graphCtx.lineTo(
+      x,
+      bottom
+    );
+
+    graphCtx.stroke();
+
+
+    graphCtx.fillStyle=
+      "#64748b";
+
+
+    graphCtx.font=
+      "10px system-ui";
+
+
+    graphCtx.textAlign=
+      "center";
+
+
+    graphCtx.fillText(
+      formatRo(
+        xMax*i/5,
+        1
+      ),
+      x,
+      bottom+19
+    );
+
+  }
+
+
+  for(
+    let i=0;
+    i<=4;
+    i++
+  ){
+
+    const y=
+      bottom-
+      plotH*
+      i/
+      4;
+
+
+    graphCtx.strokeStyle=
+      "#e2e8f0";
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      left,
+      y
+    );
+
+    graphCtx.lineTo(
+      right,
+      y
+    );
+
+    graphCtx.stroke();
+
+
+    graphCtx.fillStyle=
+      "#64748b";
+
+
+    graphCtx.textAlign=
+      "right";
+
+
+    graphCtx.fillText(
+      formatRo(
+        yMax*i/4,
+        1
+      ),
+      left-8,
+      y+3
+    );
+
+  }
+
+
+  /*
+  axes
+  */
+
+  graphCtx.strokeStyle=
+    "#475569";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.beginPath();
+
+  graphCtx.moveTo(
+    left,
+    top
+  );
+
+  graphCtx.lineTo(
+    left,
+    bottom
+  );
+
+  graphCtx.lineTo(
+    right,
+    bottom
+  );
+
+  graphCtx.stroke();
+
+
+  graphCtx.fillStyle=
+    "#334155";
+
+
+  graphCtx.font=
+    "bold 11px system-ui";
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.fillText(
+    "R [Ω]",
+    (
+      left+
+      right
+    )/
+    2,
+    H-20
+  );
+
+
+  graphCtx.save();
+
+
+  graphCtx.translate(
+    16,
+    (
+      top+
+      bottom
+    )/
+    2
+  );
+
+
+  graphCtx.rotate(
+    -Math.PI/2
+  );
+
+
+  graphCtx.fillText(
+    "Pu [W]",
+    0,
+    0
+  );
+
+
+  graphCtx.restore();
+
+
+  /*
+  Power curve.
+  */
+
+  graphCtx.strokeStyle=
+    "#16a34a";
+
+
+  graphCtx.lineWidth=4;
+
+
+  graphCtx.beginPath();
+
+
+  const samples=260;
+
+
+  for(
+    let i=0;
+    i<=samples;
+    i++
+  ){
+
+    const R=
+      xMax*
+      i/
+      samples;
+
+
+    const P=
+      powerForR(
+        m.emf,
+        m.r,
+        R
+      );
+
+
+    const x=
+      xFor(
+        R
+      );
+
+
+    const y=
+      yForPower(
+        P
+      );
+
+
+    if(
+      i===
+      0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.stroke();
+
+
+  /*
+  efficiency curve
+  */
+
+  graphCtx.strokeStyle=
+    "#7c3aed";
+
+
+  graphCtx.lineWidth=2.5;
+
+
+  graphCtx.setLineDash([
+    7,
+    5
+  ]);
+
+
+  graphCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=samples;
+    i++
+  ){
+
+    const R=
+      xMax*
+      i/
+      samples;
+
+
+    const eta=
+      R/
+      (
+        R+
+        m.r
+      );
+
+
+    const x=
+      xFor(
+        R
+      );
+
+
+    const y=
+      yForEta(
+        eta
+      );
+
+
+    if(
+      i===
+      0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.stroke();
+
+  graphCtx.setLineDash([]);
+
+
+  /*
+  optimum line
+  */
+
+  const optimumX=
+    xFor(
+      m.r
+    );
+
+
+  graphCtx.strokeStyle=
+    "#22c55e";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.setLineDash([
+    5,
+    5
+  ]);
+
+
+  graphCtx.beginPath();
+
+  graphCtx.moveTo(
+    optimumX,
+    top
+  );
+
+  graphCtx.lineTo(
+    optimumX,
+    bottom
+  );
+
+  graphCtx.stroke();
+
+  graphCtx.setLineDash([]);
+
+
+  /*
+  max point
+  */
+
+  const maxY=
+    yForPower(
+      m.maxPower
+    );
+
+
+  graphCtx.beginPath();
+
+  graphCtx.arc(
+    optimumX,
+    maxY,
+    7,
+    0,
+    Math.PI*2
+  );
+
+
+  graphCtx.fillStyle=
+    "#16a34a";
+
+
+  graphCtx.fill();
+
+
+  graphCtx.fillStyle=
+    "#166534";
+
+
+  graphCtx.font=
+    "bold 10px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    `MAX: R=r=${formatRo(m.r,1)}Ω`,
+    optimumX+9,
+    maxY-10
+  );
+
+
+  /*
+  current operating point
+  */
+
+  const pointX=
+    xFor(
+      m.R
+    );
+
+
+  const pointY=
+    yForPower(
+      m.usefulPower
+    );
+
+
+  graphCtx.beginPath();
+
+  graphCtx.arc(
+    pointX,
+    pointY,
+    7,
+    0,
+    Math.PI*2
+  );
+
+
+  graphCtx.fillStyle=
+    "#2563eb";
+
+
+  graphCtx.fill();
+
+
+  graphCtx.strokeStyle=
+    "#ffffff";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.stroke();
+
+
+  graphCtx.fillStyle=
+    "#1e3a8a";
+
+
+  graphCtx.font=
+    "bold 10px system-ui";
+
+
+  graphCtx.textAlign=
+    pointX>
+    W*.70
+      ? "right"
+      : "left";
+
+
+  graphCtx.fillText(
+    `R=${formatRo(m.R,1)}Ω • ${formatPower(m.usefulPower)}`,
+    pointX+
+    (
+      pointX>
+      W*.70
+        ? -9
+        : 9
+    ),
+    pointY+20
+  );
+
+
+  /*
+  efficiency right labels
+  */
+
+  graphCtx.fillStyle=
+    "#6d28d9";
+
+
+  graphCtx.textAlign=
+    "right";
+
+
+  graphCtx.fillText(
+    "η 100%",
+    right,
+    top+4
+  );
+
+
+  graphCtx.fillText(
+    "η 50%",
+    right,
+    bottom-
+    plotH*.50+
+    4
+  );
+
+
+  /*
+  bottom note
+  */
+
+  graphCtx.fillStyle=
+    "#475569";
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.font=
+    "11px system-ui";
+
+
+  graphCtx.fillText(
+    `Pmax = ${formatPower(m.maxPower)} • η la maxim = 50%`,
+    W*.50,
+    H-43
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function fitSliderTo(
+  target
+){
+
+  const max=
+    Number(
+      loadSlider.max
+    );
+
+
+  const value=
+    clamp(
+      target,
+      0,
+      max
+    );
+
+
+  loadSlider.value=
+    String(
+      value
+    );
+
+
+  updateResults();
+
+}
+
+
+function setMatch(){
+
+  fitSliderTo(
+    Number(
+      internalSlider.value
+    )
+  );
+
+}
+
+
+function setHalf(){
+
+  fitSliderTo(
+    Number(
+      internalSlider.value
+    )/
+    2
+  );
+
+}
+
+
+function setDouble(){
+
+  fitSliderTo(
+    2*
+    Number(
+      internalSlider.value
+    )
+  );
+
+}
+
+
+function setHighEfficiency(){
+
+  fitSliderTo(
+    9*
+    Number(
+      internalSlider.value
+    )
+  );
+
+}
+
+
+function setShort(){
+
+  loadSlider.value=
+    "0";
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  emfSlider.value=
+    "12";
+
+
+  internalSlider.value=
+    "2";
+
+
+  loadSlider.value=
+    "2";
+
+
+  timeSlider.value=
+    "10";
+
+
+  animationSelect.value=
+    "on";
+
+
+  particlePhase=0;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  emfSlider,
+  internalSlider,
+  loadSlider,
+  timeSlider,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "matchBtn"
+  )
+  .addEventListener(
+    "click",
+    setMatch
+  );
+
+
+document
+  .getElementById(
+    "halfBtn"
+  )
+  .addEventListener(
+    "click",
+    setHalf
+  );
+
+
+document
+  .getElementById(
+    "doubleBtn"
+  )
+  .addEventListener(
+    "click",
+    setDouble
+  );
+
+
+document
+  .getElementById(
+    "highEfficiencyBtn"
+  )
+  .addEventListener(
+    "click",
+    setHighEfficiency
+  );
+
+
+document
+  .getElementById(
+    "shortBtn"
+  )
+  .addEventListener(
+    "click",
+    setShort
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.I>
+    1e-9
+  ){
+
+    const speed=
+      .035+
+      Math.min(
+        m.I,
+        10
+      )*
+      .025;
+
+
+    particlePhase+=
+      speed*
+      dt;
+
+
+    if(
+      particlePhase>=1
+    ){
+
+      particlePhase-=1;
+
+    }
+
+  }
+
+
+  drawCircuit(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    circuitCanvas,
+    circuitCtx
+  );
+
+
+  resizeCanvas(
+    graphCanvas,
+    graphCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawCircuit(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește dependența Pu(R), condiția R=r și diferența dintre putere și randament.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Transferul maxim de putere este bine înțeles.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează relațiile de la R=r.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia traseul: Pu(R) → demonstrația maximului → R=r → Pmax → η=50%.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      circuitCanvas,
+      circuitCtx
+    );
+
+
+    resizeCanvas(
+      graphCanvas,
+      graphCtx
+    );
+
+
+    resetAll();
+
+
+    const m=
+      updateResults();
+
+
+    drawCircuit(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
