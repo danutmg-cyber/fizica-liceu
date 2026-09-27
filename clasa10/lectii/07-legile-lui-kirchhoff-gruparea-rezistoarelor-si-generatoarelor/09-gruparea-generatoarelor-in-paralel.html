@@ -1,1 +1,7830 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+9. Gruparea generatoarelor în paralel | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Gruparea generatoarelor în paralel: generatoare identice, t.e.m. echivalentă, rezistență internă echivalentă, curenți de ramură, surse neidentice și curenți de circulație, aplicații și simulator interactiv.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROPERTY CARDS
+========================================================= */
+
+.property-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.property-emf{
+  border-color:#2563eb;
+}
+
+.property-r{
+  border-color:#f59e0b;
+}
+
+.property-current{
+  border-color:#22c55e;
+}
+
+.property-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:54px;
+  height:54px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-size:1.15rem;
+
+  font-weight:900;
+
+}
+
+.property-emf .property-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.property-r .property-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+.property-current .property-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+
+/* =========================================================
+   FIGURE
+========================================================= */
+
+.circuit-figure{
+
+  min-height:400px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.circuit-figure svg{
+
+  width:100%;
+  max-width:850px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-source{
+
+  stroke:#2563eb;
+
+  stroke-width:5;
+
+}
+
+.svg-resistor{
+
+  fill:#fff7ed;
+
+  stroke:#ea580c;
+
+  stroke-width:4;
+
+}
+
+.svg-node{
+
+  fill:#dc2626;
+
+  stroke:#7f1d1d;
+
+  stroke-width:3;
+
+}
+
+.svg-current{
+
+  fill:none;
+
+  stroke:#16a34a;
+
+  stroke-width:5;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:20px;
+
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:14px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   DERIVATION
+========================================================= */
+
+.derivation{
+
+  margin:22px 0;
+
+  padding:22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:15px;
+
+}
+
+.derivation-step{
+
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #cbd5e1;
+
+}
+
+.derivation-step:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.advanced-controls{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  background:#fff;
+
+  border:
+    1px dashed #94a3b8;
+
+  border-radius:14px;
+
+}
+
+.hidden{
+  display:none !important;
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.08fr .92fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#parallelGeneratorCanvas,
+#currentCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:640px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.status-warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+.status-danger{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   CURRENT LIST
+========================================================= */
+
+.current-list{
+
+  display:grid;
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+.current-row{
+
+  display:grid;
+
+  grid-template-columns:
+    72px 1fr 100px;
+
+  gap:10px;
+
+  align-items:center;
+
+}
+
+.current-track{
+
+  position:relative;
+
+  height:20px;
+
+  overflow:hidden;
+
+  background:#e2e8f0;
+
+  border-radius:999px;
+
+}
+
+.current-center{
+
+  position:absolute;
+
+  left:50%;
+  top:0;
+  bottom:0;
+
+  width:2px;
+
+  background:#64748b;
+
+}
+
+.current-fill{
+
+  position:absolute;
+
+  top:2px;
+  bottom:2px;
+
+  border-radius:999px;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #parallelGeneratorCanvas,
+  #currentCanvas{
+    height:560px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 9
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Gruparea generatoarelor
+</span>
+
+</div>
+
+
+<h1>
+Gruparea generatoarelor în paralel
+</h1>
+
+
+<p class="subtitle">
+Generatoarele conectate în paralel au aceleași două borne externe.
+Pentru generatoare identice,
+t.e.m. echivalentă rămâne neschimbată,
+dar rezistența internă echivalentă scade.
+Pentru surse neidentice apare însă o problemă nouă:
+curenții de circulație între surse.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să recunoști generatoare conectate în paralel;
+</li>
+
+<li>
+să explici de ce gruparea are aceeași tensiune la borne pentru toate ramurile;
+</li>
+
+<li>
+să calculezi parametrii echivalenți pentru generatoare identice;
+</li>
+
+<li>
+să demonstrezi relația \(r_{eq}=r/n\);
+</li>
+
+<li>
+să calculezi curentul total și curenții furnizați de sursele identice;
+</li>
+
+<li>
+să explici avantajul reducerii rezistenței interne;</li>
+
+<li>
+să recunoști pericolul conectării directe în paralel a surselor cu t.e.m. diferite;</li>
+
+<li>
+să interpretezi curenții de circulație dintre surse.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pentru \(n\) generatoare identice</h3>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\mathcal E_{eq}=\mathcal E
+}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+r_{eq}=\frac rn
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}
+{R+r/n}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECALL
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 Din lecția precedentă</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Generatoare identice în serie</h3>
+
+<div class="formula">
+
+\[
+\mathcal E_{eq}=n\mathcal E
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+r_{eq}=nr
+\]
+
+</div>
+
+<p>
+Crește t.e.m. totală,
+dar crește și rezistența internă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ce ne întrebăm acum?</h3>
+
+<p>
+Ce se întâmplă dacă legăm:
+</p>
+
+<div class="formula">
+
+\[
++\text{ cu }+
+\]
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+-\text{ cu }-
+\]
+
+</div>
+
+<p>
+astfel încât sursele să fie conectate
+între aceleași două noduri?
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DEFINITION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Ce înseamnă conectarea în paralel?</h2>
+
+<div class="blue-box">
+
+Generatoarele sunt conectate în paralel
+atunci când bornele lor de aceeași polaritate
+sunt conectate la aceleași două noduri ale circuitului.
+</div>
+
+
+<div class="formula">
+
+\[
+(+)\longleftrightarrow(+)
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+(-)\longleftrightarrow(-)
+\]
+
+</div>
+
+
+<div class="circuit-figure">
+
+<svg
+  viewBox="0 0 860 500"
+  role="img"
+  aria-label="Trei generatoare identice conectate în paralel și un rezistor exterior">
+
+<!-- rails -->
+
+<line
+  class="svg-wire"
+  x1="210"
+  y1="70"
+  x2="210"
+  y2="400"/>
+
+<line
+  class="svg-wire"
+  x1="650"
+  y1="70"
+  x2="650"
+  y2="400"/>
+
+<!-- source branches -->
+
+<line
+  class="svg-wire"
+  x1="210"
+  y1="140"
+  x2="350"
+  y2="140"/>
+
+<line
+  class="svg-wire"
+  x1="510"
+  y1="140"
+  x2="650"
+  y2="140"/>
+
+<line
+  class="svg-wire"
+  x1="210"
+  y1="240"
+  x2="350"
+  y2="240"/>
+
+<line
+  class="svg-wire"
+  x1="510"
+  y1="240"
+  x2="650"
+  y2="240"/>
+
+<line
+  class="svg-wire"
+  x1="210"
+  y1="340"
+  x2="350"
+  y2="340"/>
+
+<line
+  class="svg-wire"
+  x1="510"
+  y1="340"
+  x2="650"
+  y2="340"/>
+
+<!-- sources: short plate left, long right -->
+
+<line
+  class="svg-source"
+  x1="390"
+  y1="116"
+  x2="390"
+  y2="164"/>
+
+<line
+  class="svg-source"
+  x1="465"
+  y1="103"
+  x2="465"
+  y2="177"/>
+
+<line
+  class="svg-source"
+  x1="390"
+  y1="216"
+  x2="390"
+  y2="264"/>
+
+<line
+  class="svg-source"
+  x1="465"
+  y1="203"
+  x2="465"
+  y2="277"/>
+
+<line
+  class="svg-source"
+  x1="390"
+  y1="316"
+  x2="390"
+  y2="364"/>
+
+<line
+  class="svg-source"
+  x1="465"
+  y1="303"
+  x2="465"
+  y2="377"/>
+
+<!-- labels -->
+
+<text
+  class="svg-small"
+  x="374"
+  y="196">
+−
+</text>
+
+<text
+  class="svg-small"
+  x="459"
+  y="196">
++
+</text>
+
+<text
+  class="svg-small"
+  x="405"
+  y="125">
+ℰ, r
+</text>
+
+<text
+  class="svg-small"
+  x="405"
+  y="225">
+ℰ, r
+</text>
+
+<text
+  class="svg-small"
+  x="405"
+  y="325">
+ℰ, r
+</text>
+
+<!-- load -->
+
+<path
+  class="svg-wire"
+  d="M210 70 V35 H715 V175"/>
+
+<rect
+  class="svg-resistor"
+  x="680"
+  y="175"
+  width="70"
+  height="130"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="703"
+  y="247">
+R
+</text>
+
+<path
+  class="svg-wire"
+  d="M715 305 V435 H210 V400"/>
+
+<!-- current -->
+
+<path
+  class="svg-current"
+  d="M570 35 H660"/>
+
+<polygon
+  points="660,35 638,24 638,46"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="606"
+  y="20">
+I
+</text>
+
+<text
+  class="svg-small"
+  x="270"
+  y="472">
+toate sursele au aceleași borne externe
+</text>
+
+</svg>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SAME TERMINAL VOLTAGE
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Tensiunea la borne este comună</h2>
+
+<p>
+Toate ramurile sunt conectate între aceleași două noduri,
+\(A\) și \(B\).
+</p>
+
+<p>
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_1=U_2=\ldots=U_n=U_{AB}
+}
+\]
+
+</div>
+
+
+<p>
+Pentru fiecare generator care furnizează curent:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-I_kr
+\]
+
+</div>
+
+unde \(I_k\) este curentul furnizat de generatorul \(k\).
+</p>
+
+
+<div class="green-box">
+
+La generatoare identice și într-o configurație simetrică,
+curentul total se distribuie egal:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_1=I_2=\ldots=I_n=\frac In
+}
+\]
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DERIVATION IDENTICAL
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Deducerea generatorului echivalent</h2>
+
+<p>
+Considerăm \(n\) generatoare identice,
+fiecare cu:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E,\qquad r
+\]
+
+</div>
+
+<p>
+conectate corect în paralel.
+</p>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>1. Curentul total se împarte egal</strong>
+
+<div class="formula">
+
+\[
+I_k=
+\frac In
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>2. Tensiunea la bornele fiecărei surse</strong>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-I_kr
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>3. Înlocuim \(I_k=I/n\)</strong>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-
+\frac In r
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>4. Scriem relația sub forma generatorului echivalent</strong>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-
+I\frac rn
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>5. Comparăm cu</strong>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E_{eq}
+-Ir_{eq}
+\]
+
+</div>
+
+<p>
+și obținem:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\mathcal E_{eq}=\mathcal E
+}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+r_{eq}=\frac rn
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PHYSICAL MEANING
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Ce se schimbă și ce nu se schimbă?</h2>
+
+<div class="grid-3">
+
+
+<div class="property-card property-emf">
+
+<div class="property-icon">
+ℰ
+</div>
+
+<h3>T.e.m.</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\mathcal E_{eq}=\mathcal E
+}
+\]
+
+</div>
+
+<p>
+T.e.m. nu se multiplică.
+</p>
+
+</div>
+
+
+<div class="property-card property-r">
+
+<div class="property-icon">
+r
+</div>
+
+<h3>Rezistența internă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+r_{eq}=\frac rn
+}
+\]
+
+</div>
+
+<p>
+Scade de \(n\) ori pentru surse identice.
+</p>
+
+</div>
+
+
+<div class="property-card property-current">
+
+<div class="property-icon">
+I
+</div>
+
+<h3>Curentul total</h3>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}
+{R+r/n}
+\]
+
+</div>
+
+<p>
+Poate deveni mai mare deoarece rezistența internă totală scade.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Curentul prin circuitul exterior</h2>
+
+<p>
+Generatorul echivalent are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_{eq}
+=
+\mathcal E
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+r_{eq}
+=
+\frac rn
+\]
+
+</div>
+
+<p>
+Din legea lui Ohm pentru circuitul întreg:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}
+{R+r/n}
+}
+\]
+
+</div>
+
+<p>
+Înmulțind numărătorul și numitorul cu \(n\):
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{n\mathcal E}
+{nR+r}
+}
+\]
+
+</div>
+
+
+<p>
+Fiecare generator furnizează:
+</p>
+
+<div class="formula">
+
+\[
+I_k=
+\frac In
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_k=
+\frac{\mathcal E}
+{nR+r}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Exemplu – trei generatoare identice</h2>
+
+<p>
+Trei generatoare identice au:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=6\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+r=3\,\Omega
+\]
+
+</div>
+
+<p>
+și sunt conectate în paralel la:
+</p>
+
+<div class="formula">
+
+\[
+R=5\,\Omega
+\]
+
+</div>
+
+
+<h3>Pasul 1 – T.e.m. echivalentă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\mathcal E_{eq}=6\,V
+}
+\]
+
+</div>
+
+
+<h3>Pasul 2 – Rezistența internă echivalentă</h3>
+
+<div class="formula">
+
+\[
+r_{eq}
+=
+\frac{3}{3}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+r_{eq}=1\,\Omega
+}
+\]
+
+</div>
+
+
+<h3>Pasul 3 – Curentul total</h3>
+
+<div class="formula">
+
+\[
+I=
+\frac6{5+1}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I=1\,A
+}
+\]
+
+</div>
+
+
+<h3>Pasul 4 – Curentul furnizat de fiecare sursă</h3>
+
+<div class="formula">
+
+\[
+I_k=
+\frac13\,A
+\]
+
+</div>
+
+
+<h3>Pasul 5 – Tensiunea la borne</h3>
+
+<div class="formula">
+
+\[
+U=IR
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U=1\cdot5
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U=5\,V
+}
+\]
+
+</div>
+
+
+<p>
+Verificare pe o sursă:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-I_kr
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U=
+6-\frac13\cdot3
+=
+5\,V
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ONE VS PARALLEL
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Ce câștigăm față de o singură sursă?</h2>
+
+<p>
+Pentru o singură sursă:
+</p>
+
+<div class="formula">
+
+\[
+I_1=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+<p>
+Pentru \(n\) surse identice în paralel:
+</p>
+
+<div class="formula">
+
+\[
+I_p=
+\frac{\mathcal E}{R+r/n}
+\]
+
+</div>
+
+
+<p>
+Deoarece:
+</p>
+
+<div class="formula">
+
+\[
+\frac rn<r
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_p>I_1
+}
+\]
+
+</div>
+
+pentru același \(R\).
+</p>
+
+
+<div class="green-box">
+
+Gruparea paralelă nu mărește t.e.m.,
+dar reduce rezistența internă echivalentă.
+
+Aceasta permite grupării să furnizeze
+un curent total mai mare unei sarcini,
+în limitele reale admise de surse.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SERIES VS PARALLEL
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Serie sau paralel?</h2>
+
+<p>
+Pentru \(n\) generatoare identice:
+</p>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Mărime
+</th>
+
+<th>
+Serie
+</th>
+
+<th>
+Paralel
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+T.e.m. echivalentă
+</td>
+
+<td>
+
+\[
+n\mathcal E
+\]
+
+</td>
+
+<td>
+
+\[
+\mathcal E
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Rezistență internă
+</td>
+
+<td>
+
+\[
+nr
+\]
+
+</td>
+
+<td>
+
+\[
+\frac rn
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Curent prin \(R\)
+</td>
+
+<td>
+
+\[
+I_s=
+\frac{n\mathcal E}
+{R+nr}
+\]
+
+</td>
+
+<td>
+
+\[
+I_p=
+\frac{\mathcal E}
+{R+r/n}
+\]
+
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="purple-box">
+
+<strong>Extensie:</strong>
+
+comparând formulele,
+pentru același număr de generatoare identice:
+
+<ul>
+
+<li>
+dacă \(R>r\), gruparea în serie produce curentul mai mare;
+</li>
+
+<li>
+dacă \(R<r\), gruparea în paralel produce curentul mai mare;
+</li>
+
+<li>
+dacă \(R=r\), cele două grupări dau același curent în modelul studiat.
+</li>
+
+</ul>
+
+Această comparație este una idealizată;
+în aplicațiile reale contează și limitele de curent,
+puterea, încălzirea și caracteristicile surselor.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     UNEQUAL SOURCES WARNING
+========================================================= -->
+
+<section class="card">
+
+<h2>9. De ce insistăm pe generatoare identice?</h2>
+
+<p>
+Să presupunem că două generatoare au:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1\neq\mathcal E_2
+\]
+
+</div>
+
+<p>
+și sunt conectate direct în paralel,
+cu aceeași polaritate.
+</p>
+
+<p>
+Fie tensiunea comună la borne:
+</p>
+
+<div class="formula">
+
+\[
+U
+\]
+
+</div>
+
+<p>
+Pentru fiecare ramură:
+</p>
+
+<div class="formula">
+
+\[
+I_1=
+\frac{\mathcal E_1-U}{r_1}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_2=
+\frac{\mathcal E_2-U}{r_2}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Dacă t.e.m.-urile sunt diferite,
+curenții furnizați de surse nu mai sunt egali.
+
+Mai mult,
+una dintre surse poate ajunge să primească curent
+de la cealaltă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     UNEQUAL EQUIVALENT
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Extensie – generatorul echivalent pentru surse neidentice</h2>
+
+<div class="purple-box">
+
+Această secțiune este recomandată pentru aprofundare.
+
+Modelăm fiecare generator printr-o t.e.m.
+în serie cu rezistența sa internă,
+iar toate sursele au aceeași orientare a bornelor.
+</div>
+
+
+<p>
+Pentru două surse:
+</p>
+
+<div class="formula">
+
+\[
+I_1=
+\frac{\mathcal E_1-U}{r_1}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_2=
+\frac{\mathcal E_2-U}{r_2}
+\]
+
+</div>
+
+<p>
+Generatorul echivalent are:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+r_{eq}
+=
+\frac{r_1r_2}
+{r_1+r_2}
+}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\mathcal E_{eq}
+=
+\frac{
+\mathcal E_1/r_1+
+\mathcal E_2/r_2
+}{
+1/r_1+1/r_2
+}
+}
+\]
+
+</div>
+
+
+<p>
+General:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+r_{eq}
+=
+\left(
+\sum_k\frac1{r_k}
+\right)^{-1}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\mathcal E_{eq}
+=
+\frac{
+\sum_k\mathcal E_k/r_k
+}{
+\sum_k1/r_k
+}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Observă:
+
+\(\mathcal E_{eq}\)
+nu este în general media aritmetică a t.e.m.-urilor.
+
+Este o medie ponderată de conductanțele interne:
+sursele cu rezistență internă mai mică au o influență mai mare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CIRCULATING CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Curent de circulație între surse</h2>
+
+<p>
+Cel mai clar apare atunci când circuitul exterior este deschis.
+</p>
+
+<p>
+Pentru două surse cu:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1>\mathcal E_2
+\]
+
+</div>
+
+curentul exterior este:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{exterior}}=0
+\]
+
+</div>
+
+dar poate exista un curent prin bucla formată chiar de cele două surse.
+</p>
+
+<p>
+Pentru două surse:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_c=
+\frac{
+\mathcal E_1-\mathcal E_2
+}{
+r_1+r_2
+}
+}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=6\,V,
+\qquad
+\mathcal E_2=5,5\,V
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+r_1=r_2=0,1\,\Omega
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+I_c=
+\frac{0,5}{0,2}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I_c=2,5\,A
+}
+\]
+
+</div>
+
+
+<div class="red-box">
+
+O diferență de numai \(0,5\,V\)
+poate genera un curent mare
+dacă rezistențele interne sunt mici.
+
+De aceea,
+<strong>sursele reale cu tensiuni diferite nu se conectează arbitrar direct în paralel</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL SAFETY
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Condiții practice pentru asocierea în paralel</h2>
+
+<p>
+În aplicații reale,
+sursele puse în paralel trebuie să fie compatibile.
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>De urmărit</h3>
+
+<ul>
+
+<li>aceeași tensiune nominală;</li>
+
+<li>aceeași polaritate;</li>
+
+<li>tehnologie compatibilă;</li>
+
+<li>stări de încărcare apropiate;</li>
+
+<li>caracteristici electrice apropiate;</li>
+
+<li>limite admise de curent;</li>
+
+<li>metoda de partajare a curentului prevăzută de producător.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>De evitat</h3>
+
+<ul>
+
+<li>inversarea polarității unei surse;</li>
+
+<li>punerea în paralel a unor surse cu tensiuni mult diferite;</li>
+
+<li>combinarea arbitrară a bateriilor noi cu baterii descărcate;</li>
+
+<li>conectarea surselor de laborator în paralel dacă aparatul nu permite explicit această funcționare;</li>
+
+<li>conectarea improvizată a acumulatorilor Li-ion.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+La clasă,
+conectarea fizică în paralel se face numai cu montaje didactice aprobate,
+de joasă tensiune,
+cu limitarea curentului și sub supravegherea profesorului.
+
+Simulatorul de mai jos permite explorarea în siguranță
+a cazurilor neidentice.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate experimentală – model sigur cu rezistoare de protecție</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>două surse didactice identice de joasă tensiune;</li>
+
+<li>câte un rezistor serie de protecție pentru fiecare sursă;</li>
+
+<li>un rezistor de sarcină;</li>
+
+<li>multimetre;</li>
+
+<li>conductoare și întrerupător.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scop</h3>
+
+<p>
+Observarea faptului că două ramuri identice
+pot furniza împreună curent unei sarcini,
+în timp ce fiecare ramură furnizează doar o parte din curentul total.
+</p>
+
+<div class="formula">
+
+\[
+I\approx I_1+I_2
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Profesorul pregătește două ramuri identice,
+fiecare alcătuită dintr-o sursă de joasă tensiune
+și un rezistor serie de protecție.
+</li>
+
+<li>
+Se verifică separat tensiunile surselor înainte de conectarea ramurilor.
+</li>
+
+<li>
+Ramurile sunt conectate cu aceeași polaritate la bornele comune.
+</li>
+
+<li>
+Se conectează un rezistor de sarcină.
+</li>
+
+<li>
+Se măsoară tensiunea comună:
+\[
+U
+\]
+</li>
+
+<li>
+Se măsoară curentul total:
+\[
+I
+\]
+</li>
+
+<li>
+Se măsoară separat:
+\[
+I_1
+\quad\text{și}\quad
+I_2
+\]
+</li>
+
+<li>
+Se verifică:
+\[
+I\approx I_1+I_2
+\]
+</li>
+
+<li>
+Pentru ramuri identice,
+se compară:
+\[
+I_1
+\quad\text{și}\quad
+I_2
+\]
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+Pentru două ramuri suficient de asemănătoare,
+ne așteptăm aproximativ la:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_1\approx I_2\approx\frac I2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+Rezistoarele de protecție nu sunt eliminate din montaj.
+
+Nu se încearcă realizarea unui „curent de circulație”
+cu baterii conectate direct între ele.
+Acest fenomen se studiază numeric sau prin simulator.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Două surse identice</h3>
+
+<p>
+Două generatoare identice:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=4,5\,V,
+\qquad
+r=1\,\Omega
+\]
+
+</div>
+
+<p>
+sunt conectate în paralel.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\mathcal E_{eq}
+=
+\mathcal E
+=
+4,5\,V
+\]
+
+\[
+r_{eq}
+=
+\frac r2
+=
+0,5\,\Omega
+\]
+
+Deci:
+
+\[
+\boxed{
+\mathcal E_{eq}=4,5\,V
+}
+\]
+
+\[
+\boxed{
+r_{eq}=0,5\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Patru generatoare identice</h3>
+
+<p>
+Fie:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=6\,V,
+\qquad
+r=2\,\Omega
+\]
+
+</div>
+
+<p>
+pentru fiecare dintre cele patru surse.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\mathcal E_{eq}
+=
+6\,V
+\]
+
+\[
+r_{eq}
+=
+\frac24
+=
+0,5\,\Omega
+\]
+
+\[
+\boxed{
+\mathcal E_{eq}=6\,V
+}
+\]
+
+\[
+\boxed{
+r_{eq}=0,5\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Curentul total</h3>
+
+<p>
+Trei surse identice au:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=6\,V,
+\qquad
+r=3\,\Omega
+\]
+
+</div>
+
+<p>
+și alimentează:
+</p>
+
+<div class="formula">
+
+\[
+R=5\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+r_{eq}
+=
+\frac33
+=
+1\,\Omega
+\]
+
+\[
+I=
+\frac6{5+1}
+\]
+
+\[
+\boxed{
+I=1\,A
+}
+\]
+
+Fiecare generator furnizează:
+
+\[
+I_k=
+\frac13\,A
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Tensiunea la borne</h3>
+
+<p>
+În problema precedentă:
+</p>
+
+<div class="formula">
+
+\[
+I=1\,A,
+\qquad
+R=5\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+U=IR
+\]
+
+\[
+U=1\cdot5
+\]
+
+\[
+\boxed{
+U=5\,V
+}
+\]
+
+Verificare cu generatorul echivalent:
+
+\[
+U=
+\mathcal E_{eq}
+-Ir_{eq}
+\]
+
+\[
+U=
+6-1\cdot1
+\]
+
+\[
+\boxed{
+U=5\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Numărul de surse</h3>
+
+<p>
+Generatoarele identice au:
+</p>
+
+<div class="formula">
+
+\[
+r=4\,\Omega
+\]
+
+</div>
+
+<p>
+Se dorește:
+</p>
+
+<div class="formula">
+
+\[
+r_{eq}=1\,\Omega
+\]
+
+</div>
+
+<p>
+Câte surse trebuie conectate în paralel?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+r_{eq}
+=
+\frac rn
+\]
+
+\[
+1=
+\frac4n
+\]
+
+\[
+\boxed{
+n=4
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 6 – Curent de circulație</h3>
+
+<p>
+Două surse au:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=6\,V,
+\qquad
+\mathcal E_2=5\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+r_1=0,5\,\Omega,
+\qquad
+r_2=0,5\,\Omega
+\]
+
+</div>
+
+<p>
+și sunt conectate în paralel fără sarcină exterioară.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_c=
+\frac{
+\mathcal E_1-\mathcal E_2
+}{
+r_1+r_2
+}
+\]
+
+\[
+I_c=
+\frac{
+6-5
+}{
+0,5+0,5
+}
+\]
+
+\[
+\boxed{
+I_c=1\,A
+}
+\]
+
+Curentul circulă de la sursa cu t.e.m. mai mare
+spre sursa cu t.e.m. mai mică prin bucla internă.
+
+Acest exemplu explică de ce asemenea conexiuni
+nu se realizează arbitrar în practică.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Generatoare în paralel</h2>
+
+<p>
+În modul de bază lucrezi cu generatoare identice.
+În modul de aprofundare,
+poți compara două surse cu t.e.m. și rezistențe interne diferite
+și poți observa inclusiv situația în care una dintre ele absoarbe curent.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="modeSelect">
+Mod de lucru
+</label>
+
+<select id="modeSelect">
+
+<option value="identical" selected>
+generatoare identice
+</option>
+
+<option value="unequal">
+două surse neidentice – extensie
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="loadSlider">
+Rezistența sarcinii \(R\) [Ω]
+</label>
+
+<input
+  id="loadSlider"
+  type="range"
+  min="0.5"
+  max="40"
+  step="0.5"
+  value="5">
+
+<span
+  class="range-value"
+  id="loadLabel">
+5,0 Ω
+</span>
+
+</div>
+
+
+<div
+  class="control"
+  id="countControl">
+
+<label for="countSelect">
+Număr surse
+</label>
+
+<select id="countSelect">
+
+<option value="1">
+1 sursă
+</option>
+
+<option value="2">
+2 surse
+</option>
+
+<option value="3" selected>
+3 surse
+</option>
+
+<option value="4">
+4 surse
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+<div
+  class="control"
+  id="identicalEmfControl">
+
+<label for="emfSlider">
+T.e.m. \(\mathcal E\) [V]
+</label>
+
+<input
+  id="emfSlider"
+  type="range"
+  min="1"
+  max="12"
+  step="0.5"
+  value="6">
+
+<span
+  class="range-value"
+  id="emfLabel">
+6,0 V
+</span>
+
+</div>
+
+
+<div
+  class="control"
+  id="identicalRControl">
+
+<label for="internalSlider">
+Rezistența internă \(r\) [Ω]
+</label>
+
+<input
+  id="internalSlider"
+  type="range"
+  min="0.1"
+  max="5"
+  step="0.1"
+  value="3">
+
+<span
+  class="range-value"
+  id="internalLabel">
+3,0 Ω
+</span>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="advanced-controls hidden"
+  id="advancedControls">
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Sursa 1</h3>
+
+<div class="control">
+
+<label for="e1Slider">
+\(\mathcal E_1\) [V]
+</label>
+
+<input
+  id="e1Slider"
+  type="range"
+  min="1"
+  max="12"
+  step="0.1"
+  value="6">
+
+<span
+  class="range-value"
+  id="e1Label">
+6,0 V
+</span>
+
+</div>
+
+<div class="control">
+
+<label for="r1Slider">
+\(r_1\) [Ω]
+</label>
+
+<input
+  id="r1Slider"
+  type="range"
+  min="0.1"
+  max="5"
+  step="0.1"
+  value="0.5">
+
+<span
+  class="range-value"
+  id="r1Label">
+0,5 Ω
+</span>
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Sursa 2</h3>
+
+<div class="control">
+
+<label for="e2Slider">
+\(\mathcal E_2\) [V]
+</label>
+
+<input
+  id="e2Slider"
+  type="range"
+  min="1"
+  max="12"
+  step="0.1"
+  value="5.5">
+
+<span
+  class="range-value"
+  id="e2Label">
+5,5 V
+</span>
+
+</div>
+
+<div class="control">
+
+<label for="r2Slider">
+\(r_2\) [Ω]
+</label>
+
+<input
+  id="r2Slider"
+  type="range"
+  min="0.1"
+  max="5"
+  step="0.1"
+  value="0.5">
+
+<span
+  class="range-value"
+  id="r2Label">
+0,5 Ω
+</span>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="threeIdenticalBtn">
+
+3 surse identice
+
+</button>
+
+
+<button
+  class="primary"
+  id="oneVsThreeBtn">
+
+1 ↔ 3 surse
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="equalUnequalBtn">
+
+Două surse identice
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="mismatchBtn">
+
+Surse 6 V / 5,5 V
+
+</button>
+
+
+<button
+  class="red-button"
+  id="openCircuitBtn">
+
+Sarcină foarte mare
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="parallelGeneratorCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="currentCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+\(\mathcal E_{eq}\)
+</span>
+
+<strong id="eqEmfValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(r_{eq}\)
+</span>
+
+<strong id="eqRValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tensiunea la borne
+</span>
+
+<strong id="terminalVoltageValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curentul prin sarcină
+</span>
+
+<strong id="loadCurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent sursa 1
+</span>
+
+<strong id="source1CurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent sursa 2
+</span>
+
+<strong id="source2CurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent sursa 3
+</span>
+
+<strong id="source3CurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent sursa 4
+</span>
+
+<strong id="source4CurrentValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Modifică valorile și urmărește distribuirea curenților.
+</div>
+
+
+<div
+  class="current-list"
+  id="currentList">
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. O sursă vs. trei surse</h3>
+
+<p>
+Păstrează:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=6\,V,
+\quad
+r=3\,\Omega,
+\quad
+R=5\,\Omega
+\]
+
+</div>
+
+<p>
+Compară \(n=1\) cu \(n=3\).
+</p>
+
+<p>
+Ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+r_{eq}
+\quad\text{și}\quad
+I
+\ ?
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Crește numărul de surse</h3>
+
+<p>
+Observă că:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_{eq}
+\]
+
+</div>
+
+rămâne constantă,
+în timp ce:
+</p>
+
+<div class="formula">
+
+\[
+r_{eq}
+\]
+
+</div>
+
+scade.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Verifică partajarea egală</h3>
+
+<p>
+Pentru trei surse identice,
+compară:
+</p>
+
+<div class="formula">
+
+\[
+I_1,\quad I_2,\quad I_3
+\]
+
+</div>
+
+<p>
+cu:
+</p>
+
+<div class="formula">
+
+\[
+\frac I3
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Introdu o mică diferență</h3>
+
+<p>
+Alege modul:
+<strong>surse neidentice</strong>.
+</p>
+
+<p>
+Setează:
+</p>
+
+<div class="formula">
+
+\[
+6,0\,V
+\quad\text{și}\quad
+5,5\,V
+\]
+
+</div>
+
+<p>
+Observă că cei doi curenți nu mai sunt egali.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Mărește rezistența sarcinii</h3>
+
+<p>
+Pe măsură ce \(R\) devine foarte mare,
+curentul exterior tinde spre zero.
+</p>
+
+<p>
+Pentru surse neidentice,
+verifică dacă și curenții prin surse tind spre zero.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Detectează absorbția</h3>
+
+<p>
+În modul neidentic,
+caută o situație în care:
+</p>
+
+<div class="formula">
+
+\[
+I_2<0
+\]
+
+</div>
+
+<p>
+Semnul negativ arată că sursa 2
+primește curent în modelul ales.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „În paralel se adună t.e.m.-urile.”</h3>
+
+<p>
+Pentru surse identice conectate corect:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\mathcal E_{eq}=\mathcal E
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Rezistențele interne se adună ca în serie.”</h3>
+
+<p>
+Pentru \(n\) surse identice în paralel:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+r_{eq}=\frac rn
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Fiecare sursă furnizează curentul total.”</h3>
+
+<p>
+În cazul identic:
+</p>
+
+<div class="formula">
+
+\[
+I_k=
+\frac In
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Două baterii de tensiuni diferite pot fi puse fără probleme în paralel.”</h3>
+
+<p>
+Nu.
+Pot apărea curenți de circulație foarte mari.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Dacă nu există sarcină, nu poate exista niciun curent.”</h3>
+
+<p>
+Pentru surse neidentice conectate în paralel,
+poate exista curent de circulație chiar dacă:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{exterior}}=0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Rezistența internă nu contează.”</h3>
+
+<p>
+Ea limitează curentul și este esențială
+pentru analiza surselor puse în paralel.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Dacă sursele sunt identice nominal, vor împărți întotdeauna perfect curentul.”</h3>
+
+<p>
+În modelul idealizat, da.
+
+Sursele reale pot avea diferențe de rezistență internă,
+temperatură și stare de încărcare.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Pot inversa una dintre surse într-o grupare paralelă.”</h3>
+
+<p>
+O asemenea conexiune poate produce curenți foarte mari
+și nu reprezintă o asociere normală de generatoare.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce t.e.m. echivalentă nu se multiplică atunci când sursele identice sunt conectate în paralel?
+</li>
+
+<li>
+De ce scade rezistența internă echivalentă?
+</li>
+
+<li>
+De ce curentul total se împarte egal între surse identice?
+</li>
+
+<li>
+Ce se întâmplă cu tensiunea la borne dacă rezistența internă echivalentă scade?
+</li>
+
+<li>
+De ce gruparea paralelă poate furniza un curent exterior mai mare decât o singură sursă identică?
+</li>
+
+<li>
+De ce două surse cu t.e.m. diferite nu pot avea simultan aceeași tensiune la borne fără apariția unor curenți interni?
+</li>
+
+<li>
+Cum poate o sursă ajunge să absoarbă curent?
+</li>
+
+<li>
+De ce o diferență mică de t.e.m. poate produce un curent de circulație mare?
+</li>
+
+<li>
+Ce rol au rezistențele interne în limitarea curentului de circulație?
+</li>
+
+<li>
+De ce simularea este mai potrivită decât conectarea experimentală directă a unor baterii neidentice?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Pentru trei generatoare identice conectate în paralel:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\mathcal E_{eq}=3\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(\mathcal E_{eq}=\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(\mathcal E_{eq}=\mathcal E/3\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Pentru \(n\) generatoare identice în paralel:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(r_{eq}=r/n\)
+</button>
+
+<button class="answer-btn">
+\(r_{eq}=nr\)
+</button>
+
+<button class="answer-btn">
+\(r_{eq}=r\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Curentul prin sarcină este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=\mathcal E(R+r/n)\)
+</button>
+
+<button class="answer-btn">
+\(I=(R+r/n)/\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(I=\mathcal E/(R+r/n)\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Pentru surse identice,
+curentul furnizat de fiecare este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(nI\)
+</button>
+
+<button class="answer-btn">
+\(I/n\)
+</button>
+
+<button class="answer-btn">
+întotdeauna zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Patru generatoare cu \(r=2\,\Omega\)
+au în paralel:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(r_{eq}=0,5\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(r_{eq}=8\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(r_{eq}=2\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+Conectarea în paralel a unor surse identice:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+mărește t.e.m. de \(n\) ori
+</button>
+
+<button class="answer-btn">
+mărește rezistența internă
+</button>
+
+<button class="answer-btn">
+micșorează rezistența internă echivalentă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă două surse neidentice sunt conectate în paralel:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+curenții lor sunt obligatoriu egali
+</button>
+
+<button class="answer-btn">
+pot apărea curenți de circulație
+</button>
+
+<button class="answer-btn">
+rezistențele interne dispar
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+În circuit deschis,
+două surse cu t.e.m. diferite pot avea:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+curent de circulație între ele
+</button>
+
+<button class="answer-btn">
+obligatoriu curenți interni nuli
+</button>
+
+<button class="answer-btn">
+rezistență internă nulă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Pentru două surse neidentice:
+\[
+\mathcal E_1>\mathcal E_2
+\]
+un curent negativ calculat pentru sursa 2 în convenția de furnizare înseamnă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+sursa 2 are rezistență negativă
+</button>
+
+<button class="answer-btn">
+nu există curent
+</button>
+
+<button class="answer-btn">
+curentul real intră în sursa 2
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Condiția didactică de bază pentru gruparea simplă în paralel este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+surse cu t.e.m. complet diferite
+</button>
+
+<button class="answer-btn">
+surse identice sau atent compatibilizate și aceeași polaritate
+</button>
+
+<button class="answer-btn">
+conectarea plusului unei surse la minusul alteia între aceleași noduri
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Surse identice în paralel</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\mathcal E_{eq}
+=
+\mathcal E
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistență internă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+r_{eq}
+=
+\frac rn
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curent total</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}
+{R+r/n}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Partajarea curentului</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_k=
+\frac In
+}
+\]
+
+</div>
+
+<p>
+pentru surse identice.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="orange-box">
+
+Pentru surse neidentice,
+nu mai putem folosi automat:
+
+\[
+\mathcal E_{eq}=\mathcal E
+\]
+
+și:
+
+\[
+I_1=I_2
+\]
+
+Trebuie analizate separat ramurile,
+iar diferențele dintre t.e.m.-uri pot produce
+<strong>curenți de circulație</strong>.
+</div>
+
+
+<div class="green-box">
+
+<strong>Schema mentală:</strong>
+
+generatoare identice în paralel
+→ aceeași t.e.m.
+→ rezistențe interne în paralel
+→ rezistență internă echivalentă mai mică
+→ curent total împărțit între surse.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+În acest capitol am folosit frecvent
+ampermetrul și voltmetrul
+pentru a măsura curenți și tensiuni.
+</p>
+
+<p>
+Dar orice aparat are un domeniu maxim de măsurare.
+</p>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Adaptarea domeniului aparatelor de măsură. Aplicații
+</strong>
+
+vom analiza cum poate fi extins domeniul:
+
+<ul>
+
+<li>ampermetrului, cu ajutorul unui șunt;</li>
+
+<li>voltmetrului, cu ajutorul unei rezistențe adiționale;</li>
+
+<li>și cum se dimensionează aceste rezistențe folosind legile circuitelor studiate.</li>
+
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="08-gruparea-generatoarelor-in-serie.html">
+
+← Lecția 8<br>
+Gruparea generatoarelor în serie
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="10-adaptarea-domeniului-aparatelor-de-masura-aplicatii.html">
+
+Lecția 10<br>
+Adaptarea domeniului aparatelor de măsură →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const tolerance=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    tolerance
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const modeSelect=
+  document.getElementById(
+    "modeSelect"
+  );
+
+
+const loadSlider=
+  document.getElementById(
+    "loadSlider"
+  );
+
+
+const loadLabel=
+  document.getElementById(
+    "loadLabel"
+  );
+
+
+const countControl=
+  document.getElementById(
+    "countControl"
+  );
+
+
+const countSelect=
+  document.getElementById(
+    "countSelect"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const identicalEmfControl=
+  document.getElementById(
+    "identicalEmfControl"
+  );
+
+
+const identicalRControl=
+  document.getElementById(
+    "identicalRControl"
+  );
+
+
+const emfSlider=
+  document.getElementById(
+    "emfSlider"
+  );
+
+
+const emfLabel=
+  document.getElementById(
+    "emfLabel"
+  );
+
+
+const internalSlider=
+  document.getElementById(
+    "internalSlider"
+  );
+
+
+const internalLabel=
+  document.getElementById(
+    "internalLabel"
+  );
+
+
+const advancedControls=
+  document.getElementById(
+    "advancedControls"
+  );
+
+
+const e1Slider=
+  document.getElementById(
+    "e1Slider"
+  );
+
+
+const e1Label=
+  document.getElementById(
+    "e1Label"
+  );
+
+
+const r1Slider=
+  document.getElementById(
+    "r1Slider"
+  );
+
+
+const r1Label=
+  document.getElementById(
+    "r1Label"
+  );
+
+
+const e2Slider=
+  document.getElementById(
+    "e2Slider"
+  );
+
+
+const e2Label=
+  document.getElementById(
+    "e2Label"
+  );
+
+
+const r2Slider=
+  document.getElementById(
+    "r2Slider"
+  );
+
+
+const r2Label=
+  document.getElementById(
+    "r2Label"
+  );
+
+
+const eqEmfValue=
+  document.getElementById(
+    "eqEmfValue"
+  );
+
+
+const eqRValue=
+  document.getElementById(
+    "eqRValue"
+  );
+
+
+const terminalVoltageValue=
+  document.getElementById(
+    "terminalVoltageValue"
+  );
+
+
+const loadCurrentValue=
+  document.getElementById(
+    "loadCurrentValue"
+  );
+
+
+const sourceCurrentElements=[
+
+  document.getElementById(
+    "source1CurrentValue"
+  ),
+
+  document.getElementById(
+    "source2CurrentValue"
+  ),
+
+  document.getElementById(
+    "source3CurrentValue"
+  ),
+
+  document.getElementById(
+    "source4CurrentValue"
+  )
+
+];
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const currentList=
+  document.getElementById(
+    "currentList"
+  );
+
+
+const parallelCanvas=
+  document.getElementById(
+    "parallelGeneratorCanvas"
+  );
+
+
+const parallelCtx=
+  parallelCanvas.getContext(
+    "2d"
+  );
+
+
+const currentCanvas=
+  document.getElementById(
+    "currentCanvas"
+  );
+
+
+const currentCtx=
+  currentCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const mode=
+    modeSelect.value;
+
+
+  const R=
+    Number(
+      loadSlider.value
+    );
+
+
+  let sources=[];
+
+
+  if(
+    mode===
+    "identical"
+  ){
+
+    const n=
+      Number(
+        countSelect.value
+      );
+
+
+    const emf=
+      Number(
+        emfSlider.value
+      );
+
+
+    const r=
+      Number(
+        internalSlider.value
+      );
+
+
+    for(
+      let i=0;
+      i<n;
+      i++
+    ){
+
+      sources.push({
+
+        emf,
+        r
+
+      });
+
+    }
+
+  }
+
+  else{
+
+    sources=[
+
+      {
+        emf:
+          Number(
+            e1Slider.value
+          ),
+
+        r:
+          Number(
+            r1Slider.value
+          )
+      },
+
+      {
+        emf:
+          Number(
+            e2Slider.value
+          ),
+
+        r:
+          Number(
+            r2Slider.value
+          )
+      }
+
+    ];
+
+  }
+
+
+  /*
+  General Thevenin equivalent for
+  voltage sources with series internal resistances
+  connected in parallel with the same terminal orientation.
+  */
+
+  const conductance=
+    sources.reduce(
+      (
+        sum,
+        source
+      )=>
+        sum+
+        1/source.r,
+      0
+    );
+
+
+  const weightedEmf=
+    sources.reduce(
+      (
+        sum,
+        source
+      )=>
+        sum+
+        source.emf/
+        source.r,
+      0
+    );
+
+
+  const rEq=
+    1/
+    conductance;
+
+
+  const emfEq=
+    weightedEmf/
+    conductance;
+
+
+  const loadCurrent=
+    emfEq/
+    (
+      R+
+      rEq
+    );
+
+
+  const terminalVoltage=
+    loadCurrent*
+    R;
+
+
+  /*
+  Positive source current means:
+  the source delivers current toward the common positive terminal.
+
+  Negative means:
+  current enters that source in this model.
+  */
+
+  const sourceCurrents=
+    sources.map(
+      source=>
+        (
+          source.emf-
+          terminalVoltage
+        )/
+        source.r
+    );
+
+
+  const sourceCurrentSum=
+    sourceCurrents.reduce(
+      (
+        sum,
+        current
+      )=>
+        sum+
+        current,
+      0
+    );
+
+
+  /*
+  Open-circuit state of the same parallel sources.
+  Useful for showing circulating current.
+  */
+
+  const openVoltage=
+    emfEq;
+
+
+  const openCurrents=
+    sources.map(
+      source=>
+        (
+          source.emf-
+          openVoltage
+        )/
+        source.r
+    );
+
+
+  const maxMismatch=
+    Math.max(
+      ...sources.map(
+        source=>
+          source.emf
+      )
+    )-
+    Math.min(
+      ...sources.map(
+        source=>
+          source.emf
+      )
+    );
+
+
+  return{
+
+    mode,
+    R,
+
+    sources,
+
+    n:
+      sources.length,
+
+    emfEq,
+    rEq,
+
+    loadCurrent,
+    terminalVoltage,
+
+    sourceCurrents,
+    sourceCurrentSum,
+
+    openVoltage,
+    openCurrents,
+
+    maxMismatch
+
+  };
+
+}
+
+
+/* =========================================================
+   CONTROL VISIBILITY
+========================================================= */
+
+function updateControls(
+  m
+){
+
+  loadLabel.textContent=
+    `${formatRo(
+      m.R,
+      1
+    )} Ω`;
+
+
+  const identical=
+    m.mode===
+    "identical";
+
+
+  countControl.classList.toggle(
+    "hidden",
+    !identical
+  );
+
+
+  identicalEmfControl.classList.toggle(
+    "hidden",
+    !identical
+  );
+
+
+  identicalRControl.classList.toggle(
+    "hidden",
+    !identical
+  );
+
+
+  advancedControls.classList.toggle(
+    "hidden",
+    identical
+  );
+
+
+  emfLabel.textContent=
+    `${formatRo(
+      Number(
+        emfSlider.value
+      ),
+      1
+    )} V`;
+
+
+  internalLabel.textContent=
+    `${formatRo(
+      Number(
+        internalSlider.value
+      ),
+      1
+    )} Ω`;
+
+
+  e1Label.textContent=
+    `${formatRo(
+      Number(
+        e1Slider.value
+      ),
+      1
+    )} V`;
+
+
+  e2Label.textContent=
+    `${formatRo(
+      Number(
+        e2Slider.value
+      ),
+      1
+    )} V`;
+
+
+  r1Label.textContent=
+    `${formatRo(
+      Number(
+        r1Slider.value
+      ),
+      1
+    )} Ω`;
+
+
+  r2Label.textContent=
+    `${formatRo(
+      Number(
+        r2Slider.value
+      ),
+      1
+    )} Ω`;
+
+}
+
+
+/* =========================================================
+   CURRENT LIST
+========================================================= */
+
+function renderCurrentList(
+  m
+){
+
+  currentList.innerHTML="";
+
+
+  const maxAbs=
+    Math.max(
+      ...m.sourceCurrents.map(
+        value=>
+          Math.abs(
+            value
+          )
+      ),
+      Math.abs(
+        m.loadCurrent
+      ),
+      .001
+    );
+
+
+  m.sourceCurrents.forEach(
+    (
+      current,
+      index
+    )=>{
+
+      const row=
+        document.createElement(
+          "div"
+        );
+
+
+      row.className=
+        "current-row";
+
+
+      const percent=
+        Math.abs(
+          current
+        )/
+        maxAbs*
+        48;
+
+
+      const left=
+        current>=
+        0
+          ? 50
+          : 50-percent;
+
+
+      const color=
+        current>=
+        0
+          ? "#22c55e"
+          : "#ef4444";
+
+
+      row.innerHTML=
+        `
+        <strong>I${index+1}</strong>
+
+        <div class="current-track">
+
+          <div class="current-center"></div>
+
+          <div
+            class="current-fill"
+            style="
+              left:${left}%;
+              width:${percent}%;
+              background:${color};
+            ">
+          </div>
+
+        </div>
+
+        <span>
+          ${current>=0?"+":""}${formatRo(current,3)} A
+        </span>
+        `;
+
+
+      currentList.appendChild(
+        row
+      );
+
+    }
+  );
+
+
+  const loadRow=
+    document.createElement(
+      "div"
+    );
+
+
+  loadRow.className=
+    "current-row";
+
+
+  const loadPercent=
+    Math.abs(
+      m.loadCurrent
+    )/
+    maxAbs*
+    48;
+
+
+  loadRow.innerHTML=
+    `
+    <strong>I sarcină</strong>
+
+    <div class="current-track">
+
+      <div class="current-center"></div>
+
+      <div
+        class="current-fill"
+        style="
+          left:50%;
+          width:${loadPercent}%;
+          background:#2563eb;
+        ">
+      </div>
+
+    </div>
+
+    <span>
+      ${formatRo(m.loadCurrent,3)} A
+    </span>
+    `;
+
+
+  currentList.appendChild(
+    loadRow
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  updateControls(
+    m
+  );
+
+
+  eqEmfValue.textContent=
+    `${formatRo(
+      m.emfEq,
+      3
+    )} V`;
+
+
+  eqRValue.textContent=
+    `${formatRo(
+      m.rEq,
+      3
+    )} Ω`;
+
+
+  terminalVoltageValue.textContent=
+    `${formatRo(
+      m.terminalVoltage,
+      3
+    )} V`;
+
+
+  loadCurrentValue.textContent=
+    `${formatRo(
+      m.loadCurrent,
+      3
+    )} A`;
+
+
+  sourceCurrentElements.forEach(
+    (
+      element,
+      index
+    )=>{
+
+      if(
+        index<
+        m.sourceCurrents.length
+      ){
+
+        const value=
+          m.sourceCurrents[
+            index
+          ];
+
+
+        element.textContent=
+          `${value>=0?"+":""}${formatRo(value,3)} A`;
+
+      }
+
+      else{
+
+        element.textContent=
+          "—";
+
+      }
+
+    }
+  );
+
+
+  simStatus.className=
+    "status-box";
+
+
+  if(
+    m.mode===
+    "identical"
+  ){
+
+    simStatus.classList.add(
+      "status-good"
+    );
+
+
+    simStatus.innerHTML=
+      `Pentru
+       <strong>${m.n} surse identice</strong>:
+       ℰ<sub>eq</sub> =
+       ${formatRo(m.emfEq,2)} V,
+       iar
+       r<sub>eq</sub> =
+       ${formatRo(m.rEq,3)} Ω.
+       Curentul total este
+       <strong>${formatRo(m.loadCurrent,3)} A</strong>,
+       iar fiecare sursă furnizează
+       aproximativ
+       <strong>${formatRo(m.loadCurrent/m.n,3)} A</strong>.`;
+
+  }
+
+  else{
+
+    const hasAbsorbingSource=
+      m.sourceCurrents.some(
+        current=>
+          current<
+          -1e-6
+      );
+
+
+    if(
+      hasAbsorbingSource
+    ){
+
+      simStatus.classList.add(
+        "status-danger"
+      );
+
+
+      simStatus.innerHTML=
+        `În această configurație,
+         cel puțin o sursă are
+         <strong>curent negativ în convenția de furnizare</strong>.
+         Aceasta înseamnă că modelul indică un curent care intră în acea sursă.
+         Este exact motivul pentru care sursele reale neidentice nu se conectează arbitrar în paralel.`;
+
+    }
+
+    else if(
+      m.maxMismatch>
+      .05
+    ){
+
+      simStatus.classList.add(
+        "status-warning"
+      );
+
+
+      simStatus.innerHTML=
+        `Sursele au t.e.m. diferite.
+         Curentul nu se distribuie egal.
+         Generatorul echivalent are
+         ℰ<sub>eq</sub> =
+         ${formatRo(m.emfEq,3)} V
+         și
+         r<sub>eq</sub> =
+         ${formatRo(m.rEq,3)} Ω.
+         În circuit deschis pot exista curenți de circulație între surse.`;
+
+    }
+
+    else{
+
+      simStatus.classList.add(
+        "status-good"
+      );
+
+
+      simStatus.innerHTML=
+        `Cele două surse au t.e.m. aproape egale.
+         Partajarea curentului depinde în continuare
+         și de rezistențele lor interne.`;
+
+    }
+
+  }
+
+
+  renderCurrentList(
+    m
+  );
+
+
+  drawCurrentChart(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   SOURCE SYMBOL
+========================================================= */
+
+function drawSource(
+  context,
+  x,
+  y,
+  source,
+  index,
+  current
+){
+
+  const color=
+    current>=
+    -1e-7
+      ? "#60a5fa"
+      : "#f87171";
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=5;
+
+
+  /*
+  Short negative plate.
+  */
+
+  context.beginPath();
+
+  context.moveTo(
+    x-35,
+    y-27
+  );
+
+  context.lineTo(
+    x-35,
+    y+27
+  );
+
+  context.stroke();
+
+
+  /*
+  Long positive plate.
+  */
+
+  context.beginPath();
+
+  context.moveTo(
+    x+35,
+    y-40
+  );
+
+  context.lineTo(
+    x+35,
+    y+40
+  );
+
+  context.stroke();
+
+
+  context.fillStyle=
+    "#e2e8f0";
+
+
+  context.font=
+    "bold 11px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.fillText(
+    `ℰ${index+1}=${formatRo(source.emf,1)}V`,
+    x,
+    y-57
+  );
+
+
+  context.fillText(
+    `r${index+1}=${formatRo(source.r,1)}Ω`,
+    x,
+    y+60
+  );
+
+
+  context.fillStyle=
+    "#bfdbfe";
+
+
+  context.fillText(
+    "−          +",
+    x,
+    y+88
+  );
+
+}
+
+
+/* =========================================================
+   RESISTOR
+========================================================= */
+
+function drawResistor(
+  context,
+  x,
+  y,
+  width,
+  height,
+  label
+){
+
+  context.fillStyle=
+    "#fff7ed";
+
+
+  context.strokeStyle=
+    "#fb923c";
+
+
+  context.lineWidth=4;
+
+
+  context.fillRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.strokeRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.fillStyle=
+    "#7c2d12";
+
+
+  context.font=
+    "bold 12px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    label,
+    x,
+    y
+  );
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+let branchPhases=[
+  0,
+  .25,
+  .5,
+  .75
+];
+
+
+function updateParticles(
+  m,
+  dt
+){
+
+  if(
+    animationSelect.value===
+    "off"
+  ){
+    return;
+  }
+
+
+  m.sourceCurrents.forEach(
+    (
+      current,
+      index
+    )=>{
+
+      if(
+        Math.abs(
+          current
+        )<
+        1e-5
+      ){
+        return;
+      }
+
+
+      const speed=
+        .04+
+        Math.min(
+          Math.abs(
+            current
+          ),
+          5
+        )*
+        .04;
+
+
+      branchPhases[index]+=
+        Math.sign(
+          current
+        )*
+        speed*
+        dt;
+
+
+      while(
+        branchPhases[index]>
+        1
+      ){
+        branchPhases[index]-=1;
+      }
+
+
+      while(
+        branchPhases[index]<
+        0
+      ){
+        branchPhases[index]+=1;
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PARALLEL SCENE
+========================================================= */
+
+function drawParallelScene(
+  m
+){
+
+  const rect=
+    parallelCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    parallelCtx,
+    W,
+    H
+  );
+
+
+  const left=
+    W*.16;
+
+
+  const right=
+    W*.72;
+
+
+  const loadX=
+    W*.87;
+
+
+  const top=
+    H*.17;
+
+
+  const bottom=
+    H*.82;
+
+
+  parallelCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  parallelCtx.lineWidth=6;
+
+
+  parallelCtx.lineCap=
+    "round";
+
+
+  /*
+  Rails.
+  */
+
+  parallelCtx.beginPath();
+
+  parallelCtx.moveTo(
+    left,
+    top
+  );
+
+  parallelCtx.lineTo(
+    left,
+    bottom
+  );
+
+  parallelCtx.stroke();
+
+
+  parallelCtx.beginPath();
+
+  parallelCtx.moveTo(
+    right,
+    top
+  );
+
+  parallelCtx.lineTo(
+    right,
+    bottom
+  );
+
+  parallelCtx.stroke();
+
+
+  /*
+  Load loop.
+  */
+
+  parallelCtx.beginPath();
+
+  parallelCtx.moveTo(
+    right,
+    top
+  );
+
+  parallelCtx.lineTo(
+    loadX,
+    top
+  );
+
+  parallelCtx.lineTo(
+    loadX,
+    H*.40
+  );
+
+  parallelCtx.stroke();
+
+
+  parallelCtx.beginPath();
+
+  parallelCtx.moveTo(
+    loadX,
+    H*.60
+  );
+
+  parallelCtx.lineTo(
+    loadX,
+    bottom
+  );
+
+  parallelCtx.lineTo(
+    right,
+    bottom
+  );
+
+  parallelCtx.stroke();
+
+
+  drawResistor(
+    parallelCtx,
+    loadX,
+    H*.50,
+    62,
+    115,
+    `R=${formatRo(m.R,1)}Ω`
+  );
+
+
+  /*
+  Source branches.
+  */
+
+  const usableHeight=
+    (
+      bottom-
+      top
+    )*
+    .76;
+
+
+  const firstY=
+    top+
+    (
+      bottom-
+      top
+    )*
+    .12;
+
+
+  const spacing=
+    m.n>
+    1
+      ? usableHeight/
+        (
+          m.n-1
+        )
+      : 0;
+
+
+  for(
+    let i=0;
+    i<m.n;
+    i++
+  ){
+
+    const y=
+      m.n===
+      1
+        ? H*.50
+        : firstY+
+          spacing*i;
+
+
+    parallelCtx.strokeStyle=
+      "#cbd5e1";
+
+
+    parallelCtx.lineWidth=5;
+
+
+    parallelCtx.beginPath();
+
+    parallelCtx.moveTo(
+      left,
+      y
+    );
+
+    parallelCtx.lineTo(
+      right,
+      y
+    );
+
+    parallelCtx.stroke();
+
+
+    const sourceX=
+      (
+        left+
+        right
+      )/
+      2;
+
+
+    parallelCtx.strokeStyle=
+      "#020617";
+
+
+    parallelCtx.lineWidth=16;
+
+
+    parallelCtx.beginPath();
+
+    parallelCtx.moveTo(
+      sourceX-60,
+      y
+    );
+
+    parallelCtx.lineTo(
+      sourceX+60,
+      y
+    );
+
+    parallelCtx.stroke();
+
+
+    drawSource(
+      parallelCtx,
+      sourceX,
+      y,
+      m.sources[i],
+      i,
+      m.sourceCurrents[i]
+    );
+
+
+    /*
+    Current indication.
+    */
+
+    parallelCtx.fillStyle=
+      m.sourceCurrents[i]>=
+      0
+        ? "#86efac"
+        : "#fca5a5";
+
+
+    parallelCtx.font=
+      "bold 10px system-ui";
+
+
+    parallelCtx.textAlign=
+      "left";
+
+
+    parallelCtx.fillText(
+      `I${i+1}=${m.sourceCurrents[i]>=0?"+":""}${formatRo(m.sourceCurrents[i],2)}A`,
+      left+8,
+      y-12
+    );
+
+
+    /*
+    Moving particle.
+    Positive source current:
+    from left (-) toward right (+).
+    */
+
+    if(
+      animationSelect.value===
+      "on" &&
+      Math.abs(
+        m.sourceCurrents[i]
+      )>
+      1e-5
+    ){
+
+      const phase=
+        branchPhases[i];
+
+
+      const px=
+        left+
+        (
+          right-left
+        )*
+        phase;
+
+
+      parallelCtx.beginPath();
+
+
+      parallelCtx.arc(
+        px,
+        y,
+        4,
+        0,
+        Math.PI*2
+      );
+
+
+      parallelCtx.fillStyle=
+        m.sourceCurrents[i]>=
+        0
+          ? "#fde68a"
+          : "#fca5a5";
+
+
+      parallelCtx.fill();
+
+    }
+
+  }
+
+
+  /*
+  Nodes.
+  */
+
+  parallelCtx.fillStyle=
+    "#ef4444";
+
+
+  parallelCtx.beginPath();
+
+  parallelCtx.arc(
+    left,
+    H*.50,
+    9,
+    0,
+    Math.PI*2
+  );
+
+  parallelCtx.fill();
+
+
+  parallelCtx.beginPath();
+
+  parallelCtx.arc(
+    right,
+    H*.50,
+    9,
+    0,
+    Math.PI*2
+  );
+
+  parallelCtx.fill();
+
+
+  /*
+  Labels.
+  */
+
+  parallelCtx.fillStyle=
+    "#e2e8f0";
+
+
+  parallelCtx.font=
+    "bold 15px system-ui";
+
+
+  parallelCtx.textAlign=
+    "left";
+
+
+  parallelCtx.fillText(
+    "Generatoare în paralel",
+    18,
+    28
+  );
+
+
+  parallelCtx.fillStyle=
+    "#bae6fd";
+
+
+  parallelCtx.font=
+    "11px system-ui";
+
+
+  parallelCtx.fillText(
+    `U = ${formatRo(m.terminalVoltage,2)} V • I sarcină = ${formatRo(m.loadCurrent,3)} A`,
+    18,
+    49
+  );
+
+
+  parallelCtx.fillStyle=
+    "#86efac";
+
+
+  parallelCtx.font=
+    "bold 11px system-ui";
+
+
+  parallelCtx.textAlign=
+    "center";
+
+
+  parallelCtx.fillText(
+    `Σ I surse = ${formatRo(m.sourceCurrentSum,3)} A`,
+    W*.48,
+    H*.94
+  );
+
+}
+
+
+/* =========================================================
+   CURRENT CHART
+========================================================= */
+
+function drawCurrentChart(
+  m
+){
+
+  const rect=
+    currentCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  currentCtx.fillStyle=
+    "#f8fafc";
+
+
+  currentCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  currentCtx.fillStyle=
+    "#0f172a";
+
+
+  currentCtx.font=
+    "bold 15px system-ui";
+
+
+  currentCtx.textAlign=
+    "left";
+
+
+  currentCtx.fillText(
+    "Curenții furnizați de surse",
+    24,
+    30
+  );
+
+
+  currentCtx.fillStyle=
+    "#475569";
+
+
+  currentCtx.font=
+    "11px system-ui";
+
+
+  currentCtx.fillText(
+    "valoarea negativă înseamnă că, în convenția aleasă, curentul intră în sursă",
+    24,
+    51
+  );
+
+
+  const values=[
+    ...m.sourceCurrents
+  ];
+
+
+  const maxAbs=
+    Math.max(
+      ...values.map(
+        value=>
+          Math.abs(
+            value
+          )
+      ),
+      .1
+    )*
+    1.15;
+
+
+  const zeroY=
+    H*.52;
+
+
+  const plotTop=
+    H*.16;
+
+
+  const plotBottom=
+    H*.86;
+
+
+  const positiveHeight=
+    zeroY-
+    plotTop;
+
+
+  const negativeHeight=
+    plotBottom-
+    zeroY;
+
+
+  currentCtx.strokeStyle=
+    "#64748b";
+
+
+  currentCtx.lineWidth=2;
+
+
+  currentCtx.beginPath();
+
+  currentCtx.moveTo(
+    W*.13,
+    zeroY
+  );
+
+  currentCtx.lineTo(
+    W*.90,
+    zeroY
+  );
+
+  currentCtx.stroke();
+
+
+  const spacing=
+    (
+      W*.75
+    )/
+    values.length;
+
+
+  const barWidth=
+    Math.min(
+      62,
+      spacing*.55
+    );
+
+
+  values.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      const x=
+        W*.15+
+        spacing*
+        (
+          index+.5
+        );
+
+
+      const positive=
+        value>=
+        0;
+
+
+      const h=
+        Math.abs(
+          value
+        )/
+        maxAbs*
+        (
+          positive
+            ? positiveHeight
+            : negativeHeight
+        );
+
+
+      currentCtx.fillStyle=
+        positive
+          ? "#22c55e"
+          : "#ef4444";
+
+
+      if(
+        positive
+      ){
+
+        currentCtx.fillRect(
+          x-
+          barWidth/2,
+          zeroY-h,
+          barWidth,
+          h
+        );
+
+      }
+
+      else{
+
+        currentCtx.fillRect(
+          x-
+          barWidth/2,
+          zeroY,
+          barWidth,
+          h
+        );
+
+      }
+
+
+      currentCtx.fillStyle=
+        "#334155";
+
+
+      currentCtx.font=
+        "bold 11px system-ui";
+
+
+      currentCtx.textAlign=
+        "center";
+
+
+      currentCtx.fillText(
+        `I${index+1}`,
+        x,
+        plotBottom+35
+      );
+
+
+      currentCtx.fillText(
+        `${value>=0?"+":""}${formatRo(value,2)} A`,
+        x,
+        positive
+          ? zeroY-h-10
+          : zeroY+h+18
+      );
+
+    }
+  );
+
+
+  /*
+  Thevenin information.
+  */
+
+  currentCtx.fillStyle=
+    "#1e3a8a";
+
+
+  currentCtx.font=
+    "bold 12px system-ui";
+
+
+  currentCtx.textAlign=
+    "center";
+
+
+  currentCtx.fillText(
+    `ℰeq = ${formatRo(m.emfEq,3)} V`,
+    W*.50,
+    H*.93
+  );
+
+
+  currentCtx.fillText(
+    `req = ${formatRo(m.rEq,3)} Ω`,
+    W*.50,
+    H*.97
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setThreeIdentical(){
+
+  modeSelect.value=
+    "identical";
+
+
+  countSelect.value=
+    "3";
+
+
+  emfSlider.value=
+    "6";
+
+
+  internalSlider.value=
+    "3";
+
+
+  loadSlider.value=
+    "5";
+
+
+  updateResults();
+
+}
+
+
+let compareToggle=false;
+
+
+function toggleOneVsThree(){
+
+  modeSelect.value=
+    "identical";
+
+
+  emfSlider.value=
+    "6";
+
+
+  internalSlider.value=
+    "3";
+
+
+  loadSlider.value=
+    "5";
+
+
+  compareToggle=
+    !compareToggle;
+
+
+  countSelect.value=
+    compareToggle
+      ? "1"
+      : "3";
+
+
+  updateResults();
+
+}
+
+
+function setEqualUnequal(){
+
+  modeSelect.value=
+    "unequal";
+
+
+  e1Slider.value=
+    "6";
+
+
+  e2Slider.value=
+    "6";
+
+
+  r1Slider.value=
+    "1";
+
+
+  r2Slider.value=
+    "1";
+
+
+  loadSlider.value=
+    "5";
+
+
+  updateResults();
+
+}
+
+
+function setMismatch(){
+
+  modeSelect.value=
+    "unequal";
+
+
+  e1Slider.value=
+    "6";
+
+
+  e2Slider.value=
+    "5.5";
+
+
+  r1Slider.value=
+    "0.5";
+
+
+  r2Slider.value=
+    "0.5";
+
+
+  loadSlider.value=
+    "10";
+
+
+  updateResults();
+
+}
+
+
+function setOpenLike(){
+
+  modeSelect.value=
+    "unequal";
+
+
+  e1Slider.value=
+    "6";
+
+
+  e2Slider.value=
+    "5.5";
+
+
+  r1Slider.value=
+    "0.5";
+
+
+  r2Slider.value=
+    "0.5";
+
+
+  /*
+  Slider maximum is 40 Ω, so this is not an ideal open circuit,
+  but it strongly reduces external current and makes
+  internal circulation visible.
+  */
+
+  loadSlider.value=
+    "40";
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  modeSelect.value=
+    "identical";
+
+
+  countSelect.value=
+    "3";
+
+
+  emfSlider.value=
+    "6";
+
+
+  internalSlider.value=
+    "3";
+
+
+  loadSlider.value=
+    "5";
+
+
+  e1Slider.value=
+    "6";
+
+
+  e2Slider.value=
+    "5.5";
+
+
+  r1Slider.value=
+    "0.5";
+
+
+  r2Slider.value=
+    "0.5";
+
+
+  animationSelect.value=
+    "on";
+
+
+  branchPhases=[
+    0,
+    .25,
+    .5,
+    .75
+  ];
+
+
+  compareToggle=false;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  modeSelect,
+  loadSlider,
+  countSelect,
+  animationSelect,
+  emfSlider,
+  internalSlider,
+  e1Slider,
+  e2Slider,
+  r1Slider,
+  r2Slider
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "threeIdenticalBtn"
+  )
+  .addEventListener(
+    "click",
+    setThreeIdentical
+  );
+
+
+document
+  .getElementById(
+    "oneVsThreeBtn"
+  )
+  .addEventListener(
+    "click",
+    toggleOneVsThree
+  );
+
+
+document
+  .getElementById(
+    "equalUnequalBtn"
+  )
+  .addEventListener(
+    "click",
+    setEqualUnequal
+  );
+
+
+document
+  .getElementById(
+    "mismatchBtn"
+  )
+  .addEventListener(
+    "click",
+    setMismatch
+  );
+
+
+document
+  .getElementById(
+    "openCircuitBtn"
+  )
+  .addEventListener(
+    "click",
+    setOpenLike
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION LOOP
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  updateParticles(
+    m,
+    dt
+  );
+
+
+  drawParallelScene(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    parallelCanvas,
+    parallelCtx
+  );
+
+
+  resizeCanvas(
+    currentCanvas,
+    currentCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawParallelScene(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește t.e.m. echivalentă, rezistența internă și partajarea curentului.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Stăpânești gruparea generatoarelor în paralel.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează rₑq și distribuirea curenților.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia ideea-cheie: pentru surse identice în paralel, ℰₑq=ℰ și rₑq=r/n.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      parallelCanvas,
+      parallelCtx
+    );
+
+
+    resizeCanvas(
+      currentCanvas,
+      currentCtx
+    );
+
+
+    resetAll();
+
+
+    const m=
+      updateResults();
+
+
+    drawParallelScene(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
