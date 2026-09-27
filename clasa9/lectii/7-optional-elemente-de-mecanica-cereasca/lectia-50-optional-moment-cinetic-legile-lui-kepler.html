@@ -1,1 +1,5656 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>50. Momentul cinetic. Legile lui Kepler | Fizică – Clasa a IX-a</title>
+
+<meta name="description"
+content="Momentul cinetic și legile lui Kepler. Orbite eliptice, conservarea momentului cinetic, legea ariilor și perioada de revoluție. Lecție interactivă opțională de fizică pentru clasa a IX-a.">
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+
+:root {
+  --bg: #020617;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #dbe3ee;
+
+  --blue: #2563eb;
+  --blue-soft: #eff6ff;
+
+  --green: #16a34a;
+  --green-soft: #f0fdf4;
+
+  --orange: #ea580c;
+  --orange-soft: #fff7ed;
+
+  --red: #dc2626;
+  --red-soft: #fef2f2;
+
+  --purple: #7c3aed;
+  --purple-soft: #f5f3ff;
+
+  --cyan: #0891b2;
+  --cyan-soft: #ecfeff;
+
+  --yellow: #ca8a04;
+  --yellow-soft: #fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height: 1.65;
+
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(37,99,235,.10),
+      transparent 30%
+    ),
+    #f1f5f9;
+}
+
+a {
+  color: var(--blue);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar {
+  position: relative;
+
+  overflow: hidden;
+
+  padding:
+    42px 18px 55px;
+
+  color: white;
+
+  background:
+    radial-gradient(
+      circle at 78% 30%,
+      rgba(250,204,21,.18),
+      transparent 15%
+    ),
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(59,130,246,.40),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #020617,
+      #172554 55%,
+      #1e1b4b
+    );
+}
+
+.topbar::before,
+.topbar::after {
+  content: "";
+
+  position: absolute;
+
+  width: 4px;
+  height: 4px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  opacity: .8;
+
+  box-shadow:
+    70px 30px white,
+    160px 80px #bfdbfe,
+    280px 20px white,
+    390px 105px white,
+    520px 45px #fde68a,
+    650px 120px white,
+    780px 30px #bfdbfe,
+    900px 95px white;
+}
+
+.topbar::before {
+  left: 4%;
+  top: 15px;
+}
+
+.topbar::after {
+  left: 18%;
+  top: 95px;
+  opacity: .45;
+}
+
+.topbar-inner {
+  position: relative;
+  z-index: 2;
+
+  width:
+    min(100%,1050px);
+
+  margin: auto;
+}
+
+.breadcrumb {
+  margin-bottom: 16px;
+
+  font-size: .9rem;
+
+  opacity: .85;
+}
+
+.breadcrumb a {
+  color: white;
+  text-decoration: none;
+}
+
+.lesson-number {
+  display: inline-block;
+
+  padding: 6px 12px;
+
+  margin-bottom: 12px;
+
+  background:
+    rgba(255,255,255,.13);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius: 999px;
+
+  font-weight: 800;
+}
+
+.optional-badge {
+  display: inline-block;
+
+  margin-left: 8px;
+
+  padding: 6px 12px;
+
+  background:
+    rgba(250,204,21,.16);
+
+  border:
+    1px solid rgba(250,204,21,.35);
+
+  border-radius: 999px;
+
+  color: #fef08a;
+
+  font-size: .82rem;
+
+  font-weight: 850;
+}
+
+h1 {
+  margin: 0;
+
+  font-size:
+    clamp(2rem,5vw,3.4rem);
+
+  line-height: 1.08;
+}
+
+.subtitle {
+  max-width: 900px;
+
+  margin:
+    18px 0 0;
+
+  color: #dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.25rem);
+}
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main {
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:
+    30px auto 60px;
+}
+
+.card {
+  margin-bottom: 24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:
+    var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 18px;
+
+  box-shadow:
+    var(--shadow);
+}
+
+.card h2 {
+  margin-top: 0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height: 1.2;
+}
+
+.card h3 {
+  margin-top: 28px;
+
+  line-height: 1.25;
+}
+
+.lead {
+  font-size: 1.08rem;
+}
+
+.grid-2 {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap: 18px;
+}
+
+.grid-3 {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap: 16px;
+}
+
+.mini-card {
+  padding: 18px;
+
+  background:
+    var(--surface-soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 14px;
+}
+
+.mini-card h3,
+.mini-card h4 {
+  margin-top: 0;
+}
+
+.badge {
+  display: inline-block;
+
+  padding: 5px 10px;
+
+  background: #e2e8f0;
+
+  color: #334155;
+
+  border-radius: 999px;
+
+  font-size: .8rem;
+  font-weight: 800;
+}
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.cyan-box,
+.yellow-box {
+  margin: 18px 0;
+
+  padding: 16px 18px;
+
+  border-left: 5px solid;
+
+  border-radius: 12px;
+}
+
+.blue-box {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.green-box {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.orange-box {
+  border-color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.red-box {
+  border-color: var(--red);
+  background: var(--red-soft);
+}
+
+.purple-box {
+  border-color: var(--purple);
+  background: var(--purple-soft);
+}
+
+.cyan-box {
+  border-color: var(--cyan);
+  background: var(--cyan-soft);
+}
+
+.yellow-box {
+  border-color: var(--yellow);
+  background: var(--yellow-soft);
+}
+
+/* =========================================================
+   FORMULE
+========================================================= */
+
+.formula {
+  margin: 18px 0;
+
+  padding: 15px;
+
+  overflow-x: auto;
+
+  text-align: center;
+
+  background: #f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 12px;
+
+  font-size: 1.08rem;
+}
+
+.big-formula {
+  background: var(--blue-soft);
+
+  border-color: #bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+}
+
+/* =========================================================
+   TABEL
+========================================================= */
+
+table {
+  width: 100%;
+
+  margin: 20px 0;
+
+  border-collapse: collapse;
+
+  background: white;
+}
+
+th,
+td {
+  padding: 11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align: left;
+
+  vertical-align: top;
+}
+
+th {
+  background: #eaf2ff;
+}
+
+/* =========================================================
+   PAȘI
+========================================================= */
+
+.steps {
+  padding-left: 0;
+
+  list-style: none;
+
+  counter-reset: step;
+}
+
+.steps li {
+  position: relative;
+
+  padding:
+    0 0 20px 52px;
+}
+
+.steps li::before {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  display: grid;
+
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  content:
+    counter(step);
+
+  counter-increment: step;
+
+  background:
+    var(--blue);
+
+  color: white;
+
+  border-radius: 50%;
+
+  font-weight: 900;
+}
+
+/* =========================================================
+   DIAGRAMĂ ORBITĂ
+========================================================= */
+
+.orbit-diagram {
+  position: relative;
+
+  max-width: 760px;
+  height: 390px;
+
+  margin:
+    25px auto;
+
+  overflow: hidden;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius: 18px;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      #172554,
+      #020617 70%
+    );
+}
+
+.orbit-ellipse {
+  position: absolute;
+
+  left: 10%;
+  top: 20%;
+
+  width: 80%;
+  height: 60%;
+
+  border:
+    3px solid #60a5fa;
+
+  border-radius: 50%;
+}
+
+.sun-demo {
+  position: absolute;
+
+  left: 34%;
+  top: 50%;
+
+  width: 38px;
+  height: 38px;
+
+  transform:
+    translate(-50%,-50%);
+
+  background:
+    #facc15;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 18px #facc15,
+    0 0 40px rgba(250,204,21,.4);
+}
+
+.sun-demo::after {
+  content: "Soare";
+
+  position: absolute;
+
+  left: 50%;
+  top: 46px;
+
+  transform:
+    translateX(-50%);
+
+  color: #fde68a;
+
+  font-size: .82rem;
+
+  white-space: nowrap;
+}
+
+.planet-demo {
+  position: absolute;
+
+  left: 86%;
+  top: 50%;
+
+  width: 20px;
+  height: 20px;
+
+  transform:
+    translate(-50%,-50%);
+
+  background:
+    #38bdf8;
+
+  border:
+    3px solid #e0f2fe;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 12px rgba(56,189,248,.8);
+}
+
+.focus2 {
+  position: absolute;
+
+  left: 66%;
+  top: 50%;
+
+  width: 10px;
+  height: 10px;
+
+  transform:
+    translate(-50%,-50%);
+
+  background:
+    #c084fc;
+
+  border-radius: 50%;
+}
+
+.diagram-label {
+  position: absolute;
+
+  color: #e2e8f0;
+
+  font-size: .85rem;
+
+  font-weight: 700;
+}
+
+.label-peri {
+  left: 8%;
+  top: 47%;
+}
+
+.label-afe {
+  right: 5%;
+  top: 47%;
+}
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator {
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef6ff
+    );
+}
+
+.controls {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap: 14px;
+}
+
+.control {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.control label {
+  font-size: .9rem;
+
+  font-weight: 750;
+}
+
+.control input,
+.control select {
+  width: 100%;
+
+  padding: 10px 11px;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius: 9px;
+
+  background: white;
+
+  color: var(--text);
+
+  font: inherit;
+}
+
+.control input[type="range"] {
+  padding: 4px 0;
+}
+
+.button-row {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin: 18px 0;
+}
+
+button {
+  padding: 11px 18px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  font: inherit;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+}
+
+button:hover {
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+}
+
+.primary {
+  background:
+    var(--blue);
+
+  color: white;
+}
+
+.secondary {
+  background:
+    #e2e8f0;
+
+  color: #0f172a;
+}
+
+.purple-button {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.orange-button {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.canvas-wrap {
+  margin-top: 18px;
+
+  overflow: hidden;
+
+  background: #020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius: 16px;
+}
+
+#orbitCanvas {
+  display: block;
+
+  width: 100%;
+  height: 560px;
+}
+
+.results {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.result-box {
+  padding: 12px;
+
+  background: white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius: 10px;
+}
+
+.result-box span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: .8rem;
+}
+
+.result-box strong {
+  font-size: 1.03rem;
+}
+
+.status-box {
+  margin-top: 16px;
+
+  padding: 16px;
+
+  background: #eef2ff;
+
+  color: #3730a3;
+
+  border:
+    2px solid #a5b4fc;
+
+  border-radius: 12px;
+
+  font-weight: 750;
+}
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question {
+  padding: 18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+}
+
+.question:last-child {
+  border-bottom: 0;
+}
+
+.answers {
+  display: grid;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.answer-btn {
+  text-align: left;
+
+  background: #f1f5f9;
+
+  color: #0f172a;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight: 600;
+}
+
+.answer-btn.correct {
+  background: #dcfce7;
+
+  border-color: #22c55e;
+}
+
+.answer-btn.wrong {
+  background: #fee2e2;
+
+  border-color: #ef4444;
+}
+
+.feedback {
+  min-height: 26px;
+
+  margin-top: 8px;
+
+  font-weight: 700;
+}
+
+.quiz-score {
+  margin-top: 18px;
+
+  padding: 14px;
+
+  background:
+    var(--blue-soft);
+
+  border-radius: 10px;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap: 12px;
+
+  margin-top: 35px;
+}
+
+.nav-link {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 64px;
+
+  padding: 12px 16px;
+
+  background: white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  font-weight: 800;
+}
+
+.nav-link:hover {
+  background:
+    var(--blue-soft);
+}
+
+footer {
+  padding: 22px;
+
+  color: #64748b;
+
+  text-align: center;
+
+  font-size: .9rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:780px) {
+
+  .grid-2,
+  .grid-3,
+  .controls,
+  .results {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-nav {
+    grid-template-columns: 1fr;
+  }
+
+  #orbitCanvas {
+    height: 500px;
+  }
+
+}
+
+@media print {
+
+  body {
+    background: white;
+  }
+
+  .card {
+    box-shadow: none;
+  }
+
+  .simulator,
+  .quiz,
+  .lesson-nav {
+    break-inside: avoid;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+  <div class="breadcrumb">
+
+    <a href="../../index.html">
+      Clasa a IX-a
+    </a>
+
+    &nbsp;›&nbsp;
+
+    <a href="../index.html">
+      Lecții
+    </a>
+
+    &nbsp;›&nbsp;
+
+    Elemente de mecanică cerească
+
+  </div>
+
+
+  <div>
+
+    <span class="lesson-number">
+      Lecția 50 • Clasa a IX-a
+    </span>
+
+    <span class="optional-badge">
+      ★ Conținut opțional
+    </span>
+
+  </div>
+
+
+  <h1>
+    Momentul cinetic. Legile lui Kepler
+  </h1>
+
+
+  <p class="subtitle">
+    De ce planetele nu se deplasează cu aceeași viteză în toate
+    punctele orbitei? De ce orbitele lor sunt elipse și ce legătură
+    există între perioada de revoluție și distanța față de Soare?
+  </p>
+
+</div>
+
+</header>
+
+
+<main>
+
+<!-- =========================================================
+     OBIECTIVE
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să definești momentul cinetic al unui punct material;
+</li>
+
+<li>
+să explici conservarea momentului cinetic în cazul unei forțe centrale;
+</li>
+
+<li>
+să descrii elementele principale ale unei orbite eliptice;
+</li>
+
+<li>
+să formulezi cele trei legi ale lui Kepler;
+</li>
+
+<li>
+să explici de ce o planetă se deplasează mai repede la periheliu;
+</li>
+
+<li>
+să utilizezi legea a III-a pentru comparația perioadelor orbitale;
+</li>
+
+<li>
+să interpretezi o simulare a unei orbite kepleriene.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+Gravitația este o
+<strong>forță centrală</strong>:
+forța exercitată asupra planetei este orientată permanent
+spre corpul central.
+</p>
+
+<p>
+Din această geometrie simplă rezultă o proprietate foarte puternică:
+<strong>momentul cinetic se conservă</strong>.
+</p>
+
+<p>
+Legea a II-a a lui Kepler este o consecință directă
+a acestei conservări.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SITUATIE PROBLEMA
+========================================================= -->
+
+<section class="card">
+
+<h2>☀️ Situație-problemă</h2>
+
+<p class="lead">
+O planetă se deplasează în jurul Soarelui pe o orbită eliptică.
+Soarele nu se află în centrul elipsei, ci într-unul dintre focare.
+</p>
+
+<div class="orbit-diagram">
+
+  <div class="orbit-ellipse"></div>
+
+  <div class="sun-demo"></div>
+
+  <div class="focus2"></div>
+
+  <div class="planet-demo"></div>
+
+  <div class="diagram-label label-peri">
+    periheliu
+  </div>
+
+  <div class="diagram-label label-afe">
+    afeliu
+  </div>
+
+</div>
+
+<div class="orange-box">
+
+<strong>Întrebări:</strong>
+
+<p>
+De ce planeta nu se deplasează cu viteză constantă?
+</p>
+
+<p>
+De ce este mai rapidă atunci când se află mai aproape de Soare?
+</p>
+
+<p>
+Și cum poate fi prezisă perioada orbitei fără a urmări planeta
+timp de un ciclu complet?
+</p>
+
+</div>
+
+<p>
+Răspunsurile sunt sintetizate în
+<strong>legile lui Kepler</strong>.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     RECAPITULARE GRAVITATIE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Atracția gravitațională ca forță centrală</h2>
+
+<p>
+Între două corpuri de mase \(M\) și \(m\),
+aflate la distanța \(r\), modulul forței gravitaționale este:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_g=
+G\frac{Mm}{r^2}
+}
+\]
+
+</div>
+
+<p>
+Direcția acestei forțe coincide cu dreapta care unește
+centrele celor două corpuri.
+</p>
+
+<div class="green-box">
+
+O forță a cărei linie de acțiune trece permanent
+printr-un punct fix se numește
+<strong>forță centrală</strong>.
+
+În modelul în care masa Soarelui este mult mai mare decât
+masa planetei, punctul central este aproximativ centrul Soarelui.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MOMENT CINETIC
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Momentul cinetic</h2>
+
+<p>
+Am definit impulsul mecanic prin:
+</p>
+
+<div class="formula">
+
+\[
+\vec p=m\vec v
+\]
+
+</div>
+
+<p>
+Pentru mișcările de rotație sau pentru mișcarea unui corp
+în jurul unui punct \(O\), introducem
+<strong>momentul cinetic</strong>.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\vec L=
+\vec r\times\vec p
+}
+\]
+
+</div>
+
+<p>
+unde:
+</p>
+
+<ul>
+
+<li>
+\(\vec r\) este vectorul de poziție față de punctul \(O\);
+</li>
+
+<li>
+\(\vec p=m\vec v\) este impulsul mecanic;
+</li>
+
+<li>
+\(\vec L\) este momentul cinetic față de \(O\).
+</li>
+
+</ul>
+
+<p>
+Modulul său este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+L=
+rp\sin\alpha
+}
+\]
+
+</div>
+
+adică:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+L=
+mrv\sin\alpha
+}
+\]
+
+</div>
+
+<p>
+\(\alpha\) este unghiul dintre
+\(\vec r\) și \(\vec v\).
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     CAZ PERPENDICULAR
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Cazul mișcării circulare</h2>
+
+<p>
+În mișcarea circulară,
+viteza este tangentă la traiectorie,
+iar raza este perpendiculară pe tangentă:
+</p>
+
+<div class="formula">
+
+\[
+\alpha=90^\circ
+\]
+
+</div>
+
+Cum:
+
+<div class="formula">
+
+\[
+\sin90^\circ=1
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+L=mrv
+}
+\]
+
+</div>
+
+<div class="blue-box">
+
+Momentul cinetic joacă în studiul rotației
+un rol asemănător celui jucat de impulsul mecanic
+în studiul translației.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MOMENTUL FORTEI
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Legătura cu momentul forței</h2>
+
+<p>
+În lecțiile despre echilibru am întâlnit
+momentul unei forțe.
+</p>
+
+<p>
+În formă vectorială:
+</p>
+
+<div class="formula">
+
+\[
+\vec M=
+\vec r\times\vec F
+\]
+
+</div>
+
+<p>
+Momentul rezultant al forțelor determină variația
+momentului cinetic:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{\Delta\vec L}{\Delta t}
+\approx
+\vec M
+}
+\]
+
+</div>
+
+<p>
+În formă exactă, pentru variații continue:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{d\vec L}{dt}
+=
+\vec M
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONSERVARE
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Conservarea momentului cinetic</h2>
+
+<p>
+În cazul forței gravitaționale,
+\(\vec F_g\) este paralelă cu
+\(\vec r\).
+</p>
+
+Prin urmare:
+
+<div class="formula">
+
+\[
+\vec r\times\vec F_g=0
+\]
+
+</div>
+
+deci:
+
+<div class="formula">
+
+\[
+\vec M=0
+\]
+
+</div>
+
+Din:
+
+<div class="formula">
+
+\[
+\frac{d\vec L}{dt}
+=
+\vec M
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\vec L=
+\text{constant}
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+<strong>Conservarea momentului cinetic:</strong>
+
+în mișcarea sub acțiunea unei forțe centrale,
+momentul cinetic față de centrul forței
+rămâne constant.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONSECINTA
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Ce înseamnă fizic această conservare?</h2>
+
+<p>
+Pentru o orbită plană:
+</p>
+
+<div class="formula">
+
+\[
+L=
+mrv_\perp
+\]
+
+</div>
+
+unde \(v_\perp\) este componenta vitezei perpendiculară pe
+vectorul de poziție.
+</p>
+
+<p>
+Dacă \(L\) rămâne constant:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+rv_\perp=
+\text{constant}
+}
+\]
+
+</div>
+
+<div class="purple-box">
+
+Când planeta se apropie de Soare,
+\(r\) scade.
+
+Pentru ca momentul cinetic să rămână constant,
+componenta tangențială a vitezei trebuie să crească.
+
+De aceea planeta se deplasează mai repede în apropierea Soarelui.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ELIPSA
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Orbita eliptică</h2>
+
+<p>
+Elipsa este o curbă definită prin două puncte fixe,
+numite
+<strong>focare</strong>.
+</p>
+
+<p>
+Pentru orice punct \(P\) al elipsei:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+PF_1+PF_2=
+\text{constant}
+}
+\]
+
+</div>
+
+<h3>Elemente importante</h3>
+
+<div class="grid-3">
+
+<div class="mini-card">
+
+<h3>Semiaxa mare \(a\)</h3>
+
+<p>
+Reprezintă jumătate din lungimea axei mari a elipsei.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Excentricitatea \(e\)</h3>
+
+<p>
+Caracterizează cât de alungită este elipsa.
+</p>
+
+<div class="formula">
+
+\[
+0\le e<1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Focarele</h3>
+
+<p>
+Pentru o orbită planetară,
+Soarele se află într-un focar.
+</p>
+
+</div>
+
+</div>
+
+<p>
+Pentru o elipsă:
+</p>
+
+<div class="formula">
+
+\[
+c=ae
+\]
+
+</div>
+
+unde \(c\) este distanța dintre centrul elipsei și un focar.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     PERIHEL AFEL
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Periheliu și afeliu</h2>
+
+<p>
+Pentru o planetă care orbitează Soarele:
+</p>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<span class="badge">
+PERIHELIU
+</span>
+
+<h3>Distanța minimă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+r_p=
+a(1-e)
+}
+\]
+
+</div>
+
+<p>
+Planeta este cel mai aproape de Soare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<span class="badge">
+AFELIU
+</span>
+
+<h3>Distanța maximă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+r_a=
+a(1+e)
+}
+\]
+
+</div>
+
+<p>
+Planeta este cel mai departe de Soare.
+</p>
+
+</div>
+
+</div>
+
+<div class="yellow-box">
+
+Pentru un satelit care orbitează Pământul
+folosim termenii
+<strong>perigeu</strong> și
+<strong>apogeu</strong>.
+
+Termenii generali sunt
+<strong>periapsidă</strong> și
+<strong>apoapsidă</strong>.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     KEPLER I
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Legea I a lui Kepler – legea orbitelor</h2>
+
+<div class="green-box">
+
+<strong>Legea I:</strong>
+
+Planetele se deplasează în jurul Soarelui pe orbite eliptice,
+Soarele aflându-se într-unul dintre focarele elipsei.
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{orbită eliptică}
+\quad+\quad
+\text{Soarele într-un focar}
+}
+\]
+
+</div>
+
+<div class="red-box">
+
+<strong>Greșeală frecventă:</strong>
+
+Soarele nu se află, în general,
+în centrul geometric al orbitei eliptice.
+
+Se află într-unul dintre focare.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     KEPLER II
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Legea a II-a a lui Kepler – legea ariilor</h2>
+
+<div class="green-box">
+
+<strong>Legea a II-a:</strong>
+
+Raza vectoare care unește Soarele de planetă
+mătură arii egale în intervale de timp egale.
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{\Delta A}{\Delta t}
+=
+\text{constant}
+}
+\]
+
+</div>
+
+<p>
+Mărimea:
+</p>
+
+<div class="formula">
+
+\[
+\frac{dA}{dt}
+\]
+
+</div>
+
+se numește
+<strong>viteză areolară</strong>.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     DERIVAREA ARIEI
+========================================================= -->
+
+<section class="card">
+
+<h2>11. De ce rezultă legea ariilor din conservarea momentului cinetic?</h2>
+
+<p>
+Într-un interval foarte scurt \(\Delta t\),
+planeta se deplasează aproximativ cu:
+</p>
+
+<div class="formula">
+
+\[
+\Delta s
+\approx
+v_\perp\Delta t
+\]
+
+</div>
+
+<p>
+Aria mică măturată de raza vectoare poate fi aproximată
+cu aria unui triunghi:
+</p>
+
+<div class="formula">
+
+\[
+\Delta A
+\approx
+\frac12
+r\,
+v_\perp\Delta t
+\]
+
+</div>
+
+Împărțim la \(\Delta t\):
+
+<div class="formula">
+
+\[
+\frac{\Delta A}{\Delta t}
+\approx
+\frac12
+rv_\perp
+\]
+
+</div>
+
+Dar:
+
+<div class="formula">
+
+\[
+L=
+mrv_\perp
+\]
+
+</div>
+
+deci:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{dA}{dt}
+=
+\frac{L}{2m}
+}
+\]
+
+</div>
+
+Cum \(L\) este constant:
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{dA}{dt}
+=
+\text{constant}
+}
+\]
+
+</div>
+
+<div class="purple-box">
+
+Legea a II-a a lui Kepler nu este doar o regulă geometrică.
+
+Ea exprimă direct
+<strong>conservarea momentului cinetic</strong>
+într-un câmp central.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VITEZA PERIHELIU
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Periheliu: rapid. Afeliu: lent.</h2>
+
+<p>
+În periheliu și afeliu,
+viteza este perpendiculară pe raza vectoare.
+</p>
+
+Conservarea momentului cinetic dă:
+
+<div class="formula">
+
+\[
+m r_p v_p
+=
+m r_a v_a
+\]
+
+</div>
+
+Simplificăm masa:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+r_pv_p=
+r_av_a
+}
+\]
+
+</div>
+
+de unde:
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{v_p}{v_a}
+=
+\frac{r_a}{r_p}
+}
+\]
+
+</div>
+
+Cum:
+
+<div class="formula">
+
+\[
+r_a>r_p
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula">
+
+\[
+\boxed{
+v_p>v_a
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU 1
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 1 – Raportul vitezelor</h2>
+
+<p>
+O planetă are o orbită cu:
+</p>
+
+<div class="formula">
+
+\[
+a=10
+\]
+
+unități astronomice și:
+
+\[
+e=0,40
+\]
+
+</div>
+
+<h3>1. Distanța la periheliu</h3>
+
+<div class="formula">
+
+\[
+r_p=
+a(1-e)
+\]
+
+\[
+r_p=
+10(1-0,40)
+=
+6
+\]
+
+</div>
+
+<h3>2. Distanța la afeliu</h3>
+
+<div class="formula">
+
+\[
+r_a=
+a(1+e)
+\]
+
+\[
+r_a=
+10(1+0,40)
+=
+14
+\]
+
+</div>
+
+<h3>3. Raportul vitezelor</h3>
+
+<div class="formula">
+
+\[
+\frac{v_p}{v_a}
+=
+\frac{r_a}{r_p}
+=
+\frac{14}{6}
+\]
+
+\[
+\boxed{
+\frac{v_p}{v_a}
+\approx2,33
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+În acest model,
+viteza la periheliu este de aproximativ 2,33 ori
+mai mare decât viteza la afeliu.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     KEPLER III
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Legea a III-a a lui Kepler – legea perioadelor</h2>
+
+<div class="green-box">
+
+<strong>Legea a III-a:</strong>
+
+Pentru corpuri care orbitează același corp central,
+pătratul perioadei de revoluție este proporțional
+cu cubul semiaxei mari a orbitei.
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+T^2\sim a^3
+}
+\]
+
+</div>
+
+sau:
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{T^2}{a^3}
+=
+\text{constant}
+}
+\]
+
+</div>
+
+Pentru două planete care orbitează același corp central:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{T_1^2}{a_1^3}
+=
+\frac{T_2^2}{a_2^3}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FORMA NEWTON
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Forma newtoniană a legii a III-a</h2>
+
+<p>
+Pentru un corp de masă neglijabilă față de corpul central de masă
+\(M\), legea a III-a poate fi scrisă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+T^2
+=
+\frac{4\pi^2}{GM}
+a^3
+}
+\]
+
+</div>
+
+<p>
+Observăm că perioada depinde de:
+</p>
+
+<ul>
+<li>semiaxa mare \(a\);</li>
+<li>masa corpului central \(M\).</li>
+</ul>
+
+<div class="blue-box">
+
+Pentru două corpuri care orbitează același corp central,
+\(G\) și \(M\) sunt aceleași.
+
+De aceea:
+
+\[
+\frac{T^2}{a^3}
+=
+\text{constant}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DERIVARE CERC
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Cum putem intui legea a III-a?</h2>
+
+<p>
+Pentru o orbită circulară,
+gravitația furnizează forța cu rol centripet:
+</p>
+
+<div class="formula">
+
+\[
+G\frac{Mm}{r^2}
+=
+m\frac{v^2}{r}
+\]
+
+</div>
+
+Simplificăm \(m\):
+
+<div class="formula">
+
+\[
+v^2=
+\frac{GM}{r}
+\]
+
+</div>
+
+Dar:
+
+<div class="formula">
+
+\[
+v=
+\frac{2\pi r}{T}
+\]
+
+</div>
+
+Înlocuim:
+
+<div class="formula">
+
+\[
+\frac{4\pi^2r^2}{T^2}
+=
+\frac{GM}{r}
+\]
+
+</div>
+
+și rezultă:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+T^2=
+\frac{4\pi^2}{GM}r^3
+}
+\]
+
+</div>
+
+<div class="yellow-box">
+
+Pentru orbitele eliptice,
+raza \(r\) nu este constantă.
+
+În forma generală a legii a III-a,
+în locul razei folosim
+<strong>semiaxa mare \(a\)</strong>.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     UNITATI SOARE
+========================================================= -->
+
+<section class="card">
+
+<h2>16. O formă foarte utilă pentru Sistemul Solar</h2>
+
+<p>
+Dacă folosim:
+</p>
+
+<ul>
+
+<li>
+perioada \(T\) în ani;
+</li>
+
+<li>
+semiaxa mare \(a\) în unități astronomice (UA);
+</li>
+
+<li>
+masa Soarelui ca masă centrală,
+</li>
+
+</ul>
+
+atunci pentru planetele Sistemului Solar:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+T^2\approx a^3
+}
+\]
+
+</div>
+
+sau:
+
+<div class="formula">
+
+\[
+\boxed{
+T\approx a^{3/2}
+}
+\]
+
+</div>
+
+<p>
+Pământul oferă chiar unitățile de referință:
+</p>
+
+<div class="formula">
+
+\[
+a_{\oplus}=1\,\mathrm{UA}
+\]
+
+\[
+T_{\oplus}=1\,\text{an}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU 2
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 2 – O planetă la 4 UA</h2>
+
+<p>
+O planetă orbitează o stea cu masa Soarelui
+și are:
+</p>
+
+<div class="formula">
+
+\[
+a=4\,\mathrm{UA}
+\]
+
+</div>
+
+Folosim:
+
+<div class="formula">
+
+\[
+T^2=a^3
+\]
+
+</div>
+
+deci:
+
+<div class="formula">
+
+\[
+T^2=
+4^3
+=
+64
+\]
+
+</div>
+
+Prin urmare:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+T=8\,\text{ani}
+}
+\]
+
+</div>
+
+<div class="green-box">
+
+Dacă semiaxa mare este de 4 ori mai mare decât cea a Pământului,
+perioada nu este de 4 ori mai mare, ci de
+<strong>8 ori mai mare</strong>.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXEMPLU 3
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 3 – Determinarea semiaxei mari</h2>
+
+<p>
+Un corp are perioada orbitală:
+</p>
+
+<div class="formula">
+
+\[
+T=27\,\text{ani}
+\]
+
+</div>
+
+în jurul unei stele cu masa Soarelui.
+</p>
+
+Din:
+
+<div class="formula">
+
+\[
+T^2=a^3
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula">
+
+\[
+a=
+\sqrt[3]{T^2}
+\]
+
+\[
+a=
+\sqrt[3]{27^2}
+\]
+
+\[
+a=
+\sqrt[3]{729}
+\]
+
+</div>
+
+Prin urmare:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+a=9\,\mathrm{UA}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SINTEZA KEPLER
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Cele trei legi ale lui Kepler</h2>
+
+<div class="grid-3">
+
+<div class="mini-card">
+
+<span class="badge">
+LEGEA I
+</span>
+
+<h3>Orbitele</h3>
+
+<p>
+Planetele se deplasează pe elipse,
+iar Soarele se află într-un focar.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<span class="badge">
+LEGEA II
+</span>
+
+<h3>Ariile</h3>
+
+<p>
+Arii egale sunt măturate în intervale de timp egale.
+</p>
+
+<div class="formula">
+
+\[
+\frac{dA}{dt}
+=
+\text{constant}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<span class="badge">
+LEGEA III
+</span>
+
+<h3>Perioadele</h3>
+
+<div class="formula">
+
+\[
+\frac{T^2}{a^3}
+=
+\text{constant}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     INVESTIGATIE ELIPSA
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate – Desenează o orbită eliptică</h2>
+
+<div class="grid-2">
+
+<div>
+
+<h3>Materiale</h3>
+
+<ul>
+<li>o foaie de hârtie;</li>
+<li>două pioneze;</li>
+<li>o bucată de ață;</li>
+<li>un creion;</li>
+<li>o bucată de carton ca suport.</li>
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>Scop</h3>
+
+<p>
+Construirea geometrică a unei elipse
+și observarea proprietății focarelor.
+</p>
+
+</div>
+
+</div>
+
+<ol class="steps">
+
+<li>
+Fixează cele două pioneze în două puncte \(F_1\) și \(F_2\).
+</li>
+
+<li>
+Leagă capetele firului astfel încât să formeze o buclă.
+</li>
+
+<li>
+Așază bucla în jurul celor două pioneze.
+</li>
+
+<li>
+Întinde firul cu vârful creionului.
+</li>
+
+<li>
+Menține firul întins și deplasează creionul.
+</li>
+
+<li>
+Vei obține o elipsă.
+</li>
+
+</ol>
+
+<div class="blue-box">
+
+În orice punct al curbei,
+suma distanțelor până la cele două focare
+rămâne constantă:
+
+\[
+PF_1+PF_2=\text{constant}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     INTUITIE ARII
+========================================================= -->
+
+<section class="card">
+
+<h2>🔎 Investigație conceptuală – Arii egale</h2>
+
+<p>
+Imaginează-ți două intervale de timp egale:
+</p>
+
+<ul>
+
+<li>
+unul în apropierea periheliului;
+</li>
+
+<li>
+unul în apropierea afeliului.
+</li>
+
+</ul>
+
+<p>
+În apropierea periheliului,
+distanța \(r\) este mai mică,
+dar planeta parcurge un arc mai lung.
+</p>
+
+<p>
+În apropierea afeliului,
+distanța \(r\) este mai mare,
+dar planeta parcurge un arc mai scurt.
+</p>
+
+<div class="formula">
+
+\[
+\Delta A_1=
+\Delta A_2
+\]
+
+</div>
+
+<div class="purple-box">
+
+Aceasta este esența legii a II-a:
+
+<strong>planeta „compensează” raza mai mică printr-o viteză mai mare.</strong>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Laborator virtual – Orbită kepleriană</h2>
+
+<p>
+Simulatorul folosește o orbită eliptică kepleriană.
+Steaua se află într-un focar, iar poziția planetei
+este calculată astfel încât
+<strong>legea ariilor să fie respectată</strong>.
+</p>
+
+
+<div class="controls">
+
+<div class="control">
+
+<label for="aInput">
+Semiaxa mare \(a\) [UA]
+</label>
+
+<input
+  id="aInput"
+  type="number"
+  min="0.2"
+  max="10"
+  step="0.1"
+  value="2">
+
+</div>
+
+
+<div class="control">
+
+<label for="eInput">
+Excentricitatea \(e\)
+</label>
+
+<input
+  id="eInput"
+  type="number"
+  min="0"
+  max="0.85"
+  step="0.05"
+  value="0.50">
+
+</div>
+
+
+<div class="control">
+
+<label for="massInput">
+Masa stelei [mase solare]
+</label>
+
+<input
+  id="massInput"
+  type="number"
+  min="0.1"
+  max="5"
+  step="0.1"
+  value="1">
+
+</div>
+
+
+<div class="control">
+
+<label for="timeInput">
+Poziția în timp – fracție din perioadă
+</label>
+
+<input
+  id="timeInput"
+  type="range"
+  min="0"
+  max="1"
+  step="0.001"
+  value="0">
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="playBtn">
+
+▶ Pornește
+
+</button>
+
+
+<button
+  class="secondary"
+  id="pauseBtn">
+
+⏸ Pauză
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="areasBtn">
+
+◒ Arii egale
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="eccentricBtn">
+
+Orbită mai excentrică
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="orbitCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+<div class="result-box">
+<span>Perioada orbitală</span>
+<strong id="periodValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Distanța actuală \(r\)</span>
+<strong id="distanceValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Viteza orbitală</span>
+<strong id="speedValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Moment cinetic specific \(L/m\)</span>
+<strong id="hValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Periheliu</span>
+<strong id="periValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Afeliu</span>
+<strong id="apheValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Fracția de perioadă</span>
+<strong id="timeValue">—</strong>
+</div>
+
+<div class="result-box">
+<span>Legea ariilor</span>
+<strong id="areaValue">constantă</strong>
+</div>
+
+</div>
+
+
+<div class="status-box" id="statusBox">
+
+Modifică excentricitatea și urmărește cum viteza crește
+în apropierea periheliului și scade în apropierea afeliului.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     UTILIZAREA SIMULATORULUI
+========================================================= -->
+
+<section class="card">
+
+<h2>18. Experimentează în simulator</h2>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<h3>Experiment A – cerc</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+e=0
+\]
+
+</div>
+
+<p>
+Ce observi despre distanța \(r\)
+și despre viteză?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment B – excentricitate</h3>
+
+<p>
+Crește treptat:
+</p>
+
+<div class="formula">
+
+\[
+e:0\rightarrow0,8
+\]
+
+</div>
+
+<p>
+Compară vitezele din periheliu și afeliu.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment C – semiaxa mare</h3>
+
+<p>
+Dublează \(a\) și compară perioada.
+</p>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+T\sim a^{3/2}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment D – masa stelei</h3>
+
+<p>
+Păstrează \(a\) constant și mărește masa corpului central.
+</p>
+
+<p>
+Observă că perioada scade.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment E – ariile</h3>
+
+<p>
+Apasă
+<strong>„Arii egale”</strong>.
+</p>
+
+<p>
+Sectoarele colorate corespund unor
+<strong>intervale de timp egale</strong>.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Experiment F – periheliu și afeliu</h3>
+
+<p>
+Oprește animația în apropierea celor două extreme
+și compară:
+</p>
+
+<div class="formula">
+
+\[
+r_p,\;v_p
+\]
+
+cu
+
+\[
+r_a,\;v_a
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CE NU SPUN LEGILE
+========================================================= -->
+
+<section class="card">
+
+<h2>19. Kepler descrie, Newton explică</h2>
+
+<p>
+Legile lui Kepler au fost formulate pe baza analizei
+observațiilor astronomice.
+</p>
+
+<p>
+Ele descriu foarte precis comportamentul orbitelor:
+</p>
+
+<ul>
+<li>forma;</li>
+<li>variația vitezei;</li>
+<li>relația dintre perioadă și dimensiunea orbitei.</li>
+</ul>
+
+<p>
+Mecanica newtoniană explică
+<strong>de ce</strong> aceste legi apar,
+pornind de la atracția gravitațională.
+</p>
+
+<div class="green-box">
+
+<strong>Kepler:</strong>
+descrierea regularităților mișcării planetelor.
+
+<br><br>
+
+<strong>Newton:</strong>
+explicația dinamică prin legea gravitației
+și principiile mecanicii.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GRESELI
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Idei greșite frecvente</h2>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<h3>1. „Soarele este în centrul elipsei.”</h3>
+
+<p>
+Nu.
+În modelul keplerian,
+Soarele se află într-unul dintre focare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. „Planeta are viteză constantă.”</h3>
+
+<p>
+Nu pe o orbită eliptică.
+Viteza este mai mare în apropierea periheliului.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. „Dacă planeta este mai aproape, gravitația o încetinește.”</h3>
+
+<p>
+În apropierea periheliului,
+viteza orbitală este mai mare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. „Legea a II-a spune că arcurile sunt egale.”</h3>
+
+<p>
+Nu.
+În intervale egale de timp sunt egale
+<strong>ariile măturate</strong>,
+nu lungimile arcurilor.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. „\(T^2/a^3\) este aceeași constantă pentru orice orbită din Univers.”</h3>
+
+<p>
+Nu.
+Constanta depinde de masa corpului central.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. „Momentul cinetic este același lucru cu impulsul.”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+\vec p=m\vec v
+\]
+
+dar
+
+\[
+\vec L=
+\vec r\times\vec p
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GANDIRE
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic</h2>
+
+<ol>
+
+<li>
+De ce o planetă nu parcurge arce egale în intervale egale
+de timp pe o orbită eliptică?
+</li>
+
+<li>
+De ce momentul forței gravitaționale față de Soare este nul?
+</li>
+
+<li>
+Cum conduce momentul forței nul la conservarea momentului cinetic?
+</li>
+
+<li>
+De ce conservarea momentului cinetic implică o viteză mai mare
+în apropierea periheliului?
+</li>
+
+<li>
+Cum se modifică perioada orbitală dacă semiaxa mare crește?
+</li>
+
+<li>
+Dacă două planete orbitează aceeași stea,
+care dintre ele are perioada mai mare:
+cea apropiată sau cea îndepărtată?
+</li>
+
+<li>
+Ce devine o elipsă atunci când excentricitatea este zero?
+</li>
+
+<li>
+De ce legea a II-a poate fi privită ca o lege de conservare
+„ascunsă” într-o afirmație geometrică?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card quiz">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>1.</strong>
+Momentul cinetic al unui punct material față de \(O\) este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\vec L=m\vec a\)
+</button>
+
+<button class="answer-btn">
+\(\vec L=\vec r\times\vec p\)
+</button>
+
+<button class="answer-btn">
+\(\vec L=\vec F\Delta t\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>2.</strong>
+Pentru o forță centrală,
+momentul forței față de centrul forței este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+nul
+</button>
+
+<button class="answer-btn">
+întotdeauna maxim
+</button>
+
+<button class="answer-btn">
+egal cu energia cinetică
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>3.</strong>
+Conform primei legi a lui Kepler:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+orbitele planetelor sunt obligatoriu circulare
+</button>
+
+<button class="answer-btn">
+Soarele se află în centrul fiecărei orbite
+</button>
+
+<button class="answer-btn">
+planetele se deplasează pe elipse cu Soarele într-un focar
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>4.</strong>
+Conform legii a II-a,
+în intervale egale de timp sunt egale:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+lungimile arcurilor parcurse
+</button>
+
+<button class="answer-btn">
+ariile măturate de raza vectoare
+</button>
+
+<button class="answer-btn">
+distanțele față de Soare
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>5.</strong>
+O planetă aflată pe o orbită eliptică are viteza cea mai mare:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+la afeliu
+</button>
+
+<button class="answer-btn">
+în centrul elipsei
+</button>
+
+<button class="answer-btn">
+la periheliu
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>6.</strong>
+Legea a III-a a lui Kepler poate fi scrisă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(T^2/a^3=\text{constant}\)
+</button>
+
+<button class="answer-btn">
+\(T/a^3=\text{constant}\)
+</button>
+
+<button class="answer-btn">
+\(T^3/a^2=\text{constant}\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>7.</strong>
+Pentru două planete care orbitează aceeași stea,
+planeta cu semiaxa mare mai mare are:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+perioada mai mică
+</button>
+
+<button class="answer-btn">
+perioada mai mare
+</button>
+
+<button class="answer-btn">
+obligatoriu aceeași perioadă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="2">
+
+<p>
+<strong>8.</strong>
+Dacă excentricitatea unei orbite este \(e=0\),
+orbita este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+o parabolă
+</button>
+
+<button class="answer-btn">
+o dreaptă
+</button>
+
+<button class="answer-btn">
+un cerc
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="0">
+
+<p>
+<strong>9.</strong>
+La periheliu și afeliu,
+conservarea momentului cinetic conduce la:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(r_pv_p=r_av_a\)
+</button>
+
+<button class="answer-btn">
+\(r_p+v_p=r_a+v_a\)
+</button>
+
+<button class="answer-btn">
+\(v_p=v_a\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="question" data-correct="1">
+
+<p>
+<strong>10.</strong>
+Viteza areolară este constantă deoarece:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+energia cinetică este permanent zero
+</button>
+
+<button class="answer-btn">
+momentul cinetic se conservă
+</button>
+
+<button class="answer-btn">
+distanța față de Soare este constantă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div class="quiz-score" id="quizScore">
+Scor: 0 / 10
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SINTEZA
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<h3>Moment cinetic</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\vec L=
+\vec r\times\vec p
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Modul</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+L=
+mrv\sin\alpha
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Forță centrală</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\vec M=0
+\Rightarrow
+\vec L=\text{constant}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Legea I</h3>
+
+<p>
+Orbită eliptică, corpul central într-un focar.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Legea II</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{dA}{dt}
+=
+\text{constant}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Legea III</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{T^2}{a^3}
+=
+\text{constant}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+gravitația este o forță centrală, deci momentul ei față de corpul central
+este nul. Momentul cinetic se conservă, iar această conservare apare
+geometric în legea ariilor a lui Kepler.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LEGATURA URMATOARE
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Legile lui Kepler descriu orbitele și perioadele.
+Dar putem determina și
+<strong>viteza unui satelit</strong>
+pe o orbită circulară?
+</p>
+
+<div class="blue-box">
+
+Dacă gravitația furnizează exact forța centripetă:
+
+\[
+G\frac{Mm}{r^2}
+=
+m\frac{v^2}{r}
+\]
+
+ce expresie obținem pentru
+<strong>viteza orbitală</strong>?
+
+</div>
+
+<p>
+Aceasta este legătura naturală spre studiul
+mișcării planetelor și sateliților,
+vitezelor orbitale și vitezelor cosmice.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+<a
+  class="nav-link"
+  href="../6-tema-integratoare%E2%80%93siguranta-rutiera/lectia-49-siguranta-rutiera-timp-de-reactie-franare-viraj-impact.html">
+
+← Lecția 49<br>
+Siguranța rutieră
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="../index.html">
+
+☰ Cuprins
+
+</a>
+
+</nav>
+
+</main>
+
+
+<footer>
+Fizică – Clasa a IX-a • Elemente opționale de mecanică cerească
+</footer>
+
+
+<script>
+
+/* =========================================================
+   SIMULATOR ORBITAL
+========================================================= */
+
+const aInput =
+  document.getElementById("aInput");
+
+const eInput =
+  document.getElementById("eInput");
+
+const massInput =
+  document.getElementById("massInput");
+
+const timeInput =
+  document.getElementById("timeInput");
+
+
+const periodValue =
+  document.getElementById("periodValue");
+
+const distanceValue =
+  document.getElementById("distanceValue");
+
+const speedValue =
+  document.getElementById("speedValue");
+
+const hValue =
+  document.getElementById("hValue");
+
+const periValue =
+  document.getElementById("periValue");
+
+const apheValue =
+  document.getElementById("apheValue");
+
+const timeValue =
+  document.getElementById("timeValue");
+
+const areaValue =
+  document.getElementById("areaValue");
+
+const statusBox =
+  document.getElementById("statusBox");
+
+
+const canvas =
+  document.getElementById("orbitCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+
+let animationId = null;
+
+let playing = false;
+
+let lastTime = null;
+
+let showAreas = true;
+
+
+/*
+Viteza orbitală a Pământului,
+utilă pentru unitățile:
+- distanță în UA
+- masă centrală în mase solare
+- viteză în km/s
+*/
+
+const earthOrbitalSpeed =
+  29.7847;
+
+
+/* =========================================================
+   UTILITĂȚI
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits = 2
+) {
+
+  if (
+    !Number.isFinite(value)
+  ) {
+    return "—";
+  }
+
+
+  return value
+    .toFixed(digits)
+    .replace(".",",");
+
+}
+
+
+function readValues() {
+
+  let a =
+    Number(
+      aInput.value
+    );
+
+  let e =
+    Number(
+      eInput.value
+    );
+
+  let mass =
+    Number(
+      massInput.value
+    );
+
+  let timeFraction =
+    Number(
+      timeInput.value
+    );
+
+
+  if (!Number.isFinite(a)) {
+    a = 2;
+  }
+
+  if (!Number.isFinite(e)) {
+    e = .5;
+  }
+
+  if (!Number.isFinite(mass)) {
+    mass = 1;
+  }
+
+  if (!Number.isFinite(timeFraction)) {
+    timeFraction = 0;
+  }
+
+
+  a =
+    clamp(
+      a,
+      .2,
+      10
+    );
+
+  e =
+    clamp(
+      e,
+      0,
+      .85
+    );
+
+  mass =
+    clamp(
+      mass,
+      .1,
+      5
+    );
+
+  timeFraction =
+    clamp(
+      timeFraction,
+      0,
+      1
+    );
+
+
+  aInput.value =
+    a;
+
+  eInput.value =
+    e;
+
+  massInput.value =
+    mass;
+
+  timeInput.value =
+    timeFraction;
+
+
+  return {
+    a,
+    e,
+    mass,
+    timeFraction
+  };
+
+}
+
+
+/* =========================================================
+   ECUAȚIA LUI KEPLER
+========================================================= */
+
+/*
+M = E - e sin E
+
+M = anomalia medie
+E = anomalia excentrică
+
+Rezolvare numerică Newton-Raphson.
+*/
+
+function solveKepler(
+  M,
+  e
+) {
+
+  let E =
+    e < .8
+      ? M
+      : Math.PI;
+
+
+  for (
+    let i = 0;
+    i < 12;
+    i++
+  ) {
+
+    const f =
+      E -
+      e *
+      Math.sin(E) -
+      M;
+
+
+    const fp =
+      1 -
+      e *
+      Math.cos(E);
+
+
+    E -=
+      f / fp;
+
+  }
+
+
+  return E;
+
+}
+
+
+/* =========================================================
+   POZIȚIA PE ORBITĂ
+========================================================= */
+
+/*
+Coordonate față de focarul în care este steaua:
+
+x = a(cos E - e)
+y = a sqrt(1-e²) sin E
+
+Steaua este în (0,0).
+*/
+
+function orbitalPosition(
+  a,
+  e,
+  timeFraction
+) {
+
+  const M =
+    2 *
+    Math.PI *
+    timeFraction;
+
+
+  const E =
+    solveKepler(
+      M,
+      e
+    );
+
+
+  const b =
+    a *
+    Math.sqrt(
+      1 -
+      e * e
+    );
+
+
+  const x =
+    a *
+    (
+      Math.cos(E) -
+      e
+    );
+
+
+  const y =
+    b *
+    Math.sin(E);
+
+
+  const r =
+    a *
+    (
+      1 -
+      e *
+      Math.cos(E)
+    );
+
+
+  return {
+    M,
+    E,
+    x,
+    y,
+    r
+  };
+
+}
+
+
+/* =========================================================
+   CALCULE FIZICE
+========================================================= */
+
+function calculateOrbit() {
+
+  const data =
+    readValues();
+
+
+  const pos =
+    orbitalPosition(
+      data.a,
+      data.e,
+      data.timeFraction
+    );
+
+
+  /*
+  Legea III în unități:
+  T [ani]
+  a [UA]
+  M [mase solare]
+
+  T² = a³ / M
+  */
+
+  const period =
+    Math.sqrt(
+      Math.pow(
+        data.a,
+        3
+      ) /
+      data.mass
+    );
+
+
+  /*
+  Ecuația vis-viva:
+
+  v² = GM(2/r - 1/a)
+
+  Cu UA și masă solară,
+  factorul de scalare este viteza orbitală a Pământului.
+  */
+
+  const speed =
+    earthOrbitalSpeed *
+    Math.sqrt(
+      data.mass *
+      (
+        2 / pos.r -
+        1 / data.a
+      )
+    );
+
+
+  /*
+  Moment cinetic specific:
+
+  h = L/m
+    = sqrt(mu a(1-e²))
+
+  În UA·km/s:
+  */
+
+  const specificAngularMomentum =
+    earthOrbitalSpeed *
+    Math.sqrt(
+      data.mass *
+      data.a *
+      (
+        1 -
+        data.e *
+        data.e
+      )
+    );
+
+
+  const peri =
+    data.a *
+    (
+      1 -
+      data.e
+    );
+
+
+  const aphe =
+    data.a *
+    (
+      1 +
+      data.e
+    );
+
+
+  updateResults(
+    data,
+    pos,
+    period,
+    speed,
+    specificAngularMomentum,
+    peri,
+    aphe
+  );
+
+
+  drawOrbit(
+    data,
+    pos
+  );
+
+}
+
+
+/* =========================================================
+   REZULTATE
+========================================================= */
+
+function updateResults(
+  data,
+  pos,
+  period,
+  speed,
+  h,
+  peri,
+  aphe
+) {
+
+  periodValue.textContent =
+    `${formatRo(period,2)} ani`;
+
+
+  distanceValue.textContent =
+    `${formatRo(pos.r,3)} UA`;
+
+
+  speedValue.textContent =
+    `${formatRo(speed,2)} km/s`;
+
+
+  hValue.textContent =
+    `${formatRo(h,2)} UA·km/s`;
+
+
+  periValue.textContent =
+    `${formatRo(peri,3)} UA`;
+
+
+  apheValue.textContent =
+    `${formatRo(aphe,3)} UA`;
+
+
+  timeValue.textContent =
+    `${formatRo(data.timeFraction * 100,1)} %`;
+
+
+  areaValue.textContent =
+    showAreas
+      ? "sectoare afișate"
+      : "constantă";
+
+
+  const periProximity =
+    Math.abs(
+      pos.r -
+      peri
+    );
+
+
+  const apheProximity =
+    Math.abs(
+      pos.r -
+      aphe
+    );
+
+
+  if (
+    periProximity <
+    apheProximity
+  ) {
+
+    statusBox.innerHTML =
+      `Planeta se află mai aproape de <strong>periheliu</strong>.
+       Distanța față de stea este mai mică, iar viteza orbitală este mai mare.`;
+
+  } else {
+
+    statusBox.innerHTML =
+      `Planeta se află mai aproape de <strong>afeliu</strong>.
+       Distanța față de stea este mai mare, iar viteza orbitală este mai mică.`;
+
+  }
+
+}
+
+
+/* =========================================================
+   TRANSFORMARE COORDONATE
+========================================================= */
+
+function makeTransform(
+  data,
+  W,
+  H
+) {
+
+  const marginX = 55;
+
+  const top =
+    72;
+
+  const bottom =
+    65;
+
+
+  const a =
+    data.a;
+
+  const e =
+    data.e;
+
+
+  const b =
+    a *
+    Math.sqrt(
+      1 -
+      e * e
+    );
+
+
+  const xMin =
+    -a *
+    (
+      1 +
+      e
+    );
+
+
+  const xMax =
+    a *
+    (
+      1 -
+      e
+    );
+
+
+  const yMin =
+    -b;
+
+  const yMax =
+    b;
+
+
+  const availableW =
+    W -
+    2 *
+    marginX;
+
+
+  const availableH =
+    H -
+    top -
+    bottom;
+
+
+  const scaleX =
+    availableW /
+    (
+      xMax -
+      xMin
+    );
+
+
+  const scaleY =
+    availableH /
+    (
+      yMax -
+      yMin
+    );
+
+
+  const scale =
+    Math.min(
+      scaleX,
+      scaleY
+    );
+
+
+  const offsetX =
+    (
+      W -
+      (
+        xMax -
+        xMin
+      ) *
+      scale
+    ) /
+    2 -
+    xMin *
+    scale;
+
+
+  const offsetY =
+    (
+      top +
+      availableH / 2
+    );
+
+
+  function X(x) {
+
+    return offsetX +
+      x *
+      scale;
+
+  }
+
+
+  function Y(y) {
+
+    return offsetY -
+      y *
+      scale;
+
+  }
+
+
+  return {
+    X,
+    Y,
+    scale,
+    b
+  };
+
+}
+
+
+/* =========================================================
+   STELE FUNDAL
+========================================================= */
+
+function drawStars(
+  W,
+  H
+) {
+
+  const stars = [
+    [.07,.10,1.4],
+    [.16,.18,1],
+    [.27,.08,1.2],
+    [.36,.16,.8],
+    [.49,.09,1.4],
+    [.59,.20,1],
+    [.69,.08,.9],
+    [.80,.14,1.5],
+    [.91,.07,1],
+    [.11,.40,.9],
+    [.88,.42,1.2],
+    [.18,.79,1],
+    [.32,.87,.8],
+    [.51,.82,1.4],
+    [.73,.88,1],
+    [.91,.76,.9]
+  ];
+
+
+  stars.forEach(
+    star => {
+
+      ctx.beginPath();
+
+      ctx.arc(
+        W * star[0],
+        H * star[1],
+        star[2],
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fillStyle =
+        "rgba(255,255,255,.75)";
+
+      ctx.fill();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SECTOARE CU TIMPURI EGALE
+========================================================= */
+
+function drawEqualAreaSector(
+  data,
+  transform,
+  startFraction,
+  deltaFraction,
+  color
+) {
+
+  const steps = 36;
+
+
+  ctx.beginPath();
+
+
+  /*
+  Steaua este în focar, adică originea.
+  */
+
+  ctx.moveTo(
+    transform.X(0),
+    transform.Y(0)
+  );
+
+
+  for (
+    let i = 0;
+    i <= steps;
+    i++
+  ) {
+
+    const fraction =
+      (
+        startFraction +
+        deltaFraction *
+        i /
+        steps
+      ) % 1;
+
+
+    const pos =
+      orbitalPosition(
+        data.a,
+        data.e,
+        fraction
+      );
+
+
+    ctx.lineTo(
+      transform.X(
+        pos.x
+      ),
+      transform.Y(
+        pos.y
+      )
+    );
+
+  }
+
+
+  ctx.closePath();
+
+  ctx.fillStyle =
+    color;
+
+  ctx.fill();
+
+
+  ctx.strokeStyle =
+    color.replace(
+      ".22",
+      ".65"
+    );
+
+  ctx.lineWidth = 1.5;
+
+  ctx.stroke();
+
+}
+
+
+/* =========================================================
+   DESEN ORBITĂ
+========================================================= */
+
+function drawOrbit(
+  data,
+  currentPos
+) {
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const W =
+    rect.width;
+
+
+  const H =
+    rect.height;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /* fundal */
+
+  const gradient =
+    ctx.createRadialGradient(
+      W*.48,
+      H*.50,
+      30,
+      W*.48,
+      H*.50,
+      Math.max(
+        W,
+        H
+      )
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#172554"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#020617"
+  );
+
+
+  ctx.fillStyle =
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  drawStars(
+    W,
+    H
+  );
+
+
+  const t =
+    makeTransform(
+      data,
+      W,
+      H
+    );
+
+
+  /* =====================================================
+     Arii egale
+  ===================================================== */
+
+  if (
+    showAreas
+  ) {
+
+    const delta =
+      .08;
+
+
+    const colors = [
+      "rgba(34,197,94,.22)",
+      "rgba(59,130,246,.22)",
+      "rgba(168,85,247,.22)",
+      "rgba(249,115,22,.22)"
+    ];
+
+
+    const starts = [
+      0,
+      .25,
+      .50,
+      .75
+    ];
+
+
+    starts.forEach(
+      (
+        start,
+        index
+      ) => {
+
+        drawEqualAreaSector(
+          data,
+          t,
+          start,
+          delta,
+          colors[index]
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     Orbită
+  ===================================================== */
+
+  ctx.beginPath();
+
+
+  const orbitSteps =
+    400;
+
+
+  for (
+    let i = 0;
+    i <= orbitSteps;
+    i++
+  ) {
+
+    const E =
+      2 *
+      Math.PI *
+      i /
+      orbitSteps;
+
+
+    const x =
+      data.a *
+      (
+        Math.cos(E) -
+        data.e
+      );
+
+
+    const y =
+      t.b *
+      Math.sin(E);
+
+
+    if (
+      i === 0
+    ) {
+
+      ctx.moveTo(
+        t.X(x),
+        t.Y(y)
+      );
+
+    } else {
+
+      ctx.lineTo(
+        t.X(x),
+        t.Y(y)
+      );
+
+    }
+
+  }
+
+
+  ctx.strokeStyle =
+    "#60a5fa";
+
+  ctx.lineWidth =
+    2.5;
+
+  ctx.stroke();
+
+
+  /* =====================================================
+     Axa mare
+  ===================================================== */
+
+  ctx.setLineDash(
+    [5,6]
+  );
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    t.X(
+      -data.a *
+      (
+        1 +
+        data.e
+      )
+    ),
+    t.Y(0)
+  );
+
+
+  ctx.lineTo(
+    t.X(
+      data.a *
+      (
+        1 -
+        data.e
+      )
+    ),
+    t.Y(0)
+  );
+
+
+  ctx.strokeStyle =
+    "rgba(148,163,184,.35)";
+
+  ctx.lineWidth = 1;
+
+  ctx.stroke();
+
+
+  ctx.setLineDash([]);
+
+
+  /* =====================================================
+     Al doilea focar
+  ===================================================== */
+
+  const secondFocusX =
+    -2 *
+    data.a *
+    data.e;
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    t.X(
+      secondFocusX
+    ),
+    t.Y(0),
+    4,
+    0,
+    Math.PI * 2
+  );
+
+
+  ctx.fillStyle =
+    "#c084fc";
+
+  ctx.fill();
+
+
+  /* =====================================================
+     Steaua
+  ===================================================== */
+
+  const sunX =
+    t.X(0);
+
+
+  const sunY =
+    t.Y(0);
+
+
+  const sunGradient =
+    ctx.createRadialGradient(
+      sunX,
+      sunY,
+      3,
+      sunX,
+      sunY,
+      28
+    );
+
+
+  sunGradient.addColorStop(
+    0,
+    "#fff7ae"
+  );
+
+
+  sunGradient.addColorStop(
+    .35,
+    "#facc15"
+  );
+
+
+  sunGradient.addColorStop(
+    1,
+    "rgba(250,204,21,0)"
+  );
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    sunX,
+    sunY,
+    28,
+    0,
+    Math.PI * 2
+  );
+
+
+  ctx.fillStyle =
+    sunGradient;
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    sunX,
+    sunY,
+    12,
+    0,
+    Math.PI * 2
+  );
+
+
+  ctx.fillStyle =
+    "#facc15";
+
+  ctx.fill();
+
+
+  /* =====================================================
+     Raza vectoare
+  ===================================================== */
+
+  const planetX =
+    t.X(
+      currentPos.x
+    );
+
+
+  const planetY =
+    t.Y(
+      currentPos.y
+    );
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    sunX,
+    sunY
+  );
+
+
+  ctx.lineTo(
+    planetX,
+    planetY
+  );
+
+
+  ctx.strokeStyle =
+    "rgba(248,250,252,.60)";
+
+  ctx.lineWidth =
+    1.5;
+
+  ctx.stroke();
+
+
+  /* =====================================================
+     Planetă
+  ===================================================== */
+
+  const planetGradient =
+    ctx.createRadialGradient(
+      planetX-3,
+      planetY-3,
+      2,
+      planetX,
+      planetY,
+      13
+    );
+
+
+  planetGradient.addColorStop(
+    0,
+    "#e0f2fe"
+  );
+
+
+  planetGradient.addColorStop(
+    .35,
+    "#38bdf8"
+  );
+
+
+  planetGradient.addColorStop(
+    1,
+    "#0369a1"
+  );
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    planetX,
+    planetY,
+    11,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle =
+    planetGradient;
+
+  ctx.fill();
+
+
+  ctx.strokeStyle =
+    "#e0f2fe";
+
+  ctx.lineWidth = 2;
+
+  ctx.stroke();
+
+
+  /* =====================================================
+     Periheliu / afeliu
+  ===================================================== */
+
+  const periX =
+    t.X(
+      data.a *
+      (
+        1 -
+        data.e
+      )
+    );
+
+
+  const apheX =
+    t.X(
+      -data.a *
+      (
+        1 +
+        data.e
+      )
+    );
+
+
+  ctx.fillStyle =
+    "#86efac";
+
+
+  ctx.font =
+    "bold 13px system-ui";
+
+
+  ctx.fillText(
+    "periheliu",
+    Math.min(
+      W-75,
+      periX-25
+    ),
+    t.Y(0)-18
+  );
+
+
+  ctx.fillStyle =
+    "#fda4af";
+
+
+  ctx.fillText(
+    "afeliu",
+    Math.max(
+      8,
+      apheX-20
+    ),
+    t.Y(0)-18
+  );
+
+
+  /* =====================================================
+     Legendă
+  ===================================================== */
+
+  ctx.fillStyle =
+    "#e2e8f0";
+
+
+  ctx.font =
+    "13px system-ui";
+
+
+  ctx.fillText(
+    "★ steaua se află într-un focar",
+    18,
+    27
+  );
+
+
+  ctx.fillText(
+    `e = ${formatRo(data.e,2)}   |   a = ${formatRo(data.a,2)} UA`,
+    18,
+    49
+  );
+
+
+  if (
+    showAreas
+  ) {
+
+    ctx.fillStyle =
+      "#c4b5fd";
+
+
+    ctx.fillText(
+      "sectoarele colorate corespund acelorași intervale Δt",
+      18,
+      H-22
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ANIMAȚIE
+========================================================= */
+
+function animate(
+  timestamp
+) {
+
+  if (
+    !playing
+  ) {
+    return;
+  }
+
+
+  if (
+    lastTime === null
+  ) {
+
+    lastTime =
+      timestamp;
+
+  }
+
+
+  const dt =
+    Math.min(
+      (
+        timestamp -
+        lastTime
+      ) /
+      1000,
+      .05
+    );
+
+
+  lastTime =
+    timestamp;
+
+
+  let fraction =
+    Number(
+      timeInput.value
+    );
+
+
+  /*
+  O revoluție vizuală în circa 8 secunde.
+  Parametrul este timpul fizic normalizat la T,
+  nu unghiul geometric.
+  */
+
+  fraction +=
+    dt / 8;
+
+
+  if (
+    fraction > 1
+  ) {
+
+    fraction -= 1;
+
+  }
+
+
+  timeInput.value =
+    fraction;
+
+
+  calculateOrbit();
+
+
+  animationId =
+    requestAnimationFrame(
+      animate
+    );
+
+}
+
+
+/* =========================================================
+   RESPONSIVE CANVAS
+========================================================= */
+
+function resizeCanvas() {
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+
+  canvas.width =
+    Math.round(
+      rect.width *
+      dpr
+    );
+
+
+  canvas.height =
+    Math.round(
+      rect.height *
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  calculateOrbit();
+
+}
+
+
+/* =========================================================
+   CONTROALE
+========================================================= */
+
+document.getElementById(
+  "playBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    if (
+      playing
+    ) {
+      return;
+    }
+
+
+    playing =
+      true;
+
+
+    lastTime =
+      null;
+
+
+    animationId =
+      requestAnimationFrame(
+        animate
+      );
+
+  }
+);
+
+
+document.getElementById(
+  "pauseBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    playing =
+      false;
+
+
+    if (
+      animationId
+    ) {
+
+      cancelAnimationFrame(
+        animationId
+      );
+
+    }
+
+
+    animationId =
+      null;
+
+  }
+);
+
+
+document.getElementById(
+  "areasBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    showAreas =
+      !showAreas;
+
+
+    document.getElementById(
+      "areasBtn"
+    ).textContent =
+      showAreas
+        ? "◒ Ascunde ariile"
+        : "◒ Arii egale";
+
+
+    calculateOrbit();
+
+  }
+);
+
+
+document.getElementById(
+  "eccentricBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    eInput.value =
+      .75;
+
+
+    calculateOrbit();
+
+  }
+);
+
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    playing =
+      false;
+
+
+    if (
+      animationId
+    ) {
+
+      cancelAnimationFrame(
+        animationId
+      );
+
+    }
+
+
+    animationId =
+      null;
+
+
+    aInput.value =
+      2;
+
+
+    eInput.value =
+      .50;
+
+
+    massInput.value =
+      1;
+
+
+    timeInput.value =
+      0;
+
+
+    showAreas =
+      true;
+
+
+    document.getElementById(
+      "areasBtn"
+    ).textContent =
+      "◒ Arii egale";
+
+
+    calculateOrbit();
+
+  }
+);
+
+
+[
+  aInput,
+  eInput,
+  massInput,
+  timeInput
+].forEach(
+  element => {
+
+    element.addEventListener(
+      "input",
+      calculateOrbit
+    );
+
+
+    element.addEventListener(
+      "change",
+      calculateOrbit
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions =
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score = 0;
+
+let answered = 0;
+
+
+questions.forEach(
+  question => {
+
+    const correctIndex =
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons =
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback =
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      ) => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            if (
+              question.dataset.answered
+              ===
+              "true"
+            ) {
+
+              return;
+
+            }
+
+
+            question.dataset.answered =
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              btn => {
+
+                btn.disabled =
+                  true;
+
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if (
+              index ===
+              correctIndex
+            ) {
+
+              score++;
+
+
+              feedback.textContent =
+                "✓ Corect.";
+
+
+              feedback.style.color =
+                "#15803d";
+
+            } else {
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent =
+                "✗ Mai verifică momentul cinetic și legile lui Kepler.";
+
+
+              feedback.style.color =
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox =
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent =
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if (
+              answered ===
+              questions.length
+            ) {
+
+              if (
+                score ===
+                questions.length
+              ) {
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Excelent! Ai conectat corect gravitația, momentul cinetic și legile lui Kepler.`;
+
+              } else if (
+                score >= 7
+              ) {
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește itemii greșiți.`;
+
+              } else {
+
+                scoreBox.textContent =
+                  `Scor: ${score} / ${questions.length} — Recapitulează conservarea momentului cinetic și cele trei legi ale lui Kepler.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZARE
+========================================================= */
+
+window.addEventListener(
+  "load",
+  resizeCanvas
+);
+
+</script>
+
+</body>
+</html>
