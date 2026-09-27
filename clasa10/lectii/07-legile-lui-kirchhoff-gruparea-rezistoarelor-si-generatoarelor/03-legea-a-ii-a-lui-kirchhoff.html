@@ -1,1 +1,7043 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+3. Legea a II-a a lui Kirchhoff | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Legea a II-a a lui Kirchhoff pentru ochiurile unei rețele electrice: bilanțul tensiunilor, convenții de semn pentru rezistoare și surse, exemple, probleme și simulator interactiv de parcurgere a unui ochi.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   LAW CARDS
+========================================================= */
+
+.law-card{
+
+  padding:21px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.law-source{
+  border-color:#22c55e;
+}
+
+.law-resistor{
+  border-color:#f59e0b;
+}
+
+.law-loop{
+  border-color:#2563eb;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+.sign-plus{
+
+  color:#15803d;
+
+  font-weight:900;
+
+}
+
+.sign-minus{
+
+  color:#b91c1c;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   SVG FIGURE
+========================================================= */
+
+.loop-figure{
+
+  min-height:390px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.loop-figure svg{
+
+  width:100%;
+  max-width:800px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-resistor{
+
+  fill:#fff7ed;
+
+  stroke:#ea580c;
+
+  stroke-width:4;
+
+}
+
+.svg-source-line{
+
+  stroke:#2563eb;
+
+  stroke-width:5;
+
+}
+
+.svg-arrow{
+
+  fill:none;
+
+  stroke:#16a34a;
+
+  stroke-width:5;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:23px;
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:16px;
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.05fr .95fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#loopCanvas,
+#potentialCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:600px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.step-panel{
+
+  margin-top:18px;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.step-title{
+
+  color:#1d4ed8;
+
+  font-weight:900;
+
+}
+
+.step-equation{
+
+  margin-top:8px;
+
+  font-size:1.05rem;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   MISCONCEPTION
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:#fff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:850px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #loopCanvas,
+  #potentialCanvas{
+    height:520px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 3
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Legile lui Kirchhoff
+</span>
+
+</div>
+
+
+<h1>
+Legea a II-a a lui Kirchhoff
+</h1>
+
+
+<p class="subtitle">
+Dacă Legea I a lui Kirchhoff descrie bilanțul curenților într-un nod,
+Legea a II-a descrie bilanțul variațiilor de potențial
+de-a lungul unui traseu închis.
+Cheia rezolvării corecte este folosirea consecventă
+a sensului de parcurgere și a convențiilor de semn.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să enunți Legea a II-a a lui Kirchhoff;
+</li>
+
+<li>
+să alegi un sens de parcurgere al unui ochi;
+</li>
+
+<li>
+să stabilești semnul unei t.e.m.;
+</li>
+
+<li>
+să stabilești semnul variației de potențial pe un rezistor;
+</li>
+
+<li>
+să scrii ecuația unui ochi;
+</li>
+
+<li>
+să calculezi intensitatea într-un circuit cu mai multe surse;
+</li>
+
+<li>
+să interpretezi un rezultat negativ;
+</li>
+
+<li>
+să verifici că schimbarea sensului de parcurgere nu modifică fizica problemei.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+După un tur complet al unui ochi
+revenim în același punct,
+deci și la același potențial.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum_{\text{ochi}}
+\Delta V=0
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 De la Legea I la Legea a II-a</h2>
+
+<div class="grid-2">
+
+
+<div class="law-card law-loop">
+
+<h3>Legea I</h3>
+
+<p>
+Se aplică unui:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{nod}
+}
+\]
+
+</div>
+
+<p>
+și exprimă:
+</p>
+
+<div class="formula">
+
+\[
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+\]
+
+</div>
+
+</div>
+
+
+<div class="law-card law-loop">
+
+<h3>Legea a II-a</h3>
+
+<p>
+Se aplică unui:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{ochi}
+}
+\]
+
+</div>
+
+<p>
+și exprimă:
+</p>
+
+<div class="formula">
+
+\[
+\sum \Delta V=0
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Cele două legi au roluri diferite:
+
+<strong>Legea I</strong> leagă curenții în noduri,
+iar <strong>Legea a II-a</strong> leagă tensiunile și t.e.m.-urile
+de-a lungul ochiurilor.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PHYSICAL ORIGIN
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De ce suma variațiilor de potențial este zero?</h2>
+
+<p>
+Presupunem că pornim din punctul \(A\),
+al cărui potențial este:
+</p>
+
+<div class="formula">
+
+\[
+V_A
+\]
+
+</div>
+
+<p>
+Parcurgem un traseu închis și revenim în \(A\).
+</p>
+
+<p>
+Pe traseu pot exista:
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Creșteri de potențial</h3>
+
+<p>
+De exemplu,
+la traversarea unei surse de la borna \(-\)
+spre borna \(+\).
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scăderi de potențial</h3>
+
+<p>
+De exemplu,
+la traversarea unui rezistor în sensul curentului.
+</p>
+
+</div>
+
+</div>
+
+<p>
+Dar la final:
+</p>
+
+<div class="formula">
+
+\[
+V_{\text{final}}
+=
+V_A
+\]
+
+</div>
+
+Prin urmare:
+</p>
+
+<div class="formula">
+
+\[
+V_{\text{final}}-V_A=0
+\]
+
+</div>
+
+adică:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum_{\text{ochi}}
+\Delta V=0
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Aceasta este forma cea mai generală și cea mai sigură
+pentru înțelegerea Legii a II-a a lui Kirchhoff:
+
+<strong>
+după o parcurgere completă,
+creșterile și scăderile de potențial se compensează algebric.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     STATEMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Enunțul Legii a II-a a lui Kirchhoff</h2>
+
+<div class="blue-box">
+
+<strong>
+De-a lungul oricărui traseu închis dintr-o rețea electrică,
+suma algebrică a variațiilor de potențial este nulă.
+</strong>
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum \Delta V=0
+}
+\]
+
+</div>
+
+<p>
+Pentru un ochi care conține surse și rezistoare,
+relația poate fi scrisă și sub forma:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum \varepsilon_k\mathcal E_k
+=
+\sum \eta_j R_jI_j
+}
+\]
+
+</div>
+
+<p>
+unde semnele depind de
+<strong>sensul de parcurgere ales</strong>,
+de polaritatea surselor
+și de sensurile curenților.
+</p>
+
+
+<div class="yellow-box">
+
+Nu este recomandat să memorezi o formulă cu semne gata puse.
+
+Metoda sigură este:
+
+<strong>
+alege sensul de parcurgere și analizează fiecare element pe rând.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BASIC LOOP
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Un ochi simplu</h2>
+
+<div class="loop-figure">
+
+<svg
+  viewBox="0 0 820 430"
+  role="img"
+  aria-label="Circuit cu o sursă și două rezistoare într-un singur ochi">
+
+<!-- wires -->
+
+<path
+  class="svg-wire"
+  d="M150 100 H335"/>
+
+<path
+  class="svg-wire"
+  d="M455 100 H670 V330 H455"/>
+
+<path
+  class="svg-wire"
+  d="M335 330 H150 V100"/>
+
+<!-- R1 -->
+
+<rect
+  class="svg-resistor"
+  x="335"
+  y="72"
+  width="120"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="379"
+  y="108">
+R₁
+</text>
+
+<!-- R2 -->
+
+<rect
+  class="svg-resistor"
+  x="335"
+  y="302"
+  width="120"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="379"
+  y="338">
+R₂
+</text>
+
+<!-- source -->
+
+<line
+  class="svg-source-line"
+  x1="635"
+  y1="185"
+  x2="705"
+  y2="185"/>
+
+<line
+  class="svg-source-line"
+  x1="648"
+  y1="245"
+  x2="692"
+  y2="245"/>
+
+<text
+  class="svg-text"
+  x="715"
+  y="193">
++
+</text>
+
+<text
+  class="svg-text"
+  x="715"
+  y="253">
+−
+</text>
+
+<text
+  class="svg-small"
+  x="615"
+  y="280">
+ℰ
+</text>
+
+<!-- current arrow -->
+
+<path
+  class="svg-arrow"
+  d="M215 70 H285"/>
+
+<polygon
+  points="285,70 264,59 264,81"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="242"
+  y="55">
+I
+</text>
+
+<!-- traversal -->
+
+<path
+  d="M180 370 H610"
+  stroke="#7c3aed"
+  stroke-width="4"
+  stroke-dasharray="9 8"
+  fill="none"/>
+
+<polygon
+  points="610,370 589,359 589,381"
+  fill="#7c3aed"/>
+
+<text
+  class="svg-small"
+  x="315"
+  y="405">
+sens de parcurgere ales
+</text>
+
+</svg>
+
+</div>
+
+<p>
+Dacă parcurgem circuitul în sensul curentului:
+</p>
+
+<div class="formula">
+
+\[
++\mathcal E
+-R_1I
+-R_2I
+=0
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+I(R_1+R_2)
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R_1+R_2}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIGN CONVENTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Convențiile de semn</h2>
+
+<p>
+Acesta este pasul decisiv.
+Înainte de ecuație,
+alegem un <strong>sens de parcurgere al ochiului</strong>.
+</p>
+
+
+<h3>A. Traversarea unui rezistor</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Cum traversezi rezistorul?
+</th>
+
+<th>
+Variația de potențial
+</th>
+
+<th>
+Interpretare
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+În sensul curentului
+</td>
+
+<td class="sign-minus">
+\[
+-IR
+\]
+</td>
+
+<td>
+Potențialul scade.
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+Împotriva sensului curentului
+</td>
+
+<td class="sign-plus">
+\[
++IR
+\]
+</td>
+
+<td>
+Potențialul crește.
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<h3>B. Traversarea unei surse ideale</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Cum traversezi sursa?
+</th>
+
+<th>
+Variația de potențial
+</th>
+
+<th>
+Interpretare
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+De la \(-\) la \(+\)
+</td>
+
+<td class="sign-plus">
+\[
++\mathcal E
+\]
+</td>
+
+<td>
+Creștere de potențial.
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+De la \(+\) la \(-\)
+</td>
+
+<td class="sign-minus">
+\[
+-\mathcal E
+\]
+</td>
+
+<td>
+Scădere de potențial.
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="green-box">
+
+O regulă simplă:
+
+<strong>rezistorul:</strong> privește sensul curentului.
+
+<strong>sursa:</strong> privește polaritatea bornelor pe care le întâlnești.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIGN MNEMONIC
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Cum reții semnele fără să memorezi mecanic?</h2>
+
+<div class="grid-2">
+
+
+<div class="law-card law-resistor">
+
+<h3>Rezistor</h3>
+
+<p>
+Curentul convențional „coboară” potențialul pe un rezistor.
+</p>
+
+<div class="formula">
+
+\[
+\text{sensul lui }I:
+\qquad
+\boxed{-IR}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\text{opus lui }I:
+\qquad
+\boxed{+IR}
+\]
+
+</div>
+
+</div>
+
+
+<div class="law-card law-source">
+
+<h3>Sursă</h3>
+
+<p>
+Urmărește bornele întâlnite.
+</p>
+
+<div class="formula">
+
+\[
+-\rightarrow+
+\qquad
+\boxed{+\mathcal E}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
++\rightarrow-
+\qquad
+\boxed{-\mathcal E}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REVERSE TRAVERSAL
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Dacă aleg sensul opus de parcurgere?</h2>
+
+<p>
+Presupunem că pentru sensul orar obținem:
+</p>
+
+<div class="formula">
+
+\[
++\mathcal E
+-IR_1
+-IR_2
+=0
+\]
+
+</div>
+
+<p>
+Dacă parcurgem același ochi în sens opus,
+toate variațiile își schimbă semnul:
+</p>
+
+<div class="formula">
+
+\[
+-\mathcal E
++IR_1
++IR_2
+=0
+\]
+
+</div>
+
+<p>
+Înmulțind cu \(-1\):
+</p>
+
+<div class="formula">
+
+\[
++\mathcal E
+-IR_1
+-IR_2
+=0
+\]
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Concluzie:</strong>
+
+sensul de parcurgere este o
+<strong>alegere convențională</strong>.
+
+Dacă semnele sunt stabilite consecvent,
+rezultatul fizic este același.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TWO SOURCES
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Două surse pe același ochi</h2>
+
+<p>
+Considerăm:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=12\,V
+\]
+
+\[
+\mathcal E_2=4\,V
+\]
+
+</div>
+
+<p>
+orientate în opoziție,
+iar:
+</p>
+
+<div class="formula">
+
+\[
+R_1=2\,\Omega,
+\qquad
+R_2=2\,\Omega
+\]
+
+</div>
+
+<p>
+Alegem sensul orar,
+în care \(\mathcal E_1\) produce o creștere,
+iar \(\mathcal E_2\) o scădere de potențial.
+</p>
+
+<div class="formula">
+
+\[
++\mathcal E_1
+-\mathcal E_2
+-IR_1
+-IR_2
+=0
+\]
+
+</div>
+
+Înlocuim:
+</p>
+
+<div class="formula">
+
+\[
+12-4-2I-2I=0
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+8-4I=0
+\]
+
+</div>
+
+de unde:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Sursele nu se „adună automat”.
+
+Semnul fiecărei t.e.m. depinde de
+<strong>polaritatea sursei și sensul în care o traversăm</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     INTERNAL RESISTANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Dar rezistența internă a sursei?</h2>
+
+<p>
+Dacă sursa reală are rezistență internă:
+</p>
+
+<div class="formula">
+
+\[
+r
+\]
+
+</div>
+
+aceasta se tratează,
+din punctul de vedere al variației de potențial,
+ca un rezistor.
+</p>
+
+<p>
+În sensul curentului:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+-Ir
+}
+\]
+
+</div>
+
+<p>
+De exemplu,
+pentru un circuit simplu:
+</p>
+
+<div class="formula">
+
+\[
++\mathcal E
+-IR
+-Ir
+=0
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+I(R+r)
+\]
+
+</div>
+
+și regăsim:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+Legea lui Ohm pentru circuitul întreg,
+studiată anterior,
+poate fi regăsită astfel ca un caz simplu
+al bilanțului de tensiuni pe un ochi.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Algoritmul sigur pentru Legea a II-a</h2>
+
+<ol class="steps">
+
+<li>
+
+<strong>Alege ochiul.</strong>
+
+<p>
+Marchează traseul închis pe care îl vei analiza.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Alege un sens de parcurgere.</strong>
+
+<p>
+Poate fi orar sau antiorar.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Marchează sensurile curenților.</strong>
+
+<p>
+Pot fi cunoscute sau presupuse.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Parcurge ochiul element cu element.</strong>
+
+<p>
+Nu scrie toate semnele din memorie.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Pentru fiecare rezistor:</strong>
+
+<div class="formula">
+
+\[
+\begin{cases}
+-IR,& \text{în sensul curentului}\\
++IR,& \text{împotriva curentului}
+\end{cases}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Pentru fiecare sursă:</strong>
+
+<div class="formula">
+
+\[
+\begin{cases}
++\mathcal E,& -\rightarrow+\\
+-\mathcal E,& +\rightarrow-
+\end{cases}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Scrie suma algebrică egală cu zero.</strong>
+
+<div class="formula">
+
+\[
+\sum\Delta V=0
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Rezolvă ecuația și interpretează semnul.</strong>
+
+<p>
+Dacă intensitatea rezultă negativă,
+sensul real este opus sensului presupus.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Verifică.</strong>
+
+<p>
+După un tur complet,
+suma creșterilor și scăderilor trebuie să fie zero.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     INTERACTIVE SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Parcurgerea unui ochi pas cu pas</h2>
+
+<p>
+Circuitul conține două surse și două rezistoare.
+Poți modifica valorile și orientarea surselor,
+iar apoi poți parcurge ochiul în sens orar sau antiorar.
+</p>
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="e1Slider">
+\(\mathcal E_1\) [V]
+</label>
+
+<input
+  id="e1Slider"
+  type="range"
+  min="1"
+  max="20"
+  step="0.5"
+  value="12">
+
+<span
+  class="range-value"
+  id="e1Label">
+12,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="source1Orientation">
+Orientarea sursei \(\mathcal E_1\)
+</label>
+
+<select id="source1Orientation">
+
+<option value="cw" selected>
+favorizează sensul orar
+</option>
+
+<option value="ccw">
+favorizează sensul antiorar
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="e2Slider">
+\(\mathcal E_2\) [V]
+</label>
+
+<input
+  id="e2Slider"
+  type="range"
+  min="0"
+  max="20"
+  step="0.5"
+  value="4">
+
+<span
+  class="range-value"
+  id="e2Label">
+4,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="source2Orientation">
+Orientarea sursei \(\mathcal E_2\)
+</label>
+
+<select id="source2Orientation">
+
+<option value="ccw" selected>
+favorizează sensul antiorar
+</option>
+
+<option value="cw">
+favorizează sensul orar
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="r1Slider">
+\(R_1\) [Ω]
+</label>
+
+<input
+  id="r1Slider"
+  type="range"
+  min="0.5"
+  max="12"
+  step="0.5"
+  value="2">
+
+<span
+  class="range-value"
+  id="r1Label">
+2,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r2Slider">
+\(R_2\) [Ω]
+</label>
+
+<input
+  id="r2Slider"
+  type="range"
+  min="0.5"
+  max="12"
+  step="0.5"
+  value="2">
+
+<span
+  class="range-value"
+  id="r2Label">
+2,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="traversalSelect">
+Sens de parcurgere
+</label>
+
+<select id="traversalSelect">
+
+<option value="cw" selected>
+orar ↻
+</option>
+
+<option value="ccw">
+antiorar ↺
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="stepSelect">
+Pas evidențiat
+</label>
+
+<select id="stepSelect">
+
+<option value="0">
+0 – punct de plecare
+</option>
+
+<option value="1">
+1 – primul element
+</option>
+
+<option value="2">
+2 – al doilea element
+</option>
+
+<option value="3">
+3 – al treilea element
+</option>
+
+<option value="4">
+4 – al patrulea element
+</option>
+
+<option value="5" selected>
+5 – tur complet
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="nextStepBtn">
+
+Pas următor →
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="reverseTraversalBtn">
+
+↔ Inversează sensul de parcurgere
+
+</button>
+
+
+<button
+  class="green-button"
+  id="opposedSourcesBtn">
+
+12 V și 4 V în opoziție
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="aidingSourcesBtn">
+
+Surse în același sens
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="loopCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="potentialCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+T.e.m. rezultantă în sens orar
+</span>
+
+<strong id="netEmfValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R_1+R_2\)
+</span>
+
+<strong id="totalResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent calculat
+</span>
+
+<strong id="currentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Sens real al curentului
+</span>
+
+<strong id="currentDirectionValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Suma variațiilor
+</span>
+
+<strong id="sumVoltageValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Parcurgere
+</span>
+
+<strong id="traversalValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(\Delta V_{R1}\)
+</span>
+
+<strong id="dropR1Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(\Delta V_{R2}\)
+</span>
+
+<strong id="dropR2Value">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="simStatus">
+
+Alege un sens de parcurgere și urmărește semnele fiecărui element.
+</div>
+
+
+<div class="step-panel">
+
+<div
+  class="step-title"
+  id="stepTitle">
+
+Tur complet
+
+</div>
+
+<div
+  id="stepDescription">
+
+—
+
+</div>
+
+<div
+  class="step-equation"
+  id="stepEquation">
+
+—
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHAT SIMULATOR SHOWS
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Ce trebuie să observi în simulator?</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Inversează numai sensul de parcurgere</h3>
+
+<p>
+Valorile fizice ale circuitului nu se schimbă.
+</p>
+
+<p>
+Se schimbă semnele termenilor din ecuație,
+dar ecuația rămâne echivalentă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Inversează o sursă</h3>
+
+<p>
+Acum se schimbă fizic circuitul.
+</p>
+
+<p>
+T.e.m. rezultantă și curentul se pot modifica.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Fă sursele egale și opuse</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=\mathcal E_2
+\]
+
+</div>
+
+și sunt orientate în opoziție,
+t.e.m. rezultantă este zero.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Urmărește graficul potențialului</h3>
+
+<p>
+După toate creșterile și scăderile:
+</p>
+
+<div class="formula">
+
+\[
+V_{\text{final}}
+=
+V_{\text{inițial}}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEMS
+========================================================= -->
+
+<section class="card">
+
+<h2>🧩 Probleme rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Problema 1 – O singură sursă</h3>
+
+<p>
+Un ochi conține:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=9\,V,
+\qquad
+R_1=2\,\Omega,
+\qquad
+R_2=1\,\Omega
+\]
+
+</div>
+
+<p>
+Determină curentul.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Alegem sensul curentului și sensul de parcurgere identice.
+
+\[
++\mathcal E
+-IR_1
+-IR_2
+=0
+\]
+
+\[
+9-2I-I=0
+\]
+
+\[
+9-3I=0
+\]
+
+\[
+\boxed{
+I=3\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Problema 2 – Două surse în opoziție</h3>
+
+<p>
+Avem:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=10\,V,
+\qquad
+\mathcal E_2=4\,V
+\]
+
+\[
+R_1=1\,\Omega,
+\qquad
+R_2=2\,\Omega
+\]
+
+</div>
+
+<p>
+Sursa \(\mathcal E_1\) favorizează sensul presupus al curentului,
+iar \(\mathcal E_2\) se opune.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
++\mathcal E_1
+-\mathcal E_2
+-IR_1
+-IR_2
+=0
+\]
+
+\[
+10-4-I-2I=0
+\]
+
+\[
+6-3I=0
+\]
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 3 – Surse în același sens</h3>
+
+<p>
+Două surse au:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=6\,V,
+\qquad
+\mathcal E_2=3\,V
+\]
+
+</div>
+
+și favorizează același sens.
+Rezistența totală este:
+</p>
+
+<div class="formula">
+
+\[
+R=3\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
++\mathcal E_1
++\mathcal E_2
+-IR=0
+\]
+
+\[
+6+3-3I=0
+\]
+
+\[
+9=3I
+\]
+
+\[
+\boxed{
+I=3\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 4 – Rezultat negativ</h3>
+
+<p>
+Presupunem un sens pentru curent și scriem:
+</p>
+
+<div class="formula">
+
+\[
+5-11-3I=0
+\]
+
+</div>
+
+<p>
+Determină \(I\) și interpretează.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+-6-3I=0
+\]
+
+\[
+I=-2\,A
+\]
+
+Rezultatul negativ arată că sensul real
+este opus sensului presupus.
+
+\[
+\boxed{
+|I|=2\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 5 – Sursă reală</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V,
+\qquad
+r=1\,\Omega
+\]
+
+</div>
+
+și alimentează:
+</p>
+
+<div class="formula">
+
+\[
+R=5\,\Omega
+\]
+
+</div>
+
+<p>
+Scrie Legea a II-a și determină \(I\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
++\mathcal E
+-Ir
+-IR
+=0
+\]
+
+\[
+12-I-5I=0
+\]
+
+\[
+12-6I=0
+\]
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Problema 6 – Determinarea unei t.e.m.</h3>
+
+<p>
+Într-un ochi:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E_1=12\,V,
+\qquad
+\mathcal E_2=?
+\]
+
+</div>
+
+<p>
+sursele sunt în opoziție,
+iar:
+</p>
+
+<div class="formula">
+
+\[
+R_1=2\,\Omega,
+\quad
+R_2=3\,\Omega,
+\quad
+I=1\,A
+\]
+
+</div>
+
+<p>
+Curentul este în sensul favorizat de \(\mathcal E_1\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\mathcal E_1
+-\mathcal E_2
+-IR_1
+-IR_2
+=0
+\]
+
+\[
+12-\mathcal E_2-2-3=0
+\]
+
+\[
+12-\mathcal E_2-5=0
+\]
+
+\[
+\boxed{
+\mathcal E_2=7\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMON ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Toate t.e.m.-urile au semnul plus.”</h3>
+
+<p>
+Fals.
+</p>
+
+<p>
+Semnul depinde de polaritatea traversată:
+</p>
+
+<div class="formula">
+
+\[
+-\rightarrow+:
++\mathcal E
+\]
+
+\[
++\rightarrow-:
+-\mathcal E
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Toate produsele \(IR\) au semnul minus.”</h3>
+
+<p>
+Numai dacă rezistorul este traversat
+în sensul curentului.
+</p>
+
+<p>
+În sens opus:
+</p>
+
+<div class="formula">
+
+\[
++IR
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. Schimb sensul de parcurgere la jumătatea ochiului.</h3>
+
+<p>
+Sensul ales trebuie păstrat
+pe întregul traseu închis.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. Confund sensul de parcurgere cu sensul curentului.</h3>
+
+<p>
+Sunt două alegeri diferite.
+</p>
+
+<p>
+Poți parcurge ochiul și împotriva curentului.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Rezultatul negativ înseamnă că am greșit.”</h3>
+
+<p>
+Nu neapărat.
+</p>
+
+<p>
+Poate însemna că sensul real al curentului
+este opus celui presupus.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. Aplic Legea a II-a într-un nod.</h3>
+
+<p>
+Legea a II-a se aplică unui traseu închis.
+</p>
+
+<p>
+Pentru nod se folosește Legea I.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. Uit rezistența internă.</h3>
+
+<p>
+Dacă problema specifică \(r\),
+termenul:
+</p>
+
+<div class="formula">
+
+\[
+Ir
+\]
+
+</div>
+
+trebuie inclus în bilanț.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. Scriu ecuația înainte să marchez polaritățile și sensurile.</h3>
+
+<p>
+Aceasta este una dintre cele mai frecvente surse de erori de semn.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce potențialul final este egal cu cel inițial după un tur complet?
+</li>
+
+<li>
+De ce traversarea unui rezistor în sensul curentului produce termenul \(-IR\)?
+</li>
+
+<li>
+De ce traversarea unei surse de la \(-\) la \(+\) produce \(+\mathcal E\)?
+</li>
+
+<li>
+Ce se schimbă dacă inversezi numai sensul de parcurgere?
+</li>
+
+<li>
+Ce se schimbă dacă inversezi fizic una dintre surse?
+</li>
+
+<li>
+De ce două surse pot să se ajute sau să se opună?
+</li>
+
+<li>
+Ce înseamnă un rezultat negativ pentru intensitate?
+</li>
+
+<li>
+De ce rezistența internă produce un termen de tip \(Ir\)?
+</li>
+
+<li>
+Cum poți verifica rapid dacă ecuația ochiului este coerentă?
+</li>
+
+<li>
+Care este diferența fundamentală dintre domeniul de aplicare al Legii I și al Legii a II-a?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Forma generală a Legii a II-a este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\sum I=0\)
+</button>
+
+<button class="answer-btn">
+\(\sum \Delta V=0\)
+</button>
+
+<button class="answer-btn">
+\(\sum R=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Traversăm un rezistor în sensul curentului.
+Termenul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(-IR\)
+</button>
+
+<button class="answer-btn">
+\(+IR\)
+</button>
+
+<button class="answer-btn">
+\(+\mathcal E\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Traversăm un rezistor împotriva curentului.
+Termenul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(-\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(-IR\)
+</button>
+
+<button class="answer-btn">
+\(+IR\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Traversăm o sursă de la borna \(-\) la borna \(+\).
+Termenul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(-\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(+\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(-IR\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Traversăm o sursă de la \(+\) la \(-\).
+Termenul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(-\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(+\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(+IR\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+Dacă schimbăm numai sensul de parcurgere:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+se inversează fizic sursele
+</button>
+
+<button class="answer-btn">
+se schimbă rezistențele
+</button>
+
+<button class="answer-btn">
+ecuația își schimbă semnele, dar rezultatul fizic rămâne același
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Pentru
+\(\mathcal E=12\,V\)
+și
+\(R_1+R_2=6\,\Omega\),
+curentul într-un ochi simplu este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(72\,A\)
+</button>
+
+<button class="answer-btn">
+\(2\,A\)
+</button>
+
+<button class="answer-btn">
+\(0,5\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+Două surse de 10 V și 4 V sunt orientate în opoziție.
+T.e.m. rezultantă în sensul sursei mai mari este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(6\,V\)
+</button>
+
+<button class="answer-btn">
+\(14\,V\)
+</button>
+
+<button class="answer-btn">
+\(40\,V\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Un rezultat \(I=-3\,A\) înseamnă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+că nu circulă curent
+</button>
+
+<button class="answer-btn">
+că rezistența este negativă
+</button>
+
+<button class="answer-btn">
+că sensul real este opus celui presupus, iar modulul este \(3\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Legea a II-a se aplică:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+numai unui nod
+</button>
+
+<button class="answer-btn">
+unui traseu închis al rețelei
+</button>
+
+<button class="answer-btn">
+numai unui singur rezistor
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Legea a II-a</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum \Delta V=0
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistor</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{cu }I:
+-IR
+}
+\]
+
+\[
+\boxed{
+\text{contra }I:
++IR
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Sursă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+-\rightarrow+:
++\mathcal E
+}
+\]
+
+\[
+\boxed{
++\rightarrow-:
+-\mathcal E
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Sens de parcurgere</h3>
+
+<p>
+Este convențional.
+</p>
+
+<p>
+Trebuie doar păstrat consecvent.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Algoritmul mental:</strong>
+
+aleg ochiul →
+aleg sensul →
+parcurg element cu element →
+stabilesc fiecare semn →
+scriu:
+
+\[
+\sum\Delta V=0
+\]
+
+→ rezolv →
+interpretez semnul rezultatului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+Acum avem cele două instrumente fundamentale:
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>În nod</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pe ochi</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum\Delta V=0
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+<p>
+Într-o rețea reală cu mai multe laturi și ochiuri,
+cele două legi trebuie folosite
+<strong>împreună</strong>.
+</p>
+
+<div class="blue-box">
+
+Lecția următoare:
+
+<strong>
+Aplicarea legilor lui Kirchhoff în rețele electrice
+</strong>
+
+— alegerea curenților,
+scrierea ecuațiilor de nod și ochi
+și rezolvarea unui sistem de ecuații.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="02-legea-i-a-lui-kirchhoff.html">
+
+← Lecția 2<br>
+Legea I a lui Kirchhoff
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="04-aplicarea-legilor-lui-kirchhoff-in-retele-electrice.html">
+
+Lecția 4<br>
+Aplicarea legilor lui Kirchhoff →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const e1Slider=
+  document.getElementById(
+    "e1Slider"
+  );
+
+
+const e2Slider=
+  document.getElementById(
+    "e2Slider"
+  );
+
+
+const r1Slider=
+  document.getElementById(
+    "r1Slider"
+  );
+
+
+const r2Slider=
+  document.getElementById(
+    "r2Slider"
+  );
+
+
+const source1Orientation=
+  document.getElementById(
+    "source1Orientation"
+  );
+
+
+const source2Orientation=
+  document.getElementById(
+    "source2Orientation"
+  );
+
+
+const traversalSelect=
+  document.getElementById(
+    "traversalSelect"
+  );
+
+
+const stepSelect=
+  document.getElementById(
+    "stepSelect"
+  );
+
+
+const e1Label=
+  document.getElementById(
+    "e1Label"
+  );
+
+
+const e2Label=
+  document.getElementById(
+    "e2Label"
+  );
+
+
+const r1Label=
+  document.getElementById(
+    "r1Label"
+  );
+
+
+const r2Label=
+  document.getElementById(
+    "r2Label"
+  );
+
+
+const netEmfValue=
+  document.getElementById(
+    "netEmfValue"
+  );
+
+
+const totalResistanceValue=
+  document.getElementById(
+    "totalResistanceValue"
+  );
+
+
+const currentValue=
+  document.getElementById(
+    "currentValue"
+  );
+
+
+const currentDirectionValue=
+  document.getElementById(
+    "currentDirectionValue"
+  );
+
+
+const sumVoltageValue=
+  document.getElementById(
+    "sumVoltageValue"
+  );
+
+
+const traversalValue=
+  document.getElementById(
+    "traversalValue"
+  );
+
+
+const dropR1Value=
+  document.getElementById(
+    "dropR1Value"
+  );
+
+
+const dropR2Value=
+  document.getElementById(
+    "dropR2Value"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const stepTitle=
+  document.getElementById(
+    "stepTitle"
+  );
+
+
+const stepDescription=
+  document.getElementById(
+    "stepDescription"
+  );
+
+
+const stepEquation=
+  document.getElementById(
+    "stepEquation"
+  );
+
+
+const loopCanvas=
+  document.getElementById(
+    "loopCanvas"
+  );
+
+
+const loopCtx=
+  loopCanvas.getContext(
+    "2d"
+  );
+
+
+const potentialCanvas=
+  document.getElementById(
+    "potentialCanvas"
+  );
+
+
+const potentialCtx=
+  potentialCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   ANIMATION STATE
+========================================================= */
+
+let particlePosition=0;
+
+let lastTime=0;
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const e1=
+    Number(
+      e1Slider.value
+    );
+
+
+  const e2=
+    Number(
+      e2Slider.value
+    );
+
+
+  const r1=
+    Number(
+      r1Slider.value
+    );
+
+
+  const r2=
+    Number(
+      r2Slider.value
+    );
+
+
+  /*
+  Physical reference:
+  clockwise is defined positive.
+
+  A source with orientation "cw"
+  contributes +E to the clockwise emf sum.
+  */
+
+  const s1=
+    source1Orientation.value===
+    "cw"
+      ? 1
+      : -1;
+
+
+  const s2=
+    source2Orientation.value===
+    "cw"
+      ? 1
+      : -1;
+
+
+  const netEmfCW=
+    s1*
+    e1+
+    s2*
+    e2;
+
+
+  const totalR=
+    r1+
+    r2;
+
+
+  const signedCurrentCW=
+    netEmfCW/
+    totalR;
+
+
+  const currentMagnitude=
+    Math.abs(
+      signedCurrentCW
+    );
+
+
+  let actualDirection=
+    "none";
+
+
+  if(
+    signedCurrentCW>
+    .00001
+  ){
+
+    actualDirection=
+      "cw";
+
+  }
+
+  else if(
+    signedCurrentCW<
+    -.00001
+  ){
+
+    actualDirection=
+      "ccw";
+
+  }
+
+
+  return{
+
+    e1,
+    e2,
+
+    r1,
+    r2,
+
+    s1,
+    s2,
+
+    netEmfCW,
+
+    totalR,
+
+    signedCurrentCW,
+
+    currentMagnitude,
+
+    actualDirection,
+
+    traversal:
+      traversalSelect.value,
+
+    step:
+      Number(
+        stepSelect.value
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   TRAVERSAL ELEMENT ORDER
+========================================================= */
+
+function buildTraversalSteps(
+  m
+){
+
+  /*
+  Circuit positions:
+  top: R1
+  right: E1
+  bottom: R2
+  left: E2
+
+  Clockwise traversal:
+  top -> right -> bottom -> left.
+
+  For clockwise source contribution:
+  E1 sign = s1
+  E2 sign = s2.
+
+  Resistor sign depends on whether traversal
+  follows actual current.
+  */
+
+  const traversalSign=
+    m.traversal==="cw"
+      ? 1
+      : -1;
+
+
+  const sameAsCurrent=
+    m.actualDirection==="none"
+      ? false
+      : m.traversal===
+        m.actualDirection;
+
+
+  const resistorSign=
+    m.currentMagnitude<
+    .00001
+      ? 0
+      : sameAsCurrent
+        ? -1
+        : 1;
+
+
+  const source1Delta=
+    traversalSign*
+    m.s1*
+    m.e1;
+
+
+  const source2Delta=
+    traversalSign*
+    m.s2*
+    m.e2;
+
+
+  const r1Delta=
+    resistorSign*
+    m.currentMagnitude*
+    m.r1;
+
+
+  const r2Delta=
+    resistorSign*
+    m.currentMagnitude*
+    m.r2;
+
+
+  let steps;
+
+
+  if(
+    m.traversal==="cw"
+  ){
+
+    steps=[
+
+      {
+        key:"R1",
+        label:"Rezistorul R₁",
+        delta:r1Delta,
+        kind:"resistor"
+      },
+
+      {
+        key:"E1",
+        label:"Sursa ℰ₁",
+        delta:source1Delta,
+        kind:"source"
+      },
+
+      {
+        key:"R2",
+        label:"Rezistorul R₂",
+        delta:r2Delta,
+        kind:"resistor"
+      },
+
+      {
+        key:"E2",
+        label:"Sursa ℰ₂",
+        delta:source2Delta,
+        kind:"source"
+      }
+
+    ];
+
+  }
+
+  else{
+
+    steps=[
+
+      {
+        key:"E2",
+        label:"Sursa ℰ₂",
+        delta:source2Delta,
+        kind:"source"
+      },
+
+      {
+        key:"R2",
+        label:"Rezistorul R₂",
+        delta:r2Delta,
+        kind:"resistor"
+      },
+
+      {
+        key:"E1",
+        label:"Sursa ℰ₁",
+        delta:source1Delta,
+        kind:"source"
+      },
+
+      {
+        key:"R1",
+        label:"Rezistorul R₁",
+        delta:r1Delta,
+        kind:"resistor"
+      }
+
+    ];
+
+  }
+
+
+  return steps;
+
+}
+
+
+/* =========================================================
+   UPDATE RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  const steps=
+    buildTraversalSteps(
+      m
+    );
+
+
+  const totalDelta=
+    steps.reduce(
+      (
+        sum,
+        item
+      )=>
+        sum+
+        item.delta,
+      0
+    );
+
+
+  e1Label.textContent=
+    `${formatRo(
+      m.e1,
+      1
+    )} V`;
+
+
+  e2Label.textContent=
+    `${formatRo(
+      m.e2,
+      1
+    )} V`;
+
+
+  r1Label.textContent=
+    `${formatRo(
+      m.r1,
+      1
+    )} Ω`;
+
+
+  r2Label.textContent=
+    `${formatRo(
+      m.r2,
+      1
+    )} Ω`;
+
+
+  netEmfValue.textContent=
+    `${formatRo(
+      m.netEmfCW,
+      2
+    )} V`;
+
+
+  totalResistanceValue.textContent=
+    `${formatRo(
+      m.totalR,
+      2
+    )} Ω`;
+
+
+  currentValue.textContent=
+    `${formatRo(
+      m.currentMagnitude,
+      3
+    )} A`;
+
+
+  if(
+    m.actualDirection==="cw"
+  ){
+
+    currentDirectionValue.textContent=
+      "orar ↻";
+
+  }
+
+  else if(
+    m.actualDirection==="ccw"
+  ){
+
+    currentDirectionValue.textContent=
+      "antiorar ↺";
+
+  }
+
+  else{
+
+    currentDirectionValue.textContent=
+      "I = 0";
+
+  }
+
+
+  sumVoltageValue.textContent=
+    `${formatRo(
+      totalDelta,
+      6
+    )} V`;
+
+
+  traversalValue.textContent=
+    m.traversal==="cw"
+      ? "orar ↻"
+      : "antiorar ↺";
+
+
+  const r1Step=
+    steps.find(
+      item=>
+        item.key==="R1"
+    );
+
+
+  const r2Step=
+    steps.find(
+      item=>
+        item.key==="R2"
+    );
+
+
+  dropR1Value.textContent=
+    `${r1Step.delta>=0?"+":""}${formatRo(
+      r1Step.delta,
+      2
+    )} V`;
+
+
+  dropR2Value.textContent=
+    `${r2Step.delta>=0?"+":""}${formatRo(
+      r2Step.delta,
+      2
+    )} V`;
+
+
+  if(
+    m.currentMagnitude<
+    .00001
+  ){
+
+    simStatus.innerHTML=
+      `Sursele se compensează pentru configurația aleasă:
+       <strong>t.e.m. rezultantă = 0 V</strong>,
+       deci în modelul idealizat
+       <strong>I = 0 A</strong>.
+       Totuși, la parcurgerea ochiului,
+       creșterile și scăderile datorate surselor se compensează.`;
+
+  }
+
+  else{
+
+    simStatus.innerHTML=
+      `Curentul real este
+       <strong>${formatRo(m.currentMagnitude,3)} A</strong>
+       în sens
+       <strong>${m.actualDirection==="cw"?"orar":"antiorar"}</strong>.
+       Parcurgerea aleasă este
+       <strong>${m.traversal==="cw"?"orară":"antiorară"}</strong>.
+       Indiferent de această alegere,
+       suma variațiilor după turul complet este
+       <strong>${formatRo(totalDelta,6)} V ≈ 0 V</strong>.`;
+
+  }
+
+
+  updateStepPanel(
+    m,
+    steps
+  );
+
+
+  drawPotentialGraph(
+    m,
+    steps
+  );
+
+}
+
+
+/* =========================================================
+   STEP PANEL
+========================================================= */
+
+function updateStepPanel(
+  m,
+  steps
+){
+
+  const step=
+    m.step;
+
+
+  if(
+    step===0
+  ){
+
+    stepTitle.textContent=
+      "Pasul 0 – Punctul de plecare";
+
+
+    stepDescription.innerHTML=
+      `Alegem convențional potențialul inițial
+       <strong>V₀ = 0 V</strong>.
+       Valoarea absolută nu este importantă;
+       urmărim variațiile de potențial.`;
+
+
+    stepEquation.textContent=
+      "V₀ = 0 V";
+
+    return;
+
+  }
+
+
+  if(
+    step>=1 &&
+    step<=4
+  ){
+
+    const item=
+      steps[
+        step-1
+      ];
+
+
+    stepTitle.textContent=
+      `Pasul ${step} – ${item.label}`;
+
+
+    if(
+      item.kind===
+      "resistor"
+    ){
+
+      if(
+        item.delta<
+        0
+      ){
+
+        stepDescription.innerHTML=
+          `Traversăm rezistorul în
+           <strong>sensul curentului</strong>,
+           deci potențialul scade.`;
+
+      }
+
+      else if(
+        item.delta>
+        0
+      ){
+
+        stepDescription.innerHTML=
+          `Traversăm rezistorul
+           <strong>împotriva sensului curentului</strong>,
+           deci potențialul crește.`;
+
+      }
+
+      else{
+
+        stepDescription.innerHTML=
+          `Curentul este nul,
+           deci variația de potențial pe rezistor este nulă.`;
+
+      }
+
+    }
+
+    else{
+
+      if(
+        item.delta>
+        0
+      ){
+
+        stepDescription.innerHTML=
+          `Traversăm sursa de la
+           <strong>− la +</strong>,
+           deci avem o creștere de potențial.`;
+
+      }
+
+      else{
+
+        stepDescription.innerHTML=
+          `Traversăm sursa de la
+           <strong>+ la −</strong>,
+           deci avem o scădere de potențial.`;
+
+      }
+
+    }
+
+
+    stepEquation.textContent=
+      `ΔV = ${item.delta>=0?"+":""}${formatRo(item.delta,2)} V`;
+
+    return;
+
+  }
+
+
+  const terms=
+    steps
+    .map(
+      item=>
+        `${item.delta>=0?"+":""}${formatRo(item.delta,2)}`
+    )
+    .join(" ");
+
+
+  const total=
+    steps.reduce(
+      (
+        sum,
+        item
+      )=>
+        sum+
+        item.delta,
+      0
+    );
+
+
+  stepTitle.textContent=
+    "Pasul 5 – Tur complet";
+
+
+  stepDescription.innerHTML=
+    `Am revenit în punctul de plecare.
+     Potențialul final trebuie să fie egal cu cel inițial.`;
+
+
+  stepEquation.textContent=
+    `${terms} = ${formatRo(total,6)} V`;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   CIRCUIT GEOMETRY
+========================================================= */
+
+function loopGeometry(){
+
+  const rect=
+    loopCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  return{
+
+    W,
+    H,
+
+    left:
+      W*.20,
+
+    right:
+      W*.80,
+
+    top:
+      H*.25,
+
+    bottom:
+      H*.77
+
+  };
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  ctx,
+  W,
+  H
+){
+
+  const gradient=
+    ctx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  ctx.fillStyle=
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  ctx.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  ctx.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=34
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      x,
+      0
+    );
+
+
+    ctx.lineTo(
+      x,
+      H
+    );
+
+
+    ctx.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=34
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      0,
+      y
+    );
+
+
+    ctx.lineTo(
+      W,
+      y
+    );
+
+
+    ctx.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW RESISTOR
+========================================================= */
+
+function drawResistor(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  label,
+  highlighted
+){
+
+  ctx.fillStyle=
+    highlighted
+      ? "#fef08a"
+      : "#fff7ed";
+
+
+  ctx.strokeStyle=
+    highlighted
+      ? "#facc15"
+      : "#fb923c";
+
+
+  ctx.lineWidth=
+    highlighted
+      ? 5
+      : 3;
+
+
+  ctx.fillRect(
+    x-
+    width/2,
+    y-
+    height/2,
+    width,
+    height
+  );
+
+
+  ctx.strokeRect(
+    x-
+    width/2,
+    y-
+    height/2,
+    width,
+    height
+  );
+
+
+  ctx.fillStyle=
+    "#7c2d12";
+
+
+  ctx.font=
+    "bold 15px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.textBaseline=
+    "middle";
+
+
+  ctx.fillText(
+    label,
+    x,
+    y
+  );
+
+}
+
+
+/* =========================================================
+   DRAW SOURCE
+========================================================= */
+
+function drawVerticalSource(
+  ctx,
+  x,
+  y,
+  orientation,
+  label,
+  highlighted
+){
+
+  const plusTop=
+    orientation===
+    "ccw";
+
+
+  ctx.strokeStyle=
+    highlighted
+      ? "#fde047"
+      : "#93c5fd";
+
+
+  ctx.lineWidth=
+    highlighted
+      ? 6
+      : 4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x-28,
+    y-17
+  );
+
+
+  ctx.lineTo(
+    x+28,
+    y-17
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x-18,
+    y+17
+  );
+
+
+  ctx.lineTo(
+    x+18,
+    y+17
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 15px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    plusTop
+      ? "+"
+      : "−",
+    x+43,
+    y-12
+  );
+
+
+  ctx.fillText(
+    plusTop
+      ? "−"
+      : "+",
+    x+43,
+    y+24
+  );
+
+
+  ctx.fillStyle=
+    "#bfdbfe";
+
+
+  ctx.font=
+    "bold 12px system-ui";
+
+
+  ctx.fillText(
+    label,
+    x-45,
+    y+4
+  );
+
+}
+
+
+/* =========================================================
+   CURRENT ARROW
+========================================================= */
+
+function drawLoopArrow(
+  ctx,
+  g,
+  direction,
+  color,
+  yOffset=0
+){
+
+  const y=
+    g.top-
+    38+
+    yOffset;
+
+
+  const x1=
+    direction==="cw"
+      ? g.left+
+        30
+      : g.right-
+        30;
+
+
+  const x2=
+    direction==="cw"
+      ? g.right-
+        90
+      : g.left+
+        90;
+
+
+  ctx.strokeStyle=
+    color;
+
+
+  ctx.fillStyle=
+    color;
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x1,
+    y
+  );
+
+
+  ctx.lineTo(
+    x2,
+    y
+  );
+
+
+  ctx.stroke();
+
+
+  const sign=
+    direction==="cw"
+      ? 1
+      : -1;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x2,
+    y
+  );
+
+
+  ctx.lineTo(
+    x2-
+    sign*14,
+    y-8
+  );
+
+
+  ctx.lineTo(
+    x2-
+    sign*14,
+    y+8
+  );
+
+
+  ctx.closePath();
+
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   HIGHLIGHT KEY
+========================================================= */
+
+function highlightedKey(
+  m,
+  steps
+){
+
+  if(
+    m.step<1 ||
+    m.step>4
+  ){
+    return null;
+  }
+
+
+  return steps[
+    m.step-1
+  ].key;
+
+}
+
+
+/* =========================================================
+   PARTICLE POSITION
+========================================================= */
+
+function pointOnRectangle(
+  p,
+  g,
+  direction
+){
+
+  if(
+    direction==="ccw"
+  ){
+
+    p=
+      1-p;
+
+  }
+
+
+  const width=
+    g.right-
+    g.left;
+
+
+  const height=
+    g.bottom-
+    g.top;
+
+
+  const perimeter=
+    2*
+    (
+      width+
+      height
+    );
+
+
+  let d=
+    p*
+    perimeter;
+
+
+  if(
+    d<
+    width
+  ){
+
+    return{
+
+      x:
+        g.left+
+        d,
+
+      y:
+        g.top
+
+    };
+
+  }
+
+
+  d-=width;
+
+
+  if(
+    d<
+    height
+  ){
+
+    return{
+
+      x:
+        g.right,
+
+      y:
+        g.top+
+        d
+
+    };
+
+  }
+
+
+  d-=height;
+
+
+  if(
+    d<
+    width
+  ){
+
+    return{
+
+      x:
+        g.right-
+        d,
+
+      y:
+        g.bottom
+
+    };
+
+  }
+
+
+  d-=width;
+
+
+  return{
+
+    x:
+      g.left,
+
+    y:
+      g.bottom-
+      d
+
+  };
+
+}
+
+
+/* =========================================================
+   DRAW LOOP SCENE
+========================================================= */
+
+function drawLoopScene(
+  m
+){
+
+  const steps=
+    buildTraversalSteps(
+      m
+    );
+
+
+  const highlighted=
+    highlightedKey(
+      m,
+      steps
+    );
+
+
+  const g=
+    loopGeometry();
+
+
+  drawDarkBackground(
+    loopCtx,
+    g.W,
+    g.H
+  );
+
+
+  /*
+  Wires.
+  */
+
+  loopCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  loopCtx.lineWidth=6;
+
+
+  loopCtx.lineCap=
+    "round";
+
+
+  loopCtx.beginPath();
+
+
+  loopCtx.moveTo(
+    g.left,
+    g.top
+  );
+
+
+  loopCtx.lineTo(
+    g.right,
+    g.top
+  );
+
+
+  loopCtx.lineTo(
+    g.right,
+    g.bottom
+  );
+
+
+  loopCtx.lineTo(
+    g.left,
+    g.bottom
+  );
+
+
+  loopCtx.lineTo(
+    g.left,
+    g.top
+  );
+
+
+  loopCtx.stroke();
+
+
+  /*
+  R1 and R2.
+  */
+
+  drawResistor(
+
+    loopCtx,
+
+    (
+      g.left+
+      g.right
+    )/
+    2,
+
+    g.top,
+
+    90,
+    44,
+
+    `R₁=${formatRo(m.r1,1)}Ω`,
+
+    highlighted==="R1"
+
+  );
+
+
+  drawResistor(
+
+    loopCtx,
+
+    (
+      g.left+
+      g.right
+    )/
+    2,
+
+    g.bottom,
+
+    90,
+    44,
+
+    `R₂=${formatRo(m.r2,1)}Ω`,
+
+    highlighted==="R2"
+
+  );
+
+
+  /*
+  Sources.
+  */
+
+  drawVerticalSource(
+
+    loopCtx,
+
+    g.right,
+
+    (
+      g.top+
+      g.bottom
+    )/
+    2,
+
+    source1Orientation.value,
+
+    `ℰ₁=${formatRo(m.e1,1)}V`,
+
+    highlighted==="E1"
+
+  );
+
+
+  /*
+  For left branch, clockwise traversal is bottom -> top.
+  orientation "cw" means plus at top.
+  Our helper defines ccw as plusTop on right branch,
+  therefore invert orientation for the left drawing.
+  */
+
+  const leftVisualOrientation=
+    source2Orientation.value===
+    "cw"
+      ? "ccw"
+      : "cw";
+
+
+  drawVerticalSource(
+
+    loopCtx,
+
+    g.left,
+
+    (
+      g.top+
+      g.bottom
+    )/
+    2,
+
+    leftVisualOrientation,
+
+    `ℰ₂=${formatRo(m.e2,1)}V`,
+
+    highlighted==="E2"
+
+  );
+
+
+  /*
+  Current arrow.
+  */
+
+  if(
+    m.actualDirection!==
+    "none"
+  ){
+
+    drawLoopArrow(
+      loopCtx,
+      g,
+      m.actualDirection,
+      "#22c55e",
+      0
+    );
+
+
+    loopCtx.fillStyle=
+      "#86efac";
+
+
+    loopCtx.font=
+      "bold 12px system-ui";
+
+
+    loopCtx.textAlign=
+      "center";
+
+
+    loopCtx.fillText(
+      `I = ${formatRo(m.currentMagnitude,3)} A`,
+      g.W*.50,
+      g.top-54
+    );
+
+  }
+
+
+  /*
+  Traversal arrow.
+  */
+
+  drawLoopArrow(
+    loopCtx,
+    g,
+    m.traversal,
+    "#c084fc",
+    -42
+  );
+
+
+  loopCtx.fillStyle=
+    "#d8b4fe";
+
+
+  loopCtx.font=
+    "bold 11px system-ui";
+
+
+  loopCtx.textAlign=
+    "center";
+
+
+  loopCtx.fillText(
+    "SENS DE PARCURGERE",
+    g.W*.50,
+    g.top-96
+  );
+
+
+  /*
+  Moving current marker.
+  */
+
+  if(
+    m.actualDirection!==
+    "none"
+  ){
+
+    const point=
+      pointOnRectangle(
+        particlePosition,
+        g,
+        m.actualDirection
+      );
+
+
+    loopCtx.beginPath();
+
+
+    loopCtx.arc(
+      point.x,
+      point.y,
+      7,
+      0,
+      Math.PI*2
+    );
+
+
+    loopCtx.fillStyle=
+      "#86efac";
+
+
+    loopCtx.fill();
+
+
+    loopCtx.strokeStyle=
+      "#f0fdf4";
+
+
+    loopCtx.lineWidth=2;
+
+
+    loopCtx.stroke();
+
+  }
+
+
+  /*
+  Header.
+  */
+
+  loopCtx.fillStyle=
+    "#e2e8f0";
+
+
+  loopCtx.font=
+    "bold 15px system-ui";
+
+
+  loopCtx.textAlign=
+    "left";
+
+
+  loopCtx.fillText(
+    "Circuitul fizic",
+    18,
+    28
+  );
+
+
+  loopCtx.fillStyle=
+    "#bae6fd";
+
+
+  loopCtx.font=
+    "11px system-ui";
+
+
+  loopCtx.fillText(
+    "verde = curent real • violet = sens de parcurgere",
+    18,
+    48
+  );
+
+}
+
+
+/* =========================================================
+   POTENTIAL GRAPH
+========================================================= */
+
+function drawPotentialGraph(
+  m,
+  steps
+){
+
+  const rect=
+    potentialCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  potentialCtx.fillStyle=
+    "#f8fafc";
+
+
+  potentialCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const values=[
+    0
+  ];
+
+
+  let sum=0;
+
+
+  steps.forEach(
+    item=>{
+
+      sum+=
+        item.delta;
+
+
+      values.push(
+        sum
+      );
+
+    }
+  );
+
+
+  const maxAbs=
+    Math.max(
+      1,
+      ...values.map(
+        value=>
+          Math.abs(
+            value
+          )
+      )
+    );
+
+
+  const yMin=
+    -maxAbs*
+    1.25;
+
+
+  const yMax=
+    maxAbs*
+    1.25;
+
+
+  const margin={
+
+    left:62,
+    right:24,
+    top:70,
+    bottom:70
+
+  };
+
+
+  const plotW=
+    W-
+    margin.left-
+    margin.right;
+
+
+  const plotH=
+    H-
+    margin.top-
+    margin.bottom;
+
+
+  const xFor=
+    index=>
+      margin.left+
+      plotW*
+      index/
+      4;
+
+
+  const yFor=
+    value=>
+      margin.top+
+      plotH*
+      (
+        yMax-
+        value
+      )/
+      (
+        yMax-
+        yMin
+      );
+
+
+  /*
+  Grid and zero line.
+  */
+
+  potentialCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  potentialCtx.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const y=
+      margin.top+
+      plotH*
+      i/5;
+
+
+    potentialCtx.beginPath();
+
+
+    potentialCtx.moveTo(
+      margin.left,
+      y
+    );
+
+
+    potentialCtx.lineTo(
+      margin.left+
+      plotW,
+      y
+    );
+
+
+    potentialCtx.stroke();
+
+  }
+
+
+  potentialCtx.strokeStyle=
+    "#94a3b8";
+
+
+  potentialCtx.lineWidth=2;
+
+
+  potentialCtx.beginPath();
+
+
+  potentialCtx.moveTo(
+    margin.left,
+    yFor(0)
+  );
+
+
+  potentialCtx.lineTo(
+    margin.left+
+    plotW,
+    yFor(0)
+  );
+
+
+  potentialCtx.stroke();
+
+
+  /*
+  Step graph.
+  */
+
+  potentialCtx.strokeStyle=
+    "#2563eb";
+
+
+  potentialCtx.lineWidth=4;
+
+
+  potentialCtx.beginPath();
+
+
+  potentialCtx.moveTo(
+    xFor(0),
+    yFor(
+      values[0]
+    )
+  );
+
+
+  for(
+    let i=1;
+    i<values.length;
+    i++
+  ){
+
+    potentialCtx.lineTo(
+      xFor(i),
+      yFor(
+        values[
+          i-1
+        ]
+      )
+    );
+
+
+    potentialCtx.lineTo(
+      xFor(i),
+      yFor(
+        values[
+          i
+        ]
+      )
+    );
+
+  }
+
+
+  potentialCtx.stroke();
+
+
+  /*
+  Points.
+  */
+
+  values.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      potentialCtx.beginPath();
+
+
+      potentialCtx.arc(
+        xFor(index),
+        yFor(value),
+        index===
+        m.step
+          ? 7
+          : 5,
+        0,
+        Math.PI*2
+      );
+
+
+      potentialCtx.fillStyle=
+        index===
+        m.step
+          ? "#dc2626"
+          : "#2563eb";
+
+
+      potentialCtx.fill();
+
+    }
+  );
+
+
+  /*
+  Labels.
+  */
+
+  potentialCtx.fillStyle=
+    "#0f172a";
+
+
+  potentialCtx.font=
+    "bold 15px system-ui";
+
+
+  potentialCtx.textAlign=
+    "left";
+
+
+  potentialCtx.fillText(
+    "Evoluția potențialului pe traseul ales",
+    margin.left,
+    28
+  );
+
+
+  potentialCtx.fillStyle=
+    "#475569";
+
+
+  potentialCtx.font=
+    "11px system-ui";
+
+
+  potentialCtx.fillText(
+    "după un tur complet trebuie să revenim la valoarea inițială",
+    margin.left,
+    48
+  );
+
+
+  potentialCtx.textAlign=
+    "center";
+
+
+  potentialCtx.fillStyle=
+    "#334155";
+
+
+  potentialCtx.font=
+    "11px system-ui";
+
+
+  const labels=[
+    "start",
+    steps[0].key,
+    steps[1].key,
+    steps[2].key,
+    steps[3].key
+  ];
+
+
+  labels.forEach(
+    (
+      label,
+      index
+    )=>{
+
+      potentialCtx.fillText(
+        label,
+        xFor(index),
+        H-35
+      );
+
+
+      potentialCtx.fillText(
+        `${formatRo(values[index],2)} V`,
+        xFor(index),
+        yFor(
+          values[index]
+        )-12
+      );
+
+    }
+  );
+
+
+  potentialCtx.save();
+
+
+  potentialCtx.translate(
+    20,
+    margin.top+
+    plotH/2
+  );
+
+
+  potentialCtx.rotate(
+    -Math.PI/2
+  );
+
+
+  potentialCtx.font=
+    "bold 12px system-ui";
+
+
+  potentialCtx.fillStyle=
+    "#0f172a";
+
+
+  potentialCtx.textAlign=
+    "center";
+
+
+  potentialCtx.fillText(
+    "potențial relativ [V]",
+    0,
+    0
+  );
+
+
+  potentialCtx.restore();
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  if(
+    m.currentMagnitude>
+    .00001
+  ){
+
+    const speed=
+      .04+
+      Math.min(
+        m.currentMagnitude,
+        10
+      )*
+      .015;
+
+
+    particlePosition+=
+      speed*
+      dt;
+
+
+    if(
+      particlePosition>=1
+    ){
+
+      particlePosition-=1;
+
+    }
+
+  }
+
+
+  drawLoopScene(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setOpposedSources(){
+
+  e1Slider.value=
+    12;
+
+
+  e2Slider.value=
+    4;
+
+
+  r1Slider.value=
+    2;
+
+
+  r2Slider.value=
+    2;
+
+
+  source1Orientation.value=
+    "cw";
+
+
+  source2Orientation.value=
+    "ccw";
+
+
+  traversalSelect.value=
+    "cw";
+
+
+  stepSelect.value=
+    "5";
+
+
+  updateResults();
+
+}
+
+
+function setAidingSources(){
+
+  e1Slider.value=
+    6;
+
+
+  e2Slider.value=
+    3;
+
+
+  r1Slider.value=
+    2;
+
+
+  r2Slider.value=
+    1;
+
+
+  source1Orientation.value=
+    "cw";
+
+
+  source2Orientation.value=
+    "cw";
+
+
+  traversalSelect.value=
+    "cw";
+
+
+  stepSelect.value=
+    "5";
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  e1Slider,
+  e2Slider,
+  r1Slider,
+  r2Slider,
+  source1Orientation,
+  source2Orientation,
+  traversalSelect,
+  stepSelect
+].forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "nextStepBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      let next=
+        Number(
+          stepSelect.value
+        )+
+        1;
+
+
+      if(
+        next>5
+      ){
+        next=0;
+      }
+
+
+      stepSelect.value=
+        String(
+          next
+        );
+
+
+      updateResults();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "reverseTraversalBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      traversalSelect.value=
+        traversalSelect.value===
+        "cw"
+          ? "ccw"
+          : "cw";
+
+
+      stepSelect.value=
+        "5";
+
+
+      updateResults();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "opposedSourcesBtn"
+  )
+  .addEventListener(
+    "click",
+    setOpposedSources
+  );
+
+
+document
+  .getElementById(
+    "aidingSourcesBtn"
+  )
+  .addEventListener(
+    "click",
+    setAidingSources
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    setOpposedSources
+  );
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    loopCanvas,
+    loopCtx
+  );
+
+
+  resizeCanvas(
+    potentialCanvas,
+    potentialCtx
+  );
+
+
+  updateResults();
+
+
+  drawLoopScene(
+    readModel()
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește sensul de parcurgere și convențiile de semn.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Stăpânești Legea a II-a și convențiile de semn.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar semnele la itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun de bază. Exersează parcurgerea ochiurilor pas cu pas.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia regulile: rezistor cu/contra curentului și sursă −→+ / +→−.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeAll();
+
+    setOpposedSources();
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
