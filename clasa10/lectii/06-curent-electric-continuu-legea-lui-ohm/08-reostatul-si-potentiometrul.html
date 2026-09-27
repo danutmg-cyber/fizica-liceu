@@ -1,1 +1,6237 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+8. Reostatul și potențiometrul | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Reostatul și potențiometrul: construcție, funcționare, conectare, rezistență variabilă, divizor de tensiune și simulator interactiv pentru clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(250,204,21,.18),
+      transparent 19%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+.class-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(250,204,21,.13);
+
+  color:#fef08a;
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.2rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:920px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:25px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+
+/* =========================================================
+   DEVICE DRAWINGS
+========================================================= */
+
+.device{
+
+  position:relative;
+
+  min-height:270px;
+
+  padding:22px;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.track{
+
+  position:absolute;
+
+  left:15%;
+  right:15%;
+  top:52%;
+
+  height:18px;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #b45309 0,
+      #b45309 8px,
+      #fde68a 8px,
+      #fde68a 12px
+    );
+
+  border:
+    3px solid #78350f;
+
+  border-radius:999px;
+
+}
+
+.cursor{
+
+  position:absolute;
+
+  left:50%;
+  top:27%;
+
+  width:8px;
+  height:80px;
+
+  background:#2563eb;
+
+  border-radius:4px;
+
+  transform:
+    translateX(-50%);
+
+}
+
+.cursor::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  bottom:-13px;
+
+  width:22px;
+  height:22px;
+
+  background:#2563eb;
+
+  border-radius:50%;
+
+  transform:
+    translateX(-50%);
+
+}
+
+.terminal{
+
+  position:absolute;
+
+  bottom:20%;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  color:white;
+  background:#334155;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+.terminal-a{
+  left:10%;
+}
+
+.terminal-b{
+  right:10%;
+}
+
+.terminal-w{
+
+  left:50%;
+
+  bottom:auto;
+  top:12%;
+
+  background:#2563eb;
+
+  transform:
+    translateX(-50%);
+
+}
+
+.device-caption{
+
+  position:absolute;
+
+  left:10%;
+  right:10%;
+  bottom:5%;
+
+  color:#0c4a6e;
+
+  text-align:center;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   CONNECTION RULES
+========================================================= */
+
+.rule-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:14px;
+
+  text-align:center;
+
+}
+
+.rheostat-rule{
+  border-color:#60a5fa;
+}
+
+.pot-rule{
+  border-color:#a78bfa;
+}
+
+.rule-card .large{
+
+  display:block;
+
+  margin:10px 0;
+
+  font-size:1.7rem;
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  background:var(--blue);
+  color:white;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:750;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  background:white;
+  color:var(--text);
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+  font-weight:800;
+
+}
+
+.button-row{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  background:#2563eb;
+  color:white;
+}
+
+.secondary{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+
+.green-button{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.orange-button{
+  background:#ffedd5;
+  color:#9a3412;
+}
+
+.purple-button{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+.canvas-wrap{
+
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#simCanvas{
+
+  display:block;
+
+  width:100%;
+  height:650px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  background:var(--cyan-soft);
+  color:#155e75;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  background:#f1f5f9;
+  color:#0f172a;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:820px){
+
+  .grid-3,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+
+    grid-template-columns:1fr;
+
+  }
+
+  #simCanvas{
+    height:760px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent electric continuu. Legea lui Ohm
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 8
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+</div>
+
+
+<h1>
+Reostatul și potențiometrul
+</h1>
+
+
+<p class="subtitle">
+Aceeași pistă rezistivă și același cursor mobil
+pot fi utilizate în două moduri diferite:
+pentru reglarea rezistenței dintr-un circuit
+sau pentru obținerea unei tensiuni variabile.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să identifici bornele unui rezistor variabil;</li>
+
+<li>să explici rolul cursorului;</li>
+
+<li>să explici funcționarea reostatului;</li>
+
+<li>să explici funcționarea potențiometrului;</li>
+
+<li>să diferențiezi conectarea cu două borne de cea cu trei borne;</li>
+
+<li>să calculezi rezistența selectată de cursor;</li>
+
+<li>să explici reglarea intensității cu un reostat;</li>
+
+<li>să explici divizarea tensiunii cu un potențiometru;</li>
+
+<li>să utilizezi relația \(U_{ies}=xU_{in}\) pentru un potențiometru ideal neîncărcat;</li>
+
+<li>să identifici conectări și utilizări incorecte.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+Pentru o pistă rezistivă uniformă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R\sim \ell
+}
+\]
+
+</div>
+
+<p>
+Cursorul schimbă lungimea activă a pistei
+și, prin urmare, rezistența utilizată.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEM
+========================================================= -->
+
+<section class="card">
+
+<h2>🎚️ Situație-problemă</h2>
+
+<p class="lead">
+Dorim să reglăm continuu un efect într-un circuit:
+de exemplu intensitatea curentului printr-un receptor
+sau tensiunea furnizată unei intrări.
+</p>
+
+<div class="orange-box">
+
+Cum putem realiza reglajul
+fără să schimbăm de fiecare dată rezistorul
+cu unul de altă valoare?
+</div>
+
+<p>
+Soluția este utilizarea unei piste rezistive
+prevăzute cu un contact mobil:
+<strong>cursorul</strong>.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     CONSTRUCTION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Construcția de principiu</h2>
+
+<div class="device">
+
+<div class="track"></div>
+
+<div class="cursor"></div>
+
+<div class="terminal terminal-a">
+A
+</div>
+
+<div class="terminal terminal-b">
+B
+</div>
+
+<div class="terminal terminal-w">
+C
+</div>
+
+<div class="device-caption">
+A și B sunt capetele pistei rezistive,
+iar C este cursorul mobil.
+</div>
+
+</div>
+
+
+<p>
+Considerăm o pistă rezistivă uniformă,
+cu rezistența totală:
+</p>
+
+<div class="formula">
+
+\[
+R_{\max}
+\]
+
+</div>
+
+<p>
+și cursorul aflat la fracțiunea:
+</p>
+
+<div class="formula">
+
+\[
+x
+\qquad
+0\le x\le1
+\]
+
+</div>
+
+<p>
+măsurată de la capătul \(A\).
+</p>
+
+<p>
+Atunci:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{AC}=xR_{\max}
+}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{CB}=(1-x)R_{\max}
+}
+\]
+
+</div>
+
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{AC}+R_{CB}=R_{\max}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RHEOSTAT
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Reostatul</h2>
+
+<div class="green-box">
+
+<strong>Reostatul</strong>
+este utilizat ca rezistență variabilă,
+de regulă conectată în serie cu un receptor,
+pentru modificarea intensității curentului.
+</div>
+
+<p>
+Pentru funcționarea ca reostat
+se utilizează:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{cursorul + unul dintre capetele pistei}
+}
+\]
+
+</div>
+
+<p>
+De exemplu,
+dacă sunt utilizate bornele \(A\) și \(C\):
+</p>
+
+<div class="formula">
+
+\[
+R_v=R_{AC}=xR_{\max}
+\]
+
+</div>
+
+
+<div class="rule-card rheostat-rule">
+
+<span>
+REOSTAT
+</span>
+
+<span class="large">
+2 borne utilizate
+</span>
+
+<p>
+un capăt al pistei + cursorul
+</p>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RHEOSTAT CIRCUIT
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Cum reglează reostatul intensitatea?</h2>
+
+<p>
+Considerăm un receptor de rezistență \(R_L\)
+și un reostat cu rezistența selectată \(R_v\).
+</p>
+
+<p>
+Într-un model simplificat cu sursă ideală:
+</p>
+
+<div class="formula">
+
+\[
+R_{\text{total}}
+=
+R_L+R_v
+\]
+
+</div>
+
+<p>
+iar:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{U}{R_L+R_v}
+}
+\]
+
+</div>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Deplasăm cursorul astfel încât \(R_v\) să crească</h3>
+
+<div class="formula">
+
+\[
+R_v\uparrow
+\]
+
+\[
+R_{\text{total}}\uparrow
+\]
+
+\[
+\boxed{
+I\downarrow
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Deplasăm cursorul astfel încât \(R_v\) să scadă</h3>
+
+<div class="formula">
+
+\[
+R_v\downarrow
+\]
+
+\[
+R_{\text{total}}\downarrow
+\]
+
+\[
+\boxed{
+I\uparrow
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Reostatul nu „produce mai puțin curent”.
+
+El modifică
+<strong>rezistența totală a circuitului</strong>,
+iar curentul se modifică potrivit legii lui Ohm.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RHEOSTAT EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplu – Reostat</h2>
+
+<p>
+Avem:
+</p>
+
+<div class="formula">
+
+\[
+U=12\,V
+\]
+
+\[
+R_L=20\,\Omega
+\]
+
+\[
+R_{\max}=100\,\Omega
+\]
+
+</div>
+
+<p>
+Cursorul este la:
+</p>
+
+<div class="formula">
+
+\[
+x=0,40
+\]
+
+</div>
+
+<p>
+și folosim porțiunea \(AC\).
+</p>
+
+<p>
+Rezistența variabilă:
+</p>
+
+<div class="formula">
+
+\[
+R_v=
+0,40\cdot100
+=
+40\,\Omega
+\]
+
+</div>
+
+<p>
+Rezistența totală:
+</p>
+
+<div class="formula">
+
+\[
+R_{\text{total}}
+=
+20+40
+=
+60\,\Omega
+\]
+
+</div>
+
+<p>
+Curentul:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{12}{60}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=0,20\,A
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POTENTIOMETER
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Potențiometrul</h2>
+
+<div class="purple-box">
+
+<strong>Potențiometrul</strong>
+este utilizat ca
+<strong>divizor reglabil de tensiune</strong>.
+
+În această funcționare sunt utilizate
+toate cele trei borne.
+</div>
+
+<p>
+Capetele pistei:
+</p>
+
+<div class="formula">
+
+\[
+A,\quad B
+\]
+
+</div>
+
+<p>
+sunt conectate la tensiunea de intrare:
+</p>
+
+<div class="formula">
+
+\[
+U_{in}
+\]
+
+</div>
+
+<p>
+iar tensiunea de ieșire este preluată
+între cursorul \(C\) și unul dintre capete.
+</p>
+
+
+<div class="rule-card pot-rule">
+
+<span>
+POTENȚIOMETRU
+</span>
+
+<span class="large">
+3 borne utilizate
+</span>
+
+<p>
+pista completă este alimentată,
+iar cursorul selectează tensiunea de ieșire.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POTENTIOMETER FORMULA
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Potențiometrul ideal ca divizor de tensiune</h2>
+
+<p>
+Presupunem o pistă uniformă
+și un voltmetru ideal conectat între \(A\) și cursorul \(C\).
+</p>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+R_{AC}=xR_{\max}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+R_{AB}=R_{\max}
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_{AC}}{U_{AB}}
+=
+\frac{R_{AC}}{R_{AB}}
+\]
+
+</div>
+
+de unde:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_{ies}
+=
+xU_{in}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Dacă cursorul se află la:
+
+\[
+x=0,25
+\]
+
+atunci:
+
+\[
+U_{ies}=0,25U_{in}
+\]
+
+iar la:
+
+\[
+x=0,75
+\]
+
+obținem:
+
+\[
+U_{ies}=0,75U_{in}
+\]
+
+în modelul ideal neîncărcat.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POT EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplu – Potențiometru</h2>
+
+<p>
+Potențiometrul este conectat la:
+</p>
+
+<div class="formula">
+
+\[
+U_{in}=12\,V
+\]
+
+</div>
+
+<p>
+Cursorul se află la:
+</p>
+
+<div class="formula">
+
+\[
+x=0,35
+\]
+
+</div>
+
+<p>
+față de borna de referință \(A\).
+</p>
+
+<p>
+Atunci:
+</p>
+
+<div class="formula">
+
+\[
+U_{ies}
+=
+xU_{in}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U_{ies}
+=
+0,35\cdot12
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_{ies}=4,2\,V
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RHEOSTAT VS POT
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Reostat versus potențiometru</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Caracteristică
+</th>
+
+<th>
+Reostat
+</th>
+
+<th>
+Potențiometru
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<tr>
+
+<td>
+Rol principal
+</td>
+
+<td>
+Rezistență variabilă
+</td>
+
+<td>
+Divizor reglabil de tensiune
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Borne utilizate
+</td>
+
+<td>
+De regulă 2
+</td>
+
+<td>
+3
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Conectare caracteristică
+</td>
+
+<td>
+În serie cu receptorul
+</td>
+
+<td>
+Pista completă la tensiunea de intrare
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Mărime reglată direct
+</td>
+
+<td>
+Rezistența introdusă în circuit
+</td>
+
+<td>
+Raportul tensiunilor
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Relație idealizată
+</td>
+
+<td>
+\[
+R_v=xR_{\max}
+\]
+</td>
+
+<td>
+\[
+U_{ies}=xU_{in}
+\]
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="yellow-box">
+
+Un potențiometru poate fi utilizat și ca
+<strong>rezistență variabilă</strong>
+dacă sunt folosite numai cursorul
+și una dintre bornele extreme.
+
+Funcția dispozitivului depinde,
+așadar, de
+<strong>modul de conectare</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LOADING
+========================================================= -->
+
+<section class="card">
+
+<h2>7. O precizare importantă: potențiometrul încărcat</h2>
+
+<p>
+Relația simplă:
+</p>
+
+<div class="formula">
+
+\[
+U_{ies}=xU_{in}
+\]
+
+</div>
+
+<p>
+este exactă pentru modelul ideal al unei piste uniforme
+atunci când ieșirea nu este încărcată semnificativ.
+</p>
+
+<p>
+Dacă la ieșire conectăm un receptor
+cu rezistență comparabilă cu rezistența potențiometrului,
+receptorul modifică circuitul.
+</p>
+
+<div class="orange-box">
+
+În acest caz:
+
+\[
+U_{ies}
+\]
+
+nu mai este, în general,
+exact egală cu:
+
+\[
+xU_{in}
+\]
+
+Fenomenul se numește
+<strong>efect de încărcare</strong>.
+</div>
+
+<p>
+Pentru această lecție vom utiliza în principal
+modelul potențiometrului ideal neîncărcat.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL DEVICES
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Unde întâlnim rezistențe variabile?</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Reglaje de laborator</h3>
+
+<p>
+Reostatele permit reglarea controlată
+a rezistenței într-un circuit experimental.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Comenzi rotative</h3>
+
+<p>
+Potențiometrele sunt folosite în diverse
+comenzi și circuite de reglare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Senzori de poziție</h3>
+
+<p>
+Poziția cursorului poate fi transformată
+într-o tensiune electrică măsurabilă.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+În multe echipamente moderne,
+reglajul nu mai este realizat direct cu un potențiometru
+care transportă curentul principal,
+ci prin circuite electronice.
+
+Principiul divizorului de tensiune rămâne însă fundamental.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL ACTIVITY
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – Identifică bornele unui potențiometru</h2>
+
+<div class="grid-2">
+
+
+<div>
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>potențiometru;</li>
+
+<li>multimetru;</li>
+
+<li>conductoare de măsurare;</li>
+
+<li>sursă de joasă tensiune pentru etapa a doua.</li>
+
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>Scop</h3>
+
+<p>
+Identificarea:
+</p>
+
+<ul>
+
+<li>celor două capete ale pistei;</li>
+
+<li>cursorului;</li>
+
+<li>variației rezistenței cu poziția cursorului.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Deconectează complet potențiometrul de orice sursă.
+</li>
+
+<li>
+Setează multimetrul pentru măsurarea rezistenței.
+</li>
+
+<li>
+Măsoară rezistența între două borne și rotește cursorul.
+</li>
+
+<li>
+Dacă valoarea rămâne aproximativ constantă,
+ai găsit probabil cele două capete ale pistei.
+</li>
+
+<li>
+Măsoară între una dintre aceste borne și a treia bornă.
+</li>
+
+<li>
+Deplasează cursorul.
+Rezistența trebuie să varieze.
+</li>
+
+<li>
+Repetă pentru cealaltă bornă extremă.
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+Pentru o pistă ideală:
+
+\[
+R_{AC}+R_{CB}
+\approx
+R_{AB}
+\]
+
+pentru orice poziție a cursorului.
+</div>
+
+
+<div class="red-box">
+
+Rezistența se măsoară cu ohmmetrul
+numai pe componenta
+<strong>deconectată de la sursă</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTAGE DIVIDER ACTIVITY
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – Potențiometrul ca divizor</h2>
+
+<ol class="steps">
+
+<li>
+Folosește o sursă didactică de joasă tensiune.
+</li>
+
+<li>
+Conectează bornele extreme \(A\) și \(B\)
+la sursă.
+</li>
+
+<li>
+Măsoară:
+\[
+U_{AB}=U_{in}
+\]
+</li>
+
+<li>
+Conectează voltmetrul între \(A\) și cursorul \(C\).
+</li>
+
+<li>
+Deplasează încet cursorul.
+</li>
+
+<li>
+Notează tensiunea:
+\[
+U_{AC}
+\]
+pentru mai multe poziții.
+</li>
+
+<li>
+Compară poziția relativă a cursorului cu raportul:
+\[
+\frac{U_{AC}}{U_{AB}}
+\]
+</li>
+
+</ol>
+
+
+<div class="blue-box">
+
+Pentru o pistă uniformă și un voltmetru cu rezistență foarte mare:
+
+\[
+\frac{U_{AC}}{U_{AB}}
+\approx
+x
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Laborator virtual – Reostat și potențiometru</h2>
+
+<p>
+Schimbă modul de funcționare,
+mută cursorul și urmărește efectele electrice.
+Cursorul din animație se deplasează simultan cu poziția aleasă.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="modeSelect">
+Mod de funcționare
+</label>
+
+<select id="modeSelect">
+
+<option value="rheostat">
+Reostat
+</option>
+
+<option value="potentiometer">
+Potențiometru
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="voltageInput">
+Tensiune sursă \(U\) [V]
+</label>
+
+<input
+  id="voltageInput"
+  type="number"
+  min="1"
+  max="24"
+  step="0.5"
+  value="12">
+
+</div>
+
+
+<div class="control">
+
+<label for="maxResistanceInput">
+Rezistență totală \(R_{max}\) [Ω]
+</label>
+
+<input
+  id="maxResistanceInput"
+  type="number"
+  min="10"
+  max="1000"
+  step="10"
+  value="100">
+
+</div>
+
+
+<div class="control">
+
+<label for="loadInput">
+Rezistență receptor \(R_L\) [Ω]
+</label>
+
+<input
+  id="loadInput"
+  type="number"
+  min="1"
+  max="500"
+  step="1"
+  value="20">
+
+</div>
+
+
+<div class="control">
+
+<label for="positionInput">
+Poziția cursorului \(x\)
+</label>
+
+<input
+  id="positionInput"
+  type="range"
+  min="0"
+  max="100"
+  step="1"
+  value="40">
+
+<span
+  class="range-value"
+  id="positionLabel">
+40%
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="rheostatSide">
+Porțiune utilizată ca reostat
+</label>
+
+<select id="rheostatSide">
+
+<option value="left">
+A – cursor
+</option>
+
+<option value="right">
+cursor – B
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="outputReference">
+Ieșire potențiometru
+</label>
+
+<select id="outputReference">
+
+<option value="left">
+A – cursor
+</option>
+
+<option value="right">
+cursor – B
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label>
+Model
+</label>
+
+<input
+  type="text"
+  value="pistă uniformă ideală"
+  disabled>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="rheostatBtn">
+
+Reostat
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="potBtn">
+
+Potențiometru
+
+</button>
+
+
+<button
+  class="primary"
+  id="zeroBtn">
+
+Cursor 0%
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="middleBtn">
+
+Cursor 50%
+
+</button>
+
+
+<button
+  class="primary"
+  id="fullBtn">
+
+Cursor 100%
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="simCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Poziția cursorului
+</span>
+
+<strong id="positionValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R_{AC}\)
+</span>
+
+<strong id="leftResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R_{CB}\)
+</span>
+
+<strong id="rightResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R_{AB}\)
+</span>
+
+<strong id="totalResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="mainValueLabel">
+Rezistență introdusă
+</span>
+
+<strong id="mainValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="secondaryValueLabel">
+Curent circuit
+</span>
+
+<strong id="secondaryValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="thirdValueLabel">
+Tensiune receptor
+</span>
+
+<strong id="thirdValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="fourthValueLabel">
+Tensiune reostat
+</span>
+
+<strong id="fourthValue">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="statusBox">
+
+Mută cursorul și observă efectul.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Investigații în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Reostat – cursor spre dreapta</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+A-C
+\]
+
+</div>
+
+<p>
+și mută cursorul de la 20% la 80%.
+</p>
+
+<p>
+Cum se modifică:
+</p>
+
+<div class="formula">
+
+\[
+R_v
+\quad\text{și}\quad
+I
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Schimbă borna extremă</h3>
+
+<p>
+Păstrează cursorul la 30%.
+</p>
+
+<p>
+Compară:
+</p>
+
+<div class="formula">
+
+\[
+R_{AC}
+\]
+
+cu:
+
+\[
+R_{CB}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Reostat la rezistență minimă</h3>
+
+<p>
+Găsește poziția pentru care:
+</p>
+
+<div class="formula">
+
+\[
+R_v\approx0
+\]
+
+</div>
+
+<p>
+Ce se întâmplă cu intensitatea?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Potențiometru la 50%</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+U_{in}=12\,V
+\]
+
+</div>
+
+<p>
+poziționează cursorul la:
+</p>
+
+<div class="formula">
+
+\[
+x=0,50
+\]
+
+</div>
+
+<p>
+Ce tensiune obții?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Potențiometru la 25%</h3>
+
+<p>
+Pentru aceeași sursă,
+verifică:
+</p>
+
+<div class="formula">
+
+\[
+U_{ies}=3\,V
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Schimbă referința</h3>
+
+<p>
+La aceeași poziție,
+compară tensiunea:
+</p>
+
+<div class="formula">
+
+\[
+U_{AC}
+\]
+
+cu:
+
+\[
+U_{CB}
+\]
+
+</div>
+
+<p>
+Ce observi despre suma lor?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Dublează \(R_{max}\)</h3>
+
+<p>
+În modul potențiometru ideal neîncărcat,
+dublează rezistența totală.
+</p>
+
+<p>
+Se schimbă raportul:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_{ies}}{U_{in}}
+\]
+
+</div>
+
+<p>
+pentru aceeași poziție?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>H. Legătura cu legea lui Ohm</h3>
+
+<p>
+În modul reostat,
+păstrează sursa și receptorul constante.
+</p>
+
+<p>
+Explică prin:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{U}{R_L+R_v}
+\]
+
+</div>
+
+toate modificările observate.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SAFETY / PRACTICAL
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Utilizare corectă</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La conectarea ca reostat</h3>
+
+<p>
+Este prudent ca reglajul inițial
+să fie ales astfel încât rezistența introdusă
+să limiteze curentul.
+</p>
+
+<p>
+Apoi se modifică treptat.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>La conectarea ca potențiometru</h3>
+
+<p>
+Se identifică mai întâi
+cele două borne extreme și cursorul.
+</p>
+
+<p>
+Nu se presupune ordinea bornelor
+fără verificare.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+Un rezistor variabil real are limite constructive.
+
+Nu trebuie depășite valorile nominale
+ale curentului și solicitării termice
+indicate de producător.
+
+În laboratorul școlar se folosesc numai
+surse de joasă tensiune și componente adecvate.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. „Reostatul și potențiometrul sunt complet diferite.”</h3>
+
+<p>
+Nu neapărat.
+Același tip de element cu pistă și cursor
+poate fi utilizat diferit prin modul de conectare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. Reostatul folosește obligatoriu toate cele trei borne</h3>
+
+<p>
+Pentru funcția de rezistență variabilă
+sunt suficiente două borne:
+cursorul și un capăt.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. Potențiometrul este conectat în serie ca un simplu rezistor</h3>
+
+<p>
+În funcția sa caracteristică de divizor,
+pista completă se conectează la tensiunea de intrare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. \(R_{AC}\) și \(R_{CB}\) cresc simultan</h3>
+
+<p>
+Pentru pista uniformă:
+</p>
+
+<div class="formula">
+
+\[
+R_{AC}+R_{CB}=R_{\max}
+\]
+
+</div>
+
+<p>
+Dacă una crește, cealaltă scade.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. La 50% obțin întotdeauna 50% din tensiune</h3>
+
+<p>
+Este adevărat pentru modelul ideal,
+cu pistă liniară uniformă și ieșire neîncărcată.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. Modific poziția cursorului, dar rezistența totală A-B se schimbă</h3>
+
+<p>
+Nu în modelul ideal.
+</p>
+
+<div class="formula">
+
+\[
+R_{AB}=R_{\max}
+\]
+
+</div>
+
+<p>
+rămâne constantă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. Măsor rezistența cu circuitul alimentat</h3>
+
+<p>
+Nu.
+Ohmmetrul se utilizează pe componenta
+deconectată de la sursă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. Potențiometrul produce energie</h3>
+
+<p>
+Nu.
+El redistribuie tensiunea disponibilă
+prin divizarea rezistivă.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce deplasarea cursorului modifică rezistența dintre cursor și o bornă extremă?
+</li>
+
+<li>
+De ce rezistența dintre cele două borne extreme rămâne constantă?
+</li>
+
+<li>
+De ce reostatul se conectează în serie cu receptorul?
+</li>
+
+<li>
+Ce se întâmplă cu intensitatea dacă rezistența introdusă de reostat crește?
+</li>
+
+<li>
+De ce potențiometrul utilizează toate cele trei borne?
+</li>
+
+<li>
+Ce tensiune ideală obții la 30% dintr-o sursă de \(10\,V\)?
+</li>
+
+<li>
+Dacă \(R_{AC}\) reprezintă 70% din rezistența totală,
+cât reprezintă \(R_{CB}\)?
+</li>
+
+<li>
+De ce un receptor conectat la ieșirea potențiometrului poate modifica tensiunea calculată ideal?
+</li>
+
+<li>
+Cum poți identifica experimental cursorul unui potențiometru?
+</li>
+
+<li>
+De ce un reostat poate limita curentul dintr-un circuit?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Reostatul este utilizat în principal pentru:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+măsurarea tensiunii
+</button>
+
+<button class="answer-btn">
+introducerea unei rezistențe variabile în circuit
+</button>
+
+<button class="answer-btn">
+producerea sarcinilor electrice
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+În funcționarea ca reostat sunt utilizate de regulă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+zero borne
+</button>
+
+<button class="answer-btn">
+numai cele două borne extreme
+</button>
+
+<button class="answer-btn">
+cursorul și una dintre bornele extreme
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Pentru pista uniformă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{AC}+R_{CB}=R_{AB}\)
+</button>
+
+<button class="answer-btn">
+\(R_{AC}=R_{CB}\) pentru orice poziție
+</button>
+
+<button class="answer-btn">
+\(R_{AB}=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Dacă \(R_v\) crește într-un circuit serie,
+pentru aceeași sursă ideală:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+curentul crește
+</button>
+
+<button class="answer-btn">
+curentul scade
+</button>
+
+<button class="answer-btn">
+curentul devine obligatoriu infinit
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Potențiometrul în funcția sa caracteristică este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+ampermetru
+</button>
+
+<button class="answer-btn">
+generator
+</button>
+
+<button class="answer-btn">
+divizor reglabil de tensiune
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Pentru un potențiometru ideal neîncărcat:
+\(x=0,25\), \(U_{in}=12\,V\).
+Atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_{ies}=3\,V\)
+</button>
+
+<button class="answer-btn">
+\(U_{ies}=12\,V\)
+</button>
+
+<button class="answer-btn">
+\(U_{ies}=48\,V\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+La \(x=0,60\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{AC}=0,40R_{max}\)
+</button>
+
+<button class="answer-btn">
+\(R_{AC}=0,60R_{max}\)
+</button>
+
+<button class="answer-btn">
+\(R_{AC}=1,60R_{max}\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Dacă \(R_{AC}=0,60R_{max}\), atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{CB}=0,60R_{max}\)
+</button>
+
+<button class="answer-btn">
+\(R_{CB}=1,60R_{max}\)
+</button>
+
+<button class="answer-btn">
+\(R_{CB}=0,40R_{max}\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Rezistența unui potențiometru se măsoară:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+cu componenta deconectată de la sursă
+</button>
+
+<button class="answer-btn">
+numai prin scurtcircuitarea sursei
+</button>
+
+<button class="answer-btn">
+cu voltmetrul conectat în serie
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Un potențiometru poate funcționa ca reostat:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+niciodată
+</button>
+
+<button class="answer-btn">
+dacă se utilizează cursorul și una dintre bornele extreme
+</button>
+
+<button class="answer-btn">
+numai dacă eliminăm pista rezistivă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Poziția cursorului</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+0\le x\le1
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Prima porțiune</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{AC}=xR_{\max}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>A doua porțiune</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{CB}=(1-x)R_{\max}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pista completă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{AC}+R_{CB}=R_{\max}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Reostat</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{U}{R_L+R_v}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Potențiometru ideal</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U_{ies}=xU_{in}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+același cursor poate îndeplini două funcții diferite.
+
+Ca <strong>reostat</strong>,
+el selectează o rezistență:
+
+\[
+R_v
+\]
+
+și reglează astfel curentul.
+
+Ca <strong>potențiometru</strong>,
+el selectează o fracțiune a tensiunii:
+
+\[
+U_{ies}
+\]
+
+Modul de conectare stabilește funcția dispozitivului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+În lecțiile precedente am folosit:
+</p>
+
+<div class="formula">
+
+\[
+R=
+\frac UI
+\]
+
+</div>
+
+<p>
+și am învățat să măsurăm separat:
+</p>
+
+<div class="formula">
+
+\[
+U
+\qquad\text{și}\qquad
+I
+\]
+
+</div>
+
+<p>
+Acum putem combina aceste cunoștințe
+într-o investigație experimentală completă.
+</p>
+
+<div class="blue-box">
+
+În lecția următoare vom realiza:
+
+<strong>
+Determinarea rezistenței electrice
+cu ampermetrul și voltmetrul.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="07-legea-lui-ohm-pentru-circuitul-intreg.html">
+
+← Lecția 7<br>
+Legea lui Ohm pentru circuitul întreg
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="09-determinarea-rezistentei-electrice-cu-ampermetrul-si-voltmetrul-exp.html">
+
+Lecția 9<br>
+Determinarea rezistenței electrice – experiment →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent electric continuu. Legea lui Ohm
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function numeric(
+  value,
+  fallback
+){
+
+  const n=
+    Number(
+      String(
+        value
+      ).replace(
+        ",",
+        "."
+      )
+    );
+
+
+  return Number.isFinite(
+    n
+  )
+    ? n
+    : fallback;
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const modeSelect=
+  document.getElementById(
+    "modeSelect"
+  );
+
+
+const voltageInput=
+  document.getElementById(
+    "voltageInput"
+  );
+
+
+const maxResistanceInput=
+  document.getElementById(
+    "maxResistanceInput"
+  );
+
+
+const loadInput=
+  document.getElementById(
+    "loadInput"
+  );
+
+
+const positionInput=
+  document.getElementById(
+    "positionInput"
+  );
+
+
+const positionLabel=
+  document.getElementById(
+    "positionLabel"
+  );
+
+
+const rheostatSide=
+  document.getElementById(
+    "rheostatSide"
+  );
+
+
+const outputReference=
+  document.getElementById(
+    "outputReference"
+  );
+
+
+const positionValue=
+  document.getElementById(
+    "positionValue"
+  );
+
+
+const leftResistanceValue=
+  document.getElementById(
+    "leftResistanceValue"
+  );
+
+
+const rightResistanceValue=
+  document.getElementById(
+    "rightResistanceValue"
+  );
+
+
+const totalResistanceValue=
+  document.getElementById(
+    "totalResistanceValue"
+  );
+
+
+const mainValueLabel=
+  document.getElementById(
+    "mainValueLabel"
+  );
+
+
+const mainValue=
+  document.getElementById(
+    "mainValue"
+  );
+
+
+const secondaryValueLabel=
+  document.getElementById(
+    "secondaryValueLabel"
+  );
+
+
+const secondaryValue=
+  document.getElementById(
+    "secondaryValue"
+  );
+
+
+const thirdValueLabel=
+  document.getElementById(
+    "thirdValueLabel"
+  );
+
+
+const thirdValue=
+  document.getElementById(
+    "thirdValue"
+  );
+
+
+const fourthValueLabel=
+  document.getElementById(
+    "fourthValueLabel"
+  );
+
+
+const fourthValue=
+  document.getElementById(
+    "fourthValue"
+  );
+
+
+const statusBox=
+  document.getElementById(
+    "statusBox"
+  );
+
+
+const canvas=
+  document.getElementById(
+    "simCanvas"
+  );
+
+
+const ctx=
+  canvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   ANIMATION STATE
+========================================================= */
+
+let particles=[];
+
+let animatedCursor=.40;
+
+let lastTime=0;
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const mode=
+    modeSelect.value;
+
+
+  const U=
+    clamp(
+      numeric(
+        voltageInput.value,
+        12
+      ),
+      1,
+      24
+    );
+
+
+  const Rmax=
+    clamp(
+      numeric(
+        maxResistanceInput.value,
+        100
+      ),
+      10,
+      1000
+    );
+
+
+  const RL=
+    clamp(
+      numeric(
+        loadInput.value,
+        20
+      ),
+      1,
+      500
+    );
+
+
+  const x=
+    clamp(
+      numeric(
+        positionInput.value,
+        40
+      )/
+      100,
+      0,
+      1
+    );
+
+
+  voltageInput.value=
+    U;
+
+
+  maxResistanceInput.value=
+    Rmax;
+
+
+  loadInput.value=
+    RL;
+
+
+  const RAC=
+    x*
+    Rmax;
+
+
+  const RCB=
+    (
+      1-x
+    )*
+    Rmax;
+
+
+  /*
+  Rheostat.
+  */
+
+  const Rvar=
+    rheostatSide.value===
+    "left"
+      ? RAC
+      : RCB;
+
+
+  const rheostatCurrent=
+    U/
+    (
+      RL+
+      Rvar
+    );
+
+
+  const loadVoltage=
+    rheostatCurrent*
+    RL;
+
+
+  const rheostatVoltage=
+    rheostatCurrent*
+    Rvar;
+
+
+  /*
+  Potentiometer.
+  Ideal unloaded output.
+  */
+
+  const trackCurrent=
+    U/
+    Rmax;
+
+
+  const outputVoltage=
+    outputReference.value===
+    "left"
+      ? x*
+        U
+      : (
+          1-x
+        )*
+        U;
+
+
+  return{
+
+    mode,
+
+    U,
+    Rmax,
+    RL,
+    x,
+
+    RAC,
+    RCB,
+
+    Rvar,
+    rheostatCurrent,
+    loadVoltage,
+    rheostatVoltage,
+
+    trackCurrent,
+    outputVoltage
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function updateResults(){
+
+  const r=
+    readModel();
+
+
+  positionLabel.textContent=
+    `${formatRo(
+      r.x*100,
+      0
+    )}%`;
+
+
+  positionValue.textContent=
+    `${formatRo(
+      r.x*100,
+      0
+    )}%`;
+
+
+  leftResistanceValue.textContent=
+    `${formatRo(
+      r.RAC,
+      2
+    )} Ω`;
+
+
+  rightResistanceValue.textContent=
+    `${formatRo(
+      r.RCB,
+      2
+    )} Ω`;
+
+
+  totalResistanceValue.textContent=
+    `${formatRo(
+      r.Rmax,
+      2
+    )} Ω`;
+
+
+  if(
+    r.mode===
+    "rheostat"
+  ){
+
+    loadInput.disabled=
+      false;
+
+
+    rheostatSide.disabled=
+      false;
+
+
+    outputReference.disabled=
+      true;
+
+
+    mainValueLabel.textContent=
+      "Rezistență introdusă";
+
+
+    mainValue.textContent=
+      `${formatRo(
+        r.Rvar,
+        2
+      )} Ω`;
+
+
+    secondaryValueLabel.textContent=
+      "Curent circuit";
+
+
+    secondaryValue.textContent=
+      `${formatRo(
+        r.rheostatCurrent,
+        3
+      )} A`;
+
+
+    thirdValueLabel.textContent=
+      "Tensiune receptor";
+
+
+    thirdValue.textContent=
+      `${formatRo(
+        r.loadVoltage,
+        2
+      )} V`;
+
+
+    fourthValueLabel.textContent=
+      "Tensiune reostat";
+
+
+    fourthValue.textContent=
+      `${formatRo(
+        r.rheostatVoltage,
+        2
+      )} V`;
+
+
+    statusBox.innerHTML=
+      `Mod <strong>REOSTAT</strong>:
+       în circuit este introdusă rezistența
+       <strong>${formatRo(r.Rvar,2)} Ω</strong>.
+       Pentru receptorul de
+       ${formatRo(r.RL,1)} Ω,
+       curentul este
+       <strong>${formatRo(r.rheostatCurrent,3)} A</strong>.
+       Modificarea cursorului schimbă rezistența totală și, implicit, curentul.`;
+
+  }
+
+  else{
+
+    loadInput.disabled=
+      true;
+
+
+    rheostatSide.disabled=
+      true;
+
+
+    outputReference.disabled=
+      false;
+
+
+    mainValueLabel.textContent=
+      "Tensiune ieșire";
+
+
+    mainValue.textContent=
+      `${formatRo(
+        r.outputVoltage,
+        2
+      )} V`;
+
+
+    secondaryValueLabel.textContent=
+      "Curent prin pistă";
+
+
+    secondaryValue.textContent=
+      `${formatRo(
+        r.trackCurrent,
+        3
+      )} A`;
+
+
+    thirdValueLabel.textContent=
+      "Tensiune intrare";
+
+
+    thirdValue.textContent=
+      `${formatRo(
+        r.U,
+        2
+      )} V`;
+
+
+    fourthValueLabel.textContent=
+      "Raport Uies/Uin";
+
+
+    fourthValue.textContent=
+      `${formatRo(
+        r.outputVoltage/
+        r.U,
+        3
+      )}`;
+
+
+    statusBox.innerHTML=
+      `Mod <strong>POTENȚIOMETRU</strong>:
+       pista completă este alimentată la
+       ${formatRo(r.U,2)} V.
+       Cursorul selectează ideal
+       <strong>${formatRo(r.outputVoltage,2)} V</strong>.
+       Relația este liniară pentru pista uniformă și ieșirea neîncărcată.`;
+
+  }
+
+
+  return r;
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function resetParticles(){
+
+  particles=[];
+
+
+  for(
+    let i=0;
+    i<24;
+    i++
+  ){
+
+    particles.push(
+      i/24
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawBackground(
+  W,
+  H
+){
+
+  const gradient=
+    ctx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  ctx.fillStyle=
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+}
+
+
+/* =========================================================
+   PHYSICAL POT
+========================================================= */
+
+function drawVariableResistor(
+  r,
+  W,
+  H
+){
+
+  const left=
+    W*.16;
+
+
+  const right=
+    W*.84;
+
+
+  const y=
+    H*.27;
+
+
+  /*
+  Base / track.
+  */
+
+  ctx.strokeStyle=
+    "#92400e";
+
+
+  ctx.lineWidth=20;
+
+
+  ctx.lineCap=
+    "round";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    left,
+    y
+  );
+
+
+  ctx.lineTo(
+    right,
+    y
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Winding pattern.
+  */
+
+  ctx.strokeStyle=
+    "#fde68a";
+
+
+  ctx.lineWidth=3;
+
+
+  const segments=36;
+
+
+  for(
+    let i=0;
+    i<segments;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        right-left
+      )*
+      i/
+      (
+        segments-1
+      );
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      x-4,
+      y-8
+    );
+
+
+    ctx.lineTo(
+      x+4,
+      y+8
+    );
+
+
+    ctx.stroke();
+
+  }
+
+
+  /*
+  Active sections.
+  */
+
+  const cursorX=
+    left+
+    (
+      right-left
+    )*
+    animatedCursor;
+
+
+  ctx.strokeStyle=
+    "rgba(34,197,94,.75)";
+
+
+  ctx.lineWidth=7;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    left,
+    y
+  );
+
+
+  ctx.lineTo(
+    cursorX,
+    y
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.strokeStyle=
+    "rgba(168,85,247,.75)";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    cursorX,
+    y
+  );
+
+
+  ctx.lineTo(
+    right,
+    y
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Slider.
+  */
+
+  ctx.strokeStyle=
+    "#38bdf8";
+
+
+  ctx.lineWidth=7;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    cursorX,
+    y-95
+  );
+
+
+  ctx.lineTo(
+    cursorX,
+    y-15
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    cursorX,
+    y-105,
+    17,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    "#2563eb";
+
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    cursorX,
+    y,
+    9,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    "#38bdf8";
+
+
+  ctx.fill();
+
+
+  /*
+  Terminals.
+  */
+
+  drawTerminal(
+    left,
+    y+62,
+    "A",
+    "#22c55e"
+  );
+
+
+  drawTerminal(
+    right,
+    y+62,
+    "B",
+    "#a855f7"
+  );
+
+
+  drawTerminal(
+    cursorX,
+    y-145,
+    "C",
+    "#2563eb"
+  );
+
+
+  /*
+  Labels.
+  */
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.fillText(
+    `RAC = ${formatRo(r.RAC,1)} Ω`,
+    (
+      left+
+      cursorX
+    )/2,
+    y+40
+  );
+
+
+  ctx.fillStyle=
+    "#d8b4fe";
+
+
+  ctx.fillText(
+    `RCB = ${formatRo(r.RCB,1)} Ω`,
+    (
+      cursorX+
+      right
+    )/2,
+    y+40
+  );
+
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.fillText(
+    `cursor ${formatRo(r.x*100,0)}%`,
+    cursorX,
+    y-175
+  );
+
+}
+
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+function drawTerminal(
+  x,
+  y,
+  label,
+  color
+){
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    x,
+    y,
+    15,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    color;
+
+
+  ctx.fill();
+
+
+  ctx.fillStyle=
+    "#fff";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    label,
+    x,
+    y+5
+  );
+
+}
+
+
+/* =========================================================
+   RHEOSTAT CIRCUIT
+========================================================= */
+
+function drawRheostatCircuit(
+  r,
+  W,
+  H
+){
+
+  const y=
+    H*.71;
+
+
+  const sourceX=
+    W*.13;
+
+
+  const rheoX=
+    W*.49;
+
+
+  const loadX=
+    W*.83;
+
+
+  /*
+  Circuit wire.
+  */
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+
+  ctx.lineWidth=5;
+
+
+  ctx.lineCap=
+    "round";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    sourceX,
+    y-65
+  );
+
+
+  ctx.lineTo(
+    rheoX-75,
+    y-65
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    rheoX+75,
+    y-65
+  );
+
+
+  ctx.lineTo(
+    loadX,
+    y-65
+  );
+
+
+  ctx.lineTo(
+    loadX,
+    y+65
+  );
+
+
+  ctx.lineTo(
+    sourceX,
+    y+65
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Source.
+  */
+
+  ctx.strokeStyle=
+    "#f8fafc";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    sourceX-27,
+    y-16
+  );
+
+
+  ctx.lineTo(
+    sourceX+27,
+    y-16
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    sourceX-17,
+    y+17
+  );
+
+
+  ctx.lineTo(
+    sourceX+17,
+    y+17
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    sourceX,
+    y-65
+  );
+
+
+  ctx.lineTo(
+    sourceX,
+    y-20
+  );
+
+
+  ctx.moveTo(
+    sourceX,
+    y+21
+  );
+
+
+  ctx.lineTo(
+    sourceX,
+    y+65
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Rheostat symbol.
+  */
+
+  ctx.fillStyle=
+    "#ffedd5";
+
+
+  ctx.strokeStyle=
+    "#fb923c";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.fillRect(
+    rheoX-75,
+    y-88,
+    150,
+    46
+  );
+
+
+  ctx.strokeRect(
+    rheoX-75,
+    y-88,
+    150,
+    46
+  );
+
+
+  /*
+  Arrow / cursor.
+  */
+
+  const localX=
+    rheoX-65+
+    130*
+    r.x;
+
+
+  ctx.strokeStyle=
+    "#38bdf8";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    localX,
+    y-130
+  );
+
+
+  ctx.lineTo(
+    localX,
+    y-91
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Load.
+  */
+
+  ctx.fillStyle=
+    "#fef3c7";
+
+
+  ctx.strokeStyle=
+    "#f59e0b";
+
+
+  ctx.fillRect(
+    loadX-30,
+    y-30,
+    60,
+    60
+  );
+
+
+  ctx.strokeRect(
+    loadX-30,
+    y-30,
+    60,
+    60
+  );
+
+
+  ctx.fillStyle=
+    "#92400e";
+
+
+  ctx.font=
+    "bold 17px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "RL",
+    loadX,
+    y+6
+  );
+
+
+  /*
+  Labels.
+  */
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.font=
+    "bold 12px system-ui";
+
+
+  ctx.fillText(
+    `U=${formatRo(r.U,1)} V`,
+    sourceX,
+    y+103
+  );
+
+
+  ctx.fillText(
+    `Rv=${formatRo(r.Rvar,1)} Ω`,
+    rheoX,
+    y-145
+  );
+
+
+  ctx.fillText(
+    `I=${formatRo(r.rheostatCurrent,3)} A`,
+    W*.5,
+    y+103
+  );
+
+
+  /*
+  Animated particles.
+  */
+
+  particles.forEach(
+    p=>{
+
+      const point=
+        rectangularPoint(
+          p,
+          sourceX,
+          loadX,
+          y-65,
+          y+65
+        );
+
+
+      ctx.beginPath();
+
+
+      ctx.arc(
+        point.x,
+        point.y,
+        3,
+        0,
+        Math.PI*2
+      );
+
+
+      ctx.fillStyle=
+        "#86efac";
+
+
+      ctx.fill();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   POT CIRCUIT
+========================================================= */
+
+function drawPotCircuit(
+  r,
+  W,
+  H
+){
+
+  const left=
+    W*.24;
+
+
+  const right=
+    W*.76;
+
+
+  const y=
+    H*.72;
+
+
+  const cursorX=
+    left+
+    (
+      right-left
+    )*
+    animatedCursor;
+
+
+  /*
+  Track.
+  */
+
+  ctx.strokeStyle=
+    "#92400e";
+
+
+  ctx.lineWidth=16;
+
+
+  ctx.lineCap=
+    "round";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    left,
+    y
+  );
+
+
+  ctx.lineTo(
+    right,
+    y
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Supply connections.
+  */
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+
+  ctx.lineWidth=5;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    left,
+    y
+  );
+
+
+  ctx.lineTo(
+    left,
+    y+80
+  );
+
+
+  ctx.lineTo(
+    W*.10,
+    y+80
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    right,
+    y
+  );
+
+
+  ctx.lineTo(
+    right,
+    y+80
+  );
+
+
+  ctx.lineTo(
+    W*.90,
+    y+80
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Cursor.
+  */
+
+  ctx.strokeStyle=
+    "#38bdf8";
+
+
+  ctx.lineWidth=5;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    cursorX,
+    y-75
+  );
+
+
+  ctx.lineTo(
+    cursorX,
+    y-10
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    cursorX,
+    y-85,
+    12,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    "#2563eb";
+
+
+  ctx.fill();
+
+
+  /*
+  Output voltmeter.
+  */
+
+  const meterX=
+    W*.50;
+
+
+  const meterY=
+    y-150;
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    meterX,
+    meterY,
+    45,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    "#f5f3ff";
+
+
+  ctx.fill();
+
+
+  ctx.strokeStyle=
+    "#a78bfa";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.stroke();
+
+
+  ctx.fillStyle=
+    "#7c3aed";
+
+
+  ctx.font=
+    "bold 19px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "V",
+    meterX,
+    meterY+7
+  );
+
+
+  /*
+  Output connection.
+  */
+
+  ctx.strokeStyle=
+    "#a78bfa";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    cursorX,
+    y-85
+  );
+
+
+  ctx.lineTo(
+    meterX+45,
+    meterY
+  );
+
+
+  ctx.stroke();
+
+
+  const referenceX=
+    outputReference.value===
+    "left"
+      ? left
+      : right;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    referenceX,
+    y
+  );
+
+
+  ctx.lineTo(
+    referenceX,
+    meterY
+  );
+
+
+  ctx.lineTo(
+    meterX-45,
+    meterY
+  );
+
+
+  ctx.stroke();
+
+
+  /*
+  Labels.
+  */
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.font=
+    "bold 12px system-ui";
+
+
+  ctx.fillText(
+    `Uin=${formatRo(r.U,1)} V`,
+    W*.50,
+    y+112
+  );
+
+
+  ctx.fillStyle=
+    "#d8b4fe";
+
+
+  ctx.fillText(
+    `Uies=${formatRo(r.outputVoltage,2)} V`,
+    meterX,
+    meterY+75
+  );
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+
+  ctx.fillText(
+    "A",
+    left,
+    y+35
+  );
+
+
+  ctx.fillStyle=
+    "#d8b4fe";
+
+
+  ctx.fillText(
+    "B",
+    right,
+    y+35
+  );
+
+
+  ctx.fillStyle=
+    "#7dd3fc";
+
+
+  ctx.fillText(
+    "C",
+    cursorX,
+    y-105
+  );
+
+}
+
+
+/* =========================================================
+   RECTANGULAR PARTICLE PATH
+========================================================= */
+
+function rectangularPoint(
+  p,
+  left,
+  right,
+  top,
+  bottom
+){
+
+  const width=
+    right-left;
+
+
+  const height=
+    bottom-top;
+
+
+  const perimeter=
+    2*
+    (
+      width+
+      height
+    );
+
+
+  let d=
+    p*
+    perimeter;
+
+
+  if(
+    d<width
+  ){
+
+    return{
+      x:left+d,
+      y:top
+    };
+
+  }
+
+
+  d-=width;
+
+
+  if(
+    d<height
+  ){
+
+    return{
+      x:right,
+      y:top+d
+    };
+
+  }
+
+
+  d-=height;
+
+
+  if(
+    d<width
+  ){
+
+    return{
+      x:right-d,
+      y:bottom
+    };
+
+  }
+
+
+  d-=width;
+
+
+  return{
+    x:left,
+    y:bottom-d
+  };
+
+}
+
+
+/* =========================================================
+   PARTICLE UPDATE
+========================================================= */
+
+function updateParticles(
+  r,
+  dt
+){
+
+  if(
+    r.mode!=="rheostat"
+  ){
+    return;
+  }
+
+
+  const speed=
+    .025+
+    Math.min(
+      .14,
+      r.rheostatCurrent*.25
+    );
+
+
+  particles=
+    particles.map(
+      p=>{
+
+        let next=
+          p+
+          speed*
+          dt;
+
+
+        if(
+          next>=1
+        ){
+          next-=1;
+        }
+
+
+        return next;
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   DRAW
+========================================================= */
+
+function drawScene(
+  r
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawBackground(
+    W,
+    H
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 16px system-ui";
+
+
+  ctx.textAlign=
+    "left";
+
+
+  ctx.fillText(
+    r.mode==="rheostat"
+      ? "REOSTAT – rezistență variabilă"
+      : "POTENȚIOMETRU – divizor de tensiune",
+    18,
+    30
+  );
+
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.font=
+    "12px system-ui";
+
+
+  ctx.fillText(
+    "Deplasează cursorul și urmărește mărimile electrice.",
+    18,
+    51
+  );
+
+
+  drawVariableResistor(
+    r,
+    W,
+    H
+  );
+
+
+  if(
+    r.mode==="rheostat"
+  ){
+
+    drawRheostatCircuit(
+      r,
+      W,
+      H
+    );
+
+  }
+
+  else{
+
+    drawPotCircuit(
+      r,
+      W,
+      H
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const r=
+    readModel();
+
+
+  /*
+  Cursor glides rather than jumping.
+  */
+
+  const response=
+    1-
+    Math.exp(
+      -7*
+      dt
+    );
+
+
+  animatedCursor+=
+    (
+      r.x-
+      animatedCursor
+    )*
+    response;
+
+
+  updateParticles(
+    r,
+    dt
+  );
+
+
+  drawScene(
+    r
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  modeSelect,
+  voltageInput,
+  maxResistanceInput,
+  loadInput,
+  positionInput,
+  rheostatSide,
+  outputReference
+].forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "rheostatBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "rheostat";
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "potBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "potentiometer";
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "zeroBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    positionInput.value=
+      0;
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "middleBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    positionInput.value=
+      50;
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "fullBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    positionInput.value=
+      100;
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "rheostat";
+
+
+    voltageInput.value=
+      12;
+
+
+    maxResistanceInput.value=
+      100;
+
+
+    loadInput.value=
+      20;
+
+
+    positionInput.value=
+      40;
+
+
+    rheostatSide.value=
+      "left";
+
+
+    outputReference.value=
+      "left";
+
+
+    animatedCursor=
+      .40;
+
+
+    resetParticles();
+
+    updateResults();
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              b=>{
+                b.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește rolul cursorului și diferența dintre reostat și potențiometru.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Diferențiezi corect cele două moduri de utilizare.`;
+
+              }
+
+              else if(
+                score>=7
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește conexiunile la care ai greșit.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Recapitulează R_AC, R_CB și rolurile reostatului și potențiometrului.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resetParticles();
+
+    resizeCanvas();
+
+    updateResults();
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
