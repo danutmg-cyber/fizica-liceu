@@ -1,1 +1,8663 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+10. Adaptarea domeniului aparatelor de măsură. Aplicații | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Adaptarea domeniului ampermetrului și voltmetrului: șunt, rezistență adițională, deducerea formulelor, aplicații, erori de măsurare și simulator interactiv – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROPERTY CARDS
+========================================================= */
+
+.property-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.property-ammeter{
+  border-color:#16a34a;
+}
+
+.property-voltmeter{
+  border-color:#2563eb;
+}
+
+.property-factor{
+  border-color:#f59e0b;
+}
+
+.property-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:54px;
+  height:54px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-size:1.25rem;
+
+  font-weight:900;
+
+}
+
+.property-ammeter .property-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+.property-voltmeter .property-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.property-factor .property-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+
+/* =========================================================
+   FIGURE
+========================================================= */
+
+.circuit-figure{
+
+  min-height:360px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.circuit-figure svg{
+
+  width:100%;
+  max-width:850px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-resistor{
+
+  fill:#fff7ed;
+
+  stroke:#ea580c;
+
+  stroke-width:4;
+
+}
+
+.svg-meter{
+
+  fill:white;
+
+  stroke:#2563eb;
+
+  stroke-width:5;
+
+}
+
+.svg-current{
+
+  fill:none;
+
+  stroke:#16a34a;
+
+  stroke-width:5;
+
+}
+
+.svg-node{
+
+  fill:#dc2626;
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:20px;
+
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:14px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   DERIVATION
+========================================================= */
+
+.derivation{
+
+  margin:22px 0;
+
+  padding:22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:15px;
+
+}
+
+.derivation-step{
+
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #cbd5e1;
+
+}
+
+.derivation-step:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.mode-panel{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.hidden{
+  display:none !important;
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.08fr .92fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#adapterCanvas,
+#gaugeCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:600px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.status-warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+.status-danger{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   BAR
+========================================================= */
+
+.flow-bars{
+
+  display:grid;
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+.flow-row{
+
+  display:grid;
+
+  grid-template-columns:
+    95px 1fr 105px;
+
+  gap:10px;
+
+  align-items:center;
+
+}
+
+.flow-track{
+
+  height:20px;
+
+  overflow:hidden;
+
+  background:#e2e8f0;
+
+  border-radius:999px;
+
+}
+
+.flow-fill{
+
+  height:100%;
+
+  border-radius:999px;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #adapterCanvas,
+  #gaugeCanvas{
+    height:520px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 10
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Aplicații
+</span>
+
+</div>
+
+
+<h1>
+Adaptarea domeniului aparatelor de măsură. Aplicații
+</h1>
+
+
+<p class="subtitle">
+Un aparat real nu poate măsura orice curent sau orice tensiune.
+Domeniul ampermetrului poate fi mărit printr-un
+<strong>șunt conectat în paralel</strong>,
+iar domeniul voltmetrului printr-o
+<strong>rezistență adițională conectată în serie</strong>.
+Ambele rezultate se deduc direct din legile circuitelor studiate.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să explici de ce un aparat are un domeniu maxim de măsurare;
+</li>
+
+<li>
+să modelezi un ampermetru și un voltmetru real prin rezistența internă;
+</li>
+
+<li>
+să explici rolul unui șunt;</li>
+
+<li>
+să deduci rezistența șuntului;</li>
+
+<li>
+să explici rolul unei rezistențe adiționale;</li>
+
+<li>
+să deduci valoarea rezistenței adiționale;</li>
+
+<li>
+să folosești factorul de extindere al domeniului;</li>
+
+<li>
+să verifici puterea disipată de rezistențele de adaptare;</li>
+
+<li>
+să interpretezi corect noua scară a aparatului.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Formulele-cheie</h3>
+
+<p>
+Pentru extinderea domeniului de \(n\) ori:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{sh}
+=
+\frac{R_A}{n-1}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{ad}
+=
+(n-1)R_V
+}
+\]
+
+</div>
+
+unde:
+</p>
+
+<div class="formula">
+
+\[
+n>1
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 Recapitulare – aparatele ideale și reale</h2>
+
+<div class="grid-2">
+
+
+<div class="property-card property-ammeter">
+
+<div class="property-icon">
+A
+</div>
+
+<h3>Ampermetrul</h3>
+
+<p>
+Se conectează:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{în serie}
+}
+\]
+
+</div>
+
+<p>
+Ideal:
+</p>
+
+<div class="formula">
+
+\[
+R_A=0
+\]
+
+</div>
+
+<p>
+Real:
+</p>
+
+<div class="formula">
+
+\[
+R_A>0
+\]
+
+</div>
+
+</div>
+
+
+<div class="property-card property-voltmeter">
+
+<div class="property-icon">
+V
+</div>
+
+<h3>Voltmetrul</h3>
+
+<p>
+Se conectează:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{în paralel}
+}
+\]
+
+</div>
+
+<p>
+Ideal:
+</p>
+
+<div class="formula">
+
+\[
+R_V\rightarrow\infty
+\]
+
+</div>
+
+<p>
+Real:
+</p>
+
+<div class="formula">
+
+\[
+R_V<\infty
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+Adaptarea domeniului produce și un efect favorabil:
+
+<ul>
+
+<li>ampermetrul adaptat are o rezistență echivalentă mai mică;</li>
+
+<li>voltmetrul adaptat are o rezistență totală mai mare.</li>
+
+</ul>
+
+Ambele tind astfel mai mult spre comportarea aparatului ideal.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEM
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Situație-problemă</h2>
+
+<p class="lead">
+Avem un ampermetru care poate suporta cel mult:
+</p>
+
+<div class="formula">
+
+\[
+I_A=50\,mA
+\]
+
+</div>
+
+<p>
+dar dorim să măsurăm până la:
+</p>
+
+<div class="formula">
+
+\[
+I=500\,mA
+\]
+
+</div>
+
+<p>
+Nu putem permite ca întreg curentul de \(500\,mA\)
+să treacă prin mecanismul aparatului.
+</p>
+
+
+<div class="orange-box">
+
+Cum facem ca numai \(50\,mA\) să treacă prin aparat,
+iar restul curentului să îl ocolească?
+</div>
+
+
+<p>
+Pentru voltmetru apare problema complementară:
+aparatul suportă o anumită tensiune,
+dar vrem să măsurăm una mai mare.
+</p>
+
+
+<div class="blue-box">
+
+Cele două soluții folosesc exact conexiunile studiate:
+
+<strong>
+paralel pentru ampermetru,
+serie pentru voltmetru.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FACTOR
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Factorul de extindere al domeniului</h2>
+
+<div class="property-card property-factor">
+
+<div class="property-icon">
+n
+</div>
+
+<h3>Definiție</h3>
+
+<p>
+Dacă domeniul inițial este \(X_0\),
+iar noul domeniu este \(X\),
+definim:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+n=
+\frac{X}{X_0}
+}
+\]
+
+</div>
+
+<p>
+Pentru o extindere:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+n>1
+}
+\]
+
+</div>
+
+</div>
+
+
+<h3>Ampermetru</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{I}{I_A}
+\]
+
+</div>
+
+
+<h3>Voltmetru</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{U}{U_V}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Factorul \(n\) nu are unitate de măsură.
+
+Este un raport între două mărimi de același tip.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AMMETER SHUNT
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Extinderea domeniului ampermetrului – șuntul</h2>
+
+<p>
+La bornele mecanismului ampermetrului
+se conectează un rezistor de rezistență mică:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}
+\]
+
+</div>
+
+<p>
+numit <strong>șunt</strong>.
+</p>
+
+
+<div class="circuit-figure">
+
+<svg
+  viewBox="0 0 850 410"
+  role="img"
+  aria-label="Ampermetru cu șunt conectat în paralel">
+
+<!-- incoming -->
+
+<path
+  class="svg-wire"
+  d="M80 205 H220"/>
+
+<circle
+  class="svg-node"
+  cx="220"
+  cy="205"
+  r="10"/>
+
+<!-- outgoing -->
+
+<circle
+  class="svg-node"
+  cx="650"
+  cy="205"
+  r="10"/>
+
+<path
+  class="svg-wire"
+  d="M650 205 H790"/>
+
+<!-- upper branch -->
+
+<path
+  class="svg-wire"
+  d="M220 205 V110 H335"/>
+
+<circle
+  class="svg-meter"
+  cx="435"
+  cy="110"
+  r="62"/>
+
+<text
+  class="svg-text"
+  x="421"
+  y="118">
+A
+</text>
+
+<text
+  class="svg-small"
+  x="390"
+  y="36">
+R_A
+</text>
+
+<path
+  class="svg-wire"
+  d="M497 110 H650 V205"/>
+
+<!-- lower branch -->
+
+<path
+  class="svg-wire"
+  d="M220 205 V300 H335"/>
+
+<rect
+  class="svg-resistor"
+  x="335"
+  y="272"
+  width="200"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="398"
+  y="307">
+Rsh
+</text>
+
+<path
+  class="svg-wire"
+  d="M535 300 H650 V205"/>
+
+<!-- currents -->
+
+<path
+  class="svg-current"
+  d="M95 175 H180"/>
+
+<polygon
+  points="180,175 158,164 158,186"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="128"
+  y="158">
+I
+</text>
+
+<path
+  class="svg-current"
+  d="M265 82 H320"/>
+
+<polygon
+  points="320,82 300,72 300,92"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="278"
+  y="65">
+I_A
+</text>
+
+<path
+  class="svg-current"
+  d="M265 340 H320"/>
+
+<polygon
+  points="320,340 300,330 300,350"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="270"
+  y="373">
+I_sh
+</text>
+
+</svg>
+
+</div>
+
+
+<div class="blue-box">
+
+Șuntul este conectat
+<strong>în paralel</strong>
+cu mecanismul ampermetrului.
+
+El preia cea mai mare parte a curentului,
+astfel încât prin aparat să nu treacă mai mult decât curentul său maxim admis.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AMMETER DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Deducerea rezistenței șuntului</h2>
+
+<p>
+Notăm:
+</p>
+
+<ul>
+
+<li>\(R_A\) – rezistența internă a ampermetrului;</li>
+
+<li>\(I_A\) – curentul de capăt de scară al aparatului;</li>
+
+<li>\(I\) – noul curent maxim de măsurat;</li>
+
+<li>\(R_{sh}\) – rezistența șuntului.</li>
+
+</ul>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>1. Legea I a lui Kirchhoff</strong>
+
+<div class="formula">
+
+\[
+I=
+I_A+I_{sh}
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+I_{sh}=I-I_A
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>2. Ampermetrul și șuntul sunt în paralel</strong>
+
+<p>
+Au aceeași tensiune:
+</p>
+
+<div class="formula">
+
+\[
+U_A=U_{sh}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>3. Aplicăm legea lui Ohm</strong>
+
+<div class="formula">
+
+\[
+I_AR_A
+=
+I_{sh}R_{sh}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>4. Înlocuim \(I_{sh}\)</strong>
+
+<div class="formula">
+
+\[
+I_AR_A
+=
+(I-I_A)R_{sh}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>5. Rezultă</strong>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{sh}
+=
+\frac{I_AR_A}
+{I-I_A}
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<h3>Folosind factorul \(n\)</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac I{I_A}
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+I=nI_A
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+I-I_A
+=
+(n-1)I_A
+\]
+
+</div>
+
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{sh}
+=
+\frac{R_A}{n-1}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AMMETER EQ
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Rezistența ampermetrului adaptat</h2>
+
+<p>
+Ampermetrul și șuntul sunt în paralel:
+</p>
+
+<div class="formula">
+
+\[
+R'_A
+=
+\frac{
+R_AR_{sh}
+}{
+R_A+R_{sh}
+}
+\]
+
+</div>
+
+<p>
+Înlocuind:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}
+=
+\frac{R_A}{n-1}
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R'_A=
+\frac{R_A}{n}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Prin extinderea domeniului ampermetrului de \(n\) ori,
+rezistența sa echivalentă scade de \(n\) ori.
+
+Acest lucru este favorabil,
+deoarece un ampermetru ideal ar trebui să aibă:
+</p>
+
+<div class="formula">
+
+\[
+R_A=0
+\]
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AMMETER EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Exemplu – adaptarea unui ampermetru</h2>
+
+<p>
+Un ampermetru are:
+</p>
+
+<div class="formula">
+
+\[
+I_A=50\,mA
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_A=2\,\Omega
+\]
+
+</div>
+
+<p>
+Dorim domeniul:
+</p>
+
+<div class="formula">
+
+\[
+I=500\,mA
+\]
+
+</div>
+
+
+<h3>Pasul 1 – factorul de extindere</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{500}{50}
+=
+10
+\]
+
+</div>
+
+
+<h3>Pasul 2 – șuntul</h3>
+
+<div class="formula">
+
+\[
+R_{sh}
+=
+\frac{2}{10-1}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{sh}\approx0,222\,\Omega
+}
+\]
+
+</div>
+
+
+<h3>Pasul 3 – curentul prin șunt</h3>
+
+<div class="formula">
+
+\[
+I_{sh}
+=
+500-50
+=
+450\,mA
+\]
+
+</div>
+
+
+<h3>Pasul 4 – verificarea tensiunilor</h3>
+
+<div class="formula">
+
+\[
+U_A=
+I_AR_A
+=
+0,05\cdot2
+=
+0,10\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U_{sh}
+=
+0,45\cdot0,222
+\approx
+0,10\,V
+\]
+
+</div>
+
+<p>
+Valorile sunt compatibile cu o conexiune paralelă.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTMETER
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Extinderea domeniului voltmetrului</h2>
+
+<p>
+Pentru voltmetru,
+dorim ca numai o parte din tensiunea totală
+să apară pe mecanismul aparatului.
+</p>
+
+<p>
+În serie cu acesta introducem:
+</p>
+
+<div class="formula">
+
+\[
+R_{ad}
+\]
+
+</div>
+
+numită <strong>rezistență adițională</strong>.
+</p>
+
+
+<div class="circuit-figure">
+
+<svg
+  viewBox="0 0 850 350"
+  role="img"
+  aria-label="Voltmetru cu rezistență adițională în serie">
+
+<path
+  class="svg-wire"
+  d="M80 175 H180"/>
+
+<rect
+  class="svg-resistor"
+  x="180"
+  y="147"
+  width="190"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="235"
+  y="182">
+Rad
+</text>
+
+<path
+  class="svg-wire"
+  d="M370 175 H470"/>
+
+<circle
+  class="svg-meter"
+  cx="555"
+  cy="175"
+  r="65"/>
+
+<text
+  class="svg-text"
+  x="541"
+  y="183">
+V
+</text>
+
+<path
+  class="svg-wire"
+  d="M620 175 H770"/>
+
+<!-- current -->
+
+<path
+  class="svg-current"
+  d="M95 130 H155"/>
+
+<polygon
+  points="155,130 135,120 135,140"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="112"
+  y="112">
+I_V
+</text>
+
+<!-- labels -->
+
+<text
+  class="svg-small"
+  x="220"
+  y="125">
+Uad
+</text>
+
+<text
+  class="svg-small"
+  x="520"
+  y="88">
+UV
+</text>
+
+<text
+  class="svg-small"
+  x="315"
+  y="295">
+U = Uad + UV
+</text>
+
+</svg>
+
+</div>
+
+
+<div class="blue-box">
+
+Rezistența adițională este conectată
+<strong>în serie</strong>
+cu voltmetrul.
+
+Ea preia o parte din tensiunea totală,
+astfel încât mecanismului de măsură
+să îi revină cel mult tensiunea sa nominală de capăt de scară.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTMETER DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Deducerea rezistenței adiționale</h2>
+
+<p>
+Notăm:
+</p>
+
+<ul>
+
+<li>\(R_V\) – rezistența internă a voltmetrului;</li>
+
+<li>\(U_V\) – domeniul inițial;</li>
+
+<li>\(U\) – noul domeniu;</li>
+
+<li>\(R_{ad}\) – rezistența adițională.</li>
+
+</ul>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>1. Curentul prin mecanism la capăt de scară</strong>
+
+<div class="formula">
+
+\[
+I_V=
+\frac{U_V}{R_V}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>2. Rezistența adițională este în serie</strong>
+
+<p>
+Același curent o străbate:
+</p>
+
+<div class="formula">
+
+\[
+I_{ad}=I_V
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>3. Tensiunea suplimentară</strong>
+
+<div class="formula">
+
+\[
+U_{ad}
+=
+U-U_V
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>4. Aplicăm legea lui Ohm</strong>
+
+<div class="formula">
+
+\[
+R_{ad}
+=
+\frac{U-U_V}{I_V}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>5. Înlocuim \(I_V=U_V/R_V\)</strong>
+
+<div class="formula">
+
+\[
+R_{ad}
+=
+\frac{
+U-U_V
+}{
+U_V/R_V
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>6. Folosim \(n=U/U_V\)</strong>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{ad}
+=
+(n-1)R_V
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTMETER EQ
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Rezistența voltmetrului adaptat</h2>
+
+<p>
+Fiind în serie:
+</p>
+
+<div class="formula">
+
+\[
+R'_V
+=
+R_V+R_{ad}
+\]
+
+</div>
+
+<p>
+Înlocuind:
+</p>
+
+<div class="formula">
+
+\[
+R_{ad}
+=
+(n-1)R_V
+\]
+
+</div>
+
+obținem:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R'_V=nR_V
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Extinderea domeniului de \(n\) ori
+mărește rezistența totală a voltmetrului de \(n\) ori.
+
+Aceasta este favorabil,
+deoarece voltmetrul ideal ar trebui să aibă:
+</p>
+
+<div class="formula">
+
+\[
+R_V\rightarrow\infty
+\]
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTMETER EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Exemplu – adaptarea unui voltmetru</h2>
+
+<p>
+Un voltmetru are:
+</p>
+
+<div class="formula">
+
+\[
+U_V=3\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_V=3\,k\Omega
+\]
+
+</div>
+
+<p>
+Dorim să măsurăm până la:
+</p>
+
+<div class="formula">
+
+\[
+U=15\,V
+\]
+
+</div>
+
+
+<h3>Pasul 1 – factorul</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{15}{3}
+=
+5
+\]
+
+</div>
+
+
+<h3>Pasul 2 – rezistența adițională</h3>
+
+<div class="formula">
+
+\[
+R_{ad}
+=
+(5-1)
+\cdot3\,k\Omega
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{ad}=12\,k\Omega
+}
+\]
+
+</div>
+
+
+<h3>Pasul 3 – rezistența totală</h3>
+
+<div class="formula">
+
+\[
+R'_V=
+3+12
+=
+15\,k\Omega
+\]
+
+</div>
+
+
+<h3>Pasul 4 – curentul la capăt de scară</h3>
+
+<div class="formula">
+
+\[
+I_V=
+\frac{3}{3000}
+=
+0,001\,A
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I_V=1\,mA
+}
+\]
+
+</div>
+
+
+<h3>Verificare</h3>
+
+<div class="formula">
+
+\[
+U_{ad}
+=
+I_VR_{ad}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U_{ad}
+=
+0,001\cdot12000
+=
+12\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U=
+12+3
+=
+15\,V
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMPARISON
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Ampermetru vs. voltmetru</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Caracteristică
+</th>
+
+<th>
+Ampermetru
+</th>
+
+<th>
+Voltmetru
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+Rezistența de adaptare
+</td>
+
+<td>
+șunt
+</td>
+
+<td>
+rezistență adițională
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Conectare
+</td>
+
+<td>
+
+\[
+\boxed{\text{paralel}}
+\]
+
+</td>
+
+<td>
+
+\[
+\boxed{\text{serie}}
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Formula
+</td>
+
+<td>
+
+\[
+R_{sh}
+=
+\frac{R_A}{n-1}
+\]
+
+</td>
+
+<td>
+
+\[
+R_{ad}
+=
+(n-1)R_V
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Rezistență echivalentă după adaptare
+</td>
+
+<td>
+
+\[
+R'_A=
+\frac{R_A}{n}
+\]
+
+</td>
+
+<td>
+
+\[
+R'_V=
+nR_V
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Tendință spre aparatul ideal
+</td>
+
+<td>
+rezistență mai mică
+</td>
+
+<td>
+rezistență mai mare
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHY
+========================================================= -->
+
+<section class="card">
+
+<h2>12. De ce exact paralel și serie?</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Șuntul ampermetrului</h3>
+
+<p>
+Trebuie să
+<strong>împărțim curentul</strong>.
+</p>
+
+<p>
+Conexiunea care permite ramificarea curentului este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{paralel}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistența adițională</h3>
+
+<p>
+Trebuie să
+<strong>împărțim tensiunea</strong>.
+</p>
+
+<p>
+Conexiunea în care tensiunile se adună este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{serie}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="purple-box">
+
+Formulele de adaptare nu reprezintă un capitol separat de electricitate.
+
+Ele sunt aplicații directe ale:
+
+<ul>
+
+<li>Legii I a lui Kirchhoff;</li>
+
+<li>Legii a II-a a lui Kirchhoff;</li>
+
+<li>legii lui Ohm;</li>
+
+<li>grupării rezistoarelor în serie și în paralel.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DIRECT FORMULAS
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Formule directe – fără calcularea lui \(n\)</h2>
+
+<h3>Pentru ampermetru</h3>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{sh}
+=
+\frac{
+I_AR_A
+}{
+I-I_A
+}
+}
+\]
+
+</div>
+
+
+<h3>Pentru voltmetru</h3>
+
+<p>
+Curentul de capăt de scară este:
+</p>
+
+<div class="formula">
+
+\[
+I_V=
+\frac{U_V}{R_V}
+\]
+
+</div>
+
+iar:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{ad}
+=
+\frac{
+U-U_V
+}{
+I_V
+}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Înainte de calcul,
+transformă unitățile:
+
+\[
+mA\rightarrow A,
+\qquad
+k\Omega\rightarrow\Omega
+\]
+
+dacă folosești formule în unități SI.
+
+Poți lucra și cu unități compatibile,
+de exemplu \(mA\) și \(k\Omega\),
+dar trebuie să urmărești atent unitățile rezultatului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SCALE
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Cum se modifică citirea scalei?</h2>
+
+<p>
+Aparatul de bază continuă să aibă aceeași deviație mecanică maximă.
+Ceea ce se schimbă este
+<strong>semnificația numerică a scalei</strong>.
+</p>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Un ampermetru are inițial domeniul:
+</p>
+
+<div class="formula">
+
+\[
+0\ldots100\,mA
+\]
+
+</div>
+
+<p>
+și 50 de diviziuni.
+</p>
+
+<p>
+Constanta inițială:
+</p>
+
+<div class="formula">
+
+\[
+C=
+\frac{100\,mA}{50}
+=
+2\,mA/\text{diviziune}
+\]
+
+</div>
+
+<p>
+După extinderea domeniului de 5 ori:
+</p>
+
+<div class="formula">
+
+\[
+I_{max}'=
+500\,mA
+\]
+
+</div>
+
+<p>
+noua constantă:
+</p>
+
+<div class="formula">
+
+\[
+C'=
+\frac{500\,mA}{50}
+=
+10\,mA/\text{diviziune}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Deviația acului nu spune singură valoarea mărimii.
+
+Trebuie cunoscut
+<strong>domeniul selectat</strong>
+și constanta corespunzătoare a scalei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POWER
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Puterea disipată – verificare obligatorie în practică</h2>
+
+<p>
+Calcularea rezistenței nu este suficientă pentru alegerea
+unei componente reale.
+</p>
+
+
+<h3>Șunt</h3>
+
+<div class="formula">
+
+\[
+P_{sh}
+=
+I_{sh}^{\,2}R_{sh}
+\]
+
+</div>
+
+sau:
+</p>
+
+<div class="formula">
+
+\[
+P_{sh}
+=
+U_{sh}I_{sh}
+\]
+
+</div>
+
+
+<h3>Rezistență adițională</h3>
+
+<div class="formula">
+
+\[
+P_{ad}
+=
+I_V^{\,2}R_{ad}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Într-un montaj real,
+rezistorul ales trebuie să suporte
+o putere nominală mai mare decât puterea calculată,
+cu o marjă de siguranță adecvată.
+
+Toleranța și variația cu temperatura influențează și ele precizia măsurării.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Șunt pentru extindere de 5 ori</h3>
+
+<p>
+Un ampermetru are:
+</p>
+
+<div class="formula">
+
+\[
+R_A=4\,\Omega
+\]
+
+</div>
+
+<p>
+Domeniul trebuie extins de:
+</p>
+
+<div class="formula">
+
+\[
+n=5
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_{sh}
+=
+\frac{R_A}{n-1}
+\]
+
+\[
+R_{sh}
+=
+\frac4{4}
+\]
+
+\[
+\boxed{
+R_{sh}=1\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Rezistență adițională</h3>
+
+<p>
+Un voltmetru are:
+</p>
+
+<div class="formula">
+
+\[
+R_V=10\,k\Omega
+\]
+
+</div>
+
+<p>
+și domeniul trebuie mărit de 4 ori.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_{ad}
+=
+(n-1)R_V
+\]
+
+\[
+R_{ad}
+=
+3\cdot10\,k\Omega
+\]
+
+\[
+\boxed{
+R_{ad}=30\,k\Omega
+}
+\]
+
+Rezistența totală:
+
+\[
+R'_V=
+40\,k\Omega
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Din două domenii de curent</h3>
+
+<p>
+Un ampermetru:
+</p>
+
+<div class="formula">
+
+\[
+I_A=20\,mA
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_A=5\,\Omega
+\]
+
+</div>
+
+<p>
+trebuie adaptat pentru:
+</p>
+
+<div class="formula">
+
+\[
+I=200\,mA
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+n=
+\frac{200}{20}
+=
+10
+\]
+
+\[
+R_{sh}
+=
+\frac5{9}
+\]
+
+\[
+\boxed{
+R_{sh}\approx0,556\,\Omega
+}
+\]
+
+Curentul prin șunt la capăt de scară:
+
+\[
+I_{sh}
+=
+200-20
+=
+180\,mA
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Din două domenii de tensiune</h3>
+
+<p>
+Un voltmetru are:
+</p>
+
+<div class="formula">
+
+\[
+U_V=5\,V
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_V=20\,k\Omega
+\]
+
+</div>
+
+<p>
+și trebuie adaptat pentru:
+</p>
+
+<div class="formula">
+
+\[
+U=50\,V
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+n=
+\frac{50}{5}
+=
+10
+\]
+
+\[
+R_{ad}
+=
+9\cdot20\,k\Omega
+\]
+
+\[
+\boxed{
+R_{ad}=180\,k\Omega
+}
+\]
+
+Rezistența totală:
+
+\[
+R'_V=
+200\,k\Omega
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Puterea șuntului</h3>
+
+<p>
+Un șunt are:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}=0,1\,\Omega
+\]
+
+</div>
+
+<p>
+și este străbătut la capăt de scară de:
+</p>
+
+<div class="formula">
+
+\[
+I_{sh}=2\,A
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+P_{sh}
+=
+I_{sh}^{\,2}R_{sh}
+\]
+
+\[
+P_{sh}
+=
+2^2\cdot0,1
+\]
+
+\[
+\boxed{
+P_{sh}=0,4\,W
+}
+\]
+
+Într-o realizare practică
+nu am alege un rezistor exact la limita de \(0,4\,W\);
+este necesară o marjă corespunzătoare.
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 6 – Determinarea domeniului obținut</h3>
+
+<p>
+Un ampermetru are:
+</p>
+
+<div class="formula">
+
+\[
+R_A=3\,\Omega
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_A=100\,mA
+\]
+
+</div>
+
+<p>
+și se conectează un șunt:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}=0,75\,\Omega
+\]
+
+</div>
+
+<p>
+Care este noul domeniu?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Din:
+
+\[
+R_{sh}
+=
+\frac{R_A}{n-1}
+\]
+
+rezultă:
+
+\[
+n-1=
+\frac{R_A}{R_{sh}}
+\]
+
+\[
+n=
+1+\frac3{0,75}
+=
+5
+\]
+
+Noul domeniu:
+
+\[
+I=
+nI_A
+\]
+
+\[
+I=
+5\cdot100\,mA
+\]
+
+\[
+\boxed{
+I=500\,mA
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Extinderea domeniului</h2>
+
+<p>
+Alege aparatul.
+Simulatorul dimensionează automat rezistența de adaptare,
+apoi aplică o valoare de test între 0 și 120% din noul domeniu.
+Observă ce se întâmplă în interiorul aparatului.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="modeSelect">
+Aparat
+</label>
+
+<select id="modeSelect">
+
+<option value="ammeter" selected>
+ampermetru + șunt
+</option>
+
+<option value="voltmeter">
+voltmetru + rezistență adițională
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="factorSlider">
+Factor de extindere \(n\)
+</label>
+
+<input
+  id="factorSlider"
+  type="range"
+  min="2"
+  max="20"
+  step="1"
+  value="10">
+
+<span
+  class="range-value"
+  id="factorLabel">
+10×
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="testSlider">
+Valoare aplicată
+</label>
+
+<input
+  id="testSlider"
+  type="range"
+  min="0"
+  max="120"
+  step="1"
+  value="70">
+
+<span
+  class="range-value"
+  id="testLabel">
+70% din noul domeniu
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="mode-panel"
+  id="ammeterPanel">
+
+<div class="grid-2">
+
+
+<div class="control">
+
+<label for="ammeterCurrentSlider">
+Domeniu inițial \(I_A\) [mA]
+</label>
+
+<input
+  id="ammeterCurrentSlider"
+  type="range"
+  min="1"
+  max="100"
+  step="1"
+  value="50">
+
+<span
+  class="range-value"
+  id="ammeterCurrentLabel">
+50 mA
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="ammeterResistanceSlider">
+Rezistență internă \(R_A\) [Ω]
+</label>
+
+<input
+  id="ammeterResistanceSlider"
+  type="range"
+  min="0.5"
+  max="20"
+  step="0.5"
+  value="2">
+
+<span
+  class="range-value"
+  id="ammeterResistanceLabel">
+2,0 Ω
+</span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div
+  class="mode-panel hidden"
+  id="voltmeterPanel">
+
+<div class="grid-2">
+
+
+<div class="control">
+
+<label for="voltmeterVoltageSlider">
+Domeniu inițial \(U_V\) [V]
+</label>
+
+<input
+  id="voltmeterVoltageSlider"
+  type="range"
+  min="0.5"
+  max="20"
+  step="0.5"
+  value="3">
+
+<span
+  class="range-value"
+  id="voltmeterVoltageLabel">
+3,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="voltmeterResistanceSlider">
+Rezistență internă \(R_V\) [kΩ]
+</label>
+
+<input
+  id="voltmeterResistanceSlider"
+  type="range"
+  min="1"
+  max="100"
+  step="1"
+  value="3">
+
+<span
+  class="range-value"
+  id="voltmeterResistanceLabel">
+3 kΩ
+</span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="ammeterExampleBtn">
+
+Exemplu ampermetru ×10
+
+</button>
+
+
+<button
+  class="primary"
+  id="voltmeterExampleBtn">
+
+Exemplu voltmetru ×5
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="doubleFactorBtn">
+
+×2 factorul
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="fullScaleBtn">
+
+Capăt de scară
+
+</button>
+
+
+<button
+  class="red-button"
+  id="overloadBtn">
+
+Simulează 115%
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="adapterCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="gaugeCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Domeniu inițial
+</span>
+
+<strong id="originalRangeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Domeniu nou
+</span>
+
+<strong id="newRangeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistență de adaptare
+</span>
+
+<strong id="adapterResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistență totală aparat
+</span>
+
+<strong id="equivalentResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Valoare aplicată
+</span>
+
+<strong id="appliedValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Mărime prin/pe mecanism
+</span>
+
+<strong id="mechanismValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Deviația scalei
+</span>
+
+<strong id="deflectionValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere în rezistența de adaptare
+</span>
+
+<strong id="adapterPowerValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Selectează valorile și urmărește circuitul intern.
+</div>
+
+
+<div
+  class="flow-bars"
+  id="flowBars">
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Ampermetru ×10</h3>
+
+<p>
+Folosește:
+</p>
+
+<div class="formula">
+
+\[
+I_A=50\,mA
+\]
+
+\[
+R_A=2\,\Omega
+\]
+
+\[
+n=10
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}\approx0,222\,\Omega
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Urmărește curenții</h3>
+
+<p>
+La capăt de scară:
+</p>
+
+<div class="formula">
+
+\[
+I_A=50\,mA
+\]
+
+</div>
+
+<p>
+iar restul curentului trebuie să treacă prin șunt.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Mărește \(n\)</h3>
+
+<p>
+Ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}
+\ ?
+
+\]
+
+</div>
+
+<p>
+Și cu:
+</p>
+
+<div class="formula">
+
+\[
+R'_A
+\ ?
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Voltmetru ×5</h3>
+
+<p>
+Folosește:
+</p>
+
+<div class="formula">
+
+\[
+U_V=3\,V
+\]
+
+\[
+R_V=3\,k\Omega
+\]
+
+\[
+n=5
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+R_{ad}=12\,k\Omega
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Compară 50% și 100%</h3>
+
+<p>
+Mecanismul aparatului trebuie să aibă aceeași fracție din deviația maximă
+ca fracția din noul domeniu aplicată.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Depășirea domeniului</h3>
+
+<p>
+Selectează 115%.
+</p>
+
+<p>
+De ce simulatorul marchează situația ca suprasarcină,
+chiar dacă există rezistența de adaptare?
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – modelarea adaptării fără a risca un aparat</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă didactică de joasă tensiune;</li>
+
+<li>rezistoare cunoscute;</li>
+
+<li>multimetru digital;</li>
+
+<li>placă de conexiuni;</li>
+
+<li>conductoare;</li>
+
+<li>rezistor de limitare a curentului.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea activității</h3>
+
+<p>
+În loc să modificăm un aparat comercial,
+construim un
+<strong>model rezistiv</strong>
+al mecanismului de măsură.
+</p>
+
+<p>
+Verificăm apoi:
+</p>
+
+<div class="formula">
+
+\[
+U_A=U_{sh}
+\]
+
+</div>
+
+sau:
+</p>
+
+<div class="formula">
+
+\[
+U=U_V+U_{ad}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<h3>Varianta A – model de ampermetru</h3>
+
+<ol class="steps">
+
+<li>
+Alege un rezistor \(R_A\) care modelează rezistența internă a aparatului.
+</li>
+
+<li>
+Alege un factor de extindere \(n\).
+</li>
+
+<li>
+Calculează:
+\[
+R_{sh}=\frac{R_A}{n-1}
+\]
+</li>
+
+<li>
+Conectează \(R_A\) și \(R_{sh}\) în paralel.
+</li>
+
+<li>
+Limitează curentul total cu un rezistor serie suficient de mare.
+</li>
+
+<li>
+Măsoară curenții din cele două ramuri.
+</li>
+
+<li>
+Verifică raportul:
+\[
+I_{sh}\approx(n-1)I_A
+\]
+</li>
+
+</ol>
+
+
+<h3>Varianta B – model de voltmetru</h3>
+
+<ol class="steps">
+
+<li>
+Alege un rezistor \(R_V\).
+</li>
+
+<li>
+Calculează:
+\[
+R_{ad}=(n-1)R_V
+\]
+</li>
+
+<li>
+Conectează rezistoarele în serie.
+</li>
+
+<li>
+Aplică o tensiune didactică sigură.
+</li>
+
+<li>
+Măsoară \(U_V\) și \(U_{ad}\).
+</li>
+
+<li>
+Verifică:
+\[
+U\approx U_V+U_{ad}
+\]
+</li>
+
+<li>
+Verifică aproximativ:
+\[
+U_{ad}\approx(n-1)U_V
+\]
+la condiția de capăt de scară modelată.
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Nu modifica un multimetru comercial
+și nu construi adaptoare pentru măsurători la rețeaua de 230 V.
+
+Activitatea se realizează exclusiv
+la joasă tensiune,
+cu limitarea curentului și sub îndrumarea profesorului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Precizie și surse de eroare</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Toleranța rezistențelor</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}
+\]
+
+</div>
+
+sau:
+</p>
+
+<div class="formula">
+
+\[
+R_{ad}
+\]
+
+</div>
+
+nu au exact valoarea calculată,
+raportul de extindere se modifică.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Temperatura</h3>
+
+<p>
+Încălzirea modifică rezistențele
+și poate schimba calibrarea.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistența firelor</h3>
+
+<p>
+La șunturi foarte mici,
+rezistența conductorilor și a contactelor poate deveni semnificativă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Clasa aparatului</h3>
+
+<p>
+Aparatul de bază are el însuși o incertitudine de măsurare.
+Adaptarea domeniului nu elimină această incertitudine.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+Un calcul exact matematic
+nu garantează o măsurare exactă experimental.
+
+În practică trebuie luate în calcul
+toleranțele componentelor,
+încălzirea,
+contactele și caracteristicile aparatului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Șuntul se montează în serie cu ampermetrul.”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{sh}\text{ se conectează în paralel}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Rezistența adițională se montează în paralel cu voltmetrul.”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{ad}\text{ se conectează în serie}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Șuntul trebuie să aibă rezistență mare.”</h3>
+
+<p>
+De regulă,
+șuntul are rezistență mică,
+pentru a prelua o parte mare din curent.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Rezistența adițională trebuie să fie mică.”</h3>
+
+<p>
+Pentru extinderi importante ale domeniului,
+ea este de regulă mare față de rezistența mecanismului.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Factorul \(n\) se adună în formulă.”</h3>
+
+<p>
+Pentru șunt:
+</p>
+
+<div class="formula">
+
+\[
+R_{sh}
+=
+\frac{R_A}{n-1}
+\]
+
+</div>
+
+<p>
+Pentru voltmetru:
+</p>
+
+<div class="formula">
+
+\[
+R_{ad}
+=
+(n-1)R_V
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „După adaptare, scala rămâne numeric neschimbată.”</h3>
+
+<p>
+Deviația fizică poate fi aceeași,
+dar valorile asociate diviziunilor trebuie recalibrate.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Dacă am calculat rezistența, componenta este sigur potrivită.”</h3>
+
+<p>
+Trebuie verificată și puterea disipată,
+precum și toleranța.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Un aparat adaptat nu mai poate fi suprasolicitat.”</h3>
+
+<p>
+Fals.
+Noul domeniu are și el o valoare maximă.
+Depășirea acesteia poate suprasolicita mecanismul sau rezistența de adaptare.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce șuntul trebuie conectat în paralel cu ampermetrul?
+</li>
+
+<li>
+De ce șuntul are de regulă o rezistență mai mică decât mecanismul ampermetrului?
+</li>
+
+<li>
+Ce se întâmplă cu \(R_{sh}\) când factorul \(n\) crește?
+</li>
+
+<li>
+De ce rezistența echivalentă a ampermetrului adaptat scade?
+</li>
+
+<li>
+De ce rezistența adițională a voltmetrului se conectează în serie?
+</li>
+
+<li>
+Ce se întâmplă cu \(R_{ad}\) când \(n\) crește?
+</li>
+
+<li>
+De ce un voltmetru adaptat solicită mai puțin circuitul măsurat?
+</li>
+
+<li>
+Cum se modifică valoarea unei diviziuni după extinderea domeniului?</li>
+
+<li>
+De ce trebuie verificată puterea disipată de șunt?</li>
+
+<li>
+Cum se leagă aceste două metode de legile lui Kirchhoff și de gruparea rezistoarelor?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Șuntul unui ampermetru se conectează:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+în serie
+</button>
+
+<button class="answer-btn">
+în paralel
+</button>
+
+<button class="answer-btn">
+direct la sursă fără ampermetru
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Pentru extinderea domeniului ampermetrului de \(n\) ori:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{sh}=R_A/(n-1)\)
+</button>
+
+<button class="answer-btn">
+\(R_{sh}=(n-1)R_A\)
+</button>
+
+<button class="answer-btn">
+\(R_{sh}=nR_A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Rezistența adițională a voltmetrului se conectează:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+în paralel cu sursa, fără voltmetru
+</button>
+
+<button class="answer-btn">
+în paralel cu voltmetrul
+</button>
+
+<button class="answer-btn">
+în serie cu voltmetrul
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Pentru extinderea domeniului voltmetrului de \(n\) ori:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{ad}=R_V/(n-1)\)
+</button>
+
+<button class="answer-btn">
+\(R_{ad}=(n-1)R_V\)
+</button>
+
+<button class="answer-btn">
+\(R_{ad}=R_V/n\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Dacă \(R_A=4\,\Omega\) și \(n=5\),
+șuntul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(1\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(20\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(5\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+Dacă \(R_V=10\,k\Omega\) și \(n=4\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{ad}=2,5\,k\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{ad}=40\,k\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{ad}=30\,k\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+După adaptarea ampermetrului:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+rezistența echivalentă crește de \(n\) ori
+</button>
+
+<button class="answer-btn">
+rezistența echivalentă devine \(R_A/n\)
+</button>
+
+<button class="answer-btn">
+rezistența echivalentă rămâne \(R_A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+După adaptarea voltmetrului:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R'_V=nR_V\)
+</button>
+
+<button class="answer-btn">
+\(R'_V=R_V/n\)
+</button>
+
+<button class="answer-btn">
+\(R'_V=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Pentru dimensionarea practică a șuntului trebuie verificată și:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+numai culoarea aparatului
+</button>
+
+<button class="answer-btn">
+numai lungimea firelor
+</button>
+
+<button class="answer-btn">
+puterea disipată
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Extinderea domeniului unui aparat:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+elimină complet orice limită de măsurare
+</button>
+
+<button class="answer-btn">
+creează un nou domeniu maxim, care nu trebuie depășit
+</button>
+
+<button class="answer-btn">
+face inutilă calibrarea scalei
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Ampermetru</h3>
+
+<p>
+Șunt în paralel:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{sh}
+=
+\frac{R_A}{n-1}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R'_A=
+\frac{R_A}{n}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Voltmetru</h3>
+
+<p>
+Rezistență adițională în serie:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{ad}
+=
+(n-1)R_V
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R'_V=
+nR_V
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Factorul de extindere este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+n=
+\frac{\text{domeniu nou}}
+{\text{domeniu inițial}}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Schema mentală:</strong>
+
+ampermetru → trebuie deviat curentul → paralel → șunt;
+
+voltmetru → trebuie preluată o parte din tensiune → serie → rezistență adițională.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+Am parcurs principalele instrumente ale capitolului:
+</p>
+
+<ul>
+
+<li>legile lui Kirchhoff;</li>
+
+<li>gruparea rezistoarelor;</li>
+
+<li>gruparea generatoarelor;</li>
+
+<li>aplicații privind aparatele de măsură.</li>
+
+</ul>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Consolidare și evaluare – Kirchhoff și grupări
+</strong>
+
+vom reuni aceste idei într-o evaluare diagnostică,
+cu probleme de rețea,
+rezistențe echivalente,
+generatoare,
+aparate de măsură
+și activități de remediere în funcție de tipul greșelii.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="09-gruparea-generatoarelor-in-paralel.html">
+
+← Lecția 9<br>
+Gruparea generatoarelor în paralel
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="11-consolidare-si-evaluare-kirchhoff-si-grupari.html">
+
+Lecția 11<br>
+Consolidare și evaluare →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const tolerance=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    tolerance
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const modeSelect=
+  document.getElementById(
+    "modeSelect"
+  );
+
+
+const factorSlider=
+  document.getElementById(
+    "factorSlider"
+  );
+
+
+const factorLabel=
+  document.getElementById(
+    "factorLabel"
+  );
+
+
+const testSlider=
+  document.getElementById(
+    "testSlider"
+  );
+
+
+const testLabel=
+  document.getElementById(
+    "testLabel"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const ammeterPanel=
+  document.getElementById(
+    "ammeterPanel"
+  );
+
+
+const voltmeterPanel=
+  document.getElementById(
+    "voltmeterPanel"
+  );
+
+
+const ammeterCurrentSlider=
+  document.getElementById(
+    "ammeterCurrentSlider"
+  );
+
+
+const ammeterCurrentLabel=
+  document.getElementById(
+    "ammeterCurrentLabel"
+  );
+
+
+const ammeterResistanceSlider=
+  document.getElementById(
+    "ammeterResistanceSlider"
+  );
+
+
+const ammeterResistanceLabel=
+  document.getElementById(
+    "ammeterResistanceLabel"
+  );
+
+
+const voltmeterVoltageSlider=
+  document.getElementById(
+    "voltmeterVoltageSlider"
+  );
+
+
+const voltmeterVoltageLabel=
+  document.getElementById(
+    "voltmeterVoltageLabel"
+  );
+
+
+const voltmeterResistanceSlider=
+  document.getElementById(
+    "voltmeterResistanceSlider"
+  );
+
+
+const voltmeterResistanceLabel=
+  document.getElementById(
+    "voltmeterResistanceLabel"
+  );
+
+
+const originalRangeValue=
+  document.getElementById(
+    "originalRangeValue"
+  );
+
+
+const newRangeValue=
+  document.getElementById(
+    "newRangeValue"
+  );
+
+
+const adapterResistanceValue=
+  document.getElementById(
+    "adapterResistanceValue"
+  );
+
+
+const equivalentResistanceValue=
+  document.getElementById(
+    "equivalentResistanceValue"
+  );
+
+
+const appliedValue=
+  document.getElementById(
+    "appliedValue"
+  );
+
+
+const mechanismValue=
+  document.getElementById(
+    "mechanismValue"
+  );
+
+
+const deflectionValue=
+  document.getElementById(
+    "deflectionValue"
+  );
+
+
+const adapterPowerValue=
+  document.getElementById(
+    "adapterPowerValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const flowBars=
+  document.getElementById(
+    "flowBars"
+  );
+
+
+const adapterCanvas=
+  document.getElementById(
+    "adapterCanvas"
+  );
+
+
+const adapterCtx=
+  adapterCanvas.getContext(
+    "2d"
+  );
+
+
+const gaugeCanvas=
+  document.getElementById(
+    "gaugeCanvas"
+  );
+
+
+const gaugeCtx=
+  gaugeCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const mode=
+    modeSelect.value;
+
+
+  const n=
+    Number(
+      factorSlider.value
+    );
+
+
+  const percent=
+    Number(
+      testSlider.value
+    )/
+    100;
+
+
+  if(
+    mode===
+    "ammeter"
+  ){
+
+    const fullScaleCurrent=
+      Number(
+        ammeterCurrentSlider.value
+      )/
+      1000;
+
+
+    const RA=
+      Number(
+        ammeterResistanceSlider.value
+      );
+
+
+    const newMax=
+      n*
+      fullScaleCurrent;
+
+
+    const Rsh=
+      RA/
+      (
+        n-1
+      );
+
+
+    const Req=
+      RA/
+      n;
+
+
+    const inputCurrent=
+      percent*
+      newMax;
+
+
+    const meterCurrent=
+      inputCurrent/
+      n;
+
+
+    const shuntCurrent=
+      inputCurrent-
+      meterCurrent;
+
+
+    const branchVoltage=
+      meterCurrent*
+      RA;
+
+
+    const adapterPower=
+      shuntCurrent*
+      shuntCurrent*
+      Rsh;
+
+
+    return{
+
+      mode,
+      n,
+      percent,
+
+      fullScale:
+        fullScaleCurrent,
+
+      newMax,
+
+      meterResistance:
+        RA,
+
+      adapterResistance:
+        Rsh,
+
+      equivalentResistance:
+        Req,
+
+      input:
+        inputCurrent,
+
+      mechanism:
+        meterCurrent,
+
+      secondary:
+        shuntCurrent,
+
+      branchVoltage,
+
+      adapterPower,
+
+      deflection:
+        fullScaleCurrent>
+        0
+          ? meterCurrent/
+            fullScaleCurrent
+          : 0
+
+    };
+
+  }
+
+
+  const fullScaleVoltage=
+    Number(
+      voltmeterVoltageSlider.value
+    );
+
+
+  const RV=
+    Number(
+      voltmeterResistanceSlider.value
+    )*
+    1000;
+
+
+  const newMax=
+    n*
+    fullScaleVoltage;
+
+
+  const Rad=
+    (
+      n-1
+    )*
+    RV;
+
+
+  const Req=
+    n*
+    RV;
+
+
+  const inputVoltage=
+    percent*
+    newMax;
+
+
+  const seriesCurrent=
+    inputVoltage/
+    Req;
+
+
+  const meterVoltage=
+    seriesCurrent*
+    RV;
+
+
+  const adapterVoltage=
+    seriesCurrent*
+    Rad;
+
+
+  const adapterPower=
+    seriesCurrent*
+    seriesCurrent*
+    Rad;
+
+
+  return{
+
+    mode,
+    n,
+    percent,
+
+    fullScale:
+      fullScaleVoltage,
+
+    newMax,
+
+    meterResistance:
+      RV,
+
+    adapterResistance:
+      Rad,
+
+    equivalentResistance:
+      Req,
+
+    input:
+      inputVoltage,
+
+    mechanism:
+      meterVoltage,
+
+    secondary:
+      adapterVoltage,
+
+    seriesCurrent,
+
+    adapterPower,
+
+    deflection:
+      fullScaleVoltage>
+      0
+        ? meterVoltage/
+          fullScaleVoltage
+        : 0
+
+  };
+
+}
+
+
+/* =========================================================
+   CONTROL LABELS
+========================================================= */
+
+function updateControlLabels(
+  m
+){
+
+  const isAmmeter=
+    m.mode===
+    "ammeter";
+
+
+  ammeterPanel.classList.toggle(
+    "hidden",
+    !isAmmeter
+  );
+
+
+  voltmeterPanel.classList.toggle(
+    "hidden",
+    isAmmeter
+  );
+
+
+  factorLabel.textContent=
+    `${m.n}×`;
+
+
+  testLabel.textContent=
+    `${Math.round(m.percent*100)}% din noul domeniu`;
+
+
+  ammeterCurrentLabel.textContent=
+    `${formatRo(
+      Number(
+        ammeterCurrentSlider.value
+      ),
+      0
+    )} mA`;
+
+
+  ammeterResistanceLabel.textContent=
+    `${formatRo(
+      Number(
+        ammeterResistanceSlider.value
+      ),
+      1
+    )} Ω`;
+
+
+  voltmeterVoltageLabel.textContent=
+    `${formatRo(
+      Number(
+        voltmeterVoltageSlider.value
+      ),
+      1
+    )} V`;
+
+
+  voltmeterResistanceLabel.textContent=
+    `${formatRo(
+      Number(
+        voltmeterResistanceSlider.value
+      ),
+      0
+    )} kΩ`;
+
+}
+
+
+/* =========================================================
+   FLOW BARS
+========================================================= */
+
+function renderFlowBars(
+  m
+){
+
+  flowBars.innerHTML="";
+
+
+  if(
+    m.mode===
+    "ammeter"
+  ){
+
+    const total=
+      Math.max(
+        m.input,
+        1e-12
+      );
+
+
+    const rows=[
+
+      {
+        label:"Aparat",
+        value:m.mechanism,
+        fraction:
+          m.input>
+          0
+            ? m.mechanism/
+              total
+            : 0,
+        color:"#2563eb"
+      },
+
+      {
+        label:"Șunt",
+        value:m.secondary,
+        fraction:
+          m.input>
+          0
+            ? m.secondary/
+              total
+            : 0,
+        color:"#16a34a"
+      }
+
+    ];
+
+
+    rows.forEach(
+      row=>{
+
+        const element=
+          document.createElement(
+            "div"
+          );
+
+
+        element.className=
+          "flow-row";
+
+
+        element.innerHTML=
+          `
+          <strong>${row.label}</strong>
+
+          <div class="flow-track">
+            <div
+              class="flow-fill"
+              style="
+                width:${clamp(row.fraction*100,0,100)}%;
+                background:${row.color};
+              ">
+            </div>
+          </div>
+
+          <span>
+            ${formatRo(row.value*1000,2)} mA
+          </span>
+          `;
+
+
+        flowBars.appendChild(
+          element
+        );
+
+      }
+    );
+
+  }
+
+  else{
+
+    const total=
+      Math.max(
+        m.input,
+        1e-12
+      );
+
+
+    const rows=[
+
+      {
+        label:"Voltmetru",
+        value:m.mechanism,
+        fraction:
+          m.input>
+          0
+            ? m.mechanism/
+              total
+            : 0,
+        color:"#2563eb"
+      },
+
+      {
+        label:"R adițională",
+        value:m.secondary,
+        fraction:
+          m.input>
+          0
+            ? m.secondary/
+              total
+            : 0,
+        color:"#ea580c"
+      }
+
+    ];
+
+
+    rows.forEach(
+      row=>{
+
+        const element=
+          document.createElement(
+            "div"
+          );
+
+
+        element.className=
+          "flow-row";
+
+
+        element.innerHTML=
+          `
+          <strong>${row.label}</strong>
+
+          <div class="flow-track">
+            <div
+              class="flow-fill"
+              style="
+                width:${clamp(row.fraction*100,0,100)}%;
+                background:${row.color};
+              ">
+            </div>
+          </div>
+
+          <span>
+            ${formatRo(row.value,2)} V
+          </span>
+          `;
+
+
+        flowBars.appendChild(
+          element
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  updateControlLabels(
+    m
+  );
+
+
+  if(
+    m.mode===
+    "ammeter"
+  ){
+
+    originalRangeValue.textContent=
+      `${formatRo(
+        m.fullScale*
+        1000,
+        1
+      )} mA`;
+
+
+    newRangeValue.textContent=
+      m.newMax<
+      1
+        ? `${formatRo(m.newMax*1000,1)} mA`
+        : `${formatRo(m.newMax,3)} A`;
+
+
+    adapterResistanceValue.textContent=
+      `${formatRo(
+        m.adapterResistance,
+        4
+      )} Ω`;
+
+
+    equivalentResistanceValue.textContent=
+      `${formatRo(
+        m.equivalentResistance,
+        4
+      )} Ω`;
+
+
+    appliedValue.textContent=
+      m.input<
+      1
+        ? `${formatRo(m.input*1000,2)} mA`
+        : `${formatRo(m.input,3)} A`;
+
+
+    mechanismValue.textContent=
+      `${formatRo(
+        m.mechanism*
+        1000,
+        2
+      )} mA`;
+
+
+    adapterPowerValue.textContent=
+      `${formatRo(
+        m.adapterPower,
+        3
+      )} W`;
+
+  }
+
+  else{
+
+    originalRangeValue.textContent=
+      `${formatRo(
+        m.fullScale,
+        2
+      )} V`;
+
+
+    newRangeValue.textContent=
+      `${formatRo(
+        m.newMax,
+        2
+      )} V`;
+
+
+    adapterResistanceValue.textContent=
+      m.adapterResistance>=
+      1000000
+        ? `${formatRo(m.adapterResistance/1000000,3)} MΩ`
+        : `${formatRo(m.adapterResistance/1000,2)} kΩ`;
+
+
+    equivalentResistanceValue.textContent=
+      m.equivalentResistance>=
+      1000000
+        ? `${formatRo(m.equivalentResistance/1000000,3)} MΩ`
+        : `${formatRo(m.equivalentResistance/1000,2)} kΩ`;
+
+
+    appliedValue.textContent=
+      `${formatRo(
+        m.input,
+        2
+      )} V`;
+
+
+    mechanismValue.textContent=
+      `${formatRo(
+        m.mechanism,
+        2
+      )} V`;
+
+
+    adapterPowerValue.textContent=
+      `${formatRo(
+        m.adapterPower,
+        4
+      )} W`;
+
+  }
+
+
+  deflectionValue.textContent=
+    `${formatRo(
+      m.deflection*
+      100,
+      1
+    )}%`;
+
+
+  simStatus.className=
+    "status-box";
+
+
+  if(
+    m.deflection>
+    1
+  ){
+
+    simStatus.classList.add(
+      "status-danger"
+    );
+
+
+    simStatus.innerHTML=
+      `⚠️ <strong>Suprasarcină.</strong>
+       Valoarea aplicată este
+       ${formatRo(m.percent*100,0)}%
+       din noul domeniu,
+       iar mecanismul ar trebui să depășească deviația maximă.
+       Rezistența de adaptare nu permite depășirea nelimitată a domeniului.`;
+
+  }
+
+  else if(
+    m.deflection>
+    .90
+  ){
+
+    simStatus.classList.add(
+      "status-warning"
+    );
+
+
+    simStatus.innerHTML=
+      `Aparatul funcționează aproape de capătul de scară:
+       deviație
+       <strong>${formatRo(m.deflection*100,1)}%</strong>.
+       La 100% mecanismul atinge exact domeniul său inițial.`;
+
+  }
+
+  else{
+
+    simStatus.classList.add(
+      "status-good"
+    );
+
+
+    if(
+      m.mode===
+      "ammeter"
+    ){
+
+      simStatus.innerHTML=
+        `Curentul total este împărțit între mecanism și șunt.
+         Mecanismul primește exact
+         <strong>1/${m.n}</strong>
+         din curentul total,
+         iar șuntul preia restul.
+         Deviația este
+         <strong>${formatRo(m.deflection*100,1)}%</strong>.`;
+
+    }
+
+    else{
+
+      simStatus.innerHTML=
+        `Tensiunea totală se împarte între rezistența adițională și mecanism.
+         Mecanismului îi revine exact
+         <strong>1/${m.n}</strong>
+         din tensiunea aplicată.
+         Deviația este
+         <strong>${formatRo(m.deflection*100,1)}%</strong>.`;
+
+    }
+
+  }
+
+
+  renderFlowBars(
+    m
+  );
+
+
+  drawGauge(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   DARK BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW RESISTOR
+========================================================= */
+
+function drawResistor(
+  context,
+  x,
+  y,
+  width,
+  height,
+  label,
+  color="#fb923c"
+){
+
+  context.fillStyle=
+    "#fff7ed";
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=4;
+
+
+  context.fillRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.strokeRect(
+    x-width/2,
+    y-height/2,
+    width,
+    height
+  );
+
+
+  context.fillStyle=
+    "#7c2d12";
+
+
+  context.font=
+    "bold 12px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    label,
+    x,
+    y
+  );
+
+}
+
+
+/* =========================================================
+   DRAW METER
+========================================================= */
+
+function drawMeter(
+  context,
+  x,
+  y,
+  radius,
+  letter,
+  detail
+){
+
+  context.beginPath();
+
+
+  context.arc(
+    x,
+    y,
+    radius,
+    0,
+    Math.PI*2
+  );
+
+
+  context.fillStyle=
+    "#ffffff";
+
+
+  context.fill();
+
+
+  context.strokeStyle=
+    "#60a5fa";
+
+
+  context.lineWidth=5;
+
+
+  context.stroke();
+
+
+  context.fillStyle=
+    "#1e3a8a";
+
+
+  context.font=
+    "bold 27px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    letter,
+    x,
+    y-5
+  );
+
+
+  context.fillStyle=
+    "#475569";
+
+
+  context.font=
+    "bold 9px system-ui";
+
+
+  context.fillText(
+    detail,
+    x,
+    y+23
+  );
+
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+function drawArrow(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color="#86efac"
+){
+
+  const dx=
+    x2-x1;
+
+
+  const dy=
+    y2-y1;
+
+
+  const len=
+    Math.sqrt(
+      dx*dx+
+      dy*dy
+    );
+
+
+  if(
+    len<
+    1
+  ){
+    return;
+  }
+
+
+  const ux=
+    dx/
+    len;
+
+
+  const uy=
+    dy/
+    len;
+
+
+  const px=
+    -uy;
+
+
+  const py=
+    ux;
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.fillStyle=
+    color;
+
+
+  context.lineWidth=4;
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+  context.stroke();
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x2,
+    y2
+  );
+
+  context.lineTo(
+    x2-
+    ux*13+
+    px*6,
+    y2-
+    uy*13+
+    py*6
+  );
+
+  context.lineTo(
+    x2-
+    ux*13-
+    px*6,
+    y2-
+    uy*13-
+    py*6
+  );
+
+  context.closePath();
+
+  context.fill();
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let particlePhase=0;
+
+
+/* =========================================================
+   AMMETER SCENE
+========================================================= */
+
+function drawAmmeterScene(
+  m,
+  W,
+  H
+){
+
+  const left=
+    W*.12;
+
+
+  const right=
+    W*.88;
+
+
+  const centerY=
+    H*.50;
+
+
+  const upperY=
+    H*.32;
+
+
+  const lowerY=
+    H*.68;
+
+
+  const branchLeft=
+    W*.30;
+
+
+  const branchRight=
+    W*.72;
+
+
+  /*
+  Main wires.
+  */
+
+  adapterCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  adapterCtx.lineWidth=6;
+
+
+  adapterCtx.lineCap=
+    "round";
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    left,
+    centerY
+  );
+
+  adapterCtx.lineTo(
+    branchLeft,
+    centerY
+  );
+
+  adapterCtx.stroke();
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    branchRight,
+    centerY
+  );
+
+  adapterCtx.lineTo(
+    right,
+    centerY
+  );
+
+  adapterCtx.stroke();
+
+
+  /*
+  Parallel branches.
+  */
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    branchLeft,
+    centerY
+  );
+
+  adapterCtx.lineTo(
+    branchLeft,
+    upperY
+  );
+
+  adapterCtx.lineTo(
+    branchRight,
+    upperY
+  );
+
+  adapterCtx.lineTo(
+    branchRight,
+    centerY
+  );
+
+  adapterCtx.stroke();
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    branchLeft,
+    centerY
+  );
+
+  adapterCtx.lineTo(
+    branchLeft,
+    lowerY
+  );
+
+  adapterCtx.lineTo(
+    branchRight,
+    lowerY
+  );
+
+  adapterCtx.lineTo(
+    branchRight,
+    centerY
+  );
+
+  adapterCtx.stroke();
+
+
+  /*
+  Meter.
+  */
+
+  adapterCtx.strokeStyle=
+    "#020617";
+
+
+  adapterCtx.lineWidth=18;
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    W*.44,
+    upperY
+  );
+
+  adapterCtx.lineTo(
+    W*.58,
+    upperY
+  );
+
+  adapterCtx.stroke();
+
+
+  drawMeter(
+    adapterCtx,
+    W*.51,
+    upperY,
+    48,
+    "A",
+    `RA=${formatRo(m.meterResistance,1)}Ω`
+  );
+
+
+  /*
+  Shunt.
+  */
+
+  drawResistor(
+    adapterCtx,
+    W*.51,
+    lowerY,
+    130,
+    46,
+    `Rsh=${formatRo(m.adapterResistance,3)}Ω`,
+    "#22c55e"
+  );
+
+
+  /*
+  Current arrows.
+  */
+
+  drawArrow(
+    adapterCtx,
+    left+20,
+    centerY-35,
+    branchLeft-20,
+    centerY-35
+  );
+
+
+  adapterCtx.fillStyle=
+    "#86efac";
+
+
+  adapterCtx.font=
+    "bold 11px system-ui";
+
+
+  adapterCtx.textAlign=
+    "center";
+
+
+  adapterCtx.fillText(
+    `I=${formatRo(m.input*1000,1)}mA`,
+    (
+      left+
+      branchLeft
+    )/2,
+    centerY-51
+  );
+
+
+  drawArrow(
+    adapterCtx,
+    branchLeft+20,
+    upperY-35,
+    W*.43,
+    upperY-35,
+    "#60a5fa"
+  );
+
+
+  adapterCtx.fillStyle=
+    "#93c5fd";
+
+
+  adapterCtx.fillText(
+    `IA=${formatRo(m.mechanism*1000,1)}mA`,
+    W*.37,
+    upperY-51
+  );
+
+
+  drawArrow(
+    adapterCtx,
+    branchLeft+20,
+    lowerY+36,
+    W*.43,
+    lowerY+36,
+    "#86efac"
+  );
+
+
+  adapterCtx.fillStyle=
+    "#86efac";
+
+
+  adapterCtx.fillText(
+    `Ish=${formatRo(m.secondary*1000,1)}mA`,
+    W*.37,
+    lowerY+56
+  );
+
+
+  /*
+  Nodes.
+  */
+
+  [
+    branchLeft,
+    branchRight
+  ]
+  .forEach(
+    x=>{
+
+      adapterCtx.beginPath();
+
+      adapterCtx.arc(
+        x,
+        centerY,
+        8,
+        0,
+        Math.PI*2
+      );
+
+      adapterCtx.fillStyle=
+        "#ef4444";
+
+      adapterCtx.fill();
+
+    }
+  );
+
+
+  /*
+  Particle.
+  */
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.input>
+    1e-10
+  ){
+
+    const useUpper=
+      particlePhase<
+      1/
+      m.n;
+
+
+    const p=
+      useUpper
+        ? particlePhase*
+          m.n
+        : (
+            particlePhase-
+            1/m.n
+          )/
+          (
+            1-
+            1/m.n
+          );
+
+
+    const y=
+      useUpper
+        ? upperY
+        : lowerY;
+
+
+    const px=
+      branchLeft+
+      clamp(
+        p,
+        0,
+        1
+      )*
+      (
+        branchRight-
+        branchLeft
+      );
+
+
+    adapterCtx.beginPath();
+
+    adapterCtx.arc(
+      px,
+      y,
+      5,
+      0,
+      Math.PI*2
+    );
+
+
+    adapterCtx.fillStyle=
+      "#fde68a";
+
+
+    adapterCtx.fill();
+
+  }
+
+
+  adapterCtx.fillStyle=
+    "#e2e8f0";
+
+
+  adapterCtx.font=
+    "bold 15px system-ui";
+
+
+  adapterCtx.textAlign=
+    "left";
+
+
+  adapterCtx.fillText(
+    "Ampermetru cu șunt",
+    18,
+    29
+  );
+
+
+  adapterCtx.fillStyle=
+    "#bae6fd";
+
+
+  adapterCtx.font=
+    "11px system-ui";
+
+
+  adapterCtx.fillText(
+    "curentul se ramifică • aceeași tensiune pe cele două ramuri",
+    18,
+    50
+  );
+
+}
+
+
+/* =========================================================
+   VOLTMETER SCENE
+========================================================= */
+
+function drawVoltmeterScene(
+  m,
+  W,
+  H
+){
+
+  const y=
+    H*.50;
+
+
+  const left=
+    W*.10;
+
+
+  const right=
+    W*.90;
+
+
+  const radX=
+    W*.38;
+
+
+  const meterX=
+    W*.67;
+
+
+  adapterCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  adapterCtx.lineWidth=6;
+
+
+  adapterCtx.lineCap=
+    "round";
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    left,
+    y
+  );
+
+  adapterCtx.lineTo(
+    right,
+    y
+  );
+
+  adapterCtx.stroke();
+
+
+  /*
+  Hide wire.
+  */
+
+  adapterCtx.strokeStyle=
+    "#020617";
+
+
+  adapterCtx.lineWidth=18;
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    radX-80,
+    y
+  );
+
+  adapterCtx.lineTo(
+    radX+80,
+    y
+  );
+
+  adapterCtx.stroke();
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    meterX-62,
+    y
+  );
+
+  adapterCtx.lineTo(
+    meterX+62,
+    y
+  );
+
+  adapterCtx.stroke();
+
+
+  drawResistor(
+    adapterCtx,
+    radX,
+    y,
+    145,
+    48,
+    m.adapterResistance>=
+    1000000
+      ? `Rad=${formatRo(m.adapterResistance/1000000,2)}MΩ`
+      : `Rad=${formatRo(m.adapterResistance/1000,1)}kΩ`,
+    "#fb923c"
+  );
+
+
+  drawMeter(
+    adapterCtx,
+    meterX,
+    y,
+    50,
+    "V",
+    `RV=${formatRo(m.meterResistance/1000,1)}kΩ`
+  );
+
+
+  drawArrow(
+    adapterCtx,
+    left+20,
+    y-60,
+    W*.26,
+    y-60
+  );
+
+
+  adapterCtx.fillStyle=
+    "#86efac";
+
+
+  adapterCtx.font=
+    "bold 11px system-ui";
+
+
+  adapterCtx.textAlign=
+    "center";
+
+
+  adapterCtx.fillText(
+    `IV=${formatRo(m.seriesCurrent*1000,3)}mA`,
+    W*.19,
+    y-77
+  );
+
+
+  adapterCtx.fillStyle=
+    "#fdba74";
+
+
+  adapterCtx.fillText(
+    `Uad=${formatRo(m.secondary,2)}V`,
+    radX,
+    y+60
+  );
+
+
+  adapterCtx.fillStyle=
+    "#93c5fd";
+
+
+  adapterCtx.fillText(
+    `UV=${formatRo(m.mechanism,2)}V`,
+    meterX,
+    y+74
+  );
+
+
+  /*
+  Voltage braces in simple form.
+  */
+
+  adapterCtx.strokeStyle=
+    "#facc15";
+
+
+  adapterCtx.lineWidth=3;
+
+
+  adapterCtx.beginPath();
+
+  adapterCtx.moveTo(
+    left,
+    H*.75
+  );
+
+  adapterCtx.lineTo(
+    right,
+    H*.75
+  );
+
+  adapterCtx.stroke();
+
+
+  adapterCtx.fillStyle=
+    "#fde68a";
+
+
+  adapterCtx.font=
+    "bold 12px system-ui";
+
+
+  adapterCtx.fillText(
+    `U total = ${formatRo(m.input,2)} V`,
+    W*.50,
+    H*.80
+  );
+
+
+  /*
+  Particle.
+  */
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.seriesCurrent>
+    1e-12
+  ){
+
+    const px=
+      left+
+      particlePhase*
+      (
+        right-
+        left
+      );
+
+
+    adapterCtx.beginPath();
+
+    adapterCtx.arc(
+      px,
+      y,
+      5,
+      0,
+      Math.PI*2
+    );
+
+
+    adapterCtx.fillStyle=
+      "#fde68a";
+
+
+    adapterCtx.fill();
+
+  }
+
+
+  adapterCtx.fillStyle=
+    "#e2e8f0";
+
+
+  adapterCtx.font=
+    "bold 15px system-ui";
+
+
+  adapterCtx.textAlign=
+    "left";
+
+
+  adapterCtx.fillText(
+    "Voltmetru cu rezistență adițională",
+    18,
+    29
+  );
+
+
+  adapterCtx.fillStyle=
+    "#bae6fd";
+
+
+  adapterCtx.font=
+    "11px system-ui";
+
+
+  adapterCtx.fillText(
+    "același curent • tensiunile pe elementele serie se adună",
+    18,
+    50
+  );
+
+}
+
+
+/* =========================================================
+   DRAW ADAPTER
+========================================================= */
+
+function drawAdapterScene(
+  m
+){
+
+  const rect=
+    adapterCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    adapterCtx,
+    W,
+    H
+  );
+
+
+  if(
+    m.mode===
+    "ammeter"
+  ){
+
+    drawAmmeterScene(
+      m,
+      W,
+      H
+    );
+
+  }
+
+  else{
+
+    drawVoltmeterScene(
+      m,
+      W,
+      H
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   GAUGE
+========================================================= */
+
+function drawGauge(
+  m
+){
+
+  const rect=
+    gaugeCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  gaugeCtx.fillStyle=
+    "#f8fafc";
+
+
+  gaugeCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  gaugeCtx.fillStyle=
+    "#0f172a";
+
+
+  gaugeCtx.font=
+    "bold 15px system-ui";
+
+
+  gaugeCtx.textAlign=
+    "left";
+
+
+  gaugeCtx.fillText(
+    "Scala aparatului adaptat",
+    24,
+    30
+  );
+
+
+  const cx=
+    W*.50;
+
+
+  const cy=
+    H*.64;
+
+
+  const radius=
+    Math.min(
+      W*.36,
+      H*.37
+    );
+
+
+  const start=
+    Math.PI;
+
+
+  const end=
+    2*
+    Math.PI;
+
+
+  /*
+  Arc.
+  */
+
+  gaugeCtx.strokeStyle=
+    "#334155";
+
+
+  gaugeCtx.lineWidth=5;
+
+
+  gaugeCtx.beginPath();
+
+  gaugeCtx.arc(
+    cx,
+    cy,
+    radius,
+    start,
+    end
+  );
+
+  gaugeCtx.stroke();
+
+
+  /*
+  Ticks.
+  */
+
+  for(
+    let i=0;
+    i<=10;
+    i++
+  ){
+
+    const t=
+      i/
+      10;
+
+
+    const angle=
+      start+
+      (
+        end-
+        start
+      )*
+      t;
+
+
+    const major=
+      i%
+      2===
+      0;
+
+
+    const r1=
+      radius-
+      (
+        major
+          ? 17
+          : 10
+      );
+
+
+    const x1=
+      cx+
+      Math.cos(
+        angle
+      )*
+      r1;
+
+
+    const y1=
+      cy+
+      Math.sin(
+        angle
+      )*
+      r1;
+
+
+    const x2=
+      cx+
+      Math.cos(
+        angle
+      )*
+      radius;
+
+
+    const y2=
+      cy+
+      Math.sin(
+        angle
+      )*
+      radius;
+
+
+    gaugeCtx.strokeStyle=
+      "#475569";
+
+
+    gaugeCtx.lineWidth=
+      major
+        ? 2.5
+        : 1.5;
+
+
+    gaugeCtx.beginPath();
+
+    gaugeCtx.moveTo(
+      x1,
+      y1
+    );
+
+    gaugeCtx.lineTo(
+      x2,
+      y2
+    );
+
+    gaugeCtx.stroke();
+
+
+    if(
+      major
+    ){
+
+      let labelValue=
+        m.newMax*
+        t;
+
+
+      let label;
+
+
+      if(
+        m.mode===
+        "ammeter"
+      ){
+
+        if(
+          m.newMax<
+          1
+        ){
+
+          label=
+            formatRo(
+              labelValue*
+              1000,
+              0
+            );
+
+        }
+
+        else{
+
+          label=
+            formatRo(
+              labelValue,
+              1
+            );
+
+        }
+
+      }
+
+      else{
+
+        label=
+          formatRo(
+            labelValue,
+            1
+          );
+
+      }
+
+
+      const lr=
+        radius-
+        40;
+
+
+      const lx=
+        cx+
+        Math.cos(
+          angle
+        )*
+        lr;
+
+
+      const ly=
+        cy+
+        Math.sin(
+          angle
+        )*
+        lr;
+
+
+      gaugeCtx.fillStyle=
+        "#334155";
+
+
+      gaugeCtx.font=
+        "10px system-ui";
+
+
+      gaugeCtx.textAlign=
+        "center";
+
+
+      gaugeCtx.fillText(
+        label,
+        lx,
+        ly+3
+      );
+
+    }
+
+  }
+
+
+  /*
+  Needle.
+  */
+
+  const needleFraction=
+    clamp(
+      m.deflection,
+      0,
+      1.12
+    );
+
+
+  const angle=
+    start+
+    Math.PI*
+    needleFraction;
+
+
+  const needleRadius=
+    radius-
+    35;
+
+
+  const nx=
+    cx+
+    Math.cos(
+      angle
+    )*
+    needleRadius;
+
+
+  const ny=
+    cy+
+    Math.sin(
+      angle
+    )*
+    needleRadius;
+
+
+  gaugeCtx.strokeStyle=
+    m.deflection>
+    1
+      ? "#dc2626"
+      : "#2563eb";
+
+
+  gaugeCtx.lineWidth=5;
+
+
+  gaugeCtx.beginPath();
+
+  gaugeCtx.moveTo(
+    cx,
+    cy
+  );
+
+  gaugeCtx.lineTo(
+    nx,
+    ny
+  );
+
+  gaugeCtx.stroke();
+
+
+  gaugeCtx.beginPath();
+
+  gaugeCtx.arc(
+    cx,
+    cy,
+    10,
+    0,
+    Math.PI*2
+  );
+
+
+  gaugeCtx.fillStyle=
+    "#0f172a";
+
+
+  gaugeCtx.fill();
+
+
+  /*
+  Labels.
+  */
+
+  gaugeCtx.fillStyle=
+    "#475569";
+
+
+  gaugeCtx.font=
+    "bold 12px system-ui";
+
+
+  gaugeCtx.textAlign=
+    "center";
+
+
+  gaugeCtx.fillText(
+    m.mode===
+    "ammeter"
+      ? (
+          m.newMax<
+          1
+            ? "scala în mA"
+            : "scala în A"
+        )
+      : "scala în V",
+    cx,
+    cy+52
+  );
+
+
+  gaugeCtx.fillStyle=
+    m.deflection>
+    1
+      ? "#b91c1c"
+      : "#166534";
+
+
+  gaugeCtx.font=
+    "bold 14px system-ui";
+
+
+  gaugeCtx.fillText(
+    m.deflection>
+    1
+      ? "DEPĂȘIRE DOMENIU"
+      : `${formatRo(m.deflection*100,1)}% din scară`,
+    cx,
+    H*.91
+  );
+
+
+  /*
+  Old vs new scale note.
+  */
+
+  gaugeCtx.fillStyle=
+    "#334155";
+
+
+  gaugeCtx.font=
+    "11px system-ui";
+
+
+  gaugeCtx.fillText(
+    `aceeași deviație mecanică • domeniu extins de ${m.n} ori`,
+    cx,
+    62
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setAmmeterExample(){
+
+  modeSelect.value=
+    "ammeter";
+
+
+  factorSlider.value=
+    "10";
+
+
+  testSlider.value=
+    "100";
+
+
+  ammeterCurrentSlider.value=
+    "50";
+
+
+  ammeterResistanceSlider.value=
+    "2";
+
+
+  updateResults();
+
+}
+
+
+function setVoltmeterExample(){
+
+  modeSelect.value=
+    "voltmeter";
+
+
+  factorSlider.value=
+    "5";
+
+
+  testSlider.value=
+    "100";
+
+
+  voltmeterVoltageSlider.value=
+    "3";
+
+
+  voltmeterResistanceSlider.value=
+    "3";
+
+
+  updateResults();
+
+}
+
+
+function doubleFactor(){
+
+  let value=
+    Number(
+      factorSlider.value
+    );
+
+
+  value=
+    Math.min(
+      20,
+      value*
+      2
+    );
+
+
+  factorSlider.value=
+    String(
+      value
+    );
+
+
+  updateResults();
+
+}
+
+
+function setFullScale(){
+
+  testSlider.value=
+    "100";
+
+
+  updateResults();
+
+}
+
+
+function setOverload(){
+
+  testSlider.value=
+    "115";
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  modeSelect.value=
+    "ammeter";
+
+
+  factorSlider.value=
+    "10";
+
+
+  testSlider.value=
+    "70";
+
+
+  ammeterCurrentSlider.value=
+    "50";
+
+
+  ammeterResistanceSlider.value=
+    "2";
+
+
+  voltmeterVoltageSlider.value=
+    "3";
+
+
+  voltmeterResistanceSlider.value=
+    "3";
+
+
+  animationSelect.value=
+    "on";
+
+
+  particlePhase=0;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  modeSelect,
+  factorSlider,
+  testSlider,
+  animationSelect,
+  ammeterCurrentSlider,
+  ammeterResistanceSlider,
+  voltmeterVoltageSlider,
+  voltmeterResistanceSlider
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "ammeterExampleBtn"
+  )
+  .addEventListener(
+    "click",
+    setAmmeterExample
+  );
+
+
+document
+  .getElementById(
+    "voltmeterExampleBtn"
+  )
+  .addEventListener(
+    "click",
+    setVoltmeterExample
+  );
+
+
+document
+  .getElementById(
+    "doubleFactorBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleFactor
+  );
+
+
+document
+  .getElementById(
+    "fullScaleBtn"
+  )
+  .addEventListener(
+    "click",
+    setFullScale
+  );
+
+
+document
+  .getElementById(
+    "overloadBtn"
+  )
+  .addEventListener(
+    "click",
+    setOverload
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.percent>
+    0
+  ){
+
+    const speed=
+      .08+
+      Math.min(
+        m.percent,
+        1.2
+      )*
+      .16;
+
+
+    particlePhase+=
+      speed*
+      dt;
+
+
+    if(
+      particlePhase>=1
+    ){
+
+      particlePhase-=1;
+
+    }
+
+  }
+
+
+  drawAdapterScene(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    adapterCanvas,
+    adapterCtx
+  );
+
+
+  resizeCanvas(
+    gaugeCanvas,
+    gaugeCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawAdapterScene(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește conexiunea rezistenței de adaptare și relația corespunzătoare.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Stăpânești adaptarea domeniilor de măsurare.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează formulele pentru șunt și rezistența adițională.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia ideea-cheie: ampermetru → șunt paralel; voltmetru → rezistență adițională serie.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      adapterCanvas,
+      adapterCtx
+    );
+
+
+    resizeCanvas(
+      gaugeCanvas,
+      gaugeCtx
+    );
+
+
+    resetAll();
+
+
+    const m=
+      updateResults();
+
+
+    drawAdapterScene(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
