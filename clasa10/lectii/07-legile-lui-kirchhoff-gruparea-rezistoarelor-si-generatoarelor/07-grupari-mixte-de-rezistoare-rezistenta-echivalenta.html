@@ -1,1 +1,8057 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+7. Grupări mixte de rezistoare. Rezistența echivalentă | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Grupări mixte de rezistoare: identificarea conexiunilor serie și paralel, reducerea succesivă a circuitului, calculul rezistenței echivalente, refacerea curenților și tensiunilor și simulator interactiv – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROPERTY CARDS
+========================================================= */
+
+.rule-card{
+
+  padding:20px;
+
+  background:#fff;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.rule-series{
+  border-color:#2563eb;
+}
+
+.rule-parallel{
+  border-color:#16a34a;
+}
+
+.rule-mixed{
+  border-color:#f59e0b;
+}
+
+.rule-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:48px;
+  height:48px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+.rule-series .rule-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.rule-parallel .rule-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+.rule-mixed .rule-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+
+/* =========================================================
+   NETWORK FIGURE
+========================================================= */
+
+.network-figure{
+
+  min-height:390px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.network-figure svg{
+
+  width:100%;
+  max-width:850px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-resistor{
+
+  fill:#fff7ed;
+
+  stroke:#ea580c;
+
+  stroke-width:4;
+
+}
+
+.svg-node{
+
+  fill:#dc2626;
+
+  stroke:#7f1d1d;
+
+  stroke-width:3;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:20px;
+
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:15px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   REDUCTION CHAIN
+========================================================= */
+
+.reduction-chain{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.reduction-box{
+
+  padding:18px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:12px;
+
+  text-align:center;
+
+}
+
+.reduction-arrow{
+
+  color:#2563eb;
+
+  font-size:1.7rem;
+
+  font-weight:900;
+
+  text-align:center;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.08fr .92fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#networkCanvas,
+#reductionCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:620px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+
+/* =========================================================
+   REDUCTION PANEL
+========================================================= */
+
+.reduction-panel{
+
+  margin-top:18px;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.reduction-step-list{
+
+  display:grid;
+
+  gap:10px;
+
+}
+
+.reduction-step-item{
+
+  padding:13px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #e2e8f0;
+
+  border-radius:10px;
+
+}
+
+.reduction-step-item.active{
+
+  color:#1e3a8a;
+  background:#eff6ff;
+
+  border-color:#60a5fa;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .reduction-chain{
+    grid-template-columns:1fr;
+  }
+
+  .reduction-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #networkCanvas,
+  #reductionCanvas{
+    height:560px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 7
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Grupări mixte
+</span>
+
+</div>
+
+
+<h1>
+Grupări mixte de rezistoare. Rezistența echivalentă
+</h1>
+
+
+<p class="subtitle">
+Într-un circuit real,
+rezistoarele pot apărea simultan în conexiuni serie și paralel.
+Pentru a determina rezistența echivalentă,
+nu aplicăm toate formulele deodată:
+identificăm o subgrupare simplă,
+o înlocuim cu echivalentul ei
+și repetăm procesul până rămâne un singur rezistor.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să recunoști conexiunile serie și paralel într-o rețea mixtă;
+</li>
+
+<li>
+să folosești nodurile pentru identificarea corectă a conexiunilor;
+</li>
+
+<li>
+să alegi ordinea corectă a reducerilor;
+</li>
+
+<li>
+să calculezi rezistența echivalentă pas cu pas;
+</li>
+
+<li>
+să verifici plauzibilitatea rezultatului;
+</li>
+
+<li>
+să calculezi curentul total furnizat de sursă;
+</li>
+
+<li>
+să reconstruiești curenții și tensiunile din circuitul inițial;
+</li>
+
+<li>
+să recunoști situațiile care nu pot fi reduse doar prin formule serie/paralel.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Strategia esențială</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{identific}
+\rightarrow
+\text{reduc}
+\rightarrow
+\text{redesenez}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{repet}
+\rightarrow
+R_{eq}
+}
+\]
+
+</div>
+
+<p>
+Pentru mărimile interne:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{eq}
+\rightarrow
+I_{\text{total}}
+\rightarrow
+\text{revenire în sens invers}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 Recapitulare – serie și paralel</h2>
+
+<div class="grid-3">
+
+
+<div class="rule-card rule-series">
+
+<div class="rule-icon">
+S
+</div>
+
+<h3>Serie</h3>
+
+<p>
+Rezistoarele sunt succesive pe aceeași ramură,
+fără ramificație între ele.
+</p>
+
+<div class="formula">
+
+\[
+I_1=I_2
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_s=R_1+R_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="rule-card rule-parallel">
+
+<div class="rule-icon">
+P
+</div>
+
+<h3>Paralel</h3>
+
+<p>
+Rezistoarele sunt conectate între
+aceleași două noduri.
+</p>
+
+<div class="formula">
+
+\[
+U_1=U_2
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\frac1{R_p}
+=
+\frac1{R_1}
++
+\frac1{R_2}
+\]
+
+</div>
+
+</div>
+
+
+<div class="rule-card rule-mixed">
+
+<div class="rule-icon">
+M
+</div>
+
+<h3>Mixt</h3>
+
+<p>
+Circuitul conține simultan
+subgrupări serie și paralel.
+</p>
+
+<p>
+Reducerea se face
+<strong>în mai multe etape</strong>.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CRITERIA
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Nu te baza pe aspectul desenului</h2>
+
+<div class="red-box">
+
+Două rezistoare nu sunt „în serie”
+doar pentru că apar unul după altul pe hârtie.
+
+Două rezistoare nu sunt „în paralel”
+doar pentru că sunt desenate unul deasupra celuilalt.
+</div>
+
+
+<h3>Criteriul pentru serie</h3>
+
+<p>
+Două rezistoare sunt în serie dacă:
+</p>
+
+<ul>
+
+<li>
+sunt străbătute obligatoriu de același curent;
+</li>
+
+<li>
+punctul dintre ele nu introduce o ramificare relevantă.
+</li>
+
+</ul>
+
+
+<h3>Criteriul pentru paralel</h3>
+
+<p>
+Două rezistoare sunt în paralel dacă fiecare dintre ele
+este conectat între:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{aceleași două noduri}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Când ai dubii,
+<strong>marchează nodurile</strong>.
+
+Topologia conexiunilor este mai importantă
+decât forma geometrică a schemei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MAIN EXAMPLE NETWORK
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Exemplul de bază</h2>
+
+<p>
+Considerăm circuitul:
+</p>
+
+
+<div class="network-figure">
+
+<svg
+  viewBox="0 0 880 430"
+  role="img"
+  aria-label="Circuit mixt cu R1 în serie, R2 și R3 în paralel și R4 în serie">
+
+<!-- left wire -->
+
+<path
+  class="svg-wire"
+  d="M90 215 H170"/>
+
+<!-- R1 -->
+
+<rect
+  class="svg-resistor"
+  x="170"
+  y="187"
+  width="120"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="210"
+  y="222">
+R₁
+</text>
+
+<!-- wire to A -->
+
+<path
+  class="svg-wire"
+  d="M290 215 H355"/>
+
+<!-- node A -->
+
+<circle
+  class="svg-node"
+  cx="355"
+  cy="215"
+  r="11"/>
+
+<text
+  class="svg-small"
+  x="340"
+  y="255">
+A
+</text>
+
+<!-- upper branch -->
+
+<path
+  class="svg-wire"
+  d="M355 215 V115 H430"/>
+
+<rect
+  class="svg-resistor"
+  x="430"
+  y="87"
+  width="130"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="475"
+  y="122">
+R₂
+</text>
+
+<path
+  class="svg-wire"
+  d="M560 115 H620 V215"/>
+
+<!-- lower branch -->
+
+<path
+  class="svg-wire"
+  d="M355 215 V315 H430"/>
+
+<rect
+  class="svg-resistor"
+  x="430"
+  y="287"
+  width="130"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="475"
+  y="322">
+R₃
+</text>
+
+<path
+  class="svg-wire"
+  d="M560 315 H620 V215"/>
+
+<!-- node B -->
+
+<circle
+  class="svg-node"
+  cx="620"
+  cy="215"
+  r="11"/>
+
+<text
+  class="svg-small"
+  x="608"
+  y="255">
+B
+</text>
+
+<!-- R4 -->
+
+<path
+  class="svg-wire"
+  d="M620 215 H675"/>
+
+<rect
+  class="svg-resistor"
+  x="675"
+  y="187"
+  width="120"
+  height="56"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="715"
+  y="222">
+R₄
+</text>
+
+<path
+  class="svg-wire"
+  d="M795 215 H845"/>
+
+<!-- labels -->
+
+<text
+  class="svg-small"
+  x="450"
+  y="58">
+R₂ și R₃ au aceleași noduri A și B
+</text>
+
+<text
+  class="svg-small"
+  x="270"
+  y="390">
+R₁ — (R₂ || R₃) — R₄
+</text>
+
+</svg>
+
+</div>
+
+
+<p>
+Observăm că:
+</p>
+
+<div class="formula">
+
+\[
+R_2
+\quad\text{și}\quad
+R_3
+\]
+
+</div>
+
+sunt conectate între aceleași două noduri
+\(A\) și \(B\).
+Prin urmare:
+</p>
+
+<div class="formula">
+
+\[
+R_2\parallel R_3
+\]
+
+</div>
+
+<p>
+După înlocuirea lor cu \(R_{23}\),
+rămân trei rezistențe în serie:
+</p>
+
+<div class="formula">
+
+\[
+R_1,\quad
+R_{23},\quad
+R_4
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Algoritmul de reducere</h2>
+
+<ol class="steps">
+
+<li>
+
+<strong>Marchează nodurile importante.</strong>
+
+<p>
+Acestea te ajută să vezi care componente sunt cu adevărat în paralel.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Caută o subgrupare evidentă.</strong>
+
+<p>
+Alege o pereche sau un grup simplu:
+serie ori paralel.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Calculează echivalentul subgrupării.</strong>
+
+<p>
+Pentru serie:
+</p>
+
+<div class="formula">
+
+\[
+R_s=\sum R_k
+\]
+
+</div>
+
+<p>
+Pentru paralel:
+</p>
+
+<div class="formula">
+
+\[
+\frac1{R_p}
+=
+\sum\frac1{R_k}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Înlocuiește subgruparea cu echivalentul ei.</strong>
+
+<p>
+Păstrează aceleași două borne externe.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Redesenează mental sau pe hârtie circuitul.</strong>
+
+<p>
+După fiecare reducere,
+topologia devine mai simplă.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Repetă.</strong>
+
+<p>
+Continuă până rămâne un singur rezistor:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Verifică rezultatul.</strong>
+
+<p>
+Folosește proprietățile serie/paralel
+și estimări rapide de ordin de mărime.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     COMPLETE DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Calcul complet al rezistenței echivalente</h2>
+
+<p>
+Considerăm:
+</p>
+
+<div class="formula">
+
+\[
+R_1=4\,\Omega
+\]
+
+\[
+R_2=6\,\Omega
+\]
+
+\[
+R_3=3\,\Omega
+\]
+
+\[
+R_4=5\,\Omega
+\]
+
+</div>
+
+
+<h3>Pasul 1 – Paralelul \(R_2\parallel R_3\)</h3>
+
+<div class="formula">
+
+\[
+R_{23}
+=
+\frac{R_2R_3}{R_2+R_3}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_{23}
+=
+\frac{6\cdot3}{6+3}
+=
+\frac{18}{9}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{23}=2\,\Omega
+}
+\]
+
+</div>
+
+
+<h3>Pasul 2 – Circuitul redus</h3>
+
+<p>
+Acum avem:
+</p>
+
+<div class="formula">
+
+\[
+R_1-R_{23}-R_4
+\]
+
+</div>
+
+adică trei rezistoare în serie.
+</p>
+
+
+<h3>Pasul 3 – Echivalentul total</h3>
+
+<div class="formula">
+
+\[
+R_{eq}
+=
+R_1+R_{23}+R_4
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_{eq}
+=
+4+2+5
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{eq}=11\,\Omega
+}
+\]
+
+</div>
+
+
+<div class="reduction-chain">
+
+
+<div class="reduction-box">
+
+<strong>Circuit inițial</strong>
+
+<div class="formula">
+
+\[
+R_1+
+(R_2\parallel R_3)
++R_4
+\]
+
+</div>
+
+</div>
+
+
+<div class="reduction-arrow">
+→
+</div>
+
+
+<div class="reduction-box">
+
+<strong>Prima reducere</strong>
+
+<div class="formula">
+
+\[
+R_1+R_{23}+R_4
+\]
+
+</div>
+
+</div>
+
+
+<div class="reduction-arrow">
+→
+</div>
+
+
+<div class="reduction-box">
+
+<strong>Echivalent</strong>
+
+<div class="formula">
+
+\[
+R_{eq}=11\,\Omega
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SOURCE CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>5. După reducere – curentul total</h2>
+
+<p>
+Presupunem că rețeaua este conectată la:
+</p>
+
+<div class="formula">
+
+\[
+U=22\,V
+\]
+
+</div>
+
+<p>
+Cum sursa „vede”:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}=11\,\Omega
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{U}{R_{eq}}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I=
+\frac{22}{11}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Acest curent este curentul prin elementele aflate în serie
+cu întreaga grupare:
+
+\[
+I_1=I_4=2\,A
+\]
+
+În nodul \(A\),
+curentul se va împărți între \(R_2\) și \(R_3\).
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECONSTRUCTION
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Revenirea la circuitul inițial</h2>
+
+<p>
+Reducerea s-a făcut:
+</p>
+
+<div class="formula">
+
+\[
+\text{circuit inițial}
+\rightarrow
+R_{23}
+\rightarrow
+R_{eq}
+\]
+
+</div>
+
+<p>
+Pentru a determina mărimile interne,
+revenim în sens invers:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}
+\rightarrow
+R_{23}
+\rightarrow
+R_2,\ R_3
+\]
+
+</div>
+
+
+<h3>Pasul 1 – Tensiunea pe gruparea paralelă</h3>
+
+<p>
+Curentul total este:
+</p>
+
+<div class="formula">
+
+\[
+I=2\,A
+\]
+
+</div>
+
+iar:
+</p>
+
+<div class="formula">
+
+\[
+R_{23}=2\,\Omega
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+U_{23}
+=
+IR_{23}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U_{23}=4\,V
+}
+\]
+
+</div>
+
+
+<h3>Pasul 2 – Tensiunea pe fiecare ramură</h3>
+
+<p>
+Fiind conectate în paralel:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U_2=U_3=4\,V
+}
+\]
+
+</div>
+
+
+<h3>Pasul 3 – Curenții de ramură</h3>
+
+<div class="formula">
+
+\[
+I_2=
+\frac{U_2}{R_2}
+=
+\frac46
+=
+\frac23\,A
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_3=
+\frac{U_3}{R_3}
+=
+\frac43\,A
+\]
+
+</div>
+
+
+<h3>Pasul 4 – Verificare Kirchhoff</h3>
+
+<div class="formula">
+
+\[
+I_2+I_3
+=
+\frac23+\frac43
+=
+2\,A
+\]
+
+</div>
+
+adică:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=I_2+I_3
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     IMPORTANT PRINCIPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Regula „reduci înainte, reconstruiești înapoi”</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Pentru \(R_{eq}\)</h3>
+
+<p>
+Mergi din circuitul complicat spre cel simplu:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{interior}
+\rightarrow
+\text{exterior}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pentru \(I_k\) și \(U_k\)</h3>
+
+<p>
+După ce găsești curentul total,
+revii în ordinea inversă:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{exterior}
+\rightarrow
+\text{interior}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+În problemele mixte,
+<strong>rezistența echivalentă</strong> se găsește prin reducere.
+
+<strong>Curenții și tensiunile individuale</strong>
+se găsesc apoi prin reconstruirea circuitului,
+etapă cu etapă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     OTHER TOPOLOGY
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Alt tip de grupare mixtă</h2>
+
+<p>
+Considerăm:
+</p>
+
+<div class="formula">
+
+\[
+(R_1+R_2)
+\parallel
+(R_3+R_4)
+\]
+
+</div>
+
+<p>
+Prima ramură conține \(R_1\) și \(R_2\) în serie:
+</p>
+
+<div class="formula">
+
+\[
+R_{12}=R_1+R_2
+\]
+
+</div>
+
+<p>
+A doua ramură:
+</p>
+
+<div class="formula">
+
+\[
+R_{34}=R_3+R_4
+\]
+
+</div>
+
+<p>
+Apoi cele două ramuri sunt în paralel:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{eq}
+=
+\frac{R_{12}R_{34}}
+{R_{12}+R_{34}}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Ordinea operațiilor este impusă de
+<strong>conexiunile fizice</strong>,
+nu de o convenție matematică arbitrară.
+
+Parantezele din scrierea:
+
+\[
+(R_1+R_2)\parallel(R_3+R_4)
+\]
+
+descriu topologia circuitului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THIRD TOPOLOGY
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Două grupări paralele în serie</h2>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+(R_1\parallel R_2)
++
+(R_3\parallel R_4)
+\]
+
+</div>
+
+calculăm:
+</p>
+
+<div class="formula">
+
+\[
+R_{12}
+=
+\frac{R_1R_2}{R_1+R_2}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+R_{34}
+=
+\frac{R_3R_4}{R_3+R_4}
+\]
+
+</div>
+
+<p>
+iar apoi:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{eq}
+=
+R_{12}+R_{34}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NOT ALWAYS REDUCIBLE
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Nu orice rețea se reduce direct prin serie și paralel</h2>
+
+<div class="orange-box">
+
+Unele rețele au o topologie în care nu găsim
+nicio pereche simplă de rezistoare
+care să fie în serie sau în paralel.
+
+În astfel de situații,
+formulele de grupare nu sunt suficiente.
+</div>
+
+<p>
+Atunci putem reveni la metoda generală:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{Legile lui Kirchhoff}
+}
+\]
+
+</div>
+
+<p>
+Aceasta este una dintre ideile importante ale capitolului:
+formulele de serie și paralel sunt
+<strong>scurtături pentru anumite topologii</strong>,
+în timp ce legile lui Kirchhoff au aplicabilitate mai generală.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Serie + paralel</h3>
+
+<p>
+Se dă:
+</p>
+
+<div class="formula">
+
+\[
+R_1=4\,\Omega,
+\quad
+R_2=6\,\Omega,
+\quad
+R_3=3\,\Omega
+\]
+
+</div>
+
+<p>
+cu:
+</p>
+
+<div class="formula">
+
+\[
+R_1+(R_2\parallel R_3)
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Mai întâi:
+
+\[
+R_{23}
+=
+\frac{6\cdot3}{6+3}
+=
+2\,\Omega
+\]
+
+Apoi:
+
+\[
+R_{eq}
+=
+R_1+R_{23}
+=
+4+2
+\]
+
+\[
+\boxed{
+R_{eq}=6\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Serie pe fiecare ramură</h3>
+
+<p>
+Avem:
+</p>
+
+<div class="formula">
+
+\[
+(R_1+R_2)
+\parallel
+(R_3+R_4)
+\]
+
+</div>
+
+cu:
+</p>
+
+<div class="formula">
+
+\[
+R_1=2\,\Omega,
+\quad
+R_2=4\,\Omega,
+\quad
+R_3=3\,\Omega,
+\quad
+R_4=3\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_{12}=2+4=6\,\Omega
+\]
+
+\[
+R_{34}=3+3=6\,\Omega
+\]
+
+Cele două echivalente sunt în paralel:
+
+\[
+R_{eq}
+=
+\frac{6\cdot6}{6+6}
+=
+\frac{36}{12}
+\]
+
+\[
+\boxed{
+R_{eq}=3\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Două paraleluri în serie</h3>
+
+<p>
+Se dau:
+</p>
+
+<div class="formula">
+
+\[
+R_1=12\,\Omega,
+\quad
+R_2=6\,\Omega
+\]
+
+\[
+R_3=8\,\Omega,
+\quad
+R_4=8\,\Omega
+\]
+
+</div>
+
+<p>
+în configurația:
+</p>
+
+<div class="formula">
+
+\[
+(R_1\parallel R_2)
++
+(R_3\parallel R_4)
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Prima grupare:
+
+\[
+R_{12}
+=
+\frac{12\cdot6}{12+6}
+=
+4\,\Omega
+\]
+
+A doua:
+
+\[
+R_{34}
+=
+\frac{8\cdot8}{8+8}
+=
+4\,\Omega
+\]
+
+Sunt apoi în serie:
+
+\[
+R_{eq}=4+4
+\]
+
+\[
+\boxed{
+R_{eq}=8\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Curentul total</h3>
+
+<p>
+O grupare mixtă are:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}=15\,\Omega
+\]
+
+</div>
+
+și este conectată la:
+</p>
+
+<div class="formula">
+
+\[
+U=30\,V
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I=
+\frac{U}{R_{eq}}
+=
+\frac{30}{15}
+\]
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 5 – Reconstruirea circuitului</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+R_1=4\,\Omega,
+\quad
+R_2=6\,\Omega,
+\quad
+R_3=3\,\Omega,
+\quad
+R_4=5\,\Omega
+\]
+
+</div>
+
+<p>
+în configurația:
+</p>
+
+<div class="formula">
+
+\[
+R_1+(R_2\parallel R_3)+R_4
+\]
+
+</div>
+
+<p>
+sursa are:
+</p>
+
+<div class="formula">
+
+\[
+U=22\,V
+\]
+
+</div>
+
+<p>
+Determină \(I_2\) și \(I_3\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Am găsit deja:
+
+\[
+R_{23}=2\,\Omega
+\]
+
+și:
+
+\[
+R_{eq}=11\,\Omega
+\]
+
+Curentul total:
+
+\[
+I=
+\frac{22}{11}
+=
+2\,A
+\]
+
+Tensiunea pe paralel:
+
+\[
+U_{23}
+=
+IR_{23}
+=
+2\cdot2
+=
+4\,V
+\]
+
+Așadar:
+
+\[
+I_2=
+\frac46
+=
+\frac23\,A
+\]
+
+și:
+
+\[
+I_3=
+\frac43\,A
+\]
+
+Deci:
+
+\[
+\boxed{
+I_2\approx0,67\,A
+}
+\]
+
+\[
+\boxed{
+I_3\approx1,33\,A
+}
+\]
+
+Verificare:
+
+\[
+0,67+1,33\approx2\,A
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 6 – Identificarea ordinii</h3>
+
+<p>
+Avem:
+</p>
+
+<div class="formula">
+
+\[
+R_1+
+\left[
+R_2\parallel(R_3+R_4)
+\right]
+\]
+
+</div>
+
+<p>
+Care este prima operație?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Mai întâi \(R_3\) și \(R_4\) sunt în serie:
+
+\[
+R_{34}=R_3+R_4
+\]
+
+Apoi:
+
+\[
+R_2\parallel R_{34}
+\]
+
+și abia la final adăugăm în serie \(R_1\).
+
+Ordinea este deci:
+
+\[
+R_3+R_4
+\]
+
+\[
+\downarrow
+\]
+
+\[
+R_2\parallel R_{34}
+\]
+
+\[
+\downarrow
+\]
+
+\[
+R_1+R_{234}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Reducerea unei grupări mixte</h2>
+
+<p>
+Alege una dintre cele trei topologii.
+Modifică rezistențele și urmărește
+cum rețeaua se reduce treptat până la un singur rezistor.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="topologySelect">
+Topologia
+</label>
+
+<select id="topologySelect">
+
+<option value="A" selected>
+R₁ + (R₂ ∥ R₃) + R₄
+</option>
+
+<option value="B">
+(R₁ + R₂) ∥ (R₃ + R₄)
+</option>
+
+<option value="C">
+(R₁ ∥ R₂) + (R₃ ∥ R₄)
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="sourceSlider">
+Tensiunea sursei \(U\) [V]
+</label>
+
+<input
+  id="sourceSlider"
+  type="range"
+  min="1"
+  max="30"
+  step="1"
+  value="22">
+
+<span
+  class="range-value"
+  id="sourceLabel">
+22 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r1Slider">
+\(R_1\) [Ω]
+</label>
+
+<input
+  id="r1Slider"
+  type="range"
+  min="1"
+  max="30"
+  step="1"
+  value="4">
+
+<span
+  class="range-value"
+  id="r1Label">
+4 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r2Slider">
+\(R_2\) [Ω]
+</label>
+
+<input
+  id="r2Slider"
+  type="range"
+  min="1"
+  max="30"
+  step="1"
+  value="6">
+
+<span
+  class="range-value"
+  id="r2Label">
+6 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r3Slider">
+\(R_3\) [Ω]
+</label>
+
+<input
+  id="r3Slider"
+  type="range"
+  min="1"
+  max="30"
+  step="1"
+  value="3">
+
+<span
+  class="range-value"
+  id="r3Label">
+3 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r4Slider">
+\(R_4\) [Ω]
+</label>
+
+<input
+  id="r4Slider"
+  type="range"
+  min="1"
+  max="30"
+  step="1"
+  value="5">
+
+<span
+  class="range-value"
+  id="r4Label">
+5 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="stepSelect">
+Etapa reducerii
+</label>
+
+<select id="stepSelect">
+
+<option value="0">
+0 – circuit inițial
+</option>
+
+<option value="1">
+1 – prima reducere
+</option>
+
+<option value="2">
+2 – a doua reducere
+</option>
+
+<option value="3" selected>
+3 – rezistor echivalent
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație curent
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="nextStepBtn">
+
+Pas următor →
+
+</button>
+
+
+<button
+  class="green-button"
+  id="exampleABtn">
+
+Exemplul A
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="exampleBBtn">
+
+Exemplul B
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="exampleCBtn">
+
+Exemplul C
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="networkCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="reductionCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Rezistența echivalentă
+</span>
+
+<strong id="reqValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curentul total
+</span>
+
+<strong id="totalCurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Prima subgrupare
+</span>
+
+<strong id="sub1Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+A doua subgrupare
+</span>
+
+<strong id="sub2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_1\)
+</span>
+
+<strong id="i1Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_2\)
+</span>
+
+<strong id="i2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_3\)
+</span>
+
+<strong id="i3Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_4\)
+</span>
+
+<strong id="i4Value">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Alege topologia și urmărește reducerea.
+</div>
+
+
+<div class="reduction-panel">
+
+<h3 style="margin-top:0;">
+Pașii reducerii
+</h3>
+
+<div
+  class="reduction-step-list"
+  id="reductionStepList">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Reproduce exemplul lecției</h3>
+
+<p>
+Alege topologia:
+</p>
+
+<div class="formula">
+
+\[
+R_1+(R_2\parallel R_3)+R_4
+\]
+
+</div>
+
+<p>
+și valorile:
+</p>
+
+<div class="formula">
+
+\[
+4,\ 6,\ 3,\ 5\,\Omega
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}=11\,\Omega
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Urmărește etapele</h3>
+
+<p>
+Pornește de la etapa 0 și apasă:
+</p>
+
+<p>
+<strong>Pas următor</strong>.
+</p>
+
+<p>
+Ce componente dispar la fiecare reducere?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Schimbă numai \(R_2\)</h3>
+
+<p>
+În topologia A,
+observă cum se modifică:
+</p>
+
+<div class="formula">
+
+\[
+R_{23}
+\]
+
+</div>
+
+și apoi:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Două ramuri serie</h3>
+
+<p>
+Alege topologia B.
+</p>
+
+<p>
+Identifică mai întâi:
+</p>
+
+<div class="formula">
+
+\[
+R_{12}
+\quad\text{și}\quad
+R_{34}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Două paraleluri</h3>
+
+<p>
+Alege topologia C.
+</p>
+
+<p>
+Verifică dacă:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq}
+=
+R_{12}+R_{34}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Reconstruiește curenții</h3>
+
+<p>
+După calculul lui \(R_{eq}\),
+compară curenții individuali afișați.
+</p>
+
+<p>
+Verifică Legea I în fiecare ramificare.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – verificarea rezistenței echivalente</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>3–4 rezistoare;</li>
+
+<li>multimetru cu funcție de ohmmetru;</li>
+
+<li>conductoare de legătură;</li>
+
+<li>placă de conexiuni, dacă este disponibilă.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scop</h3>
+
+<p>
+Compararea valorii calculate:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq,\ calc}
+\]
+
+</div>
+
+cu valoarea măsurată:
+</p>
+
+<div class="formula">
+
+\[
+R_{eq,\ măs}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+
+Măsoară separat rezistențele:
+\[
+R_1,\ R_2,\ R_3
+\]
+
+</li>
+
+
+<li>
+
+Construiește, de exemplu:
+\[
+R_1+(R_2\parallel R_3)
+\]
+
+</li>
+
+
+<li>
+
+Calculează mai întâi:
+\[
+R_{23}
+\]
+
+</li>
+
+
+<li>
+
+Calculează:
+\[
+R_{eq}=R_1+R_{23}
+\]
+
+</li>
+
+
+<li>
+
+Cu circuitul
+<strong>nealimentat</strong>,
+măsoară rezistența între bornele externe.
+</li>
+
+
+<li>
+
+Compară rezultatul calculat cu cel măsurat.
+
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Ohmmetrul se folosește numai pe un circuit nealimentat.
+
+Nu măsura rezistența echivalentă
+cu sursa de tensiune conectată la circuit.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PLAUSIBILITY CHECKS
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Cum verifici rapid dacă rezultatul este plauzibil?</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Pentru o reducere serie</h3>
+
+<p>
+Echivalentul trebuie să fie:
+</p>
+
+<div class="formula">
+
+\[
+R_s>
+R_k
+\]
+
+</div>
+
+<p>
+față de fiecare componentă individuală pozitivă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pentru o reducere paralel</h3>
+
+<p>
+Echivalentul trebuie să fie:
+</p>
+
+<div class="formula">
+
+\[
+R_p<R_{\min}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+Aceste teste se aplică
+<strong>subgrupării analizate</strong>.
+
+Într-un circuit mixt,
+rezistența totală poate fi apoi mărită din nou
+prin componente aflate în serie cu acel paralel.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISTAKES
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. Aplic toate formulele simultan.</h3>
+
+<p>
+Reducerea unei rețele mixte se face
+pas cu pas.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. Consider două rezistoare în paralel pentru că sunt desenate paralel.</h3>
+
+<p>
+Trebuie să verifici dacă au
+<strong>aceleași două noduri terminale</strong>.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. Consider serie două rezistoare separate de o ramificație.</h3>
+
+<p>
+Dacă între ele curentul se poate împărți,
+nu mai sunt o grupare serie simplă.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. Nu redesenez circuitul după reducere.</h3>
+
+<p>
+Redesenarea reduce mult riscul
+de a aplica următoarea formulă greșit.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. Folosesc produs pe sumă pentru orice paralel.</h3>
+
+<p>
+Formula:
+</p>
+
+<div class="formula">
+
+\[
+R_p=
+\frac{R_1R_2}{R_1+R_2}
+\]
+
+</div>
+
+este forma directă pentru două rezistoare.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. După ce găsesc \(R_{eq}\), atribui același curent tuturor rezistoarelor.</h3>
+
+<p>
+Acest lucru este fals în ramurile paralele.
+Curentul se împarte.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. În ramurile paralele împart tensiunea.</h3>
+
+<p>
+Rezistoarele în paralel au aceeași tensiune.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. Forțez orice rețea să fie serie-paralel.</h3>
+
+<p>
+Unele rețele necesită aplicarea directă
+a legilor lui Kirchhoff.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce este util să marchezi nodurile înainte de a calcula?
+</li>
+
+<li>
+De ce două rezistoare conectate între aceleași noduri sunt în paralel chiar dacă desenul lor arată diferit?
+</li>
+
+<li>
+De ce trebuie redesenat circuitul după fiecare reducere?
+</li>
+
+<li>
+De ce ordinea reducerilor este determinată de topologia circuitului?
+</li>
+
+<li>
+Ce se întâmplă cu rezistența unui subgrup dacă îi adaugi un rezistor în serie?
+</li>
+
+<li>
+Ce se întâmplă cu rezistența unui subgrup dacă îi adaugi o nouă ramură paralelă?
+</li>
+
+<li>
+De ce curentul total se poate calcula imediat după ce cunoști \(R_{eq}\)?
+</li>
+
+<li>
+De ce trebuie să revii în sens invers pentru a găsi curenții de ramură?
+</li>
+
+<li>
+Cum verifici Legea I după reconstruirea unei ramificații?
+</li>
+
+<li>
+Cum îți dai seama că o rețea nu poate fi redusă doar prin serie și paralel?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Două rezistoare sunt sigur în paralel dacă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+sunt desenate pe două linii paralele
+</button>
+
+<button class="answer-btn">
+sunt conectate între aceleași două noduri
+</button>
+
+<button class="answer-btn">
+au aceeași rezistență
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Două rezistoare sunt în serie dacă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+sunt străbătute obligatoriu de același curent și nu există ramificație între ele
+</button>
+
+<button class="answer-btn">
+au aceeași tensiune
+</button>
+
+<button class="answer-btn">
+sunt desenate vertical
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Pentru
+\(R_1+(R_2\parallel R_3)\),
+prima reducere este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_1+R_2\)
+</button>
+
+<button class="answer-btn">
+\(R_1\parallel R_3\)
+</button>
+
+<button class="answer-btn">
+\(R_2\parallel R_3\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Pentru
+\(R_2=6\,\Omega\)
+și
+\(R_3=3\,\Omega\)
+în paralel:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{23}=9\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{23}=2\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{23}=4,5\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Dacă
+\(R_1=4\,\Omega\),
+\(R_{23}=2\,\Omega\)
+și
+\(R_4=5\,\Omega\)
+sunt în serie:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_{eq}=11\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{eq}=3\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_{eq}=40\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+După ce determinăm \(R_{eq}\),
+curentul total la tensiunea \(U\) este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=UR_{eq}\)
+</button>
+
+<button class="answer-btn">
+\(I=R_{eq}/U\)
+</button>
+
+<button class="answer-btn">
+\(I=U/R_{eq}\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Într-o subgrupare paralelă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+curentul este obligatoriu identic pe fiecare ramură
+</button>
+
+<button class="answer-btn">
+tensiunea este aceeași pe ramuri
+</button>
+
+<button class="answer-btn">
+rezistențele se adună direct
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+Pentru
+\((R_1+R_2)\parallel(R_3+R_4)\)
+prima etapă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+calcularea celor două grupări serie
+</button>
+
+<button class="answer-btn">
+adunarea tuturor celor patru rezistențe
+</button>
+
+<button class="answer-btn">
+considerarea tuturor în paralel
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Dacă o rețea nu conține nicio subgrupare serie sau paralel simplă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+circuitul nu poate fi analizat
+</button>
+
+<button class="answer-btn">
+toate rezistențele se adună
+</button>
+
+<button class="answer-btn">
+putem folosi metoda generală bazată pe legile lui Kirchhoff
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Pentru a determina curenții individuali după reducerea rețelei:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+presupunem că sunt toți egali
+</button>
+
+<button class="answer-btn">
+revenim etapă cu etapă la circuitul inițial
+</button>
+
+<button class="answer-btn">
+înmulțim \(R_{eq}\) cu toate rezistențele
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Serie</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_s=\sum R_k
+}
+\]
+
+</div>
+
+<p>
+Același curent.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Paralel</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac1{R_p}
+=
+\sum\frac1{R_k}
+}
+\]
+
+</div>
+
+<p>
+Aceeași tensiune.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Grupare mixtă</h3>
+
+<p>
+Reducem succesiv subgrupări simple:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{identific}
+\rightarrow
+\text{reduc}
+\rightarrow
+\text{redesenez}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Reconstrucție</h3>
+
+<p>
+După \(R_{eq}\) și \(I\),
+revenim în sens invers pentru:
+</p>
+
+<div class="formula">
+
+\[
+U_k,\quad I_k
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+nu întreba mai întâi
+„ce formulă folosesc?”.
+
+Întreabă:
+
+<strong>
+„Care componente sunt conectate între aceleași noduri
+și care sunt străbătute obligatoriu de același curent?”
+</strong>
+
+Răspunsul îți spune dacă trebuie aplicată
+formula de paralel sau cea de serie.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+Până acum am grupat
+<strong>receptoare rezistive</strong>.
+</p>
+
+<p>
+Dar într-un circuit pot fi asociate și sursele.
+</p>
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Gruparea generatoarelor în serie
+</strong>
+
+vom analiza cum se combină
+tensiunile electromotoare și rezistențele interne
+ale mai multor generatoare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="06-gruparea-rezistoarelor-in-paralel.html">
+
+← Lecția 6<br>
+Gruparea rezistoarelor în paralel
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="08-gruparea-generatoarelor-in-serie.html">
+
+Lecția 8<br>
+Gruparea generatoarelor în serie →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function parallel(
+  a,
+  b
+){
+
+  return a*b/
+    (
+      a+b
+    );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    1e-12
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const topologySelect=
+  document.getElementById(
+    "topologySelect"
+  );
+
+
+const sourceSlider=
+  document.getElementById(
+    "sourceSlider"
+  );
+
+
+const stepSelect=
+  document.getElementById(
+    "stepSelect"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const resistorControls=[
+
+  {
+    slider:
+      document.getElementById(
+        "r1Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r1Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r2Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r2Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r3Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r3Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r4Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r4Label"
+      )
+  }
+
+];
+
+
+const sourceLabel=
+  document.getElementById(
+    "sourceLabel"
+  );
+
+
+const reqValue=
+  document.getElementById(
+    "reqValue"
+  );
+
+
+const totalCurrentValue=
+  document.getElementById(
+    "totalCurrentValue"
+  );
+
+
+const sub1Value=
+  document.getElementById(
+    "sub1Value"
+  );
+
+
+const sub2Value=
+  document.getElementById(
+    "sub2Value"
+  );
+
+
+const currentElements=[
+
+  document.getElementById(
+    "i1Value"
+  ),
+
+  document.getElementById(
+    "i2Value"
+  ),
+
+  document.getElementById(
+    "i3Value"
+  ),
+
+  document.getElementById(
+    "i4Value"
+  )
+
+];
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const reductionStepList=
+  document.getElementById(
+    "reductionStepList"
+  );
+
+
+const networkCanvas=
+  document.getElementById(
+    "networkCanvas"
+  );
+
+
+const networkCtx=
+  networkCanvas.getContext(
+    "2d"
+  );
+
+
+const reductionCanvas=
+  document.getElementById(
+    "reductionCanvas"
+  );
+
+
+const reductionCtx=
+  reductionCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const topology=
+    topologySelect.value;
+
+
+  const U=
+    Number(
+      sourceSlider.value
+    );
+
+
+  const R=
+    resistorControls.map(
+      item=>
+        Number(
+          item.slider.value
+        )
+    );
+
+
+  let req=0;
+
+  let sub1=0;
+  let sub2=0;
+
+  let currents=[
+    0,
+    0,
+    0,
+    0
+  ];
+
+  let descriptions=[];
+
+
+  /*
+  TOPOLOGY A
+  R1 + (R2 || R3) + R4
+  */
+
+  if(
+    topology===
+    "A"
+  ){
+
+    sub1=
+      parallel(
+        R[1],
+        R[2]
+      );
+
+
+    sub2=
+      R[0]+
+      sub1+
+      R[3];
+
+
+    req=
+      sub2;
+
+
+    const I=
+      U/req;
+
+
+    const uParallel=
+      I*
+      sub1;
+
+
+    currents=[
+      I,
+      uParallel/R[1],
+      uParallel/R[2],
+      I
+    ];
+
+
+    descriptions=[
+
+      `Circuit inițial: R₁ + (R₂ ∥ R₃) + R₄`,
+
+      `Reducere 1: R₂ ∥ R₃ = ${formatRo(sub1,3)} Ω`,
+
+      `Reducere 2: R₁ + R₂₃ + R₄ = ${formatRo(req,3)} Ω`,
+
+      `Rezistor final: Rₑq = ${formatRo(req,3)} Ω`
+
+    ];
+
+  }
+
+
+  /*
+  TOPOLOGY B
+  (R1 + R2) || (R3 + R4)
+  */
+
+  if(
+    topology===
+    "B"
+  ){
+
+    sub1=
+      R[0]+
+      R[1];
+
+
+    sub2=
+      R[2]+
+      R[3];
+
+
+    req=
+      parallel(
+        sub1,
+        sub2
+      );
+
+
+    const iLeft=
+      U/sub1;
+
+
+    const iRight=
+      U/sub2;
+
+
+    currents=[
+      iLeft,
+      iLeft,
+      iRight,
+      iRight
+    ];
+
+
+    descriptions=[
+
+      `Circuit inițial: (R₁ + R₂) ∥ (R₃ + R₄)`,
+
+      `Reducere 1: R₁₂ = R₁ + R₂ = ${formatRo(sub1,3)} Ω`,
+
+      `Reducere 2: R₃₄ = R₃ + R₄ = ${formatRo(sub2,3)} Ω`,
+
+      `Reducere finală: R₁₂ ∥ R₃₄ = ${formatRo(req,3)} Ω`
+
+    ];
+
+  }
+
+
+  /*
+  TOPOLOGY C
+  (R1 || R2) + (R3 || R4)
+  */
+
+  if(
+    topology===
+    "C"
+  ){
+
+    sub1=
+      parallel(
+        R[0],
+        R[1]
+      );
+
+
+    sub2=
+      parallel(
+        R[2],
+        R[3]
+      );
+
+
+    req=
+      sub1+
+      sub2;
+
+
+    const I=
+      U/req;
+
+
+    const uLeft=
+      I*
+      sub1;
+
+
+    const uRight=
+      I*
+      sub2;
+
+
+    currents=[
+      uLeft/R[0],
+      uLeft/R[1],
+      uRight/R[2],
+      uRight/R[3]
+    ];
+
+
+    descriptions=[
+
+      `Circuit inițial: (R₁ ∥ R₂) + (R₃ ∥ R₄)`,
+
+      `Reducere 1: R₁₂ = R₁ ∥ R₂ = ${formatRo(sub1,3)} Ω`,
+
+      `Reducere 2: R₃₄ = R₃ ∥ R₄ = ${formatRo(sub2,3)} Ω`,
+
+      `Reducere finală: R₁₂ + R₃₄ = ${formatRo(req,3)} Ω`
+
+    ];
+
+  }
+
+
+  const totalCurrent=
+    U/req;
+
+
+  return{
+
+    topology,
+    U,
+    R,
+
+    sub1,
+    sub2,
+
+    req,
+    totalCurrent,
+
+    currents,
+
+    descriptions,
+
+    step:
+      Number(
+        stepSelect.value
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE DOM
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  sourceLabel.textContent=
+    `${formatRo(
+      m.U,
+      0
+    )} V`;
+
+
+  resistorControls.forEach(
+    (
+      item,
+      index
+    )=>{
+
+      item.label.textContent=
+        `${formatRo(
+          m.R[index],
+          0
+        )} Ω`;
+
+    }
+  );
+
+
+  reqValue.textContent=
+    `${formatRo(
+      m.req,
+      3
+    )} Ω`;
+
+
+  totalCurrentValue.textContent=
+    `${formatRo(
+      m.totalCurrent,
+      3
+    )} A`;
+
+
+  sub1Value.textContent=
+    `${formatRo(
+      m.sub1,
+      3
+    )} Ω`;
+
+
+  sub2Value.textContent=
+    `${formatRo(
+      m.sub2,
+      3
+    )} Ω`;
+
+
+  currentElements.forEach(
+    (
+      element,
+      index
+    )=>{
+
+      element.textContent=
+        `${formatRo(
+          m.currents[
+            index
+          ],
+          3
+        )} A`;
+
+    }
+  );
+
+
+  const topologyNames={
+
+    A:
+      "R₁ + (R₂ ∥ R₃) + R₄",
+
+    B:
+      "(R₁ + R₂) ∥ (R₃ + R₄)",
+
+    C:
+      "(R₁ ∥ R₂) + (R₃ ∥ R₄)"
+
+  };
+
+
+  simStatus.innerHTML=
+    `Topologia selectată este
+     <strong>${topologyNames[m.topology]}</strong>.
+     După reducerile succesive rezultă
+     <strong>Rₑq = ${formatRo(m.req,3)} Ω</strong>.
+     La tensiunea
+     <strong>${formatRo(m.U,1)} V</strong>,
+     sursa furnizează
+     <strong>I = ${formatRo(m.totalCurrent,3)} A</strong>.`;
+
+
+  renderReductionList(
+    m
+  );
+
+
+  drawReductionDiagram(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   REDUCTION LIST
+========================================================= */
+
+function renderReductionList(
+  m
+){
+
+  reductionStepList.innerHTML="";
+
+
+  m.descriptions.forEach(
+    (
+      text,
+      index
+    )=>{
+
+      const item=
+        document.createElement(
+          "div"
+        );
+
+
+      item.className=
+        "reduction-step-item";
+
+
+      if(
+        index===
+        m.step
+      ){
+
+        item.classList.add(
+          "active"
+        );
+
+      }
+
+
+      item.textContent=
+        `${index}. ${text}`;
+
+
+      reductionStepList.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   DARK BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW BASIC COMPONENTS
+========================================================= */
+
+function drawResistor(
+  context,
+  x,
+  y,
+  width,
+  height,
+  text,
+  color="#fb923c",
+  vertical=false
+){
+
+  context.save();
+
+
+  context.translate(
+    x,
+    y
+  );
+
+
+  if(
+    vertical
+  ){
+
+    context.rotate(
+      Math.PI/2
+    );
+
+  }
+
+
+  context.fillStyle=
+    "#fff7ed";
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=4;
+
+
+  context.fillRect(
+    -width/2,
+    -height/2,
+    width,
+    height
+  );
+
+
+  context.strokeRect(
+    -width/2,
+    -height/2,
+    width,
+    height
+  );
+
+
+  context.fillStyle=
+    "#7c2d12";
+
+
+  context.font=
+    "bold 12px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    text,
+    0,
+    0
+  );
+
+
+  context.restore();
+
+}
+
+
+function drawWire(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color="#cbd5e1",
+  width=6
+){
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=
+    width;
+
+
+  context.lineCap=
+    "round";
+
+
+  context.beginPath();
+
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+
+  context.stroke();
+
+}
+
+
+function drawNode(
+  context,
+  x,
+  y
+){
+
+  context.beginPath();
+
+
+  context.arc(
+    x,
+    y,
+    8,
+    0,
+    Math.PI*2
+  );
+
+
+  context.fillStyle=
+    "#ef4444";
+
+
+  context.fill();
+
+}
+
+
+/* =========================================================
+   TOPOLOGY A
+========================================================= */
+
+function drawTopologyA(
+  context,
+  m,
+  W,
+  H
+){
+
+  const y=
+    H*.50;
+
+
+  const left=
+    W*.10;
+
+
+  const right=
+    W*.90;
+
+
+  if(
+    m.step===0
+  ){
+
+    const x1=
+      W*.25;
+
+
+    const a=
+      W*.40;
+
+
+    const b=
+      W*.67;
+
+
+    const x4=
+      W*.82;
+
+
+    drawWire(
+      context,
+      left,
+      y,
+      x1-45,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      x1,
+      y,
+      90,
+      42,
+      `R₁ ${m.R[0]}Ω`
+    );
+
+
+    drawWire(
+      context,
+      x1+45,
+      y,
+      a,
+      y
+    );
+
+
+    drawNode(
+      context,
+      a,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a,
+      y,
+      a,
+      y-100
+    );
+
+
+    drawWire(
+      context,
+      a,
+      y-100,
+      b,
+      y-100
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a+b
+      )/2,
+      y-100,
+      95,
+      42,
+      `R₂ ${m.R[1]}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      a,
+      y,
+      a,
+      y+100
+    );
+
+
+    drawWire(
+      context,
+      a,
+      y+100,
+      b,
+      y+100
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a+b
+      )/2,
+      y+100,
+      95,
+      42,
+      `R₃ ${m.R[2]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      b,
+      y-100,
+      b,
+      y
+    );
+
+
+    drawWire(
+      context,
+      b,
+      y+100,
+      b,
+      y
+    );
+
+
+    drawNode(
+      context,
+      b,
+      y
+    );
+
+
+    drawWire(
+      context,
+      b,
+      y,
+      x4-45,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      x4,
+      y,
+      90,
+      42,
+      `R₄ ${m.R[3]}Ω`
+    );
+
+
+    drawWire(
+      context,
+      x4+45,
+      y,
+      right,
+      y
+    );
+
+  }
+
+  else if(
+    m.step===1
+  ){
+
+    const xs=[
+      W*.28,
+      W*.52,
+      W*.76
+    ];
+
+
+    drawWire(
+      context,
+      left,
+      y,
+      xs[0]-45,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      xs[0],
+      y,
+      90,
+      42,
+      `R₁ ${m.R[0]}Ω`
+    );
+
+
+    drawWire(
+      context,
+      xs[0]+45,
+      y,
+      xs[1]-55,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      xs[1],
+      y,
+      110,
+      44,
+      `R₂₃ ${formatRo(m.sub1,2)}Ω`,
+      "#facc15"
+    );
+
+
+    drawWire(
+      context,
+      xs[1]+55,
+      y,
+      xs[2]-45,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      xs[2],
+      y,
+      90,
+      42,
+      `R₄ ${m.R[3]}Ω`
+    );
+
+
+    drawWire(
+      context,
+      xs[2]+45,
+      y,
+      right,
+      y
+    );
+
+  }
+
+  else{
+
+    drawWire(
+      context,
+      left,
+      y,
+      W*.42,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.55,
+      y,
+      135,
+      50,
+      `Rₑq ${formatRo(m.req,2)}Ω`,
+      "#facc15"
+    );
+
+
+    drawWire(
+      context,
+      W*.55+68,
+      y,
+      right,
+      y
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TOPOLOGY B
+========================================================= */
+
+function drawTopologyB(
+  context,
+  m,
+  W,
+  H
+){
+
+  const left=
+    W*.18;
+
+
+  const right=
+    W*.82;
+
+
+  const y=
+    H*.50;
+
+
+  if(
+    m.step===0
+  ){
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y-115
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y+115
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y-115,
+      right,
+      y
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y+115,
+      right,
+      y
+    );
+
+
+    drawNode(
+      context,
+      left,
+      y
+    );
+
+
+    drawNode(
+      context,
+      right,
+      y
+    );
+
+
+    const upperXs=[
+      W*.38,
+      W*.64
+    ];
+
+
+    const lowerXs=[
+      W*.38,
+      W*.64
+    ];
+
+
+    drawWire(
+      context,
+      left,
+      y-115,
+      upperXs[0]-42,
+      y-115
+    );
+
+
+    drawResistor(
+      context,
+      upperXs[0],
+      y-115,
+      84,
+      42,
+      `R₁ ${m.R[0]}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      upperXs[0]+42,
+      y-115,
+      upperXs[1]-42,
+      y-115
+    );
+
+
+    drawResistor(
+      context,
+      upperXs[1],
+      y-115,
+      84,
+      42,
+      `R₂ ${m.R[1]}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      upperXs[1]+42,
+      y-115,
+      right,
+      y-115
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y+115,
+      lowerXs[0]-42,
+      y+115
+    );
+
+
+    drawResistor(
+      context,
+      lowerXs[0],
+      y+115,
+      84,
+      42,
+      `R₃ ${m.R[2]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      lowerXs[0]+42,
+      y+115,
+      lowerXs[1]-42,
+      y+115
+    );
+
+
+    drawResistor(
+      context,
+      lowerXs[1],
+      y+115,
+      84,
+      42,
+      `R₄ ${m.R[3]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      lowerXs[1]+42,
+      y+115,
+      right,
+      y+115
+    );
+
+  }
+
+  else if(
+    m.step===1
+  ){
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y-95
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y-95,
+      right,
+      y
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y+95
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y+95,
+      right,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.50,
+      y-95,
+      140,
+      44,
+      `R₁₂ ${formatRo(m.sub1,2)}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y-95,
+      W*.50-70,
+      y-95
+    );
+
+
+    drawWire(
+      context,
+      W*.50+70,
+      y-95,
+      right,
+      y-95
+    );
+
+
+    drawResistor(
+      context,
+      W*.38,
+      y+95,
+      82,
+      42,
+      `R₃ ${m.R[2]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawResistor(
+      context,
+      W*.64,
+      y+95,
+      82,
+      42,
+      `R₄ ${m.R[3]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y+95,
+      W*.38-41,
+      y+95
+    );
+
+
+    drawWire(
+      context,
+      W*.38+41,
+      y+95,
+      W*.64-41,
+      y+95
+    );
+
+
+    drawWire(
+      context,
+      W*.64+41,
+      y+95,
+      right,
+      y+95
+    );
+
+  }
+
+  else if(
+    m.step===2
+  ){
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y,
+      left,
+      y+85
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y-85,
+      right,
+      y
+    );
+
+
+    drawWire(
+      context,
+      right,
+      y+85,
+      right,
+      y
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y-85,
+      W*.42,
+      y-85
+    );
+
+
+    drawResistor(
+      context,
+      W*.55,
+      y-85,
+      130,
+      44,
+      `R₁₂ ${formatRo(m.sub1,2)}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      W*.55+65,
+      y-85,
+      right,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      left,
+      y+85,
+      W*.42,
+      y+85
+    );
+
+
+    drawResistor(
+      context,
+      W*.55,
+      y+85,
+      130,
+      44,
+      `R₃₄ ${formatRo(m.sub2,2)}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      W*.55+65,
+      y+85,
+      right,
+      y+85
+    );
+
+  }
+
+  else{
+
+    drawWire(
+      context,
+      W*.15,
+      y,
+      W*.42,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.55,
+      y,
+      135,
+      50,
+      `Rₑq ${formatRo(m.req,2)}Ω`,
+      "#facc15"
+    );
+
+
+    drawWire(
+      context,
+      W*.55+68,
+      y,
+      W*.88,
+      y
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TOPOLOGY C
+========================================================= */
+
+function drawTopologyC(
+  context,
+  m,
+  W,
+  H
+){
+
+  const y=
+    H*.50;
+
+
+  const a1=
+    W*.14;
+
+
+  const b1=
+    W*.43;
+
+
+  const a2=
+    W*.57;
+
+
+  const b2=
+    W*.86;
+
+
+  if(
+    m.step===0
+  ){
+
+    /*
+    First parallel block.
+    */
+
+    drawNode(
+      context,
+      a1,
+      y
+    );
+
+
+    drawNode(
+      context,
+      b1,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a1,
+      y,
+      a1,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      a1,
+      y,
+      a1,
+      y+85
+    );
+
+
+    drawWire(
+      context,
+      b1,
+      y-85,
+      b1,
+      y
+    );
+
+
+    drawWire(
+      context,
+      b1,
+      y+85,
+      b1,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a1,
+      y-85,
+      b1,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      a1,
+      y+85,
+      b1,
+      y+85
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a1+b1
+      )/2,
+      y-85,
+      85,
+      40,
+      `R₁ ${m.R[0]}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a1+b1
+      )/2,
+      y+85,
+      85,
+      40,
+      `R₂ ${m.R[1]}Ω`,
+      "#60a5fa"
+    );
+
+
+    /*
+    connector
+    */
+
+    drawWire(
+      context,
+      b1,
+      y,
+      a2,
+      y
+    );
+
+
+    /*
+    Second parallel block.
+    */
+
+    drawNode(
+      context,
+      a2,
+      y
+    );
+
+
+    drawNode(
+      context,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y,
+      a2,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y,
+      a2,
+      y+85
+    );
+
+
+    drawWire(
+      context,
+      b2,
+      y-85,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      b2,
+      y+85,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y-85,
+      b2,
+      y-85
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y+85,
+      b2,
+      y+85
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a2+b2
+      )/2,
+      y-85,
+      85,
+      40,
+      `R₃ ${m.R[2]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a2+b2
+      )/2,
+      y+85,
+      85,
+      40,
+      `R₄ ${m.R[3]}Ω`,
+      "#4ade80"
+    );
+
+  }
+
+  else if(
+    m.step===1
+  ){
+
+    drawWire(
+      context,
+      W*.12,
+      y,
+      W*.28,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.38,
+      y,
+      120,
+      44,
+      `R₁₂ ${formatRo(m.sub1,2)}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      W*.44,
+      y,
+      a2,
+      y
+    );
+
+
+    /*
+    second block still parallel
+    */
+
+    drawNode(
+      context,
+      a2,
+      y
+    );
+
+
+    drawNode(
+      context,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y,
+      a2,
+      y-80
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y,
+      a2,
+      y+80
+    );
+
+
+    drawWire(
+      context,
+      b2,
+      y-80,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      b2,
+      y+80,
+      b2,
+      y
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y-80,
+      b2,
+      y-80
+    );
+
+
+    drawWire(
+      context,
+      a2,
+      y+80,
+      b2,
+      y+80
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a2+b2
+      )/2,
+      y-80,
+      85,
+      40,
+      `R₃ ${m.R[2]}Ω`,
+      "#4ade80"
+    );
+
+
+    drawResistor(
+      context,
+      (
+        a2+b2
+      )/2,
+      y+80,
+      85,
+      40,
+      `R₄ ${m.R[3]}Ω`,
+      "#4ade80"
+    );
+
+  }
+
+  else if(
+    m.step===2
+  ){
+
+    drawWire(
+      context,
+      W*.12,
+      y,
+      W*.25,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.35,
+      y,
+      120,
+      44,
+      `R₁₂ ${formatRo(m.sub1,2)}Ω`,
+      "#60a5fa"
+    );
+
+
+    drawWire(
+      context,
+      W*.41,
+      y,
+      W*.55,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.66,
+      y,
+      120,
+      44,
+      `R₃₄ ${formatRo(m.sub2,2)}Ω`,
+      "#4ade80"
+    );
+
+
+    drawWire(
+      context,
+      W*.72,
+      y,
+      W*.88,
+      y
+    );
+
+  }
+
+  else{
+
+    drawWire(
+      context,
+      W*.15,
+      y,
+      W*.42,
+      y
+    );
+
+
+    drawResistor(
+      context,
+      W*.55,
+      y,
+      135,
+      50,
+      `Rₑq ${formatRo(m.req,2)}Ω`,
+      "#facc15"
+    );
+
+
+    drawWire(
+      context,
+      W*.55+68,
+      y,
+      W*.88,
+      y
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+let particlePhase=0;
+
+
+function updateParticlePhase(
+  m,
+  dt
+){
+
+  if(
+    animationSelect.value===
+    "off" ||
+    m.totalCurrent<=
+    0
+  ){
+    return;
+  }
+
+
+  particlePhase+=
+    (
+      .08+
+      Math.min(
+        m.totalCurrent,
+        5
+      )*
+      .025
+    )*
+    dt;
+
+
+  if(
+    particlePhase>=1
+  ){
+
+    particlePhase-=1;
+
+  }
+
+}
+
+
+/* =========================================================
+   NETWORK SCENE
+========================================================= */
+
+function drawNetworkScene(
+  m
+){
+
+  const rect=
+    networkCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    networkCtx,
+    W,
+    H
+  );
+
+
+  if(
+    m.topology===
+    "A"
+  ){
+
+    drawTopologyA(
+      networkCtx,
+      m,
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    m.topology===
+    "B"
+  ){
+
+    drawTopologyB(
+      networkCtx,
+      m,
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    m.topology===
+    "C"
+  ){
+
+    drawTopologyC(
+      networkCtx,
+      m,
+      W,
+      H
+    );
+
+  }
+
+
+  networkCtx.fillStyle=
+    "#e2e8f0";
+
+
+  networkCtx.font=
+    "bold 15px system-ui";
+
+
+  networkCtx.textAlign=
+    "left";
+
+
+  networkCtx.fillText(
+    `Etapa ${m.step} – rețeaua electrică`,
+    18,
+    28
+  );
+
+
+  networkCtx.fillStyle=
+    "#bae6fd";
+
+
+  networkCtx.font=
+    "11px system-ui";
+
+
+  networkCtx.fillText(
+    `U = ${formatRo(m.U,1)} V • I total = ${formatRo(m.totalCurrent,3)} A`,
+    18,
+    49
+  );
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    const y=
+      H*.88;
+
+
+    const x=
+      W*.12+
+      particlePhase*
+      W*.76;
+
+
+    networkCtx.beginPath();
+
+
+    networkCtx.arc(
+      x,
+      y,
+      5,
+      0,
+      Math.PI*2
+    );
+
+
+    networkCtx.fillStyle=
+      "#fde68a";
+
+
+    networkCtx.fill();
+
+
+    networkCtx.fillStyle=
+      "#fde68a";
+
+
+    networkCtx.font=
+      "11px system-ui";
+
+
+    networkCtx.textAlign=
+      "center";
+
+
+    networkCtx.fillText(
+      "indicator de curent",
+      W*.50,
+      H*.93
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   REDUCTION CANVAS
+========================================================= */
+
+function drawReductionDiagram(
+  m
+){
+
+  const rect=
+    reductionCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  reductionCtx.fillStyle=
+    "#f8fafc";
+
+
+  reductionCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  reductionCtx.fillStyle=
+    "#0f172a";
+
+
+  reductionCtx.font=
+    "bold 16px system-ui";
+
+
+  reductionCtx.textAlign=
+    "left";
+
+
+  reductionCtx.fillText(
+    "Arborele reducerii",
+    24,
+    34
+  );
+
+
+  reductionCtx.fillStyle=
+    "#475569";
+
+
+  reductionCtx.font=
+    "11px system-ui";
+
+
+  reductionCtx.fillText(
+    "fiecare nivel înlocuiește o subgrupare cu echivalentul ei",
+    24,
+    55
+  );
+
+
+  const levels=[
+    {
+      title:"Circuit inițial",
+      text:m.descriptions[0]
+    },
+    {
+      title:"Reducere 1",
+      text:m.descriptions[1]
+    },
+    {
+      title:"Reducere 2",
+      text:m.descriptions[2]
+    },
+    {
+      title:"Echivalent",
+      text:m.descriptions[3]
+    }
+  ];
+
+
+  const top=
+    100;
+
+
+  const gap=
+    (
+      H-
+      180
+    )/
+    3;
+
+
+  levels.forEach(
+    (
+      level,
+      index
+    )=>{
+
+      const y=
+        top+
+        index*
+        gap;
+
+
+      const active=
+        index===
+        m.step;
+
+
+      reductionCtx.fillStyle=
+        active
+          ? "#dbeafe"
+          : "#ffffff";
+
+
+      reductionCtx.strokeStyle=
+        active
+          ? "#2563eb"
+          : "#cbd5e1";
+
+
+      reductionCtx.lineWidth=
+        active
+          ? 3
+          : 1.5;
+
+
+      const x=
+        W*.12;
+
+
+      const boxW=
+        W*.76;
+
+
+      const boxH=
+        72;
+
+
+      reductionCtx.beginPath();
+
+
+      reductionCtx.roundRect(
+        x,
+        y,
+        boxW,
+        boxH,
+        12
+      );
+
+
+      reductionCtx.fill();
+
+
+      reductionCtx.stroke();
+
+
+      reductionCtx.fillStyle=
+        active
+          ? "#1d4ed8"
+          : "#334155";
+
+
+      reductionCtx.font=
+        "bold 12px system-ui";
+
+
+      reductionCtx.textAlign=
+        "left";
+
+
+      reductionCtx.fillText(
+        level.title,
+        x+15,
+        y+23
+      );
+
+
+      reductionCtx.fillStyle=
+        "#0f172a";
+
+
+      reductionCtx.font=
+        "11px system-ui";
+
+
+      const shortText=
+        level.text.length>
+        55
+          ? level.text.slice(
+              0,
+              52
+            )+
+            "..."
+          : level.text;
+
+
+      reductionCtx.fillText(
+        shortText,
+        x+15,
+        y+48
+      );
+
+
+      if(
+        index<
+        levels.length-1
+      ){
+
+        reductionCtx.strokeStyle=
+          "#94a3b8";
+
+
+        reductionCtx.lineWidth=2;
+
+
+        reductionCtx.beginPath();
+
+
+        reductionCtx.moveTo(
+          W*.50,
+          y+boxH
+        );
+
+
+        reductionCtx.lineTo(
+          W*.50,
+          y+gap
+        );
+
+
+        reductionCtx.stroke();
+
+
+        reductionCtx.fillStyle=
+          "#64748b";
+
+
+        reductionCtx.beginPath();
+
+
+        reductionCtx.moveTo(
+          W*.50,
+          y+gap
+        );
+
+
+        reductionCtx.lineTo(
+          W*.50-7,
+          y+gap-12
+        );
+
+
+        reductionCtx.lineTo(
+          W*.50+7,
+          y+gap-12
+        );
+
+
+        reductionCtx.closePath();
+
+
+        reductionCtx.fill();
+
+      }
+
+    }
+  );
+
+
+  reductionCtx.fillStyle=
+    "#166534";
+
+
+  reductionCtx.font=
+    "bold 13px system-ui";
+
+
+  reductionCtx.textAlign=
+    "center";
+
+
+  reductionCtx.fillText(
+    `Rₑq = ${formatRo(m.req,3)} Ω`,
+    W*.50,
+    H-28
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setExampleA(){
+
+  topologySelect.value=
+    "A";
+
+
+  sourceSlider.value=
+    22;
+
+
+  resistorControls[0].slider.value=
+    4;
+
+
+  resistorControls[1].slider.value=
+    6;
+
+
+  resistorControls[2].slider.value=
+    3;
+
+
+  resistorControls[3].slider.value=
+    5;
+
+
+  stepSelect.value=
+    "3";
+
+
+  updateResults();
+
+}
+
+
+function setExampleB(){
+
+  topologySelect.value=
+    "B";
+
+
+  sourceSlider.value=
+    18;
+
+
+  resistorControls[0].slider.value=
+    2;
+
+
+  resistorControls[1].slider.value=
+    4;
+
+
+  resistorControls[2].slider.value=
+    3;
+
+
+  resistorControls[3].slider.value=
+    3;
+
+
+  stepSelect.value=
+    "3";
+
+
+  updateResults();
+
+}
+
+
+function setExampleC(){
+
+  topologySelect.value=
+    "C";
+
+
+  sourceSlider.value=
+    16;
+
+
+  resistorControls[0].slider.value=
+    12;
+
+
+  resistorControls[1].slider.value=
+    6;
+
+
+  resistorControls[2].slider.value=
+    8;
+
+
+  resistorControls[3].slider.value=
+    8;
+
+
+  stepSelect.value=
+    "3";
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  setExampleA();
+
+
+  stepSelect.value=
+    "0";
+
+
+  animationSelect.value=
+    "on";
+
+
+  particlePhase=0;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  topologySelect,
+  sourceSlider,
+  stepSelect,
+  animationSelect,
+  ...resistorControls.map(
+    item=>
+      item.slider
+  )
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "nextStepBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      let next=
+        Number(
+          stepSelect.value
+        )+
+        1;
+
+
+      if(
+        next>3
+      ){
+        next=0;
+      }
+
+
+      stepSelect.value=
+        String(
+          next
+        );
+
+
+      updateResults();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "exampleABtn"
+  )
+  .addEventListener(
+    "click",
+    setExampleA
+  );
+
+
+document
+  .getElementById(
+    "exampleBBtn"
+  )
+  .addEventListener(
+    "click",
+    setExampleB
+  );
+
+
+document
+  .getElementById(
+    "exampleCBtn"
+  )
+  .addEventListener(
+    "click",
+    setExampleC
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  updateParticlePhase(
+    m,
+    dt
+  );
+
+
+  drawNetworkScene(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    networkCanvas,
+    networkCtx
+  );
+
+
+  resizeCanvas(
+    reductionCanvas,
+    reductionCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawNetworkScene(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește topologia circuitului și ordinea reducerilor.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Identifici și reduci corect grupările mixte.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează identificarea nodurilor și ordinea reducerilor.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia criteriile: serie = același curent; paralel = aceleași două noduri.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      networkCanvas,
+      networkCtx
+    );
+
+
+    resizeCanvas(
+      reductionCanvas,
+      reductionCtx
+    );
+
+
+    setExampleA();
+
+
+    stepSelect.value=
+      "0";
+
+
+    const m=
+      updateResults();
+
+
+    drawNetworkScene(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
