@@ -1,1 +1,6829 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+59. Aplicații ale mecanicii fluidelor | Fizică – Clasa a IX-a
+</title>
+
+<meta
+  name="description"
+  content="Aplicații practice ale mecanicii fluidelor: sisteme hidraulice, plutire, tub Venturi, tub Pitot, pulverizator și profil aerodinamic. Lecție interactivă pentru clasa a IX-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(34,211,238,.22),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.44),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #082f49,
+      #0369a1 54%,
+      #1e3a8a
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.86;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.4rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:900px;
+
+  margin:18px 0 0;
+
+  color:#cffafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.25rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:26px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+.application-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  min-height:210px;
+
+  padding:20px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:15px;
+
+}
+
+.application-card::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:100px;
+  height:100px;
+
+  right:-35px;
+  top:-35px;
+
+  border-radius:50%;
+
+  background:
+    rgba(59,130,246,.08);
+
+}
+
+.app-icon{
+
+  display:block;
+
+  margin-bottom:10px;
+
+  font-size:2.2rem;
+
+}
+
+.app-law{
+
+  display:inline-block;
+
+  margin-top:6px;
+
+  padding:5px 9px;
+
+  background:#e2e8f0;
+
+  color:#334155;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:850;
+
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULE
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+
+/* =========================================================
+   DIAGRAMĂ HIDRAULICĂ
+========================================================= */
+
+.hydraulic-demo{
+
+  position:relative;
+
+  max-width:800px;
+  height:330px;
+
+  margin:24px auto;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:18px;
+
+}
+
+.hd-cylinder-small,
+.hd-cylinder-large{
+
+  position:absolute;
+
+  bottom:60px;
+
+  background:
+    rgba(56,189,248,.45);
+
+  border:
+    5px solid #475569;
+
+  border-top:0;
+
+}
+
+.hd-cylinder-small{
+
+  left:13%;
+
+  width:90px;
+  height:150px;
+
+}
+
+.hd-cylinder-large{
+
+  right:12%;
+
+  width:190px;
+  height:150px;
+
+}
+
+.hd-pipe{
+
+  position:absolute;
+
+  left:calc(13% + 42px);
+  right:calc(12% + 90px);
+  bottom:60px;
+
+  height:30px;
+
+  background:#38bdf8;
+
+  border-top:
+    5px solid #475569;
+
+  border-bottom:
+    5px solid #475569;
+
+}
+
+.hd-piston-small{
+
+  position:absolute;
+
+  left:calc(13% - 4px);
+  bottom:205px;
+
+  width:98px;
+  height:18px;
+
+  background:#64748b;
+
+}
+
+.hd-piston-large{
+
+  position:absolute;
+
+  right:calc(12% - 4px);
+  bottom:205px;
+
+  width:198px;
+  height:18px;
+
+  background:#64748b;
+
+}
+
+.hd-load{
+
+  position:absolute;
+
+  right:calc(12% + 31px);
+  bottom:223px;
+
+  width:128px;
+  height:62px;
+
+  display:grid;
+
+  place-items:center;
+
+  background:#f97316;
+  color:white;
+
+  border-radius:8px;
+
+  font-weight:900;
+
+}
+
+.hd-label{
+
+  position:absolute;
+
+  bottom:18px;
+
+  font-weight:850;
+
+  color:#334155;
+
+}
+
+.hd-left{
+  left:13%;
+}
+
+.hd-right{
+  right:13%;
+}
+
+
+/* =========================================================
+   PROFIL AERODINAMIC
+========================================================= */
+
+.wing-map{
+
+  position:relative;
+
+  max-width:850px;
+  height:410px;
+
+  margin:26px auto;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eff6ff,
+      #dbeafe
+    );
+
+  border:
+    1px solid #93c5fd;
+
+  border-radius:18px;
+
+}
+
+.wing-shape{
+
+  position:absolute;
+
+  left:25%;
+  top:44%;
+
+  width:50%;
+  height:86px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #cbd5e1
+    );
+
+  border:
+    4px solid #334155;
+
+  border-radius:
+    65% 20% 55% 35% / 75% 35% 50% 35%;
+
+  transform:
+    rotate(-3deg);
+
+}
+
+.air-line{
+
+  position:absolute;
+
+  left:5%;
+
+  width:90%;
+
+  border-top:
+    3px solid #2563eb;
+
+}
+
+.air-line::after{
+
+  content:"";
+
+  position:absolute;
+
+  right:0;
+  top:-6px;
+
+  border-left:
+    12px solid #2563eb;
+
+  border-top:
+    5px solid transparent;
+
+  border-bottom:
+    5px solid transparent;
+
+}
+
+.al1{
+  top:20%;
+}
+
+.al2{
+
+  top:31%;
+
+  transform:
+    translateY(3px)
+    rotate(-1deg);
+
+}
+
+.al3{
+  top:70%;
+}
+
+.al4{
+  top:80%;
+}
+
+.pressure-low{
+
+  position:absolute;
+
+  top:9%;
+  left:50%;
+
+  transform:
+    translateX(-50%);
+
+  padding:7px 12px;
+
+  background:#dbeafe;
+  color:#1d4ed8;
+
+  border:
+    2px solid #60a5fa;
+
+  border-radius:999px;
+
+  font-weight:900;
+
+}
+
+.pressure-high{
+
+  position:absolute;
+
+  bottom:8%;
+  left:50%;
+
+  transform:
+    translateX(-50%);
+
+  padding:7px 12px;
+
+  background:#ffedd5;
+  color:#9a3412;
+
+  border:
+    2px solid #fb923c;
+
+  border-radius:999px;
+
+  font-weight:900;
+
+}
+
+.lift-arrow{
+
+  position:absolute;
+
+  left:50%;
+  top:30%;
+
+  height:90px;
+
+  border-left:
+    6px solid #16a34a;
+
+}
+
+.lift-arrow::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-11px;
+  top:-2px;
+
+  border-left:
+    8px solid transparent;
+
+  border-right:
+    8px solid transparent;
+
+  border-bottom:
+    15px solid #16a34a;
+
+}
+
+.lift-label{
+
+  position:absolute;
+
+  left:53%;
+  top:25%;
+
+  color:#166534;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  background:var(--blue);
+  color:white;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   INTERACTIVE LAB
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.mode-buttons{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:9px;
+
+  margin:18px 0;
+
+}
+
+.mode-button{
+
+  padding:10px 14px;
+
+  background:#e2e8f0;
+  color:#334155;
+
+  border:
+    1px solid #cbd5e1;
+
+}
+
+.mode-button.active{
+
+  background:#2563eb;
+  color:white;
+
+  border-color:#2563eb;
+
+}
+
+.app-panel{
+
+  display:none;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.app-panel.active{
+  display:block;
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:750;
+
+}
+
+.control input{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  background:white;
+  color:var(--text);
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.canvas-wrap{
+
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#applicationCanvas{
+
+  display:block;
+
+  width:100%;
+  height:520px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  background:var(--cyan-soft);
+  color:#155e75;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  background:#f1f5f9;
+  color:#0f172a;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:780px){
+
+  .grid-2,
+  .grid-3,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #applicationCanvas{
+    height:590px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a IX-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+Noțiuni de mecanica fluidelor
+
+</div>
+
+
+<div class="lesson-number">
+Lecția 59 • Clasa a IX-a
+</div>
+
+
+<h1>
+Aplicații ale mecanicii fluidelor
+</h1>
+
+
+<p class="subtitle">
+De la cricul hidraulic și plutirea navelor
+până la măsurarea vitezei aerului și portanța unei aripi:
+aceleași câteva legi ale fluidelor explică
+numeroase dispozitive și tehnologii.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBIECTIVE
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să identifici principiul fizic folosit într-o aplicație;
+</li>
+
+<li>
+să explici funcționarea unui sistem hidraulic;
+</li>
+
+<li>
+să explici plutirea navelor și controlul flotabilității;
+</li>
+
+<li>
+să explici principiul unui tub Venturi;
+</li>
+
+<li>
+să explici principiul unui tub Pitot;
+</li>
+
+<li>
+să explici funcționarea unui pulverizator simplificat;
+</li>
+
+<li>
+să interpretezi o hartă de presiuni în jurul unui profil aerodinamic;
+</li>
+
+<li>
+să diferențiezi modelul fizic de funcționarea completă a unui sistem real.
+
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Întrebarea-cheie</h3>
+
+<p>
+În loc să memorăm separat fiecare dispozitiv,
+vom întreba:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{Ce lege fizică explică fenomenul?}
+}
+\]
+
+</div>
+
+<p>
+O aplicație reală poate folosi simultan
+două sau mai multe principii.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     HARTA CAPITOLULUI
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 Instrumentele noastre fizice</h2>
+
+<div class="grid-3">
+
+
+<div class="application-card">
+
+<span class="app-icon">
+💧
+</span>
+
+<h3>Presiune hidrostatică</h3>
+
+<div class="formula">
+
+\[
+p=p_0+\rho gh
+\]
+
+</div>
+
+<p>
+Presiunea crește cu adâncimea
+într-un fluid omogen aflat în repaus.
+</p>
+
+</div>
+
+
+<div class="application-card">
+
+<span class="app-icon">
+🔧
+</span>
+
+<h3>Legea lui Pascal</h3>
+
+<div class="formula">
+
+\[
+\Delta p_1=
+\Delta p_2
+\]
+
+</div>
+
+<p>
+O variație de presiune se transmite prin fluidul închis.
+</p>
+
+</div>
+
+
+<div class="application-card">
+
+<span class="app-icon">
+🚢
+</span>
+
+<h3>Legea lui Arhimede</h3>
+
+<div class="formula">
+
+\[
+F_A=
+\rho_f gV_d
+\]
+
+</div>
+
+<p>
+Forța arhimedică este egală
+cu greutatea fluidului dislocuit.
+</p>
+
+</div>
+
+
+<div class="application-card">
+
+<span class="app-icon">
+🚰
+</span>
+
+<h3>Continuitate</h3>
+
+<div class="formula">
+
+\[
+S_1v_1=
+S_2v_2
+\]
+
+</div>
+
+<p>
+Pentru fluid incompresibil,
+debitul volumic se conservă.
+</p>
+
+</div>
+
+
+<div class="application-card">
+
+<span class="app-icon">
+🌬️
+</span>
+
+<h3>Bernoulli</h3>
+
+<div class="formula">
+
+\[
+p+
+\frac12\rho v^2+
+\rho gh
+=
+\text{constant}
+\]
+
+</div>
+
+<p>
+Descrie redistribuirea energiei mecanice
+în modelul unui fluid ideal.
+</p>
+
+</div>
+
+
+<div class="application-card">
+
+<span class="app-icon">
+🌀
+</span>
+
+<h3>Regimul curgerii</h3>
+
+<p>
+Curgerea reală poate fi:
+</p>
+
+<div class="formula">
+
+\[
+\text{laminară}
+\quad\text{sau}\quad
+\text{turbulentă}
+\]
+
+</div>
+
+<p>
+Modelul ideal nu descrie toate pierderile reale.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APLICAȚIA 1
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Presa și cricul hidraulic</h2>
+
+<div class="hydraulic-demo">
+
+<div class="hd-pipe"></div>
+
+<div class="hd-cylinder-small"></div>
+<div class="hd-cylinder-large"></div>
+
+<div class="hd-piston-small"></div>
+<div class="hd-piston-large"></div>
+
+<div class="hd-load">
+SARCINĂ
+</div>
+
+<div class="hd-label hd-left">
+\(S_1\)
+</div>
+
+<div class="hd-label hd-right">
+\(S_2>S_1\)
+</div>
+
+</div>
+
+
+<p>
+Pe pistonul mic acționăm cu forța \(F_1\).
+</p>
+
+Creșterea de presiune este:
+
+<div class="formula">
+
+\[
+\Delta p=
+\frac{F_1}{S_1}
+\]
+
+</div>
+
+Legea lui Pascal permite scrierea:
+
+<div class="formula">
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</div>
+
+de unde:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F_2=
+F_1
+\frac{S_2}{S_1}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Dacă pistonul de ieșire are suprafața de 30 de ori mai mare,
+forța ideală de ieșire este de 30 de ori mai mare.
+</div>
+
+
+<h3>Dar nu obținem energie gratuit</h3>
+
+Pentru un sistem ideal:
+
+<div class="formula">
+
+\[
+S_1d_1=
+S_2d_2
+\]
+
+</div>
+
+deci:
+
+<div class="formula">
+
+\[
+F_1d_1=
+F_2d_2
+\]
+
+</div>
+
+<div class="orange-box">
+
+<strong>Câștigăm forță, pierdem deplasare.</strong>
+
+Presa hidraulică nu multiplică energia.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FRÂNE
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Frânele hidraulice</h2>
+
+<p>
+Într-un sistem hidraulic de frânare,
+acționarea pedalei produce o creștere de presiune
+în lichidul de frână.
+</p>
+
+<div class="formula">
+
+\[
+\Delta p=
+\frac{F}{S}
+\]
+
+</div>
+
+<p>
+Această variație de presiune se transmite prin circuit.
+</p>
+
+<div class="blue-box">
+
+Într-un sistem real apar mai multe elemente:
+
+<ul>
+
+<li>avantajul mecanic al pedalei;</li>
+
+<li>cilindrul principal;</li>
+
+<li>conductele cu lichid;</li>
+
+<li>pistoanele de la mecanismele de frânare;</li>
+
+<li>frecarea dintre plăcuțe și disc sau dintre alte componente.
+</li>
+
+</ul>
+
+</div>
+
+<div class="yellow-box">
+
+Legea lui Pascal explică
+<strong>transmiterea presiunii</strong>,
+dar întregul proces de frânare implică apoi
+forțe de frecare și transformarea energiei mecanice
+în energie internă.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APLICAȚIA 2
+========================================================= -->
+
+<section class="card">
+
+<h2>3. De ce plutește o navă din oțel?</h2>
+
+<p>
+Un bloc compact de oțel se scufundă în apă,
+deoarece densitatea oțelului este mai mare
+decât densitatea apei.
+</p>
+
+<p>
+Dar o navă are un volum exterior foarte mare,
+care include și spații cu aer.
+</p>
+
+Densitatea medie poate fi scrisă:
+
+<div class="formula">
+
+\[
+\rho_{\text{med}}
+=
+\frac{
+m_{\text{total}}
+}{
+V_{\text{exterior}}
+}
+\]
+
+</div>
+
+Pentru plutire:
+
+<div class="formula">
+
+\[
+F_A=G
+\]
+
+</div>
+
+adică:
+
+<div class="formula">
+
+\[
+\rho_{\text{apă}}
+gV_d
+=
+m_{\text{navă}}g
+\]
+
+</div>
+
+Prin simplificarea lui \(g\):
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+m_{\text{navă}}
+=
+\rho_{\text{apă}}V_d
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+O navă care plutește dislocuiește
+o masă de apă egală cu masa totală a navei.
+
+</div>
+
+
+<h3>Ce se întâmplă dacă încărcăm nava?</h3>
+
+Masa crește:
+
+<div class="formula">
+
+\[
+G\uparrow
+\]
+
+</div>
+
+Pentru a restabili:
+
+<div class="formula">
+
+\[
+F_A=G
+\]
+
+</div>
+
+trebuie să crească:
+
+<div class="formula">
+
+\[
+V_d
+\]
+
+</div>
+
+<p>
+De aceea nava se scufundă mai mult în apă.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     SUBMARIN
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Submarinul și controlul flotabilității</h2>
+
+<p>
+Un submarin își poate modifica
+densitatea medie prin controlul tancurilor de balast.
+</p>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>⬇ Coborâre</h3>
+
+<p>
+Se mărește masa de apă din tancurile de balast.
+</p>
+
+<div class="formula">
+
+\[
+G>F_A
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>⚖ Echilibru</h3>
+
+<p>
+Se urmărește aproximativ:
+</p>
+
+<div class="formula">
+
+\[
+G=F_A
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>⬆ Urcare</h3>
+
+<p>
+Densitatea medie este redusă.
+</p>
+
+<div class="formula">
+
+\[
+F_A>G
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+Mișcarea reală a submarinului implică și propulsie,
+rezistență hidrodinamică și suprafețe de comandă.
+
+Legea lui Arhimede descrie partea legată de flotabilitate.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     HIDROMETRU
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Hidrometrul – densitatea măsurată prin plutire</h2>
+
+<p>
+Un hidrometru este un corp plutitor calibrat
+pentru estimarea densității unui lichid.
+</p>
+
+La echilibru:
+
+<div class="formula">
+
+\[
+F_A=G
+\]
+
+</div>
+
+adică:
+
+<div class="formula">
+
+\[
+\rho_f gV_d=
+mg
+\]
+
+</div>
+
+de unde:
+
+<div class="formula">
+
+\[
+V_d=
+\frac{m}{\rho_f}
+\]
+
+</div>
+
+<div class="blue-box">
+
+Într-un lichid mai dens,
+același hidrometru trebuie să disloce
+un volum mai mic de lichid.
+
+Prin urmare,
+se scufundă mai puțin.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APLICAȚIA 3 VENTURI
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Tubul Venturi – măsurarea debitului prin diferență de presiune</h2>
+
+<p>
+Considerăm o conductă orizontală
+cu două secțiuni:
+</p>
+
+<div class="formula">
+
+\[
+S_2<S_1
+\]
+
+</div>
+
+Din continuitate:
+
+<div class="formula">
+
+\[
+S_1v_1=S_2v_2
+\]
+
+</div>
+
+rezultă:
+
+<div class="formula">
+
+\[
+v_2>v_1
+\]
+
+</div>
+
+Pentru aceeași înălțime,
+Bernoulli devine:
+
+<div class="formula">
+
+\[
+p_1+
+\frac12\rho v_1^2
+=
+p_2+
+\frac12\rho v_2^2
+\]
+
+</div>
+
+deci:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+p_1>p_2
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Prin măsurarea diferenței de presiune dintre cele două secțiuni
+și cunoașterea geometriei conductei,
+se poate determina debitul fluidului.
+
+</div>
+
+
+<div class="purple-box">
+
+Venturi este o aplicație în care trebuie folosite
+<strong>împreună</strong>:
+
+\[
+\boxed{
+\text{continuitatea + Bernoulli}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PITOT
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Tubul Pitot – determinarea vitezei unui fluid</h2>
+
+<p>
+Un tub Pitot compară presiunea statică
+cu o presiune obținută prin aducerea locală
+a fluidului la repaus.
+</p>
+
+În punctul de stagnare:
+
+<div class="formula">
+
+\[
+v=0
+\]
+
+</div>
+
+Pentru aceeași înălțime,
+Bernoulli permite scrierea:
+
+<div class="formula">
+
+\[
+p+
+\frac12\rho v^2
+=
+p_0
+\]
+
+</div>
+
+unde \(p_0\) este
+<strong>presiunea de stagnare</strong>.
+</p>
+
+Prin urmare:
+
+<div class="formula">
+
+\[
+p_0-p=
+\frac12\rho v^2
+\]
+
+</div>
+
+Dacă:
+
+<div class="formula">
+
+\[
+\Delta p=
+p_0-p
+\]
+
+</div>
+
+atunci:
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+v=
+\sqrt{
+\frac{2\Delta p}{\rho}
+}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Pentru gaze,
+relația incomprimabilă este o aproximație bună
+numai atunci când efectele compresibilității
+sunt suficient de mici.
+
+La viteze foarte mari ale aerului
+sunt necesare modele mai complexe.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PULVERIZATOR
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Pulverizatorul – cine „ridică” lichidul?</h2>
+
+<p>
+Într-un pulverizator simplificat,
+un curent rapid de aer trece peste capătul
+unui tub care comunică cu un rezervor de lichid.
+</p>
+
+<p>
+În regiunea curgerii rapide,
+presiunea statică poate deveni mai mică
+decât presiunea din rezervor.
+</p>
+
+<div class="formula">
+
+\[
+p_{\text{rezervor}}
+>
+p_{\text{zona rapidă}}
+\]
+
+</div>
+
+Această diferență de presiune poate împinge lichidul
+în sus prin tub.
+</p>
+
+<div class="orange-box">
+
+Este mai corect să spunem:
+
+<strong>
+„diferența de presiune împinge lichidul”
+</strong>
+
+decât:
+
+<strong>
+„aerul rapid aspiră lichidul printr-o forță misterioasă”.
+</strong>
+
+</div>
+
+
+<h3>De ce este apoi pulverizat?</h3>
+
+<p>
+Jetul de aer rapid fragmentează lichidul
+în picături mici și le antrenează în curgere.
+</p>
+
+<p>
+Aici apar și fenomene de mecanica fluidelor reale,
+nu doar relația Bernoulli ideală.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     DEMONSTRATIE
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Demonstrație simplă – pulverizator cu două tuburi</h2>
+
+<div class="grid-2">
+
+
+<div>
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>pahar cu apă colorată;</li>
+
+<li>două paie sau tuburi;</li>
+
+<li>tavă de protecție;</li>
+
+<li>ochelari de protecție pentru demonstrație.
+</li>
+
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>Ideea</h3>
+
+<p>
+Un tub este vertical,
+cu capătul inferior în apă.
+</p>
+
+<p>
+Un al doilea tub conduce aerul rapid
+peste capătul superior al primului.
+</p>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Așază primul tub vertical în lichid.
+</li>
+
+<li>
+Poziționează cel de-al doilea tub orizontal,
+foarte aproape de capătul superior al tubului vertical.
+</li>
+
+<li>
+Produce un curent de aer prin tubul orizontal.
+</li>
+
+<li>
+Observă dacă lichidul urcă prin tubul vertical.
+</li>
+
+<li>
+Explică fenomenul folosind diferența de presiune.
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Demonstrația se realizează în condiții igienice,
+fără aspirarea lichidului în gură
+și fără îndreptarea pulverizării către persoane
+sau aparatură electrică.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ARIPA
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Profilul aerodinamic și distribuția presiunii</h2>
+
+<p>
+Asupra unei aripi aflate într-un curent de aer
+acționează presiuni diferite în puncte diferite ale suprafeței.
+</p>
+
+
+<div class="wing-map">
+
+<div class="air-line al1"></div>
+<div class="air-line al2"></div>
+
+<div class="air-line al3"></div>
+<div class="air-line al4"></div>
+
+<div class="wing-shape"></div>
+
+<div class="pressure-low">
+regiune de presiune mai mică
+</div>
+
+<div class="pressure-high">
+regiune de presiune mai mare
+</div>
+
+<div class="lift-arrow"></div>
+
+<div class="lift-label">
+rezultantă aerodinamică
+</div>
+
+</div>
+
+
+<p>
+În regiunile în care curgerea are viteză mai mare,
+relația Bernoulli poate ajuta la interpretarea
+unei presiuni statice mai mici,
+în condițiile corespunzătoare.
+</p>
+
+<p>
+Distribuția presiunii pe întreaga suprafață
+produce o forță rezultantă.
+Componenta ei perpendiculară aproximativ
+pe direcția curentului incident
+este asociată portanței.
+</p>
+
+
+<div class="green-box">
+
+Într-un model simplificat,
+dacă presiunea medie sub aripă este mai mare
+decât presiunea medie deasupra:
+
+\[
+p_{\text{jos}}>p_{\text{sus}}
+\]
+
+atunci apare o contribuție verticală rezultantă în sus.
+</div>
+
+
+<div class="red-box">
+
+<strong>Nu folosim explicația „timpi egali”.</strong>
+
+Aerul care trece pe deasupra aripii
+nu are obligația fizică de a ajunge simultan
+la bordul de fugă cu o particulă
+care a trecut pe dedesubt.
+
+</div>
+
+
+<div class="blue-box">
+
+Descrierea completă a portanței implică
+<strong>câmpul de presiune</strong>
+din jurul aripii și
+<strong>modificarea impulsului aerului</strong>.
+
+Bernoulli este compatibil cu această descriere
+și permite relaționarea locală a presiunii și vitezei
+într-un model adecvat de curgere.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ACTIVITATE HARTA
+========================================================= -->
+
+<section class="card">
+
+<h2>🗺️ Activitate – Citește harta unei aripi</h2>
+
+<p>
+Pentru schema precedentă,
+completează verbal următoarele relații.
+</p>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Observație
+</th>
+
+<th>
+Interpretare fizică
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<tr>
+
+<td>
+Liniile de curent sunt mai apropiate și viteza locală este mai mare într-o regiune.
+</td>
+
+<td>
+În modelul Bernoulli,
+termenul
+\(\frac12\rho v^2\)
+este mai mare.
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Presiunea deasupra aripii este mai mică decât dedesubt.
+</td>
+
+<td>
+Forțele de presiune pot avea o rezultantă cu componentă în sus.
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Aerul este deviat în ansamblu.
+</td>
+
+<td>
+Impulsul aerului se modifică;
+aripa și aerul interacționează mecanic.
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Vitezele și presiunile nu sunt uniforme pe suprafață.
+</td>
+
+<td>
+Trebuie analizată o distribuție,
+nu o singură valoare de presiune.
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMPARAȚIE
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Ce lege folosim?</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Aplicație</th>
+<th>Principiul principal</th>
+<th>Relație utilă</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+Presă hidraulică
+</td>
+
+<td>
+Legea lui Pascal
+</td>
+
+<td>
+
+\[
+\frac{F_1}{S_1}
+=
+\frac{F_2}{S_2}
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Navă / plutire
+</td>
+
+<td>
+Legea lui Arhimede
+</td>
+
+<td>
+
+\[
+F_A=
+\rho_f gV_d
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Tub Venturi
+</td>
+
+<td>
+Continuitate + Bernoulli
+</td>
+
+<td>
+
+\[
+S_1v_1=S_2v_2
+\]
+
+\[
+p+\frac12\rho v^2
+=
+\text{constant}
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Tub Pitot
+</td>
+
+<td>
+Bernoulli
+</td>
+
+<td>
+
+\[
+\Delta p=
+\frac12\rho v^2
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Pulverizator
+</td>
+
+<td>
+Diferență de presiune + curgere rapidă
+</td>
+
+<td>
+
+\[
+\Delta p
+\rightarrow
+\text{deplasarea lichidului}
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Profil aerodinamic
+</td>
+
+<td>
+Distribuție de presiune + dinamica fluidului
+</td>
+
+<td>
+
+\[
+p+\frac12\rho v^2+\rho gh
+=
+\text{constant}
+\]
+
+local, în modelul adecvat
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Atelier virtual – Ce aplicație alegi?</h2>
+
+<p>
+Selectează una dintre aplicații.
+Fiecare modul folosește o relație fizică diferită.
+</p>
+
+
+<div class="mode-buttons">
+
+<button
+  class="mode-button active"
+  data-mode="hydraulic">
+
+🔧 Presă hidraulică
+
+</button>
+
+
+<button
+  class="mode-button"
+  data-mode="float">
+
+🚢 Plutire
+
+</button>
+
+
+<button
+  class="mode-button"
+  data-mode="venturi">
+
+🚰 Venturi
+
+</button>
+
+
+<button
+  class="mode-button"
+  data-mode="pitot">
+
+✈️ Pitot
+
+</button>
+
+
+<button
+  class="mode-button"
+  data-mode="wing">
+
+🪽 Profil aerodinamic
+
+</button>
+
+</div>
+
+
+<!-- PRESĂ -->
+
+<div
+  class="app-panel active"
+  id="panel-hydraulic">
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="hydF1">
+Forța \(F_1\) [N]
+</label>
+
+<input
+  id="hydF1"
+  type="number"
+  min="0"
+  step="10"
+  value="150">
+
+</div>
+
+
+<div class="control">
+
+<label for="hydS1">
+Aria \(S_1\) [cm²]
+</label>
+
+<input
+  id="hydS1"
+  type="number"
+  min="0.1"
+  step="1"
+  value="5">
+
+</div>
+
+
+<div class="control">
+
+<label for="hydS2">
+Aria \(S_2\) [cm²]
+</label>
+
+<input
+  id="hydS2"
+  type="number"
+  min="0.1"
+  step="5"
+  value="200">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PLUTIRE -->
+
+<div
+  class="app-panel"
+  id="panel-float">
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="floatRhoBody">
+Densitatea corpului [kg/m³]
+</label>
+
+<input
+  id="floatRhoBody"
+  type="number"
+  min="1"
+  step="10"
+  value="750">
+
+</div>
+
+
+<div class="control">
+
+<label for="floatRhoFluid">
+Densitatea fluidului [kg/m³]
+</label>
+
+<input
+  id="floatRhoFluid"
+  type="number"
+  min="1"
+  step="10"
+  value="1000">
+
+</div>
+
+
+<div class="control">
+
+<label for="floatVolume">
+Volumul corpului [L]
+</label>
+
+<input
+  id="floatVolume"
+  type="number"
+  min="0.1"
+  step="1"
+  value="10">
+
+</div>
+
+
+<div class="control">
+
+<label for="floatG">
+\(g\) [m/s²]
+</label>
+
+<input
+  id="floatG"
+  type="number"
+  min="0.1"
+  step="0.01"
+  value="9.81">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- VENTURI -->
+
+<div
+  class="app-panel"
+  id="panel-venturi">
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="ventS1">
+\(S_1\) [cm²]
+</label>
+
+<input
+  id="ventS1"
+  type="number"
+  min="1"
+  step="5"
+  value="100">
+
+</div>
+
+
+<div class="control">
+
+<label for="ventS2">
+\(S_2\) [cm²]
+</label>
+
+<input
+  id="ventS2"
+  type="number"
+  min="1"
+  step="5"
+  value="40">
+
+</div>
+
+
+<div class="control">
+
+<label for="ventQ">
+Debit \(Q\) [L/s]
+</label>
+
+<input
+  id="ventQ"
+  type="number"
+  min="0.01"
+  step="1"
+  value="10">
+
+</div>
+
+
+<div class="control">
+
+<label for="ventRho">
+Densitatea [kg/m³]
+</label>
+
+<input
+  id="ventRho"
+  type="number"
+  min="1"
+  step="10"
+  value="1000">
+
+</div>
+
+
+<div class="control">
+
+<label for="ventP1">
+\(p_1\) [kPa]
+</label>
+
+<input
+  id="ventP1"
+  type="number"
+  min="1"
+  step="1"
+  value="200">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PITOT -->
+
+<div
+  class="app-panel"
+  id="panel-pitot">
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="pitotRho">
+Densitatea fluidului [kg/m³]
+</label>
+
+<input
+  id="pitotRho"
+  type="number"
+  min="0.01"
+  step="0.001"
+  value="1.225">
+
+</div>
+
+
+<div class="control">
+
+<label for="pitotDp">
+Diferența \(\Delta p\) [Pa]
+</label>
+
+<input
+  id="pitotDp"
+  type="number"
+  min="0"
+  step="10"
+  value="150">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- WING -->
+
+<div
+  class="app-panel"
+  id="panel-wing">
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="wingRho">
+Densitatea aerului [kg/m³]
+</label>
+
+<input
+  id="wingRho"
+  type="number"
+  min="0.01"
+  step="0.001"
+  value="1.225">
+
+</div>
+
+
+<div class="control">
+
+<label for="wingTop">
+Viteza deasupra [m/s]
+</label>
+
+<input
+  id="wingTop"
+  type="number"
+  min="0"
+  step="1"
+  value="40">
+
+</div>
+
+
+<div class="control">
+
+<label for="wingBottom">
+Viteza dedesubt [m/s]
+</label>
+
+<input
+  id="wingBottom"
+  type="number"
+  min="0"
+  step="1"
+  value="30">
+
+</div>
+
+
+<div class="control">
+
+<label for="wingArea">
+Aria de referință [m²]
+</label>
+
+<input
+  id="wingArea"
+  type="number"
+  min="0.01"
+  step="1"
+  value="12">
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="applicationCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span id="resultLabel1">
+Presiune transmisă
+</span>
+
+<strong id="result1">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel2">
+Forța de ieșire
+</span>
+
+<strong id="result2">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel3">
+Avantaj mecanic
+</span>
+
+<strong id="result3">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel4">
+Principiu
+</span>
+
+<strong id="result4">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="appStatus">
+
+Modifică ariile pistoanelor și observă
+multiplicarea forței.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ACTIVITATE SIMULATOR
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Misiuni în atelierul virtual</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Misiunea A – Presa</h3>
+
+<p>
+Fă:
+</p>
+
+<div class="formula">
+
+\[
+S_2=20S_1
+\]
+
+</div>
+
+<p>
+Verifică dacă:
+</p>
+
+<div class="formula">
+
+\[
+F_2=20F_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Misiunea B – Nava</h3>
+
+<p>
+Compară:
+</p>
+
+<div class="formula">
+
+\[
+\rho_c=600\,kg/m^3
+\]
+
+cu:
+
+\[
+\rho_c=900\,kg/m^3
+\]
+
+</div>
+
+<p>
+Care corp trebuie să se scufunde mai mult pentru a pluti?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Misiunea C – Venturi</h3>
+
+<p>
+Micșorează \(S_2\) fără a modifica debitul.
+</p>
+
+<p>
+Observă simultan:
+</p>
+
+<div class="formula">
+
+\[
+v_2\uparrow
+\]
+
+și:
+
+\[
+p_2\downarrow
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Misiunea D – Pitot</h3>
+
+<p>
+Mărește de patru ori diferența de presiune.
+</p>
+
+Din:
+
+<div class="formula">
+
+\[
+v=
+\sqrt{
+\frac{2\Delta p}{\rho}
+}
+\]
+
+</div>
+
+<p>
+de câte ori crește viteza?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Misiunea E – Profil</h3>
+
+<p>
+Mărește viteza curgerii deasupra profilului
+în modelul simplificat.
+</p>
+
+<p>
+Cum se modifică diferența estimată de presiune?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Misiunea F – Identifică legea</h3>
+
+<p>
+În fiecare modul,
+numește înainte de calcul
+legea fizică principală pe care o vei folosi.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LIMITARI
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Model ideal versus dispozitiv real</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Modelul școlar
+</th>
+
+<th>
+În sistemul real mai pot apărea
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<tr>
+
+<td>
+Fluid incompresibil
+</td>
+
+<td>
+Compresibilitate, mai ales la gaze și viteze mari
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Fără vâscozitate
+</td>
+
+<td>
+Frecări interne și pierderi de presiune
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Curgere staționară
+</td>
+
+<td>
+Fluctuații și regim turbulent
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Geometrie simplă
+</td>
+
+<td>
+Conducte curbe, rugozitate, supape, obstacole
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Bernoulli ideal
+</td>
+
+<td>
+Pompe, turbine, pierderi energetice
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Profil aerodinamic simplificat
+</td>
+
+<td>
+Curgere tridimensională, turbulență, separarea curgerii
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="purple-box">
+
+Un model bun nu trebuie să reproducă toate detaliile realității.
+
+Trebuie să evidențieze corect
+fenomenul pe care îl studiem
+și să precizăm limitele în care îl folosim.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     STRATEGIE
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Cum recunoști principiul potrivit?</h2>
+
+<ol class="steps">
+
+
+<li>
+
+<strong>
+Există un fluid închis și pistoane?
+</strong>
+
+<p>
+Gândește-te la
+<strong>Pascal</strong>.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Corpul plutește sau este scufundat?
+</strong>
+
+<p>
+Gândește-te la
+<strong>Arhimede</strong>.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Se modifică secțiunea conductei?
+</strong>
+
+<p>
+Verifică
+<strong>continuitatea</strong>.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Trebuie legate presiunea, viteza și înălțimea?
+</strong>
+
+<p>
+Folosește
+<strong>Bernoulli</strong>.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Se măsoară diferența dintre presiunea statică
+și cea de stagnare?
+</strong>
+
+<p>
+Poate fi o aplicație de tip
+<strong>Pitot</strong>.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>
+Apar pierderi, vârtejuri sau curgere puternic neregulată?
+</strong>
+
+<p>
+Modelul de fluid ideal poate deveni insuficient.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     GREȘELI
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Explicații de evitat</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>„Presa hidraulică produce energie.”</h3>
+
+<p>
+Nu.
+</p>
+
+În modelul ideal:
+
+<div class="formula">
+
+\[
+F_1d_1=F_2d_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>„Un vapor plutește pentru că este ușor.”</h3>
+
+<p>
+Nu masa singură decide.
+</p>
+
+<p>
+Contează raportul dintre masă,
+volumul dislocuit și densitatea fluidului.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>„Venturi înseamnă că presiunea dispare.”</h3>
+
+<p>
+Nu.
+Presiunea statică se modifică;
+nu devine automat zero.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>„Tubul Pitot măsoară direct viteza.”</h3>
+
+<p>
+El măsoară presiuni.
+Viteza este dedusă din diferența de presiune.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>„Pulverizatorul trage lichidul prin vid.”</h3>
+
+<p>
+Mai precis,
+diferența de presiune produce deplasarea lichidului.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>„Aerul de deasupra aripii trebuie să se întâlnească cu cel de dedesubt.”</h3>
+
+<p>
+Nu există o astfel de condiție fizică.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUZA EFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Întrebări cauză–efect</h2>
+
+<ol>
+
+<li>
+De ce un piston cu arie mare poate produce o forță mare
+la aceeași presiune?
+</li>
+
+<li>
+De ce o navă încărcată se scufundă mai mult?
+</li>
+
+<li>
+De ce un hidrometru se scufundă mai puțin
+într-un lichid mai dens?
+</li>
+
+<li>
+De ce viteza crește în porțiunea îngustă
+a unui Venturi?
+</li>
+
+<li>
+De ce presiunea statică poate scădea
+în aceeași porțiune?
+</li>
+
+<li>
+De ce tubul Pitot trebuie să compare două presiuni?
+</li>
+
+<li>
+De ce lichidul unui pulverizator poate urca prin tub?
+</li>
+
+<li>
+De ce distribuția presiunii pe o aripă,
+nu doar viteza într-un singur punct,
+este importantă pentru portanță?
+</li>
+
+<li>
+De ce nu putem aplica orbește legea lui Bernoulli
+în orice conductă reală?
+</li>
+
+<li>
+Ce aplicații din această lecție folosesc simultan
+mai multe legi ale mecanicii fluidelor?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card quiz">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Presa hidraulică funcționează în principal pe baza:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+legii lui Kepler
+</button>
+
+<button class="answer-btn">
+legii lui Pascal
+</button>
+
+<button class="answer-btn">
+legii lui Hooke
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Pentru o navă care plutește în repaus:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F_A>G\)
+</button>
+
+<button class="answer-btn">
+\(F_A<G\)
+</button>
+
+<button class="answer-btn">
+\(F_A=G\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Într-un Venturi orizontal ideal,
+secțiunea mai mică are:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+viteză mai mare și presiune statică mai mică
+</button>
+
+<button class="answer-btn">
+viteză mai mică și presiune mai mică
+</button>
+
+<button class="answer-btn">
+viteză zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Tubul Pitot permite deducerea vitezei din:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+temperatură
+</button>
+
+<button class="answer-btn">
+diferența dintre presiunea de stagnare și presiunea statică
+</button>
+
+<button class="answer-btn">
+masa totală a conductei
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+În formula:
+</p>
+
+<div class="formula">
+
+\[
+v=
+\sqrt{
+\frac{2\Delta p}{\rho}
+}
+\]
+
+</div>
+
+\(\Delta p\) reprezintă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+diferența de înălțime
+</button>
+
+<button class="answer-btn">
+debitul volumic
+</button>
+
+<button class="answer-btn">
+o diferență de presiune
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Într-un pulverizator simplificat,
+lichidul urcă în principal datorită:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+diferenței de presiune
+</button>
+
+<button class="answer-btn">
+dispariției gravitației
+</button>
+
+<button class="answer-btn">
+creșterii masei lichidului
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Explicația corectă a portanței:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+cere ca două particule separate să se reîntâlnească simultan
+</button>
+
+<button class="answer-btn">
+implică distribuția presiunii și modificarea impulsului aerului
+</button>
+
+<button class="answer-btn">
+nu implică deloc aerul din jurul aripii
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Care aplicație combină explicit continuitatea și Bernoulli?
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+balanța
+</button>
+
+<button class="answer-btn">
+resortul
+</button>
+
+<button class="answer-btn">
+tubul Venturi
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Dacă densitatea lichidului crește,
+un corp care plutește trebuie să disloce:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+un volum mai mic pentru aceeași greutate
+</button>
+
+<button class="answer-btn">
+întotdeauna un volum mai mare
+</button>
+
+<button class="answer-btn">
+un volum infinit
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Într-un dispozitiv real:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+modelul ideal descrie obligatoriu toate detaliile
+</button>
+
+<button class="answer-btn">
+pot exista vâscozitate, turbulență și pierderi energetice
+</button>
+
+<button class="answer-btn">
+conservarea masei nu mai este valabilă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SINTEZA
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 Sinteza aplicațiilor</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Pascal</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\Delta p_1=\Delta p_2
+}
+\]
+
+</div>
+
+<p>
+Presă, cric, sisteme hidraulice.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Arhimede</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+F_A=\rho_f gV_d
+}
+\]
+
+</div>
+
+<p>
+Nave, submarine, hidrometre.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Continuitate</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+S_1v_1=S_2v_2
+}
+\]
+
+</div>
+
+<p>
+Conducte cu secțiune variabilă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Bernoulli</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+p+
+\frac12\rho v^2+
+\rho gh
+=
+\text{constant}
+}
+\]
+
+</div>
+
+<p>
+Venturi, Pitot și analiza energetică a curgerilor.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+o aplicație tehnică nu introduce o „lege nouă”.
+
+Ea combină legi și modele fizice deja cunoscute
+pentru a rezolva o problemă practică.
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TRANSITION 60
+========================================================= -->
+
+<section class="card">
+
+<h2>🏁 Urmează ultima lecție a capitolului</h2>
+
+<p>
+Ai parcurs acum întregul traseu conceptual:
+</p>
+
+<div class="formula">
+
+\[
+\text{presiune}
+\rightarrow
+\text{Pascal}
+\rightarrow
+\text{Arhimede}
+\rightarrow
+\text{curgere}
+\rightarrow
+\text{debit}
+\rightarrow
+\text{continuitate}
+\rightarrow
+\text{Bernoulli}
+\rightarrow
+\text{aplicații}
+\]
+
+</div>
+
+<div class="blue-box">
+
+În lecția 60 nu vom introduce o nouă lege.
+
+Vom combina conceptele capitolului în:
+
+<ul>
+
+<li>probleme de calcul;</li>
+
+<li>situații-problemă;</li>
+
+<li>itemi de identificare a legii potrivite;</li>
+
+<li>interpretări de grafice și scheme;</li>
+
+<li>probleme care folosesc succesiv două sau mai multe principii;</li>
+
+<li>o evaluare finală de capitol.
+</li>
+
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="lectia-58-legea-lui-bernoulli.html">
+
+← Lecția 58<br>
+Legea lui Bernoulli
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="lectia-60-consolidare-probleme-situatii-problema.html">
+
+Lecția 60<br>
+Consolidare. Probleme. Situații-problemă →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+Fizică – Clasa a IX-a • Noțiuni de mecanica fluidelor
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITĂȚI
+========================================================= */
+
+function num(
+  id,
+  fallback
+){
+
+  const value=
+    Number(
+      document.getElementById(
+        id
+      ).value
+    );
+
+
+  return Number.isFinite(value)
+    ? value
+    : fallback;
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(value)
+  ){
+    return "—";
+  }
+
+
+  return Number(value)
+    .toFixed(digits)
+    .replace(".",",");
+
+}
+
+
+function formatPressure(
+  value
+){
+
+  const absolute=
+    Math.abs(value);
+
+
+  if(
+    absolute>=1e6
+  ){
+
+    return `${formatRo(
+      value/1e6,
+      3
+    )} MPa`;
+
+  }
+
+
+  if(
+    absolute>=1000
+  ){
+
+    return `${formatRo(
+      value/1000,
+      2
+    )} kPa`;
+
+  }
+
+
+  return `${formatRo(
+    value,
+    1
+  )} Pa`;
+
+}
+
+
+function formatForce(
+  value
+){
+
+  if(
+    Math.abs(value)>=1000
+  ){
+
+    return `${formatRo(
+      value/1000,
+      2
+    )} kN`;
+
+  }
+
+
+  return `${formatRo(
+    value,
+    2
+  )} N`;
+
+}
+
+
+/* =========================================================
+   MODURI
+========================================================= */
+
+let currentMode=
+  "hydraulic";
+
+
+const modeButtons=
+  document.querySelectorAll(
+    ".mode-button"
+  );
+
+
+const panels=
+  document.querySelectorAll(
+    ".app-panel"
+  );
+
+
+modeButtons.forEach(
+  button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        currentMode=
+          button.dataset.mode;
+
+
+        modeButtons.forEach(
+          b=>
+            b.classList.remove(
+              "active"
+            )
+        );
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        panels.forEach(
+          panel=>
+            panel.classList.remove(
+              "active"
+            )
+        );
+
+
+        document.getElementById(
+          `panel-${currentMode}`
+        ).classList.add(
+          "active"
+        );
+
+
+        refresh();
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+const canvas=
+  document.getElementById(
+    "applicationCanvas"
+  );
+
+
+const ctx=
+  canvas.getContext(
+    "2d"
+  );
+
+
+function background(
+  W,
+  H
+){
+
+  const gradient=
+    ctx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#0c4a6e"
+  );
+
+
+  ctx.fillStyle=
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+}
+
+
+function arrow(
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width=5
+){
+
+  const angle=
+    Math.atan2(
+      y2-y1,
+      x2-x1
+    );
+
+
+  const head=13;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    y1
+  );
+
+  ctx.lineTo(
+    x2,
+    y2
+  );
+
+  ctx.strokeStyle=color;
+  ctx.lineWidth=width;
+  ctx.lineCap="round";
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x2,
+    y2
+  );
+
+
+  ctx.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle-Math.PI/6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle-Math.PI/6
+    )
+  );
+
+
+  ctx.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle+Math.PI/6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle+Math.PI/6
+    )
+  );
+
+
+  ctx.closePath();
+
+  ctx.fillStyle=color;
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   REZULTATE GENERICE
+========================================================= */
+
+const resultLabels=[
+  document.getElementById("resultLabel1"),
+  document.getElementById("resultLabel2"),
+  document.getElementById("resultLabel3"),
+  document.getElementById("resultLabel4")
+];
+
+
+const resultValues=[
+  document.getElementById("result1"),
+  document.getElementById("result2"),
+  document.getElementById("result3"),
+  document.getElementById("result4")
+];
+
+
+const appStatus=
+  document.getElementById(
+    "appStatus"
+  );
+
+
+function setResults(
+  labels,
+  values,
+  status
+){
+
+  labels.forEach(
+    (
+      label,
+      index
+    )=>{
+
+      resultLabels[
+        index
+      ].textContent=
+        label;
+
+
+      resultValues[
+        index
+      ].textContent=
+        values[
+          index
+        ];
+
+    }
+  );
+
+
+  appStatus.innerHTML=
+    status;
+
+}
+
+
+/* =========================================================
+   PRESĂ HIDRAULICĂ
+========================================================= */
+
+function calculateHydraulic(){
+
+  const F1=
+    Math.max(
+      0,
+      num(
+        "hydF1",
+        150
+      )
+    );
+
+
+  const S1cm=
+    Math.max(
+      .1,
+      num(
+        "hydS1",
+        5
+      )
+    );
+
+
+  const S2cm=
+    Math.max(
+      .1,
+      num(
+        "hydS2",
+        200
+      )
+    );
+
+
+  const S1=
+    S1cm*
+    1e-4;
+
+
+  const p=
+    F1/S1;
+
+
+  const ratio=
+    S2cm/S1cm;
+
+
+  const F2=
+    F1*
+    ratio;
+
+
+  return{
+    F1,
+    F2,
+    S1cm,
+    S2cm,
+    p,
+    ratio
+  };
+
+}
+
+
+function drawHydraulic(
+  r,
+  W,
+  H
+){
+
+  background(
+    W,
+    H
+  );
+
+
+  const bottom=
+    H*.75;
+
+
+  const waterY=
+    H*.47;
+
+
+  const x1=
+    W*.25;
+
+
+  const x2=
+    W*.72;
+
+
+  const w1=
+    70;
+
+
+  const w2=
+    Math.min(
+      190,
+      70+
+      70*
+      Math.sqrt(
+        r.ratio
+      )/
+      Math.sqrt(
+        Math.max(
+          r.ratio,
+          1
+        )
+      )
+    );
+
+
+  /*
+  Fluid.
+  */
+
+  ctx.fillStyle=
+    "rgba(56,189,248,.55)";
+
+
+  ctx.fillRect(
+    x1-w1/2,
+    waterY,
+    w1,
+    bottom-waterY
+  );
+
+
+  ctx.fillRect(
+    x2-w2/2,
+    waterY,
+    w2,
+    bottom-waterY
+  );
+
+
+  ctx.fillRect(
+    x1,
+    bottom-30,
+    x2-x1,
+    30
+  );
+
+
+  /*
+  Pereți.
+  */
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+  ctx.lineWidth=5;
+
+
+  ctx.strokeRect(
+    x1-w1/2,
+    waterY,
+    w1,
+    bottom-waterY
+  );
+
+
+  ctx.strokeRect(
+    x2-w2/2,
+    waterY,
+    w2,
+    bottom-waterY
+  );
+
+
+  /*
+  Pistoane.
+  */
+
+  ctx.fillStyle=
+    "#94a3b8";
+
+
+  ctx.fillRect(
+    x1-w1/2-4,
+    waterY-8,
+    w1+8,
+    16
+  );
+
+
+  ctx.fillRect(
+    x2-w2/2-4,
+    waterY-8,
+    w2+8,
+    16
+  );
+
+
+  /*
+  Sarcină.
+  */
+
+  ctx.fillStyle=
+    "#f97316";
+
+
+  ctx.fillRect(
+    x2-55,
+    waterY-74,
+    110,
+    62
+  );
+
+
+  ctx.fillStyle=
+    "white";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "SARCINĂ",
+    x2,
+    waterY-38
+  );
+
+
+  /*
+  Forțe.
+  */
+
+  arrow(
+    x1,
+    waterY-110,
+    x1,
+    waterY-17,
+    "#60a5fa",
+    5
+  );
+
+
+  arrow(
+    x2,
+    waterY-10,
+    x2,
+    waterY-105,
+    "#22c55e",
+    5
+  );
+
+
+  ctx.fillStyle=
+    "#93c5fd";
+
+
+  ctx.fillText(
+    `F₁=${formatForce(r.F1)}`,
+    x1,
+    waterY-126
+  );
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+
+  ctx.fillText(
+    `F₂=${formatForce(r.F2)}`,
+    x2,
+    waterY-126
+  );
+
+
+  ctx.fillStyle=
+    "#fde68a";
+
+
+  ctx.fillText(
+    `S₁=${formatRo(r.S1cm,1)} cm²`,
+    x1,
+    bottom+35
+  );
+
+
+  ctx.fillText(
+    `S₂=${formatRo(r.S2cm,1)} cm²`,
+    x2,
+    bottom+35
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 15px system-ui";
+
+
+  ctx.fillText(
+    "F₁/S₁ = F₂/S₂",
+    W/2,
+    40
+  );
+
+
+  ctx.textAlign=
+    "start";
+
+
+  setResults(
+
+    [
+      "Presiune transmisă",
+      "Forța F₂",
+      "Avantaj mecanic",
+      "Principiu"
+    ],
+
+    [
+      formatPressure(r.p),
+      formatForce(r.F2),
+      `${formatRo(r.ratio,2)} ×`,
+      "Pascal"
+    ],
+
+    `Aceeași creștere de presiune acționează
+     pe pistonul mare.
+     Raportul ideal al forțelor este
+     <strong>S₂/S₁ = ${formatRo(r.ratio,2)}</strong>.`
+
+  );
+
+}
+
+
+/* =========================================================
+   PLUTIRE
+========================================================= */
+
+function calculateFloat(){
+
+  const rhoBody=
+    Math.max(
+      1,
+      num(
+        "floatRhoBody",
+        750
+      )
+    );
+
+
+  const rhoFluid=
+    Math.max(
+      1,
+      num(
+        "floatRhoFluid",
+        1000
+      )
+    );
+
+
+  const volumeL=
+    Math.max(
+      .1,
+      num(
+        "floatVolume",
+        10
+      )
+    );
+
+
+  const g=
+    Math.max(
+      .1,
+      num(
+        "floatG",
+        9.81
+      )
+    );
+
+
+  const V=
+    volumeL*
+    1e-3;
+
+
+  const mass=
+    rhoBody*
+    V;
+
+
+  const weight=
+    mass*
+    g;
+
+
+  let fraction=
+    rhoBody/
+    rhoFluid;
+
+
+  let state;
+
+
+  if(
+    rhoBody<
+    rhoFluid
+  ){
+
+    fraction=
+      rhoBody/
+      rhoFluid;
+
+    state=
+      "plutire";
+
+  }
+
+  else if(
+    Math.abs(
+      rhoBody-rhoFluid
+    )<
+    .001
+  ){
+
+    fraction=1;
+    state="echilibru în fluid";
+
+  }
+
+  else{
+
+    fraction=1;
+    state="scufundare";
+
+  }
+
+
+  const displaced=
+    V*
+    Math.min(
+      1,
+      fraction
+    );
+
+
+  const FA=
+    rhoFluid*
+    g*
+    displaced;
+
+
+  return{
+    rhoBody,
+    rhoFluid,
+    volumeL,
+    V,
+    mass,
+    weight,
+    fraction,
+    FA,
+    state
+  };
+
+}
+
+
+function drawFloat(
+  r,
+  W,
+  H
+){
+
+  background(
+    W,
+    H
+  );
+
+
+  const tankLeft=
+    W*.16;
+
+
+  const tankRight=
+    W*.84;
+
+
+  const surface=
+    H*.34;
+
+
+  const bottom=
+    H*.83;
+
+
+  const bodyW=
+    Math.min(
+      160,
+      W*.22
+    );
+
+
+  const bodyH=
+    180;
+
+
+  ctx.fillStyle=
+    "#0284c7";
+
+
+  ctx.fillRect(
+    tankLeft,
+    surface,
+    tankRight-tankLeft,
+    bottom-surface
+  );
+
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+  ctx.lineWidth=6;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    tankLeft,
+    surface-5
+  );
+
+  ctx.lineTo(
+    tankLeft,
+    bottom
+  );
+
+  ctx.lineTo(
+    tankRight,
+    bottom
+  );
+
+  ctx.lineTo(
+    tankRight,
+    surface-5
+  );
+
+  ctx.stroke();
+
+
+  let bodyTop;
+
+
+  if(
+    r.state===
+    "plutire"
+  ){
+
+    bodyTop=
+      surface-
+      bodyH*
+      (
+        1-r.fraction
+      );
+
+  }
+
+  else if(
+    r.state===
+    "scufundare"
+  ){
+
+    bodyTop=
+      bottom-
+      bodyH-
+      7;
+
+  }
+
+  else{
+
+    bodyTop=
+      surface+
+      65;
+
+  }
+
+
+  const bodyX=
+    W/2-
+    bodyW/2;
+
+
+  ctx.fillStyle=
+    "#f59e0b";
+
+
+  ctx.fillRect(
+    bodyX,
+    bodyTop,
+    bodyW,
+    bodyH
+  );
+
+
+  ctx.strokeStyle=
+    "#b45309";
+
+  ctx.lineWidth=4;
+
+
+  ctx.strokeRect(
+    bodyX,
+    bodyTop,
+    bodyW,
+    bodyH
+  );
+
+
+  const centerX=
+    W/2;
+
+
+  const centerY=
+    bodyTop+
+    bodyH/2;
+
+
+  arrow(
+    centerX-28,
+    centerY+30,
+    centerX-28,
+    centerY-80,
+    "#22c55e",
+    5
+  );
+
+
+  arrow(
+    centerX+28,
+    centerY-30,
+    centerX+28,
+    centerY+80,
+    "#c084fc",
+    5
+  );
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+  ctx.font=
+    "bold 14px system-ui";
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "Fₐ",
+    centerX-48,
+    centerY-88
+  );
+
+
+  ctx.fillStyle=
+    "#d8b4fe";
+
+
+  ctx.fillText(
+    "G",
+    centerX+48,
+    centerY+94
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+  ctx.font=
+    "bold 15px system-ui";
+
+
+  ctx.fillText(
+    r.state.toUpperCase(),
+    W/2,
+    38
+  );
+
+
+  ctx.textAlign=
+    "start";
+
+
+  setResults(
+
+    [
+      "Greutatea",
+      "Forța arhimedică",
+      "Volum scufundat",
+      "Regim"
+    ],
+
+    [
+      formatForce(r.weight),
+      formatForce(r.FA),
+      `${formatRo(
+        r.fraction*100,
+        1
+      )} %`,
+      r.state
+    ],
+
+    r.state===
+    "plutire"
+
+      ? `Corpul se stabilește astfel încât
+         <strong>Fₐ=G</strong>.
+         Fracția scufundată este
+         <strong>ρcorp/ρfluid =
+         ${formatRo(r.fraction,3)}</strong>.`
+
+      : r.state===
+        "scufundare"
+
+        ? `Corpul este mai dens decât fluidul.
+           Chiar complet scufundat,
+           <strong>Fₐ&lt;G</strong>.`
+
+        : `Densitățile sunt egale,
+           iar corpul complet scufundat poate avea
+           <strong>Fₐ=G</strong>
+           în modelul ideal.`
+
+  );
+
+}
+
+
+/* =========================================================
+   VENTURI
+========================================================= */
+
+function calculateVenturi(){
+
+  const S1cm=
+    Math.max(
+      1,
+      num(
+        "ventS1",
+        100
+      )
+    );
+
+
+  const S2cm=
+    Math.max(
+      1,
+      num(
+        "ventS2",
+        40
+      )
+    );
+
+
+  const QLs=
+    Math.max(
+      .01,
+      num(
+        "ventQ",
+        10
+      )
+    );
+
+
+  const rho=
+    Math.max(
+      1,
+      num(
+        "ventRho",
+        1000
+      )
+    );
+
+
+  const p1kPa=
+    Math.max(
+      1,
+      num(
+        "ventP1",
+        200
+      )
+    );
+
+
+  const S1=
+    S1cm*
+    1e-4;
+
+
+  const S2=
+    S2cm*
+    1e-4;
+
+
+  const Q=
+    QLs*
+    1e-3;
+
+
+  const v1=
+    Q/S1;
+
+
+  const v2=
+    Q/S2;
+
+
+  const p1=
+    p1kPa*
+    1000;
+
+
+  const p2=
+    p1+
+    .5*
+    rho*
+    (
+      v1*v1-
+      v2*v2
+    );
+
+
+  return{
+    S1cm,
+    S2cm,
+    QLs,
+    rho,
+    p1,
+    p2,
+    v1,
+    v2
+  };
+
+}
+
+
+function drawVenturi(
+  r,
+  W,
+  H
+){
+
+  background(
+    W,
+    H
+  );
+
+
+  const maxArea=
+    Math.max(
+      r.S1cm,
+      r.S2cm
+    );
+
+
+  const h1=
+    80+
+    95*
+    Math.sqrt(
+      r.S1cm/maxArea
+    );
+
+
+  const h2=
+    80+
+    95*
+    Math.sqrt(
+      r.S2cm/maxArea
+    );
+
+
+  const mid=
+    H*.52;
+
+
+  const x1=W*.08;
+  const x2=W*.37;
+  const x3=W*.63;
+  const x4=W*.92;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    mid-h1/2
+  );
+
+  ctx.lineTo(
+    x2,
+    mid-h1/2
+  );
+
+  ctx.lineTo(
+    x3,
+    mid-h2/2
+  );
+
+  ctx.lineTo(
+    x4,
+    mid-h2/2
+  );
+
+  ctx.lineTo(
+    x4,
+    mid+h2/2
+  );
+
+  ctx.lineTo(
+    x3,
+    mid+h2/2
+  );
+
+  ctx.lineTo(
+    x2,
+    mid+h1/2
+  );
+
+  ctx.lineTo(
+    x1,
+    mid+h1/2
+  );
+
+  ctx.closePath();
+
+
+  ctx.fillStyle=
+    "rgba(14,165,233,.60)";
+
+  ctx.fill();
+
+
+  ctx.strokeStyle=
+    "#cbd5e1";
+
+  ctx.lineWidth=6;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    mid-h1/2
+  );
+
+  ctx.lineTo(
+    x2,
+    mid-h1/2
+  );
+
+  ctx.lineTo(
+    x3,
+    mid-h2/2
+  );
+
+  ctx.lineTo(
+    x4,
+    mid-h2/2
+  );
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x1,
+    mid+h1/2
+  );
+
+  ctx.lineTo(
+    x2,
+    mid+h1/2
+  );
+
+  ctx.lineTo(
+    x3,
+    mid+h2/2
+  );
+
+  ctx.lineTo(
+    x4,
+    mid+h2/2
+  );
+
+  ctx.stroke();
+
+
+  const aX=
+    (x1+x2)/2;
+
+
+  const bX=
+    (x3+x4)/2;
+
+
+  const maxV=
+    Math.max(
+      r.v1,
+      r.v2
+    );
+
+
+  arrow(
+    aX-50,
+    mid,
+    aX+
+    45+
+    60*r.v1/maxV,
+    mid,
+    "#22c55e"
+  );
+
+
+  arrow(
+    bX-50,
+    mid,
+    bX+
+    45+
+    60*r.v2/maxV,
+    mid,
+    "#22c55e"
+  );
+
+
+  const maxP=
+    Math.max(
+      r.p1,
+      r.p2,
+      1
+    );
+
+
+  const ph1=
+    Math.max(
+      5,
+      110*r.p1/maxP
+    );
+
+
+  const ph2=
+    Math.max(
+      5,
+      110*Math.max(
+        0,
+        r.p2
+      )/maxP
+    );
+
+
+  ctx.fillStyle=
+    "#f97316";
+
+
+  ctx.fillRect(
+    aX-12,
+    mid-h1/2-35-ph1,
+    24,
+    ph1
+  );
+
+
+  ctx.fillRect(
+    bX-12,
+    mid-h2/2-35-ph2,
+    24,
+    ph2
+  );
+
+
+  ctx.textAlign=
+    "center";
+
+  ctx.font=
+    "bold 14px system-ui";
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+
+  ctx.fillText(
+    `v₁=${formatRo(r.v1,2)} m/s`,
+    aX,
+    mid+30
+  );
+
+
+  ctx.fillText(
+    `v₂=${formatRo(r.v2,2)} m/s`,
+    bX,
+    mid+30
+  );
+
+
+  ctx.fillStyle=
+    "#fdba74";
+
+
+  ctx.fillText(
+    `p₁=${formatPressure(r.p1)}`,
+    aX,
+    mid-h1/2-48-ph1
+  );
+
+
+  ctx.fillText(
+    `p₂=${formatPressure(r.p2)}`,
+    bX,
+    mid-h2/2-48-ph2
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.fillText(
+    "S₁v₁ = S₂v₂",
+    W/2,
+    36
+  );
+
+
+  ctx.textAlign=
+    "start";
+
+
+  setResults(
+
+    [
+      "Viteza v₁",
+      "Viteza v₂",
+      "Presiunea p₂",
+      "Δp = p₁ − p₂"
+    ],
+
+    [
+      `${formatRo(r.v1,3)} m/s`,
+      `${formatRo(r.v2,3)} m/s`,
+      formatPressure(r.p2),
+      formatPressure(
+        r.p1-r.p2
+      )
+    ],
+
+    r.p2>0
+
+      ? `Continuitatea determină vitezele,
+         iar Bernoulli leagă viteza de presiune.
+         <strong>Venturi = continuitate + Bernoulli.</strong>`
+
+      : `⚠ Parametrii aleși conduc la o presiune calculată
+         nerealistă în modelul simplificat.
+         Redu debitul sau mărește presiunea inițială.`
+
+  );
+
+}
+
+
+/* =========================================================
+   PITOT
+========================================================= */
+
+function calculatePitot(){
+
+  const rho=
+    Math.max(
+      .001,
+      num(
+        "pitotRho",
+        1.225
+      )
+    );
+
+
+  const dp=
+    Math.max(
+      0,
+      num(
+        "pitotDp",
+        150
+      )
+    );
+
+
+  const v=
+    Math.sqrt(
+      2*dp/rho
+    );
+
+
+  return{
+    rho,
+    dp,
+    v,
+    kmh:v*3.6
+  };
+
+}
+
+
+function drawPitot(
+  r,
+  W,
+  H
+){
+
+  background(
+    W,
+    H
+  );
+
+
+  /*
+  Linii de curgere.
+  */
+
+  for(
+    let i=0;
+    i<6;
+    i++
+  ){
+
+    const y=
+      H*.27+
+      i*45;
+
+
+    arrow(
+      W*.06,
+      y,
+      W*.82,
+      y,
+      "#38bdf8",
+      2
+    );
+
+  }
+
+
+  /*
+  Tub.
+  */
+
+  ctx.strokeStyle=
+    "#f8fafc";
+
+  ctx.lineWidth=14;
+
+  ctx.lineCap="round";
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    W*.72,
+    H*.48
+  );
+
+  ctx.lineTo(
+    W*.52,
+    H*.48
+  );
+
+  ctx.lineTo(
+    W*.52,
+    H*.73
+  );
+
+  ctx.stroke();
+
+
+  ctx.fillStyle=
+    "#f97316";
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+    W*.51,
+    H*.48,
+    8,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 15px system-ui";
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "punct de stagnare",
+    W*.51,
+    H*.40
+  );
+
+
+  ctx.fillStyle=
+    "#86efac";
+
+
+  ctx.fillText(
+    `v = ${formatRo(r.v,2)} m/s`,
+    W*.34,
+    H*.18
+  );
+
+
+  ctx.fillStyle=
+    "#fdba74";
+
+
+  ctx.fillText(
+    `Δp = ${formatPressure(r.dp)}`,
+    W*.65,
+    H*.81
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.fillText(
+    "p₀ − p = ½ρv²",
+    W/2,
+    37
+  );
+
+
+  ctx.textAlign=
+    "start";
+
+
+  setResults(
+
+    [
+      "Diferența de presiune",
+      "Viteza",
+      "Viteza",
+      "Principiu"
+    ],
+
+    [
+      formatPressure(r.dp),
+      `${formatRo(r.v,2)} m/s`,
+      `${formatRo(r.kmh,1)} km/h`,
+      "Bernoulli"
+    ],
+
+    `Tubul Pitot nu „citește” direct viteza.
+     El permite măsurarea unei diferențe de presiune,
+     din care viteza este calculată.`
+
+  );
+
+}
+
+
+/* =========================================================
+   PROFIL
+========================================================= */
+
+function calculateWing(){
+
+  const rho=
+    Math.max(
+      .001,
+      num(
+        "wingRho",
+        1.225
+      )
+    );
+
+
+  const vTop=
+    Math.max(
+      0,
+      num(
+        "wingTop",
+        40
+      )
+    );
+
+
+  const vBottom=
+    Math.max(
+      0,
+      num(
+        "wingBottom",
+        30
+      )
+    );
+
+
+  const area=
+    Math.max(
+      .01,
+      num(
+        "wingArea",
+        12
+      )
+    );
+
+
+  /*
+  Model comparativ Bernoulli simplificat:
+  presupunem același total Bernoulli și aceeași înălțime.
+  p_bottom - p_top =
+  1/2 rho (v_top² - v_bottom²)
+  */
+
+  const dp=
+    .5*
+    rho*
+    (
+      vTop*vTop-
+      vBottom*vBottom
+    );
+
+
+  const estimatedForce=
+    dp*
+    area;
+
+
+  return{
+    rho,
+    vTop,
+    vBottom,
+    area,
+    dp,
+    estimatedForce
+  };
+
+}
+
+
+function drawWing(
+  r,
+  W,
+  H
+){
+
+  background(
+    W,
+    H
+  );
+
+
+  /*
+  Flux superior.
+  */
+
+  for(
+    let i=0;
+    i<3;
+    i++
+  ){
+
+    const y=
+      H*.20+
+      i*42;
+
+
+    arrow(
+      W*.06,
+      y,
+      W*.92,
+      y,
+      "#60a5fa",
+      2+
+      Math.min(
+        3,
+        r.vTop/30
+      )
+    );
+
+  }
+
+
+  /*
+  Flux inferior.
+  */
+
+  for(
+    let i=0;
+    i<3;
+    i++
+  ){
+
+    const y=
+      H*.67+
+      i*42;
+
+
+    arrow(
+      W*.06,
+      y,
+      W*.92,
+      y,
+      "#38bdf8",
+      2+
+      Math.min(
+        3,
+        r.vBottom/30
+      )
+    );
+
+  }
+
+
+  /*
+  Profil.
+  */
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    W*.25,
+    H*.52
+  );
+
+
+  ctx.quadraticCurveTo(
+    W*.48,
+    H*.38,
+    W*.76,
+    H*.49
+  );
+
+
+  ctx.quadraticCurveTo(
+    W*.51,
+    H*.59,
+    W*.25,
+    H*.52
+  );
+
+
+  ctx.closePath();
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+  ctx.fill();
+
+
+  ctx.strokeStyle=
+    "#94a3b8";
+
+  ctx.lineWidth=4;
+
+  ctx.stroke();
+
+
+  /*
+  Presiuni.
+  */
+
+  ctx.fillStyle=
+    "#93c5fd";
+
+
+  ctx.font=
+    "bold 14px system-ui";
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    `v sus = ${formatRo(r.vTop,1)} m/s`,
+    W/2,
+    H*.13
+  );
+
+
+  ctx.fillStyle=
+    "#67e8f9";
+
+
+  ctx.fillText(
+    `v jos = ${formatRo(r.vBottom,1)} m/s`,
+    W/2,
+    H*.90
+  );
+
+
+  const direction=
+    Math.sign(
+      r.estimatedForce
+    );
+
+
+  if(
+    direction!==0
+  ){
+
+    arrow(
+      W*.52,
+      H*.52,
+      W*.52,
+      H*.52-
+      direction*110,
+      direction>0
+        ? "#22c55e"
+        : "#f97316",
+      6
+    );
+
+  }
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.fillText(
+    "model Bernoulli comparativ simplificat",
+    W/2,
+    36
+  );
+
+
+  ctx.textAlign=
+    "start";
+
+
+  setResults(
+
+    [
+      "v deasupra",
+      "v dedesubt",
+      "pjos − psus",
+      "Forță estimată Δp·S"
+    ],
+
+    [
+      `${formatRo(r.vTop,2)} m/s`,
+      `${formatRo(r.vBottom,2)} m/s`,
+      formatPressure(r.dp),
+      formatForce(r.estimatedForce)
+    ],
+
+    `Acesta este numai un
+     <strong>model comparativ idealizat</strong>.
+     Portanța reală se obține din distribuția presiunii
+     pe întreaga suprafață și este legată și de
+     modificarea impulsului aerului.`
+
+  );
+
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+function refresh(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  if(
+    currentMode===
+    "hydraulic"
+  ){
+
+    drawHydraulic(
+      calculateHydraulic(),
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    currentMode===
+    "float"
+  ){
+
+    drawFloat(
+      calculateFloat(),
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    currentMode===
+    "venturi"
+  ){
+
+    drawVenturi(
+      calculateVenturi(),
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    currentMode===
+    "pitot"
+  ){
+
+    drawPitot(
+      calculatePitot(),
+      W,
+      H
+    );
+
+  }
+
+
+  if(
+    currentMode===
+    "wing"
+  ){
+
+    drawWing(
+      calculateWing(),
+      W,
+      H
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LIVE INPUT
+========================================================= */
+
+document.querySelectorAll(
+  ".app-panel input"
+).forEach(
+  input=>{
+
+    input.addEventListener(
+      "input",
+      refresh
+    );
+
+
+    input.addEventListener(
+      "change",
+      refresh
+    );
+
+  }
+);
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio ||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  refresh();
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              b=>{
+                b.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Identifică mai întâi principiul fizic folosit de aplicație.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Poți conecta aplicațiile cu legile mecanicii fluidelor.`;
+
+              }
+
+              else if(
+                score>=7
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Ești pregătit pentru consolidarea finală.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Recapitulează legătura dintre aplicații și Pascal, Arhimede, continuitate și Bernoulli.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZARE
+========================================================= */
+
+window.addEventListener(
+  "load",
+  resizeCanvas
+);
+
+</script>
+
+</body>
+</html>
