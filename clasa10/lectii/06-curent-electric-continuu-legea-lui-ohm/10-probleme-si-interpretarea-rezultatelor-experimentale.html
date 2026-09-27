@@ -1,1 +1,5820 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+10. Probleme și interpretarea rezultatelor experimentale | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Probleme și interpretarea rezultatelor experimentale pentru curent continuu și legea lui Ohm: tabele, grafice U(I), rezistență medie, eroare relativă, puncte aberante și analizor interactiv de date.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(250,204,21,.18),
+      transparent 19%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+.class-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(250,204,21,.13);
+
+  color:#fef08a;
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.2rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:930px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   ANALYSIS FLOW
+========================================================= */
+
+.analysis-flow{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-top:20px;
+
+}
+
+.analysis-step{
+
+  padding:17px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.analysis-step-number{
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  margin-bottom:9px;
+
+  color:white;
+  background:#2563eb;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   ERROR CARDS
+========================================================= */
+
+.error-card{
+
+  padding:18px;
+
+  border:2px solid;
+
+  border-radius:14px;
+
+}
+
+.random-error{
+  border-color:#60a5fa;
+}
+
+.systematic-error{
+  border-color:#f59e0b;
+}
+
+.gross-error{
+  border-color:#ef4444;
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:#fff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  padding:4px 9px;
+
+  margin-bottom:8px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  cursor:pointer;
+
+  color:#1d4ed8;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   ANALYZER
+========================================================= */
+
+.analyzer{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.analyzer-toolbar{
+
+  display:grid;
+
+  grid-template-columns:
+    1.2fr 1fr;
+
+  gap:14px;
+
+  margin-bottom:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.data-input{
+
+  width:90px;
+
+  padding:8px;
+
+  border:
+    1px solid #94a3b8;
+
+  border-radius:7px;
+
+  text-align:center;
+
+  font:inherit;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:16px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.03rem;
+
+}
+
+.canvas-wrap{
+
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:15px;
+
+}
+
+#dataGraph{
+
+  display:block;
+
+  width:100%;
+  height:500px;
+
+}
+
+.analysis-status{
+
+  margin-top:16px;
+
+  padding:17px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+}
+
+.analysis-status.good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.analysis-status.warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+.analysis-status.bad{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   DIAGNOSTIC
+========================================================= */
+
+.diagnostic{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.diagnostic-card{
+
+  padding:17px;
+
+  background:#fff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:850px){
+
+  .grid-3,
+  .grid-4,
+  .results,
+  .analysis-flow{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .results,
+  .analysis-flow,
+  .analyzer-toolbar,
+  .diagnostic{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #dataGraph{
+    height:420px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .analyzer,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent electric continuu. Legea lui Ohm
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 10
+</span>
+
+<span class="class-badge">
+Consolidare
+</span>
+
+</div>
+
+
+<h1>
+Probleme și interpretarea rezultatelor experimentale
+</h1>
+
+
+<p class="subtitle">
+Un rezultat experimental nu este doar un număr.
+Trebuie să verificăm unitățile,
+coerența datelor,
+graficul,
+dispersia valorilor,
+eventualele abateri și compatibilitatea
+cu modelul fizic studiat.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Probleme</h3>
+
+<ul>
+
+<li>să alegi relația fizică potrivită;</li>
+
+<li>să lucrezi corect cu \(V\), \(A\), \(mA\) și \(\Omega\);</li>
+
+<li>să utilizezi legea lui Ohm;</li>
+
+<li>să rezolvi probleme cu circuitul întreg;</li>
+
+<li>să interpretezi efectul unui reostat;</li>
+
+<li>să verifici fizic rezultatul obținut.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Date experimentale</h3>
+
+<ul>
+
+<li>să calculezi valorile \(R_i\);</li>
+
+<li>să calculezi o valoare medie;</li>
+
+<li>să interpretezi graficul \(U=f(I)\);</li>
+
+<li>să identifici un punct suspect;</li>
+
+<li>să diferențiezi dispersia de o eroare sistematică;</li>
+
+<li>să formulezi o concluzie prudentă și argumentată.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BIG IDEA
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De la „am calculat” la „am interpretat”</h2>
+
+<p class="lead">
+Într-o problemă de fizică,
+obținerea unui număr nu este ultimul pas.
+</p>
+
+<div class="analysis-flow">
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+1
+</div>
+
+<strong>
+Calculează
+</strong>
+
+<p>
+Aplică modelul fizic și obține rezultatul.
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+2
+</div>
+
+<strong>
+Verifică unitatea
+</strong>
+
+<p>
+Un rezultat fără unitate este incomplet.
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+3
+</div>
+
+<strong>
+Verifică ordinul de mărime
+</strong>
+
+<p>
+Este valoarea plauzibilă pentru situația analizată?
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+4
+</div>
+
+<strong>
+Interpretează
+</strong>
+
+<p>
+Ce spune rezultatul despre fenomen?
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+5
+</div>
+
+<strong>
+Compară
+</strong>
+
+<p>
+Este compatibil cu celelalte măsurări?
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+6
+</div>
+
+<strong>
+Reprezintă
+</strong>
+
+<p>
+Ce arată tabelul sau graficul?
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+7
+</div>
+
+<strong>
+Caută abateri
+</strong>
+
+<p>
+Există un punct suspect sau o tendință sistematică?
+</p>
+
+</div>
+
+
+<div class="analysis-step">
+
+<div class="analysis-step-number">
+8
+</div>
+
+<strong>
+Concluzionează
+</strong>
+
+<p>
+Datele susțin sau nu modelul în domeniul investigat?
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TOOLBOX
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Trusa de formule</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Legea lui Ohm</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=RI
+}
+\]
+
+\[
+\boxed{
+I=\frac UR
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistența</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=\frac UI
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Conductor uniform</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=\rho\frac{\ell}{S}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Circuit întreg</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiune la borne</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\mathcal E-Ir
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Grafic \(U(I)\)</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=
+\frac{\Delta U}{\Delta I}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     UNITS
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Capcana unităților</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Mărime
+</th>
+
+<th>
+Unitate SI
+</th>
+
+<th>
+Conversie frecventă
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+Intensitate
+</td>
+
+<td>
+A
+</td>
+
+<td>
+\[
+1\,mA=10^{-3}\,A
+\]
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+Tensiune
+</td>
+
+<td>
+V
+</td>
+
+<td>
+\[
+1\,mV=10^{-3}\,V
+\]
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+Rezistență
+</td>
+
+<td>
+\(\Omega\)
+</td>
+
+<td>
+\[
+1\,k\Omega=10^3\,\Omega
+\]
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+Secțiune
+</td>
+
+<td>
+\(m^2\)
+</td>
+
+<td>
+\[
+1\,mm^2=10^{-6}\,m^2
+\]
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="red-box">
+
+Exemplu:
+
+\[
+I=200\,mA
+\]
+
+înseamnă:
+
+\[
+I=0,200\,A
+\]
+
+nu:
+
+\[
+200\,A
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXP DATA
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Cum interpretezi un tabel experimental?</h2>
+
+<p>
+Presupunem următorul set de măsurări:
+</p>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Nr.
+</th>
+
+<th>
+\(I\,[A]\)
+</th>
+
+<th>
+\(U\,[V]\)
+</th>
+
+<th>
+\(R_i=U_i/I_i\,[\Omega]\)
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>1</td>
+<td>0,050</td>
+<td>1,02</td>
+<td>20,4</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>0,100</td>
+<td>1,99</td>
+<td>19,9</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>0,150</td>
+<td>3,04</td>
+<td>20,3</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>0,200</td>
+<td>3,98</td>
+<td>19,9</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<p>
+Valorile nu sunt perfect identice,
+dar sunt apropiate.
+</p>
+
+<div class="green-box">
+
+O concluzie potrivită este:
+
+<strong>
+„În limitele dispersiei experimentale,
+raportul \(U/I\) rămâne aproximativ constant,
+iar datele sunt compatibile cu un comportament ohmic
+în domeniul investigat.”
+</strong>
+</div>
+
+
+<div class="red-box">
+
+O concluzie prea puternică ar fi:
+
+<strong>
+„Am demonstrat că acest rezistor respectă perfect legea lui Ohm
+în orice condiții.”
+</strong>
+
+Experimentul verifică doar domeniul de valori și condițiile efectiv investigate.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AVERAGE
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Media valorilor determinate</h2>
+
+<p>
+Pentru patru determinări:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{med}
+=
+\frac{
+R_1+R_2+R_3+R_4
+}{4}
+}
+\]
+
+</div>
+
+<p>
+Pentru datele precedente:
+</p>
+
+<div class="formula">
+
+\[
+R_{med}
+=
+\frac{
+20,4+19,9+20,3+19,9
+}{4}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{med}
+\approx20,1\,\Omega
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Media este utilă,
+dar nu trebuie să ascundă date neobișnuite.
+
+Dacă una dintre valori este foarte diferită,
+trebuie să investigăm cauza înainte de a o include automat în medie.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GRAPH
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Interpretarea graficului \(U=f(I)\)</h2>
+
+<p>
+Pentru un rezistor ohmic menținut în condiții aproximativ constante:
+</p>
+
+<div class="formula">
+
+\[
+U=RI
+\]
+
+</div>
+
+<p>
+Graficul ideal este o dreaptă prin origine.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R=
+\frac{\Delta U}{\Delta I}
+}
+\]
+
+</div>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Dreaptă prin origine</h3>
+
+<p>
+Este compatibilă cu:
+</p>
+
+<div class="formula">
+
+\[
+U\sim I
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Dreaptă, dar nu prin origine</h3>
+
+<p>
+Poate sugera o abatere sistematică,
+un zero incorect sau un efect care trebuie investigat.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curbură evidentă</h3>
+
+<p>
+Poate indica modificarea rezistenței cu punctul de funcționare,
+de exemplu prin încălzire.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Abatere aleatoare, sistematică sau greșeală grosieră?</h2>
+
+<div class="grid-3">
+
+
+<div class="error-card random-error">
+
+<h3>Dispersie aleatoare</h3>
+
+<p>
+Valorile se împrăștie ușor de o parte și de alta
+a tendinței.
+</p>
+
+<p>
+Exemple:
+citirea scalei,
+fluctuații mici,
+contacte imperfect repetabile.
+</p>
+
+</div>
+
+
+<div class="error-card systematic-error">
+
+<h3>Abatere sistematică</h3>
+
+<p>
+Rezultatele sunt deplasate într-un mod repetabil.
+</p>
+
+<p>
+Exemple:
+zero incorect al aparatului,
+calibrare necorespunzătoare,
+o tensiune suplimentară constantă.
+</p>
+
+</div>
+
+
+<div class="error-card gross-error">
+
+<h3>Greșeală grosieră</h3>
+
+<p>
+Un rezultat este incompatibil evident cu restul datelor.
+</p>
+
+<p>
+Exemple:
+citire greșită,
+unitate greșită,
+valoare transcrisă incorect.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="orange-box">
+
+Un punct suspect nu se șterge doar pentru că „strică graficul”.
+
+Mai întâi trebuie căutată o cauză experimentală justificată.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RELATIVE ERROR
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Eroarea relativă față de o valoare de referință</h2>
+
+<p>
+Dacă este disponibilă o valoare de referință:
+</p>
+
+<div class="formula">
+
+\[
+R_{ref}
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\varepsilon_r
+=
+\frac{
+|R_{exp}-R_{ref}|
+}{
+R_{ref}
+}
+\cdot100\%
+}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<div class="formula">
+
+\[
+R_{exp}=20,4\,\Omega
+\]
+
+\[
+R_{ref}=20,0\,\Omega
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\varepsilon_r
+=
+\frac{0,4}{20}
+\cdot100\%
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\varepsilon_r=2\%
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Eroarea relativă spune cât de mare este abaterea
+<strong>în raport cu valoarea de referință</strong>.
+
+O diferență de \(1\,\Omega\)
+poate fi mică într-o măsurare de \(1000\,\Omega\),
+dar mare într-o măsurare de \(2\,\Omega\).
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WORKED PROBLEMS
+========================================================= -->
+
+<section class="card">
+
+<h2>🧩 Probleme rezolvate și de interpretare</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Problema 1 – Legea lui Ohm</h3>
+
+<p>
+La bornele unui rezistor se măsoară:
+</p>
+
+<div class="formula">
+
+\[
+U=6\,V
+\]
+
+\[
+I=300\,mA
+\]
+
+</div>
+
+<p>
+Determină rezistența.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Mai întâi:
+
+\[
+300\,mA
+=
+0,300\,A
+\]
+
+Apoi:
+
+\[
+R=
+\frac UI
+=
+\frac6{0,300}
+\]
+
+\[
+\boxed{
+R=20\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Problema 2 – Predicție</h3>
+
+<p>
+Un rezistor ohmic de:
+</p>
+
+<div class="formula">
+
+\[
+R=30\,\Omega
+\]
+
+</div>
+
+este conectat la:
+</p>
+
+<div class="formula">
+
+\[
+U=9\,V
+\]
+
+</div>
+
+<p>
+Ce curent este așteptat?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I=
+\frac UR
+=
+\frac9{30}
+\]
+
+\[
+\boxed{
+I=0,30\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 3 – Analizează patru determinări</h3>
+
+<p>
+S-au obținut:
+</p>
+
+<div class="formula">
+
+\[
+R_1=39,6\,\Omega
+\]
+
+\[
+R_2=40,2\,\Omega
+\]
+
+\[
+R_3=40,0\,\Omega
+\]
+
+\[
+R_4=40,4\,\Omega
+\]
+
+</div>
+
+<p>
+Calculează media și formulează o concluzie.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_{med}
+=
+\frac{
+39,6+40,2+40,0+40,4
+}{4}
+\]
+
+\[
+\boxed{
+R_{med}=40,05\,\Omega
+}
+\]
+
+Valorile sunt foarte apropiate.
+
+O concluzie corectă:
+
+„Rezultatele sunt coerente între ele,
+iar rezistența determinată experimental este
+aproximativ \(40\,\Omega\).”
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 4 – Punct suspect</h3>
+
+<p>
+Un elev obține:
+</p>
+
+<div class="formula">
+
+\[
+19,8\,\Omega,\quad
+20,1\,\Omega,\quad
+31,4\,\Omega,\quad
+20,0\,\Omega
+\]
+
+</div>
+
+<p>
+Ce trebuie să facă?
+</p>
+
+<details>
+
+<summary>
+Vezi interpretarea
+</summary>
+
+<div class="solution">
+
+Valoarea:
+
+\[
+31,4\,\Omega
+\]
+
+este mult diferită de celelalte trei.
+
+Nu trebuie eliminată automat.
+
+Elevul trebuie să verifice:
+
+- citirea lui \(U\);
+- citirea lui \(I\);
+- conversia unităților;
+- transcrierea;
+- conexiunile;
+- eventual repetarea determinării.
+
+Dacă se identifică o greșeală experimentală clară,
+măsurarea poate fi repetată și justificat exclusă.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Problema 5 – Circuit întreg</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=6\,V,
+\qquad
+r=1\,\Omega
+\]
+
+</div>
+
+și alimentează:
+</p>
+
+<div class="formula">
+
+\[
+R=11\,\Omega
+\]
+
+</div>
+
+<p>
+Determină \(I\) și tensiunea la borne.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+=
+\frac6{12}
+\]
+
+\[
+\boxed{
+I=0,50\,A
+}
+\]
+
+Tensiunea la borne:
+
+\[
+U=IR
+\]
+
+\[
+U=
+0,50\cdot11
+\]
+
+\[
+\boxed{
+U=5,5\,V
+}
+\]
+
+Verificare:
+
+\[
+\mathcal E-Ir
+=
+6-0,50
+=
+5,5\,V
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Problema 6 – Rezistența din grafic</h3>
+
+<p>
+Pe graficul \(U(I)\)
+se aleg două puncte ale dreptei de tendință:
+</p>
+
+<div class="formula">
+
+\[
+I_1=0,10\,A,
+\qquad
+U_1=2,1\,V
+\]
+
+\[
+I_2=0,40\,A,
+\qquad
+U_2=8,1\,V
+\]
+
+</div>
+
+<p>
+Determină panta.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R=
+\frac{\Delta U}{\Delta I}
+\]
+
+\[
+R=
+\frac{
+8,1-2,1
+}{
+0,40-0,10
+}
+\]
+
+\[
+R=
+\frac6{0,30}
+\]
+
+\[
+\boxed{
+R=20\,\Omega
+}
+\]
+
+Observă însă că dreapta definită de aceste puncte
+nu trece exact prin origine.
+
+Acest lucru trebuie observat și discutat,
+nu ascuns prin calculul pantei.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ANALYZER
+========================================================= -->
+
+<section class="card analyzer">
+
+<h2>🎮 Analizor de date experimentale</h2>
+
+<p>
+Introdu propriile valori sau folosește seturile prestabilite.
+Aplicația calculează rezistențele individuale,
+media,
+abaterea față de referință
+și caracteristicile graficului \(U(I)\).
+</p>
+
+
+<div class="analyzer-toolbar">
+
+
+<div class="control">
+
+<label for="presetSelect">
+Set de date
+</label>
+
+<select id="presetSelect">
+
+<option value="ohmic">
+Rezistor ohmic – dispersie mică
+</option>
+
+<option value="outlier">
+Un punct suspect
+</option>
+
+<option value="systematic">
+Abatere sistematică
+</option>
+
+<option value="heating">
+Rezistență în creștere / încălzire
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="referenceR">
+Rezistență de referință [Ω]
+</label>
+
+<input
+  id="referenceR"
+  type="number"
+  min="0.1"
+  step="0.1"
+  value="20">
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="loadPresetBtn">
+
+Încarcă setul
+
+</button>
+
+
+<button
+  class="green-button"
+  id="analyzeBtn">
+
+📊 Analizează datele
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="randomBtn">
+
+🎲 Adaugă dispersie mică
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Nr.
+</th>
+
+<th>
+\(I\,[A]\)
+</th>
+
+<th>
+\(U\,[V]\)
+</th>
+
+<th>
+\(R_i=U/I\,[\Omega]\)
+</th>
+
+<th>
+Abatere față de medie
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<tr>
+
+<td>1</td>
+
+<td>
+<input
+  class="data-input current-input"
+  value="0,050">
+</td>
+
+<td>
+<input
+  class="data-input voltage-input"
+  value="1,02">
+</td>
+
+<td class="r-output">
+—
+</td>
+
+<td class="dev-output">
+—
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>2</td>
+
+<td>
+<input
+  class="data-input current-input"
+  value="0,100">
+</td>
+
+<td>
+<input
+  class="data-input voltage-input"
+  value="1,99">
+</td>
+
+<td class="r-output">
+—
+</td>
+
+<td class="dev-output">
+—
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>3</td>
+
+<td>
+<input
+  class="data-input current-input"
+  value="0,150">
+</td>
+
+<td>
+<input
+  class="data-input voltage-input"
+  value="3,04">
+</td>
+
+<td class="r-output">
+—
+</td>
+
+<td class="dev-output">
+—
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>4</td>
+
+<td>
+<input
+  class="data-input current-input"
+  value="0,200">
+</td>
+
+<td>
+<input
+  class="data-input voltage-input"
+  value="3,98">
+</td>
+
+<td class="r-output">
+—
+</td>
+
+<td class="dev-output">
+—
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+\(R_{med}\)
+</span>
+
+<strong id="meanR">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Eroare relativă
+</span>
+
+<strong id="relativeError">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Panta \(a\) din \(U=aI+b\)
+</span>
+
+<strong id="slopeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Ordonata \(b\)
+</span>
+
+<strong id="interceptValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R^2\) al ajustării liniare
+</span>
+
+<strong id="rSquaredValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Abatere maximă a \(R_i\)
+</span>
+
+<strong id="maxDeviation">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistență din panta prin origine
+</span>
+
+<strong id="originSlope">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Număr puncte valide
+</span>
+
+<strong id="validCount">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="dataGraph"></canvas>
+
+</div>
+
+
+<div
+  class="analysis-status"
+  id="analysisStatus">
+
+Apasă „Analizează datele”.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     HOW TO READ ANALYZER
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Cum interpretezi indicatorii analizorului?</h2>
+
+<div class="diagnostic">
+
+
+<div class="diagnostic-card">
+
+<h3>\(R_{med}\)</h3>
+
+<p>
+Media valorilor:
+</p>
+
+<div class="formula">
+
+\[
+R_i=
+\frac{U_i}{I_i}
+\]
+
+</div>
+
+<p>
+Este o estimare directă a rezistenței.
+</p>
+
+</div>
+
+
+<div class="diagnostic-card">
+
+<h3>Panta \(a\)</h3>
+
+<p>
+Pentru ajustarea:
+</p>
+
+<div class="formula">
+
+\[
+U=aI+b
+\]
+
+</div>
+
+<p>
+\(a\) are unitatea ohm și reprezintă panta dreptei de tendință.
+</p>
+
+</div>
+
+
+<div class="diagnostic-card">
+
+<h3>Ordonata \(b\)</h3>
+
+<p>
+Pentru un rezistor ohmic ideal:
+</p>
+
+<div class="formula">
+
+\[
+b=0
+\]
+
+</div>
+
+<p>
+Un \(b\) semnificativ nenul poate indica
+o abatere sistematică sau un model incomplet.
+</p>
+
+</div>
+
+
+<div class="diagnostic-card">
+
+<h3>\(R^2\)</h3>
+
+<p>
+Indică cât de bine este descris setul de o relație liniară.
+</p>
+
+<p>
+O valoare apropiată de 1 indică linearitate bună.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+<strong>Atenție:</strong>
+
+\[
+R^2\approx1
+\]
+
+nu demonstrează singur că datele respectă legea lui Ohm.
+
+De exemplu,
+o dreaptă foarte bună care nu trece prin apropierea originii
+poate indica o abatere sistematică.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DATA CASES
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Patru situații de diagnostic</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Dispersie mică</h3>
+
+<p>
+Punctele sunt aproape de o dreaptă prin origine,
+iar valorile \(U/I\) sunt apropiate.
+</p>
+
+<p>
+Concluzie:
+<strong>date compatibile cu modelul ohmic</strong>
+în domeniul investigat.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Un punct îndepărtat</h3>
+
+<p>
+Trei puncte urmează tendința,
+unul este foarte diferit.
+</p>
+
+<p>
+Acțiune:
+<strong>verifică și, dacă este posibil, repetă măsurarea</strong>.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Dreaptă deplasată</h3>
+
+<p>
+Punctele sunt foarte liniare,
+dar dreapta nu trece prin origine.
+</p>
+
+<p>
+Acțiune:
+caută o posibilă
+<strong>abatere sistematică</strong>.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Curbură</h3>
+
+<p>
+Raportul \(U/I\) crește treptat.
+</p>
+
+<p>
+Interpretare posibilă:
+rezistența se modifică,
+de exemplu din cauza
+<strong>încălzirii conductorului</strong>.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERROR ANALYSIS TASKS
+========================================================= -->
+
+<section class="card">
+
+<h2>🔎 Detectează greșeala</h2>
+
+
+<div class="problem">
+
+<h3>Cazul A</h3>
+
+<p>
+Un elev notează:
+</p>
+
+<div class="formula">
+
+\[
+U=6\,V
+\]
+
+\[
+I=250\,mA
+\]
+
+</div>
+
+și calculează:
+</p>
+
+<div class="formula">
+
+\[
+R=
+\frac6{250}
+=
+0,024\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Care este greșeala?
+</summary>
+
+<div class="solution">
+
+Nu a transformat miliamperii în amperi.
+
+\[
+250\,mA=
+0,250\,A
+\]
+
+Deci:
+
+\[
+R=
+\frac6{0,250}
+=
+24\,\Omega
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Cazul B</h3>
+
+<p>
+Patru valori sunt:
+</p>
+
+<div class="formula">
+
+\[
+30,1;\quad30,0;\quad45,8;\quad29,9\ \Omega
+\]
+
+</div>
+
+<p>
+Elevul face imediat media tuturor și nu comentează nimic.
+</p>
+
+<details>
+
+<summary>
+Ce lipsește?
+</summary>
+
+<div class="solution">
+
+Valoarea:
+
+\[
+45,8\,\Omega
+\]
+
+este suspectă.
+
+Înaintea mediei trebuie verificată
+citirea, transcrierea, unitatea și condițiile experimentale.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Cazul C</h3>
+
+<p>
+Un elev obține un grafic perfect liniar:
+</p>
+
+<div class="formula">
+
+\[
+U=20I+0,5
+\]
+
+</div>
+
+și concluzionează doar:
+„legea lui Ohm este verificată perfect”.
+</p>
+
+<details>
+
+<summary>
+Ce trebuie observat?
+</summary>
+
+<div class="solution">
+
+Panta este constantă,
+dar:
+
+\[
+b=0,5\,V
+\]
+
+este semnificativ nenulă.
+
+Dreapta nu trece prin origine,
+deci trebuie investigată o posibilă
+abatere sistematică.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Întrebări cauză–efect</h2>
+
+<ol>
+
+<li>
+De ce nu este suficient să calculăm \(R\) dintr-o singură pereche \(U,I\)?
+</li>
+
+<li>
+De ce un grafic este mai informativ decât o listă de numere?
+</li>
+
+<li>
+Ce sugerează o dreaptă \(U(I)\) care trece prin origine?
+</li>
+
+<li>
+Ce poate sugera o ordonată la origine semnificativ nenulă?
+</li>
+
+<li>
+De ce un singur punct aberant nu trebuie eliminat automat?
+</li>
+
+<li>
+Cum poate încălzirea rezistorului modifica graficul?
+</li>
+
+<li>
+De ce o eroare relativă este mai informativă decât simpla diferență absolută?
+</li>
+
+<li>
+De ce \(R^2\) apropiat de 1 nu este suficient singur?
+</li>
+
+<li>
+Ce verifici dacă obții o rezistență de mii de ori mai mare decât te așteptai?
+</li>
+
+<li>
+De ce concluzia trebuie limitată la domeniul investigat experimental?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Pentru \(U=4\,V\) și \(I=0,20\,A\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R=0,05\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R=20\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R=0,8\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+\(150\,mA\) înseamnă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(150\,A\)
+</button>
+
+<button class="answer-btn">
+\(1,50\,A\)
+</button>
+
+<button class="answer-btn">
+\(0,150\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Pe graficul \(U=f(I)\), panta ideală este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R\)
+</button>
+
+<button class="answer-btn">
+\(1/R\)
+</button>
+
+<button class="answer-btn">
+\(RI\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Un punct foarte îndepărtat de celelalte:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+se șterge automat
+</button>
+
+<button class="answer-btn">
+trebuie investigat înainte de a fi exclus
+</button>
+
+<button class="answer-btn">
+demonstrează că toate datele sunt greșite
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Dacă graficul este liniar, dar are o ordonată la origine mare:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+nu contează deloc
+</button>
+
+<button class="answer-btn">
+rezistența este automat zero
+</button>
+
+<button class="answer-btn">
+trebuie investigată o posibilă abatere sistematică
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Valorile \(R_i\) ușor diferite:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+pot fi compatibile cu incertitudinile experimentale
+</button>
+
+<button class="answer-btn">
+sunt imposibile într-un experiment real
+</button>
+
+<button class="answer-btn">
+trebuie înlocuite cu valori identice
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă \(R=20\,\Omega\) și \(U=10\,V\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=200\,A\)
+</button>
+
+<button class="answer-btn">
+\(I=0,50\,A\)
+</button>
+
+<button class="answer-btn">
+\(I=2\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+O curbură sistematică a graficului \(U(I)\) poate indica:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+că axele nu mai au unități
+</button>
+
+<button class="answer-btn">
+că toate aparatele sunt ideale
+</button>
+
+<button class="answer-btn">
+că rezistența se modifică odată cu punctul de funcționare
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+O concluzie experimentală bună:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+menționează ce susțin datele și limitează afirmația la condițiile investigate
+</button>
+
+<button class="answer-btn">
+spune doar „a ieșit bine”
+</button>
+
+<button class="answer-btn">
+ignoră punctele neconvenabile
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Un \(R^2\) foarte apropiat de 1:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+demonstrează singur orice model fizic
+</button>
+
+<button class="answer-btn">
+arată linearitate bună, dar trebuie analizate și panta, interceptul și contextul fizic
+</button>
+
+<button class="answer-btn">
+arată că rezistența este 1 Ω
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Din fiecare măsurare</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_i=
+\frac{U_i}{I_i}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Valoarea medie</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{med}
+=
+\frac{\sum R_i}{n}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Grafic</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=f(I)
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Panta</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=
+\frac{\Delta U}{\Delta I}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Eroare relativă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\varepsilon_r
+=
+\frac{
+|R_{exp}-R_{ref}|
+}{
+R_{ref}
+}
+100\%
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Concluzie</h3>
+
+<p>
+Trebuie să fie bazată pe:
+<strong>date, grafic, incertitudini și modelul fizic</strong>.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+un elev care știe fizică nu întreabă doar:
+
+<strong>„Ce rezultat am obținut?”</strong>
+
+ci și:
+
+<strong>
+„Este coerent?
+Ce arată graficul?
+Care sunt limitele măsurării?
+Ce concluzie permit de fapt datele?”
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Ai parcurs acum:
+</p>
+
+<ul>
+
+<li>curentul electric;</li>
+
+<li>circuitul simplu;</li>
+
+<li>tensiunea și t.e.m.;</li>
+
+<li>ampermetrul și voltmetrul;</li>
+
+<li>rezistența;</li>
+
+<li>legea lui Ohm;</li>
+
+<li>circuitul întreg;</li>
+
+<li>reostatul și potențiometrul;</li>
+
+<li>determinarea experimentală a rezistenței;</li>
+
+<li>interpretarea critică a rezultatelor.</li>
+
+</ul>
+
+
+<div class="blue-box">
+
+În lecția următoare vei trece printr-o
+<strong>evaluare și remediere</strong>.
+
+Scopul nu va fi doar calcularea unui punctaj,
+ci identificarea precisă a noțiunilor care mai trebuie consolidate.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="09-determinarea-rezistentei-electrice-cu-ampermetrul-si-voltmetrul-exp.html">
+
+← Lecția 9<br>
+Determinarea experimentală a rezistenței
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="11-evaluare-si-remediere-curent-continuu-si-legea-lui-ohm.html">
+
+Lecția 11<br>
+Evaluare și remediere →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent electric continuu. Legea lui Ohm
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function numberFromInput(
+  value
+){
+
+  return Number(
+    String(
+      value
+    )
+    .trim()
+    .replace(
+      ",",
+      "."
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DATASETS
+========================================================= */
+
+const presets={
+
+  ohmic:{
+
+    reference:20,
+
+    points:[
+
+      [0.050,1.02],
+      [0.100,1.99],
+      [0.150,3.04],
+      [0.200,3.98]
+
+    ]
+
+  },
+
+
+  outlier:{
+
+    reference:20,
+
+    points:[
+
+      [0.050,1.01],
+      [0.100,2.00],
+      [0.150,3.62],
+      [0.200,3.99]
+
+    ]
+
+  },
+
+
+  systematic:{
+
+    reference:20,
+
+    points:[
+
+      [0.050,1.20],
+      [0.100,2.20],
+      [0.150,3.20],
+      [0.200,4.20]
+
+    ]
+
+  },
+
+
+  heating:{
+
+    reference:20,
+
+    points:[
+
+      [0.050,1.00],
+      [0.100,2.10],
+      [0.150,3.40],
+      [0.200,5.00]
+
+    ]
+
+  }
+
+};
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const currentInputs=
+  Array.from(
+    document.querySelectorAll(
+      ".current-input"
+    )
+  );
+
+
+const voltageInputs=
+  Array.from(
+    document.querySelectorAll(
+      ".voltage-input"
+    )
+  );
+
+
+const rOutputs=
+  Array.from(
+    document.querySelectorAll(
+      ".r-output"
+    )
+  );
+
+
+const devOutputs=
+  Array.from(
+    document.querySelectorAll(
+      ".dev-output"
+    )
+  );
+
+
+const presetSelect=
+  document.getElementById(
+    "presetSelect"
+  );
+
+
+const referenceR=
+  document.getElementById(
+    "referenceR"
+  );
+
+
+const meanROut=
+  document.getElementById(
+    "meanR"
+  );
+
+
+const relativeErrorOut=
+  document.getElementById(
+    "relativeError"
+  );
+
+
+const slopeOut=
+  document.getElementById(
+    "slopeValue"
+  );
+
+
+const interceptOut=
+  document.getElementById(
+    "interceptValue"
+  );
+
+
+const rSquaredOut=
+  document.getElementById(
+    "rSquaredValue"
+  );
+
+
+const maxDeviationOut=
+  document.getElementById(
+    "maxDeviation"
+  );
+
+
+const originSlopeOut=
+  document.getElementById(
+    "originSlope"
+  );
+
+
+const validCountOut=
+  document.getElementById(
+    "validCount"
+  );
+
+
+const analysisStatus=
+  document.getElementById(
+    "analysisStatus"
+  );
+
+
+const graph=
+  document.getElementById(
+    "dataGraph"
+  );
+
+
+const ctx=
+  graph.getContext(
+    "2d"
+  );
+
+
+let lastAnalysis=null;
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+function loadPreset(
+  key
+){
+
+  const preset=
+    presets[
+      key
+    ] ||
+    presets.ohmic;
+
+
+  referenceR.value=
+    preset.reference;
+
+
+  preset.points.forEach(
+    (
+      point,
+      index
+    )=>{
+
+      currentInputs[
+        index
+      ].value=
+        formatRo(
+          point[0],
+          3
+        );
+
+
+      voltageInputs[
+        index
+      ].value=
+        formatRo(
+          point[1],
+          2
+        );
+
+    }
+  );
+
+
+  analyzeData();
+
+}
+
+
+/* =========================================================
+   READ POINTS
+========================================================= */
+
+function readPoints(){
+
+  const points=[];
+
+
+  for(
+    let i=0;
+    i<currentInputs.length;
+    i++
+  ){
+
+    const I=
+      numberFromInput(
+        currentInputs[
+          i
+        ].value
+      );
+
+
+    const U=
+      numberFromInput(
+        voltageInputs[
+          i
+        ].value
+      );
+
+
+    if(
+      Number.isFinite(
+        I
+      ) &&
+      Number.isFinite(
+        U
+      ) &&
+      I>0
+    ){
+
+      points.push({
+
+        index:i,
+
+        I,
+        U,
+
+        R:
+          U/I
+
+      });
+
+    }
+
+  }
+
+
+  return points;
+
+}
+
+
+/* =========================================================
+   LINEAR REGRESSION
+   U = a I + b
+========================================================= */
+
+function linearRegression(
+  points
+){
+
+  const n=
+    points.length;
+
+
+  if(
+    n<2
+  ){
+
+    return null;
+
+  }
+
+
+  const meanI=
+    points.reduce(
+      (
+        sum,
+        point
+      )=>
+        sum+
+        point.I,
+      0
+    )/
+    n;
+
+
+  const meanU=
+    points.reduce(
+      (
+        sum,
+        point
+      )=>
+        sum+
+        point.U,
+      0
+    )/
+    n;
+
+
+  let numerator=0;
+  let denominator=0;
+
+
+  points.forEach(
+    point=>{
+
+      numerator+=
+        (
+          point.I-
+          meanI
+        )*
+        (
+          point.U-
+          meanU
+        );
+
+
+      denominator+=
+        Math.pow(
+          point.I-
+          meanI,
+          2
+        );
+
+    }
+  );
+
+
+  if(
+    denominator===
+    0
+  ){
+
+    return null;
+
+  }
+
+
+  const a=
+    numerator/
+    denominator;
+
+
+  const b=
+    meanU-
+    a*
+    meanI;
+
+
+  let ssRes=0;
+  let ssTot=0;
+
+
+  points.forEach(
+    point=>{
+
+      const predicted=
+        a*
+        point.I+
+        b;
+
+
+      ssRes+=
+        Math.pow(
+          point.U-
+          predicted,
+          2
+        );
+
+
+      ssTot+=
+        Math.pow(
+          point.U-
+          meanU,
+          2
+        );
+
+    }
+  );
+
+
+  const r2=
+    ssTot===
+    0
+      ? 1
+      : 1-
+        ssRes/
+        ssTot;
+
+
+  return{
+
+    a,
+    b,
+    r2
+
+  };
+
+}
+
+
+/* =========================================================
+   SLOPE FORCED THROUGH ORIGIN
+========================================================= */
+
+function slopeThroughOrigin(
+  points
+){
+
+  let numerator=0;
+  let denominator=0;
+
+
+  points.forEach(
+    point=>{
+
+      numerator+=
+        point.I*
+        point.U;
+
+
+      denominator+=
+        point.I*
+        point.I;
+
+    }
+  );
+
+
+  if(
+    denominator===
+    0
+  ){
+    return NaN;
+  }
+
+
+  return numerator/
+    denominator;
+
+}
+
+
+/* =========================================================
+   ANALYZE
+========================================================= */
+
+function analyzeData(){
+
+  const points=
+    readPoints();
+
+
+  rOutputs.forEach(
+    cell=>{
+      cell.textContent="—";
+    }
+  );
+
+
+  devOutputs.forEach(
+    cell=>{
+      cell.textContent="—";
+    }
+  );
+
+
+  validCountOut.textContent=
+    points.length;
+
+
+  if(
+    points.length<
+    2
+  ){
+
+    analysisStatus.className=
+      "analysis-status bad";
+
+
+    analysisStatus.textContent=
+      "Sunt necesare cel puțin două puncte valide, cu I > 0.";
+
+
+    lastAnalysis=null;
+
+
+    drawGraph(
+      [],
+      null
+    );
+
+
+    return;
+
+  }
+
+
+  const meanR=
+    points.reduce(
+      (
+        sum,
+        point
+      )=>
+        sum+
+        point.R,
+      0
+    )/
+    points.length;
+
+
+  points.forEach(
+    point=>{
+
+      rOutputs[
+        point.index
+      ].textContent=
+        `${formatRo(
+          point.R,
+          2
+        )} Ω`;
+
+
+      const deviation=
+        Math.abs(
+          point.R-
+          meanR
+        )/
+        meanR*
+        100;
+
+
+      devOutputs[
+        point.index
+      ].textContent=
+        `${formatRo(
+          deviation,
+          1
+        )}%`;
+
+    }
+  );
+
+
+  const deviations=
+    points.map(
+      point=>
+        Math.abs(
+          point.R-
+          meanR
+        )/
+        meanR*
+        100
+    );
+
+
+  const maxDev=
+    Math.max(
+      ...deviations
+    );
+
+
+  const reference=
+    numberFromInput(
+      referenceR.value
+    );
+
+
+  const relativeError=
+    Number.isFinite(
+      reference
+    ) &&
+    reference>0
+      ? Math.abs(
+          meanR-
+          reference
+        )/
+        reference*
+        100
+      : NaN;
+
+
+  const regression=
+    linearRegression(
+      points
+    );
+
+
+  const originSlope=
+    slopeThroughOrigin(
+      points
+    );
+
+
+  meanROut.textContent=
+    `${formatRo(
+      meanR,
+      2
+    )} Ω`;
+
+
+  relativeErrorOut.textContent=
+    Number.isFinite(
+      relativeError
+    )
+      ? `${formatRo(
+          relativeError,
+          2
+        )}%`
+      : "—";
+
+
+  maxDeviationOut.textContent=
+    `${formatRo(
+      maxDev,
+      1
+    )}%`;
+
+
+  originSlopeOut.textContent=
+    `${formatRo(
+      originSlope,
+      2
+    )} Ω`;
+
+
+  if(
+    regression
+  ){
+
+    slopeOut.textContent=
+      `${formatRo(
+        regression.a,
+        2
+      )} Ω`;
+
+
+    interceptOut.textContent=
+      `${formatRo(
+        regression.b,
+        3
+      )} V`;
+
+
+    rSquaredOut.textContent=
+      formatRo(
+        regression.r2,
+        4
+      );
+
+  }
+
+  else{
+
+    slopeOut.textContent="—";
+    interceptOut.textContent="—";
+    rSquaredOut.textContent="—";
+
+  }
+
+
+  lastAnalysis={
+
+    points,
+    meanR,
+    maxDev,
+    relativeError,
+    regression,
+    originSlope
+
+  };
+
+
+  buildInterpretation(
+    lastAnalysis
+  );
+
+
+  drawGraph(
+    points,
+    regression
+  );
+
+}
+
+
+/* =========================================================
+   INTERPRETATION
+========================================================= */
+
+function buildInterpretation(
+  result
+){
+
+  const {
+    points,
+    meanR,
+    maxDev,
+    regression
+  }=
+    result;
+
+
+  if(
+    !regression
+  ){
+    return;
+  }
+
+
+  const maxU=
+    Math.max(
+      ...points.map(
+        point=>
+          Math.abs(
+            point.U
+          )
+      ),
+      .001
+    );
+
+
+  const relativeIntercept=
+    Math.abs(
+      regression.b
+    )/
+    maxU;
+
+
+  const veryLinear=
+    regression.r2>=
+    .995;
+
+
+  const reasonablyLinear=
+    regression.r2>=
+    .98;
+
+
+  const interceptSmall=
+    relativeIntercept<=
+    .03;
+
+
+  const interceptModerate=
+    relativeIntercept<=
+    .08;
+
+
+  const spreadSmall=
+    maxDev<=
+    5;
+
+
+  const spreadModerate=
+    maxDev<=
+    10;
+
+
+  let cssClass=
+    "analysis-status";
+
+
+  let message="";
+
+
+  if(
+    veryLinear &&
+    interceptSmall &&
+    spreadSmall
+  ){
+
+    cssClass+=
+      " good";
+
+
+    message=
+      `<strong>Date foarte coerente.</strong>
+       Punctele sunt bine descrise de o relație liniară,
+       interceptul este mic,
+       iar valorile U/I sunt apropiate.
+       Setul este <strong>compatibil cu un comportament ohmic</strong>
+       în domeniul măsurat.
+       O estimare rezonabilă este
+       R ≈ ${formatRo(meanR,2)} Ω.`;
+
+  }
+
+  else if(
+    veryLinear &&
+    !interceptModerate
+  ){
+
+    cssClass+=
+      " warning";
+
+
+    message=
+      `<strong>Linearitate foarte bună, dar intercept semnificativ.</strong>
+       Graficul poate arăta aproape perfect drept,
+       însă dreapta nu trece suficient de aproape de origine.
+       Caută o posibilă <strong>abatere sistematică</strong>
+       sau un offset al măsurării.`;
+
+  }
+
+  else if(
+    reasonablyLinear &&
+    spreadModerate
+  ){
+
+    cssClass+=
+      " warning";
+
+
+    message=
+      `<strong>Date aproximativ coerente.</strong>
+       Tendința este în mare parte liniară,
+       dar există o dispersie observabilă.
+       Analizează punctele individuale,
+       precizia aparatelor și condițiile experimentale
+       înainte de concluzia finală.`;
+
+  }
+
+  else if(
+    maxDev>
+    15 &&
+    regression.r2<
+    .995
+  ){
+
+    cssClass+=
+      " bad";
+
+
+    message=
+      `<strong>Setul conține abateri mari.</strong>
+       Verifică dacă există un punct suspect,
+       o citire sau o transcriere greșită.
+       Dacă abaterea apare progresiv odată cu I,
+       poate exista și o modificare reală a rezistenței.`;
+
+  }
+
+  else{
+
+    cssClass+=
+      " warning";
+
+
+    message=
+      `<strong>Modelul ohmic simplu nu descrie perfect setul.</strong>
+       Examinează forma graficului,
+       interceptul,
+       valorile U/I
+       și eventualele modificări ale condițiilor fizice.`;
+
+  }
+
+
+  analysisStatus.className=
+    cssClass;
+
+
+  analysisStatus.innerHTML=
+    message;
+
+}
+
+
+/* =========================================================
+   GRAPH RESIZE
+========================================================= */
+
+function resizeGraph(){
+
+  const rect=
+    graph.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  graph.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  graph.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  if(
+    lastAnalysis
+  ){
+
+    drawGraph(
+      lastAnalysis.points,
+      lastAnalysis.regression
+    );
+
+  }
+
+  else{
+
+    drawGraph(
+      [],
+      null
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW GRAPH
+========================================================= */
+
+function drawGraph(
+  points,
+  regression
+){
+
+  const rect=
+    graph.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  ctx.fillStyle=
+    "#ffffff";
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const margin={
+
+    left:68,
+    right:25,
+    top:60,
+    bottom:65
+
+  };
+
+
+  const plotW=
+    W-
+    margin.left-
+    margin.right;
+
+
+  const plotH=
+    H-
+    margin.top-
+    margin.bottom;
+
+
+  const maxI=
+    points.length
+      ? Math.max(
+          ...points.map(
+            point=>point.I
+          )
+        )*
+        1.18
+      : .25;
+
+
+  const maxU=
+    points.length
+      ? Math.max(
+          ...points.map(
+            point=>point.U
+          )
+        )*
+        1.18
+      : 5;
+
+
+  /*
+  Grid.
+  */
+
+  ctx.strokeStyle=
+    "#e2e8f0";
+
+
+  ctx.lineWidth=1;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const x=
+      margin.left+
+      plotW*
+      i/5;
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      x,
+      margin.top
+    );
+
+
+    ctx.lineTo(
+      x,
+      margin.top+
+      plotH
+    );
+
+
+    ctx.stroke();
+
+
+    const y=
+      margin.top+
+      plotH*
+      i/5;
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      margin.left,
+      y
+    );
+
+
+    ctx.lineTo(
+      margin.left+
+      plotW,
+      y
+    );
+
+
+    ctx.stroke();
+
+  }
+
+
+  /*
+  Axes.
+  */
+
+  ctx.strokeStyle=
+    "#334155";
+
+
+  ctx.lineWidth=2;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    margin.left,
+    margin.top
+  );
+
+
+  ctx.lineTo(
+    margin.left,
+    margin.top+
+    plotH
+  );
+
+
+  ctx.lineTo(
+    margin.left+
+    plotW,
+    margin.top+
+    plotH
+  );
+
+
+  ctx.stroke();
+
+
+  function xForI(
+    I
+  ){
+
+    return margin.left+
+      plotW*
+      I/
+      maxI;
+
+  }
+
+
+  function yForU(
+    U
+  ){
+
+    return margin.top+
+      plotH*
+      (
+        1-
+        U/
+        maxU
+      );
+
+  }
+
+
+  /*
+  Ideal axis origin.
+  */
+
+  ctx.fillStyle=
+    "#0f172a";
+
+
+  ctx.font=
+    "bold 15px system-ui";
+
+
+  ctx.textAlign=
+    "left";
+
+
+  ctx.fillText(
+    "Grafic experimental U = f(I)",
+    margin.left,
+    28
+  );
+
+
+  /*
+  Regression line.
+  */
+
+  if(
+    regression
+  ){
+
+    const xStart=0;
+    const xEnd=maxI;
+
+
+    const yStart=
+      regression.b;
+
+
+    const yEnd=
+      regression.a*
+      xEnd+
+      regression.b;
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      xForI(
+        xStart
+      ),
+      yForU(
+        yStart
+      )
+    );
+
+
+    ctx.lineTo(
+      xForI(
+        xEnd
+      ),
+      yForU(
+        yEnd
+      )
+    );
+
+
+    ctx.strokeStyle=
+      "#2563eb";
+
+
+    ctx.lineWidth=3;
+
+
+    ctx.stroke();
+
+
+    ctx.fillStyle=
+      "#1d4ed8";
+
+
+    ctx.font=
+      "12px system-ui";
+
+
+    ctx.fillText(
+      `ajustare: U = ${formatRo(regression.a,2)}·I ${regression.b>=0?"+":"−"} ${formatRo(Math.abs(regression.b),3)}`,
+      margin.left,
+      48
+    );
+
+  }
+
+
+  /*
+  Points.
+  */
+
+  points.forEach(
+    (
+      point,
+      index
+    )=>{
+
+      const x=
+        xForI(
+          point.I
+        );
+
+
+      const y=
+        yForU(
+          point.U
+        );
+
+
+      ctx.beginPath();
+
+
+      ctx.arc(
+        x,
+        y,
+        7,
+        0,
+        Math.PI*2
+      );
+
+
+      ctx.fillStyle=
+        "#dc2626";
+
+
+      ctx.fill();
+
+
+      ctx.strokeStyle=
+        "#ffffff";
+
+
+      ctx.lineWidth=2;
+
+
+      ctx.stroke();
+
+
+      ctx.fillStyle=
+        "#7f1d1d";
+
+
+      ctx.font=
+        "bold 11px system-ui";
+
+
+      ctx.textAlign=
+        "left";
+
+
+      ctx.fillText(
+        String(
+          index+1
+        ),
+        x+9,
+        y-7
+      );
+
+    }
+  );
+
+
+  /*
+  Scales.
+  */
+
+  ctx.fillStyle=
+    "#475569";
+
+
+  ctx.font=
+    "11px system-ui";
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const f=
+      i/5;
+
+
+    ctx.textAlign=
+      "center";
+
+
+    ctx.fillText(
+      formatRo(
+        maxI*f,
+        2
+      ),
+      margin.left+
+      plotW*f,
+      margin.top+
+      plotH+
+      20
+    );
+
+
+    ctx.textAlign=
+      "right";
+
+
+    ctx.fillText(
+      formatRo(
+        maxU*f,
+        1
+      ),
+      margin.left-8,
+      margin.top+
+      plotH*
+      (
+        1-f
+      )+
+      4
+    );
+
+  }
+
+
+  /*
+  Axis labels.
+  */
+
+  ctx.fillStyle=
+    "#0f172a";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "I [A]",
+    margin.left+
+    plotW/2,
+    H-18
+  );
+
+
+  ctx.save();
+
+
+  ctx.translate(
+    18,
+    margin.top+
+    plotH/2
+  );
+
+
+  ctx.rotate(
+    -Math.PI/2
+  );
+
+
+  ctx.fillText(
+    "U [V]",
+    0,
+    0
+  );
+
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   RANDOM SMALL DISPERSION
+========================================================= */
+
+function addSmallDispersion(){
+
+  const points=
+    readPoints();
+
+
+  if(
+    points.length===
+    0
+  ){
+    return;
+  }
+
+
+  points.forEach(
+    point=>{
+
+      const noise=
+        (
+          Math.random()*
+          2-
+          1
+        )*
+        .025;
+
+
+      const newU=
+        point.U*
+        (
+          1+
+          noise
+        );
+
+
+      voltageInputs[
+        point.index
+      ].value=
+        formatRo(
+          newU,
+          3
+        );
+
+    }
+  );
+
+
+  analyzeData();
+
+}
+
+
+/* =========================================================
+   ANALYZER EVENTS
+========================================================= */
+
+document.getElementById(
+  "loadPresetBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    loadPreset(
+      presetSelect.value
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "analyzeBtn"
+).addEventListener(
+  "click",
+  analyzeData
+);
+
+
+document.getElementById(
+  "randomBtn"
+).addEventListener(
+  "click",
+  addSmallDispersion
+);
+
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    presetSelect.value=
+      "ohmic";
+
+
+    loadPreset(
+      "ohmic"
+    );
+
+  }
+);
+
+
+[
+  ...currentInputs,
+  ...voltageInputs,
+  referenceR
+].forEach(
+  input=>{
+
+    input.addEventListener(
+      "change",
+      analyzeData
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  resizeGraph
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește calculele și interpretarea datelor.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent. Calculezi și interpretezi critic rezultatele.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar punctele la care ai ezitat.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun de bază. Revizuiește graficele și analiza erorilor.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Recapitulează legea lui Ohm, unitățile și interpretarea graficului înainte de evaluare.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeGraph();
+
+    loadPreset(
+      "ohmic"
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
