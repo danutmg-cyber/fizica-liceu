@@ -1,1 +1,7842 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+7. Câmpul magnetic al bobinei parcurse de curent | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Câmpul magnetic al bobinei parcurse de curent: spiră, bobină, solenoid, regula mâinii drepte, poli magnetici, B=μ0NI/l, dependența de numărul de spire, curent și lungime, experiment și simulator interactiv.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(167,139,250,.28),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.46),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #1e3a8a 48%,
+      #7c3aed
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#ddd6fe;
+
+  background:
+    rgba(124,58,237,.20);
+
+  border:
+    1px solid rgba(196,181,253,.34);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.05rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#e0e7ff;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--purple-soft);
+
+  border-color:#ddd6fe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROGRESSION
+========================================================= */
+
+.progression{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:24px 0;
+
+}
+
+.progress-card{
+
+  padding:18px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+  text-align:center;
+
+}
+
+.progress-arrow{
+
+  color:#7c3aed;
+
+  font-size:1.8rem;
+
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   SOLENOID CARDS
+========================================================= */
+
+.factor-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.factor-turns{
+  border-color:#2563eb;
+}
+
+.factor-current{
+  border-color:#dc2626;
+}
+
+.factor-length{
+  border-color:#7c3aed;
+}
+
+.factor-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:60px;
+  height:60px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-size:1.1rem;
+
+  font-weight:950;
+
+}
+
+.factor-turns .factor-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.factor-current .factor-icon{
+
+  color:#991b1b;
+  background:#fee2e2;
+
+}
+
+.factor-length .factor-icon{
+
+  color:#6d28d9;
+  background:#ede9fe;
+
+}
+
+
+/* =========================================================
+   STATIC SOLENOID
+========================================================= */
+
+.solenoid-figure{
+
+  overflow:hidden;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #eef2ff
+    );
+
+  border:
+    1px solid #c7d2fe;
+
+  border-radius:16px;
+
+}
+
+.solenoid-figure svg{
+
+  display:block;
+
+  width:100%;
+  max-width:900px;
+
+  margin:auto;
+
+  height:auto;
+
+}
+
+
+/* =========================================================
+   DERIVATION
+========================================================= */
+
+.derivation{
+
+  margin:22px 0;
+
+  padding:22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f5f3ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #ddd6fe;
+
+  border-radius:15px;
+
+}
+
+.derivation-step{
+
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #cbd5e1;
+
+}
+
+.derivation-step:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#f3f0ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--purple);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#6d28d9;
+  background:#ede9fe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#6d28d9;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #faf8ff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#6d28d9;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#solenoidCanvas,
+#graphCanvas{
+
+  display:block;
+
+  width:100%;
+  height:640px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.status-warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--purple-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .progression{
+    grid-template-columns:1fr;
+  }
+
+  .progress-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #solenoidCanvas,
+  #graphCanvas{
+    height:560px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Energia, puterea și efectele curentului electric
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 7
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Câmp magnetic
+</span>
+
+</div>
+
+
+<h1>
+Câmpul magnetic al bobinei parcurse de curent
+</h1>
+
+
+<p class="subtitle">
+Dacă înfășurăm conductorul în mai multe spire,
+câmpurile magnetice produse de diferitele porțiuni ale conductorului
+se suprapun.
+În interiorul unei bobine lungi,
+aceste contribuții se adună și produc un câmp magnetic
+aproape uniform și orientat de-a lungul axei.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să explici trecerea de la conductor liniar la spiră și bobină;</li>
+
+<li>să descrii câmpul magnetic produs de o bobină;</li>
+
+<li>să identifici axa bobinei;</li>
+
+<li>să stabilești sensul câmpului prin regula mâinii drepte;</li>
+
+<li>să identifici capetele magnetic nord și sud;</li>
+
+<li>să explici suprapunerea câmpurilor produse de spire;</li>
+
+<li>să definești densitatea de spire \(n=N/\ell\);</li>
+
+<li>să utilizezi relația \(B=\mu_0 nI\);</li>
+
+<li>să utilizezi relația \(B=\mu_0 NI/\ell\);</li>
+
+<li>să analizezi efectele modificării lui \(N\), \(I\) și \(\ell\).</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relația centrală</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{N}{\ell}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+B=\mu_0nI
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+B=
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+<p>
+pentru interiorul unui solenoid suficient de lung,
+în aer sau vid,
+departe de capete.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BRIDGE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De la conductor la bobină</h2>
+
+<p>
+În lecția precedentă,
+un conductor rectiliniu parcurs de curent producea
+linii circulare de câmp magnetic.
+</p>
+
+
+<div class="progression">
+
+
+<div class="progress-card">
+
+<strong>
+Conductor liniar
+</strong>
+
+<div class="formula">
+
+\[
+I
+\]
+
+</div>
+
+<p>
+Câmp circular în jurul firului.
+</p>
+
+</div>
+
+
+<div class="progress-arrow">
+→
+</div>
+
+
+<div class="progress-card">
+
+<strong>
+Spiră
+</strong>
+
+<div class="formula">
+
+\[
+1\text{ tură}
+\]
+
+</div>
+
+<p>
+Contribuțiile diferitelor porțiuni ale conductorului
+se combină.
+</p>
+
+</div>
+
+
+<div class="progress-arrow">
+→
+</div>
+
+
+<div class="progress-card">
+
+<strong>
+Bobină
+</strong>
+
+<div class="formula">
+
+\[
+N\text{ spire}
+\]
+
+</div>
+
+<p>
+Câmpurile produse de spire se suprapun.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Ideea esențială este:
+
+\[
+\boxed{
+\text{câmpurile magnetice se suprapun vectorial}
+}
+\]
+
+În interiorul bobinei,
+contribuțiile spirelor au în mare parte același sens
+și se pot întări reciproc.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DEFINITIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Spiră, bobină și solenoid</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Spiră</h3>
+
+<p>
+Un conductor format într-o buclă închisă.
+</p>
+
+<p>
+O spiră parcursă de curent produce un câmp magnetic
+cu o axă bine definită.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Bobină</h3>
+
+<p>
+Ansamblu format din mai multe spire,
+de regulă apropiate între ele.
+</p>
+
+<div class="formula">
+
+\[
+N=
+\text{numărul de spire}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Solenoid</h3>
+
+<p>
+Bobină cilindrică alungită,
+cu spire distribuite de-a lungul unei axe.
+</p>
+
+<p>
+Pentru un solenoid suficient de lung,
+câmpul interior poate fi aproximat printr-un model simplu.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="orange-box">
+
+Nu orice bobină are automat câmpul:
+
+\[
+B=
+\mu_0
+\frac{NI}{\ell}
+\]
+
+Relația este modelul pentru
+<strong>solenoidul suficient de lung</strong>,
+în aer sau vid,
+în regiunea interioară aflată departe de capete.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     STATIC FIELD
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Cum arată câmpul unei bobine?</h2>
+
+<div class="solenoid-figure">
+
+<svg
+  viewBox="0 0 920 430"
+  role="img"
+  aria-label="Câmpul magnetic al unui solenoid cu pol sud la stânga și nord la dreapta">
+
+<!-- external field top -->
+
+<path
+  d="M735 180
+     C760 65 620 35 460 35
+     C300 35 160 65 185 180"
+  fill="none"
+  stroke="#8b5cf6"
+  stroke-width="4"/>
+
+<polygon
+  points="190,180 176,157 202,160"
+  fill="#8b5cf6"/>
+
+<path
+  d="M755 155
+     C800 25 620 10 460 10
+     C300 10 120 25 165 155"
+  fill="none"
+  stroke="#c4b5fd"
+  stroke-width="3"/>
+
+<polygon
+  points="170,155 156,132 182,135"
+  fill="#c4b5fd"/>
+
+<!-- external bottom -->
+
+<path
+  d="M735 250
+     C760 365 620 395 460 395
+     C300 395 160 365 185 250"
+  fill="none"
+  stroke="#8b5cf6"
+  stroke-width="4"/>
+
+<polygon
+  points="190,250 202,270 176,274"
+  fill="#8b5cf6"/>
+
+<!-- coil -->
+
+<rect
+  x="190"
+  y="155"
+  width="540"
+  height="120"
+  rx="55"
+  fill="#eef2ff"
+  stroke="#475569"
+  stroke-width="2"/>
+
+<g
+  fill="none"
+  stroke="#2563eb"
+  stroke-width="6">
+
+<ellipse cx="220" cy="215" rx="22" ry="60"/>
+<ellipse cx="260" cy="215" rx="22" ry="60"/>
+<ellipse cx="300" cy="215" rx="22" ry="60"/>
+<ellipse cx="340" cy="215" rx="22" ry="60"/>
+<ellipse cx="380" cy="215" rx="22" ry="60"/>
+<ellipse cx="420" cy="215" rx="22" ry="60"/>
+<ellipse cx="460" cy="215" rx="22" ry="60"/>
+<ellipse cx="500" cy="215" rx="22" ry="60"/>
+<ellipse cx="540" cy="215" rx="22" ry="60"/>
+<ellipse cx="580" cy="215" rx="22" ry="60"/>
+<ellipse cx="620" cy="215" rx="22" ry="60"/>
+<ellipse cx="660" cy="215" rx="22" ry="60"/>
+<ellipse cx="700" cy="215" rx="22" ry="60"/>
+
+</g>
+
+<!-- inner field arrows -->
+
+<line
+  x1="265"
+  y1="190"
+  x2="655"
+  y2="190"
+  stroke="#16a34a"
+  stroke-width="6"/>
+
+<polygon
+  points="655,190 630,176 630,204"
+  fill="#16a34a"/>
+
+<line
+  x1="265"
+  y1="215"
+  x2="655"
+  y2="215"
+  stroke="#16a34a"
+  stroke-width="6"/>
+
+<polygon
+  points="655,215 630,201 630,229"
+  fill="#16a34a"/>
+
+<line
+  x1="265"
+  y1="240"
+  x2="655"
+  y2="240"
+  stroke="#16a34a"
+  stroke-width="6"/>
+
+<polygon
+  points="655,240 630,226 630,254"
+  fill="#16a34a"/>
+
+<!-- poles -->
+
+<text
+  x="133"
+  y="224"
+  fill="#2563eb"
+  font-size="38"
+  font-weight="bold">
+S
+</text>
+
+<text
+  x="760"
+  y="224"
+  fill="#dc2626"
+  font-size="38"
+  font-weight="bold">
+N
+</text>
+
+<text
+  x="416"
+  y="145"
+  fill="#166534"
+  font-size="17"
+  font-weight="bold">
+B interior
+</text>
+
+<text
+  x="352"
+  y="420"
+  fill="#475569"
+  font-size="15"
+  font-weight="bold">
+liniile de câmp sunt închise
+</text>
+
+</svg>
+
+</div>
+
+
+<p>
+În interiorul unui solenoid suficient de lung,
+liniile câmpului sunt aproape:
+</p>
+
+<ul>
+
+<li>paralele cu axa bobinei;</li>
+
+<li>paralele între ele;</li>
+
+<li>aproape echidistante în regiunea centrală.</li>
+
+</ul>
+
+
+<div class="blue-box">
+
+Acest aspect corespunde unui câmp
+<strong>aproximativ uniform</strong>
+în zona centrală a unui solenoid lung.
+</div>
+
+
+<div class="yellow-box">
+
+În exterior,
+câmpul unui solenoid lung este mult mai slab decât în interior,
+dar pentru o bobină reală finită
+<strong>nu este exact zero</strong>.
+
+În apropierea capetelor,
+câmpul nu mai poate fi considerat perfect uniform.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FIELD LINES
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Bobina și magnetul permanent</h2>
+
+<p>
+Forma globală a câmpului unei bobine parcurse de curent
+seamănă cu cea a unui magnet bară.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>În exterior</h3>
+
+<p>
+Liniile de câmp sunt orientate convențional:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+N\longrightarrow S
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>În interior</h3>
+
+<p>
+Liniile se întorc prin interior:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+S\longrightarrow N
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="purple-box">
+
+Liniile câmpului magnetic sunt
+<strong>linii închise</strong>.
+
+Etichetele \(N\) și \(S\) descriu comportamentul capetelor bobinei;
+ele nu reprezintă existența unor monopoli magnetici izolați.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RIGHT HAND RULE
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Regula mâinii drepte pentru bobină</h2>
+
+<p>
+Pentru a determina sensul câmpului în interiorul bobinei:
+</p>
+
+
+<ol class="steps">
+
+<li>
+Imaginează-ți că apuci bobina cu mâna dreaptă.
+</li>
+
+<li>
+Orientează degetele curbate în sensul curentului convențional prin spire.
+</li>
+
+<li>
+Degetul mare întins indică sensul lui \(\vec B\)
+în interiorul bobinei.
+</li>
+
+<li>
+Degetul mare indică și capătul magnetic nord al bobinei.
+</li>
+
+</ol>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\text{degete}
+\rightarrow
+I
+\qquad
+\text{deget mare}
+\rightarrow
+\vec B,\ N
+}
+\]
+
+</div>
+
+
+<h3>O regulă echivalentă, privind un capăt al bobinei</h3>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Sensul curentului văzut din acel capăt
+</th>
+
+<th>
+Tipul capătului
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+antiorar ↺
+</td>
+
+<td>
+<strong>N</strong>
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+orar ↻
+</td>
+
+<td>
+<strong>S</strong>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="green-box">
+
+Mnemonic:
+
+<strong>
+antiorar văzut dintr-un capăt → acel capăt este nord.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REVERSAL
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Ce se întâmplă dacă inversăm curentul?</h2>
+
+<p>
+Presupunem că păstrăm aceeași bobină
+și același modul al intensității.
+</p>
+
+<div class="formula">
+
+\[
+I\rightarrow-I
+\]
+
+</div>
+
+<p>
+Atunci:</p>
+
+<ul>
+
+<li>modulul câmpului rămâne același;</li>
+
+<li>sensul lui \(\vec B\) se inversează;</li>
+
+<li>capătul \(N\) devine \(S\);</li>
+
+<li>capătul \(S\) devine \(N\).</li>
+
+</ul>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I\text{ inversat}
+\Longrightarrow
+N\leftrightarrow S
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TURN DENSITY
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Densitatea de spire</h2>
+
+<p>
+O bobină cu \(N\) spire distribuite uniform pe lungimea:
+</p>
+
+<div class="formula">
+
+\[
+\ell
+\]
+
+</div>
+
+<p>
+are densitatea de spire:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+n=
+\frac{N}{\ell}
+}
+\]
+
+</div>
+
+<p>
+unde \(n\) se exprimă în:
+</p>
+
+<div class="formula">
+
+\[
+m^{-1}
+\]
+
+</div>
+
+<p>
+sau, în limbaj uzual,
+„spire pe metru”.
+</p>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+N=300,
+\qquad
+\ell=0,60\,m
+\]
+
+</div>
+
+obținem:
+</p>
+
+<div class="formula">
+
+\[
+n=
+\frac{300}{0,60}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+n=500\,m^{-1}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FIELD MAGNITUDE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Inducția magnetică în interiorul solenoidului</h2>
+
+<p>
+Pentru un solenoid suficient de lung,
+în aer sau vid,
+în regiunea interioară centrală:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+B=\mu_0nI
+}
+\]
+
+</div>
+
+<p>
+Cum:
+</p>
+
+<div class="formula">
+
+\[
+n=
+\frac{N}{\ell}
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+B=
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+
+<p>
+Constanta magnetică este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\mu_0=
+4\pi\cdot10^{-7}
+\frac{T\cdot m}{A}
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Formula descrie
+<strong>modulul câmpului interior</strong>
+în modelul solenoidului lung.
+
+Sensul lui \(\vec B\)
+nu se obține din formulă,
+ci prin
+<strong>regula mâinii drepte</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DEPENDENCES
+========================================================= -->
+
+<section class="card">
+
+<h2>9. De ce depinde câmpul bobinei?</h2>
+
+<div class="grid-3">
+
+
+<div class="factor-card factor-turns">
+
+<div class="factor-icon">
+\(N\)
+</div>
+
+<h3>Numărul de spire</h3>
+
+<p>
+Pentru \(I\) și \(\ell\) constante:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B\propto N
+}
+\]
+
+</div>
+
+<p>
+Dublarea numărului de spire
+dublează \(B\) în model.
+</p>
+
+</div>
+
+
+<div class="factor-card factor-current">
+
+<div class="factor-icon">
+\(I\)
+</div>
+
+<h3>Intensitatea</h3>
+
+<p>
+Pentru \(N\) și \(\ell\) constante:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B\propto I
+}
+\]
+
+</div>
+
+<p>
+Dublarea curentului
+dublează modulul câmpului.
+</p>
+
+</div>
+
+
+<div class="factor-card factor-length">
+
+<div class="factor-icon">
+\(\ell\)
+</div>
+
+<h3>Lungimea</h3>
+
+<p>
+Pentru \(N\) și \(I\) constante:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B\propto\frac1{\ell}
+}
+\]
+
+</div>
+
+<p>
+În model,
+întinderea bobinei reduce densitatea de spire și câmpul.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT TABLE
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Modificări rapide</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Modificare
+</th>
+
+<th>
+Ce rămâne constant
+</th>
+
+<th>
+Efect asupra lui \(B\)
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+
+\[
+N\rightarrow2N
+\]
+
+</td>
+
+<td>
+\(I,\ell\)
+</td>
+
+<td>
+
+\[
+B\rightarrow2B
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+
+\[
+I\rightarrow3I
+\]
+
+</td>
+
+<td>
+\(N,\ell\)
+</td>
+
+<td>
+
+\[
+B\rightarrow3B
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+
+\[
+\ell\rightarrow2\ell
+\]
+
+</td>
+
+<td>
+\(N,I\)
+</td>
+
+<td>
+
+\[
+B\rightarrow\frac B2
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(N\rightarrow2N\) și \(\ell\rightarrow2\ell\)
+</td>
+
+<td>
+\(I\)
+</td>
+
+<td>
+\(B\) rămâne neschimbat
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+inversăm sensul lui \(I\)
+</td>
+
+<td>
+\(|I|,N,\ell\)
+</td>
+
+<td>
+modulul rămâne, sensul se inversează
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHY SUPERPOSITION
+========================================================= -->
+
+<section class="card">
+
+<h2>11. De ce este câmpul mai intens în interior?</h2>
+
+<p>
+Fiecare porțiune de conductor produce propriul câmp magnetic.
+Câmpul total este suma vectorială a tuturor contribuțiilor.
+</p>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>O singură spiră</strong>
+
+<p>
+Câmpurile produse de diferitele porțiuni ale spirei
+au componente care se adună de-a lungul axei.
+</p>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>Mai multe spire</strong>
+
+<p>
+Dacă toate sunt străbătute de același curent în același sens,
+contribuțiile axiale ale spirelor se adună.
+</p>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>Solenoid lung</strong>
+
+<p>
+În zona centrală,
+simetria și numărul mare de spire conduc la un câmp
+aproape paralel cu axa și aproximativ uniform.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="purple-box">
+
+Bobina nu „creează alt tip de magnetism”.
+
+Ea folosește același efect magnetic al curentului,
+dar geometria conductorului face ca
+<strong>multe contribuții de câmp să se adune favorabil</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CORE
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Ce se întâmplă dacă introducem un miez?</h2>
+
+<p>
+O bobină poate fi realizată:</p>
+
+<ul>
+
+<li>cu aer în interior;</li>
+
+<li>în jurul unui suport nemagnetic;</li>
+
+<li>în jurul unui material feromagnetic adecvat.</li>
+
+</ul>
+
+
+<p>
+Un miez feromagnetic poate modifica puternic câmpul magnetic,
+deoarece materialul răspunde la câmpul produs de bobină.
+</p>
+
+
+<div class="yellow-box">
+
+Relația folosită în această lecție:
+
+\[
+B=
+\mu_0
+\frac{NI}{\ell}
+\]
+
+este pentru solenoidul idealizat
+<strong>în aer sau vid</strong>.
+
+Pentru un miez feromagnetic real,
+comportarea poate fi neliniară și depinde de material.
+Nu este corect să presupunem automat o valoare constantă a permeabilității
+în orice regim.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE COMPLETE
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Exemplu complet</h2>
+
+<p>
+Un solenoid în aer are:
+</p>
+
+<div class="formula">
+
+\[
+N=200
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\ell=40\,cm=0,40\,m
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I=1,5\,A
+\]
+
+</div>
+
+
+<h3>a) Densitatea de spire</h3>
+
+<div class="formula">
+
+\[
+n=
+\frac{N}{\ell}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+n=
+\frac{200}{0,40}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+n=500\,m^{-1}
+}
+\]
+
+</div>
+
+
+<h3>b) Inducția magnetică</h3>
+
+<div class="formula">
+
+\[
+B=
+\mu_0nI
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+B=
+4\pi\cdot10^{-7}
+\cdot500
+\cdot1,5
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+B\approx
+9,42\cdot10^{-4}\,T
+\]
+
+</div>
+
+adică:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+B\approx0,942\,mT
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Experiment demonstrativ – bobină și busolă</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>tub din carton sau material plastic;</li>
+
+<li>conductor de cupru izolat;</li>
+
+<li>sursă de joasă tensiune cu limitarea curentului;</li>
+
+<li>întrerupător;</li>
+
+<li>busolă;</li>
+
+<li>ampermetru, dacă este disponibil;</li>
+
+<li>rezistor de protecție, dacă este necesar.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Întrebări experimentale</h3>
+
+<ul>
+
+<li>Ce se întâmplă cu acul busolei când închidem circuitul?</li>
+
+<li>Ce se întâmplă când inversăm sensul curentului?</li>
+
+<li>Care capăt al bobinei se comportă ca pol nord?</li>
+
+<li>Cum se modifică efectul dacă mărim curentul în limite sigure?</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Realizează mai multe spire pe tub,
+toate înfășurate în același sens.
+</li>
+
+<li>
+Așază o busolă în apropierea unuia dintre capetele bobinei.
+</li>
+
+<li>
+Cu circuitul deschis,
+observă orientarea inițială a acului.
+</li>
+
+<li>
+Închide circuitul pentru un interval scurt.
+</li>
+
+<li>
+Observă schimbarea orientării busolei.
+</li>
+
+<li>
+Deschide circuitul.
+</li>
+
+<li>
+Inversează polaritatea sursei.
+</li>
+
+<li>
+Închide din nou circuitul și observă inversarea efectului magnetic.
+</li>
+
+<li>
+Folosește regula mâinii drepte pentru a prezice capătul \(N\)
+și compară predicția cu observația.
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Bobina are rezistență electrică și se poate încălzi prin efect Joule.
+
+Nu conecta o bobină cu rezistență foarte mică direct la o sursă capabilă de curent mare.
+Folosește joasă tensiune,
+limitare de curent
+și intervale scurte de alimentare,
+conform indicațiilor profesorului.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     OPTIONAL CORE EXP
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Extensie experimentală – introducerea unui miez</h2>
+
+<p>
+Poți compara calitativ efectul asupra busolei:</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Fără miez feromagnetic</h3>
+
+<p>
+Bobina produce câmpul magnetic datorită curentului prin spire.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Cu miez feromagnetic</h3>
+
+<p>
+Efectul magnetic poate deveni mult mai pronunțat,
+în funcție de material și geometrie.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="orange-box">
+
+Această comparație este
+<strong>calitativă</strong>.
+
+Nu folosi formula pentru solenoidul în aer
+ca și cum ar descrie exact bobina cu miez feromagnetic.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Densitatea de spire</h3>
+
+<p>
+O bobină are:
+</p>
+
+<div class="formula">
+
+\[
+N=400,
+\qquad
+\ell=0,80\,m
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+n=
+\frac N\ell
+\]
+
+\[
+n=
+\frac{400}{0,80}
+\]
+
+\[
+\boxed{
+n=500\,m^{-1}
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Calculul câmpului</h3>
+
+<p>
+Un solenoid în aer are:
+</p>
+
+<div class="formula">
+
+\[
+N=500,
+\quad
+\ell=0,50\,m,
+\quad
+I=2\,A
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+B=
+\mu_0
+\frac{NI}{\ell}
+\]
+
+\[
+B=
+4\pi\cdot10^{-7}
+\cdot
+\frac{500\cdot2}{0,50}
+\]
+
+\[
+B=
+8\pi\cdot10^{-4}\,T
+\]
+
+\[
+\boxed{
+B\approx2,51\,mT
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 3 – Dublarea curentului</h3>
+
+<p>
+Câmpul unei bobine are inițial:
+</p>
+
+<div class="formula">
+
+\[
+B_1=0,8\,mT
+\]
+
+</div>
+
+<p>
+Curentul se dublează,
+iar geometria bobinei rămâne aceeași.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+B\propto I
+\]
+
+deci:
+
+\[
+B_2=
+2B_1
+\]
+
+\[
+\boxed{
+B_2=1,6\,mT
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Întinderea bobinei</h3>
+
+<p>
+Un solenoid are inițial lungimea:
+</p>
+
+<div class="formula">
+
+\[
+\ell_1=20\,cm
+\]
+
+</div>
+
+<p>
+și câmpul:
+</p>
+
+<div class="formula">
+
+\[
+B_1=3\,mT
+\]
+
+</div>
+
+<p>
+Păstrând aceleași \(N\) și \(I\),
+lungimea devine:
+</p>
+
+<div class="formula">
+
+\[
+\ell_2=40\,cm
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+În model:
+
+\[
+B\propto
+\frac1\ell
+\]
+
+deci:
+
+\[
+\frac{B_2}{B_1}
+=
+\frac{\ell_1}{\ell_2}
+=
+\frac12
+\]
+
+\[
+\boxed{
+B_2=1,5\,mT
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Determinarea numărului de spire</h3>
+
+<p>
+Un solenoid în aer trebuie să producă:
+</p>
+
+<div class="formula">
+
+\[
+B=1,26\,mT
+\]
+
+</div>
+
+<p>
+pentru:
+</p>
+
+<div class="formula">
+
+\[
+I=2\,A,
+\qquad
+\ell=0,40\,m
+\]
+
+</div>
+
+<p>
+Determinați aproximativ \(N\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+N=
+\frac{B\ell}{\mu_0I}
+\]
+
+\[
+N=
+\frac{
+1,26\cdot10^{-3}
+\cdot0,40
+}{
+4\pi\cdot10^{-7}\cdot2
+}
+\]
+
+\[
+N\approx200
+\]
+
+\[
+\boxed{
+N\approx200\text{ spire}
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 6 – Identificarea polului</h3>
+
+<p>
+Privind capătul din dreapta al unei bobine,
+curentul prin spire apare în sens antiorar.
+Ce tip de pol este acel capăt?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Regula pentru un capăt al bobinei este:
+
+\[
+\text{antiorar}
+\Rightarrow
+N
+\]
+
+deci:
+
+\[
+\boxed{
+\text{capătul din dreapta este }N
+}
+\]
+
+În interior,
+\(\vec B\) este orientat către capătul din dreapta.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 7 – Modificări simultane</h3>
+
+<p>
+Numărul de spire se dublează,
+curentul se triplează,
+iar lungimea bobinei se dublează.
+Cum se modifică \(B\)?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+B\propto
+\frac{NI}{\ell}
+\]
+
+deci:
+
+\[
+\frac{B_2}{B_1}
+=
+\frac{
+(2N)(3I)/(2\ell)
+}{
+NI/\ell
+}
+\]
+
+\[
+\boxed{
+\frac{B_2}{B_1}=3
+}
+\]
+
+Câmpul se triplează.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Câmpul magnetic al solenoidului</h2>
+
+<p>
+Modifică numărul de spire,
+intensitatea și lungimea bobinei.
+Simulatorul calculează câmpul interior după modelul:
+</p>
+
+<div class="formula">
+
+\[
+B=
+\mu_0
+\frac{NI}{\ell}
+\]
+
+</div>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="turnsSlider">
+Număr de spire \(N\)
+</label>
+
+<input
+  id="turnsSlider"
+  type="range"
+  min="20"
+  max="400"
+  step="10"
+  value="200">
+
+<span
+  class="range-value"
+  id="turnsLabel">
+200 spire
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="currentSlider">
+Intensitate \(I\) [A]
+</label>
+
+<input
+  id="currentSlider"
+  type="range"
+  min="0"
+  max="5"
+  step="0.1"
+  value="1.5">
+
+<span
+  class="range-value"
+  id="currentLabel">
+1,5 A
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="lengthSlider">
+Lungime \(\ell\) [cm]
+</label>
+
+<input
+  id="lengthSlider"
+  type="range"
+  min="10"
+  max="80"
+  step="1"
+  value="40">
+
+<span
+  class="range-value"
+  id="lengthLabel">
+40 cm
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="directionSelect">
+Curent văzut din capătul drept
+</label>
+
+<select id="directionSelect">
+
+<option value="ccw" selected>
+↺ antiorar
+</option>
+
+<option value="cw">
+↻ orar
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="probeSelect">
+Busolă virtuală
+</label>
+
+<select id="probeSelect">
+
+<option value="inside" selected>
+în interior
+</option>
+
+<option value="right">
+lângă capătul drept
+</option>
+
+<option value="left">
+lângă capătul stâng
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="northRightBtn">
+
+N la dreapta
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="northLeftBtn">
+
+N la stânga
+
+</button>
+
+
+<button
+  class="primary"
+  id="doubleTurnsBtn">
+
+N × 2
+
+</button>
+
+
+<button
+  class="red-button"
+  id="doubleCurrentBtn">
+
+I × 2
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="doubleLengthBtn">
+
+ℓ × 2
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="solenoidCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="graphCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Densitate spire \(n=N/\ell\)
+</span>
+
+<strong id="densityValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Inducție \(B\)
+</span>
+
+<strong id="fieldValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Inducție în mT
+</span>
+
+<strong id="milliTeslaValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Capăt stâng
+</span>
+
+<strong id="leftPoleValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Capăt drept
+</span>
+
+<strong id="rightPoleValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Sens \(B\) interior
+</span>
+
+<strong id="fieldDirectionValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(B/I\)
+</span>
+
+<strong id="bOverIValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(B\ell/(NI)\)
+</span>
+
+<strong id="modelCheckValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Modifică parametrii bobinei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Dublează numărul de spire</h3>
+
+<p>
+Păstrează \(I\) și \(\ell\) constante.
+</p>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B(2N)=2B(N)
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Dublează curentul</h3>
+
+<p>
+Păstrează geometria neschimbată.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B(2I)=2B(I)
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Întinde bobina</h3>
+
+<p>
+Dublează \(\ell\)
+fără a modifica \(N\) sau \(I\).
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B(2\ell)=\frac B2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Inversează curentul</h3>
+
+<p>
+Observă:
+</p>
+
+<ul>
+
+<li>valoarea lui \(B\);</li>
+
+<li>sensul câmpului;</li>
+
+<li>schimbarea polilor;</li>
+
+<li>orientarea busolei.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Păstrează densitatea de spire</h3>
+
+<p>
+Dublează simultan:
+</p>
+
+<div class="formula">
+
+\[
+N
+\quad\text{și}\quad
+\ell
+\]
+
+</div>
+
+<p>
+Ce se întâmplă cu \(B\)
+dacă \(I\) rămâne constant?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Oprește curentul</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+I=0
+\]
+
+</div>
+
+<p>
+Ce se întâmplă cu câmpul produs de bobină
+în model?
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GRAPHS
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Cum arată dependențele grafice?</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>\(B=f(I)\)</h3>
+
+<p>
+Pentru \(N\) și \(\ell\) constante:
+</p>
+
+<div class="formula">
+
+\[
+B=
+\left(
+\mu_0\frac N\ell
+\right)I
+\]
+
+</div>
+
+<p>
+Dreaptă prin origine.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>\(B=f(N)\)</h3>
+
+<p>
+Pentru \(I\) și \(\ell\) constante:
+</p>
+
+<div class="formula">
+
+\[
+B=
+\left(
+\mu_0\frac I\ell
+\right)N
+\]
+
+</div>
+
+<p>
+Dreaptă prin origine.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>\(B=f(\ell)\)</h3>
+
+<p>
+Pentru \(N\) și \(I\) constante:
+</p>
+
+<div class="formula">
+
+\[
+B=
+\mu_0NI
+\frac1\ell
+\]
+
+</div>
+
+<p>
+Curbă descrescătoare.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Câmpul este perpendicular pe axa bobinei.”</h3>
+
+<p>
+În regiunea centrală a unui solenoid lung,
+câmpul interior este aproximativ
+<strong>paralel cu axa</strong>.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Capătul cu curent orar este nord.”</h3>
+
+<p>
+Privit din acel capăt:
+</p>
+
+<div class="formula">
+
+\[
+\text{antiorar}\Rightarrow N
+\]
+
+\[
+\text{orar}\Rightarrow S
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Dacă inversăm curentul, B devine zero.”</h3>
+
+<p>
+Nu.
+Pentru același \(|I|\),
+modulul rămâne același,
+iar sensul se inversează.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Exteriorul bobinei nu are deloc câmp.”</h3>
+
+<p>
+Pentru o bobină reală finită,
+câmpul exterior există,
+deși poate fi mult mai slab decât cel interior.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Mai multe spire înseamnă întotdeauna câmp mai mare.”</h3>
+
+<p>
+Trebuie precizat ce se întâmplă cu lungimea.
+Factorul relevant este:
+</p>
+
+<div class="formula">
+
+\[
+n=
+\frac N\ell
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Formula este exactă pentru orice bobină.”</h3>
+
+<p>
+Nu.
+Este modelul solenoidului suficient de lung,
+în regiunea sa interioară centrală.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Introducerea oricărui material în bobină nu schimbă nimic.”</h3>
+
+<p>
+Materialele magnetice pot modifica puternic câmpul.
+Relația pentru aer nu trebuie aplicată automat unui miez feromagnetic real.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „N și S sunt sarcini magnetice izolate.”</h3>
+
+<p>
+Nu.
+Liniile câmpului magnetic sunt închise,
+iar polii apar împreună în această configurație.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce mai multe spire pot produce un câmp mai intens decât o singură spiră?
+</li>
+
+<li>
+De ce câmpul din regiunea centrală a unui solenoid lung este aproximativ uniform?
+</li>
+
+<li>
+Ce indică degetul mare în regula mâinii drepte pentru bobină?
+</li>
+
+<li>
+Cum identifici polul nord privind un capăt al bobinei?
+</li>
+
+<li>
+Ce se întâmplă cu polii dacă inversezi sensul curentului?
+</li>
+
+<li>
+De ce \(B\) crește când crește densitatea de spire?</li>
+
+<li>
+Ce se întâmplă dacă dublezi simultan \(N\) și \(\ell\)?</li>
+
+<li>
+De ce formula \(B=\mu_0NI/\ell\) nu trebuie aplicată fără precauții unei bobine foarte scurte?</li>
+
+<li>
+De ce un miez feromagnetic poate modifica efectul magnetic?</li>
+
+<li>
+Ce interacțiune te-ai aștepta să apară dacă două conductoare apropiate,
+ambele parcurse de curent,
+se află fiecare în câmpul magnetic produs de celălalt?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+În interiorul unui solenoid suficient de lung,
+câmpul magnetic central este aproximativ:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+radial
+</button>
+
+<button class="answer-btn">
+paralel cu axa și aproape uniform
+</button>
+
+<button class="answer-btn">
+obligatoriu nul
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Densitatea de spire este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(n=N\ell\)
+</button>
+
+<button class="answer-btn">
+\(n=\ell/N\)
+</button>
+
+<button class="answer-btn">
+\(n=N/\ell\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Pentru solenoidul idealizat în aer:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(B=\mu_0NI/\ell\)
+</button>
+
+<button class="answer-btn">
+\(B=\mu_0\ell/(NI)\)
+</button>
+
+<button class="answer-btn">
+\(B=\mu_0N/(I\ell)\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Privind un capăt al bobinei,
+curentul apare antiorar.
+Acel capăt este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+obligatoriu fără pol
+</button>
+
+<button class="answer-btn">
+N
+</button>
+
+<button class="answer-btn">
+S
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Dublăm numărul de spire,
+păstrând \(I\) și \(\ell\) constante.
+Atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(B\) se înjumătățește
+</button>
+
+<button class="answer-btn">
+\(B\) crește de patru ori
+</button>
+
+<button class="answer-btn">
+\(B\) se dublează
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Dublăm curentul,
+fără a modifica bobina.
+Atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(B\) se dublează
+</button>
+
+<button class="answer-btn">
+\(B\) rămâne obligatoriu constant
+</button>
+
+<button class="answer-btn">
+\(B\) scade la jumătate
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dublăm lungimea bobinei,
+păstrând \(N\) și \(I\) constante în model.
+Atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(B\) se dublează
+</button>
+
+<button class="answer-btn">
+\(B\) se înjumătățește
+</button>
+
+<button class="answer-btn">
+\(B\) crește de patru ori
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Dacă inversăm sensul curentului și păstrăm același modul:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+câmpul dispare
+</button>
+
+<button class="answer-btn">
+numărul de spire se schimbă
+</button>
+
+<button class="answer-btn">
+sensul câmpului și polii se inversează
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Afirmația corectă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+câmpul exterior al unei bobine reale finite nu este exact nul
+</button>
+
+<button class="answer-btn">
+câmpul exterior este întotdeauna exact zero
+</button>
+
+<button class="answer-btn">
+câmpul interior este întotdeauna perpendicular pe axă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Formula \(B=\mu_0NI/\ell\) este folosită aici pentru:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+orice conductor de orice formă
+</button>
+
+<button class="answer-btn">
+interiorul unui solenoid suficient de lung, în aer sau vid
+</button>
+
+<button class="answer-btn">
+un magnet permanent, independent de geometrie
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Densitate de spire</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+n=
+\frac N\ell
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Câmp interior</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+B=\mu_0nI
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Forma echivalentă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+B=
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Regula mâinii drepte</h3>
+
+<p>
+Degetele → curentul prin spire.
+</p>
+
+<p>
+Degetul mare → \(\vec B\) interior și polul \(N\).
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Dependențe</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+B\propto N
+}
+\]
+
+\[
+\boxed{
+B\propto I
+}
+\]
+
+\[
+\boxed{
+B\propto\frac1\ell
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Inversarea curentului</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I\rightarrow-I
+\Rightarrow
+N\leftrightarrow S
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema mentală:
+
+<strong>
+mai multe spire → suprapunerea câmpurilor → câmp axial în interior →
+regula mâinii drepte stabilește sensul →
+\(N\), \(I\) și \(\ell\) stabilesc modulul.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 Ce urmează?</h2>
+
+<p>
+Știm acum că orice conductor parcurs de curent produce un câmp magnetic.
+</p>
+
+<p>
+Prin urmare,
+dacă așezăm două conductoare paralele apropiate,
+fiecare conductor se află în câmpul magnetic produs de celălalt.
+</p>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Interacțiunea dintre conductoare paralele parcurse de curent
+</strong>
+
+vom studia de ce două conductoare se pot
+<strong>atrage</strong>
+sau
+<strong>respinge</strong>,
+în funcție de sensurile curenților.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_1,\ I_2
+\Longrightarrow
+\text{câmpuri magnetice}
+\Longrightarrow
+\text{forțe între conductoare}
+}
+\]
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="06-campul-magnetic-produs-de-un-conductor-liniar-parcurs-de-curent.html">
+
+← Lecția 6<br>
+Câmpul magnetic produs de un conductor liniar parcurs de curent
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="08-interactiunea-dintre-conductoare-paralele-parcurse-de-curent.html">
+
+Lecția 8<br>
+Interacțiunea dintre conductoare paralele parcurse de curent →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Energia, puterea și efectele curentului electric
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   CONSTANT
+========================================================= */
+
+const MU0=
+  4*
+  Math.PI*
+  1e-7;
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const turnsSlider=
+  document.getElementById(
+    "turnsSlider"
+  );
+
+
+const currentSlider=
+  document.getElementById(
+    "currentSlider"
+  );
+
+
+const lengthSlider=
+  document.getElementById(
+    "lengthSlider"
+  );
+
+
+const directionSelect=
+  document.getElementById(
+    "directionSelect"
+  );
+
+
+const probeSelect=
+  document.getElementById(
+    "probeSelect"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const turnsLabel=
+  document.getElementById(
+    "turnsLabel"
+  );
+
+
+const currentLabel=
+  document.getElementById(
+    "currentLabel"
+  );
+
+
+const lengthLabel=
+  document.getElementById(
+    "lengthLabel"
+  );
+
+
+const densityValue=
+  document.getElementById(
+    "densityValue"
+  );
+
+
+const fieldValue=
+  document.getElementById(
+    "fieldValue"
+  );
+
+
+const milliTeslaValue=
+  document.getElementById(
+    "milliTeslaValue"
+  );
+
+
+const leftPoleValue=
+  document.getElementById(
+    "leftPoleValue"
+  );
+
+
+const rightPoleValue=
+  document.getElementById(
+    "rightPoleValue"
+  );
+
+
+const fieldDirectionValue=
+  document.getElementById(
+    "fieldDirectionValue"
+  );
+
+
+const bOverIValue=
+  document.getElementById(
+    "bOverIValue"
+  );
+
+
+const modelCheckValue=
+  document.getElementById(
+    "modelCheckValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const solenoidCanvas=
+  document.getElementById(
+    "solenoidCanvas"
+  );
+
+
+const solenoidCtx=
+  solenoidCanvas.getContext(
+    "2d"
+  );
+
+
+const graphCanvas=
+  document.getElementById(
+    "graphCanvas"
+  );
+
+
+const graphCtx=
+  graphCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const N=
+    Number(
+      turnsSlider.value
+    );
+
+
+  const I=
+    Number(
+      currentSlider.value
+    );
+
+
+  const lengthCm=
+    Number(
+      lengthSlider.value
+    );
+
+
+  const lengthM=
+    lengthCm/
+    100;
+
+
+  const n=
+    N/
+    lengthM;
+
+
+  const B=
+    MU0*
+    n*
+    I;
+
+
+  const mT=
+    B*
+    1000;
+
+
+  const direction=
+    directionSelect.value;
+
+
+  /*
+  Looking at the right end:
+  CCW => right end N => internal B points right.
+  CW  => right end S => internal B points left.
+  */
+
+  const rightIsNorth=
+    direction===
+    "ccw";
+
+
+  const leftPole=
+    rightIsNorth
+      ? "S"
+      : "N";
+
+
+  const rightPole=
+    rightIsNorth
+      ? "N"
+      : "S";
+
+
+  const fieldDirection=
+    rightIsNorth
+      ? "spre dreapta →"
+      : "spre stânga ←";
+
+
+  const bOverI=
+    I>
+    0
+      ? B/
+        I
+      : MU0*
+        n;
+
+
+  const modelCheck=
+    N>
+    0 &&
+    I>
+    0
+      ? B*
+        lengthM/
+        (
+          N*
+          I
+        )
+      : MU0;
+
+
+  return{
+
+    N,
+    I,
+
+    lengthCm,
+    lengthM,
+
+    n,
+    B,
+    mT,
+
+    direction,
+    rightIsNorth,
+
+    leftPole,
+    rightPole,
+    fieldDirection,
+
+    bOverI,
+    modelCheck,
+
+    probe:
+      probeSelect.value
+
+  };
+
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  turnsLabel.textContent=
+    `${formatRo(
+      m.N,
+      0
+    )} spire`;
+
+
+  currentLabel.textContent=
+    `${formatRo(
+      m.I,
+      1
+    )} A`;
+
+
+  lengthLabel.textContent=
+    `${formatRo(
+      m.lengthCm,
+      0
+    )} cm`;
+
+
+  densityValue.textContent=
+    `${formatRo(
+      m.n,
+      1
+    )} m⁻¹`;
+
+
+  fieldValue.textContent=
+    `${m.B.toExponential(3)} T`;
+
+
+  milliTeslaValue.textContent=
+    `${formatRo(
+      m.mT,
+      3
+    )} mT`;
+
+
+  leftPoleValue.textContent=
+    m.I>
+    0
+      ? m.leftPole
+      : "—";
+
+
+  rightPoleValue.textContent=
+    m.I>
+    0
+      ? m.rightPole
+      : "—";
+
+
+  fieldDirectionValue.textContent=
+    m.I>
+    0
+      ? m.fieldDirection
+      : "nedeterminat";
+
+
+  bOverIValue.textContent=
+    `${m.bOverI.toExponential(3)} T/A`;
+
+
+  modelCheckValue.textContent=
+    `${m.modelCheck.toExponential(3)} T·m/A`;
+
+
+  simStatus.className=
+    "status-box";
+
+
+  if(
+    m.I===
+    0
+  ){
+
+    simStatus.classList.add(
+      "status-warning"
+    );
+
+
+    simStatus.innerHTML=
+      `Curentul este nul.
+       În model:
+       <strong>B = 0</strong>.
+       Fără curent,
+       bobina nu produce câmpul magnetic studiat aici,
+       iar capetele N/S determinate de curent nu sunt definite.`;
+
+  }
+
+  else{
+
+    simStatus.classList.add(
+      "status-good"
+    );
+
+
+    simStatus.innerHTML=
+      `Bobina are
+       <strong>${formatRo(m.N,0)} spire</strong>
+       pe
+       <strong>${formatRo(m.lengthCm,0)} cm</strong>,
+       deci
+       <strong>n = ${formatRo(m.n,1)} m⁻¹</strong>.
+       Pentru
+       <strong>I = ${formatRo(m.I,1)} A</strong>,
+       modelul solenoidului lung dă
+       <strong>B ≈ ${formatRo(m.mT,3)} mT</strong>.
+       Capătul din dreapta este
+       <strong>${m.rightPole}</strong>.`;
+
+  }
+
+
+  drawGraphs(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#172554"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#312e81"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+function drawArrow(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width=3,
+  head=9
+){
+
+  const angle=
+    Math.atan2(
+      y2-y1,
+      x2-x1
+    );
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.fillStyle=
+    color;
+
+
+  context.lineWidth=
+    width;
+
+
+  context.lineCap=
+    "round";
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+  context.stroke();
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x2,
+    y2
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle-
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle-
+      Math.PI/
+      6
+    )
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle+
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle+
+      Math.PI/
+      6
+    )
+  );
+
+  context.closePath();
+
+  context.fill();
+
+}
+
+
+/* =========================================================
+   COMPASS
+========================================================= */
+
+function drawCompass(
+  context,
+  x,
+  y,
+  radius,
+  angle,
+  label
+){
+
+  context.beginPath();
+
+  context.arc(
+    x,
+    y,
+    radius,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  context.fillStyle=
+    "rgba(255,255,255,.95)";
+
+
+  context.fill();
+
+
+  context.strokeStyle=
+    "#94a3b8";
+
+
+  context.lineWidth=3;
+
+  context.stroke();
+
+
+  const dx=
+    Math.cos(
+      angle
+    )*
+    (
+      radius-
+      12
+    );
+
+
+  const dy=
+    Math.sin(
+      angle
+    )*
+    (
+      radius-
+      12
+    );
+
+
+  context.strokeStyle=
+    "#334155";
+
+
+  context.lineWidth=4;
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x-dx,
+    y-dy
+  );
+
+  context.lineTo(
+    x+dx,
+    y+dy
+  );
+
+  context.stroke();
+
+
+  context.fillStyle=
+    "#dc2626";
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x+dx,
+    y+dy
+  );
+
+  context.lineTo(
+    x+
+    dx*.62-
+    dy*.20,
+    y+
+    dy*.62+
+    dx*.20
+  );
+
+  context.lineTo(
+    x+
+    dx*.62+
+    dy*.20,
+    y+
+    dy*.62-
+    dx*.20
+  );
+
+  context.closePath();
+
+  context.fill();
+
+
+  context.fillStyle=
+    "#cbd5e1";
+
+
+  context.font=
+    "bold 9px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.fillText(
+    label,
+    x,
+    y+
+    radius+
+    17
+  );
+
+}
+
+
+/* =========================================================
+   ANIMATION STATE
+========================================================= */
+
+let phase=0;
+
+
+/* =========================================================
+   SOLENOID CANVAS
+========================================================= */
+
+function drawSolenoid(
+  m
+){
+
+  const rect=
+    solenoidCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    solenoidCtx,
+    W,
+    H
+  );
+
+
+  solenoidCtx.fillStyle=
+    "#e2e8f0";
+
+
+  solenoidCtx.font=
+    "bold 15px system-ui";
+
+
+  solenoidCtx.textAlign=
+    "left";
+
+
+  solenoidCtx.fillText(
+    "Bobină – vedere laterală",
+    18,
+    29
+  );
+
+
+  solenoidCtx.fillStyle=
+    "#c4b5fd";
+
+
+  solenoidCtx.font=
+    "11px system-ui";
+
+
+  solenoidCtx.fillText(
+    "câmp exterior calitativ • câmp interior calculat",
+    18,
+    50
+  );
+
+
+  const centerX=
+    W*
+    .50;
+
+
+  const centerY=
+    H*
+    .43;
+
+
+  const coilWidth=
+    clamp(
+      W*
+      (
+        .34+
+        (
+          m.lengthCm-
+          10
+        )/
+        70*
+        .40
+      ),
+      W*.34,
+      W*.74
+    );
+
+
+  const left=
+    centerX-
+    coilWidth/
+    2;
+
+
+  const right=
+    centerX+
+    coilWidth/
+    2;
+
+
+  const coilHeight=
+    Math.min(
+      150,
+      H*.25
+    );
+
+
+  const top=
+    centerY-
+    coilHeight/
+    2;
+
+
+  const bottom=
+    centerY+
+    coilHeight/
+    2;
+
+
+  /*
+  Exterior field lines.
+  Direction outside is N -> S.
+  */
+
+  if(
+    m.I>
+    0
+  ){
+
+    const fromX=
+      m.rightIsNorth
+        ? right
+        : left;
+
+
+    const toX=
+      m.rightIsNorth
+        ? left
+        : right;
+
+
+    for(
+      let k=0;
+      k<3;
+      k++
+    ){
+
+      const rise=
+        70+
+        k*
+        34;
+
+
+      solenoidCtx.strokeStyle=
+        `rgba(167,139,250,${
+          .58-
+          k*
+          .11
+        })`;
+
+
+      solenoidCtx.lineWidth=
+        3-
+        k*
+        .4;
+
+
+      solenoidCtx.beginPath();
+
+      solenoidCtx.moveTo(
+        fromX,
+        centerY-
+        15
+      );
+
+
+      solenoidCtx.bezierCurveTo(
+        fromX+
+        (
+          m.rightIsNorth
+            ? 75
+            : -75
+        ),
+        centerY-
+        rise,
+        toX+
+        (
+          m.rightIsNorth
+            ? -75
+            : 75
+        ),
+        centerY-
+        rise,
+        toX,
+        centerY-
+        15
+      );
+
+      solenoidCtx.stroke();
+
+
+      const midX=
+        centerX;
+
+
+      const midY=
+        centerY-
+        rise*
+        .83;
+
+
+      drawArrow(
+        solenoidCtx,
+        midX+
+        (
+          m.rightIsNorth
+            ? 17
+            : -17
+        ),
+        midY,
+        midX+
+        (
+          m.rightIsNorth
+            ? -17
+            : 17
+        ),
+        midY,
+        "#a78bfa",
+        2,
+        7
+      );
+
+    }
+
+
+    for(
+      let k=0;
+      k<2;
+      k++
+    ){
+
+      const drop=
+        78+
+        k*
+        38;
+
+
+      solenoidCtx.strokeStyle=
+        `rgba(167,139,250,${
+          .52-
+          k*
+          .12
+        })`;
+
+
+      solenoidCtx.lineWidth=2.5;
+
+
+      solenoidCtx.beginPath();
+
+      solenoidCtx.moveTo(
+        fromX,
+        centerY+
+        15
+      );
+
+
+      solenoidCtx.bezierCurveTo(
+        fromX+
+        (
+          m.rightIsNorth
+            ? 75
+            : -75
+        ),
+        centerY+
+        drop,
+        toX+
+        (
+          m.rightIsNorth
+            ? -75
+            : 75
+        ),
+        centerY+
+        drop,
+        toX,
+        centerY+
+        15
+      );
+
+      solenoidCtx.stroke();
+
+    }
+
+  }
+
+
+  /*
+  Coil body.
+  */
+
+  solenoidCtx.fillStyle=
+    "rgba(30,41,59,.58)";
+
+
+  solenoidCtx.strokeStyle=
+    "#64748b";
+
+
+  solenoidCtx.lineWidth=2;
+
+
+  solenoidCtx.fillRect(
+    left,
+    top,
+    coilWidth,
+    coilHeight
+  );
+
+
+  solenoidCtx.strokeRect(
+    left,
+    top,
+    coilWidth,
+    coilHeight
+  );
+
+
+  /*
+  Draw a representative number of visible turns.
+  Actual N can be much larger.
+  */
+
+  const visibleTurns=
+    clamp(
+      Math.round(
+        8+
+        (
+          m.N-
+          20
+        )/
+        380*
+        22
+      ),
+      8,
+      30
+    );
+
+
+  for(
+    let i=0;
+    i<visibleTurns;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        i+
+        .5
+      )/
+      visibleTurns*
+      coilWidth;
+
+
+    solenoidCtx.beginPath();
+
+    solenoidCtx.ellipse(
+      x,
+      centerY,
+      Math.max(
+        7,
+        coilWidth/
+        visibleTurns*
+        .32
+      ),
+      coilHeight*
+      .51,
+      0,
+      0,
+      Math.PI*
+      2
+    );
+
+
+    solenoidCtx.strokeStyle=
+      i%
+      2===
+      0
+        ? "#60a5fa"
+        : "#3b82f6";
+
+
+    solenoidCtx.lineWidth=3;
+
+    solenoidCtx.stroke();
+
+  }
+
+
+  /*
+  Inner B arrows.
+  */
+
+  if(
+    m.I>
+    0
+  ){
+
+    const arrowCount=4;
+
+
+    for(
+      let i=0;
+      i<arrowCount;
+      i++
+    ){
+
+      const y=
+        centerY-
+        35+
+        i*
+        (
+          70/
+          (
+            arrowCount-
+            1
+          )
+        );
+
+
+      const x1=
+        m.rightIsNorth
+          ? left+
+            coilWidth*
+            .18
+          : right-
+            coilWidth*
+            .18;
+
+
+      const x2=
+        m.rightIsNorth
+          ? right-
+            coilWidth*
+            .18
+          : left+
+            coilWidth*
+            .18;
+
+
+      drawArrow(
+        solenoidCtx,
+        x1,
+        y,
+        x2,
+        y,
+        "#22c55e",
+        4,
+        10
+      );
+
+    }
+
+  }
+
+
+  /*
+  Poles.
+  */
+
+  solenoidCtx.font=
+    "bold 28px system-ui";
+
+
+  solenoidCtx.textAlign=
+    "center";
+
+
+  solenoidCtx.fillStyle=
+    m.leftPole===
+    "N"
+      ? "#fca5a5"
+      : "#93c5fd";
+
+
+  solenoidCtx.fillText(
+    m.I>
+    0
+      ? m.leftPole
+      : "—",
+    left-
+    34,
+    centerY+
+    10
+  );
+
+
+  solenoidCtx.fillStyle=
+    m.rightPole===
+    "N"
+      ? "#fca5a5"
+      : "#93c5fd";
+
+
+  solenoidCtx.fillText(
+    m.I>
+    0
+      ? m.rightPole
+      : "—",
+    right+
+    34,
+    centerY+
+    10
+  );
+
+
+  /*
+  Current direction viewed from right.
+  */
+
+  solenoidCtx.fillStyle=
+    "#e2e8f0";
+
+
+  solenoidCtx.font=
+    "bold 11px system-ui";
+
+
+  solenoidCtx.fillText(
+    m.direction===
+    "ccw"
+      ? "văzut din dreapta: ↺"
+      : "văzut din dreapta: ↻",
+    centerX,
+    top-
+    28
+  );
+
+
+  /*
+  Dimension line.
+  */
+
+  const dimY=
+    bottom+
+    45;
+
+
+  solenoidCtx.strokeStyle=
+    "#94a3b8";
+
+
+  solenoidCtx.lineWidth=2;
+
+
+  solenoidCtx.beginPath();
+
+  solenoidCtx.moveTo(
+    left,
+    dimY
+  );
+
+  solenoidCtx.lineTo(
+    right,
+    dimY
+  );
+
+  solenoidCtx.stroke();
+
+
+  solenoidCtx.beginPath();
+
+  solenoidCtx.moveTo(
+    left,
+    dimY-
+    8
+  );
+
+  solenoidCtx.lineTo(
+    left,
+    dimY+
+    8
+  );
+
+  solenoidCtx.moveTo(
+    right,
+    dimY-
+    8
+  );
+
+  solenoidCtx.lineTo(
+    right,
+    dimY+
+    8
+  );
+
+  solenoidCtx.stroke();
+
+
+  solenoidCtx.fillStyle=
+    "#cbd5e1";
+
+
+  solenoidCtx.font=
+    "bold 10px system-ui";
+
+
+  solenoidCtx.fillText(
+    `ℓ = ${formatRo(m.lengthCm,0)} cm`,
+    centerX,
+    dimY+
+    20
+  );
+
+
+  /*
+  Compass position.
+  */
+
+  let compassX=
+    centerX;
+
+
+  let compassY=
+    centerY;
+
+
+  let compassAngle=
+    m.rightIsNorth
+      ? 0
+      : Math.PI;
+
+
+  let compassLabel=
+    "interior";
+
+
+  if(
+    m.probe===
+    "right"
+  ){
+
+    compassX=
+      Math.min(
+        W-60,
+        right+
+        72
+      );
+
+
+    compassY=
+      centerY+
+      130;
+
+
+    /*
+    Just outside right end:
+    if right is N, external field points outward/right.
+    if right is S, external field points inward/left.
+    */
+
+    compassAngle=
+      m.rightIsNorth
+        ? 0
+        : Math.PI;
+
+
+    compassLabel=
+      "capăt drept";
+
+  }
+
+
+  if(
+    m.probe===
+    "left"
+  ){
+
+    compassX=
+      Math.max(
+        60,
+        left-
+        72
+      );
+
+
+    compassY=
+      centerY+
+      130;
+
+
+    /*
+    Just outside left end:
+    if left is N, outward/left.
+    if left is S, inward/right.
+    */
+
+    compassAngle=
+      m.leftPole===
+      "N"
+        ? Math.PI
+        : 0;
+
+
+    compassLabel=
+      "capăt stâng";
+
+  }
+
+
+  if(
+    m.I>
+    0
+  ){
+
+    drawCompass(
+      solenoidCtx,
+      compassX,
+      compassY,
+      40,
+      compassAngle,
+      compassLabel
+    );
+
+  }
+
+
+  /*
+  Readout panel.
+  */
+
+  const panelY=
+    H-
+    92;
+
+
+  solenoidCtx.fillStyle=
+    "rgba(15,23,42,.80)";
+
+
+  solenoidCtx.fillRect(
+    16,
+    panelY,
+    W-
+    32,
+    72
+  );
+
+
+  solenoidCtx.fillStyle=
+    "#86efac";
+
+
+  solenoidCtx.font=
+    "bold 13px system-ui";
+
+
+  solenoidCtx.textAlign=
+    "left";
+
+
+  solenoidCtx.fillText(
+    `B ≈ ${formatRo(m.mT,3)} mT`,
+    30,
+    panelY+
+    28
+  );
+
+
+  solenoidCtx.fillStyle=
+    "#c4b5fd";
+
+
+  solenoidCtx.fillText(
+    `n = ${formatRo(m.n,1)} spire/m`,
+    30,
+    panelY+
+    52
+  );
+
+
+  solenoidCtx.fillStyle=
+    "#e2e8f0";
+
+
+  solenoidCtx.textAlign=
+    "right";
+
+
+  solenoidCtx.fillText(
+    m.I>
+    0
+      ? `B interior: ${m.fieldDirection}`
+      : "I=0 → B=0",
+    W-
+    30,
+    panelY+
+    40
+  );
+
+}
+
+
+/* =========================================================
+   GRAPHS
+========================================================= */
+
+function drawAxes(
+  context,
+  left,
+  right,
+  top,
+  bottom,
+  xLabel,
+  yLabel
+){
+
+  context.strokeStyle=
+    "#e2e8f0";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=4;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      i/
+      4;
+
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      top
+    );
+
+    context.lineTo(
+      x,
+      bottom
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let i=0;
+    i<=3;
+    i++
+  ){
+
+    const y=
+      bottom-
+      (
+        bottom-
+        top
+      )*
+      i/
+      3;
+
+
+    context.beginPath();
+
+    context.moveTo(
+      left,
+      y
+    );
+
+    context.lineTo(
+      right,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+
+  context.strokeStyle=
+    "#475569";
+
+
+  context.lineWidth=2;
+
+
+  context.beginPath();
+
+  context.moveTo(
+    left,
+    top
+  );
+
+  context.lineTo(
+    left,
+    bottom
+  );
+
+  context.lineTo(
+    right,
+    bottom
+  );
+
+  context.stroke();
+
+
+  context.fillStyle=
+    "#334155";
+
+
+  context.font=
+    "bold 9px system-ui";
+
+
+  context.textAlign=
+    "right";
+
+
+  context.fillText(
+    xLabel,
+    right,
+    bottom+
+    17
+  );
+
+
+  context.textAlign=
+    "left";
+
+
+  context.fillText(
+    yLabel,
+    left+
+    4,
+    top-
+    6
+  );
+
+}
+
+
+function drawGraphs(
+  m
+){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  graphCtx.fillStyle=
+    "#f8fafc";
+
+
+  graphCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 15px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    "Dependențele modelului",
+    20,
+    29
+  );
+
+
+  graphCtx.fillStyle=
+    "#64748b";
+
+
+  graphCtx.font=
+    "11px system-ui";
+
+
+  graphCtx.fillText(
+    "B∝I • B∝N • B∝1/ℓ",
+    20,
+    49
+  );
+
+
+  const left=
+    60;
+
+
+  const right=
+    W-
+    35;
+
+
+  /*
+  Plot 1: B(I)
+  */
+
+  const top1=
+    82;
+
+
+  const bottom1=
+    H*
+    .35;
+
+
+  drawAxes(
+    graphCtx,
+    left,
+    right,
+    top1,
+    bottom1,
+    "I [A]",
+    "B [mT]"
+  );
+
+
+  const maxI=5;
+
+
+  const maxBI=
+    MU0*
+    m.N/
+    m.lengthM*
+    maxI*
+    1000*
+    1.08;
+
+
+  function xI(
+    I
+  ){
+
+    return left+
+      I/
+      maxI*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yI(
+    B
+  ){
+
+    return bottom1-
+      (
+        maxBI>
+        0
+          ? B/
+            maxBI
+          : 0
+      )*
+      (
+        bottom1-
+        top1
+      );
+
+  }
+
+
+  graphCtx.strokeStyle=
+    "#dc2626";
+
+
+  graphCtx.lineWidth=3;
+
+
+  graphCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=100;
+    i++
+  ){
+
+    const I=
+      maxI*
+      i/
+      100;
+
+
+    const B=
+      MU0*
+      m.N/
+      m.lengthM*
+      I*
+      1000;
+
+
+    const x=
+      xI(
+        I
+      );
+
+
+    const y=
+      yI(
+        B
+      );
+
+
+    if(
+      i===
+      0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.stroke();
+
+
+  graphCtx.beginPath();
+
+  graphCtx.arc(
+    xI(m.I),
+    yI(m.mT),
+    6,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  graphCtx.fillStyle=
+    "#2563eb";
+
+
+  graphCtx.fill();
+
+
+  /*
+  Plot 2: B(N)
+  */
+
+  const top2=
+    H*
+    .47;
+
+
+  const bottom2=
+    H*
+    .68;
+
+
+  drawAxes(
+    graphCtx,
+    left,
+    right,
+    top2,
+    bottom2,
+    "N",
+    "B [mT]"
+  );
+
+
+  const maxN=400;
+
+
+  const maxBN=
+    MU0*
+    maxN*
+    m.I/
+    m.lengthM*
+    1000*
+    1.08;
+
+
+  function xN(
+    N
+  ){
+
+    return left+
+      N/
+      maxN*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yN(
+    B
+  ){
+
+    return bottom2-
+      (
+        maxBN>
+        0
+          ? B/
+            maxBN
+          : 0
+      )*
+      (
+        bottom2-
+        top2
+      );
+
+  }
+
+
+  graphCtx.strokeStyle=
+    "#2563eb";
+
+
+  graphCtx.lineWidth=3;
+
+
+  graphCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=100;
+    i++
+  ){
+
+    const N=
+      maxN*
+      i/
+      100;
+
+
+    const B=
+      MU0*
+      N*
+      m.I/
+      m.lengthM*
+      1000;
+
+
+    const x=
+      xN(
+        N
+      );
+
+
+    const y=
+      yN(
+        B
+      );
+
+
+    if(
+      i===
+      0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.stroke();
+
+
+  graphCtx.beginPath();
+
+  graphCtx.arc(
+    xN(m.N),
+    yN(m.mT),
+    6,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  graphCtx.fillStyle=
+    "#dc2626";
+
+
+  graphCtx.fill();
+
+
+  /*
+  Plot 3: B(length)
+  */
+
+  const top3=
+    H*
+    .79;
+
+
+  const bottom3=
+    H-
+    47;
+
+
+  drawAxes(
+    graphCtx,
+    left,
+    right,
+    top3,
+    bottom3,
+    "ℓ [cm]",
+    "B [mT]"
+  );
+
+
+  const minL=10;
+  const maxL=80;
+
+
+  const maxBL=
+    MU0*
+    m.N*
+    m.I/
+    (
+      minL/
+      100
+    )*
+    1000*
+    1.08;
+
+
+  function xL(
+    lCm
+  ){
+
+    return left+
+      (
+        lCm-
+        minL
+      )/
+      (
+        maxL-
+        minL
+      )*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yL(
+    B
+  ){
+
+    return bottom3-
+      (
+        maxBL>
+        0
+          ? B/
+            maxBL
+          : 0
+      )*
+      (
+        bottom3-
+        top3
+      );
+
+  }
+
+
+  if(
+    m.I>
+    0
+  ){
+
+    graphCtx.strokeStyle=
+      "#7c3aed";
+
+
+    graphCtx.lineWidth=3;
+
+
+    graphCtx.beginPath();
+
+
+    for(
+      let i=0;
+      i<=120;
+      i++
+    ){
+
+      const lCm=
+        minL+
+        (
+          maxL-
+          minL
+        )*
+        i/
+        120;
+
+
+      const B=
+        MU0*
+        m.N*
+        m.I/
+        (
+          lCm/
+          100
+        )*
+        1000;
+
+
+      const x=
+        xL(
+          lCm
+        );
+
+
+      const y=
+        yL(
+          B
+        );
+
+
+      if(
+        i===
+        0
+      ){
+
+        graphCtx.moveTo(
+          x,
+          y
+        );
+
+      }
+
+      else{
+
+        graphCtx.lineTo(
+          x,
+          y
+        );
+
+      }
+
+    }
+
+
+    graphCtx.stroke();
+
+
+    graphCtx.beginPath();
+
+    graphCtx.arc(
+      xL(m.lengthCm),
+      yL(m.mT),
+      6,
+      0,
+      Math.PI*
+      2
+    );
+
+
+    graphCtx.fillStyle=
+      "#dc2626";
+
+
+    graphCtx.fill();
+
+  }
+
+
+  /*
+  Text notes.
+  */
+
+  graphCtx.fillStyle=
+    "#991b1b";
+
+
+  graphCtx.font=
+    "bold 10px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    "B=f(I): dreaptă",
+    left+
+    8,
+    top1+
+    17
+  );
+
+
+  graphCtx.fillStyle=
+    "#1e40af";
+
+
+  graphCtx.fillText(
+    "B=f(N): dreaptă",
+    left+
+    8,
+    top2+
+    17
+  );
+
+
+  graphCtx.fillStyle=
+    "#6d28d9";
+
+
+  graphCtx.fillText(
+    "B=f(ℓ): invers proporțional",
+    left+
+    8,
+    top3+
+    17
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setNorthRight(){
+
+  directionSelect.value=
+    "ccw";
+
+
+  updateResults();
+
+}
+
+
+function setNorthLeft(){
+
+  directionSelect.value=
+    "cw";
+
+
+  updateResults();
+
+}
+
+
+function doubleTurns(){
+
+  turnsSlider.value=
+    String(
+      clamp(
+        Number(
+          turnsSlider.value
+        )*
+        2,
+        Number(
+          turnsSlider.min
+        ),
+        Number(
+          turnsSlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function doubleCurrent(){
+
+  currentSlider.value=
+    String(
+      clamp(
+        Number(
+          currentSlider.value
+        )*
+        2,
+        Number(
+          currentSlider.min
+        ),
+        Number(
+          currentSlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function doubleLength(){
+
+  lengthSlider.value=
+    String(
+      clamp(
+        Number(
+          lengthSlider.value
+        )*
+        2,
+        Number(
+          lengthSlider.min
+        ),
+        Number(
+          lengthSlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  turnsSlider.value=
+    "200";
+
+
+  currentSlider.value=
+    "1.5";
+
+
+  lengthSlider.value=
+    "40";
+
+
+  directionSelect.value=
+    "ccw";
+
+
+  probeSelect.value=
+    "inside";
+
+
+  animationSelect.value=
+    "on";
+
+
+  phase=0;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  turnsSlider,
+  currentSlider,
+  lengthSlider,
+  directionSelect,
+  probeSelect,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "northRightBtn"
+  )
+  .addEventListener(
+    "click",
+    setNorthRight
+  );
+
+
+document
+  .getElementById(
+    "northLeftBtn"
+  )
+  .addEventListener(
+    "click",
+    setNorthLeft
+  );
+
+
+document
+  .getElementById(
+    "doubleTurnsBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleTurns
+  );
+
+
+document
+  .getElementById(
+    "doubleCurrentBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleCurrent
+  );
+
+
+document
+  .getElementById(
+    "doubleLengthBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleLength
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  if(
+    animationSelect.value===
+    "on" &&
+    m.I>
+    0
+  ){
+
+    phase+=
+      (
+        .06+
+        m.I*
+        .018
+      )*
+      dt;
+
+
+    if(
+      phase>=1
+    ){
+
+      phase-=1;
+
+    }
+
+  }
+
+
+  drawSolenoid(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    solenoidCanvas,
+    solenoidCtx
+  );
+
+
+  resizeCanvas(
+    graphCanvas,
+    graphCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawSolenoid(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește regula mâinii drepte, densitatea de spire și relația B=μ₀NI/ℓ.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Câmpul magnetic al bobinei este bine înțeles.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează sensul câmpului și dependența de N, I și ℓ.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia traseul: spire → suprapunere → regula mâinii drepte → n=N/ℓ → B=μ₀nI.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      solenoidCanvas,
+      solenoidCtx
+    );
+
+
+    resizeCanvas(
+      graphCanvas,
+      graphCtx
+    );
+
+
+    resetAll();
+
+
+    const m=
+      updateResults();
+
+
+    drawSolenoid(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
