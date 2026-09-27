@@ -1,1 +1,6339 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+2. Legea I a lui Kirchhoff | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Legea I a lui Kirchhoff pentru nodurile unei rețele electrice: conservarea sarcinii, suma curenților care intră și ies din nod, convenții de semn, exemple, probleme și simulator interactiv.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+.class-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(250,204,21,.13);
+
+  color:#fef08a;
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+.chapter-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(34,197,94,.14);
+
+  color:#bbf7d0;
+
+  border:
+    1px solid rgba(134,239,172,.3);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.38rem);
+
+}
+
+
+/* =========================================================
+   NODE FIGURE
+========================================================= */
+
+.node-figure{
+
+  min-height:390px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.node-figure svg{
+
+  width:100%;
+  max-width:790px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+
+}
+
+.svg-arrow-in{
+
+  fill:none;
+
+  stroke:#2563eb;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+
+}
+
+.svg-arrow-out{
+
+  fill:none;
+
+  stroke:#dc2626;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+
+}
+
+.svg-node{
+
+  fill:#0f172a;
+
+  stroke:#64748b;
+
+  stroke-width:4;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:24px;
+
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:17px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   LAW CARDS
+========================================================= */
+
+.law-card{
+
+  padding:22px;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+  text-align:center;
+
+}
+
+.law-enter{
+  border-color:#60a5fa;
+}
+
+.law-leave{
+  border-color:#f87171;
+}
+
+.law-algebra{
+  border-color:#a78bfa;
+}
+
+
+/* =========================================================
+   FLOW CHAIN
+========================================================= */
+
+.flow-chain{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:10px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.flow-box{
+
+  padding:15px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:11px;
+
+  text-align:center;
+
+  font-weight:800;
+
+}
+
+.flow-arrow{
+
+  color:#2563eb;
+
+  font-size:1.6rem;
+  font-weight:950;
+
+  text-align:center;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:#fff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.canvas-wrap{
+
+  margin-top:18px;
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#nodeCanvas{
+
+  display:block;
+
+  width:100%;
+  height:620px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.status-warning{
+
+  color:#92400e;
+  background:#fffbeb;
+
+  border-color:#fcd34d;
+
+}
+
+
+/* =========================================================
+   CHALLENGE
+========================================================= */
+
+.challenge-panel{
+
+  margin-top:20px;
+
+  padding:20px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.challenge-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:12px;
+
+}
+
+.challenge-box{
+
+  padding:14px;
+
+  background:#f8fafc;
+
+  border-radius:10px;
+
+}
+
+.challenge-box label{
+
+  display:block;
+
+  margin-bottom:6px;
+
+  font-size:.88rem;
+  font-weight:800;
+
+}
+
+.challenge-box input{
+
+  width:100%;
+
+  padding:10px;
+
+  border:
+    2px solid #94a3b8;
+
+  border-radius:8px;
+
+  font:inherit;
+
+}
+
+.challenge-feedback{
+
+  margin-top:14px;
+
+  padding:14px;
+
+  background:#eff6ff;
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+.feedback-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+.feedback-bad{
+
+  color:#991b1b;
+  background:#fef2f2;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   MISCONCEPTIONS
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:850px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results,
+  .challenge-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .flow-chain{
+    grid-template-columns:1fr;
+  }
+
+  .flow-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #nodeCanvas{
+    height:760px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 2
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Legile lui Kirchhoff
+</span>
+
+</div>
+
+
+<h1>
+Legea I a lui Kirchhoff
+</h1>
+
+
+<p class="subtitle">
+Într-un nod al unei rețele,
+curentul electric se poate ramifica.
+Legea I a lui Kirchhoff stabilește relația dintre
+intensitățile curenților care intră în nod
+și cele care ies din nod,
+ca expresie a conservării sarcinii electrice.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să recunoști curenții care intră și ies dintr-un nod;
+</li>
+
+<li>
+să enunți Legea I a lui Kirchhoff;
+</li>
+
+<li>
+să scrii relația pentru un nod cu mai multe laturi;
+</li>
+
+<li>
+să folosești forma algebrică a legii;
+</li>
+
+<li>
+să calculezi un curent necunoscut;
+</li>
+
+<li>
+să interpretezi un rezultat negativ;
+</li>
+
+<li>
+să explici legătura cu conservarea sarcinii electrice;
+</li>
+
+<li>
+să verifici dacă un set de curenți este compatibil cu un regim staționar.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+}
+\]
+
+</div>
+
+<p>
+Într-un nod aflat în regim staționar,
+sarcina electrică nu se acumulează continuu.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP NODE
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 Recapitulare – ce este un nod?</h2>
+
+<p>
+În lecția precedentă am numit
+<strong>nod de rețea</strong>
+joncțiunea în care se întâlnesc cel puțin trei laturi.
+</p>
+
+<p>
+Pe fiecare latură putem atribui o intensitate:
+</p>
+
+<div class="formula">
+
+\[
+I_1,\quad I_2,\quad I_3,\ldots
+\]
+
+</div>
+
+<p>
+Când aceste laturi se întâlnesc,
+curenții pot fi orientați:
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>spre nod</h3>
+
+<p>
+curenți care <strong>intră</strong>;
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>dinspre nod</h3>
+
+<p>
+curenți care <strong>ies</strong>.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SITUATION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Situație-problemă</h2>
+
+<p class="lead">
+Într-un nod intră două curente:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2\,A
+\]
+
+\[
+I_2=3\,A
+\]
+
+</div>
+
+<p>
+Din nod pleacă un singur curent \(I_3\).
+</p>
+
+<div class="node-figure">
+
+<svg
+  viewBox="0 0 800 430"
+  role="img"
+  aria-label="Nod electric cu două curente care intră și unul care iese">
+
+<!-- wires -->
+
+<line
+  class="svg-wire"
+  x1="80"
+  y1="100"
+  x2="400"
+  y2="215"/>
+
+<line
+  class="svg-wire"
+  x1="80"
+  y1="330"
+  x2="400"
+  y2="215"/>
+
+<line
+  class="svg-wire"
+  x1="400"
+  y1="215"
+  x2="730"
+  y2="215"/>
+
+<!-- arrows in -->
+
+<line
+  class="svg-arrow-in"
+  x1="150"
+  y1="125"
+  x2="300"
+  y2="180"/>
+
+<polygon
+  points="300,180 277,162 273,185"
+  fill="#2563eb"/>
+
+<line
+  class="svg-arrow-in"
+  x1="150"
+  y1="305"
+  x2="300"
+  y2="250"/>
+
+<polygon
+  points="300,250 273,245 277,268"
+  fill="#2563eb"/>
+
+<!-- arrow out -->
+
+<line
+  class="svg-arrow-out"
+  x1="500"
+  y1="215"
+  x2="650"
+  y2="215"/>
+
+<polygon
+  points="650,215 625,202 625,228"
+  fill="#dc2626"/>
+
+<!-- node -->
+
+<circle
+  class="svg-node"
+  cx="400"
+  cy="215"
+  r="18"/>
+
+<!-- labels -->
+
+<text
+  class="svg-text"
+  x="180"
+  y="105">
+I₁ = 2 A
+</text>
+
+<text
+  class="svg-text"
+  x="180"
+  y="350">
+I₂ = 3 A
+</text>
+
+<text
+  class="svg-text"
+  x="535"
+  y="190">
+I₃ = ?
+</text>
+
+<text
+  class="svg-small"
+  x="364"
+  y="265">
+NOD
+</text>
+
+</svg>
+
+</div>
+
+
+<div class="orange-box">
+
+Dacă în fiecare secundă „sosesc” prin primele două laturi
+mai multe sarcini decât „pleacă” prin a treia,
+sarcina s-ar acumula în nod.
+
+Poate continua această acumulare la nesfârșit
+într-un regim staționar?
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONSERVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Originea fizică: conservarea sarcinii</h2>
+
+<p>
+Intensitatea curentului electric este:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\Delta q}{\Delta t}
+\]
+
+</div>
+
+<p>
+Pentru un nod putem scrie schematic:
+</p>
+
+<div class="formula">
+
+\[
+\frac{\Delta q_{\text{nod}}}{\Delta t}
+=
+\sum I_{\text{intră}}
+-
+\sum I_{\text{ies}}
+\]
+
+</div>
+
+<p>
+În regim staționar,
+sarcina electrică din zona nodului
+nu crește și nu scade continuu:
+</p>
+
+<div class="formula">
+
+\[
+\frac{\Delta q_{\text{nod}}}{\Delta t}
+=
+0
+\]
+
+</div>
+
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Legea I a lui Kirchhoff este,
+în acest context,
+o expresie a
+<strong>conservării sarcinii electrice</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     STATEMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Enunțul Legii I a lui Kirchhoff</h2>
+
+<div class="blue-box">
+
+<strong>
+Suma intensităților curenților care intră într-un nod
+este egală cu suma intensităților curenților care ies din acel nod.
+</strong>
+</div>
+
+
+<div class="grid-2">
+
+
+<div class="law-card law-enter">
+
+<h3>Curent total care intră</h3>
+
+<div class="formula">
+
+\[
+I_{\text{in}}
+=
+I_1+I_2+\cdots
+\]
+
+</div>
+
+</div>
+
+
+<div class="law-card law-leave">
+
+<h3>Curent total care iese</h3>
+
+<div class="formula">
+
+\[
+I_{\text{out}}
+=
+I_3+I_4+\cdots
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_{\text{in}}
+=
+I_{\text{out}}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FIRST EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Revenim la situația-problemă</h2>
+
+<p>
+Aveam:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2\,A
+\]
+
+\[
+I_2=3\,A
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+I_3=?
+\]
+
+</div>
+
+Legea I:
+</p>
+
+<div class="formula">
+
+\[
+I_1+I_2=I_3
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula">
+
+\[
+2+3=I_3
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_3=5\,A
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Interpretare:
+
+în fiecare secundă,
+sarcina electrică transportată spre nod
+este egală cu sarcina transportată dinspre nod.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGEBRAIC FORM
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Forma algebrică</h2>
+
+<p>
+Putem folosi o convenție de semn.
+De exemplu:
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Curenți care intră</h3>
+
+<div class="formula">
+
+\[
+\boxed{+I}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curenți care ies</h3>
+
+<div class="formula">
+
+\[
+\boxed{-I}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<p>
+Atunci Legea I se scrie:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\sum_k \varepsilon_k I_k=0
+}
+\]
+
+</div>
+
+<p>
+unde:
+</p>
+
+<div class="formula">
+
+\[
+\varepsilon_k=
+\begin{cases}
++1,& \text{curent care intră}\\
+-1,& \text{curent care iese}
+\end{cases}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Pentru doi curenți care intră
+și doi care ies:
+</p>
+
+<div class="formula">
+
+\[
+I_1+I_2-I_3-I_4=0
+\]
+
+</div>
+
+echivalent cu:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_1+I_2=
+I_3+I_4
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Poți alege și convenția inversă:
+
+curenți care intră negativi,
+curenți care ies pozitivi.
+
+Rezultatul fizic este același
+dacă păstrezi convenția consecvent.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEGATIVE RESULT
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Ce înseamnă un rezultat negativ?</h2>
+
+<p>
+În problemele de rețea,
+sensul unui curent necunoscut poate fi ales inițial
+<strong>arbitrar</strong>.
+</p>
+
+<p>
+Presupunem că desenăm \(I_3\) ca ieșind din nod
+și după calcul obținem:
+</p>
+
+<div class="formula">
+
+\[
+I_3=-1,2\,A
+\]
+
+</div>
+
+
+<div class="red-box">
+
+Rezultatul negativ
+<strong>nu înseamnă existența unui „curent negativ” ca fenomen separat</strong>.
+
+Înseamnă că sensul real al curentului
+este opus sensului ales inițial.
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+|I_3|=1,2\,A
+}
+\]
+
+</div>
+
+<p>
+iar sensul real este invers celui presupus.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Algoritm de rezolvare la un nod</h2>
+
+<ol class="steps">
+
+<li>
+
+<strong>Identifică nodul.</strong>
+
+<p>
+Observă toate laturile care se întâlnesc în el.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Marchează sensurile curenților.</strong>
+
+<p>
+Unele pot fi date în problemă,
+iar pentru curenții necunoscuți poți alege un sens convențional.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Separă curenții care intră de cei care ies.</strong>
+
+</li>
+
+
+<li>
+
+<strong>Scrie Legea I.</strong>
+
+<div class="formula">
+
+\[
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>Înlocuiește valorile cu unități compatibile.</strong>
+
+<p>
+Transformă:
+</p>
+
+<div class="formula">
+
+\[
+mA\rightarrow A
+\]
+
+</div>
+
+dacă este necesar.
+
+</li>
+
+
+<li>
+
+<strong>Calculează necunoscuta.</strong>
+
+</li>
+
+
+<li>
+
+<strong>Interpretează semnul.</strong>
+
+<p>
+Un rezultat negativ indică un sens real opus celui presupus.
+</p>
+
+</li>
+
+
+<li>
+
+<strong>Verifică bilanțul.</strong>
+
+<div class="formula">
+
+\[
+\sum I_{\text{intră}}
+-
+\sum I_{\text{ies}}
+=
+0
+\]
+
+</div>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     WORKED EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Un curent se ramifică</h3>
+
+<p>
+Într-un nod intră:
+</p>
+
+<div class="formula">
+
+\[
+I=6\,A
+\]
+
+</div>
+
+și ies:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2\,A
+\]
+
+\[
+I_2=?
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Legea I:
+
+\[
+I=I_1+I_2
+\]
+
+\[
+6=2+I_2
+\]
+
+\[
+\boxed{
+I_2=4\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Două intrări, două ieșiri</h3>
+
+<p>
+Intră:
+</p>
+
+<div class="formula">
+
+\[
+I_1=1,5\,A,
+\qquad
+I_2=2,5\,A
+\]
+
+</div>
+
+și ies:
+</p>
+
+<div class="formula">
+
+\[
+I_3=3,2\,A,
+\qquad
+I_4=?
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_1+I_2=
+I_3+I_4
+\]
+
+\[
+1,5+2,5=
+3,2+I_4
+\]
+
+\[
+4,0=
+3,2+I_4
+\]
+
+\[
+\boxed{
+I_4=0,8\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Atenție la miliamperi</h3>
+
+<p>
+În nod intră:
+</p>
+
+<div class="formula">
+
+\[
+I_1=0,80\,A
+\]
+
+\[
+I_2=350\,mA
+\]
+
+</div>
+
+și ies:
+</p>
+
+<div class="formula">
+
+\[
+I_3=0,60\,A
+\]
+
+\[
+I_4=?
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Mai întâi:
+
+\[
+350\,mA=
+0,350\,A
+\]
+
+Legea I:
+
+\[
+0,80+0,350
+=
+0,60+I_4
+\]
+
+\[
+1,150=
+0,60+I_4
+\]
+
+\[
+\boxed{
+I_4=0,55\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Rezultat negativ</h3>
+
+<p>
+Presupunem că:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2\,A
+\]
+
+</div>
+
+intră în nod,
+iar:
+</p>
+
+<div class="formula">
+
+\[
+I_2=4\,A
+\]
+
+și \(I_3\) sunt desenate ca ieșind.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Scriem:
+
+\[
+I_1-I_2-I_3=0
+\]
+
+\[
+2-4-I_3=0
+\]
+
+\[
+I_3=-2\,A
+\]
+
+Rezultatul negativ arată că sensul real
+al lui \(I_3\) este invers sensului presupus.
+
+Așadar curentul real:
+
+\[
+\boxed{
+|I_3|=2\,A
+}
+\]
+
+intră în nod.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 5 – Cinci laturi</h3>
+
+<p>
+Într-un nod:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2,4\,A
+\]
+
+\[
+I_2=1,1\,A
+\]
+
+\[
+I_3=0,9\,A
+\]
+
+</div>
+
+intră,
+iar:
+</p>
+
+<div class="formula">
+
+\[
+I_4=3,0\,A
+\]
+
+și \(I_5\) ies.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_1+I_2+I_3
+=
+I_4+I_5
+\]
+
+\[
+2,4+1,1+0,9
+=
+3,0+I_5
+\]
+
+\[
+4,4=
+3,0+I_5
+\]
+
+\[
+\boxed{
+I_5=1,4\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TEMPORARY IMBALANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Ce s-ar întâmpla dacă bilanțul nu ar fi zero?</h2>
+
+<p>
+În forma mai generală:
+</p>
+
+<div class="formula">
+
+\[
+\frac{dq_{\text{nod}}}{dt}
+=
+\sum I_{\text{intră}}
+-
+\sum I_{\text{ies}}
+\]
+
+</div>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Dacă:</h3>
+
+<div class="formula">
+
+\[
+I_{\text{in}}>
+I_{\text{out}}
+\]
+
+</div>
+
+<p>
+sarcina din zona nodului ar crește temporar.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Dacă:</h3>
+
+<div class="formula">
+
+\[
+I_{\text{in}}<
+I_{\text{out}}
+\]
+
+</div>
+
+<p>
+sarcina din zona nodului ar scădea temporar.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>În regim staționar:</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_{\text{in}}
+=
+I_{\text{out}}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="purple-box">
+
+Într-un circuit real,
+o acumulare temporară de sarcină
+modifică potențialele electrice locale
+și, implicit, curenții.
+
+Regimul staționar se caracterizează printr-un bilanț constant
+compatibil cu Legea I a lui Kirchhoff.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Echilibrul curenților într-un nod</h2>
+
+<p>
+Modifică intensitățile și sensurile curenților.
+Simulatorul calculează bilanțul nodului
+și poate determina automat curentul necesar
+pentru respectarea Legii I a lui Kirchhoff.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="i1Slider">
+\(I_1\) [A]
+</label>
+
+<input
+  id="i1Slider"
+  type="range"
+  min="0"
+  max="6"
+  step="0.1"
+  value="2">
+
+<span
+  class="range-value"
+  id="i1Label">
+2,0 A
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="dir1">
+Sens \(I_1\)
+</label>
+
+<select id="dir1">
+
+<option value="in" selected>
+intră în nod
+</option>
+
+<option value="out">
+iese din nod
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="i2Slider">
+\(I_2\) [A]
+</label>
+
+<input
+  id="i2Slider"
+  type="range"
+  min="0"
+  max="6"
+  step="0.1"
+  value="3">
+
+<span
+  class="range-value"
+  id="i2Label">
+3,0 A
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="dir2">
+Sens \(I_2\)
+</label>
+
+<select id="dir2">
+
+<option value="in" selected>
+intră în nod
+</option>
+
+<option value="out">
+iese din nod
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="i3Slider">
+\(I_3\) [A]
+</label>
+
+<input
+  id="i3Slider"
+  type="range"
+  min="0"
+  max="8"
+  step="0.1"
+  value="5">
+
+<span
+  class="range-value"
+  id="i3Label">
+5,0 A
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="dir3">
+Sens \(I_3\)
+</label>
+
+<select id="dir3">
+
+<option value="out" selected>
+iese din nod
+</option>
+
+<option value="in">
+intră în nod
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="i4Slider">
+\(I_4\) [A]
+</label>
+
+<input
+  id="i4Slider"
+  type="range"
+  min="0"
+  max="8"
+  step="0.1"
+  value="0">
+
+<span
+  class="range-value"
+  id="i4Label">
+0,0 A
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="dir4">
+Sens \(I_4\)
+</label>
+
+<select id="dir4">
+
+<option value="out" selected>
+iese din nod
+</option>
+
+<option value="in">
+intră în nod
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="balanceI4Btn">
+
+⚖ Calculează \(I_4\) pentru echilibru
+
+</button>
+
+
+<button
+  class="primary"
+  id="classicBtn">
+
+Exemplul 2 A + 3 A → 5 A
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="splitBtn">
+
+Ramificare 6 A → 2 A + 4 A
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="reverseBtn">
+
+Exemplu cu sens presupus greșit
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="nodeCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+\(\sum I_{\text{intră}}\)
+</span>
+
+<strong id="sumInValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(\sum I_{\text{ies}}\)
+</span>
+
+<strong id="sumOutValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Bilanț \(I_{in}-I_{out}\)
+</span>
+
+<strong id="balanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Starea nodului
+</span>
+
+<strong id="nodeStateValue">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="nodeStatus">
+
+Pentru regim staționar,
+bilanțul trebuie să fie zero.
+</div>
+
+
+<div class="challenge-panel">
+
+<h3>🧠 Provocare – determină singur curentul necunoscut</h3>
+
+<p>
+În nod intră:
+</p>
+
+<div class="formula">
+
+\[
+I_1=1,8\,A
+\qquad
+I_2=2,7\,A
+\]
+
+</div>
+
+<p>
+și ies:
+</p>
+
+<div class="formula">
+
+\[
+I_3=1,1\,A
+\qquad
+I_4=?
+\]
+
+</div>
+
+
+<div class="challenge-grid">
+
+
+<div class="challenge-box">
+
+<label for="challengeAnswer">
+\(I_4\) [A]
+</label>
+
+<input
+  id="challengeAnswer"
+  type="text"
+  inputmode="decimal"
+  placeholder="ex. 3,4">
+
+</div>
+
+
+<div class="challenge-box">
+
+<label>
+Sensul lui \(I_4\)
+</label>
+
+<input
+  type="text"
+  value="iese din nod"
+  disabled>
+
+</div>
+
+
+<div class="challenge-box">
+
+<label>
+Verificare
+</label>
+
+<button
+  class="green-button"
+  id="checkChallengeBtn">
+
+✓ Verifică
+
+</button>
+
+</div>
+
+</div>
+
+
+<div
+  class="challenge-feedback"
+  id="challengeFeedback">
+
+Aplică suma curenților care intră = suma curenților care ies.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Nod echilibrat</h3>
+
+<p>
+Setează:
+</p>
+
+<div class="formula">
+
+\[
+I_1=2\,A,\quad
+I_2=3\,A
+\]
+
+</div>
+
+ca intrări și:
+</p>
+
+<div class="formula">
+
+\[
+I_3=5\,A
+\]
+
+</div>
+
+ca ieșire.
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+\Delta I=0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Creează un dezechilibru</h3>
+
+<p>
+Modifică:
+</p>
+
+<div class="formula">
+
+\[
+I_3:5\,A\rightarrow4\,A
+\]
+
+</div>
+
+<p>
+Ce semn are:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{in}}-I_{\text{out}}
+\ ?
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Prea mult curent iese</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{out}}>
+I_{\text{in}}
+\]
+
+</div>
+
+<p>
+Ce indică simulatorul despre variația sarcinii în nod?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Patru laturi</h3>
+
+<p>
+Folosește și:
+</p>
+
+<div class="formula">
+
+\[
+I_4
+\]
+
+</div>
+
+<p>
+și construiește un nod cu două intrări și două ieșiri.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Schimbă sensul</h3>
+
+<p>
+Schimbă sensul lui:
+</p>
+
+<div class="formula">
+
+\[
+I_2
+\]
+
+</div>
+
+<p>
+fără să-i modifici modulul.
+Cum se modifică ecuația nodului?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Calculează automat necunoscuta</h3>
+
+<p>
+Alege trei curenți,
+apoi folosește:
+<strong>„Calculează \(I_4\)”</strong>.
+</p>
+
+<p>
+Verifică prin calcul manual.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL ACTIVITY
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activitate practică – verificarea Legii I</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă didactică de joasă tensiune;</li>
+
+<li>două sau trei rezistoare;</li>
+
+<li>conductoare;</li>
+
+<li>întrerupător;</li>
+
+<li>multimetru utilizat ca ampermetru.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scop</h3>
+
+<p>
+Compararea:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{înainte de nod}}
+\]
+
+</div>
+
+cu:
+</p>
+
+<div class="formula">
+
+\[
+I_1+I_2
+\]
+
+</div>
+
+după ramificare.
+</p>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Construiește un circuit cu o ramificare în două laturi paralele,
+folosind numai joasă tensiune.
+</li>
+
+<li>
+Oprește sursa înaintea oricărei modificări a conexiunilor.
+</li>
+
+<li>
+Măsoară curentul total înaintea nodului:
+\[
+I
+\]
+</li>
+
+<li>
+Măsoară separat curentul prin prima ramură:
+\[
+I_1
+\]
+</li>
+
+<li>
+Măsoară curentul prin a doua ramură:
+\[
+I_2
+\]
+</li>
+
+<li>
+Compară:
+\[
+I
+\quad\text{cu}\quad
+I_1+I_2
+\]
+</li>
+
+<li>
+Ține cont de rezoluția aparatelor și de micile variații experimentale.
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+În limitele preciziei măsurării,
+te aștepți la:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I\approx I_1+I_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+Ampermetrul se conectează
+<strong>în serie</strong>
+cu latura al cărei curent este măsurat.
+
+Nu conecta ampermetrul direct la bornele sursei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMON ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Curentul se consumă în nod.”</h3>
+
+<p>
+Nu.
+</p>
+
+<p>
+Sarcina electrică se conservă,
+iar în regim staționar:
+</p>
+
+<div class="formula">
+
+\[
+\sum I_{\text{in}}
+=
+\sum I_{\text{out}}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. Adun toate intensitățile fără să țin cont de sens.</h3>
+
+<p>
+Trebuie separat:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{intră}}
+\]
+
+de:
+</p>
+
+<div class="formula">
+
+\[
+I_{\text{ies}}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Cel mai mare curent trebuie să intre.”</h3>
+
+<p>
+Nu există o astfel de regulă.
+Sensurile rezultă din configurația circuitului și soluția problemei.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Un rezultat negativ este imposibil.”</h3>
+
+<p>
+Un rezultat negativ înseamnă de obicei că sensul real
+este opus celui ales convențional.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. Confund \(mA\) cu \(A\).</h3>
+
+<div class="formula">
+
+\[
+1000\,mA=1\,A
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. Aplic Legea I pe un ochi.</h3>
+
+<p>
+Legea I se aplică
+<strong>nodurilor</strong>.
+</p>
+
+<p>
+Pentru ochiuri vom introduce în lecția următoare
+Legea a II-a a lui Kirchhoff.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Intrare” și „ieșire” înseamnă plus și minus fix.</h3>
+
+<p>
+Semnele sunt o convenție de calcul.
+Poți folosi și convenția opusă,
+dar trebuie să fii consecvent.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. Legea spune că fiecare curent care intră este egal cu unul care iese.</h3>
+
+<p>
+Nu individual.
+</p>
+
+<p>
+Egalitatea se referă la
+<strong>sumele</strong> curenților.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce un nod nu poate acumula continuu sarcină într-un regim staționar?
+</li>
+
+<li>
+Ce s-ar întâmpla temporar dacă suma curenților care intră ar fi mai mare decât suma celor care ies?
+</li>
+
+<li>
+De ce Legea I este legată de conservarea sarcinii?
+</li>
+
+<li>
+Dacă un curent se ramifică în două laturi, de ce suma curenților din ramuri este egală cu intensitatea înainte de ramificare?
+</li>
+
+<li>
+De ce trebuie ținut cont de sensurile curenților?
+</li>
+
+<li>
+Ce înseamnă fizic un rezultat negativ pentru un curent necunoscut?
+</li>
+
+<li>
+Dacă modifici sensul convențional ales pentru un curent, se schimbă fenomenul fizic?
+</li>
+
+<li>
+Poți aplica Legea I într-un nod cu cinci laturi? Dar cu zece?
+</li>
+
+<li>
+Cum ai verifica experimental relația \(I=I_1+I_2\)?
+</li>
+
+<li>
+Ce lege de conservare stă la baza bilanțului de curent într-un nod?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Legea I a lui Kirchhoff afirmă că:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+toți curenții din rețea sunt egali
+</button>
+
+<button class="answer-btn">
+suma curenților care intră într-un nod este egală cu suma celor care ies
+</button>
+
+<button class="answer-btn">
+tensiunea este zero în orice nod
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Legea I a lui Kirchhoff exprimă în acest context:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+conservarea sarcinii electrice
+</button>
+
+<button class="answer-btn">
+conservarea exclusivă a temperaturii
+</button>
+
+<button class="answer-btn">
+legea gravitației
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Într-un nod intră \(2\,A\) și \(4\,A\),
+iar un singur curent iese.
+Acesta este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(2\,A\)
+</button>
+
+<button class="answer-btn">
+\(4\,A\)
+</button>
+
+<button class="answer-btn">
+\(6\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Intră \(5\,A\),
+iar printr-o ramură ies \(2\,A\).
+Prin cealaltă ramură ies:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(7\,A\)
+</button>
+
+<button class="answer-btn">
+\(3\,A\)
+</button>
+
+<button class="answer-btn">
+\(2,5\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Forma algebrică a Legii I poate fi scrisă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\sum \varepsilon_k I_k=0\)
+</button>
+
+<button class="answer-btn">
+\(\sum I_k=R\)
+</button>
+
+<button class="answer-btn">
+\(\sum U_k=I\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+Dacă un curent necunoscut este ales ca ieșind din nod
+și calculul dă \(-2\,A\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+nu există curent
+</button>
+
+<button class="answer-btn">
+problema nu are soluție
+</button>
+
+<button class="answer-btn">
+curentul real are modulul \(2\,A\) și sens opus celui presupus
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+\(450\,mA\) reprezintă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(450\,A\)
+</button>
+
+<button class="answer-btn">
+\(0,450\,A\)
+</button>
+
+<button class="answer-btn">
+\(4,50\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+Dacă \(I_{in}>I_{out}\) într-un interval tranzitoriu:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+sarcina din zona nodului tinde să crească
+</button>
+
+<button class="answer-btn">
+sarcina dispare instantaneu
+</button>
+
+<button class="answer-btn">
+rezistența devine obligatoriu zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Legea I se aplică în primul rând:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+unui singur rezistor izolat
+</button>
+
+<button class="answer-btn">
+unui ochi de rețea
+</button>
+
+<button class="answer-btn">
+unui nod de rețea
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Intră în nod:
+\(1,2\,A\) și \(0,8\,A\).
+Iese:
+\(0,5\,A\) și \(I_x\).
+Atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I_x=0,5\,A\)
+</button>
+
+<button class="answer-btn">
+\(I_x=1,5\,A\)
+</button>
+
+<button class="answer-btn">
+\(I_x=2,5\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Forma intuitivă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Forma algebrică</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum_k
+\varepsilon_k I_k
+=
+0
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Baza fizică</h3>
+
+<p>
+Conservarea sarcinii electrice.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezultat negativ</h3>
+
+<p>
+Sensul real este opus sensului ales inițial.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="flow-chain">
+
+<div class="flow-box">
+sarcina se conservă
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-box">
+nu se acumulează continuu în nod
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-box">
+
+\[
+\sum I_{in}
+=
+\sum I_{out}
+\]
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+Legea I a lui Kirchhoff nu spune că
+„toți curenții sunt egali”.
+
+Ea spune că,
+la un nod,
+<strong>bilanțul curenților este zero</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT LESSON
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Legea I ne permite să analizăm
+<strong>ce se întâmplă într-un nod</strong>.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\sum I_{\text{intră}}
+=
+\sum I_{\text{ies}}
+}
+\]
+
+</div>
+
+<p>
+Dar o rețea conține și
+<strong>ochiuri</strong>.
+</p>
+
+<p>
+Pentru a analiza tensiunile,
+căderile de tensiune și tensiunile electromotoare
+de-a lungul unui traseu închis
+avem nevoie de o a doua relație.
+</p>
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Legea a II-a a lui Kirchhoff
+</strong>
+
+— bilanțul tensiunilor de-a lungul unui ochi de rețea.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="01-retea-electrica-nod-latura-ochi-de-retea.html">
+
+← Lecția 1<br>
+Rețea electrică. Nod, latură și ochi
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="03-legea-a-ii-a-lui-kirchhoff.html">
+
+Lecția 3<br>
+Legea a II-a a lui Kirchhoff →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=1
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+function numeric(
+  value
+){
+
+  return Number(
+    String(
+      value
+    )
+    .trim()
+    .replace(
+      ",",
+      "."
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const currentConfigs=[
+  {
+    slider:
+      document.getElementById(
+        "i1Slider"
+      ),
+    label:
+      document.getElementById(
+        "i1Label"
+      ),
+    direction:
+      document.getElementById(
+        "dir1"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "i2Slider"
+      ),
+    label:
+      document.getElementById(
+        "i2Label"
+      ),
+    direction:
+      document.getElementById(
+        "dir2"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "i3Slider"
+      ),
+    label:
+      document.getElementById(
+        "i3Label"
+      ),
+    direction:
+      document.getElementById(
+        "dir3"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "i4Slider"
+      ),
+    label:
+      document.getElementById(
+        "i4Label"
+      ),
+    direction:
+      document.getElementById(
+        "dir4"
+      )
+  }
+];
+
+
+const sumInValue=
+  document.getElementById(
+    "sumInValue"
+  );
+
+
+const sumOutValue=
+  document.getElementById(
+    "sumOutValue"
+  );
+
+
+const balanceValue=
+  document.getElementById(
+    "balanceValue"
+  );
+
+
+const nodeStateValue=
+  document.getElementById(
+    "nodeStateValue"
+  );
+
+
+const nodeStatus=
+  document.getElementById(
+    "nodeStatus"
+  );
+
+
+const canvas=
+  document.getElementById(
+    "nodeCanvas"
+  );
+
+
+const ctx=
+  canvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   ANIMATION STATE
+========================================================= */
+
+let chargeDots=[];
+
+let nodeChargeVisual=0;
+
+let lastTime=0;
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const currents=
+    currentConfigs.map(
+      (
+        item,
+        index
+      )=>{
+
+        const value=
+          Number(
+            item.slider.value
+          );
+
+
+        return{
+
+          id:
+            index+1,
+
+          value,
+
+          direction:
+            item.direction.value
+
+        };
+
+      }
+    );
+
+
+  let sumIn=0;
+  let sumOut=0;
+
+
+  currents.forEach(
+    current=>{
+
+      if(
+        current.direction===
+        "in"
+      ){
+
+        sumIn+=
+          current.value;
+
+      }
+
+      else{
+
+        sumOut+=
+          current.value;
+
+      }
+
+    }
+  );
+
+
+  const balance=
+    sumIn-
+    sumOut;
+
+
+  return{
+
+    currents,
+
+    sumIn,
+    sumOut,
+    balance
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE OUTPUTS
+========================================================= */
+
+function updateResults(){
+
+  const model=
+    readModel();
+
+
+  model.currents.forEach(
+    (
+      current,
+      index
+    )=>{
+
+      currentConfigs[
+        index
+      ].label.textContent=
+        `${formatRo(
+          current.value,
+          1
+        )} A`;
+
+    }
+  );
+
+
+  sumInValue.textContent=
+    `${formatRo(
+      model.sumIn,
+      2
+    )} A`;
+
+
+  sumOutValue.textContent=
+    `${formatRo(
+      model.sumOut,
+      2
+    )} A`;
+
+
+  balanceValue.textContent=
+    `${formatRo(
+      model.balance,
+      2
+    )} A`;
+
+
+  const tolerance=
+    .001;
+
+
+  nodeStatus.className=
+    "status-box";
+
+
+  if(
+    Math.abs(
+      model.balance
+    )<=
+    tolerance
+  ){
+
+    nodeStateValue.textContent=
+      "echilibru";
+
+
+    nodeStatus.classList.add(
+      "status-good"
+    );
+
+
+    nodeStatus.innerHTML=
+      `✓ <strong>Legea I este satisfăcută:</strong>
+       suma curenților care intră este
+       ${formatRo(model.sumIn,2)} A,
+       iar suma curenților care ies este
+       ${formatRo(model.sumOut,2)} A.
+       Bilanțul este zero.`;
+
+  }
+
+  else if(
+    model.balance>
+    0
+  ){
+
+    nodeStateValue.textContent=
+      "exces de intrare";
+
+
+    nodeStatus.classList.add(
+      "status-warning"
+    );
+
+
+    nodeStatus.innerHTML=
+      `În configurația aleasă,
+       intră cu
+       <strong>${formatRo(model.balance,2)} A</strong>
+       mai mult decât iese.
+       Dacă această situație ar apărea tranzitoriu,
+       sarcina din zona nodului ar tinde să crească.
+       Un regim staționar cere reajustarea curenților.`;
+
+  }
+
+  else{
+
+    nodeStateValue.textContent=
+      "exces de ieșire";
+
+
+    nodeStatus.classList.add(
+      "status-warning"
+    );
+
+
+    nodeStatus.innerHTML=
+      `În configurația aleasă,
+       ies cu
+       <strong>${formatRo(Math.abs(model.balance),2)} A</strong>
+       mai mult decât intră.
+       Dacă situația ar fi tranzitorie,
+       sarcina din zona nodului ar tinde să scadă.
+       În regim staționar, bilanțul trebuie să fie zero.`;
+
+  }
+
+
+  return model;
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function resetDots(){
+
+  chargeDots=[];
+
+
+  for(
+    let branch=0;
+    branch<4;
+    branch++
+  ){
+
+    for(
+      let i=0;
+      i<8;
+      i++
+    ){
+
+      chargeDots.push({
+
+        branch,
+
+        p:
+          i/8
+
+      });
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   GEOMETRY
+========================================================= */
+
+function geometry(){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  const center={
+
+    x:
+      W*.50,
+
+    y:
+      H*.52
+
+  };
+
+
+  const radius=
+    Math.min(
+      W,
+      H
+    )*
+    .36;
+
+
+  const angles=[
+
+    -150,
+    -30,
+    35,
+    145
+
+  ]
+  .map(
+    degrees=>
+      degrees*
+      Math.PI/
+      180
+  );
+
+
+  const endpoints=
+    angles.map(
+      angle=>({
+
+        x:
+          center.x+
+          Math.cos(
+            angle
+          )*
+          radius,
+
+        y:
+          center.y+
+          Math.sin(
+            angle
+          )*
+          radius
+
+      })
+    );
+
+
+  return{
+
+    W,
+    H,
+    center,
+    endpoints
+
+  };
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawBackground(
+  W,
+  H
+){
+
+  const gradient=
+    ctx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  ctx.fillStyle=
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  ctx.strokeStyle=
+    "rgba(148,163,184,.08)";
+
+
+  ctx.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=36
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      x,
+      0
+    );
+
+
+    ctx.lineTo(
+      x,
+      H
+    );
+
+
+    ctx.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=36
+  ){
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+      0,
+      y
+    );
+
+
+    ctx.lineTo(
+      W,
+      y
+    );
+
+
+    ctx.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   BRANCH DRAWING
+========================================================= */
+
+function drawBranch(
+  start,
+  end,
+  current,
+  index
+){
+
+  /*
+  Wire.
+  */
+
+  ctx.strokeStyle=
+    "#94a3b8";
+
+
+  ctx.lineWidth=7;
+
+
+  ctx.lineCap=
+    "round";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    start.x,
+    start.y
+  );
+
+
+  ctx.lineTo(
+    end.x,
+    end.y
+  );
+
+
+  ctx.stroke();
+
+
+  const dx=
+    end.x-
+    start.x;
+
+
+  const dy=
+    end.y-
+    start.y;
+
+
+  const length=
+    Math.sqrt(
+      dx*dx+
+      dy*dy
+    );
+
+
+  const ux=
+    dx/
+    length;
+
+
+  const uy=
+    dy/
+    length;
+
+
+  /*
+  Current arrow.
+  */
+
+  const arrowCenter={
+
+    x:
+      start.x+
+      dx*.53,
+
+    y:
+      start.y+
+      dy*.53
+
+  };
+
+
+  /*
+  Geometric line is node -> outside.
+  If current exits node, arrow follows it.
+  If current enters, arrow reversed.
+  */
+
+  let ax=
+    ux;
+
+
+  let ay=
+    uy;
+
+
+  if(
+    current.direction===
+    "in"
+  ){
+
+    ax*=-1;
+    ay*=-1;
+
+  }
+
+
+  const arrowLength=48;
+
+
+  const x1=
+    arrowCenter.x-
+    ax*
+    arrowLength/2;
+
+
+  const y1=
+    arrowCenter.y-
+    ay*
+    arrowLength/2;
+
+
+  const x2=
+    arrowCenter.x+
+    ax*
+    arrowLength/2;
+
+
+  const y2=
+    arrowCenter.y+
+    ay*
+    arrowLength/2;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x1,
+    y1
+  );
+
+
+  ctx.lineTo(
+    x2,
+    y2
+  );
+
+
+  ctx.strokeStyle=
+    current.direction==="in"
+      ? "#60a5fa"
+      : "#f87171";
+
+
+  ctx.lineWidth=5;
+
+
+  ctx.stroke();
+
+
+  const perpX=
+    -ay;
+
+
+  const perpY=
+    ax;
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    x2,
+    y2
+  );
+
+
+  ctx.lineTo(
+    x2-
+    ax*14+
+    perpX*8,
+    y2-
+    ay*14+
+    perpY*8
+  );
+
+
+  ctx.lineTo(
+    x2-
+    ax*14-
+    perpX*8,
+    y2-
+    ay*14-
+    perpY*8
+  );
+
+
+  ctx.closePath();
+
+
+  ctx.fillStyle=
+    current.direction==="in"
+      ? "#60a5fa"
+      : "#f87171";
+
+
+  ctx.fill();
+
+
+  /*
+  Labels.
+  */
+
+  const labelPos={
+
+    x:
+      start.x+
+      dx*.76,
+
+    y:
+      start.y+
+      dy*.76
+
+  };
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    `I${index+1} = ${formatRo(current.value,1)} A`,
+    labelPos.x,
+    labelPos.y-12
+  );
+
+
+  ctx.fillStyle=
+    current.direction==="in"
+      ? "#93c5fd"
+      : "#fca5a5";
+
+
+  ctx.font=
+    "11px system-ui";
+
+
+  ctx.fillText(
+    current.direction==="in"
+      ? "INTRĂ"
+      : "IESE",
+    labelPos.x,
+    labelPos.y+7
+  );
+
+}
+
+
+/* =========================================================
+   PARTICLE POSITION
+========================================================= */
+
+function dotPosition(
+  start,
+  end,
+  p,
+  direction
+){
+
+  let t=p;
+
+
+  if(
+    direction==="in"
+  ){
+
+    /*
+    Current moves from endpoint toward node.
+    */
+
+    t=
+      1-p;
+
+  }
+
+
+  return{
+
+    x:
+      start.x+
+      (
+        end.x-
+        start.x
+      )*
+      t,
+
+    y:
+      start.y+
+      (
+        end.y-
+        start.y
+      )*
+      t
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE PARTICLES
+========================================================= */
+
+function updateParticles(
+  model,
+  dt
+){
+
+  chargeDots.forEach(
+    dot=>{
+
+      const current=
+        model.currents[
+          dot.branch
+        ];
+
+
+      const speed=
+        .04+
+        current.value*
+        .018;
+
+
+      dot.p+=
+        speed*
+        dt;
+
+
+      if(
+        dot.p>=1
+      ){
+
+        dot.p-=1;
+
+      }
+
+    }
+  );
+
+
+  /*
+  purely visual accumulation indicator
+  */
+
+  nodeChargeVisual+=
+    model.balance*
+    dt*
+    .35;
+
+
+  nodeChargeVisual=
+    clamp(
+      nodeChargeVisual,
+      -8,
+      8
+    );
+
+
+  if(
+    Math.abs(
+      model.balance
+    )<
+    .001
+  ){
+
+    nodeChargeVisual*=
+      Math.pow(
+        .15,
+        dt
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW SCENE
+========================================================= */
+
+function drawScene(
+  model
+){
+
+  const g=
+    geometry();
+
+
+  drawBackground(
+    g.W,
+    g.H
+  );
+
+
+  ctx.fillStyle=
+    "#e2e8f0";
+
+
+  ctx.font=
+    "bold 16px system-ui";
+
+
+  ctx.textAlign=
+    "left";
+
+
+  ctx.fillText(
+    "Bilanț de curent într-un nod",
+    18,
+    28
+  );
+
+
+  ctx.fillStyle=
+    "#bae6fd";
+
+
+  ctx.font=
+    "12px system-ui";
+
+
+  ctx.fillText(
+    "Albastru = intră • roșu = iese",
+    18,
+    49
+  );
+
+
+  model.currents.forEach(
+    (
+      current,
+      index
+    )=>{
+
+      drawBranch(
+        g.center,
+        g.endpoints[
+          index
+        ],
+        current,
+        index
+      );
+
+    }
+  );
+
+
+  /*
+  Moving charge markers.
+  */
+
+  chargeDots.forEach(
+    dot=>{
+
+      const current=
+        model.currents[
+          dot.branch
+        ];
+
+
+      if(
+        current.value<
+        .05
+      ){
+        return;
+      }
+
+
+      const pos=
+        dotPosition(
+          g.center,
+          g.endpoints[
+            dot.branch
+          ],
+          dot.p,
+          current.direction
+        );
+
+
+      ctx.beginPath();
+
+
+      ctx.arc(
+        pos.x,
+        pos.y,
+        3,
+        0,
+        Math.PI*2
+      );
+
+
+      ctx.fillStyle=
+        "#fde68a";
+
+
+      ctx.fill();
+
+    }
+  );
+
+
+  /*
+  Node halo according to imbalance.
+  */
+
+  const balance=
+    model.balance;
+
+
+  const haloRadius=
+    38+
+    Math.abs(
+      nodeChargeVisual
+    )*
+    2;
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    g.center.x,
+    g.center.y,
+    haloRadius,
+    0,
+    Math.PI*2
+  );
+
+
+  if(
+    balance>
+    .001
+  ){
+
+    ctx.fillStyle=
+      "rgba(250,204,21,.15)";
+
+  }
+
+  else if(
+    balance<
+    -.001
+  ){
+
+    ctx.fillStyle=
+      "rgba(168,85,247,.15)";
+
+  }
+
+  else{
+
+    ctx.fillStyle=
+      "rgba(34,197,94,.14)";
+
+  }
+
+
+  ctx.fill();
+
+
+  /*
+  Node.
+  */
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    g.center.x,
+    g.center.y,
+    28,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fillStyle=
+    Math.abs(
+      balance
+    )<
+    .001
+      ? "#16a34a"
+      : "#334155";
+
+
+  ctx.fill();
+
+
+  ctx.strokeStyle=
+    "#f8fafc";
+
+
+  ctx.lineWidth=4;
+
+
+  ctx.stroke();
+
+
+  ctx.fillStyle=
+    "#fff";
+
+
+  ctx.font=
+    "bold 13px system-ui";
+
+
+  ctx.textAlign=
+    "center";
+
+
+  ctx.fillText(
+    "NOD",
+    g.center.x,
+    g.center.y+5
+  );
+
+
+  /*
+  Balance text.
+  */
+
+  ctx.fillStyle=
+    Math.abs(
+      balance
+    )<
+    .001
+      ? "#86efac"
+      : "#fde68a";
+
+
+  ctx.font=
+    "bold 14px system-ui";
+
+
+  ctx.fillText(
+    `ΣIintră − ΣIies = ${formatRo(balance,2)} A`,
+    g.W*.50,
+    g.H*.94
+  );
+
+}
+
+
+/* =========================================================
+   BALANCE I4
+========================================================= */
+
+function balanceI4(){
+
+  /*
+  Determine I4 needed based on selected direction of I4
+  while currents 1..3 are fixed.
+  */
+
+  let signedTotal=0;
+
+
+  for(
+    let i=0;
+    i<3;
+    i++
+  ){
+
+    const value=
+      Number(
+        currentConfigs[
+          i
+        ].slider.value
+      );
+
+
+    signedTotal+=
+      currentConfigs[
+        i
+      ].direction.value===
+      "in"
+        ? value
+        : -value;
+
+  }
+
+
+  const i4Direction=
+    currentConfigs[
+      3
+    ].direction.value;
+
+
+  let required=
+    i4Direction==="in"
+      ? -signedTotal
+      : signedTotal;
+
+
+  /*
+  If negative, selected direction cannot balance
+  with a positive magnitude.
+  Reverse it and use magnitude.
+  */
+
+  if(
+    required<
+    0
+  ){
+
+    currentConfigs[
+      3
+    ].direction.value=
+      i4Direction==="in"
+        ? "out"
+        : "in";
+
+
+    required=
+      Math.abs(
+        required
+      );
+
+  }
+
+
+  currentConfigs[
+    3
+  ].slider.max=
+    Math.max(
+      8,
+      Math.ceil(
+        required
+      )
+    );
+
+
+  currentConfigs[
+    3
+  ].slider.value=
+    required;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setClassic(){
+
+  const values=[
+    2,
+    3,
+    5,
+    0
+  ];
+
+
+  const dirs=[
+    "in",
+    "in",
+    "out",
+    "out"
+  ];
+
+
+  values.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      currentConfigs[
+        index
+      ].slider.value=
+        value;
+
+
+      currentConfigs[
+        index
+      ].direction.value=
+        dirs[
+          index
+        ];
+
+    }
+  );
+
+
+  nodeChargeVisual=0;
+
+  updateResults();
+
+}
+
+
+function setSplit(){
+
+  const values=[
+    6,
+    2,
+    4,
+    0
+  ];
+
+
+  const dirs=[
+    "in",
+    "out",
+    "out",
+    "out"
+  ];
+
+
+  values.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      currentConfigs[
+        index
+      ].slider.value=
+        value;
+
+
+      currentConfigs[
+        index
+      ].direction.value=
+        dirs[
+          index
+        ];
+
+    }
+  );
+
+
+  nodeChargeVisual=0;
+
+  updateResults();
+
+}
+
+
+function setReverseExample(){
+
+  /*
+  Presume I4 exits, but other values demand I4 entering.
+  */
+
+  const values=[
+    2,
+    4,
+    0,
+    2
+  ];
+
+
+  const dirs=[
+    "in",
+    "out",
+    "out",
+    "out"
+  ];
+
+
+  values.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      currentConfigs[
+        index
+      ].slider.value=
+        value;
+
+
+      currentConfigs[
+        index
+      ].direction.value=
+        dirs[
+          index
+        ];
+
+    }
+  );
+
+
+  nodeChargeVisual=0;
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+currentConfigs.forEach(
+  item=>{
+
+    item.slider.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    item.direction.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "balanceI4Btn"
+  )
+  .addEventListener(
+    "click",
+    balanceI4
+  );
+
+
+document
+  .getElementById(
+    "classicBtn"
+  )
+  .addEventListener(
+    "click",
+    setClassic
+  );
+
+
+document
+  .getElementById(
+    "splitBtn"
+  )
+  .addEventListener(
+    "click",
+    setSplit
+  );
+
+
+document
+  .getElementById(
+    "reverseBtn"
+  )
+  .addEventListener(
+    "click",
+    setReverseExample
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    setClassic
+  );
+
+
+/* =========================================================
+   CHALLENGE
+========================================================= */
+
+document
+  .getElementById(
+    "checkChallengeBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      const input=
+        document.getElementById(
+          "challengeAnswer"
+        );
+
+
+      const answer=
+        numeric(
+          input.value
+        );
+
+
+      const feedback=
+        document.getElementById(
+          "challengeFeedback"
+        );
+
+
+      if(
+        !Number.isFinite(
+          answer
+        )
+      ){
+
+        feedback.className=
+          "challenge-feedback feedback-bad";
+
+
+        feedback.textContent=
+          "Introdu o valoare numerică.";
+
+        return;
+
+      }
+
+
+      const correct=
+        1.8+
+        2.7-
+        1.1;
+
+
+      if(
+        Math.abs(
+          answer-
+          correct
+        )<=
+        .05
+      ){
+
+        feedback.className=
+          "challenge-feedback feedback-good";
+
+
+        feedback.innerHTML=
+          `✓ Corect:
+           <strong>I₄ = ${formatRo(correct,1)} A</strong>.
+           Verificare:
+           1,8 + 2,7 = 1,1 + 3,4.`;
+
+      }
+
+      else{
+
+        feedback.className=
+          "challenge-feedback feedback-bad";
+
+
+        feedback.innerHTML=
+          `Mai verifică:
+           curenții care intră sunt
+           <strong>1,8 A și 2,7 A</strong>,
+           iar la ieșire ai deja
+           <strong>1,1 A</strong>.`;
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   ANIMATION LOOP
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const model=
+    readModel();
+
+
+  updateParticles(
+    model,
+    dt
+  );
+
+
+  drawScene(
+    model
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    resizeCanvas();
+
+    drawScene(
+      readModel()
+    );
+
+  }
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește bilanțul curenților și sensurile la nod.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Aplici corect Legea I a lui Kirchhoff.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii la care ai greșit.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun de bază. Exersează convențiile de sens și rezultatele negative.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia ΣIintră = ΣIies și exemplele de calcul înainte de Legea a II-a.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas();
+
+    resetDots();
+
+    setClassic();
+
+    updateResults();
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
