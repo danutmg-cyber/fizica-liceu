@@ -1,1 +1,7388 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+9. Aplicații tehnice ale efectelor curentului electric | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Aplicații tehnice ale efectelor curentului electric: efect termic, electromagneți, relee, sonerii, actuatoare, motoare și difuzoare. Simulator interactiv și aplicații pentru clasa a X-a.">
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(34,197,94,.20),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.46),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 48%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.05rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PRINCIPLE CHAIN
+========================================================= */
+
+.principle-chain{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.chain-card{
+
+  padding:18px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+  text-align:center;
+
+}
+
+.chain-arrow{
+
+  color:#2563eb;
+
+  font-size:1.8rem;
+
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   APPLICATION CARDS
+========================================================= */
+
+.app-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  min-height:220px;
+
+  padding:20px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:15px;
+
+}
+
+.app-card::before{
+
+  content:"";
+
+  position:absolute;
+
+  right:-35px;
+  top:-35px;
+
+  width:110px;
+  height:110px;
+
+  border-radius:50%;
+
+  opacity:.12;
+
+}
+
+.app-card.thermal::before{
+  background:#ea580c;
+}
+
+.app-card.magnetic::before{
+  background:#2563eb;
+}
+
+.app-card.force::before{
+  background:#7c3aed;
+}
+
+.app-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:52px;
+  height:52px;
+
+  margin-bottom:12px;
+
+  border-radius:12px;
+
+  font-size:1.45rem;
+
+  font-weight:950;
+
+}
+
+.thermal .app-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+.magnetic .app-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.force .app-icon{
+
+  color:#6d28d9;
+  background:#ede9fe;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e40af;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.mode-tabs{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-bottom:18px;
+
+}
+
+.mode-tab{
+
+  color:#0f172a;
+  background:#e2e8f0;
+
+}
+
+.mode-tab.active{
+
+  color:white;
+  background:#2563eb;
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.05fr .95fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#deviceCanvas,
+#comparisonCanvas{
+
+  display:block;
+
+  width:100%;
+  height:600px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   MATCH ACTIVITY
+========================================================= */
+
+.match-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.match-item{
+
+  padding:16px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:12px;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #0891b2
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results,
+  .match-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .principle-chain{
+    grid-template-columns:1fr;
+  }
+
+  .chain-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #deviceCanvas,
+  #comparisonCanvas{
+    height:530px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .mode-tabs,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Energia, puterea și efectele curentului electric
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 9
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Aplicații tehnice
+</span>
+
+</div>
+
+
+<h1>
+Aplicații tehnice ale efectelor curentului electric
+</h1>
+
+
+<p class="subtitle">
+Legile fizicii studiate până acum devin principii de funcționare
+pentru dispozitive reale:
+rezistențele electrice transformă energia electrică în energie internă,
+bobinele produc câmp magnetic,
+iar conductorii parcurși de curent pot fi supuși unor forțe magnetice.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să identifici efectul fizic utilizat de un dispozitiv;</li>
+
+<li>să explici principiul de funcționare al unui aparat electric simplu;</li>
+
+<li>să diferențiezi efectul util de pierderile nedorite;</li>
+
+<li>să explici funcționarea unui element de încălzire;</li>
+
+<li>să explici rolul unei bobine într-un electromagnet;</li>
+
+<li>să explici principiul unui releu electromagnetic;</li>
+
+<li>să explici principiul unei sonerii electromagnetice;</li>
+
+<li>să interpretezi apariția unei forțe magnetice într-un actuator sau motor;</li>
+
+<li>să asociezi formulele fizice cu aplicațiile corespunzătoare;</li>
+
+<li>să faci trecerea de la putere la consumul de energie.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Trei idei-cheie</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P_J=I^2R
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+B\approx
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+F=BIL
+}
+\]
+
+</div>
+
+<p>
+Ultima relație este pentru conductor perpendicular pe câmp.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FROM LAW TO DEVICE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De la lege fizică la dispozitiv</h2>
+
+<p>
+Un aparat nu „folosește o formulă”.
+El exploatează un fenomen fizic,
+iar formula ne permite să descriem cantitativ acel fenomen.
+</p>
+
+
+<div class="principle-chain">
+
+
+<div class="chain-card">
+
+<strong>
+Fenomen fizic
+</strong>
+
+<p>
+încălzire, câmp magnetic, forță
+</p>
+
+</div>
+
+
+<div class="chain-arrow">
+→
+</div>
+
+
+<div class="chain-card">
+
+<strong>
+Principiu de funcționare
+</strong>
+
+<p>
+transformare de energie sau acțiune magnetică
+</p>
+
+</div>
+
+
+<div class="chain-arrow">
+→
+</div>
+
+
+<div class="chain-card">
+
+<strong>
+Dispozitiv tehnic
+</strong>
+
+<p>
+încălzitor, releu, motor, difuzor...
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Întrebarea utilă nu este doar:
+
+<strong>„Ce aparat este acesta?”</strong>
+
+ci mai ales:
+
+<strong>„Ce fenomen fizic face posibilă funcționarea sa?”</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FAMILY OVERVIEW
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Trei familii de aplicații</h2>
+
+<div class="grid-3">
+
+
+<div class="app-card thermal">
+
+<div class="app-icon">
+♨
+</div>
+
+<h3>Efect termic</h3>
+
+<p>
+Curentul produce încălzirea unui conductor rezistiv.
+</p>
+
+<div class="formula">
+
+\[
+P=I^2R
+\]
+
+</div>
+
+<p>
+Exemple:
+element de încălzire,
+fier de lipit,
+siguranță fuzibilă.
+</p>
+
+</div>
+
+
+<div class="app-card magnetic">
+
+<div class="app-icon">
+B
+</div>
+
+<h3>Efect magnetic</h3>
+
+<p>
+Curentul printr-o bobină produce câmp magnetic.
+</p>
+
+<div class="formula">
+
+\[
+B\propto NI
+\]
+
+</div>
+
+<p>
+Exemple:
+electromagnet,
+releu,
+sonerie electromagnetică.
+</p>
+
+</div>
+
+
+<div class="app-card force">
+
+<div class="app-icon">
+F
+</div>
+
+<h3>Forță magnetică</h3>
+
+<p>
+Un conductor parcurs de curent aflat într-un câmp magnetic
+poate fi supus unei forțe.
+</p>
+
+<div class="formula">
+
+\[
+F=BIL
+\]
+
+</div>
+
+<p>
+Exemple:
+actuator,
+motor electric,
+difuzor electrodinamic.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THERMAL
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Elementul de încălzire</h2>
+
+<p>
+Un element de încălzire este proiectat astfel încât
+efectul Joule să fie
+<strong>efectul util principal</strong>.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P_J=I^2R
+}
+\]
+
+</div>
+
+<p>
+Într-un interval \(t\):
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+Q=I^2Rt
+}
+\]
+
+</div>
+
+
+<h3>Lanț energetic</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\text{energie electrică}
+\longrightarrow
+\text{energie internă}
+\longrightarrow
+\text{transfer termic}
+}
+\]
+
+</div>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Plită / încălzitor</h3>
+
+<p>
+Elementul rezistiv se încălzește și transferă energie termică
+către mediul sau corpul încălzit.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Fier de lipit</h3>
+
+<p>
+Efectul Joule încălzește vârful utilizat pentru realizarea lipiturii.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistor de putere</h3>
+
+<p>
+Poate transforma deliberat energie electrică în energie internă
+și trebuie dimensionat pentru disiparea termică.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="orange-box">
+
+O temperatură mai mare nu este determinată numai de puterea electrică.
+
+Contează și:
+
+<ul>
+
+<li>masa corpului;</li>
+
+<li>capacitatea termică;</li>
+
+<li>transferul de căldură către mediu;</li>
+
+<li>suprafața și geometria;</li>
+
+<li>durata funcționării.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FUSE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Siguranța fuzibilă – efect termic folosit pentru protecție</h2>
+
+<p>
+Într-o siguranță fuzibilă,
+curentul trece printr-un element conductor proiectat să se încălzească puternic
+atunci când curentul depășește valoarea admisă pentru suficient timp.
+</p>
+
+<div class="formula">
+
+\[
+Q=I^2Rt
+\]
+
+</div>
+
+<p>
+Deoarece intensitatea apare la pătrat,
+un supracurent produce o creștere rapidă a efectului termic.
+</p>
+
+
+<div class="red-box">
+
+Dacă elementul fuzibil se topește,
+circuitul este întrerupt.
+
+Siguranța fuzibilă este un dispozitiv de protecție
+și nu trebuie înlocuită cu improvizații din sârmă aleasă arbitrar.
+</div>
+
+
+<div class="blue-box">
+
+Observă ideea tehnică:
+
+<strong>
+același efect termic poate fi util în două moduri diferite</strong>:
+
+<ul>
+
+<li>pentru încălzire;</li>
+
+<li>pentru protecția circuitului.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ELECTROMAGNET
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Electromagnetul</h2>
+
+<p>
+Un electromagnet folosește o bobină parcursă de curent
+pentru a produce un câmp magnetic controlabil.
+</p>
+
+<p>
+Pentru modelul unui solenoid suficient de lung în aer:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+B\approx
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Mai multe spire</h3>
+
+<div class="formula">
+
+\[
+B\propto N
+\]
+
+</div>
+
+<p>
+În model,
+mărirea densității de spire mărește câmpul.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curent mai mare</h3>
+
+<div class="formula">
+
+\[
+B\propto I
+\]
+
+</div>
+
+<p>
+Mărirea intensității mărește câmpul,
+în limitele admise de bobină.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Miez feromagnetic</h3>
+
+<p>
+Poate crește puternic efectul magnetic,
+dar comportarea reală depinde de material și de regim.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="purple-box">
+
+Avantajul esențial al electromagnetului:
+
+<strong>
+câmpul său poate fi pornit, oprit și modificat prin controlul curentului.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RELAY
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Releul electromagnetic</h2>
+
+<p>
+Un releu permite unui circuit electric să controleze mecanic
+contactele unui alt circuit.
+</p>
+
+
+<ol class="steps">
+
+<li>
+Prin bobina releului începe să circule curent.
+</li>
+
+<li>
+Bobina produce un câmp magnetic.
+</li>
+
+<li>
+O piesă feromagnetică mobilă este atrasă.
+</li>
+
+<li>
+Mișcarea schimbă starea unor contacte electrice.
+</li>
+
+<li>
+La întreruperea curentului prin bobină,
+un arc poate readuce mecanismul în poziția inițială.
+</li>
+
+</ol>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_{\text{bobină}}
+\rightarrow
+B
+\rightarrow
+\text{forță}
+\rightarrow
+\text{comutarea contactelor}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Releul arată cum o mărime electrică
+poate produce o acțiune mecanică,
+care apoi controlează un alt circuit.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BELL
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Soneria electromagnetică</h2>
+
+<p>
+Într-o sonerie electromagnetică clasică,
+electromagnetul atrage o armătură mobilă.
+Aceasta poate acționa un ciocănel și,
+în același timp,
+poate întrerupe temporar circuitul electromagnetului.
+</p>
+
+
+<div class="principle-chain">
+
+
+<div class="chain-card">
+
+<strong>
+Curent</strong>
+
+<div class="formula">
+
+\[
+I
+\]
+
+</div>
+
+</div>
+
+
+<div class="chain-arrow">
+→
+</div>
+
+
+<div class="chain-card">
+
+<strong>
+Electromagnet</strong>
+
+<div class="formula">
+
+\[
+B
+\]
+
+</div>
+
+</div>
+
+
+<div class="chain-arrow">
+→
+</div>
+
+
+<div class="chain-card">
+
+<strong>
+Mișcare repetată</strong>
+
+<p>
+sunet
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="yellow-box">
+
+Nu curentul „produce direct sunetul”.
+
+Curentul produce câmp magnetic,
+câmpul contribuie la apariția forței,
+forța produce mișcare,
+iar mișcarea mecanică produce sunet.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FORCE APPLICATION
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Forța asupra unui conductor – baza actuatorului electromagnetic</h2>
+
+<p>
+Un conductor de lungime activă \(L\),
+parcurs de curentul \(I\),
+aflat perpendicular pe un câmp magnetic aproximativ uniform,
+este supus unei forțe:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+F=BIL
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Această relație transformă o problemă de câmp magnetic
+într-o posibilitate tehnică:
+
+\[
+\boxed{
+\text{energie electrică}
+\rightarrow
+\text{forță și mișcare}
+}
+\]
+</div>
+
+
+<p>
+Principiul este întâlnit,
+în forme constructive diferite,
+în actuatoare electromagnetice,
+motoare și difuzoare.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     MOTOR
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Motorul electric – idee de principiu</h2>
+
+<p>
+Într-un motor,
+conductoare parcurse de curent se află într-un câmp magnetic.
+Forțele magnetice pot forma un cuplu care tinde să rotească rotorul.
+</p>
+
+
+<div class="formula">
+
+\[
+\vec F
+\perp
+\vec B
+\]
+
+</div>
+
+<p>
+și,
+pentru o porțiune perpendiculară pe câmp:
+</p>
+
+<div class="formula">
+
+\[
+F=BIL
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Transformarea energetică idealizată este:
+
+\[
+\boxed{
+\text{energie electrică}
+\longrightarrow
+\text{energie mecanică}
+}
+\]
+
+Într-un motor real apar și pierderi,
+inclusiv încălzire prin efect Joule.
+</div>
+
+
+<div class="orange-box">
+
+Un dispozitiv poate utiliza
+<strong>mai multe efecte ale curentului simultan</strong>.
+
+Într-un motor,
+efectul magnetic este util,
+dar încălzirea în înfășurări este în general o pierdere nedorită.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LOUDSPEAKER
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Difuzorul electrodinamic – curent → forță → vibrație</h2>
+
+<p>
+Într-un difuzor electrodinamic,
+o bobină mobilă se află într-un câmp magnetic produs de un magnet.
+Curentul prin bobină determină apariția unei forțe magnetice.
+</p>
+
+
+<div class="formula">
+
+\[
+I
+\rightarrow
+F
+\rightarrow
+\text{deplasarea membranei}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\text{deplasarea membranei}
+\rightarrow
+\text{unde sonore}
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+Principiul comun cu motorul este
+<strong>forța magnetică asupra unui conductor parcurs de curent</strong>,
+dar scopul tehnic este diferit:
+
+motorul urmărește mișcare mecanică,
+iar difuzorul urmărește vibrația controlată a membranei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMPARISON
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Compararea aplicațiilor</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Dispozitiv
+</th>
+
+<th>
+Efect principal utilizat
+</th>
+
+<th>
+Mărime importantă
+</th>
+
+<th>
+Transformare / rezultat
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+Element de încălzire
+</td>
+
+<td>
+efect termic
+</td>
+
+<td>
+\(P=I^2R\)
+</td>
+
+<td>
+energie electrică → energie internă
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Siguranță fuzibilă
+</td>
+
+<td>
+efect termic
+</td>
+
+<td>
+\(Q=I^2Rt\)
+</td>
+
+<td>
+supracurent → topire → întreruperea circuitului
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Electromagnet
+</td>
+
+<td>
+efect magnetic
+</td>
+
+<td>
+\(B\propto NI/\ell\)
+</td>
+
+<td>
+curent → câmp magnetic
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Releu
+</td>
+
+<td>
+efect magnetic + acțiune mecanică
+</td>
+
+<td>
+\(B\), forță
+</td>
+
+<td>
+curent → comutarea contactelor
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Sonerie
+</td>
+
+<td>
+efect magnetic
+</td>
+
+<td>
+\(B\), forță
+</td>
+
+<td>
+curent → mișcare repetată → sunet
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Motor electric
+</td>
+
+<td>
+forță magnetică
+</td>
+
+<td>
+\(F=BIL\)
+</td>
+
+<td>
+energie electrică → energie mecanică
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Difuzor
+</td>
+
+<td>
+forță magnetică
+</td>
+
+<td>
+\(F\propto BI\)
+</td>
+
+<td>
+curent variabil → vibrație → sunet
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SAFETY
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Siguranță: aplicație tehnică ≠ experiment improvizat</h2>
+
+<div class="red-box">
+
+Dispozitivele casnice alimentate de la rețeaua electrică
+<strong>nu se desfac și nu se experimentează sub tensiune la clasă</strong>.
+
+Pentru activități didactice se folosesc:
+
+<ul>
+
+<li>surse de joasă tensiune;</li>
+
+<li>curent limitat;</li>
+
+<li>componente didactice;</li>
+
+<li>montaje verificate înainte de alimentare.</li>
+
+</ul>
+</div>
+
+
+<div class="yellow-box">
+
+Nu se improvizează:
+
+<ul>
+
+<li>elemente de încălzire conectate la rețeaua casnică;</li>
+
+<li>siguranțe fuzibile din sârme alese arbitrar;</li>
+
+<li>bobine cu rezistență mică direct pe baterii sau acumulatori capabili de curenți mari;</li>
+
+<li>scurtcircuite pentru „obținerea unui electromagnet mai puternic”.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CLASSROOM ACTIVITIES
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Activități demonstrative simple</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>A. Rezistor de putere</h3>
+
+<p>
+La joasă tensiune,
+compară temperatura unui rezistor înainte și după un interval scurt de funcționare.
+</p>
+
+<p>
+Leagă observația de:
+</p>
+
+<div class="formula">
+
+\[
+Q=I^2Rt
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Electromagnet</h3>
+
+<p>
+Realizează o bobină didactică și observă efectul asupra unei busole
+sau asupra unor obiecte feromagnetice mici,
+într-un montaj cu curent limitat.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Releu didactic</h3>
+
+<p>
+Folosește un releu pentru joasă tensiune
+și identifică:</p>
+
+<ul>
+
+<li>bobina;</li>
+
+<li>armătura;</li>
+
+<li>contactele;</li>
+
+<li>circuitul de comandă.</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Element de încălzire</h3>
+
+<p>
+Un element rezistiv are:
+</p>
+
+<div class="formula">
+
+\[
+R=12\,\Omega
+\]
+
+</div>
+
+<p>
+și este parcurs de:
+</p>
+
+<div class="formula">
+
+\[
+I=2\,A
+\]
+
+</div>
+
+<p>
+Determinați puterea termică.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+P=I^2R
+\]
+
+\[
+P=2^2\cdot12
+\]
+
+\[
+\boxed{
+P=48\,W
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Energia transformată</h3>
+
+<p>
+Dispozitivul precedent funcționează timp de:
+</p>
+
+<div class="formula">
+
+\[
+t=30\,s
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+E=Pt
+\]
+
+\[
+E=48\cdot30
+\]
+
+\[
+\boxed{
+E=1440\,J
+}
+\]
+
+În modelul unui element pur rezistiv,
+această energie este transformată în principal în energie internă.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 3 – Electromagnet</h3>
+
+<p>
+Un solenoid în aer are:
+</p>
+
+<div class="formula">
+
+\[
+N=300,
+\quad
+\ell=0,30\,m,
+\quad
+I=1\,A
+\]
+
+</div>
+
+<p>
+Calculați \(B\) în modelul solenoidului lung.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+B=
+\mu_0
+\frac{NI}{\ell}
+\]
+
+\[
+B=
+4\pi\cdot10^{-7}
+\frac{300\cdot1}{0,30}
+\]
+
+\[
+B=
+4\pi\cdot10^{-4}\,T
+\]
+
+\[
+\boxed{
+B\approx1,26\,mT
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Mărirea câmpului</h3>
+
+<p>
+La aceeași lungime,
+numărul de spire se dublează
+și curentul se înjumătățește.
+Cum se modifică \(B\)?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+B\propto NI
+\]
+
+Noua valoare este proporțională cu:
+
+\[
+(2N)
+\left(
+\frac I2
+\right)
+=
+NI
+\]
+
+deci:
+
+\[
+\boxed{
+B'=B
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Actuator magnetic</h3>
+
+<p>
+Un conductor activ de:
+</p>
+
+<div class="formula">
+
+\[
+L=5\,cm=0,05\,m
+\]
+
+</div>
+
+<p>
+este parcurs de:
+</p>
+
+<div class="formula">
+
+\[
+I=3\,A
+\]
+
+</div>
+
+<p>
+și se află perpendicular pe un câmp:
+</p>
+
+<div class="formula">
+
+\[
+B=0,4\,T
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+F=BIL
+\]
+
+\[
+F=
+0,4\cdot3\cdot0,05
+\]
+
+\[
+\boxed{
+F=0,06\,N
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 6 – Dublarea curentului într-un actuator</h3>
+
+<p>
+Câmpul și geometria rămân constante,
+dar intensitatea se dublează.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+F=BIL
+\]
+
+deci:
+
+\[
+F\propto I
+\]
+
+Prin urmare:
+
+\[
+\boxed{
+F'=2F
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 7 – Un dispozitiv, două efecte</h3>
+
+<p>
+O bobină are și rezistență electrică.
+Prin ea trece curentul \(I\).
+Ce două efecte apar simultan?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Bobina produce câmp magnetic:
+
+\[
+B\propto I
+\]
+
+dar conductorul bobinei se și încălzește:
+
+\[
+P_J=I^2R
+\]
+
+Prin urmare,
+într-un electromagnet real apar simultan:
+
+\[
+\boxed{
+\text{efect magnetic + efect termic}
+}
+\]
+
+Efectul magnetic este de regulă efectul dorit,
+iar încălzirea excesivă este o limitare tehnică.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Atelier de aplicații electrice</h2>
+
+<p>
+Alege o familie de dispozitive și modifică parametrii.
+Simulatorul separă trei mecanisme fizice:
+încălzire rezistivă,
+câmp magnetic al unei bobine
+și forță asupra unui conductor.
+</p>
+
+
+<div class="mode-tabs">
+
+<button
+  class="mode-tab active"
+  data-mode="thermal">
+
+♨ Încălzitor
+
+</button>
+
+
+<button
+  class="mode-tab"
+  data-mode="magnet">
+
+🧲 Electromagnet
+
+</button>
+
+
+<button
+  class="mode-tab"
+  data-mode="force">
+
+↔ Actuator
+
+</button>
+
+</div>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label
+  id="labelA"
+  for="sliderA">
+
+Intensitate \(I\) [A]
+
+</label>
+
+<input
+  id="sliderA"
+  type="range">
+
+<span
+  class="range-value"
+  id="valueA">
+—
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label
+  id="labelB"
+  for="sliderB">
+
+Rezistență \(R\) [Ω]
+
+</label>
+
+<input
+  id="sliderB"
+  type="range">
+
+<span
+  class="range-value"
+  id="valueB">
+—
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label
+  id="labelC"
+  for="sliderC">
+
+Timp \(t\) [s]
+
+</label>
+
+<input
+  id="sliderC"
+  type="range">
+
+<span
+  class="range-value"
+  id="valueC">
+—
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="preset1Btn">
+
+Preset 1
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="preset2Btn">
+
+Preset 2
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="doubleMainBtn">
+
+Dublează parametrul principal
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="deviceCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="comparisonCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span id="resultLabel1">
+Rezultat 1
+</span>
+
+<strong id="resultValue1">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel2">
+Rezultat 2
+</span>
+
+<strong id="resultValue2">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel3">
+Rezultat 3
+</span>
+
+<strong id="resultValue3">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="resultLabel4">
+Rezultat 4
+</span>
+
+<strong id="resultValue4">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box"
+  id="simStatus">
+
+Selectează o aplicație.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Încălzitor</h3>
+
+<p>
+Dublează curentul
+fără a modifica rezistența.
+</p>
+
+<p>
+Compară:</p>
+
+<div class="formula">
+
+\[
+P
+\quad\text{și}\quad
+P'
+\]
+
+</div>
+
+<p>
+Explică de ce:</p>
+
+<div class="formula">
+
+\[
+P'=4P
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Timpul de funcționare</h3>
+
+<p>
+În modul „Încălzitor”,
+dublează timpul.
+</p>
+
+<p>
+Ce se modifică:
+puterea sau energia?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Electromagnet</h3>
+
+<p>
+Dublează numărul de spire
+la aceeași lungime și același curent.
+</p>
+
+<p>
+Cum se modifică \(B\)?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Electromagnet mai lung</h3>
+
+<p>
+Păstrează \(N\) și \(I\),
+dar mărește lungimea.
+</p>
+
+<p>
+Explică rezultatul prin:</p>
+
+<div class="formula">
+
+\[
+n=
+\frac N\ell
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Actuator</h3>
+
+<p>
+Dublează curentul
+la aceleași \(B\) și \(L\).
+</p>
+
+<p>
+Verifică:</p>
+
+<div class="formula">
+
+\[
+F\propto I
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Compară mecanismele</h3>
+
+<p>
+În ce mod apare dependență de \(I^2\)
+și în ce mod apare dependență liniară de \(I\)?
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MATCH
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Identifică fenomenul dominant</h2>
+
+<div class="match-grid">
+
+
+<div class="match-item">
+
+<strong>Fier de lipit</strong>
+
+<p>
+Fenomen dominant:
+<strong>efect Joule</strong>.
+</p>
+
+</div>
+
+
+<div class="match-item">
+
+<strong>Releu</strong>
+
+<p>
+Fenomen dominant:
+<strong>câmp magnetic al bobinei + forță magnetică</strong>.
+</p>
+
+</div>
+
+
+<div class="match-item">
+
+<strong>Siguranță fuzibilă</strong>
+
+<p>
+Fenomen dominant:
+<strong>efect termic la supracurent</strong>.
+</p>
+
+</div>
+
+
+<div class="match-item">
+
+<strong>Motor electric</strong>
+
+<p>
+Fenomen dominant pentru producerea mișcării:
+<strong>forță magnetică</strong>.
+</p>
+
+</div>
+
+
+<div class="match-item">
+
+<strong>Electromagnet</strong>
+
+<p>
+Fenomen dominant:
+<strong>câmp magnetic produs de curent</strong>.
+</p>
+
+</div>
+
+
+<div class="match-item">
+
+<strong>Difuzor electrodinamic</strong>
+
+<p>
+Fenomen dominant pentru mișcarea membranei:
+<strong>forță magnetică asupra bobinei mobile</strong>.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Toate aparatele electrice folosesc efectul Joule ca efect util.”</h3>
+
+<p>
+Nu.
+În motoare și electromagneți,
+încălzirea poate fi în mare parte o pierdere nedorită.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Electromagnetul funcționează deoarece bobina se încălzește.”</h3>
+
+<p>
+Nu.
+Principiul util este câmpul magnetic produs de curent.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Mai mult curent este întotdeauna mai bine.”</h3>
+
+<p>
+Nu.
+Mărirea curentului intensifică efectele magnetice,
+dar încălzirea conductorului crește ca \(I^2\).
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „Motorul transformă toată energia electrică în energie mecanică.”</h3>
+
+<p>
+Un motor real are pierderi,
+inclusiv pierderi termice.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Un releu este doar un întrerupător manual.”</h3>
+
+<p>
+Într-un releu electromagnetic,
+comutarea contactelor este produsă de acțiunea electromagnetului.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Siguranța fuzibilă este un rezistor obișnuit.”</h3>
+
+<p>
+Este un element de protecție proiectat să întrerupă circuitul
+în condiții de supracurent.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Formula pentru solenoid se aplică exact oricărui electromagnet.”</h3>
+
+<p>
+Nu.
+Este un model idealizat pentru un solenoid suficient de lung,
+iar miezurile reale pot avea comportare magnetică complexă.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Puterea și energia consumată sunt același lucru.”</h3>
+
+<p>
+Nu:
+</p>
+
+<div class="formula">
+
+\[
+E=Pt
+\]
+
+</div>
+
+<p>
+Puterea arată ritmul transferului de energie.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce același efect Joule poate fi util într-un încălzitor și nedorit într-un motor?
+</li>
+
+<li>
+De ce un supracurent poate topi un element fuzibil?</li>
+
+<li>
+De ce un electromagnet poate fi controlat mai ușor decât un magnet permanent?</li>
+
+<li>
+Ce se întâmplă cu câmpul unei bobine dacă întrerupem curentul?</li>
+
+<li>
+Cum transformă un releu o comandă electrică într-o acțiune mecanică?</li>
+
+<li>
+De ce într-o sonerie sunt necesare atât un electromagnet, cât și o piesă mobilă?</li>
+
+<li>
+Ce mărimi poți modifica pentru a schimba forța \(F=BIL\)?</li>
+
+<li>
+De ce un motor real se încălzește chiar dacă scopul său este producerea mișcării?</li>
+
+<li>
+Cum poate aceeași forță magnetică fi utilizată diferit într-un motor și într-un difuzor?</li>
+
+<li>
+De ce un aparat cu putere mai mare poate transfera mai multă energie în același interval de timp?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Un element de încălzire utilizează în principal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+numai efectul magnetic
+</button>
+
+<button class="answer-btn">
+efectul termic al curentului
+</button>
+
+<button class="answer-btn">
+numai atracția gravitațională
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Puterea disipată de un rezistor poate fi scrisă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(P=IR\)
+</button>
+
+<button class="answer-btn">
+\(P=I^2/R\)
+</button>
+
+<button class="answer-btn">
+\(P=I^2R\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Un electromagnet folosește în principal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+câmpul magnetic produs de curentul prin bobină
+</button>
+
+<button class="answer-btn">
+numai încălzirea bobinei
+</button>
+
+<button class="answer-btn">
+evaporarea conductorului
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Într-un releu electromagnetic,
+bobina:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+produce numai lumină
+</button>
+
+<button class="answer-btn">
+produce un câmp care poate acționa mecanic armătura
+</button>
+
+<button class="answer-btn">
+elimină orice rezistență din circuit
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+O siguranță fuzibilă folosește:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+numai efect optic
+</button>
+
+<button class="answer-btn">
+efect magnetic al Pământului
+</button>
+
+<button class="answer-btn">
+efectul termic produs de supracurent
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Pentru un conductor perpendicular pe câmp,
+forța magnetică are modulul:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(F=BIL\)
+</button>
+
+<button class="answer-btn">
+\(F=B/I\)
+</button>
+
+<button class="answer-btn">
+\(F=IL/B\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă \(B\) și \(L\) sunt constante,
+dublarea curentului într-un actuator idealizat:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+înjumătățește forța
+</button>
+
+<button class="answer-btn">
+dublează forța
+</button>
+
+<button class="answer-btn">
+mărește forța de patru ori
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Într-un motor electric real,
+efectul Joule din înfășurări este de regulă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+singurul efect util
+</button>
+
+<button class="answer-btn">
+imposibil
+</button>
+
+<button class="answer-btn">
+o sursă de pierderi și încălzire
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Un difuzor electrodinamic produce sunet deoarece:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+forța magnetică pune în mișcare o bobină și membrana
+</button>
+
+<button class="answer-btn">
+curentul produce direct unde sonore fără mișcare
+</button>
+
+<button class="answer-btn">
+rezistența electrică devine zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Relația dintre energia transferată,
+putere și timp este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(E=P/t\)
+</button>
+
+<button class="answer-btn">
+\(E=Pt\)
+</button>
+
+<button class="answer-btn">
+\(E=t/P\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Efect termic</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P=I^2R
+}
+\]
+
+</div>
+
+<p>
+Încălzitoare,
+rezistoare de putere,
+protecții fuzibile.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Efect magnetic</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+B\approx
+\mu_0
+\frac{NI}{\ell}
+}
+\]
+
+</div>
+
+<p>
+Electromagneți,
+relee,
+sonerii.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Forță magnetică</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+F=BIL
+}
+\]
+
+</div>
+
+<p>
+Actuatoare,
+motoare,
+difuzoare.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+O aplicație tehnică se înțelege cel mai bine prin lanțul:
+
+<strong>
+mărime electrică → fenomen fizic → forță / energie → efect util.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 De la putere la consumul de energie</h2>
+
+<p>
+Orice dispozitiv electric care funcționează o perioadă
+transferă o anumită cantitate de energie.
+</p>
+
+<p>
+Dacă puterea este aproximativ constantă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+E=Pt
+}
+\]
+
+</div>
+
+
+<p>
+Prin urmare,
+nu este suficient să știm doar puterea unui aparat.
+Contează și
+<strong>cât timp funcționează</strong>.
+</p>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Consum de energie electrică. Probleme și situații practice
+</strong>
+
+vom lega:
+</p>
+
+<div class="formula">
+
+\[
+P
+\]
+
+</div>
+
+de:
+</p>
+
+<div class="formula">
+
+\[
+t
+\]
+
+</div>
+
+și de:
+</p>
+
+<div class="formula">
+
+\[
+E
+\]
+
+</div>
+
+inclusiv prin unitatea practică:
+
+\[
+\boxed{
+kWh
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="08-interactiunea-dintre-conductoare-paralele-parcurse-de-curent.html">
+
+← Lecția 8<br>
+Interacțiunea dintre conductoare paralele parcurse de curent
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="10-consum-de-energie-electrica-probleme-si-situatii-practice.html">
+
+Lecția 10<br>
+Consum de energie electrică. Probleme și situații practice →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Energia, puterea și efectele curentului electric
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
+const MU0=
+  4*
+  Math.PI*
+  1e-7;
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const modeTabs=
+  document.querySelectorAll(
+    ".mode-tab"
+  );
+
+
+const sliderA=
+  document.getElementById(
+    "sliderA"
+  );
+
+
+const sliderB=
+  document.getElementById(
+    "sliderB"
+  );
+
+
+const sliderC=
+  document.getElementById(
+    "sliderC"
+  );
+
+
+const labelA=
+  document.getElementById(
+    "labelA"
+  );
+
+
+const labelB=
+  document.getElementById(
+    "labelB"
+  );
+
+
+const labelC=
+  document.getElementById(
+    "labelC"
+  );
+
+
+const valueA=
+  document.getElementById(
+    "valueA"
+  );
+
+
+const valueB=
+  document.getElementById(
+    "valueB"
+  );
+
+
+const valueC=
+  document.getElementById(
+    "valueC"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const resultLabel1=
+  document.getElementById(
+    "resultLabel1"
+  );
+
+
+const resultLabel2=
+  document.getElementById(
+    "resultLabel2"
+  );
+
+
+const resultLabel3=
+  document.getElementById(
+    "resultLabel3"
+  );
+
+
+const resultLabel4=
+  document.getElementById(
+    "resultLabel4"
+  );
+
+
+const resultValue1=
+  document.getElementById(
+    "resultValue1"
+  );
+
+
+const resultValue2=
+  document.getElementById(
+    "resultValue2"
+  );
+
+
+const resultValue3=
+  document.getElementById(
+    "resultValue3"
+  );
+
+
+const resultValue4=
+  document.getElementById(
+    "resultValue4"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const deviceCanvas=
+  document.getElementById(
+    "deviceCanvas"
+  );
+
+
+const deviceCtx=
+  deviceCanvas.getContext(
+    "2d"
+  );
+
+
+const comparisonCanvas=
+  document.getElementById(
+    "comparisonCanvas"
+  );
+
+
+const comparisonCtx=
+  comparisonCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODE STATE
+========================================================= */
+
+let currentMode=
+  "thermal";
+
+
+const configs={
+
+  thermal:{
+
+    a:{
+      label:"Intensitate I [A]",
+      min:0.2,
+      max:5,
+      step:0.1,
+      value:2
+    },
+
+    b:{
+      label:"Rezistență R [Ω]",
+      min:1,
+      max:30,
+      step:1,
+      value:12
+    },
+
+    c:{
+      label:"Timp t [s]",
+      min:1,
+      max:120,
+      step:1,
+      value:30
+    }
+
+  },
+
+
+  magnet:{
+
+    a:{
+      label:"Număr de spire N",
+      min:50,
+      max:500,
+      step:10,
+      value:300
+    },
+
+    b:{
+      label:"Intensitate I [A]",
+      min:0,
+      max:3,
+      step:0.1,
+      value:1
+    },
+
+    c:{
+      label:"Lungime ℓ [cm]",
+      min:10,
+      max:60,
+      step:1,
+      value:30
+    }
+
+  },
+
+
+  force:{
+
+    a:{
+      label:"Inducție B [T]",
+      min:0.05,
+      max:1.2,
+      step:0.05,
+      value:0.4
+    },
+
+    b:{
+      label:"Intensitate I [A]",
+      min:0,
+      max:5,
+      step:0.1,
+      value:3
+    },
+
+    c:{
+      label:"Lungime activă L [cm]",
+      min:1,
+      max:20,
+      step:1,
+      value:5
+    }
+
+  }
+
+};
+
+
+/* =========================================================
+   CONFIGURE MODE
+========================================================= */
+
+function applySliderConfig(
+  slider,
+  config
+){
+
+  slider.min=
+    config.min;
+
+
+  slider.max=
+    config.max;
+
+
+  slider.step=
+    config.step;
+
+
+  slider.value=
+    config.value;
+
+}
+
+
+function setMode(
+  mode
+){
+
+  currentMode=
+    mode;
+
+
+  modeTabs.forEach(
+    tab=>{
+
+      tab.classList.toggle(
+        "active",
+        tab.dataset.mode===
+        mode
+      );
+
+    }
+  );
+
+
+  const cfg=
+    configs[
+      mode
+    ];
+
+
+  labelA.textContent=
+    cfg.a.label;
+
+
+  labelB.textContent=
+    cfg.b.label;
+
+
+  labelC.textContent=
+    cfg.c.label;
+
+
+  applySliderConfig(
+    sliderA,
+    cfg.a
+  );
+
+
+  applySliderConfig(
+    sliderB,
+    cfg.b
+  );
+
+
+  applySliderConfig(
+    sliderC,
+    cfg.c
+  );
+
+
+  updateSimulator();
+
+}
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const A=
+    Number(
+      sliderA.value
+    );
+
+
+  const B=
+    Number(
+      sliderB.value
+    );
+
+
+  const C=
+    Number(
+      sliderC.value
+    );
+
+
+  if(
+    currentMode===
+    "thermal"
+  ){
+
+    const I=A;
+    const R=B;
+    const t=C;
+
+
+    const U=
+      I*
+      R;
+
+
+    const P=
+      I*
+      I*
+      R;
+
+
+    const E=
+      P*
+      t;
+
+
+    return{
+
+      mode:"thermal",
+
+      A,
+      B,
+      C,
+
+      I,
+      R,
+      t,
+
+      U,
+      P,
+      E
+
+    };
+
+  }
+
+
+  if(
+    currentMode===
+    "magnet"
+  ){
+
+    const N=A;
+    const I=B;
+    const lengthCm=C;
+
+
+    const lengthM=
+      lengthCm/
+      100;
+
+
+    const n=
+      N/
+      lengthM;
+
+
+    const field=
+      MU0*
+      n*
+      I;
+
+
+    return{
+
+      mode:"magnet",
+
+      A,
+      B,
+      C,
+
+      N,
+      I,
+
+      lengthCm,
+      lengthM,
+
+      n,
+      field
+
+    };
+
+  }
+
+
+  const field=A;
+  const I=B;
+  const lengthCm=C;
+
+
+  const lengthM=
+    lengthCm/
+    100;
+
+
+  const force=
+    field*
+    I*
+    lengthM;
+
+
+  return{
+
+    mode:"force",
+
+    A,
+    B,
+    C,
+
+    field,
+    I,
+
+    lengthCm,
+    lengthM,
+
+    force
+
+  };
+
+}
+
+
+/* =========================================================
+   FORMAT CONTROLS
+========================================================= */
+
+function updateControlLabels(
+  m
+){
+
+  if(
+    m.mode===
+    "thermal"
+  ){
+
+    valueA.textContent=
+      `${formatRo(m.I,1)} A`;
+
+
+    valueB.textContent=
+      `${formatRo(m.R,0)} Ω`;
+
+
+    valueC.textContent=
+      `${formatRo(m.t,0)} s`;
+
+  }
+
+
+  if(
+    m.mode===
+    "magnet"
+  ){
+
+    valueA.textContent=
+      `${formatRo(m.N,0)} spire`;
+
+
+    valueB.textContent=
+      `${formatRo(m.I,1)} A`;
+
+
+    valueC.textContent=
+      `${formatRo(m.lengthCm,0)} cm`;
+
+  }
+
+
+  if(
+    m.mode===
+    "force"
+  ){
+
+    valueA.textContent=
+      `${formatRo(m.field,2)} T`;
+
+
+    valueB.textContent=
+      `${formatRo(m.I,1)} A`;
+
+
+    valueC.textContent=
+      `${formatRo(m.lengthCm,0)} cm`;
+
+  }
+
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function updateResults(
+  m
+){
+
+  if(
+    m.mode===
+    "thermal"
+  ){
+
+    resultLabel1.textContent=
+      "Tensiune U=IR";
+
+
+    resultValue1.textContent=
+      `${formatRo(m.U,2)} V`;
+
+
+    resultLabel2.textContent=
+      "Putere P=I²R";
+
+
+    resultValue2.textContent=
+      `${formatRo(m.P,2)} W`;
+
+
+    resultLabel3.textContent=
+      "Energie E=Pt";
+
+
+    resultValue3.textContent=
+      `${formatRo(m.E,1)} J`;
+
+
+    resultLabel4.textContent=
+      "Energie în Wh";
+
+
+    resultValue4.textContent=
+      `${formatRo(
+        m.E/
+        3600,
+        4
+      )} Wh`;
+
+
+    simStatus.innerHTML=
+      `Elementul rezistiv transformă energie electrică în energie internă.
+       Pentru
+       <strong>I=${formatRo(m.I,1)} A</strong>,
+       puterea este
+       <strong>${formatRo(m.P,2)} W</strong>.
+       Observă sensibilitatea la curent deoarece
+       <strong>P∝I²</strong>.`;
+
+  }
+
+
+  if(
+    m.mode===
+    "magnet"
+  ){
+
+    resultLabel1.textContent=
+      "Densitate spire n";
+
+
+    resultValue1.textContent=
+      `${formatRo(m.n,1)} m⁻¹`;
+
+
+    resultLabel2.textContent=
+      "Inducție B";
+
+
+    resultValue2.textContent=
+      `${m.field.toExponential(3)} T`;
+
+
+    resultLabel3.textContent=
+      "Inducție în mT";
+
+
+    resultValue3.textContent=
+      `${formatRo(
+        m.field*
+        1000,
+        3
+      )} mT`;
+
+
+    resultLabel4.textContent=
+      "Produs NI";
+
+
+    resultValue4.textContent=
+      `${formatRo(
+        m.N*
+        m.I,
+        1
+      )} A·spire`;
+
+
+    simStatus.innerHTML=
+      `În modelul solenoidului lung în aer,
+       câmpul este
+       <strong>B≈μ₀NI/ℓ</strong>.
+       Mai multe spire pe unitatea de lungime sau un curent mai mare
+       produc un câmp mai intens.`;
+
+  }
+
+
+  if(
+    m.mode===
+    "force"
+  ){
+
+    resultLabel1.textContent=
+      "Câmp B";
+
+
+    resultValue1.textContent=
+      `${formatRo(m.field,2)} T`;
+
+
+    resultLabel2.textContent=
+      "Curent I";
+
+
+    resultValue2.textContent=
+      `${formatRo(m.I,1)} A`;
+
+
+    resultLabel3.textContent=
+      "Lungime activă L";
+
+
+    resultValue3.textContent=
+      `${formatRo(m.lengthCm,0)} cm`;
+
+
+    resultLabel4.textContent=
+      "Forță F=BIL";
+
+
+    resultValue4.textContent=
+      `${formatRo(m.force,4)} N`;
+
+
+    simStatus.innerHTML=
+      `Pentru un conductor perpendicular pe câmp,
+       modulul forței este
+       <strong>F=BIL</strong>.
+       Această conversie
+       <strong>curent → forță</strong>
+       este una dintre ideile de bază ale actuatoarelor și motoarelor.`;
+
+  }
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .56,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+function drawArrow(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width=3,
+  head=9
+){
+
+  const angle=
+    Math.atan2(
+      y2-y1,
+      x2-x1
+    );
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.fillStyle=
+    color;
+
+
+  context.lineWidth=
+    width;
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+  context.stroke();
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x2,
+    y2
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle-
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle-
+      Math.PI/
+      6
+    )
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle+
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle+
+      Math.PI/
+      6
+    )
+  );
+
+  context.closePath();
+
+  context.fill();
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let phase=0;
+
+
+/* =========================================================
+   DEVICE DRAWINGS
+========================================================= */
+
+function drawThermalDevice(
+  context,
+  W,
+  H,
+  m
+){
+
+  const cx=
+    W*
+    .50;
+
+
+  const cy=
+    H*
+    .43;
+
+
+  const powerNorm=
+    clamp(
+      m.P/
+      250,
+      0,
+      1
+    );
+
+
+  const glow=
+    context.createRadialGradient(
+      cx,
+      cy,
+      20,
+      cx,
+      cy,
+      130+
+      powerNorm*
+      60
+    );
+
+
+  glow.addColorStop(
+    0,
+    `rgba(239,68,68,${
+      .40+
+      .45*
+      powerNorm
+    })`
+  );
+
+
+  glow.addColorStop(
+    .55,
+    `rgba(249,115,22,${
+      .18+
+      .30*
+      powerNorm
+    })`
+  );
+
+
+  glow.addColorStop(
+    1,
+    "rgba(249,115,22,0)"
+  );
+
+
+  context.fillStyle=
+    glow;
+
+
+  context.beginPath();
+
+  context.arc(
+    cx,
+    cy,
+    170,
+    0,
+    Math.PI*
+    2
+  );
+
+  context.fill();
+
+
+  context.strokeStyle=
+    powerNorm>
+    .65
+      ? "#ef4444"
+      : "#fb923c";
+
+
+  context.lineWidth=12;
+
+
+  context.lineCap=
+    "round";
+
+
+  context.beginPath();
+
+
+  const left=
+    W*
+    .18;
+
+
+  const right=
+    W*
+    .82;
+
+
+  const segments=10;
+
+
+  for(
+    let i=0;
+    i<=segments;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      i/
+      segments;
+
+
+    const y=
+      cy+
+      (
+        i%
+        2===
+        0
+          ? -32
+          : 32
+      );
+
+
+    if(
+      i===
+      0
+    ){
+
+      context.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      context.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  context.stroke();
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    for(
+      let i=0;
+      i<14;
+      i++
+    ){
+
+      const p=
+        (
+          phase+
+          i/
+          14
+        )%
+        1;
+
+
+      const x=
+        left+
+        (
+          right-
+          left
+        )*
+        (
+          .05+
+          .90*
+          (
+            (
+              i*
+              41
+            )%
+            100
+          )/
+          100
+        );
+
+
+      const y=
+        cy-
+        65-
+        p*
+        (
+          50+
+          80*
+          powerNorm
+        );
+
+
+      context.beginPath();
+
+      context.arc(
+        x+
+        Math.sin(
+          p*
+          Math.PI*
+          3+
+          i
+        )*
+        7,
+        y,
+        3,
+        0,
+        Math.PI*
+        2
+      );
+
+
+      context.fillStyle=
+        `rgba(253,186,116,${
+          .8*
+          (
+            1-p
+          )
+        })`;
+
+
+      context.fill();
+
+    }
+
+  }
+
+
+  context.fillStyle=
+    "#fed7aa";
+
+
+  context.font=
+    "bold 16px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.fillText(
+    "ELEMENT REZISTIV",
+    cx,
+    cy+
+    95
+  );
+
+
+  context.fillStyle=
+    "#ffffff";
+
+
+  context.font=
+    "bold 13px system-ui";
+
+
+  context.fillText(
+    `P = ${formatRo(m.P,2)} W`,
+    cx,
+    cy+
+    124
+  );
+
+
+  context.fillText(
+    `E = ${formatRo(m.E,1)} J`,
+    cx,
+    cy+
+    148
+  );
+
+}
+
+
+function drawMagnetDevice(
+  context,
+  W,
+  H,
+  m
+){
+
+  const left=
+    W*
+    .19;
+
+
+  const right=
+    W*
+    .81;
+
+
+  const cy=
+    H*
+    .44;
+
+
+  const coilHeight=
+    H*
+    .22;
+
+
+  const visibleTurns=
+    clamp(
+      Math.round(
+        9+
+        (
+          m.N-
+          50
+        )/
+        450*
+        18
+      ),
+      9,
+      27
+    );
+
+
+  /*
+  core
+  */
+
+  context.fillStyle=
+    "#64748b";
+
+
+  context.fillRect(
+    left-
+    15,
+    cy-
+    26,
+    right-
+    left+
+    30,
+    52
+  );
+
+
+  /*
+  turns
+  */
+
+  for(
+    let i=0;
+    i<visibleTurns;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        i+
+        .5
+      )/
+      visibleTurns*
+      (
+        right-
+        left
+      );
+
+
+    context.beginPath();
+
+    context.ellipse(
+      x,
+      cy,
+      10,
+      coilHeight/
+      2,
+      0,
+      0,
+      Math.PI*
+      2
+    );
+
+
+    context.strokeStyle=
+      "#60a5fa";
+
+
+    context.lineWidth=4;
+
+    context.stroke();
+
+  }
+
+
+  /*
+  interior field
+  */
+
+  if(
+    m.I>
+    0
+  ){
+
+    for(
+      let i=0;
+      i<3;
+      i++
+    ){
+
+      const y=
+        cy-
+        28+
+        i*
+        28;
+
+
+      drawArrow(
+        context,
+        left+
+        35,
+        y,
+        right-
+        35,
+        y,
+        "#22c55e",
+        4,
+        11
+      );
+
+    }
+
+  }
+
+
+  /*
+  poles
+  */
+
+  context.fillStyle=
+    "#93c5fd";
+
+
+  context.font=
+    "bold 30px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.fillText(
+    "S",
+    left-
+    45,
+    cy+
+    10
+  );
+
+
+  context.fillStyle=
+    "#fca5a5";
+
+
+  context.fillText(
+    "N",
+    right+
+    45,
+    cy+
+    10
+  );
+
+
+  /*
+  external lines
+  */
+
+  if(
+    m.I>
+    0
+  ){
+
+    context.strokeStyle=
+      "rgba(167,139,250,.65)";
+
+
+    context.lineWidth=3;
+
+
+    for(
+      let k=0;
+      k<3;
+      k++
+    ){
+
+      context.beginPath();
+
+      context.moveTo(
+        right,
+        cy-
+        12
+      );
+
+
+      context.bezierCurveTo(
+        right+
+        70,
+        cy-
+        100-
+        k*
+        32,
+        left-
+        70,
+        cy-
+        100-
+        k*
+        32,
+        left,
+        cy-
+        12
+      );
+
+      context.stroke();
+
+    }
+
+  }
+
+
+  context.fillStyle=
+    "#c4b5fd";
+
+
+  context.font=
+    "bold 14px system-ui";
+
+
+  context.fillText(
+    `B ≈ ${formatRo(m.field*1000,3)} mT`,
+    W*
+    .50,
+    cy+
+    130
+  );
+
+
+  context.fillStyle=
+    "#e2e8f0";
+
+
+  context.font=
+    "11px system-ui";
+
+
+  context.fillText(
+    `${formatRo(m.N,0)} spire • ${formatRo(m.I,1)} A • ${formatRo(m.lengthCm,0)} cm`,
+    W*
+    .50,
+    cy+
+    156
+  );
+
+}
+
+
+function drawForceDevice(
+  context,
+  W,
+  H,
+  m
+){
+
+  const cx=
+    W*
+    .50;
+
+
+  const cy=
+    H*
+    .44;
+
+
+  /*
+  field symbols into page
+  */
+
+  for(
+    let row=0;
+    row<5;
+    row++
+  ){
+
+    for(
+      let col=0;
+      col<7;
+      col++
+    ){
+
+      const x=
+        W*
+        .18+
+        col*
+        W*
+        .105;
+
+
+      const y=
+        H*
+        .20+
+        row*
+        H*
+        .11;
+
+
+      context.strokeStyle=
+        "rgba(167,139,250,.65)";
+
+
+      context.lineWidth=2;
+
+
+      context.beginPath();
+
+      context.arc(
+        x,
+        y,
+        8,
+        0,
+        Math.PI*
+        2
+      );
+
+      context.stroke();
+
+
+      context.beginPath();
+
+      context.moveTo(
+        x-
+        4,
+        y-
+        4
+      );
+
+      context.lineTo(
+        x+
+        4,
+        y+
+        4
+      );
+
+      context.moveTo(
+        x+
+        4,
+        y-
+        4
+      );
+
+      context.lineTo(
+        x-
+        4,
+        y+
+        4
+      );
+
+      context.stroke();
+
+    }
+
+  }
+
+
+  /*
+  conductor
+  */
+
+  context.strokeStyle=
+    "#fbbf24";
+
+
+  context.lineWidth=12;
+
+
+  context.beginPath();
+
+  context.moveTo(
+    W*
+    .20,
+    cy
+  );
+
+  context.lineTo(
+    W*
+    .80,
+    cy
+  );
+
+  context.stroke();
+
+
+  drawArrow(
+    context,
+    W*
+    .28,
+    cy,
+    W*
+    .70,
+    cy,
+    "#ffffff",
+    4,
+    11
+  );
+
+
+  /*
+  force upward
+  */
+
+  const forceLength=
+    clamp(
+      40+
+      m.force*
+      600,
+      40,
+      150
+    );
+
+
+  drawArrow(
+    context,
+    cx,
+    cy-
+    12,
+    cx,
+    cy-
+    forceLength,
+    "#22c55e",
+    5,
+    13
+  );
+
+
+  context.fillStyle=
+    "#86efac";
+
+
+  context.font=
+    "bold 13px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.fillText(
+    "F",
+    cx+
+    18,
+    cy-
+    forceLength+
+    8
+  );
+
+
+  context.fillStyle=
+    "#fde68a";
+
+
+  context.fillText(
+    `I = ${formatRo(m.I,1)} A`,
+    cx,
+    cy+
+    35
+  );
+
+
+  context.fillStyle=
+    "#c4b5fd";
+
+
+  context.fillText(
+    `B = ${formatRo(m.field,2)} T`,
+    cx,
+    H*
+    .74
+  );
+
+
+  context.fillStyle=
+    "#86efac";
+
+
+  context.font=
+    "bold 16px system-ui";
+
+
+  context.fillText(
+    `F = ${formatRo(m.force,4)} N`,
+    cx,
+    H*
+    .81
+  );
+
+}
+
+
+/* =========================================================
+   DEVICE CANVAS
+========================================================= */
+
+function drawDevice(
+  m
+){
+
+  const rect=
+    deviceCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    deviceCtx,
+    W,
+    H
+  );
+
+
+  deviceCtx.fillStyle=
+    "#e2e8f0";
+
+
+  deviceCtx.font=
+    "bold 15px system-ui";
+
+
+  deviceCtx.textAlign=
+    "left";
+
+
+  const title=
+    m.mode===
+    "thermal"
+      ? "Element de încălzire"
+      : m.mode===
+        "magnet"
+          ? "Electromagnet"
+          : "Actuator magnetic";
+
+
+  deviceCtx.fillText(
+    title,
+    18,
+    29
+  );
+
+
+  deviceCtx.fillStyle=
+    "#bae6fd";
+
+
+  deviceCtx.font=
+    "11px system-ui";
+
+
+  deviceCtx.fillText(
+    m.mode===
+    "thermal"
+      ? "efect Joule"
+      : m.mode===
+        "magnet"
+          ? "curent → câmp magnetic"
+          : "câmp + curent → forță",
+    18,
+    49
+  );
+
+
+  if(
+    m.mode===
+    "thermal"
+  ){
+
+    drawThermalDevice(
+      deviceCtx,
+      W,
+      H,
+      m
+    );
+
+  }
+
+
+  if(
+    m.mode===
+    "magnet"
+  ){
+
+    drawMagnetDevice(
+      deviceCtx,
+      W,
+      H,
+      m
+    );
+
+  }
+
+
+  if(
+    m.mode===
+    "force"
+  ){
+
+    drawForceDevice(
+      deviceCtx,
+      W,
+      H,
+      m
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   COMPARISON CANVAS
+========================================================= */
+
+function drawComparison(
+  m
+){
+
+  const rect=
+    comparisonCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  comparisonCtx.fillStyle=
+    "#f8fafc";
+
+
+  comparisonCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  comparisonCtx.fillStyle=
+    "#0f172a";
+
+
+  comparisonCtx.font=
+    "bold 15px system-ui";
+
+
+  comparisonCtx.textAlign=
+    "left";
+
+
+  comparisonCtx.fillText(
+    "Dependența de parametrul principal",
+    20,
+    29
+  );
+
+
+  comparisonCtx.fillStyle=
+    "#64748b";
+
+
+  comparisonCtx.font=
+    "11px system-ui";
+
+
+  const subtitle=
+    m.mode===
+    "thermal"
+      ? "P=f(I), cu R constant"
+      : m.mode===
+        "magnet"
+          ? "B=f(I), cu N și ℓ constante"
+          : "F=f(I), cu B și L constante";
+
+
+  comparisonCtx.fillText(
+    subtitle,
+    20,
+    49
+  );
+
+
+  const left=62;
+  const right=W-38;
+  const top=90;
+  const bottom=H-90;
+
+
+  const width=
+    right-
+    left;
+
+
+  const height=
+    bottom-
+    top;
+
+
+  comparisonCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  comparisonCtx.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const x=
+      left+
+      width*
+      i/
+      5;
+
+
+    comparisonCtx.beginPath();
+
+    comparisonCtx.moveTo(
+      x,
+      top
+    );
+
+    comparisonCtx.lineTo(
+      x,
+      bottom
+    );
+
+    comparisonCtx.stroke();
+
+  }
+
+
+  for(
+    let i=0;
+    i<=4;
+    i++
+  ){
+
+    const y=
+      bottom-
+      height*
+      i/
+      4;
+
+
+    comparisonCtx.beginPath();
+
+    comparisonCtx.moveTo(
+      left,
+      y
+    );
+
+    comparisonCtx.lineTo(
+      right,
+      y
+    );
+
+    comparisonCtx.stroke();
+
+  }
+
+
+  comparisonCtx.strokeStyle=
+    "#475569";
+
+
+  comparisonCtx.lineWidth=2;
+
+
+  comparisonCtx.beginPath();
+
+  comparisonCtx.moveTo(
+    left,
+    top
+  );
+
+  comparisonCtx.lineTo(
+    left,
+    bottom
+  );
+
+  comparisonCtx.lineTo(
+    right,
+    bottom
+  );
+
+  comparisonCtx.stroke();
+
+
+  let maxX;
+  let activeX;
+  let maxY;
+  let activeY;
+  let color;
+  let xLabel;
+  let yLabel;
+
+
+  if(
+    m.mode===
+    "thermal"
+  ){
+
+    maxX=5;
+    activeX=m.I;
+
+    maxY=
+      maxX*
+      maxX*
+      m.R;
+
+    activeY=m.P;
+
+    color="#ea580c";
+
+    xLabel="I [A]";
+    yLabel="P [W]";
+
+  }
+
+
+  if(
+    m.mode===
+    "magnet"
+  ){
+
+    maxX=3;
+    activeX=m.I;
+
+    maxY=
+      MU0*
+      m.N/
+      m.lengthM*
+      maxX*
+      1000;
+
+    activeY=
+      m.field*
+      1000;
+
+    color="#2563eb";
+
+    xLabel="I [A]";
+    yLabel="B [mT]";
+
+  }
+
+
+  if(
+    m.mode===
+    "force"
+  ){
+
+    maxX=5;
+    activeX=m.I;
+
+    maxY=
+      m.field*
+      maxX*
+      m.lengthM;
+
+    activeY=m.force;
+
+    color="#7c3aed";
+
+    xLabel="I [A]";
+    yLabel="F [N]";
+
+  }
+
+
+  function xFor(
+    x
+  ){
+
+    return left+
+      x/
+      maxX*
+      width;
+
+  }
+
+
+  function yFor(
+    y
+  ){
+
+    return bottom-
+      (
+        maxY>
+        0
+          ? y/
+            maxY
+          : 0
+      )*
+      height;
+
+  }
+
+
+  comparisonCtx.strokeStyle=
+    color;
+
+
+  comparisonCtx.lineWidth=4;
+
+
+  comparisonCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=150;
+    i++
+  ){
+
+    const x=
+      maxX*
+      i/
+      150;
+
+
+    let y;
+
+
+    if(
+      m.mode===
+      "thermal"
+    ){
+
+      y=
+        x*
+        x*
+        m.R;
+
+    }
+
+
+    if(
+      m.mode===
+      "magnet"
+    ){
+
+      y=
+        MU0*
+        m.N/
+        m.lengthM*
+        x*
+        1000;
+
+    }
+
+
+    if(
+      m.mode===
+      "force"
+    ){
+
+      y=
+        m.field*
+        x*
+        m.lengthM;
+
+    }
+
+
+    if(
+      i===
+      0
+    ){
+
+      comparisonCtx.moveTo(
+        xFor(x),
+        yFor(y)
+      );
+
+    }
+
+    else{
+
+      comparisonCtx.lineTo(
+        xFor(x),
+        yFor(y)
+      );
+
+    }
+
+  }
+
+
+  comparisonCtx.stroke();
+
+
+  comparisonCtx.beginPath();
+
+  comparisonCtx.arc(
+    xFor(activeX),
+    yFor(activeY),
+    7,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  comparisonCtx.fillStyle=
+    "#dc2626";
+
+  comparisonCtx.fill();
+
+
+  comparisonCtx.fillStyle=
+    "#334155";
+
+
+  comparisonCtx.font=
+    "bold 10px system-ui";
+
+
+  comparisonCtx.textAlign=
+    "right";
+
+
+  comparisonCtx.fillText(
+    xLabel,
+    right,
+    bottom+
+    23
+  );
+
+
+  comparisonCtx.textAlign=
+    "left";
+
+
+  comparisonCtx.fillText(
+    yLabel,
+    left+
+    3,
+    top-
+    10
+  );
+
+
+  comparisonCtx.fillStyle=
+    color;
+
+
+  comparisonCtx.font=
+    "bold 13px system-ui";
+
+
+  const dependence=
+    m.mode===
+    "thermal"
+      ? "P ∝ I²"
+      : m.mode===
+        "magnet"
+          ? "B ∝ I"
+          : "F ∝ I";
+
+
+  comparisonCtx.fillText(
+    dependence,
+    left+
+    12,
+    top+
+    25
+  );
+
+
+  comparisonCtx.fillStyle=
+    "#475569";
+
+
+  comparisonCtx.font=
+    "11px system-ui";
+
+
+  const interpretation=
+    m.mode===
+    "thermal"
+      ? "Dublarea curentului → putere de 4 ori mai mare."
+      : m.mode===
+        "magnet"
+          ? "Dublarea curentului → câmp de 2 ori mai mare."
+          : "Dublarea curentului → forță de 2 ori mai mare.";
+
+
+  comparisonCtx.fillText(
+    interpretation,
+    left+
+    12,
+    H-
+    38
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function updateSimulator(){
+
+  const m=
+    readModel();
+
+
+  updateControlLabels(
+    m
+  );
+
+
+  updateResults(
+    m
+  );
+
+
+  drawComparison(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function applyPreset1(){
+
+  if(
+    currentMode===
+    "thermal"
+  ){
+
+    sliderA.value="2";
+    sliderB.value="12";
+    sliderC.value="30";
+
+  }
+
+
+  if(
+    currentMode===
+    "magnet"
+  ){
+
+    sliderA.value="300";
+    sliderB.value="1";
+    sliderC.value="30";
+
+  }
+
+
+  if(
+    currentMode===
+    "force"
+  ){
+
+    sliderA.value="0.4";
+    sliderB.value="3";
+    sliderC.value="5";
+
+  }
+
+
+  updateSimulator();
+
+}
+
+
+function applyPreset2(){
+
+  if(
+    currentMode===
+    "thermal"
+  ){
+
+    sliderA.value="3";
+    sliderB.value="8";
+    sliderC.value="60";
+
+  }
+
+
+  if(
+    currentMode===
+    "magnet"
+  ){
+
+    sliderA.value="450";
+    sliderB.value="2";
+    sliderC.value="40";
+
+  }
+
+
+  if(
+    currentMode===
+    "force"
+  ){
+
+    sliderA.value="0.8";
+    sliderB.value="2";
+    sliderC.value="10";
+
+  }
+
+
+  updateSimulator();
+
+}
+
+
+function doubleMain(){
+
+  if(
+    currentMode===
+    "thermal"
+  ){
+
+    sliderA.value=
+      String(
+        clamp(
+          Number(
+            sliderA.value
+          )*
+          2,
+          Number(
+            sliderA.min
+          ),
+          Number(
+            sliderA.max
+          )
+        )
+      );
+
+  }
+
+
+  if(
+    currentMode===
+    "magnet"
+  ){
+
+    sliderB.value=
+      String(
+        clamp(
+          Number(
+            sliderB.value
+          )*
+          2,
+          Number(
+            sliderB.min
+          ),
+          Number(
+            sliderB.max
+          )
+        )
+      );
+
+  }
+
+
+  if(
+    currentMode===
+    "force"
+  ){
+
+    sliderB.value=
+      String(
+        clamp(
+          Number(
+            sliderB.value
+          )*
+          2,
+          Number(
+            sliderB.min
+          ),
+          Number(
+            sliderB.max
+          )
+        )
+      );
+
+  }
+
+
+  updateSimulator();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+modeTabs.forEach(
+  tab=>{
+
+    tab.addEventListener(
+      "click",
+      ()=>{
+
+        setMode(
+          tab.dataset.mode
+        );
+
+      }
+    );
+
+  }
+);
+
+
+[
+  sliderA,
+  sliderB,
+  sliderC,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateSimulator
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateSimulator
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "preset1Btn"
+  )
+  .addEventListener(
+    "click",
+    applyPreset1
+  );
+
+
+document
+  .getElementById(
+    "preset2Btn"
+  )
+  .addEventListener(
+    "click",
+    applyPreset2
+  );
+
+
+document
+  .getElementById(
+    "doubleMainBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleMain
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      setMode(
+        currentMode
+      );
+
+      phase=0;
+
+    }
+  );
+
+
+/* =========================================================
+   ANIMATION LOOP
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    phase+=
+      .17*
+      dt;
+
+
+    if(
+      phase>=1
+    ){
+
+      phase-=1;
+
+    }
+
+  }
+
+
+  const m=
+    readModel();
+
+
+  drawDevice(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    deviceCanvas,
+    deviceCtx
+  );
+
+
+  resizeCanvas(
+    comparisonCanvas,
+    comparisonCtx
+  );
+
+
+  const m=
+    updateSimulator();
+
+
+  drawDevice(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește fenomenul fizic dominant și lanțul cauză → efect → aplicație.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Poți lega corect legile fizice de aplicațiile tehnice.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar aplicațiile asociate itemilor greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Reia diferența dintre efect termic, câmp magnetic și forță magnetică.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia schema: fenomen fizic → relație → principiu → dispozitiv.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      deviceCanvas,
+      deviceCtx
+    );
+
+
+    resizeCanvas(
+      comparisonCanvas,
+      comparisonCtx
+    );
+
+
+    setMode(
+      "thermal"
+    );
+
+
+    const m=
+      updateSimulator();
+
+
+    drawDevice(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
