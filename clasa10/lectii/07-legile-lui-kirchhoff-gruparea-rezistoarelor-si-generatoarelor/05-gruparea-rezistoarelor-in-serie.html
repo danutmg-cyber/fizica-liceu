@@ -1,1 +1,7305 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+5. Gruparea rezistoarelor în serie | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Gruparea rezistoarelor în serie: același curent, adunarea tensiunilor, rezistența echivalentă Rs=R1+R2+..., divizarea tensiunii, experiment și simulator interactiv – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(250,204,21,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  font-size:.9rem;
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.15rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:940px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.4rem);
+
+}
+
+
+/* =========================================================
+   PROPERTY CARDS
+========================================================= */
+
+.property-card{
+
+  padding:20px;
+
+  background:white;
+
+  border:2px solid;
+
+  border-radius:15px;
+
+}
+
+.property-current{
+  border-color:#22c55e;
+}
+
+.property-voltage{
+  border-color:#2563eb;
+}
+
+.property-resistance{
+  border-color:#f59e0b;
+}
+
+.property-icon{
+
+  display:grid;
+  place-items:center;
+
+  width:54px;
+  height:54px;
+
+  margin-bottom:12px;
+
+  border-radius:50%;
+
+  font-size:1.4rem;
+
+  font-weight:900;
+
+}
+
+.property-current .property-icon{
+
+  color:#166534;
+  background:#dcfce7;
+
+}
+
+.property-voltage .property-icon{
+
+  color:#1e40af;
+  background:#dbeafe;
+
+}
+
+.property-resistance .property-icon{
+
+  color:#9a3412;
+  background:#ffedd5;
+
+}
+
+
+/* =========================================================
+   SVG
+========================================================= */
+
+.circuit-figure{
+
+  min-height:360px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.circuit-figure svg{
+
+  width:100%;
+  max-width:850px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:6;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-resistor{
+
+  fill:#fff7ed;
+
+  stroke:#ea580c;
+
+  stroke-width:4;
+
+}
+
+.svg-source{
+
+  stroke:#2563eb;
+
+  stroke-width:5;
+
+}
+
+.svg-current{
+
+  fill:none;
+
+  stroke:#16a34a;
+
+  stroke-width:5;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:21px;
+
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:15px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   DERIVATION
+========================================================= */
+
+.derivation{
+
+  position:relative;
+
+  margin:22px 0;
+
+  padding:22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:15px;
+
+}
+
+.derivation-step{
+
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #cbd5e1;
+
+}
+
+.derivation-step:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--blue);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#1e3a8a;
+  background:#dbeafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#1d4ed8;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.08fr .92fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#seriesCanvas,
+#voltageCanvas{
+
+  display:block;
+
+  width:100%;
+
+  height:600px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.status-good{
+
+  color:#166534;
+  background:#f0fdf4;
+
+  border-color:#86efac;
+
+}
+
+
+/* =========================================================
+   EQUIVALENCE PANEL
+========================================================= */
+
+.equivalence-panel{
+
+  margin-top:18px;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.eq-row{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:14px;
+
+  align-items:center;
+
+}
+
+.eq-side{
+
+  padding:16px;
+
+  background:#f8fafc;
+
+  border-radius:12px;
+
+  text-align:center;
+
+}
+
+.eq-symbol{
+
+  color:#2563eb;
+
+  font-size:2rem;
+
+  font-weight:900;
+
+  text-align:center;
+
+}
+
+
+/* =========================================================
+   VOLTAGE BARS
+========================================================= */
+
+.voltage-bars{
+
+  display:grid;
+
+  gap:10px;
+
+  margin-top:18px;
+
+}
+
+.voltage-row{
+
+  display:grid;
+
+  grid-template-columns:
+    65px 1fr 85px;
+
+  gap:10px;
+
+  align-items:center;
+
+}
+
+.voltage-track{
+
+  height:18px;
+
+  overflow:hidden;
+
+  background:#e2e8f0;
+
+  border-radius:999px;
+
+}
+
+.voltage-fill{
+
+  height:100%;
+
+  border-radius:999px;
+
+}
+
+
+/* =========================================================
+   MISTAKES
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .eq-row{
+    grid-template-columns:1fr;
+  }
+
+  .eq-symbol{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #seriesCanvas{
+    height:700px;
+  }
+
+  #voltageCanvas{
+    height:500px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 5
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Gruparea rezistoarelor
+</span>
+
+</div>
+
+
+<h1>
+Gruparea rezistoarelor în serie
+</h1>
+
+
+<p class="subtitle">
+Când mai multe rezistoare sunt conectate succesiv,
+fără ramificații între ele,
+același curent le străbate pe toate.
+Folosind legea lui Ohm și Legea a II-a a lui Kirchhoff
+vom determina rezistența echivalentă a întregii grupări.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să recunoști o grupare de rezistoare în serie;
+</li>
+
+<li>
+să explici de ce intensitatea este aceeași prin toate rezistoarele;
+</li>
+
+<li>
+să explici cum se distribuie tensiunea pe rezistoare;
+</li>
+
+<li>
+să deduci formula rezistenței echivalente;
+</li>
+
+<li>
+să calculezi rezistența echivalentă a unei grupări în serie;
+</li>
+
+<li>
+să determini tensiunea pe fiecare rezistor;
+</li>
+
+<li>
+să folosești raportul de divizare a tensiunii;
+</li>
+
+<li>
+să verifici experimental proprietățile grupării în serie.
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relațiile esențiale</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=I_1=I_2=\ldots=I_n
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U=U_1+U_2+\ldots+U_n
+}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_s=
+R_1+R_2+\ldots+R_n
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEM
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Situație-problemă</h2>
+
+<p class="lead">
+Avem trei rezistoare:
+</p>
+
+<div class="formula">
+
+\[
+R_1=2\,\Omega,
+\qquad
+R_2=3\,\Omega,
+\qquad
+R_3=5\,\Omega
+\]
+
+</div>
+
+<p>
+conectate unul după altul la o sursă.
+</p>
+
+<div class="circuit-figure">
+
+<svg
+  viewBox="0 0 880 360"
+  role="img"
+  aria-label="Trei rezistoare conectate în serie">
+
+<!-- top wire -->
+
+<path
+  class="svg-wire"
+  d="M120 95 H200"/>
+
+<path
+  class="svg-wire"
+  d="M300 95 H375"/>
+
+<path
+  class="svg-wire"
+  d="M475 95 H550"/>
+
+<path
+  class="svg-wire"
+  d="M650 95 H760 V285 H120"/>
+
+<path
+  class="svg-wire"
+  d="M120 95 V145"/>
+
+<path
+  class="svg-wire"
+  d="M120 220 V285"/>
+
+<!-- R1 -->
+
+<rect
+  class="svg-resistor"
+  x="200"
+  y="68"
+  width="100"
+  height="54"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="230"
+  y="102">
+R₁
+</text>
+
+<!-- R2 -->
+
+<rect
+  class="svg-resistor"
+  x="375"
+  y="68"
+  width="100"
+  height="54"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="405"
+  y="102">
+R₂
+</text>
+
+<!-- R3 -->
+
+<rect
+  class="svg-resistor"
+  x="550"
+  y="68"
+  width="100"
+  height="54"
+  rx="7"/>
+
+<text
+  class="svg-text"
+  x="580"
+  y="102">
+R₃
+</text>
+
+<!-- source -->
+
+<line
+  class="svg-source"
+  x1="85"
+  y1="160"
+  x2="155"
+  y2="160"/>
+
+<line
+  class="svg-source"
+  x1="98"
+  y1="205"
+  x2="142"
+  y2="205"/>
+
+<text
+  class="svg-text"
+  x="60"
+  y="168">
++
+</text>
+
+<text
+  class="svg-text"
+  x="62"
+  y="213">
+−
+</text>
+
+<!-- current -->
+
+<path
+  class="svg-current"
+  d="M315 45 H445"/>
+
+<polygon
+  points="445,45 423,34 423,56"
+  fill="#16a34a"/>
+
+<text
+  class="svg-small"
+  x="368"
+  y="31">
+I
+</text>
+
+<!-- voltages -->
+
+<text
+  class="svg-small"
+  x="218"
+  y="150">
+U₁
+</text>
+
+<text
+  class="svg-small"
+  x="393"
+  y="150">
+U₂
+</text>
+
+<text
+  class="svg-small"
+  x="568"
+  y="150">
+U₃
+</text>
+
+<text
+  class="svg-small"
+  x="340"
+  y="325">
+U = U₁ + U₂ + U₃
+</text>
+
+</svg>
+
+</div>
+
+
+<div class="orange-box">
+
+Întrebarea acestei lecții:
+
+<strong>
+Putem înlocui cele trei rezistoare cu un singur rezistor
+astfel încât sursa să furnizeze același curent?
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHAT SERIES MEANS
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Când sunt rezistoarele conectate în serie?</h2>
+
+<div class="blue-box">
+
+Două sau mai multe rezistoare sunt conectate
+<strong>în serie</strong>
+dacă sunt așezate succesiv pe aceeași latură,
+iar între ele nu există ramificații prin care curentul
+să se poată împărți.
+</div>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Conectare în serie</h3>
+
+<div class="formula">
+
+\[
+A
+-R_1-
+R_2-
+R_3-
+B
+\]
+
+</div>
+
+<p>
+Există un singur traseu al curentului prin grupare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Nu este suficient...</h3>
+
+<p>
+...ca rezistoarele să fie desenate unul lângă altul.
+</p>
+
+<p>
+Trebuie analizate
+<strong>conexiunile electrice</strong>,
+nu poziția lor geometrică pe schemă.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="yellow-box">
+
+Un criteriu foarte util:
+
+dacă între două rezistoare apare un nod din care pleacă
+o altă latură,
+ele nu mai formează singure o grupare pur serie.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THREE PROPERTIES
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Cele trei proprietăți fundamentale</h2>
+
+<div class="grid-3">
+
+
+<div class="property-card property-current">
+
+<div class="property-icon">
+I
+</div>
+
+<h3>Același curent</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=I_1=I_2=I_3
+}
+\]
+
+</div>
+
+<p>
+Nu există ramificații între rezistoare.
+</p>
+
+</div>
+
+
+<div class="property-card property-voltage">
+
+<div class="property-icon">
+U
+</div>
+
+<h3>Tensiunile se adună</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=U_1+U_2+U_3
+}
+\]
+
+</div>
+
+<p>
+Rezultă din bilanțul variațiilor de potențial.
+</p>
+
+</div>
+
+
+<div class="property-card property-resistance">
+
+<div class="property-icon">
+R
+</div>
+
+<h3>Rezistențele se adună</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_s=R_1+R_2+R_3
+}
+\]
+
+</div>
+
+<p>
+Rezistorul echivalent opune aceeași rezistență totală.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SAME CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>4. De ce este aceeași intensitate?</h2>
+
+<p>
+Privim punctul de legătură dintre \(R_1\) și \(R_2\).
+</p>
+
+<p>
+În acel punct nu există nicio ramificație.
+Sarcina electrică nu are două trasee pe care să se împartă.
+</p>
+
+<p>
+Prin urmare:
+</p>
+
+<div class="formula">
+
+\[
+I_1=I_2
+\]
+
+</div>
+
+<p>
+La fel:
+</p>
+
+<div class="formula">
+
+\[
+I_2=I_3
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_1=I_2=I_3=I
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Aceasta este consecința directă a faptului că
+toate rezistoarele fac parte din
+<strong>aceeași latură</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTAGE SUM
+========================================================= -->
+
+<section class="card">
+
+<h2>5. De ce tensiunile se adună?</h2>
+
+<p>
+Aplicăm Legea a II-a a lui Kirchhoff
+circuitului care conține sursa și cele trei rezistoare.
+</p>
+
+<div class="formula">
+
+\[
++U
+-U_1
+-U_2
+-U_3
+=0
+\]
+
+</div>
+
+de unde:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U=
+U_1+U_2+U_3
+}
+\]
+
+</div>
+
+
+<p>
+Pentru \(n\) rezistoare:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\sum_{k=1}^{n}U_k
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Deducerea rezistenței echivalente</h2>
+
+<p>
+Nu memorăm formula.
+O deducem din relațiile deja cunoscute.
+</p>
+
+
+<div class="derivation">
+
+
+<div class="derivation-step">
+
+<strong>1. Tensiunea totală</strong>
+
+<div class="formula">
+
+\[
+U=
+U_1+U_2+U_3
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>2. Aplicăm legea lui Ohm fiecărui rezistor</strong>
+
+<div class="formula">
+
+\[
+U_1=IR_1
+\]
+
+\[
+U_2=IR_2
+\]
+
+\[
+U_3=IR_3
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>3. Înlocuim</strong>
+
+<div class="formula">
+
+\[
+U=
+IR_1+
+IR_2+
+IR_3
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>4. Factorizăm intensitatea</strong>
+
+<div class="formula">
+
+\[
+U=
+I(R_1+R_2+R_3)
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>5. Rezistorul echivalent trebuie să respecte</strong>
+
+<div class="formula">
+
+\[
+U=IR_s
+\]
+
+</div>
+
+</div>
+
+
+<div class="derivation-step">
+
+<strong>6. Comparăm</strong>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_s=
+R_1+R_2+R_3
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<p>
+General:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_s=
+R_1+R_2+\ldots+R_n
+=
+\sum_{k=1}^{n}R_k
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EQUIVALENT MEANING
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Ce înseamnă „rezistor echivalent”?</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Gruparea originală</h3>
+
+<div class="formula">
+
+\[
+A
+-R_1-
+R_2-
+R_3-
+B
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Gruparea echivalentă</h3>
+
+<div class="formula">
+
+\[
+A
+-R_s-
+B
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<p>
+Cele două configurații sunt echivalente
+din punctul de vedere al bornelor \(A\) și \(B\)
+dacă pentru aceeași tensiune:
+</p>
+
+<div class="formula">
+
+\[
+U_{AB}
+\]
+
+</div>
+
+produc același curent:
+</p>
+
+<div class="formula">
+
+\[
+I
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Rezistorul echivalent nu reproduce neapărat
+toate detaliile interne ale grupării.
+
+El reproduce comportarea electrică
+<strong>văzută de la bornele externe</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     IMPORTANT CONSEQUENCE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. O consecință imediată</h2>
+
+<p>
+Pentru rezistoare cu rezistențe pozitive:
+</p>
+
+<div class="formula">
+
+\[
+R_s=
+R_1+R_2+\ldots
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_s>
+R_k
+}
+\]
+
+</div>
+
+<p>
+pentru fiecare rezistor individual din grupare,
+dacă există cel puțin două rezistențe nenule.
+</p>
+
+
+<div class="blue-box">
+
+Într-o grupare în serie,
+rezistența echivalentă este
+<strong>mai mare decât fiecare rezistență componentă luată separat</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EQUAL RESISTORS
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Caz particular – rezistoare identice</h2>
+
+<p>
+Dacă avem \(n\) rezistoare identice:
+</p>
+
+<div class="formula">
+
+\[
+R_1=R_2=\ldots=R_n=R
+\]
+
+</div>
+
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+R_s=
+\underbrace{
+R+R+\ldots+R
+}_{n\text{ termeni}}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_s=nR
+}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Patru rezistoare de:
+</p>
+
+<div class="formula">
+
+\[
+R=10\,\Omega
+\]
+
+</div>
+
+au:
+</p>
+
+<div class="formula">
+
+\[
+R_s=
+4\cdot10
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R_s=40\,\Omega
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTAGE DIVISION
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Cum se distribuie tensiunea?</h2>
+
+<p>
+Pentru fiecare rezistor:
+</p>
+
+<div class="formula">
+
+\[
+U_k=IR_k
+\]
+
+</div>
+
+iar pentru întreaga grupare:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{U}{R_s}
+\]
+
+</div>
+
+Înlocuim:
+</p>
+
+<div class="formula">
+
+\[
+U_k=
+\frac{U}{R_s}
+R_k
+\]
+
+</div>
+
+deci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_k=
+U
+\frac{R_k}{R_s}
+}
+\]
+
+</div>
+
+
+<p>
+Pentru două rezistoare:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{R_1}{R_2}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+În serie,
+rezistorul cu rezistența mai mare
+are și căderea de tensiune mai mare,
+deoarece același curent străbate toate rezistoarele.
+</div>
+
+
+<div class="yellow-box">
+
+Această relație este valabilă pentru rezistoare ohmice
+în condițiile în care rezistențele lor pot fi considerate constante.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Rezistența echivalentă</h3>
+
+<p>
+Se conectează în serie:
+</p>
+
+<div class="formula">
+
+\[
+R_1=4\,\Omega,
+\quad
+R_2=6\,\Omega,
+\quad
+R_3=10\,\Omega
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_s=
+R_1+R_2+R_3
+\]
+
+\[
+R_s=
+4+6+10
+\]
+
+\[
+\boxed{
+R_s=20\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Curentul prin grupare</h3>
+
+<p>
+Gruparea anterioară este conectată la:
+</p>
+
+<div class="formula">
+
+\[
+U=10\,V
+\]
+
+</div>
+
+<p>
+Determină intensitatea.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_s=20\,\Omega
+\]
+
+\[
+I=
+\frac{U}{R_s}
+\]
+
+\[
+I=
+\frac{10}{20}
+\]
+
+\[
+\boxed{
+I=0,50\,A
+}
+\]
+
+Același curent străbate fiecare rezistor.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Tensiunile pe rezistoare</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+I=0,50\,A
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+R_1=4\,\Omega,
+\quad
+R_2=6\,\Omega,
+\quad
+R_3=10\,\Omega
+\]
+
+</div>
+
+<p>
+determină \(U_1,U_2,U_3\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+U_1=
+IR_1=
+0,5\cdot4=
+2\,V
+\]
+
+\[
+U_2=
+0,5\cdot6=
+3\,V
+\]
+
+\[
+U_3=
+0,5\cdot10=
+5\,V
+\]
+
+Verificare:
+
+\[
+2+3+5=
+10\,V
+\]
+
+\[
+\boxed{
+U_1=2\,V,\quad
+U_2=3\,V,\quad
+U_3=5\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Rezistență necunoscută</h3>
+
+<p>
+Trei rezistoare sunt conectate în serie:
+</p>
+
+<div class="formula">
+
+\[
+R_s=30\,\Omega
+\]
+
+\[
+R_1=8\,\Omega
+\]
+
+\[
+R_2=12\,\Omega
+\]
+
+\[
+R_3=?
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_s=
+R_1+R_2+R_3
+\]
+
+\[
+30=
+8+12+R_3
+\]
+
+\[
+30=
+20+R_3
+\]
+
+\[
+\boxed{
+R_3=10\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Divizor de tensiune</h3>
+
+<p>
+Două rezistoare:
+</p>
+
+<div class="formula">
+
+\[
+R_1=2\,k\Omega
+\]
+
+\[
+R_2=4\,k\Omega
+\]
+
+</div>
+
+sunt conectate în serie la:
+</p>
+
+<div class="formula">
+
+\[
+U=12\,V
+\]
+
+</div>
+
+<p>
+Determină tensiunea pe \(R_2\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+R_s=
+2+4=
+6\,k\Omega
+\]
+
+Folosim raportul:
+</p>
+
+\[
+U_2=
+U
+\frac{R_2}{R_s}
+\]
+
+\[
+U_2=
+12
+\frac{4}{6}
+\]
+
+\[
+\boxed{
+U_2=8\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 6 – Determină raportul rezistențelor</h3>
+
+<p>
+Pe două rezistoare conectate în serie se măsoară:
+</p>
+
+<div class="formula">
+
+\[
+U_1=3\,V
+\]
+
+\[
+U_2=9\,V
+\]
+
+</div>
+
+<p>
+Determină:
+</p>
+
+<div class="formula">
+
+\[
+\frac{R_1}{R_2}
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+În serie:
+</p>
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{R_1}{R_2}
+\]
+
+deci:
+</p>
+
+\[
+\frac{R_1}{R_2}
+=
+\frac39
+=
+\frac13
+\]
+
+\[
+\boxed{
+R_1:R_2=1:3
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – Rezistoare în serie</h2>
+
+<p>
+Modifică tensiunea sursei și valorile rezistoarelor.
+Observă simultan intensitatea comună,
+rezistența echivalentă
+și modul în care tensiunea totală se împarte între rezistoare.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="sourceSlider">
+Tensiunea \(U\) [V]
+</label>
+
+<input
+  id="sourceSlider"
+  type="range"
+  min="0"
+  max="24"
+  step="0.5"
+  value="12">
+
+<span
+  class="range-value"
+  id="sourceLabel">
+12,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="countSelect">
+Număr rezistoare
+</label>
+
+<select id="countSelect">
+
+<option value="2">
+2 rezistoare
+</option>
+
+<option value="3" selected>
+3 rezistoare
+</option>
+
+<option value="4">
+4 rezistoare
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="r1Slider">
+\(R_1\) [Ω]
+</label>
+
+<input
+  id="r1Slider"
+  type="range"
+  min="1"
+  max="50"
+  step="1"
+  value="10">
+
+<span
+  class="range-value"
+  id="r1Label">
+10 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r2Slider">
+\(R_2\) [Ω]
+</label>
+
+<input
+  id="r2Slider"
+  type="range"
+  min="1"
+  max="50"
+  step="1"
+  value="20">
+
+<span
+  class="range-value"
+  id="r2Label">
+20 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r3Slider">
+\(R_3\) [Ω]
+</label>
+
+<input
+  id="r3Slider"
+  type="range"
+  min="1"
+  max="50"
+  step="1"
+  value="30">
+
+<span
+  class="range-value"
+  id="r3Label">
+30 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="r4Slider">
+\(R_4\) [Ω]
+</label>
+
+<input
+  id="r4Slider"
+  type="range"
+  min="1"
+  max="50"
+  step="1"
+  value="40">
+
+<span
+  class="range-value"
+  id="r4Label">
+40 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="viewSelect">
+Vizualizare
+</label>
+
+<select id="viewSelect">
+
+<option value="series" selected>
+gruparea în serie
+</option>
+
+<option value="equivalent">
+rezistorul echivalent
+</option>
+
+<option value="compare">
+compară ambele
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Mișcarea sarcinilor
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="equalBtn">
+
+3 rezistoare egale
+
+</button>
+
+
+<button
+  class="primary"
+  id="dividerBtn">
+
+Divizor 10 Ω / 20 Ω / 30 Ω
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="equivalentBtn">
+
+⇄ Arată echivalentul
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="doubleRBtn">
+
+×2 toate rezistențele
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="seriesCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="voltageCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Rezistența echivalentă
+</span>
+
+<strong id="reqValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curentul comun
+</span>
+
+<strong id="currentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(U_1\)
+</span>
+
+<strong id="u1Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(U_2\)
+</span>
+
+<strong id="u2Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(U_3\)
+</span>
+
+<strong id="u3Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(U_4\)
+</span>
+
+<strong id="u4Value">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(\sum U_k\)
+</span>
+
+<strong id="sumUValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Verificare \(U/I\)
+</span>
+
+<strong id="ratioValue">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box status-good"
+  id="simStatus">
+
+Modifică valorile și urmărește proprietățile grupării.
+</div>
+
+
+<div class="equivalence-panel">
+
+<h3 style="margin-top:0;">
+Echivalența văzută de sursă
+</h3>
+
+<div class="eq-row">
+
+
+<div class="eq-side">
+
+<strong>Gruparea</strong>
+
+<div
+  class="formula"
+  id="groupFormula">
+
+\(R_1+R_2+R_3\)
+
+</div>
+
+<div id="groupCurrent">
+—
+</div>
+
+</div>
+
+
+<div class="eq-symbol">
+
+≡
+
+</div>
+
+
+<div class="eq-side">
+
+<strong>Rezistorul echivalent</strong>
+
+<div
+  class="formula"
+  id="equivFormula">
+
+\(R_s\)
+
+</div>
+
+<div id="equivCurrent">
+—
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="voltage-bars" id="voltageBars"></div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Verifică formula</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+R_1=10\,\Omega
+\]
+
+\[
+R_2=20\,\Omega
+\]
+
+\[
+R_3=30\,\Omega
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+R_s=60\,\Omega
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Dublează toate rezistențele</h3>
+
+<p>
+Păstrează aceeași tensiune.
+</p>
+
+<p>
+Ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+R_s
+\quad\text{și}\quad
+I
+\ ?
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Rezistoare egale</h3>
+
+<p>
+Alege trei rezistoare egale.
+</p>
+
+<p>
+Cum se împarte tensiunea totală?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Mărește numai \(R_3\)</h3>
+
+<p>
+Observă ce se întâmplă cu:
+</p>
+
+<div class="formula">
+
+\[
+U_3
+\]
+
+</div>
+
+și cu tensiunile celorlalte rezistoare.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Compară gruparea cu echivalentul</h3>
+
+<p>
+Alege vizualizarea:
+<strong>compară ambele</strong>.
+</p>
+
+<p>
+Curentul furnizat de sursă se modifică?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Adaugă al patrulea rezistor</h3>
+
+<p>
+Treci de la 3 la 4 rezistoare.
+</p>
+
+<p>
+Ce se întâmplă cu rezistența echivalentă
+și cu intensitatea,
+dacă tensiunea sursei rămâne constantă?
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Experiment – verificarea grupării în serie</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă didactică de joasă tensiune;</li>
+
+<li>2–3 rezistoare;</li>
+
+<li>ampermetru sau multimetru;</li>
+
+<li>voltmetru sau multimetru;</li>
+
+<li>conductoare;</li>
+
+<li>întrerupător.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ce verificăm?</h3>
+
+<div class="formula">
+
+\[
+I_1\approx I_2\approx I_3
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U\approx U_1+U_2+U_3
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+
+Montează două sau trei rezistoare succesiv,
+fără ramificații între ele.
+
+</li>
+
+
+<li>
+
+Conectează sursa numai după verificarea circuitului.
+
+</li>
+
+
+<li>
+
+Măsoară intensitatea înaintea primului rezistor:
+\[
+I_1
+\]
+
+</li>
+
+
+<li>
+
+Oprește alimentarea înainte de modificarea conexiunilor,
+apoi măsoară intensitatea într-un alt punct al aceleiași laturi:
+\[
+I_2
+\]
+
+</li>
+
+
+<li>
+
+Compară valorile:
+\[
+I_1
+\quad\text{și}\quad
+I_2
+\]
+
+</li>
+
+
+<li>
+
+Conectează voltmetrul succesiv la bornele fiecărui rezistor
+și măsoară:
+\[
+U_1,\ U_2,\ U_3
+\]
+
+</li>
+
+
+<li>
+
+Măsoară tensiunea la bornele întregii grupări:
+\[
+U
+\]
+
+</li>
+
+
+<li>
+
+Compară:
+\[
+U
+\quad\text{cu}\quad
+U_1+U_2+U_3
+\]
+
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+În limitele erorilor experimentale,
+te aștepți la:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_1\approx I_2\approx I_3
+}
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U\approx
+U_1+U_2+U_3
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="red-box">
+
+<strong>Reguli de lucru:</strong>
+
+ampermetrul se conectează în serie,
+voltmetrul în paralel cu porțiunea măsurată,
+iar conexiunile se modifică cu sursa oprită.
+
+Nu utiliza funcția de ohmmetru pe un circuit alimentat.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXP TABLE
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Model de tabel experimental</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Mărime
+</th>
+
+<th>
+Valoare măsurată
+</th>
+
+<th>
+Relație de verificat
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+\(I_1\)
+</td>
+
+<td>
+........ A
+</td>
+
+<td rowspan="3">
+
+\[
+I_1\approx I_2\approx I_3
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(I_2\)
+</td>
+
+<td>
+........ A
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(I_3\)
+</td>
+
+<td>
+........ A
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(U_1\)
+</td>
+
+<td>
+........ V
+</td>
+
+<td rowspan="4">
+
+\[
+U\approx U_1+U_2+U_3
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(U_2\)
+</td>
+
+<td>
+........ V
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(U_3\)
+</td>
+
+<td>
+........ V
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(U\)
+</td>
+
+<td>
+........ V
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „Curentul scade după fiecare rezistor.”</h3>
+
+<p>
+Nu.
+</p>
+
+<p>
+Într-o grupare serie fără ramificații:
+</p>
+
+<div class="formula">
+
+\[
+I_1=I_2=I_3
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Rezistoarele consumă curent.”</h3>
+
+<p>
+Rezistorul transferă energie electrică,
+dar sarcina electrică nu este „consumată”.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „Tensiunea este aceeași pe toate rezistoarele.”</h3>
+
+<p>
+Numai în cazul particular al unor rezistențe egale.
+</p>
+
+<p>
+În general:
+</p>
+
+<div class="formula">
+
+\[
+U_k=IR_k
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „În serie se adună tensiunile pentru că așa spune formula.”</h3>
+
+<p>
+Relația provine din bilanțul variațiilor de potențial,
+adică din Legea a II-a a lui Kirchhoff.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Orice rezistoare desenate unul după altul sunt în serie.”</h3>
+
+<p>
+Nu.
+Trebuie să nu existe ramificații între ele.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Rezistența echivalentă este media rezistențelor.”</h3>
+
+<p>
+Pentru serie:
+</p>
+
+<div class="formula">
+
+\[
+R_s=
+R_1+R_2+\ldots
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Rezistența echivalentă poate fi mai mică decât toate rezistențele.”</h3>
+
+<p>
+Nu pentru o grupare serie de rezistențe pozitive.
+Suma este mai mare decât fiecare termen individual.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Rezistorul echivalent trebuie să fie identic fizic cu gruparea.”</h3>
+
+<p>
+Nu.
+Echivalența se referă la comportarea electrică
+văzută de la bornele externe.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce este același curent prin toate rezistoarele conectate în serie?
+</li>
+
+<li>
+De ce tensiunea totală este suma tensiunilor pe rezistoare?
+</li>
+
+<li>
+De ce rezistențele se adună?
+</li>
+
+<li>
+Ce se întâmplă cu rezistența echivalentă dacă mai adaugi un rezistor în serie?
+</li>
+
+<li>
+La aceeași tensiune a sursei, ce se întâmplă cu intensitatea dacă \(R_s\) crește?
+</li>
+
+<li>
+De ce rezistorul cu rezistența mai mare are o cădere de tensiune mai mare?
+</li>
+
+<li>
+Dacă toate rezistoarele sunt egale, cum se distribuie tensiunea?
+</li>
+
+<li>
+Cum poți recunoaște din schemă că două rezistoare nu sunt în serie?
+</li>
+
+<li>
+Ce trebuie să rămână identic atunci când înlocuiești gruparea cu rezistorul echivalent?
+</li>
+
+<li>
+Cum ai verifica experimental relația \(U=U_1+U_2+U_3\)?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Într-o grupare de rezistoare în serie:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+tensiunea este obligatoriu aceeași pe toate rezistoarele
+</button>
+
+<button class="answer-btn">
+intensitatea este aceeași prin toate rezistoarele
+</button>
+
+<button class="answer-btn">
+rezistențele sunt obligatoriu egale
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>2.</strong>
+Rezistența echivalentă a trei rezistoare în serie este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_s=R_1+R_2+R_3\)
+</button>
+
+<button class="answer-btn">
+\(R_s=R_1R_2R_3\)
+</button>
+
+<button class="answer-btn">
+\(R_s=(R_1+R_2+R_3)/3\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>3.</strong>
+Pentru \(R_1=2\,\Omega\) și \(R_2=8\,\Omega\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_s=4\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_s=16\,\Omega\)
+</button>
+
+<button class="answer-btn">
+\(R_s=10\,\Omega\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Tensiunea totală pe o grupare serie este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+mai mică decât fiecare tensiune
+</button>
+
+<button class="answer-btn">
+suma tensiunilor pe rezistoare
+</button>
+
+<button class="answer-btn">
+întotdeauna zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>5.</strong>
+Trei rezistoare identice \(R\) conectate în serie au:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R_s=3R\)
+</button>
+
+<button class="answer-btn">
+\(R_s=R/3\)
+</button>
+
+<button class="answer-btn">
+\(R_s=R\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>6.</strong>
+Dacă în serie avem \(R_1>R_2\),
+atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I_1>I_2\)
+</button>
+
+<button class="answer-btn">
+\(U_1<U_2\)
+</button>
+
+<button class="answer-btn">
+\(U_1>U_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Două rezistoare pot fi considerate în serie dacă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+au aceeași culoare
+</button>
+
+<button class="answer-btn">
+sunt succesive și între ele nu există ramificație
+</button>
+
+<button class="answer-btn">
+au aceeași rezistență
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>8.</strong>
+Pentru \(U=12\,V\) și \(R_s=24\,\Omega\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=0,5\,A\)
+</button>
+
+<button class="answer-btn">
+\(I=2\,A\)
+</button>
+
+<button class="answer-btn">
+\(I=288\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>9.</strong>
+Dacă adăugăm încă un rezistor pozitiv în serie:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+rezistența echivalentă scade
+</button>
+
+<button class="answer-btn">
+rezistența echivalentă nu se modifică
+</button>
+
+<button class="answer-btn">
+rezistența echivalentă crește
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Pentru două rezistoare în serie:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\frac{U_1}{U_2}=\frac{R_2}{R_1}\)
+</button>
+
+<button class="answer-btn">
+\(\frac{U_1}{U_2}=\frac{R_1}{R_2}\)
+</button>
+
+<button class="answer-btn">
+\(U_1=U_2\) în orice situație
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Curent</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_1=I_2=\ldots=I
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiune</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+U_1+U_2+\ldots
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistență</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_s=
+R_1+R_2+\ldots
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Pentru \(n\) rezistoare identice:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+R_s=nR
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+Pentru divizarea tensiunii:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U_k=
+U
+\frac{R_k}{R_s}
+}
+\]
+
+</div>
+
+<p>
+și, pentru două rezistoare:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{U_1}{U_2}
+=
+\frac{R_1}{R_2}
+}
+\]
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Ce urmează?</h2>
+
+<p>
+În serie există
+<strong>un singur traseu</strong>
+pentru curent.
+</p>
+
+<p>
+Dar ce se întâmplă când fiecare rezistor este conectat
+între aceleași două noduri?
+</p>
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Gruparea rezistoarelor în paralel
+</strong>
+
+vom descoperi că:
+
+<ul>
+
+<li>tensiunea devine aceeași pe fiecare ramură;</li>
+
+<li>curentul se ramifică;</li>
+
+<li>rezistența echivalentă devine mai mică decât fiecare rezistență individuală.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="04-aplicarea-legilor-lui-kirchhoff-in-retele-electrice.html">
+
+← Lecția 4<br>
+Aplicarea legilor lui Kirchhoff
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="06-gruparea-rezistoarelor-in-paralel.html">
+
+Lecția 6<br>
+Gruparea rezistoarelor în paralel →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Legile lui Kirchhoff. Gruparea rezistoarelor și generatoarelor
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    1e-12
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const sourceSlider=
+  document.getElementById(
+    "sourceSlider"
+  );
+
+
+const countSelect=
+  document.getElementById(
+    "countSelect"
+  );
+
+
+const viewSelect=
+  document.getElementById(
+    "viewSelect"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const resistorControls=[
+
+  {
+    slider:
+      document.getElementById(
+        "r1Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r1Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r2Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r2Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r3Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r3Label"
+      )
+  },
+
+  {
+    slider:
+      document.getElementById(
+        "r4Slider"
+      ),
+
+    label:
+      document.getElementById(
+        "r4Label"
+      )
+  }
+
+];
+
+
+const sourceLabel=
+  document.getElementById(
+    "sourceLabel"
+  );
+
+
+const reqValue=
+  document.getElementById(
+    "reqValue"
+  );
+
+
+const currentValue=
+  document.getElementById(
+    "currentValue"
+  );
+
+
+const voltageValueElements=[
+
+  document.getElementById(
+    "u1Value"
+  ),
+
+  document.getElementById(
+    "u2Value"
+  ),
+
+  document.getElementById(
+    "u3Value"
+  ),
+
+  document.getElementById(
+    "u4Value"
+  )
+
+];
+
+
+const sumUValue=
+  document.getElementById(
+    "sumUValue"
+  );
+
+
+const ratioValue=
+  document.getElementById(
+    "ratioValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const groupFormula=
+  document.getElementById(
+    "groupFormula"
+  );
+
+
+const equivFormula=
+  document.getElementById(
+    "equivFormula"
+  );
+
+
+const groupCurrent=
+  document.getElementById(
+    "groupCurrent"
+  );
+
+
+const equivCurrent=
+  document.getElementById(
+    "equivCurrent"
+  );
+
+
+const voltageBars=
+  document.getElementById(
+    "voltageBars"
+  );
+
+
+const seriesCanvas=
+  document.getElementById(
+    "seriesCanvas"
+  );
+
+
+const seriesCtx=
+  seriesCanvas.getContext(
+    "2d"
+  );
+
+
+const voltageCanvas=
+  document.getElementById(
+    "voltageCanvas"
+  );
+
+
+const voltageCtx=
+  voltageCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const U=
+    Number(
+      sourceSlider.value
+    );
+
+
+  const count=
+    Number(
+      countSelect.value
+    );
+
+
+  const resistances=
+    resistorControls
+    .slice(
+      0,
+      count
+    )
+    .map(
+      item=>
+        Number(
+          item.slider.value
+        )
+    );
+
+
+  const req=
+    resistances.reduce(
+      (
+        sum,
+        value
+      )=>
+        sum+
+        value,
+      0
+    );
+
+
+  const I=
+    req>0
+      ? U/req
+      : 0;
+
+
+  const voltages=
+    resistances.map(
+      R=>
+        I*R
+    );
+
+
+  const sumU=
+    voltages.reduce(
+      (
+        sum,
+        value
+      )=>
+        sum+
+        value,
+      0
+    );
+
+
+  return{
+
+    U,
+    count,
+    resistances,
+
+    req,
+    I,
+
+    voltages,
+    sumU
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  sourceLabel.textContent=
+    `${formatRo(
+      m.U,
+      1
+    )} V`;
+
+
+  resistorControls.forEach(
+    (
+      item,
+      index
+    )=>{
+
+      item.label.textContent=
+        `${Number(item.slider.value)} Ω`;
+
+
+      const active=
+        index<
+        m.count;
+
+
+      item.slider.disabled=
+        !active;
+
+
+      item.slider.parentElement.style.opacity=
+        active
+          ? "1"
+          : ".42";
+
+    }
+  );
+
+
+  reqValue.textContent=
+    `${formatRo(
+      m.req,
+      2
+    )} Ω`;
+
+
+  currentValue.textContent=
+    `${formatRo(
+      m.I,
+      3
+    )} A`;
+
+
+  voltageValueElements.forEach(
+    (
+      element,
+      index
+    )=>{
+
+      if(
+        index<
+        m.count
+      ){
+
+        element.textContent=
+          `${formatRo(
+            m.voltages[index],
+            2
+          )} V`;
+
+      }
+
+      else{
+
+        element.textContent=
+          "—";
+
+      }
+
+    }
+  );
+
+
+  sumUValue.textContent=
+    `${formatRo(
+      m.sumU,
+      3
+    )} V`;
+
+
+  ratioValue.textContent=
+    m.I>
+    1e-10
+      ? `${formatRo(
+          m.U/m.I,
+          2
+        )} Ω`
+      : "—";
+
+
+  const terms=
+    m.resistances
+    .map(
+      (
+        value,
+        index
+      )=>
+        `R${index+1}`
+    )
+    .join(" + ");
+
+
+  groupFormula.textContent=
+    `${terms} = ${formatRo(m.req,1)} Ω`;
+
+
+  equivFormula.textContent=
+    `Rs = ${formatRo(m.req,1)} Ω`;
+
+
+  groupCurrent.textContent=
+    `I = ${formatRo(m.I,3)} A`;
+
+
+  equivCurrent.textContent=
+    `I = ${formatRo(m.I,3)} A`;
+
+
+  simStatus.innerHTML=
+    `Pentru
+     <strong>Rₛ = ${formatRo(m.req,2)} Ω</strong>
+     și
+     <strong>U = ${formatRo(m.U,2)} V</strong>,
+     curentul comun este
+     <strong>I = ${formatRo(m.I,3)} A</strong>.
+     Verificare:
+     ΣUₖ =
+     ${formatRo(m.sumU,3)} V
+     ≈
+     U =
+     ${formatRo(m.U,3)} V.`;
+
+
+  drawVoltageBars(
+    m
+  );
+
+
+  drawVoltageGraph(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   VOLTAGE BARS
+========================================================= */
+
+function drawVoltageBars(
+  m
+){
+
+  const colors=[
+    "#2563eb",
+    "#16a34a",
+    "#ea580c",
+    "#7c3aed"
+  ];
+
+
+  voltageBars.innerHTML="";
+
+
+  m.voltages.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      const fraction=
+        m.U>
+        0
+          ? value/m.U
+          : 0;
+
+
+      const row=
+        document.createElement(
+          "div"
+        );
+
+
+      row.className=
+        "voltage-row";
+
+
+      row.innerHTML=
+        `
+        <strong>U${index+1}</strong>
+
+        <div class="voltage-track">
+
+          <div
+            class="voltage-fill"
+            style="
+              width:${clamp(fraction*100,0,100)}%;
+              background:${colors[index]};
+            ">
+          </div>
+
+        </div>
+
+        <span>
+          ${formatRo(value,2)} V
+        </span>
+        `;
+
+
+      voltageBars.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function drawDarkBackground(
+  context,
+  W,
+  H
+){
+
+  const gradient=
+    context.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  context.fillStyle=
+    gradient;
+
+
+  context.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  context.strokeStyle=
+    "rgba(148,163,184,.07)";
+
+
+  context.lineWidth=1;
+
+
+  for(
+    let x=0;
+    x<W;
+    x+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      x,
+      0
+    );
+
+    context.lineTo(
+      x,
+      H
+    );
+
+    context.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<H;
+    y+=35
+  ){
+
+    context.beginPath();
+
+    context.moveTo(
+      0,
+      y
+    );
+
+    context.lineTo(
+      W,
+      y
+    );
+
+    context.stroke();
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW RESISTOR
+========================================================= */
+
+function drawResistor(
+  context,
+  x,
+  y,
+  width,
+  height,
+  label,
+  color
+){
+
+  context.fillStyle=
+    "#fff7ed";
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.lineWidth=4;
+
+
+  context.fillRect(
+    x-
+    width/2,
+    y-
+    height/2,
+    width,
+    height
+  );
+
+
+  context.strokeRect(
+    x-
+    width/2,
+    y-
+    height/2,
+    width,
+    height
+  );
+
+
+  context.fillStyle=
+    "#7c2d12";
+
+
+  context.font=
+    "bold 12px system-ui";
+
+
+  context.textAlign=
+    "center";
+
+
+  context.textBaseline=
+    "middle";
+
+
+  context.fillText(
+    label,
+    x,
+    y
+  );
+
+}
+
+
+/* =========================================================
+   SERIES CIRCUIT
+========================================================= */
+
+function drawSeriesCircuit(
+  m,
+  W,
+  H,
+  regionTop=0,
+  regionHeight=H
+){
+
+  const colors=[
+    "#60a5fa",
+    "#4ade80",
+    "#fb923c",
+    "#c084fc"
+  ];
+
+
+  const left=
+    W*.12;
+
+
+  const right=
+    W*.88;
+
+
+  const top=
+    regionTop+
+    regionHeight*.35;
+
+
+  const bottom=
+    regionTop+
+    regionHeight*.76;
+
+
+  const sourceX=
+    left;
+
+
+  const available=
+    right-
+    left-
+    100;
+
+
+  const spacing=
+    available/
+    m.count;
+
+
+  /*
+  Wires.
+  */
+
+  seriesCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  seriesCtx.lineWidth=6;
+
+
+  seriesCtx.lineCap=
+    "round";
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left,
+    top
+  );
+
+  seriesCtx.lineTo(
+    right,
+    top
+  );
+
+  seriesCtx.lineTo(
+    right,
+    bottom
+  );
+
+  seriesCtx.lineTo(
+    left,
+    bottom
+  );
+
+  seriesCtx.lineTo(
+    left,
+    regionTop+
+    regionHeight*.60
+  );
+
+  seriesCtx.stroke();
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left,
+    regionTop+
+    regionHeight*.46
+  );
+
+  seriesCtx.lineTo(
+    left,
+    top
+  );
+
+  seriesCtx.stroke();
+
+
+  /*
+  Source.
+  */
+
+  const sy=
+    regionTop+
+    regionHeight*.53;
+
+
+  seriesCtx.strokeStyle=
+    "#60a5fa";
+
+
+  seriesCtx.lineWidth=4;
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    sourceX-28,
+    sy-19
+  );
+
+  seriesCtx.lineTo(
+    sourceX+28,
+    sy-19
+  );
+
+  seriesCtx.stroke();
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    sourceX-18,
+    sy+19
+  );
+
+  seriesCtx.lineTo(
+    sourceX+18,
+    sy+19
+  );
+
+  seriesCtx.stroke();
+
+
+  seriesCtx.fillStyle=
+    "#bfdbfe";
+
+
+  seriesCtx.font=
+    "bold 13px system-ui";
+
+
+  seriesCtx.textAlign=
+    "right";
+
+
+  seriesCtx.fillText(
+    "+",
+    sourceX-36,
+    sy-14
+  );
+
+
+  seriesCtx.fillText(
+    "−",
+    sourceX-36,
+    sy+24
+  );
+
+
+  seriesCtx.textAlign=
+    "center";
+
+
+  seriesCtx.fillText(
+    `U=${formatRo(m.U,1)}V`,
+    sourceX,
+    sy+65
+  );
+
+
+  /*
+  Resistors.
+  */
+
+  for(
+    let i=0;
+    i<m.count;
+    i++
+  ){
+
+    const x=
+      left+
+      80+
+      spacing*
+      (
+        i+.5
+      );
+
+
+    drawResistor(
+      seriesCtx,
+      x,
+      top,
+      Math.min(
+        72,
+        spacing*.58
+      ),
+      42,
+      `R${i+1}=${formatRo(m.resistances[i],0)}Ω`,
+      colors[i]
+    );
+
+
+    seriesCtx.fillStyle=
+      colors[i];
+
+
+    seriesCtx.font=
+      "bold 11px system-ui";
+
+
+    seriesCtx.fillText(
+      `U${i+1}=${formatRo(m.voltages[i],2)}V`,
+      x,
+      top+46
+    );
+
+  }
+
+
+  /*
+  Current arrow.
+  */
+
+  if(
+    m.I>
+    0
+  ){
+
+    const x1=
+      W*.34;
+
+
+    const x2=
+      W*.50;
+
+
+    const y=
+      top-65;
+
+
+    seriesCtx.strokeStyle=
+      "#86efac";
+
+
+    seriesCtx.fillStyle=
+      "#86efac";
+
+
+    seriesCtx.lineWidth=4;
+
+
+    seriesCtx.beginPath();
+
+    seriesCtx.moveTo(
+      x1,
+      y
+    );
+
+    seriesCtx.lineTo(
+      x2,
+      y
+    );
+
+    seriesCtx.stroke();
+
+
+    seriesCtx.beginPath();
+
+    seriesCtx.moveTo(
+      x2,
+      y
+    );
+
+    seriesCtx.lineTo(
+      x2-13,
+      y-7
+    );
+
+    seriesCtx.lineTo(
+      x2-13,
+      y+7
+    );
+
+    seriesCtx.closePath();
+
+    seriesCtx.fill();
+
+
+    seriesCtx.font=
+      "bold 12px system-ui";
+
+
+    seriesCtx.textAlign=
+      "center";
+
+
+    seriesCtx.fillText(
+      `I=${formatRo(m.I,3)} A`,
+      (
+        x1+x2
+      )/2,
+      y-14
+    );
+
+  }
+
+
+  seriesCtx.fillStyle=
+    "#bae6fd";
+
+
+  seriesCtx.font=
+    "bold 11px system-ui";
+
+
+  seriesCtx.textAlign=
+    "center";
+
+
+  seriesCtx.fillText(
+    "același curent prin toate rezistoarele",
+    W*.50,
+    bottom+35
+  );
+
+}
+
+
+/* =========================================================
+   EQUIVALENT CIRCUIT
+========================================================= */
+
+function drawEquivalentCircuit(
+  m,
+  W,
+  H,
+  regionTop=0,
+  regionHeight=H
+){
+
+  const left=
+    W*.16;
+
+
+  const right=
+    W*.84;
+
+
+  const top=
+    regionTop+
+    regionHeight*.36;
+
+
+  const bottom=
+    regionTop+
+    regionHeight*.76;
+
+
+  const sy=
+    regionTop+
+    regionHeight*.54;
+
+
+  seriesCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  seriesCtx.lineWidth=6;
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left,
+    top
+  );
+
+  seriesCtx.lineTo(
+    right,
+    top
+  );
+
+  seriesCtx.lineTo(
+    right,
+    bottom
+  );
+
+  seriesCtx.lineTo(
+    left,
+    bottom
+  );
+
+  seriesCtx.lineTo(
+    left,
+    regionTop+
+    regionHeight*.61
+  );
+
+  seriesCtx.stroke();
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left,
+    regionTop+
+    regionHeight*.47
+  );
+
+  seriesCtx.lineTo(
+    left,
+    top
+  );
+
+  seriesCtx.stroke();
+
+
+  /*
+  Source.
+  */
+
+  seriesCtx.strokeStyle=
+    "#60a5fa";
+
+
+  seriesCtx.lineWidth=4;
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left-27,
+    sy-18
+  );
+
+  seriesCtx.lineTo(
+    left+27,
+    sy-18
+  );
+
+  seriesCtx.stroke();
+
+
+  seriesCtx.beginPath();
+
+  seriesCtx.moveTo(
+    left-17,
+    sy+18
+  );
+
+  seriesCtx.lineTo(
+    left+17,
+    sy+18
+  );
+
+  seriesCtx.stroke();
+
+
+  /*
+  Equivalent R.
+  */
+
+  drawResistor(
+    seriesCtx,
+    W*.52,
+    top,
+    125,
+    50,
+    `Rs=${formatRo(m.req,1)}Ω`,
+    "#facc15"
+  );
+
+
+  seriesCtx.fillStyle=
+    "#fde68a";
+
+
+  seriesCtx.font=
+    "bold 13px system-ui";
+
+
+  seriesCtx.textAlign=
+    "center";
+
+
+  seriesCtx.fillText(
+    `I=${formatRo(m.I,3)} A`,
+    W*.52,
+    top-48
+  );
+
+
+  seriesCtx.fillStyle=
+    "#bae6fd";
+
+
+  seriesCtx.font=
+    "bold 11px system-ui";
+
+
+  seriesCtx.fillText(
+    "același U și același I la bornele sursei",
+    W*.52,
+    bottom+35
+  );
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+let particles=[];
+
+
+function resetParticles(){
+
+  particles=[];
+
+
+  for(
+    let i=0;
+    i<28;
+    i++
+  ){
+
+    particles.push(
+      i/28
+    );
+
+  }
+
+}
+
+
+function pointOnRectangle(
+  p,
+  left,
+  right,
+  top,
+  bottom
+){
+
+  const width=
+    right-
+    left;
+
+
+  const height=
+    bottom-
+    top;
+
+
+  const perimeter=
+    2*
+    (
+      width+
+      height
+    );
+
+
+  let d=
+    p*
+    perimeter;
+
+
+  if(
+    d<
+    width
+  ){
+
+    return{
+      x:left+d,
+      y:top
+    };
+
+  }
+
+
+  d-=width;
+
+
+  if(
+    d<
+    height
+  ){
+
+    return{
+      x:right,
+      y:top+d
+    };
+
+  }
+
+
+  d-=height;
+
+
+  if(
+    d<
+    width
+  ){
+
+    return{
+      x:right-d,
+      y:bottom
+    };
+
+  }
+
+
+  d-=width;
+
+
+  return{
+    x:left,
+    y:bottom-d
+  };
+
+}
+
+
+/* =========================================================
+   DRAW PARTICLES
+========================================================= */
+
+function drawParticles(
+  m,
+  W,
+  H
+){
+
+  if(
+    m.I<=
+    0 ||
+    animationSelect.value===
+    "off" ||
+    viewSelect.value===
+    "compare"
+  ){
+    return;
+  }
+
+
+  const left=
+    viewSelect.value===
+    "equivalent"
+      ? W*.16
+      : W*.12;
+
+
+  const right=
+    viewSelect.value===
+    "equivalent"
+      ? W*.84
+      : W*.88;
+
+
+  const top=
+    H*.35;
+
+
+  const bottom=
+    H*.76;
+
+
+  particles.forEach(
+    p=>{
+
+      const point=
+        pointOnRectangle(
+          p,
+          left,
+          right,
+          top,
+          bottom
+        );
+
+
+      seriesCtx.beginPath();
+
+
+      seriesCtx.arc(
+        point.x,
+        point.y,
+        3,
+        0,
+        Math.PI*2
+      );
+
+
+      seriesCtx.fillStyle=
+        "#fde68a";
+
+
+      seriesCtx.fill();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   DRAW SERIES SCENE
+========================================================= */
+
+function drawSeriesScene(
+  m
+){
+
+  const rect=
+    seriesCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  drawDarkBackground(
+    seriesCtx,
+    W,
+    H
+  );
+
+
+  const view=
+    viewSelect.value;
+
+
+  if(
+    view==="series"
+  ){
+
+    drawSeriesCircuit(
+      m,
+      W,
+      H
+    );
+
+  }
+
+  else if(
+    view==="equivalent"
+  ){
+
+    drawEquivalentCircuit(
+      m,
+      W,
+      H
+    );
+
+  }
+
+  else{
+
+    /*
+    Two compact circuits.
+    */
+
+    drawSeriesCircuit(
+      m,
+      W,
+      H,
+      20,
+      H*.44
+    );
+
+
+    seriesCtx.strokeStyle=
+      "rgba(255,255,255,.25)";
+
+
+    seriesCtx.lineWidth=2;
+
+
+    seriesCtx.beginPath();
+
+    seriesCtx.moveTo(
+      W*.08,
+      H*.50
+    );
+
+    seriesCtx.lineTo(
+      W*.92,
+      H*.50
+    );
+
+    seriesCtx.stroke();
+
+
+    drawEquivalentCircuit(
+      m,
+      W,
+      H,
+      H*.49,
+      H*.45
+    );
+
+  }
+
+
+  drawParticles(
+    m,
+    W,
+    H
+  );
+
+
+  seriesCtx.fillStyle=
+    "#e2e8f0";
+
+
+  seriesCtx.font=
+    "bold 15px system-ui";
+
+
+  seriesCtx.textAlign=
+    "left";
+
+
+  seriesCtx.fillText(
+    "Gruparea în serie și echivalentul ei",
+    18,
+    27
+  );
+
+}
+
+
+/* =========================================================
+   POTENTIAL GRAPH
+========================================================= */
+
+function drawVoltageGraph(
+  m
+){
+
+  const rect=
+    voltageCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  voltageCtx.fillStyle=
+    "#f8fafc";
+
+
+  voltageCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const margin={
+
+    left:65,
+    right:28,
+    top:72,
+    bottom:65
+
+  };
+
+
+  const plotW=
+    W-
+    margin.left-
+    margin.right;
+
+
+  const plotH=
+    H-
+    margin.top-
+    margin.bottom;
+
+
+  const yMax=
+    Math.max(
+      m.U,
+      1
+    )*
+    1.10;
+
+
+  const yFor=
+    value=>
+      margin.top+
+      plotH*
+      (
+        1-
+        value/yMax
+      );
+
+
+  const stepWidth=
+    plotW/
+    (
+      m.count+1
+    );
+
+
+  /*
+  Grid.
+  */
+
+  voltageCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  voltageCtx.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const y=
+      margin.top+
+      plotH*
+      i/5;
+
+
+    voltageCtx.beginPath();
+
+    voltageCtx.moveTo(
+      margin.left,
+      y
+    );
+
+    voltageCtx.lineTo(
+      margin.left+
+      plotW,
+      y
+    );
+
+    voltageCtx.stroke();
+
+  }
+
+
+  /*
+  Build potential values.
+  Start at U then drop after each resistor.
+  */
+
+  const potentials=[
+    m.U
+  ];
+
+
+  let potential=
+    m.U;
+
+
+  m.voltages.forEach(
+    drop=>{
+
+      potential-=
+        drop;
+
+
+      potentials.push(
+        potential
+      );
+
+    }
+  );
+
+
+  /*
+  Step plot.
+  */
+
+  voltageCtx.strokeStyle=
+    "#2563eb";
+
+
+  voltageCtx.lineWidth=4;
+
+
+  voltageCtx.beginPath();
+
+
+  let x=
+    margin.left;
+
+
+  voltageCtx.moveTo(
+    x,
+    yFor(
+      potentials[0]
+    )
+  );
+
+
+  for(
+    let i=0;
+    i<m.count;
+    i++
+  ){
+
+    const nextX=
+      margin.left+
+      stepWidth*
+      (
+        i+1
+      );
+
+
+    voltageCtx.lineTo(
+      nextX,
+      yFor(
+        potentials[i]
+      )
+    );
+
+
+    voltageCtx.lineTo(
+      nextX,
+      yFor(
+        potentials[
+          i+1
+        ]
+      )
+    );
+
+
+    x=
+      nextX;
+
+  }
+
+
+  voltageCtx.lineTo(
+    margin.left+
+    plotW,
+    yFor(
+      potentials[
+        potentials.length-1
+      ]
+    )
+  );
+
+
+  voltageCtx.stroke();
+
+
+  /*
+  Points.
+  */
+
+  potentials.forEach(
+    (
+      value,
+      index
+    )=>{
+
+      const px=
+        index===
+        0
+          ? margin.left
+          : margin.left+
+            stepWidth*
+            index;
+
+
+      voltageCtx.beginPath();
+
+
+      voltageCtx.arc(
+        px,
+        yFor(value),
+        5,
+        0,
+        Math.PI*2
+      );
+
+
+      voltageCtx.fillStyle=
+        "#dc2626";
+
+
+      voltageCtx.fill();
+
+
+      voltageCtx.fillStyle=
+        "#334155";
+
+
+      voltageCtx.font=
+        "bold 10px system-ui";
+
+
+      voltageCtx.textAlign=
+        "center";
+
+
+      voltageCtx.fillText(
+        `${formatRo(value,2)} V`,
+        px,
+        yFor(value)-12
+      );
+
+    }
+  );
+
+
+  /*
+  Titles.
+  */
+
+  voltageCtx.fillStyle=
+    "#0f172a";
+
+
+  voltageCtx.font=
+    "bold 15px system-ui";
+
+
+  voltageCtx.textAlign=
+    "left";
+
+
+  voltageCtx.fillText(
+    "Scăderea potențialului pe gruparea serie",
+    margin.left,
+    28
+  );
+
+
+  voltageCtx.fillStyle=
+    "#475569";
+
+
+  voltageCtx.font=
+    "11px system-ui";
+
+
+  voltageCtx.fillText(
+    "fiecare treaptă verticală reprezintă o cădere Uk = I·Rk",
+    margin.left,
+    48
+  );
+
+
+  voltageCtx.fillStyle=
+    "#334155";
+
+
+  voltageCtx.font=
+    "bold 11px system-ui";
+
+
+  voltageCtx.textAlign=
+    "center";
+
+
+  voltageCtx.fillText(
+    "intrare",
+    margin.left,
+    H-30
+  );
+
+
+  for(
+    let i=0;
+    i<m.count;
+    i++
+  ){
+
+    voltageCtx.fillText(
+      `R${i+1}`,
+      margin.left+
+      stepWidth*
+      (
+        i+1
+      ),
+      H-30
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PARTICLE ANIMATION
+========================================================= */
+
+let lastTime=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const m=
+    readModel();
+
+
+  if(
+    m.I>
+    0 &&
+    animationSelect.value===
+    "on"
+  ){
+
+    const speed=
+      .035+
+      Math.min(
+        m.I,
+        4
+      )*
+      .04;
+
+
+    particles=
+      particles.map(
+        p=>{
+
+          let next=
+            p+
+            speed*
+            dt;
+
+
+          if(
+            next>=1
+          ){
+            next-=1;
+          }
+
+
+          return next;
+
+        }
+      );
+
+  }
+
+
+  drawSeriesScene(
+    m
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setEqual(){
+
+  countSelect.value=
+    "3";
+
+
+  resistorControls[0].slider.value=
+    20;
+
+
+  resistorControls[1].slider.value=
+    20;
+
+
+  resistorControls[2].slider.value=
+    20;
+
+
+  sourceSlider.value=
+    12;
+
+
+  updateResults();
+
+}
+
+
+function setDivider(){
+
+  countSelect.value=
+    "3";
+
+
+  resistorControls[0].slider.value=
+    10;
+
+
+  resistorControls[1].slider.value=
+    20;
+
+
+  resistorControls[2].slider.value=
+    30;
+
+
+  sourceSlider.value=
+    12;
+
+
+  updateResults();
+
+}
+
+
+function doubleAll(){
+
+  const count=
+    Number(
+      countSelect.value
+    );
+
+
+  for(
+    let i=0;
+    i<count;
+    i++
+  ){
+
+    const current=
+      Number(
+        resistorControls[
+          i
+        ].slider.value
+      );
+
+
+    resistorControls[
+      i
+    ].slider.value=
+      Math.min(
+        50,
+        current*
+        2
+      );
+
+  }
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  sourceSlider.value=
+    12;
+
+
+  countSelect.value=
+    "3";
+
+
+  resistorControls[0].slider.value=
+    10;
+
+
+  resistorControls[1].slider.value=
+    20;
+
+
+  resistorControls[2].slider.value=
+    30;
+
+
+  resistorControls[3].slider.value=
+    40;
+
+
+  viewSelect.value=
+    "series";
+
+
+  animationSelect.value=
+    "on";
+
+
+  resetParticles();
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  sourceSlider,
+  countSelect,
+  viewSelect,
+  animationSelect,
+  ...resistorControls.map(
+    item=>
+      item.slider
+  )
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "equalBtn"
+  )
+  .addEventListener(
+    "click",
+    setEqual
+  );
+
+
+document
+  .getElementById(
+    "dividerBtn"
+  )
+  .addEventListener(
+    "click",
+    setDivider
+  );
+
+
+document
+  .getElementById(
+    "equivalentBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      viewSelect.value=
+        viewSelect.value===
+        "series"
+          ? "equivalent"
+          : viewSelect.value===
+            "equivalent"
+              ? "compare"
+              : "series";
+
+
+      updateResults();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "doubleRBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleAll
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    seriesCanvas,
+    seriesCtx
+  );
+
+
+  resizeCanvas(
+    voltageCanvas,
+    voltageCtx
+  );
+
+
+  const m=
+    updateResults();
+
+
+  drawSeriesScene(
+    m
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește proprietățile grupării în serie.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Stăpânești gruparea rezistoarelor în serie.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Exersează rezistența echivalentă și divizarea tensiunii.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia cele trei relații: I comun, U se adună, R se adună.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      seriesCanvas,
+      seriesCtx
+    );
+
+
+    resizeCanvas(
+      voltageCanvas,
+      voltageCtx
+    );
+
+
+    resetParticles();
+
+
+    const m=
+      updateResults();
+
+
+    drawSeriesScene(
+      m
+    );
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
