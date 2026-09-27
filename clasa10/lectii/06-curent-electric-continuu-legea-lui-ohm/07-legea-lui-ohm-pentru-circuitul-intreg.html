@@ -1,1 +1,7818 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+7. Legea lui Ohm pentru circuitul întreg | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Legea lui Ohm pentru circuitul întreg: sursă reală, tensiune electromotoare, rezistență internă, tensiune la borne, curent de scurtcircuit și simulator interactiv. Fizică clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(250,204,21,.18),
+      transparent 19%
+    ),
+
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(59,130,246,.45),
+      transparent 38%
+    ),
+
+    linear-gradient(
+      135deg,
+      #172554,
+      #1d4ed8 52%,
+      #0891b2
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius:999px;
+
+  font-weight:800;
+
+}
+
+.class-badge{
+
+  display:inline-block;
+
+  margin-left:8px;
+
+  padding:6px 12px;
+
+  background:
+    rgba(250,204,21,.13);
+
+  color:#fef08a;
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3.2rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:930px;
+
+  margin:18px 0 0;
+
+  color:#dbeafe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:25px;
+
+  line-height:1.25;
+
+}
+
+.lead{
+  font-size:1.08rem;
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--blue-soft);
+
+  border-color:#bfdbfe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.35rem);
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#eaf2ff;
+}
+
+
+/* =========================================================
+   SOURCE MODEL
+========================================================= */
+
+.source-model{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:24px 0;
+
+}
+
+.model-box{
+
+  padding:18px 12px;
+
+  text-align:center;
+
+  background:#fff;
+
+  border:
+    2px solid #bfdbfe;
+
+  border-radius:13px;
+
+}
+
+.model-arrow{
+
+  color:#2563eb;
+
+  font-size:2rem;
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   RELATION
+========================================================= */
+
+.relation-card{
+
+  padding:20px;
+
+  text-align:center;
+
+  background:#fff;
+
+  border:
+    2px solid #dbeafe;
+
+  border-radius:14px;
+
+}
+
+.relation-card strong{
+
+  display:block;
+
+  margin-bottom:8px;
+
+  color:#1d4ed8;
+
+}
+
+
+/* =========================================================
+   CIRCUIT FIGURE
+========================================================= */
+
+.circuit-figure{
+
+  min-height:330px;
+
+  display:grid;
+  place-items:center;
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #e0f2fe
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:16px;
+
+}
+
+.circuit-figure svg{
+
+  width:100%;
+  max-width:780px;
+  height:auto;
+
+}
+
+.svg-wire{
+
+  fill:none;
+
+  stroke:#334155;
+
+  stroke-width:5;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+}
+
+.svg-element{
+
+  fill:white;
+
+  stroke:#334155;
+
+  stroke-width:4;
+
+}
+
+.svg-text{
+
+  fill:#0f172a;
+
+  font-family:Arial,sans-serif;
+
+  font-size:23px;
+  font-weight:bold;
+
+}
+
+.svg-small{
+
+  fill:#334155;
+
+  font-family:Arial,sans-serif;
+
+  font-size:16px;
+  font-weight:bold;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  background:var(--blue);
+  color:white;
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fbff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+  font-weight:750;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  background:white;
+  color:var(--text);
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.range-value{
+
+  color:#1d4ed8;
+
+  font-size:.85rem;
+  font-weight:800;
+
+}
+
+.button-row{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:
+    translateY(-1px);
+
+  filter:
+    brightness(.97);
+
+}
+
+.primary{
+
+  background:#2563eb;
+  color:white;
+
+}
+
+.secondary{
+
+  background:#e2e8f0;
+  color:#0f172a;
+
+}
+
+.green-button{
+
+  background:#dcfce7;
+  color:#166534;
+
+}
+
+.orange-button{
+
+  background:#ffedd5;
+  color:#9a3412;
+
+}
+
+.purple-button{
+
+  background:#ede9fe;
+  color:#6d28d9;
+
+}
+
+.red-button{
+
+  background:#fee2e2;
+  color:#991b1b;
+
+}
+
+.lab-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.12fr .88fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#circuitCanvas,
+#graphCanvas{
+
+  display:block;
+
+  width:100%;
+
+}
+
+#circuitCanvas{
+  height:620px;
+}
+
+#graphCanvas{
+  height:620px;
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+
+  font-size:1.04rem;
+
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  background:var(--cyan-soft);
+  color:#155e75;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+.danger-status{
+
+  background:#fef2f2;
+  color:#991b1b;
+
+  border-color:#fca5a5;
+
+}
+
+
+/* =========================================================
+   ENERGY BARS
+========================================================= */
+
+.energy-panel{
+
+  margin-top:18px;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.energy-row{
+
+  display:grid;
+
+  grid-template-columns:
+    180px 1fr 90px;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:12px 0;
+
+}
+
+.energy-track{
+
+  height:22px;
+
+  overflow:hidden;
+
+  background:#e2e8f0;
+
+  border-radius:999px;
+
+}
+
+.energy-fill{
+
+  height:100%;
+
+  transition:
+    width .25s ease;
+
+}
+
+.energy-source{
+  background:#8b5cf6;
+}
+
+.energy-external{
+  background:#22c55e;
+}
+
+.energy-internal{
+  background:#f97316;
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:#fff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  cursor:pointer;
+
+  color:#1d4ed8;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  background:#f1f5f9;
+  color:#0f172a;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--blue-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:64px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:850px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .lab-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .source-model{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .model-arrow{
+
+    transform:rotate(90deg);
+
+    text-align:center;
+
+  }
+
+  .energy-row{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .lesson-nav{
+
+    grid-template-columns:1fr;
+
+  }
+
+  #circuitCanvas{
+    height:720px;
+  }
+
+  #graphCanvas{
+    height:520px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .simulator,
+  .lesson-nav{
+    break-inside:avoid;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent electric continuu. Legea lui Ohm
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 7
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+</div>
+
+
+<h1>
+Legea lui Ohm pentru circuitul întreg
+</h1>
+
+
+<p class="subtitle">
+O sursă reală are și ea rezistență electrică.
+Curentul din circuit este determinat atât de receptorul exterior,
+cât și de rezistența internă a sursei.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>
+să explici modelul unei surse reale;
+</li>
+
+<li>
+să diferențiezi rezistența exterioară \(R\)
+de rezistența internă \(r\);
+</li>
+
+<li>
+să deduci legea lui Ohm pentru circuitul întreg;
+</li>
+
+<li>
+să utilizezi relația
+\(I=\mathcal E/(R+r)\);
+</li>
+
+<li>
+să calculezi tensiunea la borne:
+\(U=\mathcal E-Ir\);
+</li>
+
+<li>
+să explici de ce tensiunea la borne scade când curentul crește;
+</li>
+
+<li>
+să descrii mersul în gol;
+</li>
+
+<li>
+să explici regimul de scurtcircuit;
+</li>
+
+<li>
+să determini experimental rezistența internă a unei surse;
+</li>
+
+<li>
+să interpretezi graficele \(I(R)\) și \(U(R)\).
+</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relația fundamentală</h3>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+<p>
+Curentul este determinat de
+<strong>rezistența totală a circuitului simplu</strong>:
+</p>
+
+<div class="formula">
+
+\[
+R_{\text{tot}}
+=
+R+r
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RECAP
+========================================================= -->
+
+<section class="card">
+
+<h2>🔁 Recapitulare</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>T.e.m.</h3>
+
+<div class="formula">
+
+\[
+\mathcal E
+\]
+
+</div>
+
+<p>
+Energia furnizată de sursă
+pe unitatea de sarcină.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiunea la borne</h3>
+
+<div class="formula">
+
+\[
+U
+\]
+
+</div>
+
+<p>
+Energia pe unitatea de sarcină
+disponibilă circuitului exterior.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiunea interioară</h3>
+
+<div class="formula">
+
+\[
+u
+\]
+
+</div>
+
+<p>
+Pentru sursa reală în regim de generator:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=U+u
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<p>
+Din lecția precedentă știm și:
+</p>
+
+<div class="formula">
+
+\[
+U=RI
+\]
+
+</div>
+
+<p>
+pentru rezistorul exterior ohmic.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEM
+========================================================= -->
+
+<section class="card">
+
+<h2>🔋 Situație-problemă</h2>
+
+<p class="lead">
+O baterie are înscrisă o anumită tensiune,
+dar atunci când alimentăm un receptor solicitant,
+tensiunea măsurată la borne poate scădea.
+</p>
+
+<div class="orange-box">
+
+<strong>De ce?</strong>
+
+<p>
+Dacă sursa ar fi ideală,
+tensiunea la borne ar rămâne egală cu t.e.m.
+indiferent de curent.
+</p>
+
+<p>
+Sursele reale nu se comportă astfel.
+</p>
+
+</div>
+
+<p>
+Modelul cel mai simplu introduce o mărime nouă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+r=\text{rezistența internă a sursei}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REAL SOURCE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Modelul sursei reale</h2>
+
+<p>
+O sursă reală este modelată prin:
+</p>
+
+<div class="source-model">
+
+<div class="model-box">
+
+<strong>
+Sursă ideală
+</strong>
+
+<div class="formula">
+
+\[
+\mathcal E
+\]
+
+</div>
+
+</div>
+
+
+<div class="model-arrow">
++
+</div>
+
+
+<div class="model-box">
+
+<strong>
+Rezistență internă
+</strong>
+
+<div class="formula">
+
+\[
+r
+\]
+
+</div>
+
+</div>
+
+
+<div class="model-arrow">
+→
+</div>
+
+
+<div class="model-box">
+
+<strong>
+Sursă reală
+</strong>
+
+<div class="formula">
+
+\[
+(\mathcal E,r)
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Rezistența internă \(r\)</strong>
+modelează opoziția electrică
+din interiorul sursei reale.
+</div>
+
+
+<div class="yellow-box">
+
+Rezistența internă nu este neapărat
+un rezistor fizic separat aflat în baterie.
+
+Ea este o mărime a
+<strong>modelului electric echivalent</strong>
+al sursei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CIRCUIT
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Circuitul întreg</h2>
+
+<div class="circuit-figure">
+
+<svg
+  viewBox="0 0 820 390"
+  aria-label="Circuit complet cu rezistență externă și internă">
+
+<!-- main circuit -->
+
+<path
+  class="svg-wire"
+  d="M110 85 H270"/>
+
+<path
+  class="svg-wire"
+  d="M350 85 H690 V140"/>
+
+<path
+  class="svg-wire"
+  d="M690 220 V300 H110"/>
+
+<path
+  class="svg-wire"
+  d="M110 85 V130"/>
+
+<path
+  class="svg-wire"
+  d="M110 210 V300"/>
+
+<!-- source emf -->
+
+<line
+  class="svg-wire"
+  x1="75"
+  y1="140"
+  x2="145"
+  y2="140"/>
+
+<line
+  class="svg-wire"
+  x1="88"
+  y1="198"
+  x2="132"
+  y2="198"/>
+
+<text
+  class="svg-text"
+  x="57"
+  y="148">
++
+</text>
+
+<text
+  class="svg-text"
+  x="58"
+  y="207">
+−
+</text>
+
+<!-- internal r -->
+
+<rect
+  class="svg-element"
+  x="270"
+  y="55"
+  width="80"
+  height="60"
+  rx="5"/>
+
+<text
+  class="svg-text"
+  x="302"
+  y="94">
+r
+</text>
+
+<!-- external R -->
+
+<rect
+  class="svg-element"
+  x="655"
+  y="140"
+  width="70"
+  height="80"
+  rx="5"/>
+
+<text
+  class="svg-text"
+  x="679"
+  y="190">
+R
+</text>
+
+<!-- labels -->
+
+<text
+  class="svg-small"
+  x="57"
+  y="345">
+sursă: ℰ
+</text>
+
+<text
+  class="svg-small"
+  x="248"
+  y="145">
+rezistență internă
+</text>
+
+<text
+  class="svg-small"
+  x="625"
+  y="255">
+circuit exterior
+</text>
+
+<text
+  class="svg-small"
+  x="420"
+  y="335">
+același curent I străbate întregul circuit simplu
+</text>
+
+</svg>
+
+</div>
+
+
+<p>
+În acest circuit simplu,
+rezistențele \(R\) și \(r\) sunt parcurse de același curent.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+R_{\text{tot}}
+=
+R+r
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Deducerea legii lui Ohm pentru circuitul întreg</h2>
+
+<p>
+Pentru sursa reală în regim de generator:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+U+u
+\]
+
+</div>
+
+<p>
+Pentru circuitul exterior:
+</p>
+
+<div class="formula">
+
+\[
+U=IR
+\]
+
+</div>
+
+<p>
+Pentru rezistența internă:
+</p>
+
+<div class="formula">
+
+\[
+u=Ir
+\]
+
+</div>
+
+<p>
+Înlocuim:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+IR+Ir
+\]
+
+</div>
+
+<p>
+Scoatem \(I\) factor comun:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+I(R+r)
+\]
+
+</div>
+
+<p>
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Aceasta este
+<strong>legea lui Ohm pentru circuitul întreg</strong>
+în modelul simplu format dintr-o sursă reală
+și o rezistență exterioară.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THREE RELATIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Cele trei relații pe care trebuie să le legi între ele</h2>
+
+<div class="grid-3">
+
+
+<div class="relation-card">
+
+<strong>
+Circuit întreg
+</strong>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="relation-card">
+
+<strong>
+Circuit exterior
+</strong>
+
+<div class="formula">
+
+\[
+\boxed{
+U=IR
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="relation-card">
+
+<strong>
+Interiorul sursei
+</strong>
+
+<div class="formula">
+
+\[
+\boxed{
+u=Ir
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+<p>
+Iar bilanțul este:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\mathcal E
+=
+U+u
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TERMINAL VOLTAGE
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Tensiunea la borne a sursei reale</h2>
+
+Din:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+U+Ir
+\]
+
+</div>
+
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U=
+\mathcal E-Ir
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Pentru o sursă care furnizează energie:
+
+\[
+I\uparrow
+\quad\Rightarrow\quad
+Ir\uparrow
+\quad\Rightarrow\quad
+U\downarrow
+\]
+
+dacă \(\mathcal E\) și \(r\) sunt considerate constante.
+</div>
+
+
+<p>
+Acesta este motivul pentru care
+o sursă reală poate avea la borne,
+sub sarcină,
+o tensiune mai mică decât t.e.m.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE 1
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 1 – Curentul în circuit</h2>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V
+\]
+
+\[
+r=1\,\Omega
+\]
+
+</div>
+
+<p>
+iar rezistența exterioară este:
+</p>
+
+<div class="formula">
+
+\[
+R=5\,\Omega
+\]
+
+</div>
+
+<p>
+Aplicăm:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I=
+\frac{12}{5+1}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=2\,A
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE 2
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemplul 2 – Tensiunea la borne</h2>
+
+<p>
+Pentru datele precedente:
+</p>
+
+<div class="formula">
+
+\[
+I=2\,A
+\]
+
+\[
+r=1\,\Omega
+\]
+
+</div>
+
+<p>
+tensiunea interioară este:
+</p>
+
+<div class="formula">
+
+\[
+u=Ir
+=
+2\cdot1
+=
+2\,V
+\]
+
+</div>
+
+<p>
+Tensiunea la borne:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-u
+\]
+
+\[
+U=
+12-2
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U=10\,V
+}
+\]
+
+</div>
+
+<p>
+Verificare prin circuitul exterior:
+</p>
+
+<div class="formula">
+
+\[
+U=IR
+=
+2\cdot5
+=
+10\,V
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     OPEN CIRCUIT
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Mersul în gol – circuit deschis</h2>
+
+<p>
+Dacă circuitul exterior este deschis:
+</p>
+
+<div class="formula">
+
+\[
+I=0
+\]
+
+</div>
+
+<p>
+Atunci:
+</p>
+
+<div class="formula">
+
+\[
+u=Ir=0
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_0=
+\mathcal E
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+În modelul școlar,
+tensiunea la bornele unei surse
+măsurată în gol este egală cu t.e.m.
+</div>
+
+
+<div class="red-box">
+
+<strong>Nu confunda mersul în gol cu scurtcircuitul.</strong>
+
+Circuit deschis:
+
+\[
+I=0
+\]
+
+Scurtcircuit:
+
+\[
+R\approx0
+\]
+
+și curentul poate deveni foarte mare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SHORT CIRCUIT
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Regimul de scurtcircuit</h2>
+
+<p>
+În modelul simplificat,
+scurtcircuitul exterior corespunde:
+</p>
+
+<div class="formula">
+
+\[
+R=0
+\]
+
+</div>
+
+<p>
+Legea circuitului întreg devine:
+</p>
+
+<div class="formula">
+
+\[
+I_{sc}
+=
+\frac{\mathcal E}{r}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I_{sc}
+=
+\frac{\mathcal E}{r}
+}
+\]
+
+</div>
+
+
+<p>
+Tensiunea pe circuitul exterior idealizat:
+</p>
+
+<div class="formula">
+
+\[
+U=I_{sc}R=0
+\]
+
+</div>
+
+<p>
+iar:
+</p>
+
+<div class="formula">
+
+\[
+Ir=
+\mathcal E
+\]
+
+</div>
+
+
+<div class="red-box">
+
+<strong>Scurtcircuitul real este periculos.</strong>
+
+Curentul foarte mare poate produce încălzire,
+deteriorarea sursei și a conductoarelor
+și poate declanșa dispozitivele de protecție.
+
+<strong>Nu se realizează experimental prin legarea directă
+a bornelor unei baterii.</strong>
+</div>
+
+
+<div class="yellow-box">
+
+Relația:
+
+\[
+I_{sc}=
+\frac{\mathcal E}{r}
+\]
+
+aparține modelului simplificat.
+
+În surse reale,
+rezistența internă poate depinde de temperatură,
+starea de încărcare și intensitatea curentului,
+iar unele surse includ protecții electronice.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LIMIT COMPARISON
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Trei regimuri importante</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Regim
+</th>
+
+<th>
+Rezistență exterioară
+</th>
+
+<th>
+Curent
+</th>
+
+<th>
+Tensiune la borne
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+Mers în gol
+</td>
+
+<td>
+foarte mare / circuit deschis
+</td>
+
+<td>
+\[
+I=0
+\]
+</td>
+
+<td>
+\[
+U=\mathcal E
+\]
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Funcționare normală
+</td>
+
+<td>
+\[
+R>0
+\]
+</td>
+
+<td>
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+</td>
+
+<td>
+\[
+U=\mathcal E-Ir
+\]
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Scurtcircuit idealizat
+</td>
+
+<td>
+\[
+R=0
+\]
+</td>
+
+<td>
+\[
+I_{sc}=
+\frac{\mathcal E}{r}
+\]
+</td>
+
+<td>
+\[
+U=0
+\]
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE R
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Ce se întâmplă când modificăm rezistența exterioară?</h2>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+cu \(\mathcal E\) și \(r\) constante:
+</p>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Mărim \(R\)</h3>
+
+<div class="formula">
+
+\[
+R\uparrow
+\]
+
+\[
+R+r\uparrow
+\]
+
+\[
+I\downarrow
+\]
+
+</div>
+
+<p>
+Curentul scade.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Micșorăm \(R\)</h3>
+
+<div class="formula">
+
+\[
+R\downarrow
+\]
+
+\[
+R+r\downarrow
+\]
+
+\[
+I\uparrow
+\]
+
+</div>
+
+<p>
+Curentul crește.
+</p>
+
+</div>
+
+</div>
+
+
+<p>
+Dar tensiunea la borne este:
+</p>
+
+<div class="formula">
+
+\[
+U=
+IR
+\]
+
+</div>
+
+sau:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-Ir
+\]
+
+</div>
+
+<p>
+Pe măsură ce \(R\) crește,
+curentul scade,
+căderea internă \(Ir\) scade,
+iar tensiunea la borne se apropie de \(\mathcal E\).
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT r
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 Experiment – Estimarea rezistenței interne a unei surse</h2>
+
+<div class="grid-2">
+
+
+<div>
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă de joasă tensiune;</li>
+
+<li>rezistor de sarcină adecvat;</li>
+
+<li>ampermetru;</li>
+
+<li>voltmetru;</li>
+
+<li>întrerupător;</li>
+
+<li>conductoare.</li>
+
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>Scop</h3>
+
+<p>
+Estimarea rezistenței interne:
+</p>
+
+<div class="formula">
+
+\[
+r
+\]
+
+</div>
+
+din măsurări ale tensiunii și curentului.
+</p>
+
+</div>
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Măsoară tensiunea la borne cu circuitul deschis:
+\(U_0\).
+</li>
+
+<li>
+În modelul studiat consideră:
+\[
+\mathcal E\approx U_0
+\]
+</li>
+
+<li>
+Conectează un rezistor de sarcină adecvat.
+</li>
+
+<li>
+Măsoară tensiunea la borne sub sarcină:
+\(U\).
+</li>
+
+<li>
+Măsoară intensitatea curentului:
+\(I\).
+</li>
+
+<li>
+Folosește:
+\[
+\mathcal E=U+Ir
+\]
+</li>
+
+<li>
+Rezultă:
+\[
+\boxed{
+r=
+\frac{\mathcal E-U}{I}
+}
+\]
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+Exemplu:
+
+\[
+\mathcal E=6,0\,V
+\]
+
+\[
+U=5,6\,V
+\]
+
+\[
+I=0,40\,A
+\]
+
+Atunci:
+
+\[
+r=
+\frac{6,0-5,6}{0,40}
+=
+1,0\,\Omega
+\]
+
+</div>
+
+
+<div class="red-box">
+
+Experimentul se realizează doar cu
+surse de joasă tensiune și rezistoare potrivite.
+
+Nu se determină \(r\)
+prin scurtcircuitarea sursei.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Laborator virtual – Sursa reală și circuitul întreg</h2>
+
+<p>
+Modifică t.e.m.,
+rezistența internă și rezistența exterioară.
+Urmărește simultan curentul,
+tensiunea la borne,
+căderea internă și graficele circuitului.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="emfSlider">
+T.e.m. \(\mathcal E\) [V]
+</label>
+
+<input
+  id="emfSlider"
+  type="range"
+  min="1"
+  max="24"
+  step="0.5"
+  value="12">
+
+<span
+  class="range-value"
+  id="emfLabel">
+12,0 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="internalSlider">
+Rezistența internă \(r\) [Ω]
+</label>
+
+<input
+  id="internalSlider"
+  type="range"
+  min="0.2"
+  max="10"
+  step="0.1"
+  value="1">
+
+<span
+  class="range-value"
+  id="internalLabel">
+1,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="externalSlider">
+Rezistența exterioară \(R\) [Ω]
+</label>
+
+<input
+  id="externalSlider"
+  type="range"
+  min="0.2"
+  max="50"
+  step="0.2"
+  value="5">
+
+<span
+  class="range-value"
+  id="externalLabel">
+5,0 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="modeSelect">
+Regim
+</label>
+
+<select id="modeSelect">
+
+<option value="normal">
+funcționare normală
+</option>
+
+<option value="open">
+mers în gol
+</option>
+
+<option value="short">
+scurtcircuit virtual
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="ammeterRange">
+Domeniu ampermetru
+</label>
+
+<select id="ammeterRange">
+
+<option value="1">
+0 – 1 A
+</option>
+
+<option value="3">
+0 – 3 A
+</option>
+
+<option value="10" selected>
+0 – 10 A
+</option>
+
+<option value="30">
+0 – 30 A
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="voltmeterRange">
+Domeniu voltmetru
+</label>
+
+<select id="voltmeterRange">
+
+<option value="3">
+0 – 3 V
+</option>
+
+<option value="6">
+0 – 6 V
+</option>
+
+<option value="15" selected>
+0 – 15 V
+</option>
+
+<option value="30">
+0 – 30 V
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="graphMode">
+Grafic
+</label>
+
+<select id="graphMode">
+
+<option value="current">
+\(I(R)\)
+</option>
+
+<option value="voltage">
+\(U(R)\)
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label>
+Model
+</label>
+
+<input
+  type="text"
+  value="sursă reală: ℰ + r"
+  disabled>
+
+</div>
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="normalBtn">
+
+🔌 Funcționare normală
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="openBtn">
+
+⭕ Mers în gol
+
+</button>
+
+
+<button
+  class="red-button"
+  id="shortBtn">
+
+⚠ Scurtcircuit virtual
+
+</button>
+
+
+<button
+  class="primary"
+  id="bestRangeBtn">
+
+🎯 Alege domenii potrivite
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="doubleRBtn">
+
+×2 Rezistența exterioară
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="lab-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="circuitCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="graphCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Curentul \(I\)
+</span>
+
+<strong id="currentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tensiunea la borne \(U\)
+</span>
+
+<strong id="terminalValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tensiunea interioară \(u=Ir\)
+</span>
+
+<strong id="internalVoltageValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+T.e.m. \(\mathcal E\)
+</span>
+
+<strong id="emfValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistența exterioară
+</span>
+
+<strong id="externalValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistența internă
+</span>
+
+<strong id="internalValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Rezistența totală
+</span>
+
+<strong id="totalResistanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Verificare \(\mathcal E=U+u\)
+</span>
+
+<strong id="balanceValue">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div
+  class="status-box"
+  id="statusBox">
+
+Modifică rezistența exterioară și urmărește
+ampermetrul și voltmetrul.
+</div>
+
+
+<div class="energy-panel">
+
+<h3>
+⚡ Bilanț energetic pentru fiecare \(1\,C\) de sarcină
+</h3>
+
+<div class="energy-row">
+
+<strong>
+Sursa furnizează
+</strong>
+
+<div class="energy-track">
+<div
+  class="energy-fill energy-source"
+  id="sourceEnergyBar">
+</div>
+</div>
+
+<span id="sourceEnergyText">
+—
+</span>
+
+</div>
+
+
+<div class="energy-row">
+
+<strong>
+Circuit exterior
+</strong>
+
+<div class="energy-track">
+<div
+  class="energy-fill energy-external"
+  id="externalEnergyBar">
+</div>
+</div>
+
+<span id="externalEnergyText">
+—
+</span>
+
+</div>
+
+
+<div class="energy-row">
+
+<strong>
+Interiorul sursei
+</strong>
+
+<div class="energy-track">
+<div
+  class="energy-fill energy-internal"
+  id="internalEnergyBar">
+</div>
+</div>
+
+<span id="internalEnergyText">
+—
+</span>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Investigații în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Mărește \(R\)</h3>
+
+<p>
+Păstrează:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V
+\qquad
+r=1\,\Omega
+\]
+
+</div>
+
+<p>
+Crește \(R\) de la \(5\,\Omega\) la \(20\,\Omega\).
+</p>
+
+<p>
+Ce se întâmplă cu \(I\)?
+Dar cu \(U\)?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Mărește \(r\)</h3>
+
+<p>
+Păstrează aceeași t.e.m. și aceeași sarcină.
+</p>
+
+<p>
+Mărește rezistența internă.
+</p>
+
+<p>
+Cum se modifică:
+</p>
+
+<div class="formula">
+
+\[
+I,\quad
+Ir,\quad
+U
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Mers în gol</h3>
+
+<p>
+Selectează:
+</p>
+
+<div class="formula">
+
+\[
+I=0
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+U=\mathcal E
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Scurtcircuit virtual</h3>
+
+<p>
+Selectează modul virtual de scurtcircuit.
+</p>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+I_{sc}
+=
+\frac{\mathcal E}{r}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Sursă cu rezistență internă mare</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+r=5\,\Omega
+\]
+
+</div>
+
+<p>
+Compară tensiunea la borne pentru sarcini diferite.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Graficul \(I(R)\)</h3>
+
+<p>
+Observă forma curbei:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+<p>
+Este o dreaptă?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Graficul \(U(R)\)</h3>
+
+<p>
+Schimbă modul grafic.
+</p>
+
+<p>
+Observă că:
+</p>
+
+<div class="formula">
+
+\[
+R\rightarrow\infty
+\Rightarrow
+U\rightarrow\mathcal E
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>H. Pregătire pentru reostat</h3>
+
+<p>
+Modifică numai \(R\).
+</p>
+
+<p>
+Observă că reglarea rezistenței exterioare permite
+reglarea intensității curentului.
+</p>
+
+<p>
+Aceasta pregătește lecția următoare.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Algoritm pentru probleme</h2>
+
+<ol class="steps">
+
+<li>
+
+<strong>
+Identifică sursa.
+</strong>
+
+<p>
+Notează:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E,\qquad r
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Identifică circuitul exterior.
+</strong>
+
+<div class="formula">
+
+\[
+R
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Calculează rezistența totală.
+</strong>
+
+<div class="formula">
+
+\[
+R_{\text{tot}}
+=
+R+r
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Aplică legea circuitului întreg.
+</strong>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Calculează tensiunea la borne.
+</strong>
+
+<p>
+Poți folosi:
+</p>
+
+<div class="formula">
+
+\[
+U=IR
+\]
+
+</div>
+
+sau:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-Ir
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Verifică bilanțul.
+</strong>
+
+<div class="formula">
+
+\[
+\mathcal E
+=
+U+Ir
+\]
+
+</div>
+
+</li>
+
+
+<li>
+
+<strong>
+Analizează fizic rezultatul.
+</strong>
+
+<p>
+Trebuie să fie:
+</p>
+
+<div class="formula">
+
+\[
+0\le U\le\mathcal E
+\]
+
+</div>
+
+<p>
+pentru regimul simplu de generator studiat aici.
+</p>
+
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     PROBLEMS
+========================================================= -->
+
+<section class="card">
+
+<h2>🧩 Probleme de antrenament</h2>
+
+
+<div class="problem">
+
+<h3>Problema 1</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=9\,V
+\]
+
+\[
+r=1\,\Omega
+\]
+
+</div>
+
+<p>
+și alimentează:
+</p>
+
+<div class="formula">
+
+\[
+R=8\,\Omega
+\]
+
+</div>
+
+<p>
+Determină curentul.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I=
+\frac9{8+1}
+\]
+
+\[
+\boxed{
+I=1\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Problema 2</h3>
+
+<p>
+Pentru circuitul precedent,
+determină tensiunea la borne.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+U=IR
+\]
+
+\[
+U=
+1\cdot8
+\]
+
+\[
+\boxed{
+U=8\,V
+}
+\]
+
+Verificare:
+
+\[
+U=
+\mathcal E-Ir
+=
+9-1
+=
+8\,V
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Problema 3</h3>
+
+<p>
+O sursă are:
+</p>
+
+<div class="formula">
+
+\[
+\mathcal E=12\,V
+\]
+
+</div>
+
+iar curentul de scurtcircuit idealizat este:
+</p>
+
+<div class="formula">
+
+\[
+I_{sc}=6\,A
+\]
+
+</div>
+
+<p>
+Determină rezistența internă.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_{sc}
+=
+\frac{\mathcal E}{r}
+\]
+
+\[
+r=
+\frac{\mathcal E}{I_{sc}}
+\]
+
+\[
+r=
+\frac{12}{6}
+\]
+
+\[
+\boxed{
+r=2\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Problema 4</h3>
+
+<p>
+O sursă are în gol:
+</p>
+
+<div class="formula">
+
+\[
+U_0=6,0\,V
+\]
+
+</div>
+
+iar sub sarcină:
+</p>
+
+<div class="formula">
+
+\[
+U=5,4\,V
+\]
+
+\[
+I=0,30\,A
+\]
+
+</div>
+
+<p>
+Estimează rezistența internă.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+În modelul utilizat:
+
+\[
+\mathcal E\approx U_0
+=
+6,0\,V
+\]
+
+Apoi:
+
+\[
+r=
+\frac{\mathcal E-U}{I}
+\]
+
+\[
+r=
+\frac{6,0-5,4}{0,30}
+\]
+
+\[
+\boxed{
+r=2\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<h3>Problema 5</h3>
+
+<p>
+Pentru aceeași sursă,
+rezistența exterioară crește.
+</p>
+
+<p>
+Fără calcule,
+precizează cum se modifică:
+</p>
+
+<div class="formula">
+
+\[
+I
+\qquad
+Ir
+\qquad
+U
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi răspunsul
+</summary>
+
+<div class="solution">
+
+\[
+R\uparrow
+\Rightarrow
+I\downarrow
+\]
+
+Apoi:
+
+\[
+Ir\downarrow
+\]
+
+iar:
+
+\[
+U=
+\mathcal E-Ir
+\]
+
+crește și se apropie de:
+
+\[
+\mathcal E
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. Folosesc \(I=\mathcal E/R\)</h3>
+
+<p>
+Pentru sursa reală trebuie inclusă rezistența internă:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{\mathcal E}{R+r}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. Confund \(R\) cu \(r\)</h3>
+
+<p>
+\(R\) aparține circuitului exterior.
+</p>
+
+<p>
+\(r\) este rezistența internă a sursei.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. Scriu \(U=\mathcal E+Ir\)</h3>
+
+<p>
+Pentru sursa care funcționează ca generator:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\mathcal E-Ir
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. Cred că mersul în gol înseamnă \(R=0\)</h3>
+
+<p>
+Fals.
+</p>
+
+<p>
+Mersul în gol înseamnă circuit exterior deschis:
+</p>
+
+<div class="formula">
+
+\[
+I=0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. Cred că scurtcircuitul înseamnă \(I=0\)</h3>
+
+<p>
+Exact invers:
+în modelul simplu,
+curentul este maxim.
+</p>
+
+<div class="formula">
+
+\[
+I_{sc}
+=
+\frac{\mathcal E}{r}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. Ignor rezistența internă</h3>
+
+<p>
+Atunci nu mai putem explica de ce
+tensiunea la borne scade sub sarcină.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. Consider \(r\) perfect constantă în orice situație reală</h3>
+
+<p>
+Este o aproximație a modelului.
+Rezistența internă poate varia cu starea sursei și temperatura.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. Verific scurtcircuitul direct cu bateria</h3>
+
+<p>
+Nu se face.
+Regimul se studiază prin model,
+simulare sau montaje didactice protejate.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce trebuie adunată rezistența internă \(r\)
+la rezistența exterioară \(R\)?
+</li>
+
+<li>
+De ce tensiunea la borne scade când intensitatea crește?
+</li>
+
+<li>
+Ce se întâmplă cu tensiunea interioară \(Ir\)
+dacă intensitatea scade?
+</li>
+
+<li>
+De ce tensiunea în gol este egală cu t.e.m.
+în modelul studiat?
+</li>
+
+<li>
+De ce curentul de scurtcircuit depinde puternic de \(r\)?
+</li>
+
+<li>
+Ce se întâmplă cu \(I_{sc}\)
+dacă rezistența internă se dublează?
+</li>
+
+<li>
+Pentru aceeași sursă,
+ce se întâmplă cu intensitatea dacă \(R\) crește?
+</li>
+
+<li>
+De ce tensiunea la borne se apropie de \(\mathcal E\)
+atunci când \(R\) devine foarte mare?
+</li>
+
+<li>
+Cum poți estima rezistența internă fără a scurtcircuita sursa?
+</li>
+
+<li>
+De ce o baterie uzată poate prezenta
+o scădere mai pronunțată a tensiunii sub sarcină?
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card quiz">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Legea lui Ohm pentru circuitul întreg este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=\mathcal E R\)
+</button>
+
+<button class="answer-btn">
+\(I=\mathcal E/(R+r)\)
+</button>
+
+<button class="answer-btn">
+\(I=(R+r)/\mathcal E\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Rezistența totală a circuitului simplu este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R-r\)
+</button>
+
+<button class="answer-btn">
+\(R/r\)
+</button>
+
+<button class="answer-btn">
+\(R+r\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Pentru o sursă în regim de generator:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U=\mathcal E-Ir\)
+</button>
+
+<button class="answer-btn">
+\(U=\mathcal E+Ir\)
+</button>
+
+<button class="answer-btn">
+\(U=Ir-\mathcal E\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+La mersul în gol:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R=0\)
+</button>
+
+<button class="answer-btn">
+\(I=0\)
+</button>
+
+<button class="answer-btn">
+\(U=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+În modelul studiat,
+tensiunea în gol este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_0=0\)
+</button>
+
+<button class="answer-btn">
+\(U_0=rI\)
+</button>
+
+<button class="answer-btn">
+\(U_0=\mathcal E\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Curentul de scurtcircuit idealizat este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I_{sc}=\mathcal E/r\)
+</button>
+
+<button class="answer-btn">
+\(I_{sc}=r/\mathcal E\)
+</button>
+
+<button class="answer-btn">
+\(I_{sc}=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă \(R\) crește,
+iar \(\mathcal E\) și \(r\) rămân constante,
+curentul:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+crește
+</button>
+
+<button class="answer-btn">
+scade
+</button>
+
+<button class="answer-btn">
+rămâne obligatoriu constant
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Pentru
+\(\mathcal E=12\,V\),
+\(R=5\,\Omega\)
+și
+\(r=1\,\Omega\),
+curentul este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(12\,A\)
+</button>
+
+<button class="answer-btn">
+\(2,4\,A\)
+</button>
+
+<button class="answer-btn">
+\(2\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Pentru sursa precedentă,
+tensiunea la borne este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(10\,V\)
+</button>
+
+<button class="answer-btn">
+\(12\,V\)
+</button>
+
+<button class="answer-btn">
+\(2\,V\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Metoda sigură pentru estimarea lui \(r\) este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+scurtcircuitarea directă a bateriei
+</button>
+
+<button class="answer-btn">
+măsurarea tensiunii în gol și sub sarcină, împreună cu intensitatea
+</button>
+
+<button class="answer-btn">
+atingerea bornelor cu un conductor gros
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Circuit întreg</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistență totală</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R_{\text{tot}}
+=
+R+r
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiune la borne</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\mathcal E-Ir
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiune interioară</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+u=Ir
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Mers în gol</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=0,
+\qquad
+U=\mathcal E
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scurtcircuit</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_{sc}
+=
+\frac{\mathcal E}{r}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="green-box">
+
+<strong>Ideea esențială:</strong>
+
+sursa reală face parte din circuit.
+
+Rezistența ei internă \(r\)
+contribuie la rezistența totală:
+
+\[
+\boxed{
+R_{\text{tot}}=R+r
+}
+\]
+
+iar curentul este:
+
+\[
+\boxed{
+I=
+\frac{\mathcal E}{R+r}
+}
+\]
+
+Tensiunea disponibilă circuitului exterior este mai mică decât t.e.m.
+atunci când prin sursă trece curent:
+
+\[
+\boxed{
+U=
+\mathcal E-Ir
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔗 Legătura cu lecția următoare</h2>
+
+<p>
+Am observat că putem modifica intensitatea curentului
+dacă modificăm rezistența exterioară:
+</p>
+
+<div class="formula">
+
+\[
+R\uparrow
+\Rightarrow
+I\downarrow
+\]
+
+</div>
+
+<p>
+Dar cum realizăm practic
+o rezistență pe care o putem modifica în mod controlat?
+</p>
+
+<div class="blue-box">
+
+În lecția următoare vom studia
+<strong>reostatul și potențiometrul</strong>:
+dispozitive care folosesc o rezistență variabilă
+pentru reglarea mărimilor electrice din circuit.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="06-legea-lui-ohm-pentru-o-portiune-de-circuit.html">
+
+← Lecția 6<br>
+Legea lui Ohm pentru o porțiune de circuit
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="08-reostatul-si-potentiometrul.html">
+
+Lecția 8<br>
+Reostatul și potențiometrul →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent electric continuu. Legea lui Ohm
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  return Number(
+    value
+  )
+  .toFixed(
+    digits
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const emfSlider =
+  document.getElementById(
+    "emfSlider"
+  );
+
+
+const internalSlider =
+  document.getElementById(
+    "internalSlider"
+  );
+
+
+const externalSlider =
+  document.getElementById(
+    "externalSlider"
+  );
+
+
+const emfLabel =
+  document.getElementById(
+    "emfLabel"
+  );
+
+
+const internalLabel =
+  document.getElementById(
+    "internalLabel"
+  );
+
+
+const externalLabel =
+  document.getElementById(
+    "externalLabel"
+  );
+
+
+const modeSelect =
+  document.getElementById(
+    "modeSelect"
+  );
+
+
+const ammeterRange =
+  document.getElementById(
+    "ammeterRange"
+  );
+
+
+const voltmeterRange =
+  document.getElementById(
+    "voltmeterRange"
+  );
+
+
+const graphMode =
+  document.getElementById(
+    "graphMode"
+  );
+
+
+const currentValue =
+  document.getElementById(
+    "currentValue"
+  );
+
+
+const terminalValue =
+  document.getElementById(
+    "terminalValue"
+  );
+
+
+const internalVoltageValue =
+  document.getElementById(
+    "internalVoltageValue"
+  );
+
+
+const emfValue =
+  document.getElementById(
+    "emfValue"
+  );
+
+
+const externalValue =
+  document.getElementById(
+    "externalValue"
+  );
+
+
+const internalValue =
+  document.getElementById(
+    "internalValue"
+  );
+
+
+const totalResistanceValue =
+  document.getElementById(
+    "totalResistanceValue"
+  );
+
+
+const balanceValue =
+  document.getElementById(
+    "balanceValue"
+  );
+
+
+const statusBox =
+  document.getElementById(
+    "statusBox"
+  );
+
+
+const sourceEnergyBar =
+  document.getElementById(
+    "sourceEnergyBar"
+  );
+
+
+const externalEnergyBar =
+  document.getElementById(
+    "externalEnergyBar"
+  );
+
+
+const internalEnergyBar =
+  document.getElementById(
+    "internalEnergyBar"
+  );
+
+
+const sourceEnergyText =
+  document.getElementById(
+    "sourceEnergyText"
+  );
+
+
+const externalEnergyText =
+  document.getElementById(
+    "externalEnergyText"
+  );
+
+
+const internalEnergyText =
+  document.getElementById(
+    "internalEnergyText"
+  );
+
+
+const circuitCanvas =
+  document.getElementById(
+    "circuitCanvas"
+  );
+
+
+const circuitCtx =
+  circuitCanvas.getContext(
+    "2d"
+  );
+
+
+const graphCanvas =
+  document.getElementById(
+    "graphCanvas"
+  );
+
+
+const graphCtx =
+  graphCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   ANIMATION STATE
+========================================================= */
+
+let needleA =
+  Math.PI*.85;
+
+
+let needleV =
+  Math.PI*.85;
+
+
+let targetNeedleA =
+  needleA;
+
+
+let targetNeedleV =
+  needleV;
+
+
+let particles=[];
+
+
+let lastTime=0;
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const emf =
+    Number(
+      emfSlider.value
+    );
+
+
+  const r =
+    Number(
+      internalSlider.value
+    );
+
+
+  const selectedR =
+    Number(
+      externalSlider.value
+    );
+
+
+  const mode =
+    modeSelect.value;
+
+
+  let R =
+    selectedR;
+
+
+  let I=0;
+  let U=0;
+  let u=0;
+
+
+  if(
+    mode==="open"
+  ){
+
+    /*
+    Circuit deschis:
+    I = 0 și U = emf.
+    */
+
+    I=0;
+    U=emf;
+    u=0;
+
+  }
+
+  else if(
+    mode==="short"
+  ){
+
+    /*
+    Scurtcircuit idealizat:
+    R = 0.
+    */
+
+    R=0;
+
+    I=
+      emf/r;
+
+    U=0;
+
+    u=
+      I*r;
+
+  }
+
+  else{
+
+    I=
+      emf/
+      (
+        R+r
+      );
+
+
+    U=
+      I*R;
+
+
+    u=
+      I*r;
+
+  }
+
+
+  const aRange=
+    Number(
+      ammeterRange.value
+    );
+
+
+  const vRange=
+    Number(
+      voltmeterRange.value
+    );
+
+
+  return{
+
+    emf,
+    r,
+    R,
+    selectedR,
+
+    I,
+    U,
+    u,
+
+    mode,
+
+    aRange,
+    vRange,
+
+    aOver:
+      I>aRange,
+
+    vOver:
+      U>vRange
+
+  };
+
+}
+
+
+/* =========================================================
+   NEEDLE ANGLE
+========================================================= */
+
+function valueToAngle(
+  value,
+  max,
+  overload
+){
+
+  const start=
+    Math.PI*.85;
+
+
+  const end=
+    Math.PI*.15;
+
+
+  if(
+    overload
+  ){
+
+    return end-.09;
+
+  }
+
+
+  const fraction=
+    clamp(
+      value/max,
+      0,
+      1
+    );
+
+
+  return start+
+    (
+      end-start
+    )*
+    fraction;
+
+}
+
+
+/* =========================================================
+   UPDATE RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const r=
+    readModel();
+
+
+  emfLabel.textContent=
+    `${formatRo(
+      r.emf,
+      1
+    )} V`;
+
+
+  internalLabel.textContent=
+    `${formatRo(
+      r.r,
+      1
+    )} Ω`;
+
+
+  externalLabel.textContent=
+    `${formatRo(
+      r.selectedR,
+      1
+    )} Ω`;
+
+
+  /*
+  Slider external disabled in open / short,
+  because the mode defines the boundary condition.
+  */
+
+  externalSlider.disabled=
+    r.mode!=="normal";
+
+
+  currentValue.textContent=
+    `${formatRo(
+      r.I,
+      3
+    )} A`;
+
+
+  terminalValue.textContent=
+    `${formatRo(
+      r.U,
+      2
+    )} V`;
+
+
+  internalVoltageValue.textContent=
+    `${formatRo(
+      r.u,
+      2
+    )} V`;
+
+
+  emfValue.textContent=
+    `${formatRo(
+      r.emf,
+      2
+    )} V`;
+
+
+  externalValue.textContent=
+    r.mode==="open"
+      ? "circuit deschis"
+      : `${formatRo(
+          r.R,
+          2
+        )} Ω`;
+
+
+  internalValue.textContent=
+    `${formatRo(
+      r.r,
+      2
+    )} Ω`;
+
+
+  totalResistanceValue.textContent=
+    r.mode==="open"
+      ? "→ ∞"
+      : `${formatRo(
+          r.R+r.r,
+          2
+        )} Ω`;
+
+
+  balanceValue.textContent=
+    `${formatRo(
+      r.emf,
+      2
+    )} = ${formatRo(
+      r.U,
+      2
+    )} + ${formatRo(
+      r.u,
+      2
+    )} V`;
+
+
+  targetNeedleA=
+    valueToAngle(
+      r.I,
+      r.aRange,
+      r.aOver
+    );
+
+
+  targetNeedleV=
+    valueToAngle(
+      r.U,
+      r.vRange,
+      r.vOver
+    );
+
+
+  updateEnergyBars(
+    r
+  );
+
+
+  statusBox.classList.remove(
+    "danger-status"
+  );
+
+
+  if(
+    r.mode==="open"
+  ){
+
+    statusBox.innerHTML=
+      `⭕ <strong>Mers în gol:</strong>
+       circuitul exterior este deschis,
+       deci I = 0 A și căderea internă este nulă.
+       Rezultă
+       <strong>U = ℰ = ${formatRo(r.emf,2)} V</strong>.`;
+
+  }
+
+  else if(
+    r.mode==="short"
+  ){
+
+    statusBox.classList.add(
+      "danger-status"
+    );
+
+
+    statusBox.innerHTML=
+      `⚠ <strong>Scurtcircuit virtual:</strong>
+       R = 0 Ω.
+       Modelul prezice
+       <strong>Isc = ℰ/r = ${formatRo(r.I,3)} A</strong>.
+       Acest regim se studiază numai virtual aici;
+       nu scurtcircuita o sursă reală.`;
+
+  }
+
+  else if(
+    r.aOver ||
+    r.vOver
+  ){
+
+    statusBox.classList.add(
+      "danger-status"
+    );
+
+
+    let message=
+      "⚠ <strong>Depășire de domeniu:</strong> ";
+
+
+    if(
+      r.aOver &&
+      r.vOver
+    ){
+
+      message+=
+        "ambele aparate au domenii insuficiente.";
+
+    }
+
+    else if(
+      r.aOver
+    ){
+
+      message+=
+        "domeniul ampermetrului este prea mic.";
+
+    }
+
+    else{
+
+      message+=
+        "domeniul voltmetrului este prea mic.";
+
+    }
+
+
+    message+=
+      " Selectează un domeniu mai mare.";
+
+
+    statusBox.innerHTML=
+      message;
+
+  }
+
+  else{
+
+    statusBox.innerHTML=
+      `Pentru
+       <strong>ℰ=${formatRo(r.emf,2)} V</strong>,
+       <strong>R=${formatRo(r.R,2)} Ω</strong>
+       și
+       <strong>r=${formatRo(r.r,2)} Ω</strong>,
+       curentul este
+       <strong>I=${formatRo(r.I,3)} A</strong>,
+       iar tensiunea la borne este
+       <strong>U=${formatRo(r.U,2)} V</strong>.`;
+
+  }
+
+
+  drawGraph(
+    r
+  );
+
+}
+
+
+/* =========================================================
+   ENERGY BARS
+========================================================= */
+
+function updateEnergyBars(
+  r
+){
+
+  const total=
+    Math.max(
+      r.emf,
+      .0001
+    );
+
+
+  const externalFraction=
+    clamp(
+      r.U/total,
+      0,
+      1
+    );
+
+
+  const internalFraction=
+    clamp(
+      r.u/total,
+      0,
+      1
+    );
+
+
+  sourceEnergyBar.style.width=
+    "100%";
+
+
+  externalEnergyBar.style.width=
+    `${externalFraction*100}%`;
+
+
+  internalEnergyBar.style.width=
+    `${internalFraction*100}%`;
+
+
+  sourceEnergyText.textContent=
+    `${formatRo(r.emf,2)} J/C`;
+
+
+  externalEnergyText.textContent=
+    `${formatRo(r.U,2)} J/C`;
+
+
+  internalEnergyText.textContent=
+    `${formatRo(r.u,2)} J/C`;
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+function circuitBackground(
+  W,
+  H
+){
+
+  const gradient=
+    circuitCtx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#082f49"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#172554"
+  );
+
+
+  circuitCtx.fillStyle=
+    gradient;
+
+
+  circuitCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+}
+
+
+/* =========================================================
+   GAUGE
+========================================================= */
+
+function drawGauge(
+  cx,
+  cy,
+  radius,
+  title,
+  unit,
+  range,
+  value,
+  needleAngle,
+  overload
+){
+
+  const start=
+    Math.PI*.85;
+
+
+  const end=
+    Math.PI*.15;
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.arc(
+    cx,
+    cy,
+    radius+22,
+    0,
+    Math.PI*2
+  );
+
+
+  circuitCtx.fillStyle=
+    "#f8fafc";
+
+
+  circuitCtx.fill();
+
+
+  circuitCtx.strokeStyle=
+    overload
+      ? "#ef4444"
+      : "#94a3b8";
+
+
+  circuitCtx.lineWidth=5;
+
+
+  circuitCtx.stroke();
+
+
+  /*
+  Scale arc.
+  */
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.arc(
+    cx,
+    cy,
+    radius,
+    start,
+    end,
+    true
+  );
+
+
+  circuitCtx.strokeStyle=
+    "#334155";
+
+
+  circuitCtx.lineWidth=3;
+
+
+  circuitCtx.stroke();
+
+
+  /*
+  Scale ticks.
+  */
+
+  for(
+    let i=0;
+    i<=10;
+    i++
+  ){
+
+    const f=
+      i/10;
+
+
+    const angle=
+      start+
+      (
+        end-start
+      )*
+      f;
+
+
+    const outer=
+      radius;
+
+
+    const inner=
+      radius-
+      (
+        i%5===0
+          ? 18
+          : 10
+      );
+
+
+    circuitCtx.beginPath();
+
+
+    circuitCtx.moveTo(
+
+      cx+
+      Math.cos(
+        angle
+      )*
+      outer,
+
+      cy+
+      Math.sin(
+        angle
+      )*
+      outer
+
+    );
+
+
+    circuitCtx.lineTo(
+
+      cx+
+      Math.cos(
+        angle
+      )*
+      inner,
+
+      cy+
+      Math.sin(
+        angle
+      )*
+      inner
+
+    );
+
+
+    circuitCtx.strokeStyle=
+      "#334155";
+
+
+    circuitCtx.lineWidth=
+      i%5===0
+        ? 3
+        : 1.3;
+
+
+    circuitCtx.stroke();
+
+
+    if(
+      i%2===0
+    ){
+
+      circuitCtx.fillStyle=
+        "#334155";
+
+
+      circuitCtx.font=
+        "bold 9px system-ui";
+
+
+      circuitCtx.textAlign=
+        "center";
+
+
+      circuitCtx.fillText(
+
+        formatRo(
+          range*f,
+          range<=3
+            ? 1
+            : 0
+        ),
+
+        cx+
+        Math.cos(
+          angle
+        )*
+        (
+          radius-32
+        ),
+
+        cy+
+        Math.sin(
+          angle
+        )*
+        (
+          radius-32
+        )+
+        3
+
+      );
+
+    }
+
+  }
+
+
+  /*
+  Needle.
+  */
+
+  const needleLength=
+    radius-25;
+
+
+  const nx=
+    cx+
+    Math.cos(
+      needleAngle
+    )*
+    needleLength;
+
+
+  const ny=
+    cy+
+    Math.sin(
+      needleAngle
+    )*
+    needleLength;
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    cx,
+    cy
+  );
+
+
+  circuitCtx.lineTo(
+    nx,
+    ny
+  );
+
+
+  circuitCtx.strokeStyle=
+    "#dc2626";
+
+
+  circuitCtx.lineWidth=4;
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.arc(
+    cx,
+    cy,
+    8,
+    0,
+    Math.PI*2
+  );
+
+
+  circuitCtx.fillStyle=
+    "#334155";
+
+
+  circuitCtx.fill();
+
+
+  circuitCtx.textAlign=
+    "center";
+
+
+  circuitCtx.fillStyle=
+    "#0f172a";
+
+
+  circuitCtx.font=
+    "bold 14px system-ui";
+
+
+  circuitCtx.fillText(
+    title,
+    cx,
+    cy+
+    radius*.47
+  );
+
+
+  circuitCtx.font=
+    "bold 12px system-ui";
+
+
+  circuitCtx.fillText(
+    unit,
+    cx,
+    cy+
+    radius*.65
+  );
+
+
+  if(
+    overload
+  ){
+
+    circuitCtx.fillStyle=
+      "#b91c1c";
+
+
+    circuitCtx.font=
+      "bold 10px system-ui";
+
+
+    circuitCtx.fillText(
+      "DEPĂȘIRE",
+      cx,
+      cy+
+      radius*.82
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CIRCUIT DRAW
+========================================================= */
+
+function drawCircuit(
+  r,
+  W,
+  H
+){
+
+  const left=
+    W*.12;
+
+
+  const right=
+    W*.88;
+
+
+  const top=
+    H*.67;
+
+
+  const bottom=
+    H*.90;
+
+
+  const middle=
+    (
+      top+
+      bottom
+    )/2;
+
+
+  const internalX=
+    W*.43;
+
+
+  /*
+  Wires.
+  */
+
+  circuitCtx.strokeStyle=
+    "#cbd5e1";
+
+
+  circuitCtx.lineWidth=6;
+
+
+  circuitCtx.lineCap=
+    "round";
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    left,
+    top
+  );
+
+
+  circuitCtx.lineTo(
+    internalX-38,
+    top
+  );
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    internalX+38,
+    top
+  );
+
+
+  circuitCtx.lineTo(
+    right,
+    top
+  );
+
+
+  circuitCtx.lineTo(
+    right,
+    middle-36
+  );
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    right,
+    middle+36
+  );
+
+
+  circuitCtx.lineTo(
+    right,
+    bottom
+  );
+
+
+  circuitCtx.lineTo(
+    left,
+    bottom
+  );
+
+
+  circuitCtx.lineTo(
+    left,
+    middle+30
+  );
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    left,
+    middle-30
+  );
+
+
+  circuitCtx.lineTo(
+    left,
+    top
+  );
+
+
+  circuitCtx.stroke();
+
+
+  /*
+  Source symbol.
+  */
+
+  circuitCtx.strokeStyle=
+    "#f8fafc";
+
+
+  circuitCtx.lineWidth=4;
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    left-27,
+    middle-18
+  );
+
+
+  circuitCtx.lineTo(
+    left+27,
+    middle-18
+  );
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.beginPath();
+
+
+  circuitCtx.moveTo(
+    left-17,
+    middle+17
+  );
+
+
+  circuitCtx.lineTo(
+    left+17,
+    middle+17
+  );
+
+
+  circuitCtx.stroke();
+
+
+  circuitCtx.fillStyle=
+    "#f87171";
+
+
+  circuitCtx.font=
+    "bold 16px system-ui";
+
+
+  circuitCtx.textAlign=
+    "right";
+
+
+  circuitCtx.fillText(
+    "+",
+    left-34,
+    middle-12
+  );
+
+
+  circuitCtx.fillStyle=
+    "#60a5fa";
+
+
+  circuitCtx.fillText(
+    "−",
+    left-34,
+    middle+23
+  );
+
+
+  /*
+  Internal resistor.
+  */
+
+  circuitCtx.fillStyle=
+    "#ffedd5";
+
+
+  circuitCtx.strokeStyle=
+    "#fb923c";
+
+
+  circuitCtx.lineWidth=4;
+
+
+  circuitCtx.fillRect(
+    internalX-38,
+    top-24,
+    76,
+    48
+  );
+
+
+  circuitCtx.strokeRect(
+    internalX-38,
+    top-24,
+    76,
+    48
+  );
+
+
+  circuitCtx.fillStyle=
+    "#9a3412";
+
+
+  circuitCtx.font=
+    "bold 17px system-ui";
+
+
+  circuitCtx.textAlign=
+    "center";
+
+
+  circuitCtx.fillText(
+    "r",
+    internalX,
+    top+6
+  );
+
+
+  /*
+  External resistor / short.
+  */
+
+  if(
+    r.mode==="short"
+  ){
+
+    circuitCtx.strokeStyle=
+      "#ef4444";
+
+
+    circuitCtx.lineWidth=7;
+
+
+    circuitCtx.beginPath();
+
+
+    circuitCtx.moveTo(
+      right,
+      middle-36
+    );
+
+
+    circuitCtx.lineTo(
+      right,
+      middle+36
+    );
+
+
+    circuitCtx.stroke();
+
+
+    circuitCtx.fillStyle=
+      "#fecaca";
+
+
+    circuitCtx.font=
+      "bold 11px system-ui";
+
+
+    circuitCtx.fillText(
+      "R = 0",
+      right-44,
+      middle+4
+    );
+
+  }
+
+  else if(
+    r.mode==="open"
+  ){
+
+    circuitCtx.strokeStyle=
+      "#fb923c";
+
+
+    circuitCtx.lineWidth=5;
+
+
+    circuitCtx.beginPath();
+
+
+    circuitCtx.moveTo(
+      right,
+      middle-36
+    );
+
+
+    circuitCtx.lineTo(
+      right-38,
+      middle
+    );
+
+
+    circuitCtx.stroke();
+
+
+    circuitCtx.fillStyle=
+      "#fdba74";
+
+
+    circuitCtx.font=
+      "bold 11px system-ui";
+
+
+    circuitCtx.fillText(
+      "DESCHIS",
+      right-45,
+      middle+28
+    );
+
+  }
+
+  else{
+
+    circuitCtx.fillStyle=
+      "#f8fafc";
+
+
+    circuitCtx.strokeStyle=
+      "#fde68a";
+
+
+    circuitCtx.lineWidth=4;
+
+
+    circuitCtx.fillRect(
+      right-29,
+      middle-36,
+      58,
+      72
+    );
+
+
+    circuitCtx.strokeRect(
+      right-29,
+      middle-36,
+      58,
+      72
+    );
+
+
+    circuitCtx.fillStyle=
+      "#92400e";
+
+
+    circuitCtx.font=
+      "bold 18px system-ui";
+
+
+    circuitCtx.fillText(
+      "R",
+      right,
+      middle+7
+    );
+
+  }
+
+
+  /*
+  Current particles.
+  */
+
+  if(
+    r.I>0
+  ){
+
+    drawParticles(
+      left,
+      right,
+      top,
+      bottom
+    );
+
+  }
+
+
+  /*
+  Labels.
+  */
+
+  circuitCtx.fillStyle=
+    "#fde68a";
+
+
+  circuitCtx.font=
+    "bold 11px system-ui";
+
+
+  circuitCtx.fillText(
+    `ℰ=${formatRo(r.emf,1)} V`,
+    left,
+    middle-48
+  );
+
+
+  circuitCtx.fillStyle=
+    "#fdba74";
+
+
+  circuitCtx.fillText(
+    `r=${formatRo(r.r,1)} Ω`,
+    internalX,
+    top-36
+  );
+
+
+  circuitCtx.fillStyle=
+    "#bae6fd";
+
+
+  if(
+    r.mode==="normal"
+  ){
+
+    circuitCtx.fillText(
+      `R=${formatRo(r.R,1)} Ω`,
+      right,
+      middle-50
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function resetParticles(){
+
+  particles=[];
+
+
+  for(
+    let i=0;
+    i<22;
+    i++
+  ){
+
+    particles.push(
+      i/22
+    );
+
+  }
+
+}
+
+
+function updateParticles(
+  r,
+  dt
+){
+
+  if(
+    r.I<=0
+  ){
+    return;
+  }
+
+
+  const speed=
+    .025+
+    Math.min(
+      .13,
+      r.I*.012
+    );
+
+
+  particles=
+    particles.map(
+      p=>{
+
+        let next=
+          p+
+          speed*
+          dt;
+
+
+        if(
+          next>=1
+        ){
+          next-=1;
+        }
+
+
+        return next;
+
+      }
+    );
+
+}
+
+
+function circuitPoint(
+  p,
+  left,
+  right,
+  top,
+  bottom
+){
+
+  const width=
+    right-left;
+
+
+  const height=
+    bottom-top;
+
+
+  const perimeter=
+    2*
+    (
+      width+
+      height
+    );
+
+
+  let d=
+    p*
+    perimeter;
+
+
+  if(
+    d<width
+  ){
+
+    return{
+      x:left+d,
+      y:top
+    };
+
+  }
+
+
+  d-=width;
+
+
+  if(
+    d<height
+  ){
+
+    return{
+      x:right,
+      y:top+d
+    };
+
+  }
+
+
+  d-=height;
+
+
+  if(
+    d<width
+  ){
+
+    return{
+      x:right-d,
+      y:bottom
+    };
+
+  }
+
+
+  d-=width;
+
+
+  return{
+    x:left,
+    y:bottom-d
+  };
+
+}
+
+
+function drawParticles(
+  left,
+  right,
+  top,
+  bottom
+){
+
+  particles.forEach(
+    p=>{
+
+      const point=
+        circuitPoint(
+          p,
+          left,
+          right,
+          top,
+          bottom
+        );
+
+
+      circuitCtx.beginPath();
+
+
+      circuitCtx.arc(
+        point.x,
+        point.y,
+        3.2,
+        0,
+        Math.PI*2
+      );
+
+
+      circuitCtx.fillStyle=
+        "#86efac";
+
+
+      circuitCtx.fill();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CIRCUIT SCENE
+========================================================= */
+
+function drawCircuitScene(
+  r
+){
+
+  const rect=
+    circuitCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  circuitBackground(
+    W,
+    H
+  );
+
+
+  const gaugeRadius=
+    Math.min(
+      100,
+      W*.16
+    );
+
+
+  drawGauge(
+
+    W*.28,
+    H*.29,
+    gaugeRadius,
+
+    "AMPERMETRU",
+    "A",
+
+    r.aRange,
+    r.I,
+
+    needleA,
+    r.aOver
+
+  );
+
+
+  drawGauge(
+
+    W*.72,
+    H*.29,
+    gaugeRadius,
+
+    "VOLTMETRU",
+    "V",
+
+    r.vRange,
+    r.U,
+
+    needleV,
+    r.vOver
+
+  );
+
+
+  drawCircuit(
+    r,
+    W,
+    H
+  );
+
+
+  circuitCtx.textAlign=
+    "left";
+
+
+  circuitCtx.fillStyle=
+    "#e2e8f0";
+
+
+  circuitCtx.font=
+    "bold 15px system-ui";
+
+
+  circuitCtx.fillText(
+    "Circuit întreg – sursă reală",
+    18,
+    27
+  );
+
+
+  circuitCtx.fillStyle=
+    "#bae6fd";
+
+
+  circuitCtx.font=
+    "12px system-ui";
+
+
+  circuitCtx.fillText(
+    `I=${formatRo(r.I,3)} A   U=${formatRo(r.U,2)} V   u=${formatRo(r.u,2)} V`,
+    18,
+    48
+  );
+
+}
+
+
+/* =========================================================
+   GRAPH
+========================================================= */
+
+function drawGraph(
+  r
+){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  graphCtx.fillStyle=
+    "#f8fafc";
+
+
+  graphCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const margin={
+    left:65,
+    right:25,
+    top:60,
+    bottom:65
+  };
+
+
+  const plotW=
+    W-
+    margin.left-
+    margin.right;
+
+
+  const plotH=
+    H-
+    margin.top-
+    margin.bottom;
+
+
+  const maxR=50;
+
+
+  const mode=
+    graphMode.value;
+
+
+  const maxY=
+    mode==="current"
+      ? Math.max(
+          r.emf/r.r*1.08,
+          1
+        )
+      : Math.max(
+          r.emf*1.08,
+          1
+        );
+
+
+  /*
+  Grid.
+  */
+
+  graphCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  graphCtx.lineWidth=1;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const x=
+      margin.left+
+      plotW*
+      i/5;
+
+
+    graphCtx.beginPath();
+
+
+    graphCtx.moveTo(
+      x,
+      margin.top
+    );
+
+
+    graphCtx.lineTo(
+      x,
+      margin.top+
+      plotH
+    );
+
+
+    graphCtx.stroke();
+
+  }
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const y=
+      margin.top+
+      plotH*
+      i/5;
+
+
+    graphCtx.beginPath();
+
+
+    graphCtx.moveTo(
+      margin.left,
+      y
+    );
+
+
+    graphCtx.lineTo(
+      margin.left+
+      plotW,
+      y
+    );
+
+
+    graphCtx.stroke();
+
+  }
+
+
+  /*
+  Axes.
+  */
+
+  graphCtx.strokeStyle=
+    "#334155";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.beginPath();
+
+
+  graphCtx.moveTo(
+    margin.left,
+    margin.top
+  );
+
+
+  graphCtx.lineTo(
+    margin.left,
+    margin.top+
+    plotH
+  );
+
+
+  graphCtx.lineTo(
+    margin.left+
+    plotW,
+    margin.top+
+    plotH
+  );
+
+
+  graphCtx.stroke();
+
+
+  /*
+  Curve.
+  */
+
+  graphCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=300;
+    i++
+  ){
+
+    const R=
+      maxR*
+      i/300;
+
+
+    const I=
+      r.emf/
+      (
+        R+r.r
+      );
+
+
+    const U=
+      I*R;
+
+
+    const value=
+      mode==="current"
+        ? I
+        : U;
+
+
+    const x=
+      margin.left+
+      plotW*
+      R/
+      maxR;
+
+
+    const y=
+      margin.top+
+      plotH*
+      (
+        1-
+        value/
+        maxY
+      );
+
+
+    if(
+      i===0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.strokeStyle=
+    mode==="current"
+      ? "#2563eb"
+      : "#16a34a";
+
+
+  graphCtx.lineWidth=3;
+
+
+  graphCtx.stroke();
+
+
+  /*
+  Current operating point.
+  */
+
+  if(
+    r.mode==="normal"
+  ){
+
+    const pointValue=
+      mode==="current"
+        ? r.I
+        : r.U;
+
+
+    const px=
+      margin.left+
+      plotW*
+      r.R/
+      maxR;
+
+
+    const py=
+      margin.top+
+      plotH*
+      (
+        1-
+        pointValue/
+        maxY
+      );
+
+
+    graphCtx.beginPath();
+
+
+    graphCtx.arc(
+      px,
+      py,
+      7,
+      0,
+      Math.PI*2
+    );
+
+
+    graphCtx.fillStyle=
+      "#dc2626";
+
+
+    graphCtx.fill();
+
+
+    graphCtx.strokeStyle=
+      "#fff";
+
+
+    graphCtx.lineWidth=2;
+
+
+    graphCtx.stroke();
+
+  }
+
+
+  /*
+  Labels.
+  */
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 16px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    mode==="current"
+      ? "Curentul I în funcție de R"
+      : "Tensiunea la borne U în funcție de R",
+    margin.left,
+    29
+  );
+
+
+  graphCtx.fillStyle=
+    "#475569";
+
+
+  graphCtx.font=
+    "12px system-ui";
+
+
+  graphCtx.fillText(
+    mode==="current"
+      ? "I = ℰ / (R + r)"
+      : "U = ℰR / (R + r)",
+    margin.left,
+    47
+  );
+
+
+  graphCtx.fillStyle=
+    "#334155";
+
+
+  graphCtx.font=
+    "bold 13px system-ui";
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.fillText(
+    "R [Ω]",
+    margin.left+
+    plotW/2,
+    H-18
+  );
+
+
+  graphCtx.save();
+
+
+  graphCtx.translate(
+    18,
+    margin.top+
+    plotH/2
+  );
+
+
+  graphCtx.rotate(
+    -Math.PI/2
+  );
+
+
+  graphCtx.fillText(
+    mode==="current"
+      ? "I [A]"
+      : "U [V]",
+    0,
+    0
+  );
+
+
+  graphCtx.restore();
+
+
+  /*
+  Scale.
+  */
+
+  graphCtx.font=
+    "10px system-ui";
+
+
+  graphCtx.fillStyle=
+    "#64748b";
+
+
+  for(
+    let i=0;
+    i<=5;
+    i++
+  ){
+
+    const f=
+      i/5;
+
+
+    graphCtx.textAlign=
+      "center";
+
+
+    graphCtx.fillText(
+      formatRo(
+        maxR*f,
+        0
+      ),
+      margin.left+
+      plotW*f,
+      margin.top+
+      plotH+
+      18
+    );
+
+
+    graphCtx.textAlign=
+      "right";
+
+
+    graphCtx.fillText(
+      formatRo(
+        maxY*f,
+        1
+      ),
+      margin.left-7,
+      margin.top+
+      plotH*
+      (
+        1-f
+      )+
+      3
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTime
+  ){
+
+    lastTime=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTime
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTime=
+    timestamp;
+
+
+  const r=
+    readModel();
+
+
+  const response=
+    1-
+    Math.exp(
+      -5*
+      dt
+    );
+
+
+  needleA+=
+    (
+      targetNeedleA-
+      needleA
+    )*
+    response;
+
+
+  needleV+=
+    (
+      targetNeedleV-
+      needleV
+    )*
+    response;
+
+
+  updateParticles(
+    r,
+    dt
+  );
+
+
+  drawCircuitScene(
+    r
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   BEST RANGES
+========================================================= */
+
+function chooseBestRanges(){
+
+  const r=
+    readModel();
+
+
+  const aRanges=[
+    1,
+    3,
+    10,
+    30
+  ];
+
+
+  const vRanges=[
+    3,
+    6,
+    15,
+    30
+  ];
+
+
+  const bestA=
+    aRanges.find(
+      value=>
+        value>=r.I
+    )||
+    30;
+
+
+  const bestV=
+    vRanges.find(
+      value=>
+        value>=r.U
+    )||
+    30;
+
+
+  ammeterRange.value=
+    String(
+      bestA
+    );
+
+
+  voltmeterRange.value=
+    String(
+      bestV
+    );
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  emfSlider,
+  internalSlider,
+  externalSlider,
+  modeSelect,
+  ammeterRange,
+  voltmeterRange,
+  graphMode
+].forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "normalBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "normal";
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "openBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "open";
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "shortBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "short";
+
+
+    chooseBestRanges();
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "bestRangeBtn"
+).addEventListener(
+  "click",
+  chooseBestRanges
+);
+
+
+document.getElementById(
+  "doubleRBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    modeSelect.value=
+      "normal";
+
+
+    externalSlider.value=
+      clamp(
+        Number(
+          externalSlider.value
+        )*
+        2,
+        .2,
+        50
+      );
+
+
+    updateResults();
+
+  }
+);
+
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  ()=>{
+
+    emfSlider.value=
+      12;
+
+
+    internalSlider.value=
+      1;
+
+
+    externalSlider.value=
+      5;
+
+
+    modeSelect.value=
+      "normal";
+
+
+    ammeterRange.value=
+      "10";
+
+
+    voltmeterRange.value=
+      "15";
+
+
+    graphMode.value=
+      "current";
+
+
+    resetParticles();
+
+    updateResults();
+
+  }
+);
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    circuitCanvas,
+    circuitCtx
+  );
+
+
+  resizeCanvas(
+    graphCanvas,
+    graphCtx
+  );
+
+
+  updateResults();
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește relațiile I = ℰ/(R+r), U = ℰ − Ir și regimurile limită.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Stăpânești modelul circuitului întreg.`;
+
+              }
+
+              else if(
+                score>=7
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește regimurile sau bilanțul la care ai greșit.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Recapitulează rolurile lui R și r, apoi relația I = ℰ/(R+r).`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resetParticles();
+
+    resizeAll();
+
+    updateResults();
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
