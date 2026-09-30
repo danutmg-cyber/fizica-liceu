@@ -2175,9 +2175,20 @@ L = (L̄ ± u<sub>L</sub>) mm
 
 <input
     type="text"
+    inputmode="text"
     data-final-expression
     placeholder="Exemplu de formă: L = (82,4 ± 1,5) mm"
 >
+
+<button
+    class="btn secondary"
+    type="button"
+    data-insert-plusminus
+    aria-label="Inserează simbolul plus-minus"
+    title="Inserează ±"
+>
+±
+</button>
 
 </label>
 
@@ -2715,6 +2726,68 @@ const qsa = (
             selector
         )
     ];
+
+/* =========================================================
+   BUTON ± PENTRU RAPORTAREA REZULTATULUI
+========================================================= */
+
+const plusMinusButton =
+    qs(
+        "[data-insert-plusminus]"
+    );
+
+if(plusMinusButton){
+
+    plusMinusButton.addEventListener(
+        "click",
+        () => {
+
+            const input =
+                qs(
+                    "[data-final-expression]"
+                );
+
+            if(!input){
+                return;
+            }
+
+            const start =
+                Number.isInteger(
+                    input.selectionStart
+                )
+                    ? input.selectionStart
+                    : input.value.length;
+
+            const end =
+                Number.isInteger(
+                    input.selectionEnd
+                )
+                    ? input.selectionEnd
+                    : start;
+
+            input.setRangeText(
+                "±",
+                start,
+                end,
+                "end"
+            );
+
+            input.dispatchEvent(
+                new Event(
+                    "input",
+                    {
+                        bubbles:true
+                    }
+                )
+            );
+
+            input.focus();
+
+        }
+    );
+
+}
+
 
 
 /* =========================================================
