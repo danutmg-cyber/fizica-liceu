@@ -1,1 +1,6321 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+10. Trasarea caracteristicii voltamperice a unui element de circuit în curent alternativ – experiment | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Experiment de fizică pentru clasa a X-a: trasarea caracteristicii voltamperice I=f(U) a unui element de circuit în curent alternativ, măsurarea valorilor efective, determinarea impedanței, interpretarea rezistorului, bobinei și condensatorului, erori experimentale și simulator interactiv.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(34,211,238,.28),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 13% 0%,
+      rgba(74,222,128,.22),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 52% 120%,
+      rgba(168,85,247,.20),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #1e3a8a 46%,
+      #0e7490
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.9;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#bbf7d0;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(134,239,172,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(1.95rem,5vw,3rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#e0f2fe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.22rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--cyan-soft);
+
+  border-color:#a5f3fc;
+
+  font-size:
+    clamp(1.1rem,3vw,1.42rem);
+
+}
+
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:middle;
+
+}
+
+th{
+  background:#ecfeff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--cyan);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   CIRCUIT SCHEME
+========================================================= */
+
+.circuit-box{
+
+  margin:22px 0;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0f172a,
+      #172554
+    );
+
+  border-radius:16px;
+
+  color:white;
+
+}
+
+.circuit-line{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  max-width:850px;
+
+  margin:auto;
+
+}
+
+.circuit-item{
+
+  min-height:92px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  padding:14px;
+
+  text-align:center;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border:
+    1px solid rgba(255,255,255,.20);
+
+  border-radius:12px;
+
+}
+
+.circuit-arrow{
+
+  color:#67e8f9;
+
+  font-size:1.7rem;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#155e75;
+  background:#cffafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#0e7490;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   INTERACTIVE LAB
+========================================================= */
+
+.lab{
+
+  background:
+    linear-gradient(
+      180deg,
+      #ecfeff,
+      #f5f3ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#0e7490;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:translateY(-1px);
+
+  filter:brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.cyan-button{
+  color:#155e75;
+  background:#cffafe;
+}
+
+.data-input{
+
+  width:88px;
+
+  padding:7px 8px;
+
+  border:
+    1px solid #94a3b8;
+
+  border-radius:7px;
+
+  text-align:center;
+
+  font:inherit;
+
+}
+
+.graph-wrap{
+
+  overflow:hidden;
+
+  margin-top:18px;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#graphCanvas{
+
+  display:block;
+
+  width:100%;
+  height:570px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--cyan-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0891b2,
+      #16a34a
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .circuit-line{
+    grid-template-columns:1fr;
+  }
+
+  .circuit-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #graphCanvas{
+    height:500px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent alternativ și elemente de circuit
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 10
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Experiment
+</span>
+
+</div>
+
+
+<h1>
+Trasarea caracteristicii voltamperice a unui element de circuit în curent alternativ
+</h1>
+
+
+<p class="subtitle">
+Măsurăm perechi de valori efective
+\((U,I)\),
+menținând frecvența constantă,
+reprezentăm grafic
+\(I=f(U)\)
+și folosim panta caracteristicii pentru a determina opoziția elementului
+la trecerea curentului alternativ.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Obiectivele experimentului</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să realizezi corect montajul volt-ampermetric în curent alternativ;</li>
+
+<li>să conectezi ampermetrul în serie și voltmetrul în paralel;</li>
+
+<li>să măsori valori efective ale tensiunii și curentului;</li>
+
+<li>să păstrezi frecvența constantă pe parcursul unei serii de măsurători;</li>
+
+<li>să completezi un tabel de date experimentale;</li>
+
+<li>să trasezi caracteristica \(I=f(U)\);</li>
+
+<li>să recunoști o caracteristică liniară sau neliniară;</li>
+
+<li>să determini panta graficului;</li>
+
+<li>să determini modulul impedanței pentru un element liniar;</li>
+
+<li>să apreciezi principalele surse de eroare experimentală.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ideea centrală</h3>
+
+<p>
+La frecvență fixă,
+pentru un element liniar:
+</p>
+
+<div class="formula">
+
+\[
+U=|Z|I
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac1{|Z|}
+U
+}
+\]
+
+</div>
+
+<p>
+Caracteristica \(I=f(U)\) este o dreaptă prin origine,
+cu panta:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+m=
+\frac{\Delta I}{\Delta U}
+=
+\frac1{|Z|}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     IMPORTANT DEFINITION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Ce este caracteristica voltamperică?</h2>
+
+<p>
+Caracteristica voltamperică descrie legătura dintre
+intensitatea curentului printr-un element și tensiunea aplicată acestuia.
+</p>
+
+<p>
+În această activitate reprezentăm:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=f(U)
+}
+\]
+
+</div>
+
+<p>
+unde \(U\) și \(I\) sunt
+<strong>valori efective</strong>
+ale unor mărimi sinusoidale.
+</p>
+
+
+<div class="blue-box">
+
+În unele reprezentări se folosește și \(U=f(I)\).
+
+Cele două grafice sunt corecte,
+dar panta are altă semnificație:
+
+\[
+I=f(U)
+\Rightarrow
+m=\frac{\Delta I}{\Delta U}
+\]
+
+în timp ce:
+
+\[
+U=f(I)
+\Rightarrow
+m=\frac{\Delta U}{\Delta I}
+\]
+
+Trebuie precizat întotdeauna ce mărime este pe fiecare axă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FREQUENCY CONDITION
+========================================================= -->
+
+<section class="card">
+
+<h2>2. De ce trebuie păstrată frecvența constantă?</h2>
+
+<p>
+Pentru rezistorul ideal,
+rezistența nu depinde de frecvență în modelul studiat.
+</p>
+
+<p>
+Pentru bobină însă:</p>
+
+<div class="formula">
+
+\[
+X_L=
+2\pi fL
+\]
+
+</div>
+
+<p>
+iar pentru condensator:</p>
+
+<div class="formula">
+
+\[
+X_C=
+\frac1{2\pi fC}
+\]
+
+</div>
+
+<p>
+Prin urmare,
+dacă modificăm simultan tensiunea și frecvența,
+modificăm și opoziția elementului.
+</p>
+
+
+<div class="red-box">
+
+Pentru a construi o singură caracteristică voltamperică
+a bobinei sau condensatorului:
+
+\[
+\boxed{
+f=\text{constant}
+}
+\]
+
+pe toată seria de măsurători.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MODELS
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Ce ne așteptăm să obținem?</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Rezistor ideal</h3>
+
+<div class="formula">
+
+\[
+U=RI
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+I=
+\frac1R U
+\]
+
+</div>
+
+<p>
+Caracteristică liniară.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Bobină ideală</h3>
+
+<p>
+La frecvență fixă:</p>
+
+<div class="formula">
+
+\[
+U=X_LI
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I=
+\frac1{X_L}U
+\]
+
+</div>
+
+<p>
+Caracteristică liniară ca module,
+dar cu decalaj de fază între \(u\) și \(i\).
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Condensator ideal</h3>
+
+<p>
+La frecvență fixă:</p>
+
+<div class="formula">
+
+\[
+U=X_CI
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I=
+\frac1{X_C}U
+\]
+
+</div>
+
+<p>
+Caracteristică liniară ca module,
+cu altă relație de fază.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="yellow-box">
+
+Graficul \(I=f(U)\) construit numai din valori efective
+<strong>nu arată singur diferența de fază</strong> dintre tensiune și curent.
+
+Două elemente pot avea același raport \(U/I\),
+dar comportări de fază diferite.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SLOPE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Ce ne spune panta?</h2>
+
+<p>
+Pentru o caracteristică liniară:</p>
+
+<div class="formula">
+
+\[
+I=mU
+\]
+
+</div>
+
+<p>
+Comparăm cu:</p>
+
+<div class="formula">
+
+\[
+I=
+\frac1{|Z|}U
+\]
+
+</div>
+
+<p>
+și obținem:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+m=
+\frac1{|Z|}
+}
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+|Z|=
+\frac1m
+}
+\]
+
+</div>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Pentru rezistor</h3>
+
+<div class="formula">
+
+\[
+|Z|=R
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+R=\frac1m
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pentru bobina ideală</h3>
+
+<div class="formula">
+
+\[
+|Z|=X_L=\omega L
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+L=
+\frac1{\omega m}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pentru condensator</h3>
+
+<div class="formula">
+
+\[
+I=\omega CU
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+m=\omega C
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+C=
+\frac m\omega
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REAL ELEMENTS
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Element ideal versus element real</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Model ideal</h3>
+
+<p>
+Pentru un element liniar ideal,
+la frecvență constantă:</p>
+
+<div class="formula">
+
+\[
+I\propto U
+\]
+
+</div>
+
+<p>
+Graficul este o dreaptă prin origine.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Element real</h3>
+
+<p>
+Pot interveni:</p>
+
+<ul>
+
+<li>rezistența conductorului bobinei;</li>
+
+<li>pierderi în miez;</li>
+
+<li>pierderi în dielectric;</li>
+
+<li>încălzire;</li>
+
+<li>toleranța componentelor;</li>
+
+<li>dependența parametrilor de temperatură și frecvență.</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<div class="orange-box">
+
+Pentru o bobină reală,
+raportul:
+
+\[
+\frac UI
+\]
+
+reprezintă modulul impedanței ramurii,
+nu pur și simplu \(X_L\).
+
+Determinarea directă a inductanței din panta graficului este corectă
+numai în modelul de bobină ideală sau atunci când efectele rezistive sunt neglijabile.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     APPARATUS
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 6. Materiale necesare</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Aparatură</h3>
+
+<ul>
+
+<li>sursă sinusoidală didactică izolată, de joasă tensiune;</li>
+
+<li>generator de semnal cu ieșire adecvată sarcinii sau sursă c.a. didactică reglabilă;</li>
+
+<li>ampermetru pentru curent alternativ;</li>
+
+<li>voltmetru pentru curent alternativ;</li>
+
+<li>conductoare de legătură;</li>
+
+<li>opțional: osciloscop.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Element analizat</h3>
+
+<p>
+Pentru varianta de bază se recomandă:</p>
+
+<ul>
+
+<li>un rezistor didactic de putere adecvată.</li>
+
+</ul>
+
+<p>
+Extensii:</p>
+
+<ul>
+
+<li>bobină didactică;</li>
+
+<li>condensator nepolarizat adecvat;</li>
+
+<li>bec incandescent de joasă tensiune, pentru o caracteristică neliniară.</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<div class="red-box">
+
+Experimentul se realizează numai la
+<strong>tensiuni joase, izolate galvanic de rețeaua de alimentare</strong>.
+
+Nu se construiește acest montaj direct la 230 V.
+
+Condensatoarele utilizate trebuie să fie adecvate tensiunii alternative aplicate.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CIRCUIT
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Montajul experimental</h2>
+
+<p>
+Ampermetrul se conectează
+<strong>în serie</strong>
+cu elementul studiat,
+iar voltmetrul se conectează
+<strong>în paralel</strong>
+pe element.
+</p>
+
+
+<div class="circuit-box">
+
+<div class="circuit-line">
+
+
+<div class="circuit-item">
+
+<strong>
+Sursă sinusoidală
+</strong>
+
+<span>
+\(U\) reglabilă
+</span>
+
+<span>
+\(f=\text{constant}\)
+</span>
+
+</div>
+
+
+<div class="circuit-arrow">
+→
+</div>
+
+
+<div class="circuit-item">
+
+<strong>
+Ampermetru c.a.
+</strong>
+
+<span>
+conectat în serie
+</span>
+
+</div>
+
+
+<div class="circuit-arrow">
+→
+</div>
+
+
+<div class="circuit-item">
+
+<strong>
+Elementul analizat
+</strong>
+
+<span>
+voltmetrul se leagă în paralel pe acesta
+</span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Regula de conectare:
+
+<strong>
+ampermetrul în serie,
+voltmetrul în paralel.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MEASUREMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Ce măsurăm?</h2>
+
+<p>
+Pentru fiecare valoare a tensiunii aplicate,
+înregistrăm:
+</p>
+
+<div class="formula">
+
+\[
+U
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula">
+
+\[
+I
+\]
+
+</div>
+
+<p>
+în regim sinusoidal stabil.
+</p>
+
+
+<div class="green-box">
+
+În tabel se folosesc valorile efective indicate de aparatele de măsură:
+
+\[
+\boxed{
+U=U_{ef},
+\qquad
+I=I_{ef}
+}
+\]
+</div>
+
+
+<div class="yellow-box">
+
+Dacă se folosesc multimetre,
+acestea trebuie să fie adecvate frecvenței semnalului utilizat.
+
+Un aparat care indică corect la 50 Hz nu este automat precis la frecvențe mult mai mari.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROCEDURE
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Mod de lucru</h2>
+
+<ol class="steps">
+
+<li>
+Montează circuitul cu sursa oprită sau cu tensiunea reglată la minim.
+</li>
+
+<li>
+Verifică dacă ampermetrul este în serie și voltmetrul în paralel pe elementul studiat.
+</li>
+
+<li>
+Alege frecvența de lucru și noteaz-o:
+\[
+f=\text{constant}
+\]
+</li>
+
+<li>
+Pornește sursa la o tensiune mică.
+</li>
+
+<li>
+Citește valoarea efectivă \(U\) de pe voltmetru și valoarea efectivă \(I\) de pe ampermetru.
+</li>
+
+<li>
+Notează perechea \((U,I)\) în tabel.
+</li>
+
+<li>
+Mărește treptat tensiunea, fără a depăși valorile admise pentru element și aparate.
+</li>
+
+<li>
+Înregistrează cel puțin 6–8 perechi de valori.
+</li>
+
+<li>
+Revino la tensiune mică și oprește sursa înainte de modificarea montajului.
+</li>
+
+<li>
+Reprezintă grafic \(I=f(U)\).
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     DATA TABLE
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Tabel experimental</h2>
+
+<p>
+Model de tabel pentru fișa de laborator:
+</p>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Nr.
+</th>
+
+<th>
+\(U\) [V]
+</th>
+
+<th>
+\(I\) [A]
+</th>
+
+<th>
+\(U/I\) [Ω]
+</th>
+
+<th>
+Observații
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>1</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>7</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GRAPH
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Trasarea graficului</h2>
+
+<p>
+Pe axa orizontală reprezentăm:</p>
+
+<div class="formula">
+
+\[
+U\,[V]
+\]
+
+</div>
+
+<p>
+iar pe axa verticală:</p>
+
+<div class="formula">
+
+\[
+I\,[A]
+\]
+
+</div>
+
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=f(U)
+}
+\]
+
+</div>
+
+
+<h3>Reguli de reprezentare</h3>
+
+<ul>
+
+<li>alege scări uniforme și ușor de citit;</li>
+
+<li>scrie mărimea fizică și unitatea pe fiecare axă;</li>
+
+<li>marchează punctele experimentale;</li>
+
+<li>nu uni mecanic punctele cu segmente frânte dacă modelul fizic prezice o dreaptă;</li>
+
+<li>trasează linia de tendință care reprezintă cel mai bine ansamblul datelor.</li>
+
+</ul>
+
+
+<div class="green-box">
+
+Pentru un element liniar ideal:
+
+\[
+\boxed{
+I=mU
+}
+\]
+
+iar graficul trece prin origine.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SLOPE EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Determinarea pantei experimentale</h2>
+
+<p>
+Alegem două puncte suficient de îndepărtate de pe
+<strong>dreapta de tendință</strong>,
+nu neapărat două puncte experimentale consecutive.
+</p>
+
+<div class="formula">
+
+\[
+m=
+\frac{
+I_2-I_1
+}{
+U_2-U_1
+}
+\]
+
+</div>
+
+<p>
+Unitatea pantei este:</p>
+
+<div class="formula">
+
+\[
+[m]=
+\frac A V
+=
+S
+\]
+
+</div>
+
+<p>
+Pentru un element liniar:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+|Z|=
+\frac1m
+}
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+Dacă graficul este \(I=f(U)\),
+panta este inversul impedanței.
+
+Dacă ai fi reprezentat \(U=f(I)\),
+panta ar fi chiar modulul impedanței.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LINEAR REGRESSION
+========================================================= -->
+
+<section class="card">
+
+<h2>13. O metodă mai bună: folosim toate măsurătorile</h2>
+
+<p>
+Pentru o dreaptă care trebuie să treacă prin origine:</p>
+
+<div class="formula">
+
+\[
+I=mU
+\]
+
+</div>
+
+<p>
+o estimare a pantei din toate punctele este:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+m=
+\frac{
+\sum U_kI_k
+}{
+\sum U_k^2
+}
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Avantaj:
+
+nu ne bazăm pe o singură pereche de puncte,
+ci folosim întreaga serie de măsurători.
+
+Laboratorul interactiv de mai jos calculează automat această pantă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 14. Exemplu de prelucrare a datelor</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Exemplu
+</span>
+
+<h3>Rezistor alimentat în curent alternativ</h3>
+
+<p>
+La frecvență constantă se obțin aproximativ:</p>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+\(U\) [V]
+</th>
+
+<th>
+\(I\) [A]
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>2</td>
+<td>0,040</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>0,081</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>0,119</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>0,161</td>
+</tr>
+
+<tr>
+<td>10</td>
+<td>0,200</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<details>
+
+<summary>
+Vezi interpretarea
+</summary>
+
+<div class="solution">
+
+Valorile sugerează aproximativ:</p>
+
+\[
+m\approx
+0,020\,A/V
+\]
+
+Deci:</p>
+
+\[
+R=
+\frac1m
+\]
+
+\[
+R\approx
+\frac1{0,020}
+\]
+
+\[
+\boxed{
+R\approx50\,\Omega
+}
+\]
+
+Micile abateri ale punctelor față de dreapta ideală pot proveni din
+incertitudinea aparatelor,
+citire și variații ale temperaturii.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COIL
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Extensie – bobina ideală</h2>
+
+<p>
+La frecvență constantă:</p>
+
+<div class="formula">
+
+\[
+U=X_LI
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+I=
+\frac1{X_L}U
+\]
+
+</div>
+
+<p>
+Panta este:</p>
+
+<div class="formula">
+
+\[
+m=
+\frac1{X_L}
+\]
+
+</div>
+
+<p>
+de unde:</p>
+
+<div class="formula">
+
+\[
+X_L=
+\frac1m
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+L=
+\frac{
+1
+}{
+\omega m
+}
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Pentru o bobină reală:
+
+\[
+\frac UI=|Z|
+\]
+
+și nu este corect să identificăm automat această valoare cu \(X_L\).
+
+Rezistența conductorului bobinei trebuie luată în considerare dacă nu este neglijabilă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAPACITOR
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Extensie – condensatorul ideal</h2>
+
+<p>
+Pentru condensator:</p>
+
+<div class="formula">
+
+\[
+I=
+\frac U{X_C}
+\]
+
+</div>
+
+<p>
+dar:</p>
+
+<div class="formula">
+
+\[
+X_C=
+\frac1{\omega C}
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+I=
+\omega CU
+\]
+
+</div>
+
+<p>
+Panta este:</p>
+
+<div class="formula">
+
+\[
+m=
+\omega C
+\]
+
+</div>
+
+<p>
+de unde:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+C=
+\frac m\omega
+}
+\]
+
+</div>
+
+
+<div class="cyan-box">
+
+Pentru condensator,
+la aceeași tensiune:
+
+\[
+f\uparrow
+\Rightarrow
+m\uparrow
+\]
+
+deoarece:
+
+\[
+m=2\pi fC
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NONLINEAR
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Ce se întâmplă pentru un element neliniar?</h2>
+
+<p>
+Nu toate elementele respectă:</p>
+
+<div class="formula">
+
+\[
+I\propto U
+\]
+
+</div>
+
+<p>
+Un exemplu didactic este becul incandescent de joasă tensiune.
+Când filamentul se încălzește,
+rezistivitatea sa crește,
+iar raportul \(U/I\) se modifică.
+</p>
+
+
+<div class="purple-box">
+
+Pentru un element neliniar:
+
+<strong>
+caracteristica voltamperică nu mai este o dreaptă.
+</strong>
+
+Prin urmare,
+nu mai putem descrie întregul domeniu printr-o singură valoare constantă a rezistenței sau impedanței.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>18. Surse de eroare</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Aparate și citire</h3>
+
+<ul>
+
+<li>rezoluția voltmetrului;</li>
+
+<li>rezoluția ampermetrului;</li>
+
+<li>clasa de precizie;</li>
+
+<li>rotunjirea valorilor;</li>
+
+<li>domeniu de măsură ales necorespunzător.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Circuit și sursă</h3>
+
+<ul>
+
+<li>variația frecvenței;</li>
+
+<li>tensiune sinusoidală imperfectă;</li>
+
+<li>rezistența firelor;</li>
+
+<li>încălzirea elementului;</li>
+
+<li>rezistența internă a sursei;</li>
+
+<li>influența aparatelor asupra circuitului.</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+O măsurătoare bună nu înseamnă că toate punctele se află perfect pe modelul teoretic.
+
+Scopul este să observăm
+<strong>tendința fizică</strong>
+și să apreciem realist abaterile.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     LAB REPORT
+========================================================= -->
+
+<section class="card">
+
+<h2>19. Structura raportului de laborator</h2>
+
+<ol class="steps">
+
+<li>
+<strong>Titlul lucrării</strong> – Trasarea caracteristicii voltamperice în curent alternativ.
+</li>
+
+<li>
+<strong>Scopul</strong> – determinarea relației dintre \(I\) și \(U\) la frecvență constantă.
+</li>
+
+<li>
+<strong>Materiale și aparate</strong>.
+</li>
+
+<li>
+<strong>Schema montajului</strong>.
+</li>
+
+<li>
+<strong>Modul de lucru</strong>.
+</li>
+
+<li>
+<strong>Tabelul cu măsurători</strong>.
+</li>
+
+<li>
+<strong>Graficul \(I=f(U)\)</strong>.
+</li>
+
+<li>
+<strong>Calculul pantei</strong>.
+</li>
+
+<li>
+<strong>Determinarea parametrului urmărit</strong>.
+</li>
+
+<li>
+<strong>Concluzii și surse de eroare</strong>.
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     INTERACTIVE LAB
+========================================================= -->
+
+<section class="card lab">
+
+<h2>🎮 Laborator virtual – caracteristica \(I=f(U)\)</h2>
+
+<p>
+Simulatorul generează măsurători didactice.
+Poți modifica valorile direct în tabel,
+apoi poți recalcula graficul și panta experimentală.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="elementSelect">
+Element analizat
+</label>
+
+<select id="elementSelect">
+
+<option value="resistor" selected>
+Rezistor ideal
+</option>
+
+<option value="inductor">
+Bobină ideală
+</option>
+
+<option value="capacitor">
+Condensator ideal
+</option>
+
+<option value="lamp">
+Bec – model neliniar didactic
+</option>
+
+</select>
+
+</div>
+
+
+<div class="control">
+
+<label for="frequencySlider">
+Frecvență \(f\) [Hz]
+</label>
+
+<input
+  id="frequencySlider"
+  type="range"
+  min="10"
+  max="200"
+  step="1"
+  value="50">
+
+<span
+  class="range-value"
+  id="frequencyLabel">
+50 Hz
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="maxVoltageSlider">
+Tensiune maximă [V]
+</label>
+
+<input
+  id="maxVoltageSlider"
+  type="range"
+  min="2"
+  max="20"
+  step="1"
+  value="12">
+
+<span
+  class="range-value"
+  id="maxVoltageLabel">
+12 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="noiseSlider">
+Abatere simulată [%]
+</label>
+
+<input
+  id="noiseSlider"
+  type="range"
+  min="0"
+  max="5"
+  step="0.5"
+  value="1.5">
+
+<span
+  class="range-value"
+  id="noiseLabel">
+1,5 %
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="resistanceSlider">
+\(R\) [Ω]
+</label>
+
+<input
+  id="resistanceSlider"
+  type="range"
+  min="10"
+  max="200"
+  step="1"
+  value="50">
+
+<span
+  class="range-value"
+  id="resistanceLabel">
+50 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="inductanceSlider">
+\(L\) [mH]
+</label>
+
+<input
+  id="inductanceSlider"
+  type="range"
+  min="20"
+  max="800"
+  step="10"
+  value="200">
+
+<span
+  class="range-value"
+  id="inductanceLabel">
+200 mH
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="capacitanceSlider">
+\(C\) [µF]
+</label>
+
+<input
+  id="capacitanceSlider"
+  type="range"
+  min="5"
+  max="300"
+  step="1"
+  value="100">
+
+<span
+  class="range-value"
+  id="capacitanceLabel">
+100 µF
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="pointsSelect">
+Număr de măsurători
+</label>
+
+<select id="pointsSelect">
+
+<option value="5">
+5
+</option>
+
+<option value="6">
+6
+</option>
+
+<option value="8" selected>
+8
+</option>
+
+<option value="10">
+10
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="primary"
+  id="generateBtn">
+
+Generează măsurători
+
+</button>
+
+
+<button
+  class="green-button"
+  id="recalculateBtn">
+
+Recalculează din tabel
+
+</button>
+
+
+<button
+  class="cyan-button"
+  id="idealBtn">
+
+Date ideale
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Nr.
+</th>
+
+<th>
+\(U\) [V]
+</th>
+
+<th>
+\(I\) [A]
+</th>
+
+<th>
+\(U/I\) [Ω]
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dataBody">
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="graph-wrap">
+
+<canvas id="graphCanvas"></canvas>
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Panta experimentală \(m\)
+</span>
+
+<strong id="slopeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(1/m\)
+</span>
+
+<strong id="inverseSlopeValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span id="parameterLabel">
+\(R_{exp}\)
+</span>
+
+<strong id="parameterValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(R^2\) – liniaritate
+</span>
+
+<strong id="rSquaredValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box"
+  id="labStatus">
+
+Generează o serie de măsurători și interpretează graficul.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>20. Misiuni în laboratorul virtual</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Rezistor fără erori</h3>
+
+<p>
+Selectează rezistorul și:</p>
+
+<div class="formula">
+
+\[
+\text{abatere}=0\%
+\]
+
+</div>
+
+<p>
+Verifică dacă:</p>
+
+<div class="formula">
+
+\[
+R_{exp}=R
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Introdu erori</h3>
+
+<p>
+Crește abaterea la 3–5%.
+</p>
+
+<p>
+Punctele mai sunt exact pe dreaptă?</p>
+
+<p>
+Se păstrează tendința liniară?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Bobină</h3>
+
+<p>
+Păstrează \(L\) constantă și dublează frecvența.
+</p>
+
+<p>
+Predicție:</p>
+
+<div class="formula">
+
+\[
+X_L\rightarrow2X_L
+\]
+
+</div>
+
+<p>
+Cum se modifică panta?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Condensator</h3>
+
+<p>
+Dublează frecvența.
+</p>
+
+<p>
+Cum se modifică:</p>
+
+<div class="formula">
+
+\[
+m=\omega C
+\]
+
+</div>
+
+?</div>
+
+
+<div class="mini-card">
+
+<h3>E. Modifică datele manual</h3>
+
+<p>
+Schimbă o valoare \(I\) din tabel.
+</p>
+
+<p>
+Apasă „Recalculează din tabel”.
+</p>
+
+<p>
+Observă efectul unui punct aberant asupra pantei.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Bec</h3>
+
+<p>
+Selectează modelul de bec.
+</p>
+
+<p>
+Graficul mai poate fi descris bine printr-o singură dreaptă?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Două elemente cu aceeași pantă</h3>
+
+<p>
+Poți obține la o anumită frecvență aceeași valoare \(U/I\)
+pentru un rezistor și o bobină ideală.</p>
+
+<p>
+Sunt cele două elemente fizic echivalente?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>H. Importanța frecvenței</h3>
+
+<p>
+Generează date pentru aceeași bobină la:</p>
+
+<div class="formula">
+
+\[
+50\,Hz
+\]
+
+</div>
+
+<p>
+și apoi la:</p>
+
+<div class="formula">
+
+\[
+100\,Hz
+\]
+
+</div>
+
+<p>
+Compară graficele.</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     QUESTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 21. Întrebări cauză–efect</h2>
+
+<ol>
+
+<li>
+De ce ampermetrul se conectează în serie?
+</li>
+
+<li>
+De ce voltmetrul se conectează în paralel pe element?
+</li>
+
+<li>
+De ce trebuie păstrată frecvența constantă pentru bobină sau condensator?
+</li>
+
+<li>
+De ce caracteristica unui rezistor ideal este o dreaptă?</li>
+
+<li>
+Ce semnificație are panta graficului \(I=f(U)\)?</li>
+
+<li>
+De ce panta nu este egală cu rezistența?</li>
+
+<li>
+De ce două elemente cu același raport \(U/I\) nu au obligatoriu aceeași comportare în c.a.?</li>
+
+<li>
+Ce informație despre fază lipsește din graficul construit numai din valori efective?</li>
+
+<li>
+De ce un bec incandescent poate avea o caracteristică neliniară?</li>
+
+<li>
+De ce punctele experimentale reale nu se află perfect pe dreapta teoretică?</li>
+
+<li>
+Cum afectează un punct aberant determinarea pantei?</li>
+
+<li>
+De ce este util să folosim mai multe măsurători în locul unei singure perechi \(U,I\)?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     COMMON ERRORS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ 22. Greșeli frecvente</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. „Ampermetrul se leagă în paralel.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Ampermetrul se conectează în serie cu elementul studiat.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. „Voltmetrul se leagă în serie.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Voltmetrul se conectează în paralel pe element.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. „Pot modifica și \(U\), și \(f\).”</h3>
+
+<p>
+Nu dacă vrei o singură caracteristică pentru bobină sau condensator.</p>
+
+<div class="formula">
+
+\[
+\boxed{
+f=\text{constant}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. „Panta lui \(I=f(U)\) este \(R\).”</h3>
+
+<p>
+Nu.</p>
+
+<div class="formula">
+
+\[
+m=
+\frac1R
+\]
+
+</div>
+
+<p>
+pentru rezistor.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. „Raportul \(U/I\) arată și faza.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+El oferă modulul opoziției elementului,
+dar nu indică dacă elementul este rezistiv,
+inductiv sau capacitiv.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. „Pentru orice bobină \(U/I=X_L\).”</h3>
+
+<p>
+Nu pentru o bobină reală cu rezistență semnificativă.
+</p>
+
+<div class="formula">
+
+\[
+\frac UI=|Z|
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. „Trebuie să unesc fiecare punct cu următorul.”</h3>
+
+<p>
+Nu neapărat.</p>
+
+<p>
+Pentru un model liniar se trasează o dreaptă de tendință.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. „Dacă punctele nu sunt perfect aliniate, experimentul este greșit.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Datele reale conțin incertitudini.
+Importantă este compatibilitatea cu tendința prezisă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>9. „Un bec este un rezistor ideal.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Temperatura filamentului se schimbă,
+iar rezistența sa nu rămâne constantă.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>10. „Pot folosi orice tensiune disponibilă.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Trebuie respectate tensiunea,
+curentul și puterea nominală ale elementelor și aparatelor.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+În această lucrare reprezentăm:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U=f(t)\)
+</button>
+
+<button class="answer-btn">
+\(I=f(U)\)
+</button>
+
+<button class="answer-btn">
+\(f=I(U)\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Ampermetrul se conectează:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+în paralel cu sursa
+</button>
+
+<button class="answer-btn">
+în paralel cu elementul
+</button>
+
+<button class="answer-btn">
+în serie cu elementul
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Voltmetrul se conectează:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+în paralel pe elementul studiat
+</button>
+
+<button class="answer-btn">
+în serie cu ampermetrul
+</button>
+
+<button class="answer-btn">
+în locul sursei
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Pentru bobină sau condensator,
+pe parcursul unei caracteristici trebuie menținută constantă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+intensitatea
+</button>
+
+<button class="answer-btn">
+frecvența
+</button>
+
+<button class="answer-btn">
+puterea activă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Pentru un element liniar,
+panta graficului \(I=f(U)\) este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(|Z|\)
+</button>
+
+<button class="answer-btn">
+\(|Z|^2\)
+</button>
+
+<button class="answer-btn">
+\(1/|Z|\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Pentru rezistor:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(R=1/m\)
+</button>
+
+<button class="answer-btn">
+\(R=m\)
+</button>
+
+<button class="answer-btn">
+\(R=m^2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Doar din valorile efective \(U\) și \(I\):
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+determinăm sigur și semnul diferenței de fază
+</button>
+
+<button class="answer-btn">
+nu determinăm singuri informația completă de fază
+</button>
+
+<button class="answer-btn">
+determinăm direct frecvența
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Pentru condensatorul ideal la frecvență fixă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(m=1/C\)
+</button>
+
+<button class="answer-btn">
+\(m=C/\omega\)
+</button>
+
+<button class="answer-btn">
+\(m=\omega C\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+O caracteristică curbată poate indica:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+un element neliniar sau parametri care se modifică
+</button>
+
+<button class="answer-btn">
+obligatoriu un aparat defect
+</button>
+
+<button class="answer-btn">
+obligatoriu frecvență zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Montajul didactic se realizează:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+direct la 230 V
+</button>
+
+<button class="answer-btn">
+cu sursă izolată de joasă tensiune
+</button>
+
+<button class="answer-btn">
+fără limitarea curentului
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Caracteristică</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=f(U)
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Condiție</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+f=\text{constant}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Element liniar</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac U{|Z|}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Pantă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+m=
+\frac{\Delta I}{\Delta U}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Impedanță</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+|Z|=\frac1m
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Rezistor</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+R=\frac1m
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Bobină ideală</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+L=
+\frac1{\omega m}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Condensator</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+C=
+\frac m\omega
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Montaj</h3>
+
+<p>
+Ampermetru → serie
+</p>
+
+<p>
+Voltmetru → paralel
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema experimentului:
+
+<strong>
+aleg elementul →
+fixez frecvența →
+variez tensiunea →
+măsor \(U\) și \(I\) →
+completez tabelul →
+trasez \(I=f(U)\) →
+determin panta →
+interpretez parametrul fizic →
+discut erorile.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CHAPTER END
+========================================================= -->
+
+<section class="card">
+
+<h2>🏁 Finalul capitolului 09</h2>
+
+<p>
+Prin acest experiment se încheie capitolul
+<strong>„Curent alternativ și elemente de circuit”</strong>.
+</p>
+
+<p>
+Ai trecut de la producerea tensiunii alternative la:
+</p>
+
+<ul>
+
+<li>mărimi sinusoidale și valori efective;</li>
+
+<li>reprezentări grafice și fazoriale;</li>
+
+<li>rezistor, bobină și condensator în c.a.;</li>
+
+<li>reactanță inductivă și capacitivă;</li>
+
+<li>circuite RLC serie și paralel;</li>
+
+<li>impedanță și admitanță;</li>
+
+<li>rezonanță;</li>
+
+<li>verificarea experimentală a relației dintre tensiune și curent.</li>
+
+</ul>
+
+
+<div class="blue-box">
+
+În capitolul următor,
+<strong>„Energia și puterea în curent alternativ. Transformatorul”</strong>,
+primul subiect este:
+
+<strong>
+Puterea activă, reactivă și aparentă.
+</strong>
+
+Relația:
+
+\[
+P=UI\cos\varphi
+\]
+
+va fi integrată într-o descriere mai completă a transferului de energie în curent alternativ.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="09-rezonanta-frecventa-de-rezonanta.html">
+
+← Lecția 9<br>
+Rezonanța. Frecvența de rezonanță
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins capitol
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="../10-energia-si-puterea-in-ca-transformatorul/1-puterea-activa-reactiva-si-aparenta.html">
+
+Capitolul 10<br>
+Puterea activă, reactivă și aparentă →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent alternativ și elemente de circuit
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=3
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+function parseRo(
+  value
+){
+
+  return Number(
+    String(
+      value
+    )
+    .trim()
+    .replace(
+      ",",
+      "."
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const elementSelect=
+  document.getElementById(
+    "elementSelect"
+  );
+
+
+const frequencySlider=
+  document.getElementById(
+    "frequencySlider"
+  );
+
+
+const maxVoltageSlider=
+  document.getElementById(
+    "maxVoltageSlider"
+  );
+
+
+const noiseSlider=
+  document.getElementById(
+    "noiseSlider"
+  );
+
+
+const resistanceSlider=
+  document.getElementById(
+    "resistanceSlider"
+  );
+
+
+const inductanceSlider=
+  document.getElementById(
+    "inductanceSlider"
+  );
+
+
+const capacitanceSlider=
+  document.getElementById(
+    "capacitanceSlider"
+  );
+
+
+const pointsSelect=
+  document.getElementById(
+    "pointsSelect"
+  );
+
+
+const frequencyLabel=
+  document.getElementById(
+    "frequencyLabel"
+  );
+
+
+const maxVoltageLabel=
+  document.getElementById(
+    "maxVoltageLabel"
+  );
+
+
+const noiseLabel=
+  document.getElementById(
+    "noiseLabel"
+  );
+
+
+const resistanceLabel=
+  document.getElementById(
+    "resistanceLabel"
+  );
+
+
+const inductanceLabel=
+  document.getElementById(
+    "inductanceLabel"
+  );
+
+
+const capacitanceLabel=
+  document.getElementById(
+    "capacitanceLabel"
+  );
+
+
+const dataBody=
+  document.getElementById(
+    "dataBody"
+  );
+
+
+const slopeValue=
+  document.getElementById(
+    "slopeValue"
+  );
+
+
+const inverseSlopeValue=
+  document.getElementById(
+    "inverseSlopeValue"
+  );
+
+
+const parameterLabel=
+  document.getElementById(
+    "parameterLabel"
+  );
+
+
+const parameterValue=
+  document.getElementById(
+    "parameterValue"
+  );
+
+
+const rSquaredValue=
+  document.getElementById(
+    "rSquaredValue"
+  );
+
+
+const labStatus=
+  document.getElementById(
+    "labStatus"
+  );
+
+
+const graphCanvas=
+  document.getElementById(
+    "graphCanvas"
+  );
+
+
+const graphCtx=
+  graphCanvas.getContext(
+    "2d"
+  );
+
+
+let currentData=[];
+
+
+/* =========================================================
+   MODEL PARAMETERS
+========================================================= */
+
+function getParameters(){
+
+  return{
+
+    type:
+      elementSelect.value,
+
+    f:
+      Number(
+        frequencySlider.value
+      ),
+
+    Umax:
+      Number(
+        maxVoltageSlider.value
+      ),
+
+    noisePercent:
+      Number(
+        noiseSlider.value
+      ),
+
+    R:
+      Number(
+        resistanceSlider.value
+      ),
+
+    L:
+      Number(
+        inductanceSlider.value
+      )/
+      1000,
+
+    C:
+      Number(
+        capacitanceSlider.value
+      )*
+      1e-6,
+
+    points:
+      Number(
+        pointsSelect.value
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   IDEAL CURRENT
+========================================================= */
+
+function idealCurrent(
+  U,
+  p
+){
+
+  const omega=
+    2*
+    Math.PI*
+    p.f;
+
+
+  if(
+    p.type===
+    "resistor"
+  ){
+
+    return U/
+      p.R;
+
+  }
+
+
+  if(
+    p.type===
+    "inductor"
+  ){
+
+    const XL=
+      omega*
+      p.L;
+
+
+    return U/
+      XL;
+
+  }
+
+
+  if(
+    p.type===
+    "capacitor"
+  ){
+
+    return omega*
+      p.C*
+      U;
+
+  }
+
+
+  /*
+  Nonlinear illustrative lamp model.
+
+  Resistance rises with voltage as the filament heats.
+  This is intentionally a pedagogical model,
+  not a detailed thermal simulation.
+  */
+
+  const normalized=
+    p.Umax>
+    0
+      ? U/
+        p.Umax
+      : 0;
+
+
+  const hotFactor=
+    1+
+    3.2*
+    Math.pow(
+      normalized,
+      1.45
+    );
+
+
+  const effectiveR=
+    p.R*
+    hotFactor;
+
+
+  return U/
+    effectiveR;
+
+}
+
+
+/* =========================================================
+   RANDOM NOISE
+========================================================= */
+
+function randomNoise(
+  percent
+){
+
+  const span=
+    percent/
+    100;
+
+
+  return 1+
+    (
+      Math.random()*
+      2-
+      1
+    )*
+    span;
+
+}
+
+
+/* =========================================================
+   GENERATE DATA
+========================================================= */
+
+function generateData(
+  forceIdeal=false
+){
+
+  const p=
+    getParameters();
+
+
+  currentData=[];
+
+
+  for(
+    let k=1;
+    k<=p.points;
+    k++
+  ){
+
+    const U=
+      p.Umax*
+      k/
+      p.points;
+
+
+    let I=
+      idealCurrent(
+        U,
+        p
+      );
+
+
+    if(
+      !forceIdeal
+    ){
+
+      I*=
+        randomNoise(
+          p.noisePercent
+        );
+
+    }
+
+
+    currentData.push({
+
+      U,
+      I
+
+    });
+
+  }
+
+
+  renderTable();
+
+  analyseData();
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+function renderTable(){
+
+  dataBody.innerHTML="";
+
+
+  currentData.forEach(
+    (
+      point,
+      index
+    )=>{
+
+      const tr=
+        document.createElement(
+          "tr"
+        );
+
+
+      const ratio=
+        point.I>
+        0
+          ? point.U/
+            point.I
+          : NaN;
+
+
+      tr.innerHTML=
+        `
+        <td>
+          ${index+1}
+        </td>
+
+        <td>
+          <input
+            class="data-input voltage-input"
+            type="text"
+            inputmode="decimal"
+            value="${formatRo(point.U,3)}"
+            aria-label="Tensiunea pentru măsurarea ${index+1}">
+        </td>
+
+        <td>
+          <input
+            class="data-input current-input"
+            type="text"
+            inputmode="decimal"
+            value="${formatRo(point.I,5)}"
+            aria-label="Curentul pentru măsurarea ${index+1}">
+        </td>
+
+        <td class="ratio-cell">
+          ${formatRo(ratio,2)}
+        </td>
+        `;
+
+
+      dataBody.appendChild(
+        tr
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   READ TABLE
+========================================================= */
+
+function readTableData(){
+
+  const rows=
+    dataBody.querySelectorAll(
+      "tr"
+    );
+
+
+  const data=[];
+
+
+  rows.forEach(
+    row=>{
+
+      const U=
+        parseRo(
+          row.querySelector(
+            ".voltage-input"
+          ).value
+        );
+
+
+      const I=
+        parseRo(
+          row.querySelector(
+            ".current-input"
+          ).value
+        );
+
+
+      const ratioCell=
+        row.querySelector(
+          ".ratio-cell"
+        );
+
+
+      if(
+        Number.isFinite(
+          U
+        ) &&
+        Number.isFinite(
+          I
+        ) &&
+        U>=0 &&
+        I>=0
+      ){
+
+        data.push({
+          U,
+          I
+        });
+
+
+        ratioCell.textContent=
+          I>
+          0
+            ? formatRo(
+                U/
+                I,
+                2
+              )
+            : "—";
+
+      }
+
+      else{
+
+        ratioCell.textContent=
+          "—";
+
+      }
+
+    }
+  );
+
+
+  currentData=
+    data;
+
+}
+
+
+/* =========================================================
+   REGRESSION THROUGH ORIGIN
+========================================================= */
+
+function regressionThroughOrigin(
+  data
+){
+
+  let sumUI=0;
+  let sumU2=0;
+
+
+  data.forEach(
+    point=>{
+
+      sumUI+=
+        point.U*
+        point.I;
+
+
+      sumU2+=
+        point.U*
+        point.U;
+
+    }
+  );
+
+
+  const slope=
+    sumU2>
+    0
+      ? sumUI/
+        sumU2
+      : NaN;
+
+
+  /*
+  R² relative to mean of I.
+  Used here only as a descriptive indicator of how well
+  the forced-origin linear model matches the points.
+  */
+
+  const meanI=
+    data.length>
+    0
+      ? data.reduce(
+          (
+            sum,
+            point
+          )=>
+            sum+
+            point.I,
+          0
+        )/
+        data.length
+      : NaN;
+
+
+  let ssRes=0;
+  let ssTot=0;
+
+
+  data.forEach(
+    point=>{
+
+      const predicted=
+        slope*
+        point.U;
+
+
+      ssRes+=
+        Math.pow(
+          point.I-
+          predicted,
+          2
+        );
+
+
+      ssTot+=
+        Math.pow(
+          point.I-
+          meanI,
+          2
+        );
+
+    }
+  );
+
+
+  const r2=
+    ssTot>
+    0
+      ? 1-
+        ssRes/
+        ssTot
+      : 1;
+
+
+  return{
+    slope,
+    r2
+  };
+
+}
+
+
+/* =========================================================
+   ANALYSIS
+========================================================= */
+
+function analyseData(){
+
+  readTableData();
+
+
+  if(
+    currentData.length<
+    2
+  ){
+
+    labStatus.textContent=
+      "Sunt necesare cel puțin două perechi valide de valori.";
+
+    return;
+
+  }
+
+
+  const p=
+    getParameters();
+
+
+  const regression=
+    regressionThroughOrigin(
+      currentData
+    );
+
+
+  const m=
+    regression.slope;
+
+
+  const inverse=
+    m>
+    0
+      ? 1/
+        m
+      : NaN;
+
+
+  slopeValue.textContent=
+    `${formatRo(
+      m,
+      6
+    )} A/V`;
+
+
+  inverseSlopeValue.textContent=
+    `${formatRo(
+      inverse,
+      3
+    )} Ω`;
+
+
+  rSquaredValue.textContent=
+    formatRo(
+      regression.r2,
+      4
+    );
+
+
+  const omega=
+    2*
+    Math.PI*
+    p.f;
+
+
+  if(
+    p.type===
+    "resistor"
+  ){
+
+    parameterLabel.innerHTML=
+      "\\(R_{exp}\\)";
+
+
+    parameterValue.textContent=
+      `${formatRo(
+        inverse,
+        2
+      )} Ω`;
+
+
+    const relativeError=
+      Math.abs(
+        inverse-
+        p.R
+      )/
+      p.R*
+      100;
+
+
+    labStatus.innerHTML=
+      `Pentru rezistor:
+       <strong>m≈1/R</strong>.
+       Valoarea introdusă este
+       ${formatRo(p.R,1)} Ω,
+       iar din date rezultă aproximativ
+       <strong>${formatRo(inverse,2)} Ω</strong>.
+       Abaterea relativă față de model este aproximativ
+       <strong>${formatRo(relativeError,2)}%</strong>.`;
+
+  }
+
+
+  else if(
+    p.type===
+    "inductor"
+  ){
+
+    const Lexp=
+      m>
+      0
+        ? 1/
+          (
+            omega*
+            m
+          )
+        : NaN;
+
+
+    parameterLabel.innerHTML=
+      "\\(L_{exp}\\)";
+
+
+    parameterValue.textContent=
+      `${formatRo(
+        Lexp*
+        1000,
+        2
+      )} mH`;
+
+
+    labStatus.innerHTML=
+      `Pentru bobina ideală:
+       <strong>m=1/(ωL)</strong>.
+       Din date rezultă
+       <strong>L≈${formatRo(Lexp*1000,2)} mH</strong>.
+       Într-un experiment cu bobină reală,
+       raportul U/I include și efectele rezistive ale bobinei.`;
+
+  }
+
+
+  else if(
+    p.type===
+    "capacitor"
+  ){
+
+    const Cexp=
+      m/
+      omega;
+
+
+    parameterLabel.innerHTML=
+      "\\(C_{exp}\\)";
+
+
+    parameterValue.textContent=
+      `${formatRo(
+        Cexp*
+        1e6,
+        2
+      )} µF`;
+
+
+    labStatus.innerHTML=
+      `Pentru condensatorul ideal:
+       <strong>m=ωC</strong>.
+       Din date rezultă
+       <strong>C≈${formatRo(Cexp*1e6,2)} µF</strong>.
+       Frecvența trebuie păstrată constantă pe întreaga caracteristică.`;
+
+  }
+
+
+  else{
+
+    parameterLabel.textContent=
+      "Model";
+
+
+    parameterValue.textContent=
+      "neliniar";
+
+
+    labStatus.innerHTML=
+      `Modelul de bec este intenționat neliniar.
+       Pe măsură ce tensiunea crește,
+       modelul presupune încălzirea filamentului și creșterea rezistenței.
+       De aceea <strong>o singură pantă nu descrie bine întregul domeniu</strong>.
+       Valoarea R² trebuie interpretată cu prudență.`;
+
+  }
+
+
+  if(
+    window.MathJax &&
+    MathJax.typesetPromise
+  ){
+
+    MathJax.typesetPromise([
+      parameterLabel
+    ]).catch(
+      ()=>{}
+    );
+
+  }
+
+
+  drawGraph(
+    p,
+    regression
+  );
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  graphCanvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  graphCanvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  graphCtx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   GRAPH
+========================================================= */
+
+function drawGraph(
+  p,
+  regression
+){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  graphCtx.fillStyle=
+    "#f8fafc";
+
+
+  graphCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 15px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    "Caracteristica voltamperică I = f(U)",
+    20,
+    30
+  );
+
+
+  graphCtx.fillStyle=
+    "#64748b";
+
+
+  graphCtx.font=
+    "11px system-ui";
+
+
+  graphCtx.fillText(
+    `f = ${formatRo(p.f,0)} Hz • puncte = măsurători • linie = model / tendință`,
+    20,
+    50
+  );
+
+
+  const left=72;
+  const right=W-34;
+
+  const top=82;
+  const bottom=H-70;
+
+
+  let maxU=
+    Math.max(
+      ...currentData.map(
+        p=>p.U
+      ),
+      p.Umax,
+      1
+    );
+
+
+  let maxI=
+    Math.max(
+      ...currentData.map(
+        p=>p.I
+      ),
+      0.001
+    );
+
+
+  /*
+  Also consider ideal model so it fits.
+  */
+
+  for(
+    let k=0;
+    k<=100;
+    k++
+  ){
+
+    const U=
+      maxU*
+      k/
+      100;
+
+
+    maxI=
+      Math.max(
+        maxI,
+        idealCurrent(
+          U,
+          p
+        )
+      );
+
+  }
+
+
+  maxU*=
+    1.08;
+
+
+  maxI*=
+    1.12;
+
+
+  function xFor(
+    U
+  ){
+
+    return left+
+      U/
+      maxU*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yFor(
+    I
+  ){
+
+    return bottom-
+      I/
+      maxI*
+      (
+        bottom-
+        top
+      );
+
+  }
+
+
+  /*
+  Grid.
+  */
+
+  graphCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  graphCtx.lineWidth=1;
+
+
+  for(
+    let k=0;
+    k<=5;
+    k++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      k/
+      5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      x,
+      top
+    );
+
+    graphCtx.lineTo(
+      x,
+      bottom
+    );
+
+    graphCtx.stroke();
+
+
+    const U=
+      maxU*
+      k/
+      5;
+
+
+    graphCtx.fillStyle=
+      "#475569";
+
+
+    graphCtx.font=
+      "10px system-ui";
+
+
+    graphCtx.textAlign=
+      "center";
+
+
+    graphCtx.fillText(
+      formatRo(
+        U,
+        1
+      ),
+      x,
+      bottom+
+      20
+    );
+
+  }
+
+
+  for(
+    let k=0;
+    k<=5;
+    k++
+  ){
+
+    const y=
+      bottom-
+      (
+        bottom-
+        top
+      )*
+      k/
+      5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      left,
+      y
+    );
+
+    graphCtx.lineTo(
+      right,
+      y
+    );
+
+    graphCtx.stroke();
+
+
+    const I=
+      maxI*
+      k/
+      5;
+
+
+    graphCtx.fillStyle=
+      "#475569";
+
+
+    graphCtx.font=
+      "10px system-ui";
+
+
+    graphCtx.textAlign=
+      "right";
+
+
+    graphCtx.fillText(
+      formatRo(
+        I,
+        3
+      ),
+      left-
+      9,
+      y+
+      4
+    );
+
+  }
+
+
+  /*
+  Axes.
+  */
+
+  graphCtx.strokeStyle=
+    "#334155";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.beginPath();
+
+  graphCtx.moveTo(
+    left,
+    top
+  );
+
+  graphCtx.lineTo(
+    left,
+    bottom
+  );
+
+  graphCtx.lineTo(
+    right,
+    bottom
+  );
+
+  graphCtx.stroke();
+
+
+  /*
+  Ideal curve.
+  */
+
+  graphCtx.strokeStyle=
+    "#0891b2";
+
+
+  graphCtx.lineWidth=3;
+
+
+  graphCtx.setLineDash([
+    8,
+    5
+  ]);
+
+
+  graphCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=250;
+    k++
+  ){
+
+    const U=
+      maxU*
+      k/
+      250;
+
+
+    const I=
+      idealCurrent(
+        U,
+        p
+      );
+
+
+    const x=
+      xFor(
+        U
+      );
+
+
+    const y=
+      yFor(
+        I
+      );
+
+
+    if(
+      k===
+      0
+    ){
+
+      graphCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      graphCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  graphCtx.stroke();
+
+
+  graphCtx.setLineDash([]);
+
+
+  /*
+  Experimental best fit through origin.
+  Only meaningful as global model for linear elements,
+  but drawn for comparison for the lamp too.
+  */
+
+  if(
+    Number.isFinite(
+      regression.slope
+    )
+  ){
+
+    graphCtx.strokeStyle=
+      "#7c3aed";
+
+
+    graphCtx.lineWidth=2.5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      xFor(0),
+      yFor(0)
+    );
+
+    graphCtx.lineTo(
+      xFor(
+        maxU
+      ),
+      yFor(
+        regression.slope*
+        maxU
+      )
+    );
+
+    graphCtx.stroke();
+
+  }
+
+
+  /*
+  Experimental points.
+  */
+
+  currentData.forEach(
+    point=>{
+
+      graphCtx.beginPath();
+
+      graphCtx.arc(
+        xFor(
+          point.U
+        ),
+        yFor(
+          point.I
+        ),
+        6,
+        0,
+        Math.PI*
+        2
+      );
+
+
+      graphCtx.fillStyle=
+        "#dc2626";
+
+
+      graphCtx.fill();
+
+
+      graphCtx.strokeStyle=
+        "#ffffff";
+
+
+      graphCtx.lineWidth=2;
+
+
+      graphCtx.stroke();
+
+    }
+  );
+
+
+  /*
+  Axis labels.
+  */
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 11px system-ui";
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.fillText(
+    "U [V]",
+    (
+      left+
+      right
+    )/
+    2,
+    H-
+    22
+  );
+
+
+  graphCtx.save();
+
+
+  graphCtx.translate(
+    20,
+    (
+      top+
+      bottom
+    )/
+    2
+  );
+
+
+  graphCtx.rotate(
+    -Math.PI/
+    2
+  );
+
+
+  graphCtx.fillText(
+    "I [A]",
+    0,
+    0
+  );
+
+
+  graphCtx.restore();
+
+
+  /*
+  Legend.
+  */
+
+  graphCtx.font=
+    "bold 10px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillStyle=
+    "#0891b2";
+
+
+  graphCtx.fillText(
+    "— model teoretic",
+    right-
+    190,
+    top+
+    18
+  );
+
+
+  graphCtx.fillStyle=
+    "#7c3aed";
+
+
+  graphCtx.fillText(
+    "— ajustare liniară",
+    right-
+    190,
+    top+
+    36
+  );
+
+
+  graphCtx.fillStyle=
+    "#dc2626";
+
+
+  graphCtx.fillText(
+    "● măsurători",
+    right-
+    190,
+    top+
+    54
+  );
+
+}
+
+
+/* =========================================================
+   UI LABELS
+========================================================= */
+
+function updateLabels(){
+
+  frequencyLabel.textContent=
+    `${formatRo(
+      Number(
+        frequencySlider.value
+      ),
+      0
+    )} Hz`;
+
+
+  maxVoltageLabel.textContent=
+    `${formatRo(
+      Number(
+        maxVoltageSlider.value
+      ),
+      0
+    )} V`;
+
+
+  noiseLabel.textContent=
+    `${formatRo(
+      Number(
+        noiseSlider.value
+      ),
+      1
+    )} %`;
+
+
+  resistanceLabel.textContent=
+    `${formatRo(
+      Number(
+        resistanceSlider.value
+      ),
+      0
+    )} Ω`;
+
+
+  inductanceLabel.textContent=
+    `${formatRo(
+      Number(
+        inductanceSlider.value
+      ),
+      0
+    )} mH`;
+
+
+  capacitanceLabel.textContent=
+    `${formatRo(
+      Number(
+        capacitanceSlider.value
+      ),
+      0
+    )} µF`;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetAll(){
+
+  elementSelect.value=
+    "resistor";
+
+
+  frequencySlider.value=
+    "50";
+
+
+  maxVoltageSlider.value=
+    "12";
+
+
+  noiseSlider.value=
+    "1.5";
+
+
+  resistanceSlider.value=
+    "50";
+
+
+  inductanceSlider.value=
+    "200";
+
+
+  capacitanceSlider.value=
+    "100";
+
+
+  pointsSelect.value=
+    "8";
+
+
+  updateLabels();
+
+  generateData();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  elementSelect,
+  frequencySlider,
+  maxVoltageSlider,
+  noiseSlider,
+  resistanceSlider,
+  inductanceSlider,
+  capacitanceSlider,
+  pointsSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateLabels
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateLabels
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "generateBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>generateData(
+      false
+    )
+  );
+
+
+document
+  .getElementById(
+    "idealBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>generateData(
+      true
+    )
+  );
+
+
+document
+  .getElementById(
+    "recalculateBtn"
+  )
+  .addEventListener(
+    "click",
+    analyseData
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas();
+
+  if(
+    currentData.length>
+    0
+  ){
+
+    analyseData();
+
+  }
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește montajul, condiția de frecvență constantă și semnificația pantei graficului I=f(U).";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Poți interpreta corect o caracteristică voltamperică în curent alternativ.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Mai exersează interpretarea pantei și rolul frecvenței.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia traseul: montaj → f constantă → măsurători U,I → grafic I(U) → pantă → |Z|.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas();
+
+    resetAll();
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
