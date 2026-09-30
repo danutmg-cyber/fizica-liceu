@@ -1,1 +1,6906 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+2. Mărimi alternative sinusoidale. Valori instantanee, maxime și efective | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Mărimi alternative sinusoidale: valoare instantanee, amplitudine, valoare maximă și valoare efectivă. Relațiile u=Um sin(ωt+φ0), U=Um/√2, exemple, activitate experimentală și simulator interactiv. Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      rgba(34,211,238,.22),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(168,85,247,.34),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #4338ca 48%,
+      #0e7490
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#cffafe;
+
+  background:
+    rgba(6,182,212,.16);
+
+  border:
+    1px solid rgba(103,232,249,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#e0f2fe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--purple-soft);
+
+  border-color:#ddd6fe;
+
+  font-size:
+    clamp(1.1rem,3vw,1.42rem);
+
+}
+
+
+/* =========================================================
+   CONCEPT FLOW
+========================================================= */
+
+.flow{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.flow-card{
+
+  padding:18px;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.flow-arrow{
+
+  color:#7c3aed;
+
+  font-size:1.8rem;
+
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#f5f3ff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--purple);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#6d28d9;
+  background:#ede9fe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#6d28d9;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #faf8ff,
+      #eef9ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#6d28d9;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:translateY(-1px);
+
+  filter:brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.2fr .8fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#waveCanvas,
+#rmsCanvas{
+
+  display:block;
+
+  width:100%;
+  height:620px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   MISCONCEPTIONS
+========================================================= */
+
+.mistake-card{
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.mistake-card h3{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--purple-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .flow{
+    grid-template-columns:1fr;
+  }
+
+  .flow-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #waveCanvas,
+  #rmsCanvas{
+    height:540px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent alternativ și elemente de circuit
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 2
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Mărimi sinusoidale
+</span>
+
+</div>
+
+
+<h1>
+Mărimi alternative sinusoidale. Valori instantanee, maxime și efective
+</h1>
+
+
+<p class="subtitle">
+Tensiunea produsă de alternatorul idealizat nu are aceeași valoare în fiecare moment.
+Ea variază periodic, trece prin zero și își schimbă semnul.
+Pentru a descrie riguros o asemenea mărime vom diferenția
+valoarea instantanee, amplitudinea și valoarea efectivă.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să recunoști o mărime alternativă sinusoidală;</li>
+
+<li>să interpretezi semnul valorii instantanee;</li>
+
+<li>să diferențiezi valoarea instantanee de valoarea maximă;</li>
+
+<li>să identifici amplitudinea unei sinusoide;</li>
+
+<li>să folosești relația \(u=U_m\sin(\omega t+\varphi_0)\);</li>
+
+<li>să interpretezi noțiunea de fază instantanee;</li>
+
+<li>să diferențiezi valoarea medie de valoarea efectivă;</li>
+
+<li>să utilizezi \(U=U_m/\sqrt2\) pentru o tensiune sinusoidală;</li>
+
+<li>să utilizezi \(I=I_m/\sqrt2\) pentru un curent sinusoidal;</li>
+
+<li>să explici semnificația energetică a valorii efective.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relațiile centrale</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+u(t)=
+U_m
+\sin(\omega t+\varphi_0)
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+i(t)=
+I_m
+\sin(\omega t+\varphi_0)
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\frac{U_m}{\sqrt2}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{I_m}{\sqrt2}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BRIDGE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Legătura cu alternatorul</h2>
+
+<p>
+În lecția precedentă am obținut,
+pentru un alternator idealizat:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\mathcal E(t)
+=
+\mathcal E_m
+\sin(\omega t)
+\]
+
+</div>
+
+<p>
+Această expresie arată că tensiunea electromotoare
+nu este constantă.
+</p>
+
+<p>
+Ea parcurge periodic valori:</p>
+
+<div class="formula">
+
+\[
+0
+\rightarrow
++\mathcal E_m
+\rightarrow
+0
+\rightarrow
+-\mathcal E_m
+\rightarrow
+0
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+O mărime care își modifică periodic atât valoarea,
+cât și semnul poate fi o
+<strong>mărime alternativă</strong>.
+
+Dacă variația sa este descrisă printr-o funcție sinus sau cosinus,
+mărimea este
+<strong>alternativă sinusoidală</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WHAT IS ALTERNATING
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Ce înseamnă „alternativ”?</h2>
+
+<p>
+Considerăm tensiunea:
+</p>
+
+<div class="formula">
+
+\[
+u(t)=U_m\sin(\omega t)
+\]
+
+</div>
+
+<p>
+Pe durata unei perioade,
+tensiunea are atât valori pozitive,
+cât și valori negative.
+</p>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Semialternanță pozitivă</h3>
+
+<div class="formula">
+
+\[
+u>0
+\]
+
+</div>
+
+<p>
+Polaritatea este cea corespunzătoare sensului de referință ales.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Trecere prin zero</h3>
+
+<div class="formula">
+
+\[
+u=0
+\]
+
+</div>
+
+<p>
+Valoarea instantanee este nulă numai în acel moment.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Semialternanță negativă</h3>
+
+<div class="formula">
+
+\[
+u<0
+\]
+
+</div>
+
+<p>
+Polaritatea este inversă față de sensul de referință ales.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="blue-box">
+
+Semnul minus al valorii instantanee nu înseamnă că
+„tensiunea a dispărut”.
+
+El indică
+<strong>inversarea polarității față de convenția aleasă</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     GENERIC SINUSOID
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Ecuația unei mărimi alternative sinusoidale</h2>
+
+<p>
+O tensiune sinusoidală se poate scrie:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+u(t)
+=
+U_m
+\sin(\omega t+\varphi_0)
+}
+\]
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Simbol
+</th>
+
+<th>
+Semnificație
+</th>
+
+<th>
+Unitate
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+\(u(t)\)
+</td>
+
+<td>
+valoarea instantanee a tensiunii
+</td>
+
+<td>
+V
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(U_m\)
+</td>
+
+<td>
+valoarea maximă sau amplitudinea
+</td>
+
+<td>
+V
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(\omega\)
+</td>
+
+<td>
+pulsația
+</td>
+
+<td>
+rad/s
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(t\)
+</td>
+
+<td>
+timpul
+</td>
+
+<td>
+s
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(\omega t+\varphi_0\)
+</td>
+
+<td>
+faza instantanee
+</td>
+
+<td>
+rad
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(\varphi_0\)
+</td>
+
+<td>
+faza inițială
+</td>
+
+<td>
+rad
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="yellow-box">
+
+În această lecție folosim faza doar pentru a citi o sinusoidă.
+
+Perioada,
+frecvența,
+pulsația și reprezentările fazoriale
+vor fi aprofundate în lecția următoare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Curent sinusoidal</h2>
+
+<p>
+În mod analog,
+un curent alternativ sinusoidal poate fi exprimat:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+i(t)=
+I_m
+\sin(\omega t+\varphi_0)
+}
+\]
+
+</div>
+
+<p>
+unde:</p>
+
+<ul>
+
+<li>\(i(t)\) este intensitatea instantanee;</li>
+
+<li>\(I_m\) este intensitatea maximă;</li>
+
+<li>semnul lui \(i\) indică sensul instantaneu față de sensul de referință ales.</li>
+
+</ul>
+
+
+<div class="green-box">
+
+În curent alternativ trebuie să distingem atent:
+
+\[
+\boxed{
+i
+\neq
+I_m
+\neq
+I
+}
+\]
+
+unde:
+
+<ul>
+
+<li>\(i\) – valoare instantanee;</li>
+
+<li>\(I_m\) – valoare maximă;</li>
+
+<li>\(I\) – valoare efectivă.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     INSTANTANEOUS
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Valoarea instantanee</h2>
+
+<p>
+Valoarea instantanee este valoarea mărimii
+<strong>la un anumit moment</strong>.
+</p>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+u(t)=
+20\sin(100\pi t)
+\]
+
+</div>
+
+<p>
+atunci la:</p>
+
+<div class="formula">
+
+\[
+t=0
+\]
+
+</div>
+
+<p>
+avem:</p>
+
+<div class="formula">
+
+\[
+u(0)=0
+\]
+
+</div>
+
+<p>
+iar la un moment pentru care:
+</p>
+
+<div class="formula">
+
+\[
+100\pi t=
+\frac{\pi}{2}
+\]
+
+</div>
+
+<p>
+rezultă:</p>
+
+<div class="formula">
+
+\[
+u=
+20\,V
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+Valoarea instantanee se poate modifica continuu.
+
+Prin urmare,
+un singur număr precum „20 V” nu descrie complet o tensiune sinusoidală
+decât dacă precizăm ce fel de valoare reprezintă.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MAXIMUM
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Valoarea maximă – amplitudinea</h2>
+
+<p>
+Deoarece:
+</p>
+
+<div class="formula">
+
+\[
+-1\le
+\sin(\omega t+\varphi_0)
+\le1
+\]
+
+</div>
+
+<p>
+pentru:
+</p>
+
+<div class="formula">
+
+\[
+u=
+U_m
+\sin(\omega t+\varphi_0)
+\]
+
+</div>
+
+<p>
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+-U_m
+\le
+u
+\le
+U_m
+}
+\]
+
+</div>
+
+<p>
+\(U_m\) reprezintă
+<strong>amplitudinea</strong>
+sau modulul valorii maxime.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Maxim pozitiv</h3>
+
+<div class="formula">
+
+\[
+u_{max}=+U_m
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Minim</h3>
+
+<div class="formula">
+
+\[
+u_{min}=-U_m
+\]
+
+</div>
+
+<p>
+Modulul este tot \(U_m\).
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PEAK TO PEAK
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Valoarea vârf-la-vârf</h2>
+
+<p>
+Pe un osciloscop poate fi utilă distanța dintre
+vârful pozitiv și vârful negativ.
+</p>
+
+<div class="formula">
+
+\[
+U_{pp}
+=
+U_m-
+(-U_m)
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_{pp}=2U_m
+}
+\]
+
+</div>
+
+
+<h3>Exemplu</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+U_{pp}=12\,V
+\]
+
+</div>
+
+<p>
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+U_m=
+\frac{U_{pp}}2
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U_m=6\,V
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AVERAGE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Valoarea medie pe o perioadă</h2>
+
+<p>
+Pentru o sinusoidă simetrică față de axa timpului,
+contribuția pozitivă dintr-o semiperioadă
+este compensată de contribuția negativă din cealaltă semiperioadă.
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+u_{med}=0
+}
+\]
+
+</div>
+
+<p>
+pe o perioadă completă.
+</p>
+
+
+<div class="red-box">
+
+Valoarea medie nulă
+<strong>nu înseamnă că tensiunea sinusoidală nu poate transfera energie</strong>.
+
+Un rezistor conectat la o sursă alternativă sinusoidală se poate încălzi,
+deși media algebrică a tensiunii pe o perioadă este zero.
+</div>
+
+
+<p>
+Această observație conduce la necesitatea unei alte mărimi:
+<strong>valoarea efectivă</strong>.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     RMS IDEA
+========================================================= -->
+
+<section class="card">
+
+<h2>9. De ce avem nevoie de valoarea efectivă?</h2>
+
+<p>
+Considerăm un rezistor \(R\).
+</p>
+
+<p>
+În curent continuu,
+energia transformată prin efect Joule într-un timp \(t\) este:
+</p>
+
+<div class="formula">
+
+\[
+Q_{cc}
+=
+I_{cc}^{\,2}Rt
+\]
+
+</div>
+
+<p>
+Un curent alternativ își schimbă semnul,
+dar:
+</p>
+
+<div class="formula">
+
+\[
+i^2\ge0
+\]
+
+</div>
+
+<p>
+în fiecare moment.
+</p>
+
+<p>
+Prin urmare,
+efectul termic nu se anulează atunci când curentul își schimbă sensul.
+</p>
+
+
+<div class="green-box">
+
+<strong>Valoarea efectivă a unui curent alternativ</strong>
+este valoarea curentului continuu care,
+trecând prin același rezistor în același interval de timp,
+produce același efect Joule.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RMS DERIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Valoarea efectivă a unui curent sinusoidal</h2>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+i(t)=I_m\sin(\omega t)
+\]
+
+</div>
+
+<p>
+puterea Joule instantanee într-un rezistor este:
+</p>
+
+<div class="formula">
+
+\[
+p(t)=i^2R
+\]
+
+</div>
+
+<p>
+deci:
+</p>
+
+<div class="formula">
+
+\[
+p(t)
+=
+I_m^2R
+\sin^2(\omega t)
+\]
+
+</div>
+
+<p>
+Pe o perioadă,
+valoarea medie a lui \(\sin^2\) este:
+</p>
+
+<div class="formula">
+
+\[
+\left\langle
+\sin^2
+\right\rangle
+=
+\frac12
+\]
+
+</div>
+
+<p>
+Prin urmare:</p>
+
+<div class="formula">
+
+\[
+P_{med}
+=
+\frac{
+I_m^2R
+}{
+2
+}
+\]
+
+</div>
+
+<p>
+Definim valoarea efectivă \(I\) astfel încât:
+</p>
+
+<div class="formula">
+
+\[
+P_{med}=I^2R
+\]
+
+</div>
+
+<p>
+Comparând:</p>
+
+<div class="formula">
+
+\[
+I^2R=
+\frac{
+I_m^2R
+}{
+2
+}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\frac{I_m}{\sqrt2}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     VOLTAGE RMS
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Valoarea efectivă a tensiunii sinusoidale</h2>
+
+<p>
+Pentru o tensiune sinusoidală:
+</p>
+
+<div class="formula">
+
+\[
+u=
+U_m
+\sin(\omega t+\varphi_0)
+\]
+
+</div>
+
+<p>
+valoarea efectivă este:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U=
+\frac{U_m}{\sqrt2}
+}
+\]
+
+</div>
+
+<p>
+de unde:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U_m=
+\sqrt2\,U
+}
+\]
+
+</div>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Din maxim în efectiv</h3>
+
+<div class="formula">
+
+\[
+U\approx0,707U_m
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Din efectiv în maxim</h3>
+
+<div class="formula">
+
+\[
+U_m\approx1,414U
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="orange-box">
+
+Relațiile:
+
+\[
+U=
+\frac{U_m}{\sqrt2},
+\qquad
+I=
+\frac{I_m}{\sqrt2}
+\]
+
+sunt valabile pentru
+<strong>mărimi sinusoidale</strong>.
+
+Pentru alte forme de undă,
+valoarea efectivă trebuie determinată prin definiția RMS corespunzătoare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RMS DEFINITION GENERAL
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Semnificația RMS</h2>
+
+<p>
+Denumirea internațională folosită frecvent este
+<strong>RMS</strong>:
+</p>
+
+<div class="formula">
+
+\[
+\text{Root Mean Square}
+\]
+
+</div>
+
+<p>
+adică:</p>
+
+<div class="flow">
+
+
+<div class="flow-card">
+
+<strong>Square</strong>
+
+<div class="formula">
+
+\[
+x^2
+\]
+
+</div>
+
+<p>
+ridicare la pătrat
+</p>
+
+</div>
+
+
+<div class="flow-arrow">
+→
+</div>
+
+
+<div class="flow-card">
+
+<strong>Mean</strong>
+
+<p>
+media pe o perioadă
+</p>
+
+</div>
+
+
+<div class="flow-arrow">
+→
+</div>
+
+
+<div class="flow-card">
+
+<strong>Root</strong>
+
+<div class="formula">
+
+\[
+\sqrt{\phantom{x}}
+\]
+
+</div>
+
+<p>
+rădăcina pătrată
+</p>
+
+</div>
+
+
+</div>
+
+
+<p>
+Pentru o mărime periodică \(x(t)\),
+definiția generală este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+X_{ef}
+=
+\sqrt{
+\frac1T
+\int_0^T
+x^2(t)\,dt
+}
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Pentru o sinusoidă,
+această definiție conduce exact la:
+
+\[
+X_{ef}
+=
+\frac{X_m}{\sqrt2}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NOTATION
+========================================================= -->
+
+<section class="card">
+
+<h2>13. O convenție de notație importantă</h2>
+
+<p>
+În studiul curentului alternativ,
+se folosesc frecvent:
+</p>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Mărime
+</th>
+
+<th>
+Tensiune
+</th>
+
+<th>
+Curent
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+instantanee
+</td>
+
+<td>
+\(u\)
+</td>
+
+<td>
+\(i\)
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+maximă / amplitudine
+</td>
+
+<td>
+\(U_m\)
+</td>
+
+<td>
+\(I_m\)
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+efectivă
+</td>
+
+<td>
+\(U\)
+</td>
+
+<td>
+\(I\)
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="yellow-box">
+
+În probleme,
+verifică întotdeauna dacă valoarea numerică dată reprezintă:
+
+<strong>
+valoare instantanee,
+amplitudine
+sau valoare efectivă.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLE 230
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Exemplu: din valoare efectivă în amplitudine</h2>
+
+<p>
+O tensiune sinusoidală are valoarea efectivă:
+</p>
+
+<div class="formula">
+
+\[
+U=230\,V
+\]
+
+</div>
+
+<p>
+Amplitudinea este:
+</p>
+
+<div class="formula">
+
+\[
+U_m=
+\sqrt2\,U
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+U_m=
+230\sqrt2
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_m\approx325\,V
+}
+\]
+
+</div>
+
+
+<div class="red-box">
+
+Acesta este un exemplu numeric pentru relația dintre valoarea efectivă și amplitudine.
+
+Nu se realizează experimente didactice direct la tensiuni de rețea.
+Pentru activități practice se folosesc exclusiv surse didactice de joasă tensiune.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Valoare instantanee</h3>
+
+<p>
+Se dă:
+</p>
+
+<div class="formula">
+
+\[
+u=
+12\sin(\omega t)
+\]
+
+</div>
+
+<p>
+Determinați \(u\) pentru:
+</p>
+
+<div class="formula">
+
+\[
+\omega t=
+\frac{\pi}{6}
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+u=
+12
+\sin
+\frac{\pi}{6}
+\]
+
+\[
+u=
+12\cdot\frac12
+\]
+
+\[
+\boxed{
+u=6\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Valoarea maximă</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+i=
+4\sin(100\pi t)\,A
+\]
+
+</div>
+
+<p>
+determinați \(I_m\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Comparăm cu forma:
+
+\[
+i=
+I_m\sin(\omega t)
+\]
+
+Prin urmare:
+
+\[
+\boxed{
+I_m=4\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 3 – Valoarea efectivă</h3>
+
+<p>
+O tensiune sinusoidală are:
+</p>
+
+<div class="formula">
+
+\[
+U_m=24\,V
+\]
+
+</div>
+
+<p>
+Determinați valoarea efectivă.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+U=
+\frac{U_m}{\sqrt2}
+\]
+
+\[
+U=
+\frac{24}{\sqrt2}
+\]
+
+\[
+\boxed{
+U\approx16,97\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 4 – Din efectiv în maxim</h3>
+
+<p>
+Un curent sinusoidal are:
+</p>
+
+<div class="formula">
+
+\[
+I=2\,A
+\]
+
+</div>
+
+<p>
+Determinați \(I_m\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_m=
+\sqrt2 I
+\]
+
+\[
+I_m=
+2\sqrt2
+\]
+
+\[
+\boxed{
+I_m\approx2,83\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Vârf-la-vârf</h3>
+
+<p>
+Pe un osciloscop se observă:
+</p>
+
+<div class="formula">
+
+\[
+U_{pp}=40\,V
+\]
+
+</div>
+
+<p>
+Determinați amplitudinea și valoarea efectivă,
+presupunând o sinusoidă.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+U_m=
+\frac{U_{pp}}2
+=
+20\,V
+\]
+
+Apoi:
+
+\[
+U=
+\frac{20}{\sqrt2}
+\]
+
+\[
+\boxed{
+U\approx14,14\,V
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 6 – Valoare instantanee negativă</h3>
+
+<p>
+Pentru:
+</p>
+
+<div class="formula">
+
+\[
+u=
+10\sin(\omega t)
+\]
+
+</div>
+
+<p>
+se consideră:
+</p>
+
+<div class="formula">
+
+\[
+\omega t=
+\frac{7\pi}{6}
+\]
+
+</div>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\sin
+\frac{7\pi}{6}
+=
+-\frac12
+\]
+
+Deci:
+
+\[
+u=
+10
+\left(
+-\frac12
+\right)
+\]
+
+\[
+\boxed{
+u=-5\,V
+}
+\]
+
+Semnul negativ indică polaritatea opusă
+față de sensul de referință ales.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 7 – Efect Joule echivalent</h3>
+
+<p>
+Un curent sinusoidal are:
+</p>
+
+<div class="formula">
+
+\[
+I_m=
+6\,A
+\]
+
+</div>
+
+<p>
+Ce curent continuu ar produce același efect Joule
+în același rezistor?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Curentul continuu echivalent termic are valoarea:
+
+\[
+I=
+\frac{I_m}{\sqrt2}
+\]
+
+\[
+I=
+\frac6{\sqrt2}
+\]
+
+\[
+\boxed{
+I\approx4,24\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 8 – Puterea medie într-un rezistor</h3>
+
+<p>
+O tensiune sinusoidală cu:
+</p>
+
+<div class="formula">
+
+\[
+U_m=20\,V
+\]
+
+</div>
+
+<p>
+este aplicată unui rezistor:
+</p>
+
+<div class="formula">
+
+\[
+R=10\,\Omega
+\]
+
+</div>
+
+<p>
+Determinați puterea medie disipată.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Mai întâi valoarea efectivă:
+
+\[
+U=
+\frac{20}{\sqrt2}
+\]
+
+Apoi:
+
+\[
+P_{med}
+=
+\frac{U^2}{R}
+\]
+
+Cum:
+
+\[
+U^2=
+\frac{U_m^2}{2}
+\]
+
+rezultă:
+
+\[
+P_{med}
+=
+\frac{
+20^2
+}{
+2\cdot10
+}
+\]
+
+\[
+\boxed{
+P_{med}=20\,W
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 15. Activitate experimentală – amplitudine și valoare efectivă</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale posibile</h3>
+
+<ul>
+
+<li>generator de semnal didactic de joasă tensiune;</li>
+
+<li>osciloscop;</li>
+
+<li>multimetru adecvat măsurărilor de tensiune alternativă;</li>
+
+<li>conductoare de legătură.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Scop</h3>
+
+<p>
+Compararea pentru o tensiune sinusoidală a:
+</p>
+
+<ul>
+
+<li>amplitudinii \(U_m\), observată pe osciloscop;</li>
+
+<li>valorii efective \(U\), măsurată cu aparatul corespunzător.</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Setează generatorul la o tensiune sinusoidală de joasă tensiune.
+</li>
+
+<li>
+Vizualizează semnalul pe osciloscop.
+</li>
+
+<li>
+Determină valoarea vârf-la-vârf \(U_{pp}\).
+</li>
+
+<li>
+Calculează:
+\[
+U_m=\frac{U_{pp}}2
+\]
+</li>
+
+<li>
+Determină valoarea efectivă:
+\[
+U_{calc}=\frac{U_m}{\sqrt2}
+\]
+</li>
+
+<li>
+Compară această valoare cu indicația aparatului de măsură pentru tensiune alternativă.
+</li>
+
+<li>
+Discutați diferențele și incertitudinile experimentale.
+</li>
+
+</ol>
+
+
+<div class="yellow-box">
+
+Pentru o sinusoidă ideală ne așteptăm aproximativ la:
+
+\[
+\frac{U_m}{U}
+=
+\sqrt2
+\approx1,414
+\]
+</div>
+
+
+<div class="red-box">
+
+Activitatea se realizează numai cu
+<strong>semnale didactice de joasă tensiune</strong>.
+
+Nu conectați osciloscopul sau montaje improvizate direct la rețeaua electrică.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – anatomia unei sinusoide</h2>
+
+<p>
+Modifică amplitudinea,
+frecvența,
+faza inițială și momentul analizat.
+Graficul arată simultan valoarea instantanee,
+amplitudinea și nivelurile efective.
+În panoul din dreapta poți compara efectul termic al tensiunii alternative
+cu tensiunea continuă echivalentă.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="amplitudeSlider">
+Amplitudine \(U_m\) [V]
+</label>
+
+<input
+  id="amplitudeSlider"
+  type="range"
+  min="1"
+  max="100"
+  step="1"
+  value="20">
+
+<span
+  class="range-value"
+  id="amplitudeLabel">
+20 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="frequencySlider">
+Frecvență \(f\) [Hz]
+</label>
+
+<input
+  id="frequencySlider"
+  type="range"
+  min="0.5"
+  max="10"
+  step="0.5"
+  value="2">
+
+<span
+  class="range-value"
+  id="frequencyLabel">
+2,0 Hz
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="phaseSlider">
+Fază inițială \(\varphi_0\) [°]
+</label>
+
+<input
+  id="phaseSlider"
+  type="range"
+  min="-180"
+  max="180"
+  step="15"
+  value="0">
+
+<span
+  class="range-value"
+  id="phaseLabel">
+0°
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="timeSlider">
+Moment analizat \(t/T\)
+</label>
+
+<input
+  id="timeSlider"
+  type="range"
+  min="0"
+  max="2"
+  step="0.01"
+  value="0">
+
+<span
+  class="range-value"
+  id="timeLabel">
+0,00 T
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="resistanceSlider">
+Rezistență pentru comparație [Ω]
+</label>
+
+<input
+  id="resistanceSlider"
+  type="range"
+  min="2"
+  max="50"
+  step="1"
+  value="10">
+
+<span
+  class="range-value"
+  id="resistanceLabel">
+10 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="maxPositiveBtn">
+
+\(u=+U_m\)
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="zeroBtn">
+
+\(u=0\)
+
+</button>
+
+
+<button
+  class="red-button"
+  id="maxNegativeBtn">
+
+\(u=-U_m\)
+
+</button>
+
+
+<button
+  class="primary"
+  id="doubleAmplitudeBtn">
+
+\(U_m\times2\)
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="phaseShiftBtn">
+
+\(\varphi_0+90^\circ\)
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="waveCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="rmsCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Valoare instantanee \(u\)
+</span>
+
+<strong id="instantValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Amplitudine \(U_m\)
+</span>
+
+<strong id="maxValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Vârf-la-vârf \(U_{pp}\)
+</span>
+
+<strong id="peakToPeakValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Valoare efectivă \(U\)
+</span>
+
+<strong id="rmsValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Perioadă \(T\)
+</span>
+
+<strong id="periodValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Pulsație \(\omega\)
+</span>
+
+<strong id="omegaValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Fază instantanee
+</span>
+
+<strong id="instantPhaseValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere medie în \(R\)
+</span>
+
+<strong id="powerValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box"
+  id="simStatus">
+
+Pentru o sinusoidă, valoarea efectivă este \(U_m/\sqrt2\).
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Misiuni în simulator</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Găsește maximul</h3>
+
+<p>
+Oprește animația și deplasează momentul până când:
+</p>
+
+<div class="formula">
+
+\[
+u=U_m
+\]
+
+</div>
+
+<p>
+Ce valoare are sinusul în acel moment?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Trecerea prin zero</h3>
+
+<p>
+Găsește două momente succesive pentru care:
+</p>
+
+<div class="formula">
+
+\[
+u=0
+\]
+
+</div>
+
+<p>
+Observă că semnul se schimbă după trecere.</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Efectiv vs maxim</h3>
+
+<p>
+Setează:
+</p>
+
+<div class="formula">
+
+\[
+U_m=40\,V
+\]
+
+</div>
+
+<p>
+Verifică dacă:
+</p>
+
+<div class="formula">
+
+\[
+U\approx28,28\,V
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Dublează amplitudinea</h3>
+
+<p>
+Ce se întâmplă cu valoarea efectivă?
+</p>
+
+<p>
+Dar cu puterea medie într-un rezistor?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Schimbă frecvența</h3>
+
+<p>
+Observă:
+</p>
+
+<ul>
+
+<li>se modifică perioada;</li>
+
+<li>nu se modifică amplitudinea setată;</li>
+
+<li>nu se modifică valoarea efectivă dacă \(U_m\) rămâne constant.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Schimbă faza inițială</h3>
+
+<p>
+Observă că sinusoida se deplasează pe axa timpului,
+dar:
+</p>
+
+<div class="formula">
+
+\[
+U_m
+\]
+
+</div>
+
+și:
+</p>
+
+<div class="formula">
+
+\[
+U
+\]
+
+</div>
+
+<p>
+rămân neschimbate.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RMS MEAN
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Medie zero, efect Joule nenul</h2>
+
+<p>
+Această diferență merită reținută foarte clar.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Media algebrică a tensiunii</h3>
+
+<p>
+Pe o perioadă completă:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+u_{med}=0
+}
+\]
+
+</div>
+
+<p>
+Zona pozitivă și zona negativă se compensează.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Media lui \(u^2\)</h3>
+
+<p>
+În schimb:
+</p>
+
+<div class="formula">
+
+\[
+u^2\ge0
+\]
+
+</div>
+
+<p>
+și pentru sinusoidă:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\left\langle u^2\right\rangle
+=
+\frac{U_m^2}{2}
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+De aceea:
+
+\[
+\boxed{
+U_{ef}
+=
+\sqrt{
+\left\langle u^2\right\rangle
+}
+=
+\frac{U_m}{\sqrt2}
+}
+\]
+
+și nu:
+
+\[
+U_{ef}=u_{med}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+<div class="grid-2">
+
+
+<div class="mistake-card">
+
+<h3>1. „\(u\), \(U_m\) și \(U\) sunt același lucru.”</h3>
+
+<p>
+Nu.
+</p>
+
+<ul>
+
+<li>\(u\) – instantaneu;</li>
+
+<li>\(U_m\) – maxim;</li>
+
+<li>\(U\) – efectiv.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>2. „Valoarea efectivă este media tensiunii.”</h3>
+
+<p>
+Nu.
+Pentru sinusoidă,
+media algebrică pe o perioadă este zero,
+dar valoarea efectivă este:
+</p>
+
+<div class="formula">
+
+\[
+U=
+\frac{U_m}{\sqrt2}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>3. „O tensiune negativă are amplitudine negativă.”</h3>
+
+<p>
+Nu.
+Amplitudinea \(U_m\) este pozitivă.
+Valoarea instantanee \(u\) poate fi negativă.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>4. „\(U_{pp}=U_m\).”</h3>
+
+<p>
+Nu:
+</p>
+
+<div class="formula">
+
+\[
+U_{pp}=2U_m
+\]
+
+</div>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>5. „Dacă media tensiunii este zero, nu există încălzire.”</h3>
+
+<p>
+Fals.
+Puterea Joule depinde de pătratul tensiunii sau al curentului.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>6. „Relația \(U=U_m/\sqrt2\) este valabilă pentru orice semnal.”</h3>
+
+<p>
+Nu.
+Este relația specifică sinusoidei.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>7. „Dublarea frecvenței dublează automat \(U_m\).”</h3>
+
+<p>
+Nu pentru o sinusoidă a cărei amplitudine este deja impusă independent.
+
+Frecvența și amplitudinea sunt parametri diferiți.
+</p>
+
+</div>
+
+
+<div class="mistake-card">
+
+<h3>8. „Semnul lui \(u\) arată sensul în care curge energia.”</h3>
+
+<p>
+Nu în general.
+Semnul arată polaritatea instantanee față de convenția de referință.
+Analiza energiei necesită și curentul.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce valoarea instantanee a unei tensiuni sinusoidale nu este suficientă pentru a caracteriza întreaga tensiune?
+</li>
+
+<li>
+De ce amplitudinea este întotdeauna considerată pozitivă?</li>
+
+<li>
+Ce semnificație are o valoare instantanee negativă?</li>
+
+<li>
+De ce media unei sinusoide pe o perioadă este zero?</li>
+
+<li>
+De ce un rezistor se încălzește chiar dacă media curentului sinusoidal este zero?</li>
+
+<li>
+De ce valoarea efectivă implică pătratul mărimii instantanee?</li>
+
+<li>
+De ce \(U\) este mai mic decât \(U_m\) pentru o sinusoidă?</li>
+
+<li>
+Cum se modifică \(U\) dacă \(U_m\) se dublează?</li>
+
+<li>
+Cum se modifică puterea medie într-un rezistor dacă \(U_m\) se dublează?</li>
+
+<li>
+De ce schimbarea fazei inițiale nu modifică amplitudinea?</li>
+
+<li>
+De ce valoarea efectivă a aceleiași sinusoide nu depinde de momentul ales drept origine a timpului?</li>
+
+<li>
+Care este diferența fizică dintre \(U_m\) și \(U_{pp}\)?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+În expresia:
+\[
+u=20\sin(\omega t)
+\]
+valoarea 20 V reprezintă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+valoarea efectivă
+</button>
+
+<button class="answer-btn">
+amplitudinea
+</button>
+
+<button class="answer-btn">
+valoarea medie
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Pentru o tensiune sinusoidală:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U=U_m\)
+</button>
+
+<button class="answer-btn">
+\(U=\sqrt2U_m\)
+</button>
+
+<button class="answer-btn">
+\(U=U_m/\sqrt2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Dacă:
+\[
+U_m=10\,V
+\]
+atunci valoarea minimă instantanee este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(-10\,V\)
+</button>
+
+<button class="answer-btn">
+0 V
+</button>
+
+<button class="answer-btn">
+\(-7,07\,V\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Dacă:
+\[
+U_{pp}=30\,V
+\]
+atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_m=30\,V\)
+</button>
+
+<button class="answer-btn">
+\(U_m=15\,V\)
+</button>
+
+<button class="answer-btn">
+\(U_m=60\,V\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Media algebrică a unei sinusoide pe o perioadă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_m\)
+</button>
+
+<button class="answer-btn">
+\(U_m/\sqrt2\)
+</button>
+
+<button class="answer-btn">
+0
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Valoarea efectivă a curentului este definită prin comparația:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+efectului Joule cu un curent continuu echivalent
+</button>
+
+<button class="answer-btn">
+culorii conductorului
+</button>
+
+<button class="answer-btn">
+fluxului magnetic maxim
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă:
+\[
+I_m=10\,A
+\]
+atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=10\sqrt2\,A\)
+</button>
+
+<button class="answer-btn">
+\(I\approx7,07\,A\)
+</button>
+
+<button class="answer-btn">
+\(I=5\,A\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Schimbarea fazei inițiale a unei sinusoide:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+modifică obligatoriu amplitudinea
+</button>
+
+<button class="answer-btn">
+modifică valoarea \(\sqrt2\)
+</button>
+
+<button class="answer-btn">
+deplasează sinusoida în timp fără a-i modifica amplitudinea
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Dacă amplitudinea tensiunii se dublează,
+valoarea efectivă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+se dublează
+</button>
+
+<button class="answer-btn">
+crește de patru ori
+</button>
+
+<button class="answer-btn">
+rămâne constantă
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Pentru o sinusoidă,
+valoarea efectivă:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+este zero deoarece media este zero
+</button>
+
+<button class="answer-btn">
+este diferită de zero și caracterizează efectul energetic
+</button>
+
+<button class="answer-btn">
+este întotdeauna egală cu amplitudinea
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Valoare instantanee</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+u=
+U_m
+\sin(\omega t+\varphi_0)
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Amplitudine</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+|u|\le U_m
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Vârf-la-vârf</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U_{pp}=2U_m
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Valoare medie</h3>
+
+<p>
+Pe o perioadă:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+u_{med}=0
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Valoare efectivă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U=
+\frac{U_m}{\sqrt2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curent efectiv</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\frac{I_m}{\sqrt2}
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema mentală esențială:
+
+<strong>
+valoarea instantanee spune „cât este acum”;
+amplitudinea spune „cât poate ajunge”;
+valoarea efectivă spune „ce efect energetic echivalent produce”.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 Ce urmează?</h2>
+
+<p>
+Am folosit deja expresia:
+</p>
+
+<div class="formula">
+
+\[
+u=
+U_m
+\sin(\omega t+\varphi_0)
+\]
+
+</div>
+
+<p>
+dar mai avem de analizat în detaliu:
+</p>
+
+<ul>
+
+<li>ce reprezintă perioada \(T\);</li>
+
+<li>cum se definește frecvența \(f\);</li>
+
+<li>de unde apare pulsația \(\omega\);</li>
+
+<li>cum citim aceste mărimi dintr-un grafic;</li>
+
+<li>cum asociem unei sinusoide o reprezentare fazorială.</li>
+
+</ul>
+
+
+<div class="blue-box">
+
+În lecția următoare:
+
+<strong>
+Perioada, frecvența și pulsația. Reprezentări grafice și fazoriale
+</strong>
+
+vom construi instrumentele grafice necesare pentru studiul circuitelor de curent alternativ.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="01-inductia-electromagnetica-producerea-curentului-alternativ-alternatorul.html">
+
+← Lecția 1<br>
+Inducția electromagnetică. Alternatorul
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins capitol
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="03-perioada-frecventa-pulsatie-reprezentari-grafice-si-fazoriale.html">
+
+Lecția 3<br>
+Perioada, frecvența și pulsația. Reprezentări grafice și fazoriale →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent alternativ și elemente de circuit
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const amplitudeSlider=
+  document.getElementById(
+    "amplitudeSlider"
+  );
+
+
+const frequencySlider=
+  document.getElementById(
+    "frequencySlider"
+  );
+
+
+const phaseSlider=
+  document.getElementById(
+    "phaseSlider"
+  );
+
+
+const timeSlider=
+  document.getElementById(
+    "timeSlider"
+  );
+
+
+const resistanceSlider=
+  document.getElementById(
+    "resistanceSlider"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const amplitudeLabel=
+  document.getElementById(
+    "amplitudeLabel"
+  );
+
+
+const frequencyLabel=
+  document.getElementById(
+    "frequencyLabel"
+  );
+
+
+const phaseLabel=
+  document.getElementById(
+    "phaseLabel"
+  );
+
+
+const timeLabel=
+  document.getElementById(
+    "timeLabel"
+  );
+
+
+const resistanceLabel=
+  document.getElementById(
+    "resistanceLabel"
+  );
+
+
+const instantValue=
+  document.getElementById(
+    "instantValue"
+  );
+
+
+const maxValue=
+  document.getElementById(
+    "maxValue"
+  );
+
+
+const peakToPeakValue=
+  document.getElementById(
+    "peakToPeakValue"
+  );
+
+
+const rmsValue=
+  document.getElementById(
+    "rmsValue"
+  );
+
+
+const periodValue=
+  document.getElementById(
+    "periodValue"
+  );
+
+
+const omegaValue=
+  document.getElementById(
+    "omegaValue"
+  );
+
+
+const instantPhaseValue=
+  document.getElementById(
+    "instantPhaseValue"
+  );
+
+
+const powerValue=
+  document.getElementById(
+    "powerValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const waveCanvas=
+  document.getElementById(
+    "waveCanvas"
+  );
+
+
+const waveCtx=
+  waveCanvas.getContext(
+    "2d"
+  );
+
+
+const rmsCanvas=
+  document.getElementById(
+    "rmsCanvas"
+  );
+
+
+const rmsCtx=
+  rmsCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const Um=
+    Number(
+      amplitudeSlider.value
+    );
+
+
+  const f=
+    Number(
+      frequencySlider.value
+    );
+
+
+  const phaseDeg=
+    Number(
+      phaseSlider.value
+    );
+
+
+  const phase0=
+    phaseDeg*
+    Math.PI/
+    180;
+
+
+  const timePeriods=
+    Number(
+      timeSlider.value
+    );
+
+
+  const T=
+    1/
+    f;
+
+
+  const t=
+    timePeriods*
+    T;
+
+
+  const omega=
+    2*
+    Math.PI*
+    f;
+
+
+  const phaseInstant=
+    omega*
+    t+
+    phase0;
+
+
+  const u=
+    Um*
+    Math.sin(
+      phaseInstant
+    );
+
+
+  const Urms=
+    Um/
+    Math.sqrt(
+      2
+    );
+
+
+  const Upp=
+    2*
+    Um;
+
+
+  const R=
+    Number(
+      resistanceSlider.value
+    );
+
+
+  const averagePower=
+    Urms*
+    Urms/
+    R;
+
+
+  return{
+
+    Um,
+    f,
+
+    phaseDeg,
+    phase0,
+
+    timePeriods,
+    T,
+    t,
+
+    omega,
+    phaseInstant,
+
+    u,
+    Urms,
+    Upp,
+
+    R,
+    averagePower
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  amplitudeLabel.textContent=
+    `${formatRo(
+      m.Um,
+      0
+    )} V`;
+
+
+  frequencyLabel.textContent=
+    `${formatRo(
+      m.f,
+      1
+    )} Hz`;
+
+
+  phaseLabel.textContent=
+    `${formatRo(
+      m.phaseDeg,
+      0
+    )}°`;
+
+
+  timeLabel.textContent=
+    `${formatRo(
+      m.timePeriods,
+      2
+    )} T`;
+
+
+  resistanceLabel.textContent=
+    `${formatRo(
+      m.R,
+      0
+    )} Ω`;
+
+
+  instantValue.textContent=
+    `${formatRo(
+      m.u,
+      3
+    )} V`;
+
+
+  maxValue.textContent=
+    `${formatRo(
+      m.Um,
+      2
+    )} V`;
+
+
+  peakToPeakValue.textContent=
+    `${formatRo(
+      m.Upp,
+      2
+    )} V`;
+
+
+  rmsValue.textContent=
+    `${formatRo(
+      m.Urms,
+      3
+    )} V`;
+
+
+  periodValue.textContent=
+    `${formatRo(
+      m.T,
+      4
+    )} s`;
+
+
+  omegaValue.textContent=
+    `${formatRo(
+      m.omega,
+      3
+    )} rad/s`;
+
+
+  let normalizedPhase=
+    m.phaseInstant%
+    (
+      2*
+      Math.PI
+    );
+
+
+  if(
+    normalizedPhase<
+    0
+  ){
+
+    normalizedPhase+=
+      2*
+      Math.PI;
+
+  }
+
+
+  instantPhaseValue.textContent=
+    `${formatRo(
+      normalizedPhase*
+      180/
+      Math.PI,
+      1
+    )}°`;
+
+
+  powerValue.textContent=
+    `${formatRo(
+      m.averagePower,
+      3
+    )} W`;
+
+
+  const ratio=
+    m.Um>
+    0
+      ? m.u/
+        m.Um
+      : 0;
+
+
+  if(
+    Math.abs(
+      ratio-
+      1
+    )<
+    .025
+  ){
+
+    simStatus.innerHTML=
+      `Valoarea instantanee este aproape de
+       <strong>maximul pozitiv</strong>:
+       u≈+Uₘ.
+       Valoarea efectivă rămâne
+       <strong>${formatRo(m.Urms,3)} V</strong>.`;
+
+  }
+
+  else if(
+    Math.abs(
+      ratio+
+      1
+    )<
+    .025
+  ){
+
+    simStatus.innerHTML=
+      `Valoarea instantanee este aproape de
+       <strong>maximul negativ</strong>:
+       u≈−Uₘ.
+       Amplitudinea rămâne o mărime pozitivă:
+       <strong>Uₘ=${formatRo(m.Um,2)} V</strong>.`;
+
+  }
+
+  else if(
+    Math.abs(
+      ratio
+    )<
+    .025
+  ){
+
+    simStatus.innerHTML=
+      `Sinusoida trece prin
+       <strong>zero</strong>.
+       Acest lucru nu înseamnă că amplitudinea sau valoarea efectivă sunt zero.`;
+
+  }
+
+  else{
+
+    simStatus.innerHTML=
+      `În acest moment:
+       <strong>u=${formatRo(m.u,3)} V</strong>,
+       în timp ce
+       <strong>Uₘ=${formatRo(m.Um,2)} V</strong>
+       și
+       <strong>U=${formatRo(m.Urms,3)} V</strong>.
+       Cele trei valori au semnificații diferite.`;
+
+  }
+
+
+  drawWave(
+    m
+  );
+
+
+  drawRms(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   WAVE GRAPH
+========================================================= */
+
+function drawWave(
+  m
+){
+
+  const rect=
+    waveCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  waveCtx.fillStyle=
+    "#f8fafc";
+
+
+  waveCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  waveCtx.fillStyle=
+    "#0f172a";
+
+
+  waveCtx.font=
+    "bold 15px system-ui";
+
+
+  waveCtx.textAlign=
+    "left";
+
+
+  waveCtx.fillText(
+    "Tensiune sinusoidală",
+    20,
+    29
+  );
+
+
+  waveCtx.fillStyle=
+    "#64748b";
+
+
+  waveCtx.font=
+    "11px system-ui";
+
+
+  waveCtx.fillText(
+    "amplitudine • valoare efectivă • valoare instantanee",
+    20,
+    49
+  );
+
+
+  const left=62;
+  const right=W-28;
+
+  const top=85;
+  const bottom=H-80;
+
+  const mid=
+    (
+      top+
+      bottom
+    )/
+    2;
+
+
+  const graphH=
+    (
+      bottom-
+      top
+    )*
+    .43;
+
+
+  /*
+  Grid
+  */
+
+  waveCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  waveCtx.lineWidth=1;
+
+
+  for(
+    let i=0;
+    i<=8;
+    i++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      i/
+      8;
+
+
+    waveCtx.beginPath();
+
+    waveCtx.moveTo(
+      x,
+      top
+    );
+
+    waveCtx.lineTo(
+      x,
+      bottom
+    );
+
+    waveCtx.stroke();
+
+  }
+
+
+  for(
+    let i=-2;
+    i<=2;
+    i++
+  ){
+
+    const y=
+      mid-
+      i*
+      graphH/
+      2;
+
+
+    waveCtx.beginPath();
+
+    waveCtx.moveTo(
+      left,
+      y
+    );
+
+    waveCtx.lineTo(
+      right,
+      y
+    );
+
+    waveCtx.stroke();
+
+  }
+
+
+  /*
+  Zero axis
+  */
+
+  waveCtx.strokeStyle=
+    "#64748b";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    left,
+    mid
+  );
+
+  waveCtx.lineTo(
+    right,
+    mid
+  );
+
+  waveCtx.stroke();
+
+
+  /*
+  RMS lines
+  */
+
+  const rmsRatio=
+    1/
+    Math.sqrt(
+      2
+    );
+
+
+  const rmsYPositive=
+    mid-
+    rmsRatio*
+    graphH;
+
+
+  const rmsYNegative=
+    mid+
+    rmsRatio*
+    graphH;
+
+
+  waveCtx.strokeStyle=
+    "#16a34a";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.setLineDash([
+    7,
+    5
+  ]);
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    left,
+    rmsYPositive
+  );
+
+  waveCtx.lineTo(
+    right,
+    rmsYPositive
+  );
+
+  waveCtx.moveTo(
+    left,
+    rmsYNegative
+  );
+
+  waveCtx.lineTo(
+    right,
+    rmsYNegative
+  );
+
+  waveCtx.stroke();
+
+
+  waveCtx.setLineDash([]);
+
+
+  /*
+  Amplitude lines
+  */
+
+  waveCtx.strokeStyle=
+    "#7c3aed";
+
+
+  waveCtx.lineWidth=1.5;
+
+
+  waveCtx.setLineDash([
+    3,
+    5
+  ]);
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    left,
+    mid-
+    graphH
+  );
+
+  waveCtx.lineTo(
+    right,
+    mid-
+    graphH
+  );
+
+  waveCtx.moveTo(
+    left,
+    mid+
+    graphH
+  );
+
+  waveCtx.lineTo(
+    right,
+    mid+
+    graphH
+  );
+
+  waveCtx.stroke();
+
+
+  waveCtx.setLineDash([]);
+
+
+  /*
+  Sinusoid over 2 periods
+  */
+
+  waveCtx.strokeStyle=
+    "#2563eb";
+
+
+  waveCtx.lineWidth=4;
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let i=0;
+    i<=500;
+    i++
+  ){
+
+    const tau=
+      2*
+      i/
+      500;
+
+
+    const theta=
+      2*
+      Math.PI*
+      tau+
+      m.phase0;
+
+
+    const yRatio=
+      Math.sin(
+        theta
+      );
+
+
+    const x=
+      left+
+      tau/
+      2*
+      (
+        right-
+        left
+      );
+
+
+    const y=
+      mid-
+      yRatio*
+      graphH;
+
+
+    if(
+      i===
+      0
+    ){
+
+      waveCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      waveCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  /*
+  Current point
+  */
+
+  const markerX=
+    left+
+    m.timePeriods/
+    2*
+    (
+      right-
+      left
+    );
+
+
+  const markerY=
+    mid-
+    (
+      m.u/
+      m.Um
+    )*
+    graphH;
+
+
+  waveCtx.strokeStyle=
+    "#dc2626";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.setLineDash([
+    5,
+    5
+  ]);
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    markerX,
+    top
+  );
+
+  waveCtx.lineTo(
+    markerX,
+    bottom
+  );
+
+  waveCtx.stroke();
+
+
+  waveCtx.setLineDash([]);
+
+
+  waveCtx.beginPath();
+
+  waveCtx.arc(
+    markerX,
+    markerY,
+    7,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  waveCtx.fillStyle=
+    "#dc2626";
+
+  waveCtx.fill();
+
+
+  /*
+  Labels
+  */
+
+  waveCtx.fillStyle=
+    "#6d28d9";
+
+
+  waveCtx.font=
+    "bold 10px system-ui";
+
+
+  waveCtx.textAlign=
+    "left";
+
+
+  waveCtx.fillText(
+    "+Uₘ",
+    left+
+    5,
+    mid-
+    graphH-
+    5
+  );
+
+
+  waveCtx.fillText(
+    "−Uₘ",
+    left+
+    5,
+    mid+
+    graphH-
+    5
+  );
+
+
+  waveCtx.fillStyle=
+    "#15803d";
+
+
+  waveCtx.fillText(
+    "+Uef",
+    right-
+    38,
+    rmsYPositive-
+    5
+  );
+
+
+  waveCtx.fillText(
+    "−Uef",
+    right-
+    38,
+    rmsYNegative-
+    5
+  );
+
+
+  waveCtx.fillStyle=
+    "#b91c1c";
+
+
+  waveCtx.fillText(
+    `u=${formatRo(m.u,2)} V`,
+    markerX+
+    8,
+    markerY-
+    10
+  );
+
+
+  /*
+  Time labels
+  */
+
+  waveCtx.fillStyle=
+    "#475569";
+
+
+  waveCtx.font=
+    "10px system-ui";
+
+
+  waveCtx.textAlign=
+    "center";
+
+
+  const labels=[
+    ["0",0],
+    ["T/2",.5],
+    ["T",1],
+    ["3T/2",1.5],
+    ["2T",2]
+  ];
+
+
+  labels.forEach(
+    item=>{
+
+      const x=
+        left+
+        item[1]/
+        2*
+        (
+          right-
+          left
+        );
+
+
+      waveCtx.fillText(
+        item[0],
+        x,
+        bottom+
+        24
+      );
+
+    }
+  );
+
+
+  waveCtx.fillStyle=
+    "#334155";
+
+
+  waveCtx.font=
+    "bold 10px system-ui";
+
+
+  waveCtx.textAlign=
+    "right";
+
+
+  waveCtx.fillText(
+    "t",
+    right,
+    bottom+
+    48
+  );
+
+}
+
+
+/* =========================================================
+   RMS PANEL
+========================================================= */
+
+function drawRms(
+  m
+){
+
+  const rect=
+    rmsCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  const gradient=
+    rmsCtx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#172554"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#312e81"
+  );
+
+
+  rmsCtx.fillStyle=
+    gradient;
+
+
+  rmsCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  rmsCtx.fillStyle=
+    "#e2e8f0";
+
+
+  rmsCtx.font=
+    "bold 15px system-ui";
+
+
+  rmsCtx.textAlign=
+    "left";
+
+
+  rmsCtx.fillText(
+    "Semnificația valorii efective",
+    18,
+    29
+  );
+
+
+  rmsCtx.fillStyle=
+    "#c4b5fd";
+
+
+  rmsCtx.font=
+    "11px system-ui";
+
+
+  rmsCtx.fillText(
+    "AC sinusoidal vs DC echivalent termic",
+    18,
+    49
+  );
+
+
+  const Urms=
+    m.Urms;
+
+
+  const Pac=
+    m.averagePower;
+
+
+  const Pdc=
+    Urms*
+    Urms/
+    m.R;
+
+
+  /*
+  AC box
+  */
+
+  const boxW=
+    W*
+    .72;
+
+
+  const boxX=
+    W*
+    .14;
+
+
+  const acY=
+    90;
+
+
+  const dcY=
+    315;
+
+
+  function roundedRect(
+    context,
+    x,
+    y,
+    w,
+    h,
+    r
+  ){
+
+    context.beginPath();
+
+    context.roundRect(
+      x,
+      y,
+      w,
+      h,
+      r
+    );
+
+  }
+
+
+  roundedRect(
+    rmsCtx,
+    boxX,
+    acY,
+    boxW,
+    165,
+    15
+  );
+
+
+  rmsCtx.fillStyle=
+    "rgba(37,99,235,.18)";
+
+  rmsCtx.fill();
+
+
+  rmsCtx.strokeStyle=
+    "#60a5fa";
+
+  rmsCtx.lineWidth=2;
+
+  rmsCtx.stroke();
+
+
+  rmsCtx.fillStyle=
+    "#bfdbfe";
+
+
+  rmsCtx.font=
+    "bold 14px system-ui";
+
+
+  rmsCtx.textAlign=
+    "center";
+
+
+  rmsCtx.fillText(
+    "TENSIUNE ALTERNATIVĂ SINUSOIDALĂ",
+    W/
+    2,
+    acY+
+    30
+  );
+
+
+  rmsCtx.fillStyle=
+    "#ffffff";
+
+
+  rmsCtx.font=
+    "bold 24px system-ui";
+
+
+  rmsCtx.fillText(
+    `Uₘ = ${formatRo(m.Um,1)} V`,
+    W/
+    2,
+    acY+
+    72
+  );
+
+
+  rmsCtx.fillStyle=
+    "#86efac";
+
+
+  rmsCtx.font=
+    "bold 18px system-ui";
+
+
+  rmsCtx.fillText(
+    `Uef = ${formatRo(Urms,2)} V`,
+    W/
+    2,
+    acY+
+    108
+  );
+
+
+  rmsCtx.fillStyle=
+    "#cbd5e1";
+
+
+  rmsCtx.font=
+    "11px system-ui";
+
+
+  rmsCtx.fillText(
+    `Pmed = ${formatRo(Pac,2)} W în R = ${formatRo(m.R,0)} Ω`,
+    W/
+    2,
+    acY+
+    139
+  );
+
+
+  /*
+  Equals
+  */
+
+  rmsCtx.fillStyle=
+    "#fde68a";
+
+
+  rmsCtx.font=
+    "bold 30px system-ui";
+
+
+  rmsCtx.fillText(
+    "⇅ efect Joule echivalent ⇅",
+    W/
+    2,
+    292
+  );
+
+
+  /*
+  DC box
+  */
+
+  roundedRect(
+    rmsCtx,
+    boxX,
+    dcY,
+    boxW,
+    165,
+    15
+  );
+
+
+  rmsCtx.fillStyle=
+    "rgba(34,197,94,.15)";
+
+  rmsCtx.fill();
+
+
+  rmsCtx.strokeStyle=
+    "#4ade80";
+
+  rmsCtx.lineWidth=2;
+
+  rmsCtx.stroke();
+
+
+  rmsCtx.fillStyle=
+    "#bbf7d0";
+
+
+  rmsCtx.font=
+    "bold 14px system-ui";
+
+
+  rmsCtx.fillText(
+    "TENSIUNE CONTINUĂ ECHIVALENTĂ",
+    W/
+    2,
+    dcY+
+    30
+  );
+
+
+  rmsCtx.fillStyle=
+    "#ffffff";
+
+
+  rmsCtx.font=
+    "bold 24px system-ui";
+
+
+  rmsCtx.fillText(
+    `Udc = ${formatRo(Urms,2)} V`,
+    W/
+    2,
+    dcY+
+    80
+  );
+
+
+  rmsCtx.fillStyle=
+    "#86efac";
+
+
+  rmsCtx.font=
+    "bold 16px system-ui";
+
+
+  rmsCtx.fillText(
+    `P = ${formatRo(Pdc,2)} W`,
+    W/
+    2,
+    dcY+
+    118
+  );
+
+
+  rmsCtx.fillStyle=
+    "#cbd5e1";
+
+
+  rmsCtx.font=
+    "11px system-ui";
+
+
+  rmsCtx.fillText(
+    "același rezistor • aceeași putere medie",
+    W/
+    2,
+    dcY+
+    144
+  );
+
+
+  /*
+  Footer relation
+  */
+
+  rmsCtx.fillStyle=
+    "#ddd6fe";
+
+
+  rmsCtx.font=
+    "bold 15px system-ui";
+
+
+  rmsCtx.fillText(
+    "Uef = Uₘ / √2",
+    W/
+    2,
+    H-
+    63
+  );
+
+
+  rmsCtx.fillStyle=
+    "#94a3b8";
+
+
+  rmsCtx.font=
+    "10px system-ui";
+
+
+  rmsCtx.fillText(
+    "echivalența este definită prin efectul energetic într-un rezistor",
+    W/
+    2,
+    H-
+    36
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function stopAnimation(){
+
+  animationSelect.value=
+    "off";
+
+}
+
+
+function setPositiveMaximum(){
+
+  stopAnimation();
+
+
+  const phi=
+    Number(
+      phaseSlider.value
+    );
+
+
+  let tau=
+    (
+      90-
+      phi
+    )/
+    360;
+
+
+  tau=
+    (
+      tau%
+      1+
+      1
+    )%
+    1;
+
+
+  timeSlider.value=
+    String(
+      tau
+    );
+
+
+  updateResults();
+
+}
+
+
+function setZero(){
+
+  stopAnimation();
+
+
+  const phi=
+    Number(
+      phaseSlider.value
+    );
+
+
+  let tau=
+    (
+      -phi
+    )/
+    360;
+
+
+  tau=
+    (
+      tau%
+      1+
+      1
+    )%
+    1;
+
+
+  timeSlider.value=
+    String(
+      tau
+    );
+
+
+  updateResults();
+
+}
+
+
+function setNegativeMaximum(){
+
+  stopAnimation();
+
+
+  const phi=
+    Number(
+      phaseSlider.value
+    );
+
+
+  let tau=
+    (
+      270-
+      phi
+    )/
+    360;
+
+
+  tau=
+    (
+      tau%
+      1+
+      1
+    )%
+    1;
+
+
+  timeSlider.value=
+    String(
+      tau
+    );
+
+
+  updateResults();
+
+}
+
+
+function doubleAmplitude(){
+
+  amplitudeSlider.value=
+    String(
+      clamp(
+        Number(
+          amplitudeSlider.value
+        )*
+        2,
+        Number(
+          amplitudeSlider.min
+        ),
+        Number(
+          amplitudeSlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function shiftPhase(){
+
+  let value=
+    Number(
+      phaseSlider.value
+    )+
+    90;
+
+
+  if(
+    value>
+    180
+  ){
+
+    value-=
+      360;
+
+  }
+
+
+  phaseSlider.value=
+    String(
+      value
+    );
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  amplitudeSlider.value=
+    "20";
+
+
+  frequencySlider.value=
+    "2";
+
+
+  phaseSlider.value=
+    "0";
+
+
+  timeSlider.value=
+    "0";
+
+
+  resistanceSlider.value=
+    "10";
+
+
+  animationSelect.value=
+    "on";
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  amplitudeSlider,
+  frequencySlider,
+  phaseSlider,
+  timeSlider,
+  resistanceSlider,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "maxPositiveBtn"
+  )
+  .addEventListener(
+    "click",
+    setPositiveMaximum
+  );
+
+
+document
+  .getElementById(
+    "zeroBtn"
+  )
+  .addEventListener(
+    "click",
+    setZero
+  );
+
+
+document
+  .getElementById(
+    "maxNegativeBtn"
+  )
+  .addEventListener(
+    "click",
+    setNegativeMaximum
+  );
+
+
+document
+  .getElementById(
+    "doubleAmplitudeBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleAmplitude
+  );
+
+
+document
+  .getElementById(
+    "phaseShiftBtn"
+  )
+  .addEventListener(
+    "click",
+    shiftPhase
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTimestamp=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTimestamp
+  ){
+
+    lastTimestamp=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTimestamp
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTimestamp=
+    timestamp;
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    let tau=
+      Number(
+        timeSlider.value
+      );
+
+
+    tau+=
+      dt*
+      .28;
+
+
+    if(
+      tau>
+      2
+    ){
+
+      tau-=2;
+
+    }
+
+
+    timeSlider.value=
+      String(
+        tau
+      );
+
+  }
+
+
+  updateResults();
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    waveCanvas,
+    waveCtx
+  );
+
+
+  resizeCanvas(
+    rmsCanvas,
+    rmsCtx
+  );
+
+
+  updateResults();
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește diferența dintre valoarea instantanee, amplitudine și valoarea efectivă.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Mărimile sinusoidale și valorile efective sunt bine înțelese.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Mai exersează conversia între maxim, efectiv și vârf-la-vârf.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia schema: instantaneu → amplitudine → RMS → semnificație energetică.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      waveCanvas,
+      waveCtx
+    );
+
+
+    resizeCanvas(
+      rmsCanvas,
+      rmsCtx
+    );
+
+
+    resetAll();
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
