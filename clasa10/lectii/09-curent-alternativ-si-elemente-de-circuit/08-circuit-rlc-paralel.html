@@ -1,1 +1,8484 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+8. Circuit RLC paralel | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Circuitul RLC paralel în curent alternativ: curenți de ramură, diagramă fazorială, admitanță, impedanță echivalentă, caracter inductiv și capacitiv, putere activă și pregătirea rezonanței. Exemple, activitate practică, simulator și evaluare – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 15%,
+      rgba(34,211,238,.28),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(168,85,247,.27),
+      transparent 36%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #312e81 47%,
+      #0e7490
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.88;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#cffafe;
+
+  background:
+    rgba(6,182,212,.16);
+
+  border:
+    1px solid rgba(103,232,249,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(2rem,5vw,3rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#e0f2fe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.24rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.grid-4{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--cyan-soft);
+
+  border-color:#a5f3fc;
+
+  font-size:
+    clamp(1.1rem,3vw,1.42rem);
+
+}
+
+
+/* =========================================================
+   FLOW
+========================================================= */
+
+.flow{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.flow-card{
+
+  padding:18px;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.flow-arrow{
+
+  color:#0891b2;
+
+  font-size:1.8rem;
+
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#ecfeff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--cyan);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#155e75;
+  background:#cffafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#0e7490;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #ecfeff,
+      #f5f3ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#0e7490;
+
+  font-size:.85rem;
+
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:translateY(-1px);
+
+  filter:brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.red-button{
+  color:#991b1b;
+  background:#fee2e2;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.cyan-button{
+  color:#155e75;
+  background:#cffafe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1.05fr .95fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#waveCanvas,
+#phasorCanvas{
+
+  display:block;
+
+  width:100%;
+  height:660px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--cyan-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0891b2,
+      #7c3aed
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .grid-4,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .flow{
+    grid-template-columns:1fr;
+  }
+
+  .flow-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #waveCanvas,
+  #phasorCanvas{
+    height:570px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Curent alternativ și elemente de circuit
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 8
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Circuit RLC paralel
+</span>
+
+</div>
+
+
+<h1>
+Circuit RLC paralel
+</h1>
+
+
+<p class="subtitle">
+În circuitul RLC paralel,
+tensiunea este aceeași pe toate cele trei ramuri,
+dar curenții prin rezistor,
+bobină și condensator au faze diferite.
+Curentul total se obține prin sumă fazorială,
+iar modul natural de descriere a circuitului devine admitanța.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să descrii structura unui circuit RLC paralel;</li>
+
+<li>să explici de ce tensiunea este aceeași pe toate ramurile;</li>
+
+<li>să calculezi \(I_R\), \(I_L\) și \(I_C\);</li>
+
+<li>să reprezinți fazorial curenții de ramură;</li>
+
+<li>să calculezi curentul total;</li>
+
+<li>să definești conductanța și admitanța;</li>
+
+<li>să calculezi impedanța echivalentă;</li>
+
+<li>să recunoști caracterul inductiv sau capacitiv al circuitului;</li>
+
+<li>să calculezi unghiul de fază și factorul de putere;</li>
+
+<li>să explici cazul \(I_L=I_C\);</li>
+
+<li>să pregătești studiul rezonanței.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relațiile centrale</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_R=\frac UR
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I_L=\frac U{X_L}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I_C=\frac U{X_C}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\sqrt{
+I_R^2+
+(I_C-I_L)^2
+}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+Y=
+\sqrt{
+G^2+
+(B_C-B_L)^2
+}
+}
+\]
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BRIDGE
+========================================================= -->
+
+<section class="card">
+
+<h2>1. Serie versus paralel</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>RLC serie</h3>
+
+<p>
+Curentul este comun:
+</p>
+
+<div class="formula">
+
+\[
+I_R=I_L=I_C=I
+\]
+
+</div>
+
+<p>
+Tensiunile se compun fazorial.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>RLC paralel</h3>
+
+<p>
+Tensiunea este comună:
+</p>
+
+<div class="formula">
+
+\[
+U_R=U_L=U_C=U
+\]
+
+</div>
+
+<p>
+Curenții se compun fazorial.
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="purple-box">
+
+Ideea-cheie:
+
+<strong>
+în circuitul RLC paralel alegem tensiunea \(\vec U\) drept fazor de referință.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMON VOLTAGE
+========================================================= -->
+
+<section class="card">
+
+<h2>2. De ce tensiunea este aceeași?</h2>
+
+<p>
+Rezistorul,
+bobina și condensatorul sunt conectate între aceleași două noduri.
+</p>
+
+<p>
+Prin urmare:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+u_R(t)=u_L(t)=u_C(t)=u(t)
+}
+\]
+
+</div>
+
+<p>
+iar pentru valorile efective:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U_R=U_L=U_C=U
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Aceeași tensiune produce trei curenți diferiți,
+deoarece fiecare ramură are o comportare diferită în curent alternativ.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BRANCH CURRENTS
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Curenții prin cele trei ramuri</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Ramura rezistivă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_R=\frac UR
+}
+\]
+
+</div>
+
+<p>
+Curentul este în fază cu tensiunea.
+</p>
+
+<div class="formula">
+
+\[
+\Delta\varphi_R=0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ramura inductivă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_L=\frac U{X_L}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+X_L=\omega L
+\]
+
+</div>
+
+<p>
+Curentul este în urmă față de tensiune cu:</p>
+
+<div class="formula">
+
+\[
+90^\circ
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ramura capacitivă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_C=\frac U{X_C}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+X_C=\frac1{\omega C}
+\]
+
+</div>
+
+<p>
+Curentul este în avans față de tensiune cu:</p>
+
+<div class="formula">
+
+\[
+90^\circ
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PHASE TABLE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. Diagrama fazorială a curenților</h2>
+
+<p>
+Alegem fazorul tensiunii pe direcția orizontală.
+</p>
+
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Curent
+</th>
+
+<th>
+Modul
+</th>
+
+<th>
+Poziție față de tensiune
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+\(I_R\)
+</td>
+
+<td>
+
+\[
+\frac UR
+\]
+
+</td>
+
+<td>
+
+\[
+0^\circ
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(I_L\)
+</td>
+
+<td>
+
+\[
+\frac U{X_L}
+\]
+
+</td>
+
+<td>
+
+\[
+-90^\circ
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+\(I_C\)
+</td>
+
+<td>
+
+\[
+\frac U{X_C}
+\]
+
+</td>
+
+<td>
+
+\[
++90^\circ
+\]
+
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="green-box">
+
+Fazorii \(I_L\) și \(I_C\) sunt pe aceeași direcție,
+dar au sensuri opuse.
+
+De aceea componenta reactivă a curentului total este:
+
+\[
+\boxed{
+I_X=I_C-I_L
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     KCL
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Legea I a lui Kirchhoff în regim sinusoidal</h2>
+
+<p>
+În nodul în care curentul sursei se separă în cele trei ramuri,
+legea I a lui Kirchhoff rămâne valabilă instantaneu:
+</p>
+
+<div class="formula">
+
+\[
+i=i_R+i_L+i_C
+\]
+
+</div>
+
+<p>
+Pentru reprezentarea fazorială:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\vec I=
+\vec I_R+
+\vec I_L+
+\vec I_C
+}
+\]
+
+</div>
+
+
+<div class="red-box">
+
+Nu putem scrie în general:
+
+\[
+I=I_R+I_L+I_C
+\]
+
+pentru module,
+deoarece curenții nu sunt în fază.
+
+Ei trebuie adunați
+<strong>fazorial</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TOTAL CURRENT
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Curentul total</h2>
+
+<p>
+Componenta orizontală este:</p>
+
+<div class="formula">
+
+\[
+I_R
+\]
+
+</div>
+
+<p>
+iar componenta verticală este:</p>
+
+<div class="formula">
+
+\[
+I_C-I_L
+\]
+
+</div>
+
+<p>
+Aceste componente sunt perpendiculare,
+deci:</p>
+
+<div class="formula">
+
+\[
+I^2=
+I_R^2+
+(I_C-I_L)^2
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=
+\sqrt{
+I_R^2+
+(I_C-I_L)^2
+}
+}
+\]
+
+</div>
+
+
+<div class="cyan-box">
+
+Observă analogia cu circuitul RLC serie:
+
+serie:
+
+\[
+U=
+\sqrt{
+U_R^2+
+(U_L-U_C)^2
+}
+\]
+
+paralel:
+
+\[
+I=
+\sqrt{
+I_R^2+
+(I_C-I_L)^2
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONDUCTANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Conductanța</h2>
+
+<p>
+Pentru ramura rezistivă:</p>
+
+<div class="formula">
+
+\[
+I_R=
+\frac UR
+\]
+
+</div>
+
+<p>
+Definim conductanța:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+G=
+\frac1R
+}
+\]
+
+</div>
+
+<p>
+Atunci:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_R=UG
+}
+\]
+
+</div>
+
+
+<h3>Unitatea conductanței</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+[G]=S
+}
+\]
+
+</div>
+
+<p>
+Unitatea se numește
+<strong>siemens</strong>.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     SUSCEPTANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Susceptanțele inductivă și capacitivă</h2>
+
+<p>
+Pentru bobină:</p>
+
+<div class="formula">
+
+\[
+I_L=
+\frac U{X_L}
+\]
+
+</div>
+
+<p>
+definim modulul susceptanței inductive:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B_L=
+\frac1{X_L}
+=
+\frac1{\omega L}
+}
+\]
+
+</div>
+
+<p>
+astfel încât:</p>
+
+<div class="formula">
+
+\[
+I_L=UB_L
+\]
+
+</div>
+
+
+<p>
+Pentru condensator:</p>
+
+<div class="formula">
+
+\[
+I_C=
+\frac U{X_C}
+\]
+
+</div>
+
+<p>
+iar:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+B_C=
+\frac1{X_C}
+=
+\omega C
+}
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+I_C=UB_C
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Atât conductanța,
+cât și susceptanța se măsoară în siemens:
+
+\[
+\boxed{
+[G]=[B_L]=[B_C]=S
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ADMITTANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Admitanța circuitului paralel</h2>
+
+<p>
+Înlocuim:</p>
+
+<div class="formula">
+
+\[
+I_R=UG
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_C-I_L=
+U(B_C-B_L)
+\]
+
+</div>
+
+<p>
+în expresia curentului total:</p>
+
+<div class="formula">
+
+\[
+I=
+\sqrt{
+(UG)^2+
+\left[
+U(B_C-B_L)
+\right]^2
+}
+\]
+
+</div>
+
+<p>
+Factorizăm \(U\):</p>
+
+<div class="formula">
+
+\[
+I=
+U
+\sqrt{
+G^2+
+(B_C-B_L)^2
+}
+\]
+
+</div>
+
+<p>
+Definim admitanța:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+Y=
+\sqrt{
+G^2+
+(B_C-B_L)^2
+}
+}
+\]
+
+</div>
+
+<p>
+și obținem:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I=UY
+}
+\]
+
+</div>
+
+
+<h3>Unitatea admitanței</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+[Y]=S
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DIRECT FORM
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Admitanța exprimată prin \(R\), \(L\), \(C\) și \(f\)</h2>
+
+<p>
+Cum:</p>
+
+<div class="formula">
+
+\[
+G=\frac1R
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+B_L=
+\frac1{\omega L}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+B_C=
+\omega C
+\]
+
+</div>
+
+<p>
+rezultă:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+Y=
+\sqrt{
+\frac1{R^2}
++
+\left(
+\omega C-
+\frac1{\omega L}
+\right)^2
+}
+}
+\]
+
+</div>
+
+
+<p>
+Curentul total este:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+U
+\sqrt{
+\frac1{R^2}
++
+\left(
+\omega C-
+\frac1{\omega L}
+\right)^2
+}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     IMPEDANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Impedanța echivalentă</h2>
+
+<p>
+Prin definiție:</p>
+
+<div class="formula">
+
+\[
+Y=
+\frac IZ
+\cdot
+\frac ZU
+\]
+
+</div>
+
+<p>
+mai simplu,
+deoarece:</p>
+
+<div class="formula">
+
+\[
+I=UY
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula">
+
+\[
+I=
+\frac UZ
+\]
+
+</div>
+
+<p>
+rezultă:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+Z=
+\frac1Y
+}
+\]
+
+</div>
+
+<p>
+Deci:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+Z=
+\frac{
+1
+}{
+\sqrt{
+\dfrac1{R^2}
++
+\left(
+\omega C-
+\dfrac1{\omega L}
+\right)^2
+}
+}
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Pentru circuitul paralel,
+<strong>admitanța</strong>
+este adesea mai ușor de calculat decât impedanța,
+deoarece contribuțiile ramurilor apar natural în expresia curentului total.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PHASE ANGLE
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Unghiul de fază</h2>
+
+<p>
+Păstrăm convenția folosită în lecția anterioară:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\varphi=
+\varphi_U-\varphi_I
+}
+\]
+
+</div>
+
+<p>
+Din triunghiul curenților:</p>
+
+<div class="formula">
+
+\[
+\tan(-\varphi)=
+\frac{
+I_C-I_L
+}{
+I_R
+}
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\tan\varphi=
+\frac{
+I_L-I_C
+}{
+I_R
+}
+}
+\]
+
+</div>
+
+<p>
+În termeni de admitanțe:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\tan\varphi=
+\frac{
+B_L-B_C
+}{
+G
+}
+}
+\]
+
+</div>
+
+
+<p>
+Factorul de putere este:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\cos\varphi=
+\frac{I_R}{I}
+=
+\frac GY
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REGIMES
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Caracter inductiv sau capacitiv</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Caracter inductiv</h3>
+
+<div class="formula">
+
+\[
+I_L>I_C
+\]
+
+</div>
+
+<p>
+sau:</p>
+
+<div class="formula">
+
+\[
+B_L>B_C
+\]
+
+</div>
+
+<p>
+Curentul total este în urmă față de tensiune:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\varphi>0
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Caracter capacitiv</h3>
+
+<div class="formula">
+
+\[
+I_C>I_L
+\]
+
+</div>
+
+<p>
+sau:</p>
+
+<div class="formula">
+
+\[
+B_C>B_L
+\]
+
+</div>
+
+<p>
+Curentul conduce tensiunea:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\varphi<0
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Echilibru reactiv</h3>
+
+<div class="formula">
+
+\[
+I_L=I_C
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\varphi=0
+}
+\]
+
+</div>
+
+<p>
+Curentul sursei este în fază cu tensiunea.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BALANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>14. Cazul \(I_L=I_C\)</h2>
+
+<p>
+Dacă:</p>
+
+<div class="formula">
+
+\[
+I_L=I_C
+\]
+
+</div>
+
+<p>
+atunci componenta reactivă a curentului total este nulă:</p>
+
+<div class="formula">
+
+\[
+I_C-I_L=0
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula">
+
+\[
+I=
+I_R
+\]
+
+</div>
+
+<p>
+Prin urmare:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+Y=G=\frac1R
+}
+\]
+
+</div>
+
+<p>
+iar:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+Z=R
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+În circuitul RLC paralel ideal studiat aici,
+la compensarea curenților reactivi:
+
+\[
+\boxed{
+I=I_R
+}
+\]
+
+iar curentul absorbit de la sursă este minim pentru tensiunea dată.
+
+Curenții \(I_L\) și \(I_C\) pot fi însă nenuli și chiar mari.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONDITION
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Condiția de compensare a ramurilor reactive</h2>
+
+<p>
+Condiția:</p>
+
+<div class="formula">
+
+\[
+I_L=I_C
+\]
+
+</div>
+
+<p>
+devine:</p>
+
+<div class="formula">
+
+\[
+\frac U{X_L}
+=
+\frac U{X_C}
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+X_L=X_C
+\]
+
+</div>
+
+<p>
+Înlocuim:</p>
+
+<div class="formula">
+
+\[
+\omega L=
+\frac1{\omega C}
+\]
+
+</div>
+
+<p>
+și obținem:</p>
+
+<div class="formula">
+
+\[
+\omega^2LC=1
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\omega_0=
+\frac1{\sqrt{LC}}
+}
+\]
+
+</div>
+
+<p>
+respectiv:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+f_0=
+\frac{
+1
+}{
+2\pi\sqrt{LC}
+}
+}
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+Aceasta este exact frecvența pe care o vom studia în lecția următoare:
+
+<strong>
+frecvența de rezonanță.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     IMPORTANT NUANCE
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Ce este special la compensarea curenților?</h2>
+
+<p>
+Să presupunem că:</p>
+
+<div class="formula">
+
+\[
+I_L=I_C=2\,A
+\]
+
+</div>
+
+<p>
+iar:</p>
+
+<div class="formula">
+
+\[
+I_R=0,5\,A
+\]
+
+</div>
+
+<p>
+Curentul total nu este:</p>
+
+<div class="formula">
+
+\[
+2+2+0,5=4,5\,A
+\]
+
+</div>
+
+<p>
+deoarece curenții inductiv și capacitiv sunt în opoziție de fază.
+</p>
+
+<p>
+Rezultanta este:</p>
+
+<div class="formula">
+
+\[
+I=
+\sqrt{
+0,5^2+
+(2-2)^2
+}
+\]
+
+</div>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+I=0,5\,A
+}
+\]
+
+</div>
+
+
+<div class="orange-box">
+
+Sursa poate furniza un curent relativ mic,
+în timp ce între ramurile reactive există curenți mai mari.
+
+Nu există contradicție:
+curenții se compun fazorial,
+nu aritmetic.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     POWER
+========================================================= -->
+
+<section class="card">
+
+<h2>17. Puterea activă</h2>
+
+<p>
+Pentru întregul circuit:</p>
+
+<div class="formula">
+
+\[
+P=
+UI\cos\varphi
+\]
+
+</div>
+
+<p>
+Dar:</p>
+
+<div class="formula">
+
+\[
+I_R=
+I\cos\varphi
+\]
+
+</div>
+
+<p>
+deci:</p>
+
+<div class="formula">
+
+\[
+P=
+UI_R
+\]
+
+</div>
+
+<p>
+iar cum:</p>
+
+<div class="formula">
+
+\[
+I_R=
+\frac UR
+\]
+
+</div>
+
+<p>
+obținem:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P=
+\frac{U^2}{R}
+}
+\]
+
+</div>
+
+<p>
+sau:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+P=
+I_R^2R
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+În modelul ideal,
+numai ramura rezistivă consumă putere activă medie.
+
+Bobina și condensatorul ideale fac schimb periodic de energie cu circuitul.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SERIES VS PARALLEL
+========================================================= -->
+
+<section class="card">
+
+<h2>18. RLC serie versus RLC paralel</h2>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Aspect
+</th>
+
+<th>
+RLC serie
+</th>
+
+<th>
+RLC paralel
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+Mărime comună
+</td>
+
+<td>
+curentul \(I\)
+</td>
+
+<td>
+tensiunea \(U\)
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Se compun fazorial
+</td>
+
+<td>
+tensiunile
+</td>
+
+<td>
+curenții
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Componentă reactivă
+</td>
+
+<td>
+
+\[
+X_L-X_C
+\]
+
+</td>
+
+<td>
+
+\[
+B_C-B_L
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Mărime convenabilă
+</td>
+
+<td>
+impedanța \(Z\)
+</td>
+
+<td>
+admitanța \(Y\)
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+La compensare
+</td>
+
+<td>
+
+\[
+Z=R
+\]
+
+</td>
+
+<td>
+
+\[
+Y=\frac1R
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Fază la compensare
+</td>
+
+<td>
+
+\[
+\varphi=0
+\]
+
+</td>
+
+<td>
+
+\[
+\varphi=0
+\]
+
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     ALGORITHM
+========================================================= -->
+
+<section class="card">
+
+<h2>19. Algoritm de rezolvare</h2>
+
+<ol class="steps">
+
+<li>
+Transformă \(L\) în henry și \(C\) în farad.
+</li>
+
+<li>
+Calculează:
+\[
+\omega=2\pi f
+\]
+</li>
+
+<li>
+Calculează:
+\[
+X_L=\omega L
+\]
+</li>
+
+<li>
+Calculează:
+\[
+X_C=\frac1{\omega C}
+\]
+</li>
+
+<li>
+Determină curenții de ramură:
+\[
+I_R=\frac UR,
+\quad
+I_L=\frac U{X_L},
+\quad
+I_C=\frac U{X_C}
+\]
+</li>
+
+<li>
+Calculează componenta reactivă:
+\[
+I_X=I_C-I_L
+\]
+</li>
+
+<li>
+Calculează curentul total:
+\[
+I=
+\sqrt{
+I_R^2+
+I_X^2
+}
+\]
+</li>
+
+<li>
+Dacă este necesar,
+calculează:
+\[
+Y=\frac IU
+\]
+și:
+\[
+Z=\frac1Y=\frac UI
+\]
+</li>
+
+<li>
+Determină caracterul circuitului din semnul lui \(I_C-I_L\).
+</li>
+
+<li>
+Calculează faza:
+\[
+\tan\varphi=
+\frac{I_L-I_C}{I_R}
+\]
+</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Curenții de ramură</h3>
+
+<p>
+Se dau:</p>
+
+<div class="formula">
+
+\[
+U=60\,V,
+\quad
+R=60\,\Omega,
+\quad
+X_L=30\,\Omega,
+\quad
+X_C=20\,\Omega
+\]
+
+</div>
+
+<p>
+Determinați curenții de ramură.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Pentru rezistor:</p>
+
+\[
+I_R=
+\frac{60}{60}
+=
+1\,A
+\]
+
+Pentru bobină:</p>
+
+\[
+I_L=
+\frac{60}{30}
+=
+2\,A
+\]
+
+Pentru condensator:</p>
+
+\[
+I_C=
+\frac{60}{20}
+=
+3\,A
+\]
+
+Prin urmare:</p>
+
+\[
+\boxed{
+I_R=1\,A,
+\quad
+I_L=2\,A,
+\quad
+I_C=3\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Curentul total</h3>
+
+<p>
+Pentru circuitul anterior:</p>
+
+<div class="formula">
+
+\[
+I_R=1\,A,
+\quad
+I_L=2\,A,
+\quad
+I_C=3\,A
+\]
+
+</div>
+
+<p>
+determinați curentul total.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Componenta reactivă:</p>
+
+\[
+I_C-I_L=
+3-2=
+1\,A
+\]
+
+Curentul total:</p>
+
+\[
+I=
+\sqrt{
+1^2+
+1^2
+}
+\]
+
+\[
+\boxed{
+I=\sqrt2\,A\approx1,41\,A
+}
+\]
+
+Circuitul are caracter capacitiv deoarece:</p>
+
+\[
+I_C>I_L
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 3 – Unghiul de fază</h3>
+
+<p>
+Pentru:</p>
+
+<div class="formula">
+
+\[
+I_R=1\,A,
+\quad
+I_L=2\,A,
+\quad
+I_C=3\,A
+\]
+
+</div>
+
+<p>
+determinați \(\varphi\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\tan\varphi=
+\frac{
+I_L-I_C
+}{
+I_R
+}
+\]
+
+\[
+\tan\varphi=
+\frac{
+2-3
+}{
+1
+}
+=
+-1
+\]
+
+Prin urmare:</p>
+
+\[
+\boxed{
+\varphi=-45^\circ
+}
+\]
+
+Semnul negativ arată caracterul capacitiv:
+curentul total conduce tensiunea.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Admitanța și impedanța</h3>
+
+<p>
+Un circuit paralel absoarbe:</p>
+
+<div class="formula">
+
+\[
+I=2\,A
+\]
+
+</div>
+
+<p>
+la tensiunea:</p>
+
+<div class="formula">
+
+\[
+U=40\,V
+\]
+
+</div>
+
+<p>
+Determinați admitanța și impedanța echivalentă.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+Y=
+\frac IU
+\]
+
+\[
+Y=
+\frac2{40}
+=
+0,05\,S
+\]
+
+Apoi:</p>
+
+\[
+Z=
+\frac1Y
+\]
+
+\[
+Z=
+\frac1{0,05}
+\]
+
+\[
+\boxed{
+Y=0,05\,S
+}
+\]
+
+\[
+\boxed{
+Z=20\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Calcul din \(L\), \(C\) și \(f\)</h3>
+
+<p>
+Se dau:</p>
+
+<div class="formula">
+
+\[
+L=0,20\,H,
+\quad
+C=100\,\mu F,
+\quad
+f=50\,Hz
+\]
+
+</div>
+
+<p>
+Determinați \(X_L\) și \(X_C\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\omega=
+2\pi f=
+100\pi\,rad/s
+\]
+
+Pentru bobină:</p>
+
+\[
+X_L=
+\omega L
+\]
+
+\[
+X_L=
+100\pi\cdot0,20
+\]
+
+\[
+\boxed{
+X_L\approx62,8\,\Omega
+}
+\]
+
+Pentru condensator:</p>
+
+\[
+C=
+100\cdot10^{-6}\,F
+\]
+
+\[
+X_C=
+\frac1{
+100\pi\cdot100\cdot10^{-6}
+}
+\]
+
+\[
+\boxed{
+X_C\approx31,8\,\Omega
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 6 – Efectul frecvenței</h3>
+
+<p>
+Frecvența sursei crește,
+în timp ce \(U\), \(R\), \(L\) și \(C\) rămân constante.
+Cum se modifică \(I_L\) și \(I_C\)?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Pentru bobină:</p>
+
+\[
+X_L=\omega L
+\]
+
+Deci:</p>
+
+\[
+f\uparrow
+\Rightarrow
+X_L\uparrow
+\Rightarrow
+I_L=
+\frac U{X_L}
+\downarrow
+\]
+
+Pentru condensator:</p>
+
+\[
+X_C=
+\frac1{\omega C}
+\]
+
+deci:</p>
+
+\[
+f\uparrow
+\Rightarrow
+X_C\downarrow
+\Rightarrow
+I_C=
+\frac U{X_C}
+\uparrow
+\]
+
+Prin urmare:</p>
+
+\[
+\boxed{
+f\uparrow
+\Rightarrow
+I_L\downarrow,
+\quad
+I_C\uparrow
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 7 – Compensarea curenților reactivi</h3>
+
+<p>
+Se măsoară:</p>
+
+<div class="formula">
+
+\[
+I_R=0,80\,A,
+\quad
+I_L=2,5\,A,
+\quad
+I_C=2,5\,A
+\]
+
+</div>
+
+<p>
+Determinați curentul sursei.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+I_C-I_L=0
+\]
+
+deci:</p>
+
+\[
+I=
+\sqrt{
+I_R^2+0^2
+}
+\]
+
+\[
+\boxed{
+I=0,80\,A
+}
+\]
+
+Deși prin bobină și condensator circulă câte \(2,5\,A\),
+componentele lor reactive se compensează fazorial la sursă.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 8 – Puterea activă</h3>
+
+<p>
+Un circuit RLC paralel are:</p>
+
+<div class="formula">
+
+\[
+U=120\,V,
+\quad
+R=60\,\Omega
+\]
+
+</div>
+
+<p>
+Determinați puterea activă în modelul ideal.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+P=
+\frac{U^2}{R}
+\]
+
+\[
+P=
+\frac{120^2}{60}
+\]
+
+\[
+P=
+\frac{14400}{60}
+\]
+
+\[
+\boxed{
+P=240\,W
+}
+\]
+
+Bobina și condensatorul ideale nu contribuie la puterea activă medie.
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 9 – Frecvența pentru compensare</h3>
+
+<p>
+Se dau:</p>
+
+<div class="formula">
+
+\[
+L=0,20\,H
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+C=50\,\mu F
+\]
+
+</div>
+
+<p>
+Determinați frecvența la care \(I_L=I_C\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+Condiția este:</p>
+
+\[
+f_0=
+\frac{
+1
+}{
+2\pi\sqrt{LC}
+}
+\]
+
+Transformăm:</p>
+
+\[
+C=
+50\cdot10^{-6}\,F
+\]
+
+Calculăm:</p>
+
+\[
+LC=
+0,20\cdot50\cdot10^{-6}
+=
+10^{-5}
+\]
+
+\[
+\sqrt{LC}
+=
+\sqrt{10^{-5}}
+\approx
+0,003162
+\]
+
+Deci:</p>
+
+\[
+f_0=
+\frac{
+1
+}{
+2\pi\cdot0,003162
+}
+\]
+
+\[
+\boxed{
+f_0\approx50,3\,Hz
+}
+\]
+
+Acesta este chiar cazul ce va conduce la studiul rezonanței.
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICAL
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 20. Activitate practică – suma fazorială a curenților</h2>
+
+<p>
+Activitatea poate fi făcută pe hârtie,
+fără conectarea unui circuit real.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Date propuse</h3>
+
+<div class="formula">
+
+\[
+I_R=2\,A
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_L=3\,A
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+I_C=1\,A
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Sarcină</h3>
+
+<p>
+Alege o scară:</p>
+
+<div class="formula">
+
+\[
+1\,A
+\longleftrightarrow
+2\,cm
+\]
+
+</div>
+
+<p>
+și construiește diagrama fazorială.
+</p>
+
+</div>
+
+
+</div>
+
+
+<ol class="steps">
+
+<li>
+Desenează fazorul tensiunii pe orizontală.
+</li>
+
+<li>
+Desenează \(I_R\) în aceeași direcție.
+</li>
+
+<li>
+Desenează \(I_C\) vertical în sus.
+</li>
+
+<li>
+Desenează \(I_L\) vertical în jos.
+</li>
+
+<li>
+Construiește componenta:
+\[
+I_C-I_L
+\]
+</li>
+
+<li>
+Desenează curentul total \(\vec I\).
+</li>
+
+<li>
+Măsoară unghiul dintre \(\vec U\) și \(\vec I\).
+</li>
+
+<li>
+Compară cu valoarea calculată din:
+\[
+\tan\varphi=
+\frac{I_L-I_C}{I_R}
+\]
+</li>
+
+</ol>
+
+
+<div class="green-box">
+
+Activitatea evidențiază de ce
+<strong>legea I a lui Kirchhoff este o sumă algebrică instantanee,
+dar modulele curenților sinusoidali trebuie combinate fazorial</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     OPTIONAL EXPERIMENT
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 21. Extensie experimentală cu tensiune joasă</h2>
+
+<p>
+Dacă laboratorul dispune de generator sinusoidal,
+rezistor,
+bobină,
+condensator nepolarizat și aparate adecvate,
+se poate realiza un montaj paralel la tensiune joasă.
+</p>
+
+<p>
+Se pot măsura:</p>
+
+<ul>
+
+<li>tensiunea comună \(U\);</li>
+
+<li>curentul \(I_R\);</li>
+
+<li>curentul \(I_L\);</li>
+
+<li>curentul \(I_C\);</li>
+
+<li>curentul total furnizat de generator.</li>
+
+</ul>
+
+
+<div class="yellow-box">
+
+O bobină reală are rezistență proprie,
+iar condensatorul real are pierderi.
+
+Prin urmare,
+rezultatele experimentale nu vor reproduce perfect modelul ideal.
+</div>
+
+
+<div class="red-box">
+
+Experimentul se realizează exclusiv cu
+<strong>surse didactice izolate și tensiuni joase</strong>.
+
+Nu realizați montaje RLC improvizate direct la rețeaua electrică de 230 V.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – circuit RLC paralel</h2>
+
+<p>
+Modifică \(R\), \(L\), \(C\), frecvența și tensiunea.
+Urmărește curenții din fiecare ramură,
+curentul total,
+admitanța,
+impedanța echivalentă și diagrama fazorială.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="voltageSlider">
+Tensiune efectivă \(U\) [V]
+</label>
+
+<input
+  id="voltageSlider"
+  type="range"
+  min="5"
+  max="120"
+  step="1"
+  value="40">
+
+<span
+  class="range-value"
+  id="voltageLabel">
+40 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="resistanceSlider">
+Rezistență \(R\) [Ω]
+</label>
+
+<input
+  id="resistanceSlider"
+  type="range"
+  min="10"
+  max="200"
+  step="1"
+  value="80">
+
+<span
+  class="range-value"
+  id="resistanceLabel">
+80 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="inductanceSlider">
+Inductanță \(L\) [mH]
+</label>
+
+<input
+  id="inductanceSlider"
+  type="range"
+  min="20"
+  max="800"
+  step="10"
+  value="200">
+
+<span
+  class="range-value"
+  id="inductanceLabel">
+200 mH
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="capacitanceSlider">
+Capacitate \(C\) [µF]
+</label>
+
+<input
+  id="capacitanceSlider"
+  type="range"
+  min="5"
+  max="300"
+  step="1"
+  value="50">
+
+<span
+  class="range-value"
+  id="capacitanceLabel">
+50 µF
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="frequencySlider">
+Frecvență \(f\) [Hz]
+</label>
+
+<input
+  id="frequencySlider"
+  type="range"
+  min="5"
+  max="200"
+  step="1"
+  value="50">
+
+<span
+  class="range-value"
+  id="frequencyLabel">
+50 Hz
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="timeSlider">
+Moment \(t/T\)
+</label>
+
+<input
+  id="timeSlider"
+  type="range"
+  min="0"
+  max="2"
+  step="0.005"
+  value="0">
+
+<span
+  class="range-value"
+  id="timeLabel">
+0,000 T
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Animație
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+pornită
+</option>
+
+<option value="off">
+oprită
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="orange-button"
+  id="inductiveBtn">
+
+Regim inductiv
+
+</button>
+
+
+<button
+  class="cyan-button"
+  id="capacitiveBtn">
+
+Regim capacitiv
+
+</button>
+
+
+<button
+  class="green-button"
+  id="balanceBtn">
+
+\(I_L\approx I_C\)
+
+</button>
+
+
+<button
+  class="primary"
+  id="doubleFrequencyBtn">
+
+f × 2
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="waveCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="phasorCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+\(X_L\)
+</span>
+
+<strong id="xlValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(X_C\)
+</span>
+
+<strong id="xcValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_R\)
+</span>
+
+<strong id="irValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_L\)
+</span>
+
+<strong id="ilValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+\(I_C\)
+</span>
+
+<strong id="icValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent total \(I\)
+</span>
+
+<strong id="currentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Admitanță \(Y\)
+</span>
+
+<strong id="admittanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Impedanță \(Z\)
+</span>
+
+<strong id="impedanceValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Unghi \(\varphi\)
+</span>
+
+<strong id="phaseValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Factor de putere
+</span>
+
+<strong id="powerFactorValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere activă
+</span>
+
+<strong id="powerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Caracter
+</span>
+
+<strong id="regimeValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box"
+  id="simStatus">
+
+Circuit RLC paralel.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIM MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>22. Misiuni în simulator</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Regim inductiv</h3>
+
+<p>
+Selectează presetarea corespunzătoare.
+</p>
+
+<p>
+Verifică:</p>
+
+<div class="formula">
+
+\[
+I_L>I_C
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula">
+
+\[
+\varphi>0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Regim capacitiv</h3>
+
+<p>
+Verifică:</p>
+
+<div class="formula">
+
+\[
+I_C>I_L
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula">
+
+\[
+\varphi<0
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Compensarea curenților</h3>
+
+<p>
+Alege:</p>
+
+<div class="formula">
+
+\[
+I_L\approx I_C
+\]
+
+</div>
+
+<p>
+Observă:</p>
+
+<div class="formula">
+
+\[
+I\approx I_R
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Mărește frecvența</h3>
+
+<p>
+Urmărește simultan:</p>
+
+<div class="formula">
+
+\[
+I_L\downarrow
+\]
+
+</div>
+
+și:</p>
+
+<div class="formula">
+
+\[
+I_C\uparrow
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Caută curent minim</h3>
+
+<p>
+Modifică frecvența până când curentul total devine minim.
+</p>
+
+<p>
+Ce observi despre:</p>
+
+<div class="formula">
+
+\[
+I_L
+\quad\text{și}\quad
+I_C
+\]
+
+</div>
+
+?</div>
+
+
+<div class="mini-card">
+
+<h3>F. Impedanța maximă</h3>
+
+<p>
+Urmărește ce se întâmplă cu:</p>
+
+<div class="formula">
+
+\[
+Z=\frac UI
+\]
+
+</div>
+
+<p>
+când curentul sursei devine minim.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Puterea activă</h3>
+
+<p>
+Modifică \(L\), \(C\) și frecvența,
+dar păstrează \(U\) și \(R\) constante.
+</p>
+
+<p>
+Ce se întâmplă cu:</p>
+
+<div class="formula">
+
+\[
+P=\frac{U^2}{R}
+\]
+
+</div>
+
+?</div>
+
+
+<div class="mini-card">
+
+<h3>H. Curent de ramură mai mare decât curentul total</h3>
+
+<p>
+Caută un caz în care:</p>
+
+<div class="formula">
+
+\[
+I_L>I
+\]
+
+</div>
+
+<p>
+sau:</p>
+
+<div class="formula">
+
+\[
+I_C>I
+\]
+
+</div>
+
+<p>
+și explică de ce este posibil.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ Greșeli frecvente</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. „În paralel curentul este același în toate ramurile.”</h3>
+
+<p>
+Nu.
+În paralel,
+<strong>tensiunea</strong>
+este aceeași.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. „Curentul total este \(I_R+I_L+I_C\).”</h3>
+
+<p>
+Nu pentru module.
+</p>
+
+<div class="formula">
+
+\[
+I=
+\sqrt{
+I_R^2+
+(I_C-I_L)^2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. „\(I_L\) și \(I_C\) se adună.”</h3>
+
+<p>
+Fazorial au sensuri opuse:</p>
+
+<div class="formula">
+
+\[
+I_X=
+I_C-I_L
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. „Frecvența mai mare mărește \(I_L\).”</h3>
+
+<p>
+La tensiune constantă:</p>
+
+<div class="formula">
+
+\[
+f\uparrow
+\Rightarrow
+X_L\uparrow
+\Rightarrow
+I_L\downarrow
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. „Frecvența mai mare micșorează \(I_C\).”</h3>
+
+<p>
+Este invers:</p>
+
+<div class="formula">
+
+\[
+f\uparrow
+\Rightarrow
+X_C\downarrow
+\Rightarrow
+I_C\uparrow
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. „Dacă \(I_L=I_C\), ambii curenți sunt zero.”</h3>
+
+<p>
+Nu.
+Ei pot fi mari și egali,
+dar se compensează fazorial în curentul sursei.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. „La compensare curentul sursei este zero.”</h3>
+
+<p>
+Nu dacă există ramura rezistivă.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I=I_R
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. „Admitanța se măsoară în ohmi.”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+[Y]=S
+\]
+
+</div>
+
+<p>
+Impedanța se măsoară în ohmi.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>9. „Circuit inductiv înseamnă \(I_C>I_L\).”</h3>
+
+<p>
+Nu.
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+I_L>I_C
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>10. „Toate ramurile consumă putere activă.”</h3>
+
+<p>
+În modelul ideal,
+numai rezistorul disipă putere activă medie.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     THINK
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce tensiunea este aceeași pe toate ramurile unui circuit paralel?
+</li>
+
+<li>
+De ce \(I_R\) este în fază cu tensiunea?</li>
+
+<li>
+De ce \(I_L\) este în urmă cu \(90^\circ\)?</li>
+
+<li>
+De ce \(I_C\) este în avans cu \(90^\circ\)?</li>
+
+<li>
+De ce \(I_L\) și \(I_C\) se scad fazorial?</li>
+
+<li>
+De ce curentul total poate fi mai mic decât fiecare dintre curenții reactivi?</li>
+
+<li>
+De ce este admitanța o mărime convenabilă în circuitul paralel?</li>
+
+<li>
+Ce indică semnul unghiului \(\varphi\)?</li>
+
+<li>
+De ce creșterea frecvenței reduce \(I_L\), dar mărește \(I_C\)?</li>
+
+<li>
+De ce la \(I_L=I_C\) curentul sursei devine \(I_R\)?</li>
+
+<li>
+De ce impedanța echivalentă este maximă când curentul total este minim?</li>
+
+<li>
+Ce legătură există între această compensare și rezonanță?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+În circuitul RLC paralel,
+mărimea comună celor trei ramuri este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+curentul
+</button>
+
+<button class="answer-btn">
+tensiunea
+</button>
+
+<button class="answer-btn">
+reactanța
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+Curentul prin ramura rezistivă este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I_R=UR\)
+</button>
+
+<button class="answer-btn">
+\(I_R=R/U\)
+</button>
+
+<button class="answer-btn">
+\(I_R=U/R\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Curentul prin condensator:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+este în avans cu \(90^\circ\) față de tensiune
+</button>
+
+<button class="answer-btn">
+este în urmă cu \(90^\circ\)
+</button>
+
+<button class="answer-btn">
+este obligatoriu în fază
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+Curentul prin bobina ideală:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+conduce tensiunea cu \(90^\circ\)
+</button>
+
+<button class="answer-btn">
+este în urmă cu \(90^\circ\) față de tensiune
+</button>
+
+<button class="answer-btn">
+este în opoziție de fază cu tensiunea
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Curentul total are modulul:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=I_R+I_L+I_C\)
+</button>
+
+<button class="answer-btn">
+\(I=I_C-I_L\)
+</button>
+
+<button class="answer-btn">
+\(I=\sqrt{I_R^2+(I_C-I_L)^2}\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Admitanța se măsoară în:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+siemens
+</button>
+
+<button class="answer-btn">
+ohmi
+</button>
+
+<button class="answer-btn">
+henry
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Dacă \(I_L>I_C\),
+circuitul are caracter:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+capacitiv
+</button>
+
+<button class="answer-btn">
+inductiv
+</button>
+
+<button class="answer-btn">
+pur rezistiv obligatoriu
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Dacă \(I_L=I_C\),
+în circuitul studiat:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I=0\)
+</button>
+
+<button class="answer-btn">
+\(I=I_L+I_C\)
+</button>
+
+<button class="answer-btn">
+\(I=I_R\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Relația dintre impedanță și admitanță este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(Z=1/Y\)
+</button>
+
+<button class="answer-btn">
+\(Z=Y^2\)
+</button>
+
+<button class="answer-btn">
+\(Z=R+Y\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+În modelul ideal,
+puterea activă medie este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U^2/X_L\)
+</button>
+
+<button class="answer-btn">
+\(U^2/R\)
+</button>
+
+<button class="answer-btn">
+\(U^2/X_C\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Tensiune comună</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+U_R=U_L=U_C=U
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curent rezistiv</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_R=\frac UR
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curenți reactivi</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I_L=\frac U{X_L},
+\qquad
+I_C=\frac U{X_C}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curent total</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+I=
+\sqrt{
+I_R^2+
+(I_C-I_L)^2
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Admitanță</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+Y=
+\sqrt{
+G^2+
+(B_C-B_L)^2
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Impedanță</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+Z=\frac1Y
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Unghi de fază</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\tan\varphi=
+\frac{
+I_L-I_C
+}{
+I_R
+}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Factor de putere</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\cos\varphi=
+\frac{I_R}{I}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Putere activă</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P=
+\frac{U^2}{R}
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema mentală:
+
+<strong>
+aceeași tensiune →
+\(I_R\) orizontal →
+\(I_C\) în sus →
+\(I_L\) în jos →
+diferența \(I_C-I_L\) →
+curent total →
+admitanță →
+impedanță →
+fază →
+compensarea curenților reactivi.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 Ce urmează?</h2>
+
+<p>
+Atât în circuitul serie,
+cât și în circuitul paralel,
+am întâlnit condiția:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+X_L=X_C
+}
+\]
+
+</div>
+
+<p>
+echivalentă cu:</p>
+
+<div class="formula">
+
+\[
+\omega L=
+\frac1{\omega C}
+\]
+
+</div>
+
+<p>
+de unde:</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\omega_0=
+\frac1{\sqrt{LC}}
+}
+\]
+
+</div>
+
+<p>
+și:</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+f_0=
+\frac{
+1
+}{
+2\pi\sqrt{LC}
+}
+}
+\]
+
+</div>
+
+
+<div class="purple-box">
+
+În lecția următoare vom studia sistematic
+<strong>rezonanța</strong>:
+
+<ul>
+
+<li>condiția de rezonanță;</li>
+
+<li>frecvența de rezonanță;</li>
+
+<li>ce se întâmplă cu impedanța;</li>
+
+<li>ce se întâmplă cu intensitatea curentului;</li>
+
+<li>de ce circuitul devine global rezistiv la rezonanță.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="07-circuit-rlc-serie-impedanta-diagrama-fazoriala.html">
+
+← Lecția 7<br>
+Circuit RLC serie. Impedanța. Diagrama fazorială
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins capitol
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="09-rezonanta-frecventa-de-rezonanta.html">
+
+Lecția 9<br>
+Rezonanța. Frecvența de rezonanță →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Curent alternativ și elemente de circuit
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const voltageSlider=
+  document.getElementById(
+    "voltageSlider"
+  );
+
+
+const resistanceSlider=
+  document.getElementById(
+    "resistanceSlider"
+  );
+
+
+const inductanceSlider=
+  document.getElementById(
+    "inductanceSlider"
+  );
+
+
+const capacitanceSlider=
+  document.getElementById(
+    "capacitanceSlider"
+  );
+
+
+const frequencySlider=
+  document.getElementById(
+    "frequencySlider"
+  );
+
+
+const timeSlider=
+  document.getElementById(
+    "timeSlider"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const voltageLabel=
+  document.getElementById(
+    "voltageLabel"
+  );
+
+
+const resistanceLabel=
+  document.getElementById(
+    "resistanceLabel"
+  );
+
+
+const inductanceLabel=
+  document.getElementById(
+    "inductanceLabel"
+  );
+
+
+const capacitanceLabel=
+  document.getElementById(
+    "capacitanceLabel"
+  );
+
+
+const frequencyLabel=
+  document.getElementById(
+    "frequencyLabel"
+  );
+
+
+const timeLabel=
+  document.getElementById(
+    "timeLabel"
+  );
+
+
+const xlValue=
+  document.getElementById(
+    "xlValue"
+  );
+
+
+const xcValue=
+  document.getElementById(
+    "xcValue"
+  );
+
+
+const irValue=
+  document.getElementById(
+    "irValue"
+  );
+
+
+const ilValue=
+  document.getElementById(
+    "ilValue"
+  );
+
+
+const icValue=
+  document.getElementById(
+    "icValue"
+  );
+
+
+const currentValue=
+  document.getElementById(
+    "currentValue"
+  );
+
+
+const admittanceValue=
+  document.getElementById(
+    "admittanceValue"
+  );
+
+
+const impedanceValue=
+  document.getElementById(
+    "impedanceValue"
+  );
+
+
+const phaseValue=
+  document.getElementById(
+    "phaseValue"
+  );
+
+
+const powerFactorValue=
+  document.getElementById(
+    "powerFactorValue"
+  );
+
+
+const powerValue=
+  document.getElementById(
+    "powerValue"
+  );
+
+
+const regimeValue=
+  document.getElementById(
+    "regimeValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const waveCanvas=
+  document.getElementById(
+    "waveCanvas"
+  );
+
+
+const waveCtx=
+  waveCanvas.getContext(
+    "2d"
+  );
+
+
+const phasorCanvas=
+  document.getElementById(
+    "phasorCanvas"
+  );
+
+
+const phasorCtx=
+  phasorCanvas.getContext(
+    "2d"
+  );
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const U=
+    Number(
+      voltageSlider.value
+    );
+
+
+  const R=
+    Number(
+      resistanceSlider.value
+    );
+
+
+  const L=
+    Number(
+      inductanceSlider.value
+    )/
+    1000;
+
+
+  const C=
+    Number(
+      capacitanceSlider.value
+    )*
+    1e-6;
+
+
+  const f=
+    Number(
+      frequencySlider.value
+    );
+
+
+  const tau=
+    Number(
+      timeSlider.value
+    );
+
+
+  const omega=
+    2*
+    Math.PI*
+    f;
+
+
+  const XL=
+    omega*
+    L;
+
+
+  const XC=
+    1/
+    (
+      omega*
+      C
+    );
+
+
+  const IR=
+    U/
+    R;
+
+
+  const IL=
+    U/
+    XL;
+
+
+  const IC=
+    U/
+    XC;
+
+
+  /*
+  Current reactive component:
+  positive upward = capacitive.
+  */
+
+  const IX=
+    IC-
+    IL;
+
+
+  const I=
+    Math.sqrt(
+      IR*
+      IR+
+      IX*
+      IX
+    );
+
+
+  const G=
+    1/
+    R;
+
+
+  const BL=
+    1/
+    XL;
+
+
+  const BC=
+    1/
+    XC;
+
+
+  const B=
+    BC-
+    BL;
+
+
+  const Y=
+    Math.sqrt(
+      G*
+      G+
+      B*
+      B
+    );
+
+
+  const Z=
+    1/
+    Y;
+
+
+  /*
+  Current phase relative to voltage:
+  psi = atan2(IC-IL, IR)
+
+  We keep convention from previous lesson:
+  phi = phi_U - phi_I = -psi.
+  */
+
+  const psi=
+    Math.atan2(
+      IX,
+      IR
+    );
+
+
+  const phi=
+    -psi;
+
+
+  const cosPhi=
+    Math.cos(
+      phi
+    );
+
+
+  const P=
+    U*
+    U/
+    R;
+
+
+  const theta=
+    2*
+    Math.PI*
+    tau;
+
+
+  const Um=
+    Math.sqrt(
+      2
+    )*
+    U;
+
+
+  const IRm=
+    Math.sqrt(
+      2
+    )*
+    IR;
+
+
+  const ILm=
+    Math.sqrt(
+      2
+    )*
+    IL;
+
+
+  const ICm=
+    Math.sqrt(
+      2
+    )*
+    IC;
+
+
+  const Im=
+    Math.sqrt(
+      2
+    )*
+    I;
+
+
+  /*
+  Voltage reference:
+  u = Um sin theta
+
+  iR = IRm sin theta
+  iC = ICm sin(theta + pi/2) = ICm cos theta
+  iL = ILm sin(theta - pi/2) = -ILm cos theta
+  total i = sum
+  */
+
+  const u=
+    Um*
+    Math.sin(
+      theta
+    );
+
+
+  const iR=
+    IRm*
+    Math.sin(
+      theta
+    );
+
+
+  const iC=
+    ICm*
+    Math.cos(
+      theta
+    );
+
+
+  const iL=
+    -ILm*
+    Math.cos(
+      theta
+    );
+
+
+  const i=
+    iR+
+    iC+
+    iL;
+
+
+  let regime=
+    "echilibrat";
+
+
+  const tolerance=
+    Math.max(
+      .01,
+      .015*
+      Math.max(
+        IL,
+        IC
+      )
+    );
+
+
+  if(
+    IL-
+    IC>
+    tolerance
+  ){
+
+    regime=
+      "inductiv";
+
+  }
+
+  else if(
+    IC-
+    IL>
+    tolerance
+  ){
+
+    regime=
+      "capacitiv";
+
+  }
+
+
+  return{
+
+    U,
+    R,
+    L,
+    C,
+    f,
+    tau,
+
+    omega,
+
+    XL,
+    XC,
+
+    IR,
+    IL,
+    IC,
+    IX,
+    I,
+
+    G,
+    BL,
+    BC,
+    B,
+    Y,
+    Z,
+
+    psi,
+    phi,
+    cosPhi,
+
+    P,
+
+    theta,
+
+    Um,
+    IRm,
+    ILm,
+    ICm,
+    Im,
+
+    u,
+    iR,
+    iL,
+    iC,
+    i,
+
+    regime
+
+  };
+
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  voltageLabel.textContent=
+    `${formatRo(
+      m.U,
+      0
+    )} V`;
+
+
+  resistanceLabel.textContent=
+    `${formatRo(
+      m.R,
+      0
+    )} Ω`;
+
+
+  inductanceLabel.textContent=
+    `${formatRo(
+      m.L*
+      1000,
+      0
+    )} mH`;
+
+
+  capacitanceLabel.textContent=
+    `${formatRo(
+      m.C*
+      1e6,
+      0
+    )} µF`;
+
+
+  frequencyLabel.textContent=
+    `${formatRo(
+      m.f,
+      0
+    )} Hz`;
+
+
+  timeLabel.textContent=
+    `${formatRo(
+      m.tau,
+      3
+    )} T`;
+
+
+  xlValue.textContent=
+    `${formatRo(
+      m.XL,
+      2
+    )} Ω`;
+
+
+  xcValue.textContent=
+    `${formatRo(
+      m.XC,
+      2
+    )} Ω`;
+
+
+  irValue.textContent=
+    `${formatRo(
+      m.IR,
+      3
+    )} A`;
+
+
+  ilValue.textContent=
+    `${formatRo(
+      m.IL,
+      3
+    )} A`;
+
+
+  icValue.textContent=
+    `${formatRo(
+      m.IC,
+      3
+    )} A`;
+
+
+  currentValue.textContent=
+    `${formatRo(
+      m.I,
+      3
+    )} A`;
+
+
+  admittanceValue.textContent=
+    `${formatRo(
+      m.Y,
+      5
+    )} S`;
+
+
+  impedanceValue.textContent=
+    `${formatRo(
+      m.Z,
+      2
+    )} Ω`;
+
+
+  phaseValue.textContent=
+    `${formatRo(
+      m.phi*
+      180/
+      Math.PI,
+      2
+    )}°`;
+
+
+  powerFactorValue.textContent=
+    formatRo(
+      m.cosPhi,
+      3
+    );
+
+
+  powerValue.textContent=
+    `${formatRo(
+      m.P,
+      2
+    )} W`;
+
+
+  regimeValue.textContent=
+    m.regime;
+
+
+  if(
+    m.regime===
+    "inductiv"
+  ){
+
+    simStatus.innerHTML=
+      `Circuitul are caracter
+       <strong>inductiv</strong>:
+       I<sub>L</sub> &gt; I<sub>C</sub>.
+       Curentul total este în urmă față de tensiune,
+       deci
+       <strong>φ &gt; 0</strong>
+       pentru convenția φ = φ<sub>U</sub> − φ<sub>I</sub>.`;
+
+  }
+
+  else if(
+    m.regime===
+    "capacitiv"
+  ){
+
+    simStatus.innerHTML=
+      `Circuitul are caracter
+       <strong>capacitiv</strong>:
+       I<sub>C</sub> &gt; I<sub>L</sub>.
+       Curentul total conduce tensiunea,
+       deci
+       <strong>φ &lt; 0</strong>.`;
+
+  }
+
+  else{
+
+    simStatus.innerHTML=
+      `Curenții reactivi sunt aproape compensați:
+       <strong>I<sub>L</sub> ≈ I<sub>C</sub></strong>.
+       Curentul sursei este aproape egal cu I<sub>R</sub>,
+       iar impedanța este aproape maximă pentru acest circuit ideal cu ramură rezistivă.`;
+
+  }
+
+
+  drawWave(
+    m
+  );
+
+
+  drawPhasors(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+function drawArrow(
+  context,
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width=3,
+  head=9
+){
+
+  const angle=
+    Math.atan2(
+      y2-y1,
+      x2-x1
+    );
+
+
+  context.strokeStyle=
+    color;
+
+
+  context.fillStyle=
+    color;
+
+
+  context.lineWidth=
+    width;
+
+
+  context.lineCap=
+    "round";
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x1,
+    y1
+  );
+
+  context.lineTo(
+    x2,
+    y2
+  );
+
+  context.stroke();
+
+
+  context.beginPath();
+
+  context.moveTo(
+    x2,
+    y2
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle-
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle-
+      Math.PI/
+      6
+    )
+  );
+
+  context.lineTo(
+    x2-
+    head*
+    Math.cos(
+      angle+
+      Math.PI/
+      6
+    ),
+    y2-
+    head*
+    Math.sin(
+      angle+
+      Math.PI/
+      6
+    )
+  );
+
+  context.closePath();
+
+  context.fill();
+
+}
+
+
+/* =========================================================
+   WAVE GRAPH
+========================================================= */
+
+function drawWave(
+  m
+){
+
+  const rect=
+    waveCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  waveCtx.fillStyle=
+    "#f8fafc";
+
+
+  waveCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  waveCtx.fillStyle=
+    "#0f172a";
+
+
+  waveCtx.font=
+    "bold 15px system-ui";
+
+
+  waveCtx.textAlign=
+    "left";
+
+
+  waveCtx.fillText(
+    "Curenții din ramuri",
+    20,
+    29
+  );
+
+
+  waveCtx.fillStyle=
+    "#64748b";
+
+
+  waveCtx.font=
+    "11px system-ui";
+
+
+  waveCtx.fillText(
+    "forme normalizate pentru compararea fazelor",
+    20,
+    49
+  );
+
+
+  const left=62;
+  const right=W-30;
+
+  const top=94;
+  const bottom=H-92;
+
+  const mid=
+    (
+      top+
+      bottom
+    )/
+    2;
+
+
+  const ampPx=
+    (
+      bottom-
+      top
+    )*
+    .36;
+
+
+  function xFor(
+    tau
+  ){
+
+    return left+
+      tau/
+      2*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yNorm(
+    value
+  ){
+
+    return mid-
+      value*
+      ampPx;
+
+  }
+
+
+  /*
+  Grid.
+  */
+
+  waveCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  waveCtx.lineWidth=1;
+
+
+  for(
+    let k=0;
+    k<=8;
+    k++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      k/
+      8;
+
+
+    waveCtx.beginPath();
+
+    waveCtx.moveTo(
+      x,
+      top
+    );
+
+    waveCtx.lineTo(
+      x,
+      bottom
+    );
+
+    waveCtx.stroke();
+
+  }
+
+
+  waveCtx.strokeStyle=
+    "#64748b";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    left,
+    mid
+  );
+
+  waveCtx.lineTo(
+    right,
+    mid
+  );
+
+  waveCtx.stroke();
+
+
+  /*
+  Voltage reference.
+  */
+
+  waveCtx.strokeStyle=
+    "#64748b";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.setLineDash([
+    7,
+    6
+  ]);
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=600;
+    k++
+  ){
+
+    const tau=
+      2*
+      k/
+      600;
+
+
+    const value=
+      Math.sin(
+        2*
+        Math.PI*
+        tau
+      );
+
+
+    const x=
+      xFor(
+        tau
+      );
+
+
+    const y=
+      yNorm(
+        value
+      );
+
+
+    if(
+      k===
+      0
+    ){
+
+      waveCtx.moveTo(
+        x,
+        y
+      );
+
+    }
+
+    else{
+
+      waveCtx.lineTo(
+        x,
+        y
+      );
+
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  waveCtx.setLineDash([]);
+
+
+  /*
+  IR in phase.
+  */
+
+  waveCtx.strokeStyle=
+    "#16a34a";
+
+
+  waveCtx.lineWidth=3.5;
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=600;
+    k++
+  ){
+
+    const tau=
+      2*
+      k/
+      600;
+
+
+    const value=
+      Math.sin(
+        2*
+        Math.PI*
+        tau
+      );
+
+
+    const x=
+      xFor(
+        tau
+      );
+
+
+    const y=
+      yNorm(
+        value
+      );
+
+
+    if(
+      k===
+      0
+    ){
+      waveCtx.moveTo(
+        x,
+        y
+      );
+    }
+
+    else{
+      waveCtx.lineTo(
+        x,
+        y
+      );
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  /*
+  IC leads +90.
+  */
+
+  waveCtx.strokeStyle=
+    "#0891b2";
+
+
+  waveCtx.lineWidth=3;
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=600;
+    k++
+  ){
+
+    const tau=
+      2*
+      k/
+      600;
+
+
+    const value=
+      Math.cos(
+        2*
+        Math.PI*
+        tau
+      );
+
+
+    const x=
+      xFor(
+        tau
+      );
+
+
+    const y=
+      yNorm(
+        value
+      );
+
+
+    if(
+      k===
+      0
+    ){
+      waveCtx.moveTo(
+        x,
+        y
+      );
+    }
+
+    else{
+      waveCtx.lineTo(
+        x,
+        y
+      );
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  /*
+  IL lags -90.
+  */
+
+  waveCtx.strokeStyle=
+    "#7c3aed";
+
+
+  waveCtx.lineWidth=3;
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=600;
+    k++
+  ){
+
+    const tau=
+      2*
+      k/
+      600;
+
+
+    const value=
+      -Math.cos(
+        2*
+        Math.PI*
+        tau
+      );
+
+
+    const x=
+      xFor(
+        tau
+      );
+
+
+    const y=
+      yNorm(
+        value
+      );
+
+
+    if(
+      k===
+      0
+    ){
+      waveCtx.moveTo(
+        x,
+        y
+      );
+    }
+
+    else{
+      waveCtx.lineTo(
+        x,
+        y
+      );
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  /*
+  Total current normalized.
+  */
+
+  waveCtx.strokeStyle=
+    "#dc2626";
+
+
+  waveCtx.lineWidth=4.5;
+
+
+  waveCtx.beginPath();
+
+
+  for(
+    let k=0;
+    k<=600;
+    k++
+  ){
+
+    const tau=
+      2*
+      k/
+      600;
+
+
+    const theta=
+      2*
+      Math.PI*
+      tau;
+
+
+    const actual=
+      m.IR*
+      Math.sin(
+        theta
+      )
+      +
+      m.IC*
+      Math.cos(
+        theta
+      )
+      -
+      m.IL*
+      Math.cos(
+        theta
+      );
+
+
+    const value=
+      m.I>
+      0
+        ? actual/
+          m.I
+        : 0;
+
+
+    const x=
+      xFor(
+        tau
+      );
+
+
+    const y=
+      yNorm(
+        value
+      );
+
+
+    if(
+      k===
+      0
+    ){
+      waveCtx.moveTo(
+        x,
+        y
+      );
+    }
+
+    else{
+      waveCtx.lineTo(
+        x,
+        y
+      );
+    }
+
+  }
+
+
+  waveCtx.stroke();
+
+
+  /*
+  Marker.
+  */
+
+  const markerX=
+    xFor(
+      m.tau
+    );
+
+
+  waveCtx.strokeStyle=
+    "#f59e0b";
+
+
+  waveCtx.lineWidth=2;
+
+
+  waveCtx.setLineDash([
+    6,
+    5
+  ]);
+
+
+  waveCtx.beginPath();
+
+  waveCtx.moveTo(
+    markerX,
+    top
+  );
+
+  waveCtx.lineTo(
+    markerX,
+    bottom
+  );
+
+  waveCtx.stroke();
+
+
+  waveCtx.setLineDash([]);
+
+
+  /*
+  Labels.
+  */
+
+  waveCtx.font=
+    "bold 10px system-ui";
+
+
+  waveCtx.textAlign=
+    "left";
+
+
+  waveCtx.fillStyle=
+    "#475569";
+
+
+  waveCtx.fillText(
+    "u",
+    left+
+    5,
+    top+
+    17
+  );
+
+
+  waveCtx.fillStyle=
+    "#15803d";
+
+
+  waveCtx.fillText(
+    "iR",
+    left+
+    28,
+    top+
+    17
+  );
+
+
+  waveCtx.fillStyle=
+    "#0e7490";
+
+
+  waveCtx.fillText(
+    "iC",
+    left+
+    58,
+    top+
+    17
+  );
+
+
+  waveCtx.fillStyle=
+    "#6d28d9";
+
+
+  waveCtx.fillText(
+    "iL",
+    left+
+    88,
+    top+
+    17
+  );
+
+
+  waveCtx.fillStyle=
+    "#b91c1c";
+
+
+  waveCtx.fillText(
+    "i total",
+    left+
+    116,
+    top+
+    17
+  );
+
+
+  const labels=[
+    ["0",0],
+    ["T/4",.25],
+    ["T/2",.5],
+    ["3T/4",.75],
+    ["T",1],
+    ["3T/2",1.5],
+    ["2T",2]
+  ];
+
+
+  waveCtx.fillStyle=
+    "#475569";
+
+
+  waveCtx.font=
+    "10px system-ui";
+
+
+  waveCtx.textAlign=
+    "center";
+
+
+  labels.forEach(
+    item=>{
+
+      waveCtx.fillText(
+        item[0],
+        xFor(
+          item[1]
+        ),
+        bottom+
+        24
+      );
+
+    }
+  );
+
+
+  waveCtx.fillStyle=
+    "#0f172a";
+
+
+  waveCtx.font=
+    "bold 10px system-ui";
+
+
+  waveCtx.fillText(
+    `iR=${formatRo(m.iR,2)} A • iL=${formatRo(m.iL,2)} A • iC=${formatRo(m.iC,2)} A • i=${formatRo(m.i,2)} A`,
+    W/
+    2,
+    H-
+    26
+  );
+
+}
+
+
+/* =========================================================
+   PHASOR DIAGRAM
+========================================================= */
+
+function drawPhasors(
+  m
+){
+
+  const rect=
+    phasorCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  const gradient=
+    phasorCtx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#164e63"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#312e81"
+  );
+
+
+  phasorCtx.fillStyle=
+    gradient;
+
+
+  phasorCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  phasorCtx.fillStyle=
+    "#e2e8f0";
+
+
+  phasorCtx.font=
+    "bold 15px system-ui";
+
+
+  phasorCtx.textAlign=
+    "left";
+
+
+  phasorCtx.fillText(
+    "Diagrama fazorială a curenților",
+    18,
+    29
+  );
+
+
+  phasorCtx.fillStyle=
+    "#c4b5fd";
+
+
+  phasorCtx.font=
+    "11px system-ui";
+
+
+  phasorCtx.fillText(
+    "tensiunea este fazorul de referință",
+    18,
+    49
+  );
+
+
+  const cx=
+    W*
+    .27;
+
+
+  const cy=
+    H*
+    .43;
+
+
+  const maxCurrent=
+    Math.max(
+      m.IR,
+      m.IL,
+      m.IC,
+      m.I,
+      .001
+    );
+
+
+  const scale=
+    Math.min(
+      W*
+      .45/
+      maxCurrent,
+      H*
+      .29/
+      maxCurrent
+    );
+
+
+  const irLength=
+    m.IR*
+    scale;
+
+
+  const ilLength=
+    m.IL*
+    scale;
+
+
+  const icLength=
+    m.IC*
+    scale;
+
+
+  /*
+  Axes.
+  */
+
+  phasorCtx.strokeStyle=
+    "#64748b";
+
+
+  phasorCtx.lineWidth=1.5;
+
+
+  phasorCtx.beginPath();
+
+  phasorCtx.moveTo(
+    28,
+    cy
+  );
+
+  phasorCtx.lineTo(
+    W-
+    28,
+    cy
+  );
+
+  phasorCtx.moveTo(
+    cx,
+    80
+  );
+
+  phasorCtx.lineTo(
+    cx,
+    H-
+    190
+  );
+
+  phasorCtx.stroke();
+
+
+  /*
+  Voltage reference.
+  */
+
+  const uLength=
+    Math.min(
+      W*
+      .30,
+      125
+    );
+
+
+  drawArrow(
+    phasorCtx,
+    cx,
+    cy+
+    45,
+    cx+
+    uLength,
+    cy+
+    45,
+    "#94a3b8",
+    3,
+    9
+  );
+
+
+  /*
+  IR.
+  */
+
+  drawArrow(
+    phasorCtx,
+    cx,
+    cy,
+    cx+
+    irLength,
+    cy,
+    "#22c55e",
+    5,
+    11
+  );
+
+
+  /*
+  IC upward.
+  */
+
+  drawArrow(
+    phasorCtx,
+    cx,
+    cy,
+    cx,
+    cy-
+    icLength,
+    "#22d3ee",
+    5,
+    11
+  );
+
+
+  /*
+  IL downward.
+  */
+
+  drawArrow(
+    phasorCtx,
+    cx,
+    cy,
+    cx,
+    cy+
+    ilLength,
+    "#a78bfa",
+    5,
+    11
+  );
+
+
+  /*
+  Total current.
+  */
+
+  const totalX=
+    cx+
+    irLength;
+
+
+  const totalY=
+    cy-
+    (
+      m.IC-
+      m.IL
+    )*
+    scale;
+
+
+  phasorCtx.strokeStyle=
+    "rgba(248,250,252,.38)";
+
+
+  phasorCtx.lineWidth=2;
+
+
+  phasorCtx.setLineDash([
+    5,
+    5
+  ]);
+
+
+  phasorCtx.beginPath();
+
+  phasorCtx.moveTo(
+    cx+
+    irLength,
+    cy
+  );
+
+  phasorCtx.lineTo(
+    totalX,
+    totalY
+  );
+
+  phasorCtx.stroke();
+
+
+  phasorCtx.setLineDash([]);
+
+
+  drawArrow(
+    phasorCtx,
+    cx,
+    cy,
+    totalX,
+    totalY,
+    "#f87171",
+    6,
+    13
+  );
+
+
+  /*
+  Labels.
+  */
+
+  phasorCtx.font=
+    "bold 11px system-ui";
+
+
+  phasorCtx.textAlign=
+    "center";
+
+
+  phasorCtx.fillStyle=
+    "#86efac";
+
+
+  phasorCtx.fillText(
+    `Iᴿ ${formatRo(m.IR,2)} A`,
+    cx+
+    irLength/
+    2,
+    cy-
+    11
+  );
+
+
+  phasorCtx.fillStyle=
+    "#67e8f9";
+
+
+  phasorCtx.fillText(
+    `Iᶜ ${formatRo(m.IC,2)} A`,
+    cx+
+    38,
+    cy-
+    icLength/
+    2
+  );
+
+
+  phasorCtx.fillStyle=
+    "#c4b5fd";
+
+
+  phasorCtx.fillText(
+    `Iᴸ ${formatRo(m.IL,2)} A`,
+    cx+
+    38,
+    cy+
+    ilLength/
+    2
+  );
+
+
+  phasorCtx.fillStyle=
+    "#fca5a5";
+
+
+  phasorCtx.fillText(
+    `I ${formatRo(m.I,2)} A`,
+    totalX-
+    8,
+    totalY-
+    13
+  );
+
+
+  phasorCtx.fillStyle=
+    "#cbd5e1";
+
+
+  phasorCtx.fillText(
+    "U",
+    cx+
+    uLength+
+    15,
+    cy+
+    49
+  );
+
+
+  /*
+  Phase information.
+  */
+
+  phasorCtx.fillStyle=
+    "#fde68a";
+
+
+  phasorCtx.font=
+    "bold 12px system-ui";
+
+
+  phasorCtx.fillText(
+    `φ = ${formatRo(
+      m.phi*
+      180/
+      Math.PI,
+      2
+    )}°`,
+    cx+
+    65,
+    cy+
+    92
+  );
+
+
+  /*
+  Info panel.
+  */
+
+  const panelX=18;
+  const panelY=H-160;
+  const panelW=W-36;
+  const panelH=126;
+
+
+  phasorCtx.fillStyle=
+    "rgba(15,23,42,.82)";
+
+
+  phasorCtx.fillRect(
+    panelX,
+    panelY,
+    panelW,
+    panelH
+  );
+
+
+  phasorCtx.font=
+    "bold 11px system-ui";
+
+
+  phasorCtx.textAlign=
+    "left";
+
+
+  phasorCtx.fillStyle=
+    "#67e8f9";
+
+
+  phasorCtx.fillText(
+    `Iᶜ − Iᴸ = ${formatRo(m.IX,3)} A`,
+    panelX+
+    14,
+    panelY+
+    27
+  );
+
+
+  phasorCtx.fillStyle=
+    "#e2e8f0";
+
+
+  phasorCtx.fillText(
+    `Y = ${formatRo(m.Y,5)} S`,
+    panelX+
+    14,
+    panelY+
+    53
+  );
+
+
+  phasorCtx.fillText(
+    `Z = ${formatRo(m.Z,2)} Ω`,
+    panelX+
+    14,
+    panelY+
+    79
+  );
+
+
+  phasorCtx.fillText(
+    `P = ${formatRo(m.P,2)} W`,
+    panelX+
+    14,
+    panelY+
+    105
+  );
+
+
+  phasorCtx.textAlign=
+    "right";
+
+
+  if(
+    m.regime===
+    "inductiv"
+  ){
+
+    phasorCtx.fillStyle=
+      "#c4b5fd";
+
+
+    phasorCtx.fillText(
+      "CARACTER INDUCTIV",
+      W-
+      32,
+      panelY+
+      44
+    );
+
+  }
+
+  else if(
+    m.regime===
+    "capacitiv"
+  ){
+
+    phasorCtx.fillStyle=
+      "#67e8f9";
+
+
+    phasorCtx.fillText(
+      "CARACTER CAPACITIV",
+      W-
+      32,
+      panelY+
+      44
+    );
+
+  }
+
+  else{
+
+    phasorCtx.fillStyle=
+      "#86efac";
+
+
+    phasorCtx.fillText(
+      "CURENȚI REACTIVI COMPENSAȚI",
+      W-
+      32,
+      panelY+
+      44
+    );
+
+  }
+
+
+  phasorCtx.fillStyle=
+    "#fde68a";
+
+
+  phasorCtx.fillText(
+    `cos φ = ${formatRo(m.cosPhi,3)}`,
+    W-
+    32,
+    panelY+
+    77
+  );
+
+
+  phasorCtx.fillText(
+    `I / Iᴿ = ${formatRo(
+      m.IR>
+      0
+        ? m.I/
+          m.IR
+        : 0,
+      3
+    )}`,
+    W-
+    32,
+    panelY+
+    104
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setPreset(
+  type
+){
+
+  animationSelect.value=
+    "off";
+
+
+  if(
+    type===
+    "inductive"
+  ){
+
+    resistanceSlider.value=
+      "80";
+
+
+    inductanceSlider.value=
+      "100";
+
+
+    capacitanceSlider.value=
+      "50";
+
+
+    frequencySlider.value=
+      "50";
+
+  }
+
+
+  else if(
+    type===
+    "capacitive"
+  ){
+
+    resistanceSlider.value=
+      "80";
+
+
+    inductanceSlider.value=
+      "300";
+
+
+    capacitanceSlider.value=
+      "120";
+
+
+    frequencySlider.value=
+      "50";
+
+  }
+
+
+  else if(
+    type===
+    "balance"
+  ){
+
+    /*
+    For L = 200 mH and f = 50 Hz:
+    C0 = 1/(omega^2 L) ≈ 50.66 µF.
+    */
+
+    resistanceSlider.value=
+      "80";
+
+
+    inductanceSlider.value=
+      "200";
+
+
+    capacitanceSlider.value=
+      "51";
+
+
+    frequencySlider.value=
+      "50";
+
+  }
+
+
+  updateResults();
+
+}
+
+
+function doubleFrequency(){
+
+  frequencySlider.value=
+    String(
+      clamp(
+        Number(
+          frequencySlider.value
+        )*
+        2,
+        Number(
+          frequencySlider.min
+        ),
+        Number(
+          frequencySlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  voltageSlider.value=
+    "40";
+
+
+  resistanceSlider.value=
+    "80";
+
+
+  inductanceSlider.value=
+    "200";
+
+
+  capacitanceSlider.value=
+    "50";
+
+
+  frequencySlider.value=
+    "50";
+
+
+  timeSlider.value=
+    "0";
+
+
+  animationSelect.value=
+    "on";
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  voltageSlider,
+  resistanceSlider,
+  inductanceSlider,
+  capacitanceSlider,
+  frequencySlider,
+  timeSlider,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "inductiveBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>setPreset(
+      "inductive"
+    )
+  );
+
+
+document
+  .getElementById(
+    "capacitiveBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>setPreset(
+      "capacitive"
+    )
+  );
+
+
+document
+  .getElementById(
+    "balanceBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>setPreset(
+      "balance"
+    )
+  );
+
+
+document
+  .getElementById(
+    "doubleFrequencyBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleFrequency
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let lastTimestamp=0;
+
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTimestamp
+  ){
+
+    lastTimestamp=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTimestamp
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTimestamp=
+    timestamp;
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    let tau=
+      Number(
+        timeSlider.value
+      );
+
+
+    tau+=
+      dt*
+      .22;
+
+
+    if(
+      tau>
+      2
+    ){
+
+      tau-=2;
+
+    }
+
+
+    timeSlider.value=
+      String(
+        tau
+      );
+
+  }
+
+
+  updateResults();
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    waveCanvas,
+    waveCtx
+  );
+
+
+  resizeCanvas(
+    phasorCanvas,
+    phasorCtx
+  );
+
+
+  updateResults();
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește fazele curenților, suma fazorială și admitanța circuitului paralel.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Ești pregătit pentru studiul rezonanței.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Mai exersează suma fazorială a curenților și admitanța.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia traseul: U comună → IR, IL, IC → IC−IL → I → Y → Z → φ → compensare.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      waveCanvas,
+      waveCtx
+    );
+
+
+    resizeCanvas(
+      phasorCanvas,
+      phasorCtx
+    );
+
+
+    resetAll();
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
