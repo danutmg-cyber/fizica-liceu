@@ -35,6 +35,12 @@ Erori de măsurare și incertitudinea măsurării
     href="../assets/css/instrumente-scala.css"
 >
 
+
+<link
+    rel="stylesheet"
+    href="../assets/css/main.css"
+>
+
 <link
     rel="stylesheet"
     href="../assets/css/print.css"
@@ -694,8 +700,20 @@ window.LAB_EXPERIMENT_CONFIG={
 </script>
 
 
+<!--
+    Instrumentele analogice (inclusiv vitezometrul) sunt desenate de
+    instrumente-scala.js. Limitarea acului la domeniul și raza scalei
+    trebuie implementată în acel asset comun, astfel încât protecția
+    să se aplice tuturor experimentelor care folosesc instrumentul.
+-->
 <script
     src="../assets/js/instrumente-scala.js"
+    defer
+></script>
+
+
+<script
+    src="../assets/js/app.js"
     defer
 ></script>
 
@@ -871,6 +889,7 @@ Numărul în catalog
     min="1"
     max="30"
     step="1"
+    inputmode="numeric"
     required
 >
 
@@ -1344,9 +1363,12 @@ scăderea unei valori negative înseamnă adunare.
 Transcrie e₀ (mm)
 
 <input
-    type="text"
+    type="number"
+    step="any"
     inputmode="decimal"
+    autocomplete="off"
     data-copy-zero
+    data-signed-number
 >
 
 </label>
@@ -1357,14 +1379,24 @@ Transcrie e₀ (mm)
 Transcrie rezoluția riglei (mm)
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="any"
     inputmode="decimal"
+    autocomplete="off"
     data-copy-resolution
 >
 
 </label>
 
 </div>
+
+
+<p class="rounding-note">
+Pe telefon sau tabletă, dacă tastatura numerică nu afișează semnul minus,
+introdu valoarea lui e₀ și folosește butonul <strong>±</strong>
+pentru a-i schimba semnul.
+</p>
 
 
 <fieldset>
@@ -1614,6 +1646,7 @@ Numărul măsurării cu valoarea atipică
     min="1"
     max="6"
     step="1"
+    inputmode="numeric"
     data-gross-index
 >
 
@@ -1855,7 +1888,12 @@ Nu introduce unitatea în câmpurile numerice.
 </li>
 
 <li>
-Poți folosi virgulă sau punct zecimal.
+Câmpurile de calcul folosesc tastatura numerică a dispozitivului.
+Butonul <strong>±</strong> apare numai la mărimile care pot avea semn.
+</li>
+
+<li>
+Separatorul zecimal disponibil depinde de tastatura și limba dispozitivului.
 </li>
 
 <li>
@@ -1965,8 +2003,11 @@ L̄ (mm)
 </span>
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="any"
     inputmode="decimal"
+    autocomplete="off"
     data-calc="mean"
     disabled
 >
@@ -2023,8 +2064,11 @@ u<sub>L</sub> (mm)
 </span>
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="any"
     inputmode="decimal"
+    autocomplete="off"
     data-calc="uncertainty"
     disabled
 >
@@ -2081,8 +2125,11 @@ u<sub>rel</sub> (%)
 </span>
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="any"
     inputmode="decimal"
+    autocomplete="off"
     data-calc="relative"
     disabled
 >
@@ -4263,7 +4310,9 @@ function renderRuler(){
                 Lungimea citită (mm)
 
                 <input
-                    type="text"
+                    type="number"
+                    min="0"
+                    step="any"
                     inputmode="decimal"
                     autocomplete="off"
                     data-ruler-answer
@@ -4544,8 +4593,11 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
+                                step="any"
                                 inputmode="decimal"
+                                autocomplete="off"
                                 data-table-value="${index}"
                                 aria-label="Citirea ${index + 1}"
                             >
@@ -5359,8 +5411,11 @@ function renderCorrectionBlocks(){
                             </span>
 
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
+                                step="any"
                                 inputmode="decimal"
+                                autocomplete="off"
                                 data-calc="${key}"
                             >
 

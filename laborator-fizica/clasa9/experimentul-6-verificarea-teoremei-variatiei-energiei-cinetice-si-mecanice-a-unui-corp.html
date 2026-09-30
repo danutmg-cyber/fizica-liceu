@@ -37,6 +37,11 @@ Verificarea teoremei variației energiei cinetice și mecanice
 
 <link
     rel="stylesheet"
+    href="../assets/css/main.css"
+>
+
+<link
+    rel="stylesheet"
     href="../assets/css/print.css"
     media="print"
 >
@@ -848,6 +853,11 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
+    src="../assets/js/app.js"
+    defer
+></script>
+
+<script
     src="../assets/js/instrumente-scala.js"
     defer
 ></script>
@@ -1023,8 +1033,9 @@ Numărul în catalog
     name="catalogNumber"
     type="number"
     min="1"
-    max="30"
     step="1"
+    inputmode="numeric"
+    max="30"
     required
 >
 
@@ -1364,12 +1375,12 @@ mgh
 <br><br>
 
 ΔE<sub>c</sub> =
-W<sub>rez</sub>
+L<sub>rez</sub>
 
 <br><br>
 
 ΔE<sub>m</sub> =
-W<sub>forțelor neconservative</sub>
+L<sub>forțelor neconservative</sub>
 
 <br><br>
 
@@ -1377,7 +1388,7 @@ W<sub>forțelor neconservative</sub>
 
 <br>
 
-ΔE<sub>m</sub> ≈ W<sub>f</sub>
+ΔE<sub>m</sub> ≈ L<sub>f</sub>
 
 </div>
 
@@ -1476,7 +1487,9 @@ Cântărește căruciorul
 Masa citită, m (kg)
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="0.001"
     inputmode="decimal"
     data-mass-answer
 >
@@ -1837,7 +1850,9 @@ Citirea vitezei finale
 Viteza finală v (m/s)
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="0.1"
     inputmode="decimal"
     data-speed-answer
 >
@@ -2107,15 +2122,15 @@ mv²/2
 
 <br><br>
 
-W<sub>f</sub>
+L<sub>f</sub>
 =
 −F<sub>f</sub>s
 
 <br><br>
 
-W<sub>rez</sub>
+L<sub>rez</sub>
 =
-mgh + W<sub>f</sub>
+mgh + L<sub>f</sub>
 
 <br><br>
 
@@ -2142,7 +2157,7 @@ Forța de frecare este opusă deplasării,
 deci
 
 <strong>
-Wf &lt; 0
+Lf &lt; 0
 </strong>.
 
 </div>
@@ -2157,13 +2172,13 @@ Verificarea experimentală urmărește dacă:
 
 ΔE<sub>c</sub>
 ≈
-W<sub>rez</sub>
+L<sub>rez</sub>
 
 <br><br>
 
 ΔE<sub>m</sub>
 ≈
-W<sub>f</sub>
+L<sub>f</sub>
 
 </div>
 
@@ -2219,12 +2234,12 @@ Nu rotunji excesiv rezultatele intermediare.
 </tr>
 
 <tr>
-<td>W<sub>f</sub></td>
+<td>L<sub>f</sub></td>
 <td>3</td>
 </tr>
 
 <tr>
-<td>W<sub>rez</sub></td>
+<td>L<sub>rez</sub></td>
 <td>3</td>
 </tr>
 
@@ -2285,7 +2300,9 @@ F<sub>f</sub> (N)
 </span>
 
 <input
-    type="text"
+    type="number"
+    min="0"
+    step="0.01"
     inputmode="decimal"
     data-calc="friction"
 >
@@ -2347,11 +2364,11 @@ Nr.
 </th>
 
 <th>
-|ΔE<sub>c</sub>−W<sub>rez</sub>|
+|ΔE<sub>c</sub>−L<sub>rez</sub>|
 </th>
 
 <th>
-|ΔE<sub>m</sub>−W<sub>f</sub>|
+|ΔE<sub>m</sub>−L<sub>f</sub>|
 </th>
 
 </tr>
@@ -2387,7 +2404,7 @@ celorlalte determinări.
 <textarea
     rows="10"
     data-student-steps
-    placeholder="Ff=T-mg sinα=...; pentru determinarea 1: ΔEc1=mv1²/2=...; Wf1=-Ff·s1=...; Wrez1=mgh1+Wf1=...; ΔEm1=ΔEc1-mgh1=...; apoi rezultatele determinărilor 2–4."
+    placeholder="Ff=T-mg sinα=...; pentru determinarea 1: ΔEc1=mv1²/2=...; Lf1=-Ff·s1=...; Lrez1=mgh1+Lf1=...; ΔEm1=ΔEc1-mgh1=...; apoi rezultatele determinărilor 2–4."
 ></textarea>
 
 </label>
@@ -2414,7 +2431,7 @@ C. Interpretarea fizică
 
 <label class="field">
 
-Compară ΔEc cu Wrez și ΔEm cu Wf.
+Compară ΔEc cu Lrez și ΔEm cu Lf.
 
 <textarea
     rows="9"
@@ -2680,7 +2697,7 @@ Concluzia experimentului
     minlength="120"
     data-final-conclusion
     required
-    placeholder="Formulează concluzia privind ΔEc și Wrez, ΔEm și Wf, precum și rolul frecării."
+    placeholder="Formulează concluzia privind ΔEc și Lrez, ΔEm și Lf, precum și rolul frecării."
 ></textarea>
 
 </label>
@@ -4708,7 +4725,9 @@ function renderTensionInstrument(){
             Forța de tracțiune T (N)
 
             <input
-                type="text"
+                type="number"
+                min="0"
+                step="0.05"
                 inputmode="decimal"
                 data-tension-answer
             >
@@ -5488,13 +5507,58 @@ function drawSpeedScale(
     }
 
 
+    /*
+       Folosim aceeași geometrie ca pentru gradațiile scalei.
+
+       Valoarea este limitată explicit la domeniul 0...maximum,
+       astfel încât acul nu poate ajunge în afara semicercului
+       nici dacă funcția primește accidental o valoare invalidă.
+    */
+    const safeSpeed =
+        Math.min(
+            maximum,
+            Math.max(
+                0,
+                Number(
+                    speed
+                ) ||
+                0
+            )
+        );
+
+
     const needleAngle =
-        180 -
+        Math.PI -
         (
-            speed /
+            safeSpeed /
             maximum
         ) *
-        180;
+        Math.PI;
+
+
+    /*
+       Acul este intenționat mai scurt decât raza scalei.
+       Astfel vârful rămâne în interiorul gradațiilor.
+    */
+    const needleRadius =
+        radius -
+        38;
+
+
+    const needleX =
+        cx +
+        Math.cos(
+            needleAngle
+        ) *
+        needleRadius;
+
+
+    const needleY =
+        cy -
+        Math.sin(
+            needleAngle
+        ) *
+        needleRadius;
 
 
     html += `
@@ -5502,11 +5566,11 @@ function drawSpeedScale(
         <line
             x1="${cx}"
             y1="${cy}"
-            x2="${cx}"
-            y2="${cy-radius+38}"
+            x2="${needleX}"
+            y2="${needleY}"
             stroke="#d22f27"
             stroke-width="6"
-            transform="rotate(${needleAngle} ${cx} ${cy})"
+            stroke-linecap="round"
         />
 
 
@@ -5923,7 +5987,9 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
+                                step="0.001"
                                 inputmode="decimal"
                                 data-table-distance="${index}"
                             >
@@ -5934,7 +6000,9 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
+                                step="0.001"
                                 inputmode="decimal"
                                 data-table-height="${index}"
                             >
@@ -5945,7 +6013,9 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
+                                step="0.1"
                                 inputmode="decimal"
                                 data-table-speed="${index}"
                             >
@@ -6399,20 +6469,20 @@ function ecKey(
 }
 
 
-function wfKey(
+function lfKey(
     index
 ){
 
-    return `wf-${index}`;
+    return `lf-${index}`;
 
 }
 
 
-function wresKey(
+function lrezKey(
     index
 ){
 
-    return `wres-${index}`;
+    return `lrez-${index}`;
 
 }
 
@@ -6451,8 +6521,8 @@ function prepareCalculationStage(){
 
         [
             ecKey(index),
-            wfKey(index),
-            wresKey(index),
+            lfKey(index),
+            lrezKey(index),
             demKey(index)
         ].forEach(
             key => {
@@ -6639,7 +6709,9 @@ function renderTrialCalculations(){
                         </span>
 
                         <input
-                            type="text"
+                            type="number"
+                            min="0"
+                            step="0.001"
                             inputmode="decimal"
                             data-calc="${ecKey(index)}"
                         >
@@ -6673,7 +6745,7 @@ function renderTrialCalculations(){
 
                     <div class="formula">
 
-                        W<sub>f,${nr}</sub>
+                        L<sub>f,${nr}</sub>
                         =
                         −F<sub>f</sub>s<sub>${nr}</sub>
 
@@ -6682,16 +6754,18 @@ function renderTrialCalculations(){
 
                     <label class="field">
 
-                        W<sub>f,${nr}</sub> (J)
+                        L<sub>f,${nr}</sub> (J)
 
                         <span class="rounding-note">
                             3 zecimale. Rezultatul trebuie să fie negativ.
                         </span>
 
                         <input
-                            type="text"
+                            type="number"
+                            step="0.001"
                             inputmode="decimal"
-                            data-calc="${wfKey(index)}"
+                            data-signed-number
+                            data-calc="${lfKey(index)}"
                             disabled
                         >
 
@@ -6700,7 +6774,7 @@ function renderTrialCalculations(){
 
                     <p
                         class="calc-feedback info"
-                        data-calc-feedback="${wfKey(index)}"
+                        data-calc-feedback="${lfKey(index)}"
                     >
                         Verifică mai întâi forța de frecare.
                     </p>
@@ -6709,7 +6783,7 @@ function renderTrialCalculations(){
                     <button
                         class="btn secondary calc-check-btn"
                         type="button"
-                        data-check-calc="${wfKey(index)}"
+                        data-check-calc="${lfKey(index)}"
                         disabled
                     >
                         Verifică
@@ -6727,27 +6801,29 @@ function renderTrialCalculations(){
 
                     <div class="formula">
 
-                        W<sub>rez,${nr}</sub>
+                        L<sub>rez,${nr}</sub>
                         =
                         mgh<sub>${nr}</sub>
                         +
-                        W<sub>f,${nr}</sub>
+                        L<sub>f,${nr}</sub>
 
                     </div>
 
 
                     <label class="field">
 
-                        W<sub>rez,${nr}</sub> (J)
+                        L<sub>rez,${nr}</sub> (J)
 
                         <span class="rounding-note">
                             3 zecimale.
                         </span>
 
                         <input
-                            type="text"
+                            type="number"
+                            min="0"
+                            step="0.001"
                             inputmode="decimal"
-                            data-calc="${wresKey(index)}"
+                            data-calc="${lrezKey(index)}"
                             disabled
                         >
 
@@ -6756,7 +6832,7 @@ function renderTrialCalculations(){
 
                     <p
                         class="calc-feedback info"
-                        data-calc-feedback="${wresKey(index)}"
+                        data-calc-feedback="${lrezKey(index)}"
                     >
                         Verifică mai întâi lucrul frecării.
                     </p>
@@ -6765,7 +6841,7 @@ function renderTrialCalculations(){
                     <button
                         class="btn secondary calc-check-btn"
                         type="button"
-                        data-check-calc="${wresKey(index)}"
+                        data-check-calc="${lrezKey(index)}"
                         disabled
                     >
                         Verifică
@@ -6801,8 +6877,10 @@ function renderTrialCalculations(){
                         </span>
 
                         <input
-                            type="text"
+                            type="number"
+                            step="0.001"
                             inputmode="decimal"
+                            data-signed-number
                             data-calc="${demKey(index)}"
                             disabled
                         >
@@ -6916,14 +6994,14 @@ function expectedRow(
         reading.heightM;
 
 
-    const wf =
+    const lf =
         -expectedFriction() *
         reading.distanceM;
 
 
-    const wres =
+    const lrez =
         gravitationalWork +
-        wf;
+        lf;
 
 
     const dem =
@@ -6937,9 +7015,9 @@ function expectedRow(
 
         gravitationalWork,
 
-        wf,
+        lf,
 
-        wres,
+        lrez,
 
         dem
 
@@ -7256,14 +7334,14 @@ function dependentsOf(
     ){
 
         return [
-            wfKey(0),
-            wresKey(0),
-            wfKey(1),
-            wresKey(1),
-            wfKey(2),
-            wresKey(2),
-            wfKey(3),
-            wresKey(3)
+            lfKey(0),
+            lrezKey(0),
+            lfKey(1),
+            lrezKey(1),
+            lfKey(2),
+            lrezKey(2),
+            lfKey(3),
+            lrezKey(3)
         ];
 
     }
@@ -7271,7 +7349,7 @@ function dependentsOf(
 
     if(
         key.startsWith(
-            "wf-"
+            "lf-"
         )
     ){
 
@@ -7284,7 +7362,7 @@ function dependentsOf(
 
 
         return [
-            wresKey(
+            lrezKey(
                 index
             )
         ];
@@ -7509,7 +7587,7 @@ function updateCalculationDependencies(){
     ){
 
         setDependency(
-            wfKey(
+            lfKey(
                 index
             ),
             frictionReady,
@@ -7518,12 +7596,12 @@ function updateCalculationDependencies(){
 
 
         setDependency(
-            wresKey(
+            lrezKey(
                 index
             ),
             Boolean(
                 state.calculationVerified[
-                    wfKey(
+                    lfKey(
                         index
                     )
                 ]
@@ -7821,7 +7899,7 @@ function verifySingleCalculation(
 
     else if(
         key.startsWith(
-            "wf-"
+            "lf-"
         )
     ){
 
@@ -7850,7 +7928,7 @@ function verifySingleCalculation(
         const exact =
             expectedRow(
                 index
-            ).wf;
+            ).lf;
 
 
         const studentFriction =
@@ -7875,7 +7953,7 @@ function verifySingleCalculation(
                 ],
 
                 hint:
-                    "Folosește Wf = −Ff·s. Semnul este negativ deoarece frecarea este opusă deplasării.",
+                    "Folosește Lf = −Ff·s. Semnul este negativ deoarece frecarea este opusă deplasării.",
 
                 specialHint:
                     value => {
@@ -7918,12 +7996,12 @@ function verifySingleCalculation(
 
 
 /* ---------------------------------------------------------
-   LUCRUL REZULTANTEI
+   LUCRUL MECANIC AL REZULTANTEI
 --------------------------------------------------------- */
 
     else if(
         key.startsWith(
-            "wres-"
+            "lrez-"
         )
     ){
 
@@ -7937,7 +8015,7 @@ function verifySingleCalculation(
 
         if(
             !state.calculationVerified[
-                wfKey(
+                lfKey(
                     index
                 )
             ]
@@ -7961,12 +8039,12 @@ function verifySingleCalculation(
         const exact =
             expectedRow(
                 index
-            ).wres;
+            ).lrez;
 
 
-        const studentWf =
+        const studentLf =
             calcValue(
-                wfKey(
+                lfKey(
                     index
                 )
             );
@@ -7974,7 +8052,7 @@ function verifySingleCalculation(
 
         const propagated =
             gravitational +
-            studentWf;
+            studentLf;
 
 
         result =
@@ -7988,14 +8066,14 @@ function verifySingleCalculation(
                 ],
 
                 hint:
-                    "Folosește Wrez = mgh + Wf. Lucrul frecării intră cu semnul său negativ.",
+                    "Folosește Lrez = mgh + Lf. Lucrul frecării intră cu semnul său negativ.",
 
                 specialHint:
                     value => {
 
                         const wrongMinus =
                             gravitational -
-                            studentWf;
+                            studentLf;
 
 
                         if(
@@ -8006,7 +8084,7 @@ function verifySingleCalculation(
                             )
                         ){
 
-                            return "Ai schimbat din nou semnul lui Wf. În expresia Wrez = mgh + Wf, Wf este deja negativ.";
+                            return "Ai schimbat din nou semnul lui Lf. În expresia Lrez = mgh + Lf, Lf este deja negativ.";
 
                         }
 
@@ -8332,14 +8410,14 @@ function studentCalculatedRows(){
 
             frictionWorkJ:
                 calcValue(
-                    wfKey(
+                    lfKey(
                         index
                     )
                 ),
 
             resultantWorkJ:
                 calcValue(
-                    wresKey(
+                    lrezKey(
                         index
                     )
                 ),
@@ -8447,7 +8525,7 @@ function renderComparisonSummary(){
 
             <span>
                 Abaterea medie
-                |ΔEc − Wrez|
+                |ΔEc − Lrez|
             </span>
 
             <strong>
@@ -8462,7 +8540,7 @@ function renderComparisonSummary(){
 
             <span>
                 Abaterea medie
-                |ΔEm − Wf|
+                |ΔEm − Lf|
             </span>
 
             <strong>
@@ -8783,13 +8861,13 @@ qs(
         ){
 
             interpretationMessage =
-                "Dezvoltă interpretarea. Compară explicit ΔEc cu Wrez și ΔEm cu Wf și discută diferențele experimentale.";
+                "Dezvoltă interpretarea. Compară explicit ΔEc cu Lrez și ΔEm cu Lf și discută diferențele experimentale.";
 
         }
         else if(
             !(
                 text.includes(
-                    "wrez"
+                    "lrez"
                 )
                 ||
                 text.includes(
@@ -8799,7 +8877,7 @@ qs(
         ){
 
             interpretationMessage =
-                "Compară ΔEc cu lucrul rezultantei Wrez.";
+                "Compară ΔEc cu lucrul rezultantei Lrez.";
 
         }
         else if(
@@ -8809,7 +8887,7 @@ qs(
                 )
                 ||
                 text.includes(
-                    "wf"
+                    "lf"
                 )
             )
         ){
@@ -9841,7 +9919,7 @@ qs(
             <div class="result-card">
 
                 <span>
-                    Abatere medie ΔEc–Wrez
+                    Abatere medie ΔEc–Lrez
                 </span>
 
                 <strong>
@@ -9855,7 +9933,7 @@ qs(
             <div class="result-card">
 
                 <span>
-                    Abatere medie ΔEm–Wf
+                    Abatere medie ΔEm–Lf
                 </span>
 
                 <strong>
@@ -10623,13 +10701,13 @@ function savePortfolioPdf(){
             </tr>
 
             <tr>
-                <td>Wf${index + 1}</td>
-                <td>${attempts[wfKey(index)]}</td>
+                <td>Lf${index + 1}</td>
+                <td>${attempts[lfKey(index)]}</td>
             </tr>
 
             <tr>
-                <td>Wrez${index + 1}</td>
-                <td>${attempts[wresKey(index)]}</td>
+                <td>Lrez${index + 1}</td>
+                <td>${attempts[lrezKey(index)]}</td>
             </tr>
 
             <tr>
@@ -10889,11 +10967,11 @@ Ff = T − mg sin α
 
 <br><br>
 
-Wf = −Ff·s
+Lf = −Ff·s
 
 <br><br>
 
-Wrez = mgh + Wf
+Lrez = mgh + Lf
 
 <br><br>
 
@@ -10921,9 +10999,9 @@ Date și rezultate
 
 <th>ΔEc<br>(J)</th>
 
-<th>Wf<br>(J)</th>
+<th>Lf<br>(J)</th>
 
-<th>Wrez<br>(J)</th>
+<th>Lrez<br>(J)</th>
 
 <th>ΔEm<br>(J)</th>
 
@@ -10942,12 +11020,12 @@ Compararea teoremelor
 <table>
 
 <tr>
-<td>Abaterea medie |ΔEc − Wrez|</td>
+<td>Abaterea medie |ΔEc − Lrez|</td>
 <td>${metrics.meanKineticDifferenceJ.toFixed(3)} J</td>
 </tr>
 
 <tr>
-<td>Abaterea medie |ΔEm − Wf|</td>
+<td>Abaterea medie |ΔEm − Lf|</td>
 <td>${metrics.meanMechanicalDifferenceJ.toFixed(3)} J</td>
 </tr>
 
@@ -10956,7 +11034,7 @@ Compararea teoremelor
 
 <p>
 Datele sunt interpretate experimental prin comparația
-ΔEc ≈ Wrez și ΔEm ≈ Wf,
+ΔEc ≈ Lrez și ΔEm ≈ Lf,
 ținând cont de rezoluția instrumentelor și de aproximațiile modelului.
 </p>
 
