@@ -1,3581 +1,6211 @@
 <!DOCTYPE html>
 <html lang="ro">
+
 <head>
-  <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
+<meta charset="UTF-8">
 
-  <meta
-    name="description"
-    content="Stare termodinamică, echilibru termodinamic și proces termodinamic. Stări inițiale și finale, procese izocore, izobare și izoterme, reprezentarea pe diagrama p-V. Fizică, clasa a X-a."
-  >
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-  <meta
-    name="author"
-    content="Prof. Dănuț Andronie"
-  >
+<meta
+  name="description"
+  content="Stare termodinamică, echilibru termodinamic, proces termodinamic, procese cvasistatice și necvasistatice, reversibile și ireversibile, ciclice și neciclice. Fizică, clasa a X-a."
+>
 
-  <meta
-    name="lesson-id"
-    content="L10-T02-004"
-  >
+<meta
+  name="author"
+  content="Prof. Dănuț Andronie"
+>
 
-  <title>
-    Stare termodinamică. Echilibru termodinamic. Proces termodinamic
-  </title>
+<meta
+  name="lesson-id"
+  content="L10-T02-004"
+>
 
-
-  <!-- =========================================================
-       STILURI
-       ========================================================= -->
-
-  <link
-    rel="stylesheet"
-    href="../../../assets/css/main.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="../../../assets/css/lesson.css"
-  >
+<title>
+Stare termodinamică. Echilibru termodinamic. Proces termodinamic
+</title>
 
 
-  <!-- =========================================================
-       MATHJAX
-       ========================================================= -->
+<!-- =========================================================
+     ASSETS COMUNE
+========================================================= -->
 
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [
-          ["\\(", "\\)"],
-          ["$", "$"]
-        ],
+<link
+  rel="stylesheet"
+  href="../../../assets/css/main.css"
+>
 
-        displayMath: [
-          ["\\[", "\\]"],
-          ["$$", "$$"]
-        ],
+<link
+  rel="stylesheet"
+  href="../../../assets/css/lesson.css"
+>
 
-        processEscapes: true
-      },
 
-      svg: {
-        fontCache: "global"
-      },
+<!-- =========================================================
+     AJUSTĂRI LOCALE
+========================================================= -->
 
-      options: {
-        skipHtmlTags: [
-          "script",
-          "noscript",
-          "style",
-          "textarea",
-          "pre",
-          "code"
-        ]
-      }
-    };
-  </script>
+<style>
 
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
-  ></script>
+:root{
+
+  --lesson-font:
+    clamp(
+      1.12rem,
+      1.01rem + 0.50vw,
+      1.48rem
+    );
+
+  --lesson-h1:
+    clamp(
+      2.05rem,
+      1.55rem + 2.55vw,
+      4rem
+    );
+
+  --lesson-h2:
+    clamp(
+      1.65rem,
+      1.34rem + 1.40vw,
+      2.75rem
+    );
+
+  --lesson-h3:
+    clamp(
+      1.28rem,
+      1.13rem + 0.72vw,
+      1.85rem
+    );
+
+}
+
+
+/* =========================================================
+   COD VIZUAL
+========================================================= */
+
+.memory-legend{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+
+}
+
+
+.memory-chip{
+
+  min-height:90px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  gap:5px;
+
+  padding:14px;
+
+  border-radius:12px;
+
+  font-size:
+    clamp(
+      .96rem,
+      .9rem + .25vw,
+      1.12rem
+    );
+
+  font-weight:750;
+
+}
+
+
+.memory-blue{
+
+  color:#075985;
+  background:#e0f2fe;
+
+  border:
+    2px solid #38bdf8;
+
+}
+
+
+.memory-green{
+
+  color:#14532d;
+  background:#dcfce7;
+
+  border:
+    2px solid #4ade80;
+
+}
+
+
+.memory-yellow{
+
+  color:#78350f;
+  background:#fef3c7;
+
+  border:
+    2px solid #fbbf24;
+
+}
+
+
+.memory-orange{
+
+  color:#7c2d12;
+  background:#ffedd5;
+
+  border:
+    2px solid #fb923c;
+
+}
+
+
+.box-label{
+
+  display:inline-block;
+
+  margin-bottom:9px;
+
+  padding:4px 10px;
+
+  border-radius:999px;
+
+  font-size:
+    clamp(
+      .82rem,
+      .78rem + .18vw,
+      .96rem
+    );
+
+  font-weight:900;
+
+  letter-spacing:.02em;
+
+  text-transform:uppercase;
+
+}
+
+
+.lesson-highlight .box-label{
+
+  color:#075985;
+  background:#bae6fd;
+
+}
+
+
+.answer-card .box-label{
+
+  color:#14532d;
+  background:#bbf7d0;
+
+}
+
+
+.cause-effect .box-label{
+
+  color:#78350f;
+  background:#fde68a;
+
+}
+
+
+.warning-card .box-label{
+
+  color:#7c2d12;
+  background:#fed7aa;
+
+}
+
+
+/* =========================================================
+   SCHEME
+========================================================= */
+
+.logic-flow{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+}
+
+
+.logic-step{
+
+  min-height:96px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:
+    clamp(
+      15px,
+      2.4vw,
+      23px
+    );
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:12px;
+
+  text-align:center;
+
+  font-size:
+    clamp(
+      1rem,
+      .93rem + .3vw,
+      1.2rem
+    );
+
+  font-weight:800;
+
+}
+
+
+.logic-arrow{
+
+  color:#0284c7;
+
+  font-size:
+    clamp(
+      1.5rem,
+      1rem + 1.8vw,
+      2.4rem
+    );
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   CLASIFICĂRI
+========================================================= */
+
+.class-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0,1fr)
+    );
+
+  gap:
+    clamp(
+      14px,
+      2vw,
+      22px
+    );
+
+}
+
+
+.class-card{
+
+  min-width:0;
+
+  padding:
+    clamp(
+      18px,
+      3vw,
+      28px
+    );
+
+  border-radius:
+    var(--lesson-radius);
+
+}
+
+
+.class-card h2,
+.class-card h3{
+
+  margin-top:0;
+
+}
+
+
+.class-blue{
+
+  color:#075985;
+  background:#e0f2fe;
+
+  border:
+    2px solid #38bdf8;
+
+}
+
+
+.class-green{
+
+  color:#14532d;
+  background:#dcfce7;
+
+  border:
+    2px solid #4ade80;
+
+}
+
+
+.class-yellow{
+
+  color:#78350f;
+  background:#fef3c7;
+
+  border:
+    2px solid #fbbf24;
+
+}
+
+
+.class-orange{
+
+  color:#7c2d12;
+  background:#ffedd5;
+
+  border:
+    2px solid #fb923c;
+
+}
+
+
+/* =========================================================
+   RELAȚIA DINTRE CLASELE DE PROCESE
+========================================================= */
+
+.process-sets{
+
+  position:relative;
+
+  min-height:370px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  margin-top:20px;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc,
+      #eff6ff
+    );
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:18px;
+
+}
+
+
+.quasi-set{
+
+  width:min(88%,620px);
+
+  min-height:285px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:24px;
+
+  background:
+    rgba(
+      186,
+      230,
+      253,
+      .5
+    );
+
+  border:
+    3px solid #0284c7;
+
+  border-radius:50%;
+
+}
+
+
+.reversible-set{
+
+  width:58%;
+  min-height:175px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  color:#14532d;
+  background:
+    rgba(
+      187,
+      247,
+      208,
+      .85
+    );
+
+  border:
+    3px solid #16a34a;
+
+  border-radius:50%;
+
+  text-align:center;
+
+}
+
+
+.set-label{
+
+  font-size:
+    clamp(
+      1.1rem,
+      1rem + .5vw,
+      1.45rem
+    );
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   DIAGRAMA p-V
+========================================================= */
+
+.diagram-wrap{
+
+  width:100%;
+
+  overflow:hidden;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+
+#pvCanvas{
+
+  display:block;
+
+  width:100%;
+  height:460px;
+
+}
+
+
+/* =========================================================
+   LABORATOR VIRTUAL
+========================================================= */
+
+.process-lab{
+
+  width:100%;
+
+  padding:
+    clamp(
+      18px,
+      3vw,
+      30px
+    );
+
+  color:#0f172a;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eff6ff,
+      #ecfeff
+    );
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:
+    var(--lesson-radius);
+
+}
+
+
+.lab-controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0,1fr)
+    );
+
+  gap:16px;
+
+}
+
+
+.lab-control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:8px;
+
+}
+
+
+.lab-control label{
+
+  font-size:
+    clamp(
+      1rem,
+      .94rem + .28vw,
+      1.2rem
+    );
+
+  font-weight:800;
+
+}
+
+
+.lab-control input,
+.lab-control select{
+
+  width:100%;
+
+  min-height:50px;
+
+  padding:10px 12px;
+
+  color:#0f172a;
+  background:#ffffff;
+
+  border:
+    1px solid #93c5fd;
+
+  border-radius:10px;
+
+  font:inherit;
+
+}
+
+
+.lab-results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+
+  margin-top:18px;
+
+}
+
+
+.lab-result{
+
+  min-width:0;
+
+  padding:15px;
+
+  background:#ffffff;
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:12px;
+
+}
+
+
+.lab-result span{
+
+  display:block;
+
+  margin-bottom:4px;
+
+  color:#64748b;
+
+  font-size:
+    clamp(
+      .94rem,
+      .89rem + .2vw,
+      1.08rem
+    );
+
+}
+
+
+.lab-result strong{
+
+  color:#0c4a6e;
+
+  font-size:
+    clamp(
+      1.08rem,
+      .98rem + .4vw,
+      1.34rem
+    );
+
+}
+
+
+.lab-canvases{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+
+.canvas-shell{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:14px;
+
+}
+
+
+#pistonCanvas,
+#processCanvas{
+
+  display:block;
+
+  width:100%;
+  height:460px;
+
+}
+
+
+/* =========================================================
+   MINI-CLASIFICATOR
+========================================================= */
+
+.classifier{
+
+  margin-top:22px;
+
+  padding:
+    clamp(
+      18px,
+      3vw,
+      28px
+    );
+
+  background:#ffffff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:
+    var(--lesson-radius);
+
+}
+
+
+.classifier select{
+
+  width:100%;
+
+  min-height:50px;
+
+  margin-top:8px;
+
+  padding:10px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+  font:inherit;
+
+}
+
+
+.classifier-actions{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-top:14px;
+
+}
+
+
+.classifier-button{
+
+  flex:
+    1 1 150px;
+
+  min-height:48px;
+
+  padding:10px 14px;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+
+.classifier-feedback{
+
+  margin-top:14px;
+
+  padding:14px;
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAVIGARE GLOBALĂ
+========================================================= */
+
+.lesson-final-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  width:100%;
+
+  margin-top:
+    clamp(
+      24px,
+      4vw,
+      38px
+    );
+
+  padding-top:22px;
+
+  border-top:
+    1px solid var(--lesson-border);
+
+}
+
+
+.lesson-final-nav a{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:76px;
+
+  padding:12px 16px;
+
+  color:#075985;
+  background:#ffffff;
+
+  border:
+    1px solid #bae6fd;
+
+  border-radius:12px;
+
+  text-align:center;
+  text-decoration:none;
+
+  font-size:
+    clamp(
+      1rem,
+      .94rem + .28vw,
+      1.18rem
+    );
+
+  font-weight:800;
+
+}
+
+
+.lesson-final-nav a:hover{
+
+  background:#eff6ff;
+
+}
+
+
+.lesson-final-nav .next-lesson{
+
+  color:#ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0284c7,
+      #0891b2
+    );
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .memory-legend{
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0,1fr)
+      );
+
+  }
+
+
+  .lab-results{
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0,1fr)
+      );
+
+  }
+
+
+  .lab-canvases{
+
+    grid-template-columns:1fr;
+
+  }
+
+}
+
+
+@media(max-width:680px){
+
+  .memory-legend,
+  .class-grid,
+  .lab-controls,
+  .lab-results,
+  .lesson-final-nav{
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .logic-flow{
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .logic-arrow{
+
+    transform:rotate(90deg);
+
+    text-align:center;
+
+  }
+
+
+  .lesson-page{
+
+    padding:
+      clamp(
+        18px,
+        5vw,
+        25px
+      );
+
+  }
+
+
+  .quasi-set{
+
+    width:96%;
+    min-height:250px;
+
+  }
+
+
+  .reversible-set{
+
+    width:70%;
+    min-height:145px;
+
+  }
+
+
+  #pvCanvas,
+  #pistonCanvas,
+  #processCanvas{
+
+    height:380px;
+
+  }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+  .lesson-page[hidden]{
+
+    display:flex !important;
+
+  }
+
+
+  .lesson-final-nav{
+
+    display:none !important;
+
+  }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     MATHJAX
+========================================================= -->
+
+<script>
+
+window.MathJax = {
+
+  tex: {
+
+    inlineMath: [
+      ["\\(","\\)"],
+      ["$","$"]
+    ],
+
+    displayMath: [
+      ["\\[","\\]"],
+      ["$$","$$"]
+    ],
+
+    processEscapes:true
+
+  },
+
+  svg: {
+
+    fontCache:"global"
+
+  },
+
+  options: {
+
+    skipHtmlTags: [
+      "script",
+      "noscript",
+      "style",
+      "textarea",
+      "pre",
+      "code"
+    ]
+
+  }
+
+};
+
+</script>
+
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+
 </head>
 
 
 <body class="lesson-body">
 
 
-  <!-- =========================================================
-       PROGRES
-       ========================================================= -->
-
-  <div
-    class="lesson-progress no-print"
-    aria-label="Progresul lecției"
-  >
+<!-- =========================================================
+     PROGRES
+========================================================= -->
 
-    <div
-      id="lessonProgressText"
-      class="lesson-progress-text"
-    >
-      Pagina 1 din 9
-    </div>
+<div
+  class="lesson-progress no-print"
+  aria-label="Progresul lecției"
+>
 
-    <div
-      id="lessonProgressTrack"
-      class="lesson-progress-track"
-      role="progressbar"
-      aria-valuemin="1"
-      aria-valuemax="9"
-      aria-valuenow="1"
-    >
+<div
+  id="lessonProgressText"
+  class="lesson-progress-text"
+>
+Pagina 1 din 9
+</div>
 
-      <div
-        id="lessonProgressBar"
-        class="lesson-progress-bar"
-      ></div>
 
-    </div>
+<div
+  id="lessonProgressTrack"
+  class="lesson-progress-track"
+  role="progressbar"
+  aria-valuemin="1"
+  aria-valuemax="9"
+  aria-valuenow="1"
+>
 
-  </div>
-
+<div
+  id="lessonProgressBar"
+  class="lesson-progress-bar"
+></div>
 
-  <!-- =========================================================
-       LECȚIA
-       ========================================================= -->
+</div>
 
-  <main
-    id="lesson"
-    class="lesson-shell"
-    data-lesson-id="L10-T02-004"
-  >
+</div>
 
 
-    <!-- =======================================================
-         PAGINA 1 – INTRODUCERE
-         ======================================================= -->
+<!-- =========================================================
+     LECȚIA
+========================================================= -->
 
-    <section
-      id="pagina-1"
-      class="lesson-page is-active"
-      data-page="1"
-      aria-hidden="false"
-    >
+<main
+  id="lesson"
+  class="lesson-shell"
+  data-lesson-id="L10-T02-004"
+>
 
-      <header class="lesson-header">
 
-        <p class="lesson-kicker">
-          Fizică • Clasa a X-a • Noțiuni termodinamice de bază • Lecția 4
-        </p>
+<!-- =========================================================
+     PAGINA 1
+========================================================= -->
 
-        <h1>
-          Stare termodinamică.
-          Echilibru termodinamic.
-          Proces termodinamic
-        </h1>
+<section
+  id="pagina-1"
+  class="lesson-page lesson-cover is-active"
+  data-page="1"
+  aria-hidden="false"
+>
 
-        <p>
-          Stare inițială • Stare finală • Echilibru •
-          Transformare • Diagramă \(p-V\)
-        </p>
 
+<header class="lesson-header">
 
-        <div class="lesson-meta">
+<p class="lesson-kicker">
+Fizică • Clasa a X-a • Noțiuni termodinamice de bază • Lecția 4
+</p>
 
-          <span>
-            <strong>
-              Prof. Dănuț Andronie
-            </strong>
-          </span>
 
-          <span>
-            <a href="mailto:danutmg@gmail.com">
-              e-Mail: danutmg@gmail.com
-            </a>
-          </span>
+<h1>
+Stare termodinamică. Echilibru termodinamic. Proces termodinamic
+</h1>
 
-        </div>
 
+<p>
+Cum trece un sistem dintr-o stare în alta?
+Ce înseamnă echilibru,
+cvasistatic,
+reversibil
+sau ciclic?
+</p>
 
-        <div class="lesson-actions no-print">
 
-          <button
-            type="button"
-            class="lesson-button pdf-button"
-            data-pdf-button
-          >
-            Descarcă PDF
-          </button>
+<div class="lesson-meta">
 
-        </div>
+<span>
 
-      </header>
+<strong>
+Prof. Dănuț Andronie
+</strong>
 
+</span>
 
-      <div class="lesson-banner">
+</div>
 
-        <h2>
-          Starea și procesul nu sunt același lucru
-        </h2>
 
-        <p>
-          Un gaz aflat într-un cilindru poate avea la un moment dat:
-        </p>
+<div class="lesson-actions no-print">
 
-        \[
-          p=p_1,\qquad
-          V=V_1,\qquad
-          T=T_1.
-        \]
+<button
+  type="button"
+  class="lesson-button pdf-button"
+  data-pdf-button
+>
+Tipărește / salvează PDF
+</button>
 
-        <p>
-          După încălzire sau comprimare, acești parametri se pot
-          modifica:
-        </p>
+</div>
 
-        \[
-          p=p_2,\qquad
-          V=V_2,\qquad
-          T=T_2.
-        \]
+</header>
 
-      </div>
 
+<div class="lesson-banner">
 
-      <div class="cause-effect">
+<h2>
+Un piston comprimă un gaz. Este suficient să cunoaștem starea inițială și starea finală?
+</h2>
 
-        <p>
-          Valorile parametrilor descriu
-          <strong>starea sistemului</strong>.
-        </p>
+<p>
+Nu întotdeauna.
+Modul în care sistemul trece între cele două stări
+poate fi la fel de important ca stările înseși.
+</p>
 
-        <p>
-          Modificarea stării în timp reprezintă un
-          <strong>proces termodinamic</strong>.
-        </p>
+</div>
 
-      </div>
 
+<h2>
+Codul de culori
+</h2>
 
-      <div class="formula-card">
 
-        \[
-          \boxed{
-            \text{starea 1}
-            \longrightarrow
-            \text{proces termodinamic}
-            \longrightarrow
-            \text{starea 2}
-          }
-        \]
+<div class="memory-legend">
 
-      </div>
 
+<div class="memory-chip memory-blue">
 
-      <div class="lesson-card">
+<strong>
+🔵 Definiție
+</strong>
 
-        <h3>
-          La finalul lecției vei putea:
-        </h3>
+<span>
+Noțiune care trebuie formulată corect.
+</span>
 
-        <ul class="lesson-list">
+</div>
 
-          <li>
-            să definești starea termodinamică;
-          </li>
 
-          <li>
-            să identifici stări inițiale și finale;
-          </li>
+<div class="memory-chip memory-green">
 
-          <li>
-            să explici ce reprezintă echilibrul termodinamic;
-          </li>
+<strong>
+🟢 De reținut
+</strong>
 
-          <li>
-            să diferențiezi echilibrul termic și mecanic;
-          </li>
+<span>
+Concluzie esențială.
+</span>
 
-          <li>
-            să definești un proces termodinamic;
-          </li>
+</div>
 
-          <li>
-            să explici noțiunea de proces cvasi-static;
-          </li>
 
-          <li>
-            să identifici procese izocore, izobare și izoterme;
-          </li>
+<div class="memory-chip memory-yellow">
 
-          <li>
-            să interpretezi elementar o diagramă \(p-V\).
-          </li>
+<strong>
+🟡 Cauză → efect
+</strong>
 
-        </ul>
+<span>
+Raționament fizic.
+</span>
 
-      </div>
+</div>
 
 
-      <nav class="lesson-page-nav no-print">
+<div class="memory-chip memory-orange">
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-          disabled
-        >
-          ← Anterior
-        </button>
+<strong>
+🟠 Atenție
+</strong>
 
-        <span class="lesson-page-indicator">
-          Pagina 1 din 9
-        </span>
+<span>
+Confuzie frecventă sau condiție importantă.
+</span>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Starea termodinamică →
-        </button>
+</div>
 
-      </nav>
 
-    </section>
+</div>
 
 
-    <!-- =======================================================
-         PAGINA 2 – STARE TERMODINAMICĂ
-         ======================================================= -->
+<div class="lesson-card">
 
-    <section
-      id="pagina-2"
-      class="lesson-page"
-      data-page="2"
-      hidden
-      aria-hidden="true"
-    >
+<h2>
+La finalul lecției vei putea:
+</h2>
 
-      <span class="lesson-page-label">
-        1. Starea termodinamică
-      </span>
+<ul class="lesson-list">
 
-      <h2>
-        Cum descriem sistemul?
-      </h2>
+<li>
+să explici starea de echilibru termodinamic;
+</li>
 
+<li>
+să diferențiezi echilibrul de simpla staționaritate;
+</li>
 
-      <div class="lesson-highlight">
+<li>
+să definești procesul termodinamic sau transformarea de stare;
+</li>
 
-        <strong>Starea termodinamică</strong>
-        a unui sistem aflat în echilibru este caracterizată
-        macroscopic printr-un set de parametri de stare independenți
-        suficienți pentru descrierea sa.
+<li>
+să diferențiezi procesele cvasistatice și necvasistatice;
+</li>
 
-      </div>
+<li>
+să explici de ce comprimarea lentă poate fi modelată cvasistatic;
+</li>
 
+<li>
+să diferențiezi procesele reversibile și ireversibile;
+</li>
 
-      <p>
-        Pentru o cantitate fixă de gaz putem utiliza, de exemplu:
-      </p>
+<li>
+să explici relația dintre cvasistatic și reversibil;
+</li>
 
-      \[
-        p,\qquad
-        V,\qquad
-        T.
-      \]
+<li>
+să diferențiezi procesele ciclice și neciclice;
+</li>
 
+<li>
+să interpretezi un proces într-o diagramă \(p-V\).
+</li>
 
-      <div class="concept-grid">
+</ul>
 
-        <div class="concept-card">
+</div>
 
-          <h3>
-            Presiune
-          </h3>
 
-          \[
-            p
-          \]
+<nav class="lesson-page-nav no-print">
 
-          \[
-            [p]=\mathrm{Pa}
-          \]
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+  disabled
+>
+← Anterior
+</button>
 
-        </div>
+<span class="lesson-page-indicator">
+Pagina 1 din 9
+</span>
 
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Stare și echilibru →
+</button>
 
-        <div class="concept-card">
+</nav>
 
-          <h3>
-            Volum
-          </h3>
+</section>
 
-          \[
-            V
-          \]
 
-          \[
-            [V]=\mathrm{m^3}
-          \]
+<!-- =========================================================
+     PAGINA 2
+========================================================= -->
 
-        </div>
+<section
+  id="pagina-2"
+  class="lesson-page"
+  data-page="2"
+  hidden
+  aria-hidden="true"
+>
 
 
-        <div class="concept-card">
+<span class="lesson-page-label">
+1. Stare termodinamică. Echilibru
+</span>
 
-          <h3>
-            Temperatură
-          </h3>
 
-          \[
-            T
-          \]
+<h2>
+Recapitulare: ce este starea?
+</h2>
 
-          \[
-            [T]=\mathrm K
-          \]
 
-        </div>
+<div class="lesson-highlight">
 
-      </div>
+<span class="box-label">
+🔵 Definiție
+</span>
 
+<p>
+<strong>Starea termodinamică</strong>
+a unui sistem este descrisă prin valorile parametrilor săi de stare
+la momentul considerat.
+</p>
 
-      <h2>
-        Două stări diferite
-      </h2>
+</div>
 
 
-      <div class="responsive-table">
+<p>
+Pentru un gaz,
+putem folosi de exemplu:
+</p>
 
-        <table>
 
-          <thead>
-            <tr>
-              <th>Stare</th>
-              <th>Presiune</th>
-              <th>Volum</th>
-              <th>Temperatură</th>
-            </tr>
-          </thead>
+<div class="formula-card">
 
-          <tbody>
+\[
+p,
+\qquad
+V,
+\qquad
+T,
+\qquad
+\nu
+\]
 
-            <tr>
-              <td>
-                <strong>A</strong>
-              </td>
-              <td>\(p_A\)</td>
-              <td>\(V_A\)</td>
-              <td>\(T_A\)</td>
-            </tr>
+</div>
 
-            <tr>
-              <td>
-                <strong>B</strong>
-              </td>
-              <td>\(p_B\)</td>
-              <td>\(V_B\)</td>
-              <td>\(T_B\)</td>
-            </tr>
 
-          </tbody>
+<div class="problem-card">
 
-        </table>
+<h3>
+Exemplu de stare
+</h3>
 
-      </div>
+<div class="formula-card">
 
+\[
+A:
+\begin{cases}
+p_A=100\,\mathrm{kPa}\\
+V_A=2\,\mathrm L\\
+T_A=300\,\mathrm K
+\end{cases}
+\]
 
-      <div class="cause-effect">
+</div>
 
-        <p>
-          Dacă cel puțin un parametru de stare independent se
-          modifică:
-        </p>
+<p>
+Litera \(A\) identifică o anumită stare macroscopică.
+</p>
 
-        \[
-          p_A\neq p_B
-        \]
+</div>
 
-        sau:
-        \[
-          V_A\neq V_B
-        \]
 
-        sau:
-        \[
-          T_A\neq T_B,
-        \]
+<h2>
+Stare de echilibru termodinamic
+</h2>
 
-        <p>
-          sistemul se află într-o altă stare termodinamică.
-        </p>
 
-      </div>
+<div class="lesson-highlight">
 
+<span class="box-label">
+🔵 Definiție
+</span>
 
-      <div class="warning-card">
+<p>
+În formularea folosită în manual,
+un sistem se află în
+<strong>stare de echilibru termodinamic</strong>
+atunci când,
+în condiții de izolare,
+starea sa este staționară
+și nu mai există tendințe macroscopice spontane de modificare.
+</p>
 
-        <h3>
-          Starea nu descrie istoria sistemului
-        </h3>
+</div>
 
-        <p>
-          Parametrii de stare caracterizează sistemul în starea
-          analizată.
-        </p>
 
-        <p>
-          Ei nu ne spun singuri prin ce proces a ajuns sistemul în
-          acea stare.
-        </p>
+<div class="answer-card">
 
-      </div>
+<span class="box-label">
+🟢 De reținut
+</span>
 
+<p>
+Un sistem aflat în echilibru
+poate fi descris prin valori bine definite
+ale parametrilor de stare.
+</p>
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="1"
-      >
+</div>
 
-        <h3>
-          Un gaz trece de la \(T=300\,\mathrm K\) la
-          \(T=350\,\mathrm K\). Putem afirma că:
-        </h3>
 
-        <div class="quiz-options">
+<div class="cause-effect">
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            starea termodinamică a rămas obligatoriu aceeași
-          </button>
+<span class="box-label">
+🟡 Cauză → efect
+</span>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            starea termodinamică s-a modificat
-          </button>
+<p>
+Izolăm un sistem aflat inițial în neechilibru
+→ sistemul evoluează spontan
+→ neuniformitățile macroscopice tind să se reducă
+→ sistemul ajunge la o stare de echilibru.
+</p>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            sistemul nu mai are parametri de stare
-          </button>
+</div>
 
-        </div>
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. Temperatura este parametru de stare; modificarea ei implică o schimbare de stare."
-          data-wrong-feedback="Temperatura este unul dintre parametrii care caracterizează starea sistemului."
-        ></div>
+<div class="warning-card">
 
-      </article>
+<span class="box-label">
+🟠 Atenție
+</span>
 
+<p>
+<strong>Staționar</strong>
+și
+<strong>echilibru termodinamic</strong>
+nu trebuie folosite automat ca sinonime.
+</p>
 
-      <nav class="lesson-page-nav no-print">
+<p>
+O stare poate fi menținută staționară prin acțiunea mediului exterior,
+deși în sistem există fluxuri sau neuniformități.
+</p>
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
+</div>
 
-        <span class="lesson-page-indicator">
-          Pagina 2 din 9
-        </span>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Echilibrul termodinamic →
-        </button>
+<h2>
+Postulatul echilibrului termodinamic
+</h2>
 
-      </nav>
 
-    </section>
+<div class="lesson-highlight">
 
+<span class="box-label">
+🔵 Idee fundamentală
+</span>
 
-    <!-- =======================================================
-         PAGINA 3 – ECHILIBRU
-         ======================================================= -->
+<p>
+Un sistem termodinamic izolat evoluează spontan
+spre o stare de echilibru termodinamic,
+din care nu se îndepărtează spontan.
+</p>
 
-    <section
-      id="pagina-3"
-      class="lesson-page"
-      data-page="3"
-      hidden
-      aria-hidden="true"
-    >
+</div>
 
-      <span class="lesson-page-label">
-        2. Echilibrul termodinamic
-      </span>
 
-      <h2>
-        Când spunem că sistemul este în echilibru?
-      </h2>
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="1"
+>
 
+<h3>
+Un sistem izolat aflat inițial în neechilibru:
+</h3>
 
-      <div class="lesson-highlight">
+<div class="quiz-options">
 
-        Un sistem se află în
-        <strong>echilibru termodinamic</strong>
-        atunci când, în condiții exterioare constante, nu apar
-        spontan modificări macroscopice ale stării sale.
+<button
+  type="button"
+  class="quiz-option"
+  data-option="0"
+>
+trebuie să rămână permanent în aceeași stare
+</button>
 
-      </div>
+<button
+  type="button"
+  class="quiz-option"
+  data-option="1"
+>
+evoluează spontan spre echilibru
+</button>
 
+<button
+  type="button"
+  class="quiz-option"
+  data-option="2"
+>
+își dublează automat temperatura
+</button>
 
-      <p>
-        Într-o stare de echilibru, parametrii macroscopici ai
-        sistemului rămân constanți în timp:
-      </p>
+</div>
 
-      \[
-        p=\text{constant},
-        \qquad
-        V=\text{constant},
-        \qquad
-        T=\text{constant},
-      \]
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect. Aceasta este ideea postulatului echilibrului termodinamic."
+  data-wrong-feedback="Revezi caseta albastră despre postulatul echilibrului."
+></div>
 
-      <p>
-        atât timp cât condițiile exterioare nu se modifică.
-      </p>
+</article>
 
 
-      <h2>
-        Echilibrul termodinamic presupune mai multe condiții
-      </h2>
+<nav class="lesson-page-nav no-print">
 
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Introducere
+</button>
 
-      <div class="concept-grid">
+<span class="lesson-page-indicator">
+Pagina 2 din 9
+</span>
 
-        <div class="concept-card">
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Proces termodinamic →
+</button>
 
-          <h3>
-            Echilibru termic
-          </h3>
+</nav>
 
-          <p>
-            Nu există diferențe de temperatură care să producă un
-            transfer termic net în interiorul sistemului.
-          </p>
+</section>
 
-        </div>
 
+<!-- =========================================================
+     PAGINA 3
+========================================================= -->
 
-        <div class="concept-card">
+<section
+  id="pagina-3"
+  class="lesson-page"
+  data-page="3"
+  hidden
+  aria-hidden="true"
+>
 
-          <h3>
-            Echilibru mecanic
-          </h3>
 
-          <p>
-            Nu există dezechilibre mecanice macroscopice care să
-            provoace modificarea spontană a volumului sau mișcări
-            macroscopice.
-          </p>
+<span class="lesson-page-label">
+2. Procesul termodinamic
+</span>
 
-        </div>
 
+<h2>
+Trecerea dintr-o stare în alta
+</h2>
 
-        <div class="concept-card">
 
-          <h3>
-            Echilibru material
-          </h3>
+<p>
+Considerăm un sistem aflat inițial în starea \(A\).
+După modificarea unor condiții,
+sistemul ajunge în starea \(B\).
+</p>
 
-          <p>
-            Dacă sunt posibile reacții, difuzie sau transformări de
-            fază, compoziția macroscopică nu se modifică spontan.
-          </p>
 
-        </div>
+<div class="logic-flow">
 
-      </div>
+<div class="logic-step">
 
+<strong>
+Stare inițială
+</strong>
 
-      <div
-        class="problem-card"
-        role="img"
-        aria-label="Două corpuri aflate inițial la temperaturi diferite care ajung la aceeași temperatură"
-      >
+\[
+A
+\]
 
-        <svg
-          viewBox="0 0 840 450"
-          width="100%"
-          aria-hidden="true"
-        >
+</div>
 
-          <rect
-            x="5"
-            y="5"
-            width="830"
-            height="440"
-            rx="24"
-            fill="#f8fafc"
-          />
+<div class="logic-arrow">
+→
+</div>
 
-          <!-- corp cald -->
+<div class="logic-step">
 
-          <rect
-            x="110"
-            y="120"
-            width="190"
-            height="170"
-            rx="18"
-            fill="#fee2e2"
-            stroke="#dc2626"
-            stroke-width="6"
-          />
+<strong>
+evoluția sistemului
+</strong>
 
-          <text
-            x="155"
-            y="205"
-            font-size="31"
-            font-family="Arial"
-            fill="#b91c1c"
-          >
-            T₁
-          </text>
+</div>
 
-          <!-- săgeată transfer -->
+<div class="logic-arrow">
+→
+</div>
 
-          <line
-            x1="320"
-            y1="205"
-            x2="500"
-            y2="205"
-            stroke="#f97316"
-            stroke-width="8"
-          />
+<div class="logic-step">
 
-          <polygon
-            points="500,205 468,188 468,222"
-            fill="#f97316"
-          />
+<strong>
+Stare finală
+</strong>
 
-          <!-- corp rece -->
+\[
+B
+\]
 
-          <rect
-            x="525"
-            y="120"
-            width="190"
-            height="170"
-            rx="18"
-            fill="#dbeafe"
-            stroke="#2563eb"
-            stroke-width="6"
-          />
+</div>
 
-          <text
-            x="570"
-            y="205"
-            font-size="31"
-            font-family="Arial"
-            fill="#1d4ed8"
-          >
-            T₂
-          </text>
+</div>
 
-          <text
-            x="320"
-            y="345"
-            font-size="28"
-            font-family="Arial"
-            fill="#334155"
-          >
-            T₁ &gt; T₂
-          </text>
 
-        </svg>
+<div class="lesson-highlight">
 
-      </div>
+<span class="box-label">
+🔵 Definiție din manual
+</span>
 
+<p>
+Trecerea unui sistem termodinamic
+dintr-o stare de echilibru
+în altă stare de echilibru
+se numește
+<strong>proces termodinamic</strong>
+sau
+<strong>transformare de stare</strong>.
+</p>
 
-      <p>
-        Dacă cele două corpuri sunt puse în contact termic, energia
-        se transferă până când se atinge echilibrul termic:
-      </p>
+</div>
 
-      \[
-        \boxed{
-          T_1=T_2
-        }.
-      \]
 
+<div class="answer-card">
 
-      <div class="warning-card">
+<span class="box-label">
+🟢 De reținut
+</span>
 
-        <h3>
-          Echilibru nu înseamnă absența mișcării moleculare
-        </h3>
+<div class="formula-card">
 
-        <p>
-          La nivel microscopic, particulele continuă să se afle în
-          agitație termică.
-        </p>
+\[
+\boxed{
+A
+\longrightarrow
+B
+}
+\]
 
-        <p>
-          Echilibrul se referă la absența modificărilor
-          <strong>macroscopice spontane</strong>.
-        </p>
+</div>
 
-      </div>
+<p>
+nu descrie numai două stări,
+ci și
+<strong>transformarea</strong>
+care le leagă.
+</p>
 
+</div>
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="2"
-      >
 
-        <h3>
-          Două corpuri aflate în contact termic sunt în echilibru
-          termic atunci când:
-        </h3>
+<h2>
+Stările intermediare contează
+</h2>
 
-        <div class="quiz-options">
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            au mase egale
-          </button>
+<p>
+Între starea inițială și starea finală,
+sistemul trece printr-o succesiune de stări intermediare.
+</p>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            au volume egale
-          </button>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            au aceeași temperatură
-          </button>
+<div class="cause-effect">
 
-        </div>
+<span class="box-label">
+🟡 Cauză → efect
+</span>
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. La echilibru termic nu mai există diferență de temperatură care să determine transfer termic net."
-          data-wrong-feedback="Echilibrul termic este legat de temperatură, nu de egalitatea maselor sau volumelor."
-        ></div>
+<p>
+Două transformări pot avea aceeași stare inițială
+și aceeași stare finală
+→ dar pot trece prin stări intermediare diferite
+→ procesele nu sunt neapărat identice.
+</p>
 
-      </article>
+</div>
 
 
-      <nav class="lesson-page-nav no-print">
+<div class="problem-card">
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
+<h3>
+Exemplu – comprimarea unui gaz
+</h3>
 
-        <span class="lesson-page-indicator">
-          Pagina 3 din 9
-        </span>
+<p>
+Un gaz este închis într-un cilindru cu piston mobil.
+</p>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Procesul termodinamic →
-        </button>
+<p>
+Deplasăm pistonul spre interior:
+</p>
 
-      </nav>
+\[
+V_A>V_B
+\]
 
-    </section>
+<p>
+Gazul trece din starea \(A\)
+în starea \(B\).
+</p>
 
+</div>
 
-    <!-- =======================================================
-         PAGINA 4 – PROCES TERMODINAMIC
-         ======================================================= -->
 
-    <section
-      id="pagina-4"
-      class="lesson-page"
-      data-page="4"
-      hidden
-      aria-hidden="true"
-    >
+<div class="warning-card">
 
-      <span class="lesson-page-label">
-        3. Procesul termodinamic
-      </span>
+<span class="box-label">
+🟠 Atenție
+</span>
 
-      <h2>
-        Trecerea dintr-o stare în alta
-      </h2>
+<p>
+Nu orice stare intermediară trebuie să fie automat
+o stare de echilibru.
+</p>
 
+<p>
+Această observație permite clasificarea proceselor
+în
+<strong>cvasistatice</strong>
+și
+<strong>necvasistatice</strong>.
+</p>
 
-      <div class="lesson-highlight">
+</div>
 
-        <strong>Procesul termodinamic</strong>
-        este transformarea prin care un sistem trece dintr-o stare
-        termodinamică în alta.
 
-      </div>
+<nav class="lesson-page-nav no-print">
 
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Echilibru
+</button>
 
-      <div class="formula-card">
+<span class="lesson-page-indicator">
+Pagina 3 din 9
+</span>
 
-        \[
-          \boxed{
-            A
-            \longrightarrow
-            B
-          }
-        \]
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Cvasistatic / necvasistatic →
+</button>
 
-        <p>
-          \(A\) = stare inițială
-        </p>
+</nav>
 
-        <p>
-          \(B\) = stare finală
-        </p>
+</section>
 
-      </div>
 
+<!-- =========================================================
+     PAGINA 4
+========================================================= -->
 
-      <h2>
-        Ce produce un proces?
-      </h2>
+<section
+  id="pagina-4"
+  class="lesson-page"
+  data-page="4"
+  hidden
+  aria-hidden="true"
+>
 
-      <p>
-        Un proces poate apărea atunci când sistemul:
-      </p>
 
-      <ul class="lesson-list">
+<span class="lesson-page-label">
+3. Procese cvasistatice și necvasistatice
+</span>
 
-        <li>
-          primește sau cedează energie prin transfer termic;
-        </li>
 
-        <li>
-          este comprimat;
-        </li>
+<h2>
+Ce se întâmplă dacă deplasăm pistonul foarte repede?
+</h2>
 
-        <li>
-          se destinde;
-        </li>
 
-        <li>
-          schimbă substanță cu exteriorul, dacă este un sistem deschis;
-        </li>
+<div class="class-grid">
 
-        <li>
-          este supus modificării unor condiții exterioare.
-        </li>
 
-      </ul>
+<div class="class-card class-green">
 
+<h2>
+🐢 Proces cvasistatic
+</h2>
 
-      <div class="problem-card">
+<p>
+Stările intermediare pot fi considerate,
+cu aproximație,
+stări de echilibru.
+</p>
 
-        <h3>
-          Exemplu: încălzirea unui gaz cu piston mobil
-        </h3>
+</div>
 
-        <p>
-          Inițial:
-        </p>
 
-        \[
-          A:
-          \quad
-          p_A,\;
-          V_A,\;
-          T_A.
-        \]
+<div class="class-card class-orange">
 
-        <p>
-          Gazul primește energie.
-        </p>
+<h2>
+⚡ Proces necvasistatic
+</h2>
 
-        <p>
-          Pistonul se poate deplasa, iar sistemul ajunge într-o altă
-          stare:
-        </p>
+<p>
+În timpul procesului apar stări intermediare
+care nu pot fi considerate stări de echilibru.
+</p>
 
-        \[
-          B:
-          \quad
-          p_B,\;
-          V_B,\;
-          T_B.
-        \]
+</div>
 
-      </div>
 
+</div>
 
-      <div class="cause-effect">
 
-        <p>
-          <strong>Modificarea condițiilor exterioare</strong>
-        </p>
+<div class="lesson-highlight">
 
-        \[
-          \Downarrow
-        \]
+<span class="box-label">
+🔵 Definiție
+</span>
 
-        <p>
-          <strong>modificarea parametrilor de stare</strong>
-        </p>
+<p>
+Procesul în care stările intermediare
+pot fi considerate stări de echilibru
+se numește
+<strong>proces cvasistatic</strong>.
+</p>
 
-        \[
-          \Downarrow
-        \]
+</div>
 
-        <p>
-          <strong>proces termodinamic</strong>
-        </p>
 
-      </div>
+<div class="lesson-highlight">
 
+<span class="box-label">
+🔵 Definiție
+</span>
 
-      <div class="warning-card">
+<p>
+Dacă există stări intermediare de neechilibru,
+procesul este
+<strong>necvasistatic</strong>.
+</p>
 
-        <h3>
-          Stare ≠ proces
-        </h3>
+</div>
 
-        <p>
-          Starea este descrisă prin parametri.
-        </p>
 
-        <p>
-          Procesul descrie
-          <strong>trecerea</strong>
-          dintre două stări.
-        </p>
+<h2>
+Comprimare rapidă
+</h2>
 
-      </div>
 
+<div class="cause-effect">
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="1"
-      >
+<span class="box-label">
+🟡 Cauză → efect
+</span>
 
-        <h3>
-          Un gaz trece din starea A în starea B. Trecerea
-          \(A\rightarrow B\) reprezintă:
-        </h3>
+<p>
+Pistonul este împins rapid
+→ moleculele apropiate de piston sunt afectate primele
+→ apar neuniformități temporare de presiune și densitate
+→ gazul nu poate fi descris în orice moment
+printr-o singură stare de echilibru
+→ procesul este necvasistatic.
+</p>
 
-        <div class="quiz-options">
+</div>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            un parametru de stare
-          </button>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            un proces termodinamic
-          </button>
+<h2>
+Comprimare foarte lentă
+</h2>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            o unitate de măsură
-          </button>
 
-        </div>
+<div class="cause-effect">
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. Procesul termodinamic este trecerea sistemului între două stări."
-          data-wrong-feedback="A și B sunt stări; săgeata dintre ele descrie transformarea."
-        ></div>
+<span class="box-label">
+🟡 Cauză → efect
+</span>
 
-      </article>
+<p>
+Pistonul este deplasat suficient de lent
+→ sistemul are timp să se redistribuie
+→ diferențele interne rămân foarte mici
+→ fiecare stare intermediară poate fi aproximată printr-o stare de echilibru
+→ procesul poate fi tratat cvasistatic.
+</p>
 
+</div>
 
-      <nav class="lesson-page-nav no-print">
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
+<div class="answer-card">
 
-        <span class="lesson-page-indicator">
-          Pagina 4 din 9
-        </span>
+<span class="box-label">
+🟢 Formularea practică din manual
+</span>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Procese cvasi-statice →
-        </button>
+<p>
+Pentru modelul studiat,
+condiția caracteristică unui proces cvasistatic este
+desfășurarea suficient de lentă a procesului,
+astfel încât stările intermediare să poată fi considerate stări de echilibru.
+</p>
 
-      </nav>
+</div>
 
-    </section>
 
+<div class="warning-card">
 
-    <!-- =======================================================
-         PAGINA 5 – CVASI-STATIC
-         ======================================================= -->
+<span class="box-label">
+🟠 Precizare fizică
+</span>
 
-    <section
-      id="pagina-5"
-      class="lesson-page"
-      data-page="5"
-      hidden
-      aria-hidden="true"
-    >
+<p>
+„Lent” nu trebuie memorat izolat.
+Ideea fizică importantă este:
+</p>
 
-      <span class="lesson-page-label">
-        4. Procesul cvasi-static
-      </span>
+<p>
+<strong>
+sistemul are timp să rămână permanent foarte aproape de echilibru.
+</strong>
+</p>
 
-      <h2>
-        Putem descrie stările intermediare?
-      </h2>
+<p>
+Într-un sistem real,
+pot exista și efecte disipative;
+de aceea caracterul lent/cvasistatic nu este suficient,
+de unul singur,
+pentru reversibilitate.
+</p>
 
-      <p>
-        Într-un proces real foarte rapid, sistemul poate fi temporar
-        departe de echilibru.
-      </p>
+</div>
 
-      <p>
-        În această situație, o singură valoare a presiunii sau
-        temperaturii poate să nu fie suficientă pentru a descrie
-        întregul sistem la fiecare moment.
-      </p>
 
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="0"
+>
 
-      <div class="lesson-highlight">
+<h3>
+De ce comprimarea foarte lentă poate fi tratată cvasistatic?
+</h3>
 
-        Un
-        <strong>proces cvasi-static</strong>
-        este un proces idealizat desfășurat suficient de lent încât
-        sistemul să treacă printr-o succesiune de stări foarte
-        apropiate de echilibrul termodinamic.
+<div class="quiz-options">
 
-      </div>
+<button
+  type="button"
+  class="quiz-option"
+  data-option="0"
+>
+sistemul are timp să treacă prin stări foarte apropiate de echilibru
+</button>
 
+<button
+  type="button"
+  class="quiz-option"
+  data-option="1"
+>
+moleculele nu se mai mișcă
+</button>
 
-      <div class="formula-card">
+<button
+  type="button"
+  class="quiz-option"
+  data-option="2"
+>
+presiunea devine obligatoriu zero
+</button>
 
-        \[
-          A
-          \rightarrow
-          A_1
-          \rightarrow
-          A_2
-          \rightarrow
-          A_3
-          \rightarrow
-          \cdots
-          \rightarrow
-          B
-        \]
+</div>
 
-      </div>
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect. Aceasta este ideea centrală a procesului cvasistatic."
+  data-wrong-feedback="Cvasistatic înseamnă succesiune de stări foarte apropiate de echilibru."
+></div>
 
+</article>
 
-      <div class="concept-grid">
 
-        <div class="concept-card">
+<nav class="lesson-page-nav no-print">
 
-          <h3>
-            Proces rapid
-          </h3>
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Proces termodinamic
+</button>
 
-          <p>
-            pot apărea neuniformități importante de presiune,
-            temperatură sau densitate
-          </p>
+<span class="lesson-page-indicator">
+Pagina 4 din 9
+</span>
 
-        </div>
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Reversibil / ireversibil →
+</button>
 
+</nav>
 
-        <div class="concept-card">
+</section>
 
-          <h3>
-            Proces cvasi-static
-          </h3>
 
-          <p>
-            stările intermediare pot fi tratate aproximativ ca stări
-            de echilibru
-          </p>
+<!-- =========================================================
+     PAGINA 5
+========================================================= -->
 
-        </div>
+<section
+  id="pagina-5"
+  class="lesson-page"
+  data-page="5"
+  hidden
+  aria-hidden="true"
+>
 
-      </div>
 
+<span class="lesson-page-label">
+4. Procese reversibile și ireversibile
+</span>
 
-      <div class="problem-card">
 
-        <h3>
-          Exemplu
-        </h3>
+<h2>
+Putem inversa procesul?
+</h2>
 
-        <p>
-          Dacă împingem foarte lent pistonul unui cilindru, gazul are
-          timp să se redistribuie după fiecare deplasare foarte mică.
-        </p>
 
-        <p>
-          Putem descrie aproximativ fiecare stare intermediară prin
-          valori bine definite ale parametrilor:
-        </p>
+<div class="class-grid">
 
-        \[
-          p,\qquad V,\qquad T.
-        \]
 
-      </div>
+<div class="class-card class-green">
 
+<h2>
+↔️ Proces reversibil
+</h2>
 
-      <div class="warning-card">
+<p>
+Poate fi parcurs în ambele sensuri
+prin aceleași stări intermediare,
+în modelul ideal.
+</p>
 
-        <h3>
-          Cvasi-static nu înseamnă automat reversibil
-        </h3>
+</div>
 
-        <p>
-          „Cvasi-static” descrie faptul că procesul este suficient de
-          lent pentru a trece prin stări apropiate de echilibru.
-        </p>
 
-        <p>
-          Reversibilitatea impune condiții suplimentare și va fi
-          discutată separat.
-        </p>
+<div class="class-card class-orange">
 
-      </div>
+<h2>
+➡️ Proces ireversibil
+</h2>
 
+<p>
+Nu poate fi inversat astfel încât sistemul
+să parcurgă exact aceleași stări intermediare
+și să refacă integral situația inițială.
+</p>
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="0"
-      >
+</div>
 
-        <h3>
-          Principalul avantaj al modelului cvasi-static este că:
-        </h3>
 
-        <div class="quiz-options">
+</div>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            putem atribui parametri de stare bine definiți stărilor
-            intermediare
-          </button>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            temperatura este întotdeauna zero
-          </button>
+<div class="lesson-highlight">
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            sistemul nu mai conține particule
-          </button>
+<span class="box-label">
+🔵 Definiție din manual
+</span>
 
-        </div>
+<p>
+Un proces termodinamic se numește
+<strong>reversibil</strong>
+dacă se poate desfășura în ambele sensuri
+prin aceleași stări intermediare.
+</p>
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. Stările intermediare pot fi tratate ca foarte apropiate de stări de echilibru."
-          data-wrong-feedback="Gândește-te la motivul pentru care procesul este realizat foarte lent."
-        ></div>
+<p>
+Dacă această condiție nu este îndeplinită,
+procesul este
+<strong>ireversibil</strong>.
+</p>
 
-      </article>
+</div>
 
 
-      <nav class="lesson-page-nav no-print">
+<div class="answer-card">
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
+<span class="box-label">
+🟢 De reținut
+</span>
 
-        <span class="lesson-page-indicator">
-          Pagina 5 din 9
-        </span>
+<p>
+În modelul ideal:
+</p>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Diagrama p-V →
-        </button>
+<div class="formula-card">
 
-      </nav>
+\[
+A
+\rightarrow
+B
+\]
 
-    </section>
+<p>
+și apoi:
+</p>
 
+\[
+B
+\rightarrow
+A
+\]
 
-    <!-- =======================================================
-         PAGINA 6 – DIAGRAMA p-V
-         ======================================================= -->
+<p>
+prin aceeași succesiune de stări.
+</p>
 
-    <section
-      id="pagina-6"
-      class="lesson-page"
-      data-page="6"
-      hidden
-      aria-hidden="true"
-    >
+</div>
 
-      <span class="lesson-page-label">
-        5. Reprezentarea unui proces
-      </span>
+</div>
 
-      <h2>
-        Diagrama \(p-V\)
-      </h2>
 
-      <p>
-        Pentru un sistem simplu compresibil, stările și procesele
-        pot fi reprezentate într-un sistem de axe:
-      </p>
+<h2>
+Este orice proces cvasistatic reversibil?
+</h2>
 
-      \[
-        V
-        \quad\text{și}\quad
-        p.
-      \]
 
+<div class="process-sets">
 
-      <div
-        class="problem-card"
-        role="img"
-        aria-label="Diagramă presiune-volum cu două stări A și B unite printr-un proces"
-      >
+<div class="quasi-set">
 
-        <svg
-          viewBox="0 0 840 540"
-          width="100%"
-          aria-hidden="true"
-        >
+<div class="reversible-set">
 
-          <rect
-            x="5"
-            y="5"
-            width="830"
-            height="530"
-            rx="24"
-            fill="#f8fafc"
-          />
+<span class="set-label">
+Procese reversibile
+</span>
 
-          <!-- axe -->
+<p>
+subset al proceselor cvasistatice
+</p>
 
-          <line
-            x1="120"
-            y1="440"
-            x2="740"
-            y2="440"
-            stroke="#0f172a"
-            stroke-width="6"
-          />
+</div>
 
-          <polygon
-            points="740,440 710,425 710,455"
-            fill="#0f172a"
-          />
+</div>
 
-          <line
-            x1="120"
-            y1="440"
-            x2="120"
-            y2="70"
-            stroke="#0f172a"
-            stroke-width="6"
-          />
+</div>
 
-          <polygon
-            points="120,70 105,100 135,100"
-            fill="#0f172a"
-          />
 
-          <text
-            x="752"
-            y="450"
-            font-size="30"
-            font-family="Arial"
-            fill="#0f172a"
-          >
-            V
-          </text>
+<div class="formula-card">
 
-          <text
-            x="90"
-            y="65"
-            font-size="30"
-            font-family="Arial"
-            fill="#0f172a"
-          >
-            p
-          </text>
+\[
+\boxed{
+\text{reversibil}
+\Rightarrow
+\text{cvasistatic}
+}
+\]
 
-          <!-- stări -->
+</div>
 
-          <circle
-            cx="245"
-            cy="340"
-            r="14"
-            fill="#2563eb"
-          />
 
-          <circle
-            cx="625"
-            cy="165"
-            r="14"
-            fill="#dc2626"
-          />
+<div class="formula-card">
 
-          <text
-            x="215"
-            y="330"
-            font-size="30"
-            font-family="Arial"
-            fill="#1d4ed8"
-          >
-            A
-          </text>
+\[
+\boxed{
+\text{cvasistatic}
+\not\Rightarrow
+\text{obligatoriu reversibil}
+}
+\]
 
-          <text
-            x="645"
-            y="160"
-            font-size="30"
-            font-family="Arial"
-            fill="#b91c1c"
-          >
-            B
-          </text>
+</div>
 
-          <!-- curbă proces -->
 
-          <path
-            d="M245,340
-               C340,325
-                450,240
-                625,165"
-            fill="none"
-            stroke="#16a34a"
-            stroke-width="8"
-          />
+<div class="warning-card">
 
-          <polygon
-            points="490,225 455,225 470,252"
-            fill="#16a34a"
-          />
+<span class="box-label">
+🟠 Atenție esențială
+</span>
 
-          <text
-            x="355"
-            y="240"
-            font-size="27"
-            font-family="Arial"
-            fill="#15803d"
-          >
-            proces A → B
-          </text>
+<p>
+Caracterul
+<strong>cvasistatic</strong>
+este o condiție necesară pentru reversibilitate,
+dar nu suficientă.
+</p>
 
-        </svg>
+<p>
+Un proces poate fi foarte lent
+și totuși ireversibil,
+de exemplu dacă apar efecte disipative
+precum frecarea.
+</p>
 
-      </div>
+</div>
 
 
-      <div class="concept-grid">
+<h2>
+Exemple de ireversibilitate
+</h2>
 
-        <div class="concept-card">
 
-          <h3>
-            O stare
-          </h3>
+<ul class="lesson-list">
 
-          <p>
-            este reprezentată printr-un
-            <strong>punct</strong>
-          </p>
+<li>
+frecarea mecanică;
+</li>
 
-          \[
-            A(V_A,p_A)
-          \]
+<li>
+transferul de căldură printr-o diferență finită de temperatură;
+</li>
 
-        </div>
+<li>
+expansiunea liberă a unui gaz;
+</li>
 
+<li>
+procese rapide cu neuniformități mari;
+</li>
 
-        <div class="concept-card">
+<li>
+amestecarea spontană a substanțelor.
+</li>
 
-          <h3>
-            Un proces cvasi-static
-          </h3>
+</ul>
 
-          <p>
-            este reprezentat printr-o
-            <strong>linie sau curbă</strong>
-          </p>
 
-        </div>
+<div class="answer-card">
 
+<span class="box-label">
+🟢 Model ideal
+</span>
 
-        <div class="concept-card">
+<p>
+Procesele perfect reversibile sunt idealizări.
+În natură,
+procesele reale au într-o anumită măsură caracter ireversibil.
+</p>
 
-          <h3>
-            Sensul procesului
-          </h3>
+<p>
+Unele procese pot fi însă
+<strong>aproximate</strong>
+ca reversibile.
+</p>
 
-          <p>
-            este indicat prin
-            <strong>săgeată</strong>
-          </p>
+</div>
 
-          \[
-            A\rightarrow B
-          \]
 
-        </div>
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="2"
+>
 
-      </div>
+<h3>
+Care afirmație este corectă?
+</h3>
 
+<div class="quiz-options">
 
-      <div class="warning-card">
+<button
+  type="button"
+  class="quiz-option"
+  data-option="0"
+>
+orice proces cvasistatic este obligatoriu reversibil
+</button>
 
-        <h3>
-          Graficul \(p(V)\) nu reprezintă forma recipientului
-        </h3>
+<button
+  type="button"
+  class="quiz-option"
+  data-option="1"
+>
+un proces reversibil trebuie să fie rapid
+</button>
 
-        <p>
-          Este o diagramă în spațiul parametrilor de stare.
-        </p>
+<button
+  type="button"
+  class="quiz-option"
+  data-option="2"
+>
+un proces reversibil trebuie să fie cvasistatic
+</button>
 
-        <p>
-          Axa orizontală reprezintă volumul, iar cea verticală
-          presiunea.
-        </p>
+</div>
 
-      </div>
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect. Cvasistatic este o condiție necesară pentru reversibilitate."
+  data-wrong-feedback="Reversibilitatea este o condiție mai restrictivă decât cvasistaticitatea."
+></div>
 
+</article>
 
-      <div class="lesson-highlight">
 
-        Două procese pot avea aceleași stări inițială și finală,
-        dar pot urma
-        <strong>trasee diferite</strong>
-        pe diagrama \(p-V\).
-      </div>
+<nav class="lesson-page-nav no-print">
 
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Cvasistatic
+</button>
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="2"
-      >
+<span class="lesson-page-indicator">
+Pagina 5 din 9
+</span>
 
-        <h3>
-          Pe o diagramă \(p-V\), o stare de echilibru este
-          reprezentată prin:
-        </h3>
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Ciclic / neciclic →
+</button>
 
-        <div class="quiz-options">
+</nav>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            o săgeată infinită
-          </button>
+</section>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            forma reală a cilindrului
-          </button>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            un punct
-          </button>
+<!-- =========================================================
+     PAGINA 6
+========================================================= -->
 
-        </div>
+<section
+  id="pagina-6"
+  class="lesson-page"
+  data-page="6"
+  hidden
+  aria-hidden="true"
+>
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. Coordonatele punctului sunt volumul și presiunea stării respective."
-          data-wrong-feedback="O stare are valori bine definite ale parametrilor p și V."
-        ></div>
 
-      </article>
+<span class="lesson-page-label">
+5. Procese ciclice și neciclice
+</span>
 
 
-      <nav class="lesson-page-nav no-print">
+<h2>
+Ce relație există între starea finală și cea inițială?
+</h2>
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
 
-        <span class="lesson-page-indicator">
-          Pagina 6 din 9
-        </span>
+<div class="class-grid">
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Procese particulare →
-        </button>
 
-      </nav>
+<div class="class-card class-blue">
 
-    </section>
+<h2>
+🔄 Proces ciclic
+</h2>
 
+<p>
+Starea finală coincide cu starea inițială.
+</p>
 
-    <!-- =======================================================
-         PAGINA 7 – PROCESE PARTICULARE
-         ======================================================= -->
+<div class="formula-card">
 
-    <section
-      id="pagina-7"
-      class="lesson-page"
-      data-page="7"
-      hidden
-      aria-hidden="true"
-    >
+\[
+\boxed{
+A
+\rightarrow
+\cdots
+\rightarrow
+A
+}
+\]
 
-      <span class="lesson-page-label">
-        6. Clasificarea după parametrul constant
-      </span>
+</div>
 
-      <h2>
-        Trei procese importante
-      </h2>
+</div>
 
 
-      <div class="concept-grid">
+<div class="class-card class-yellow">
 
-        <div class="concept-card">
+<h2>
+↗️ Proces neciclic
+</h2>
 
-          <h3>
-            Proces izocor
-          </h3>
+<p>
+Starea finală este diferită de starea inițială.
+</p>
 
-          \[
-            \boxed{
-              V=\text{constant}
-            }
-          \]
+<div class="formula-card">
 
-          <p>
-            Volumul sistemului nu se modifică.
-          </p>
+\[
+\boxed{
+A
+\rightarrow
+B,
+\qquad
+B\neq A
+}
+\]
 
-        </div>
+</div>
 
+</div>
 
-        <div class="concept-card">
 
-          <h3>
-            Proces izobar
-          </h3>
+</div>
 
-          \[
-            \boxed{
-              p=\text{constant}
-            }
-          \]
 
-          <p>
-            Presiunea sistemului rămâne constantă.
-          </p>
+<div class="lesson-highlight">
 
-        </div>
+<span class="box-label">
+🔵 Definiție
+</span>
 
+<p>
+Un proces termodinamic este
+<strong>ciclic</strong>
+dacă starea finală coincide cu starea inițială.
+</p>
 
-        <div class="concept-card">
+<p>
+În caz contrar,
+procesul este
+<strong>neciclic</strong>.
+</p>
 
-          <h3>
-            Proces izoterm
-          </h3>
+</div>
 
-          \[
-            \boxed{
-              T=\text{constant}
-            }
-          \]
 
-          <p>
-            Temperatura sistemului rămâne constantă.
-          </p>
+<h2>
+Ciclic nu înseamnă reversibil
+</h2>
 
-        </div>
 
-      </div>
+<div class="warning-card">
 
+<span class="box-label">
+🟠 Confuzie frecventă
+</span>
 
-      <h2>
-        Cum apar pe diagrama \(p-V\)?
-      </h2>
+<p>
+<strong>Proces ciclic</strong>
+și
+<strong>proces reversibil</strong>
+sunt clasificări diferite.
+</p>
 
+<p>
+Un proces ciclic poate fi ireversibil.
+</p>
 
-      <div class="responsive-table">
+<p>
+Un proces reversibil poate fi neciclic.
+</p>
 
-        <table>
+</div>
 
-          <thead>
-            <tr>
-              <th>Proces</th>
-              <th>Parametru constant</th>
-              <th>Aspect pe diagrama \(p-V\)</th>
-            </tr>
-          </thead>
 
-          <tbody>
+<div class="cause-effect">
 
-            <tr>
-              <td>izocor</td>
-              <td>\(V\)</td>
-              <td>segment vertical</td>
-            </tr>
+<span class="box-label">
+🟡 Cum verific?
+</span>
 
-            <tr>
-              <td>izobar</td>
-              <td>\(p\)</td>
-              <td>segment orizontal</td>
-            </tr>
+<p>
+Întreb:
+<strong>„Starea finală este aceeași cu starea inițială?”</strong>
+</p>
 
-            <tr>
-              <td>izoterm</td>
-              <td>\(T\)</td>
-              <td>curbă specifică ecuației de stare</td>
-            </tr>
+<p>
+Dacă da
+→ proces ciclic.
+</p>
 
-          </tbody>
+<p>
+Această întrebare nu ne spune dacă procesul este reversibil.
+</p>
 
-        </table>
+</div>
 
-      </div>
 
+<h2>
+Trei clasificări independente ca întrebare
+</h2>
 
-      <div
-        class="problem-card"
-        role="img"
-        aria-label="Diagramă p-V cu proces izocor vertical și proces izobar orizontal"
-      >
 
-        <svg
-          viewBox="0 0 840 500"
-          width="100%"
-          aria-hidden="true"
-        >
+<div class="responsive-table">
 
-          <rect
-            x="5"
-            y="5"
-            width="830"
-            height="490"
-            rx="24"
-            fill="#f8fafc"
-          />
+<table>
 
-          <!-- axe -->
+<thead>
 
-          <line
-            x1="120"
-            y1="410"
-            x2="750"
-            y2="410"
-            stroke="#0f172a"
-            stroke-width="6"
-          />
+<tr>
 
-          <polygon
-            points="750,410 720,395 720,425"
-            fill="#0f172a"
-          />
+<th>
+Criteriu
+</th>
 
-          <line
-            x1="120"
-            y1="410"
-            x2="120"
-            y2="65"
-            stroke="#0f172a"
-            stroke-width="6"
-          />
+<th>
+Întrebarea
+</th>
 
-          <polygon
-            points="120,65 105,95 135,95"
-            fill="#0f172a"
-          />
+<th>
+Clase
+</th>
 
-          <text
-            x="765"
-            y="420"
-            font-size="29"
-            font-family="Arial"
-          >
-            V
-          </text>
+</tr>
 
-          <text
-            x="88"
-            y="60"
-            font-size="29"
-            font-family="Arial"
-          >
-            p
-          </text>
+</thead>
 
-          <!-- izocor -->
+<tbody>
 
-          <line
-            x1="285"
-            y1="340"
-            x2="285"
-            y2="145"
-            stroke="#2563eb"
-            stroke-width="9"
-          />
+<tr>
 
-          <polygon
-            points="285,145 270,175 300,175"
-            fill="#2563eb"
-          />
+<td>
+stările intermediare
+</td>
 
-          <text
-            x="215"
-            y="125"
-            font-size="27"
-            font-family="Arial"
-            fill="#1d4ed8"
-          >
-            izocor
-          </text>
+<td>
+Sunt foarte apropiate de echilibru?
+</td>
 
-          <!-- izobar -->
+<td>
+cvasistatic / necvasistatic
+</td>
 
-          <line
-            x1="430"
-            y1="265"
-            x2="665"
-            y2="265"
-            stroke="#dc2626"
-            stroke-width="9"
-          />
+</tr>
 
-          <polygon
-            points="665,265 635,250 635,280"
-            fill="#dc2626"
-          />
+<tr>
 
-          <text
-            x="500"
-            y="235"
-            font-size="27"
-            font-family="Arial"
-            fill="#b91c1c"
-          >
-            izobar
-          </text>
+<td>
+posibilitatea inversării
+</td>
 
-        </svg>
+<td>
+Poate fi parcurs invers prin aceleași stări?
+</td>
 
-      </div>
+<td>
+reversibil / ireversibil
+</td>
 
+</tr>
 
-      <div class="warning-card">
+<tr>
 
-        <h3>
-          Nu deducem încă legile acestor procese
-        </h3>
+<td>
+starea finală
+</td>
 
-        <p>
-          În această etapă identificăm doar parametrul menținut
-          constant.
-        </p>
+<td>
+Coincide cu starea inițială?
+</td>
 
-        <p>
-          Relațiile cantitative dintre \(p\), \(V\) și \(T\) vor fi
-          studiate cu ajutorul legilor gazului ideal.
-        </p>
+<td>
+ciclic / neciclic
+</td>
 
-      </div>
+</tr>
 
+</tbody>
 
-      <div class="problem-card">
+</table>
 
-        <h3>
-          Exemplu
-        </h3>
+</div>
 
-        <p>
-          Un gaz este încălzit într-un recipient rigid, închis.
-        </p>
 
-        <p>
-          Dacă recipientul nu își modifică volumul:
-        </p>
+<div class="answer-card">
 
-        \[
-          V=\text{constant}.
-        \]
+<span class="box-label">
+🟢 De reținut
+</span>
 
-        <p>
-          Procesul este:
-        </p>
+<p>
+Un proces poate primi simultan mai multe calificative.
+</p>
 
-        \[
-          \boxed{
-            \text{izocor}
-          }.
-        \]
+<p>
+De exemplu,
+într-un model ideal,
+poate fi:
+</p>
 
-      </div>
+<p>
+<strong>
+cvasistatic + reversibil + ciclic.
+</strong>
+</p>
 
+<p>
+Într-o altă situație poate fi:
+</p>
 
-      <article
-        class="quiz-question"
-        data-interactive-question
-        data-type="choice"
-        data-answer="0"
-      >
+<p>
+<strong>
+necvasistatic + ireversibil + neciclic.
+</strong>
+</p>
 
-        <h3>
-          Un proces în care \(p=\text{constant}\) se numește:
-        </h3>
+</div>
 
-        <div class="quiz-options">
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="0"
-          >
-            izobar
-          </button>
+<nav class="lesson-page-nav no-print">
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="1"
-          >
-            izocor
-          </button>
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Reversibilitate
+</button>
 
-          <button
-            type="button"
-            class="quiz-option"
-            data-option="2"
-          >
-            izoterm
-          </button>
+<span class="lesson-page-indicator">
+Pagina 6 din 9
+</span>
 
-        </div>
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Diagrama de stare →
+</button>
 
-        <div
-          class="quiz-feedback"
-          aria-live="polite"
-          data-correct-feedback="Corect. Într-un proces izobar presiunea rămâne constantă."
-          data-wrong-feedback="Prefixul „bar” se referă la presiune."
-        ></div>
+</nav>
 
-      </article>
+</section>
 
 
-      <nav class="lesson-page-nav no-print">
+<!-- =========================================================
+     PAGINA 7
+========================================================= -->
 
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
+<section
+  id="pagina-7"
+  class="lesson-page"
+  data-page="7"
+  hidden
+  aria-hidden="true"
+>
 
-        <span class="lesson-page-indicator">
-          Pagina 7 din 9
-        </span>
 
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Verifică ce ai învățat →
-        </button>
+<span class="lesson-page-label">
+6. Reprezentarea proceselor în diagrama de stare
+</span>
 
-      </nav>
 
-    </section>
+<h2>
+Stare = punct. Proces cvasistatic = curbă.
+</h2>
 
 
-    <!-- =======================================================
-         PAGINA 8 – QUIZ
-         ======================================================= -->
+<div class="answer-card">
 
-    <section
-      id="pagina-8"
-      class="lesson-page"
-      data-page="8"
-      hidden
-      aria-hidden="true"
-    >
+<span class="box-label">
+🟢 Idee vizuală
+</span>
 
-      <span class="lesson-page-label">
-        Verifică ce ai învățat
-      </span>
+<p>
+Într-o diagramă \(p-V\):
+</p>
 
-      <h2>
-        Test interactiv
-      </h2>
+<ul class="lesson-list">
 
-      <p>
-        Rezolvă cei 8 itemi.
-      </p>
+<li>
+o stare de echilibru este reprezentată printr-un
+<strong>punct</strong>;
+</li>
 
+<li>
+un proces cvasistatic poate fi reprezentat printr-o
+<strong>succesiune continuă de puncte</strong>,
+adică printr-o curbă.
+</li>
 
-      <div
-        id="lessonQuiz"
-        class="quiz-list"
-      >
+</ul>
 
+</div>
 
-        <!-- ITEM 1 -->
 
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="1"
-        >
+<div class="diagram-wrap">
 
-          <h3>
-            1. Starea termodinamică este caracterizată macroscopic
-            prin:
-          </h3>
+<canvas
+  id="pvCanvas"
+  aria-label="Diagramă presiune-volum"
+></canvas>
 
-          <div class="quiz-options">
+</div>
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              numai forma recipientului
-            </button>
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              parametri de stare
-            </button>
+<div class="lesson-highlight">
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              numele experimentatorului
-            </button>
+<span class="box-label">
+🔵 Reprezentare
+</span>
 
-          </div>
+<p>
+Starea inițială:
+</p>
 
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Parametrii macroscopici permit descrierea stării sistemului."
-            data-wrong-feedback="Gândește-te la p, V și T."
-          ></div>
+\[
+A(V_A,p_A)
+\]
 
-        </article>
+<p>
+Starea finală:
+</p>
 
+\[
+B(V_B,p_B)
+\]
 
-        <!-- ITEM 2 -->
+<p>
+Pentru un proces cvasistatic:
+</p>
 
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="2"
-        >
+\[
+A
+\longrightarrow
+B
+\]
 
-          <h3>
-            2. În echilibru termodinamic:
-          </h3>
+<p>
+poate fi reprezentat printr-o curbă continuă în planul \(p-V\).
+</p>
 
-          <div class="quiz-options">
+</div>
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              moleculele sunt complet nemișcate
-            </button>
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              temperatura trebuie să fie \(0\,\mathrm K\)
-            </button>
+<div class="warning-card">
 
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              nu apar spontan modificări macroscopice ale stării în
-              condiții exterioare constante
-            </button>
+<span class="box-label">
+🟠 Atenție
+</span>
 
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Mișcarea microscopică continuă, dar mărimile macroscopice nu se modifică spontan."
-            data-wrong-feedback="Echilibrul termodinamic este o proprietate macroscopică."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 3 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="0"
-        >
+<p>
+Pentru un proces puternic necvasistatic,
+sistemul nu are în fiecare moment
+o presiune uniformă bine definită pentru întregul volum.
+</p>
 
-          <h3>
-            3. La echilibru termic, două corpuri aflate în contact
-            termic au:
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              aceeași temperatură
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              obligatoriu aceeași masă
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              obligatoriu același volum
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Egalitatea temperaturilor caracterizează echilibrul termic."
-            data-wrong-feedback="Echilibrul termic este legat de temperatură."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 4 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="1"
-        >
-
-          <h3>
-            4. Trecerea unui sistem din starea A în starea B este:
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              o unitate de măsură
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              un proces termodinamic
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              un parametru intensiv
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Procesul termodinamic reprezintă schimbarea stării sistemului."
-            data-wrong-feedback="A și B sunt stări; transformarea dintre ele este procesul."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 5 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="2"
-        >
-
-          <h3>
-            5. Într-un proces cvasi-static:
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              sistemul nu se modifică deloc
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              procesul se desfășoară instantaneu
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              stările intermediare sunt foarte apropiate de stări de
-              echilibru
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Acesta este sensul modelului cvasi-static."
-            data-wrong-feedback="Un proces cvasi-static este idealizat ca fiind suficient de lent."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 6 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="1"
-        >
-
-          <h3>
-            6. Pe diagrama \(p-V\), un proces izocor este reprezentat
-            prin:
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              un segment orizontal
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              un segment vertical
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              obligatoriu un cerc
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Volumul este pe axa orizontală și rămâne constant."
-            data-wrong-feedback="Dacă V este constant, coordonata orizontală nu se modifică."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 7 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="0"
-        >
-
-          <h3>
-            7. Un proces în care temperatura rămâne constantă este:
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              izoterm
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              izocor
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              izobar
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Într-un proces izoterm T = constant."
-            data-wrong-feedback="Prefixul «term» indică temperatura."
-          ></div>
-
-        </article>
-
-
-        <!-- ITEM 8 -->
-
-        <article
-          class="quiz-question"
-          data-interactive-question
-          data-quiz-question
-          data-type="choice"
-          data-answer="2"
-        >
-
-          <h3>
-            8. Două procese au aceleași stări inițială și finală.
-            Care afirmație este corectă?
-          </h3>
-
-          <div class="quiz-options">
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="0"
-            >
-              trebuie obligatoriu să urmeze același traseu
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="1"
-            >
-              nu pot fi reprezentate pe o diagramă
-            </button>
-
-            <button
-              type="button"
-              class="quiz-option"
-              data-option="2"
-            >
-              pot urma trasee diferite între aceleași stări
-            </button>
-
-          </div>
-
-          <div
-            class="quiz-feedback"
-            aria-live="polite"
-            data-correct-feedback="Corect. Stările inițială și finală nu determină singure traseul procesului."
-            data-wrong-feedback="Aceleași puncte A și B pot fi unite prin trasee termodinamice diferite."
-          ></div>
-
-        </article>
-
-      </div>
-
-
-      <div class="quiz-controls no-print">
-
-        <button
-          type="button"
-          id="quizScoreButton"
-          class="lesson-button"
-        >
-          Vezi rezultatul
-        </button>
-
-        <button
-          type="button"
-          id="quizResetButton"
-          class="lesson-button secondary"
-        >
-          Reia testul
-        </button>
-
-      </div>
-
-
-      <div
-        id="quizResult"
-        class="quiz-result"
-        aria-live="polite"
-        hidden
-      ></div>
-
-
-      <nav class="lesson-page-nav no-print">
-
-        <button
-          type="button"
-          class="lesson-button secondary"
-          data-prev
-        >
-          ← Anterior
-        </button>
-
-        <span class="lesson-page-indicator">
-          Pagina 8 din 9
-        </span>
-
-        <button
-          type="button"
-          class="lesson-button"
-          data-next
-        >
-          Sinteza lecției →
-        </button>
-
-      </nav>
-
-    </section>
-
-
-    <!-- =======================================================
-         PAGINA 9 – SINTEZĂ
-         ======================================================= -->
+<p>
+De aceea nu putem atribui riguros fiecărui moment
+un singur punct de echilibru
+\((V,p)\)
+și aceeași interpretare geometrică a curbei.
+</p>
 
-    <section
-      id="pagina-9"
-      class="lesson-page"
-      data-page="9"
-      hidden
-      aria-hidden="true"
-    >
-
-      <span class="lesson-page-label">
-        Sinteză
-      </span>
+</div>
 
-      <h2>
-        De reținut
-      </h2>
 
+<div class="cause-effect">
 
-      <div class="concept-grid">
+<span class="box-label">
+🟡 Cauză → efect
+</span>
 
-        <div class="concept-card">
+<p>
+Proces suficient de lent
+→ stările intermediare sunt apropiate de echilibru
+→ fiecărei stări îi putem asocia parametri bine definiți
+→ procesul poate fi reprezentat printr-o curbă de stare.
+</p>
 
-          <h3>
-            Stare termodinamică
-          </h3>
+</div>
 
-          <p>
-            este descrisă prin parametri de stare
-          </p>
 
-          \[
-            p,\;V,\;T,\ldots
-          \]
+<h2>
+Proces ciclic în diagramă
+</h2>
 
-        </div>
 
+<div class="formula-card">
 
-        <div class="concept-card">
+\[
+\boxed{
+A
+\rightarrow
+B
+\rightarrow
+C
+\rightarrow
+A
+}
+\]
 
-          <h3>
-            Echilibru termodinamic
-          </h3>
+</div>
 
-          <p>
-            nu apar modificări macroscopice spontane în condiții
-            exterioare constante
-          </p>
+<p>
+Într-o diagramă de stare,
+un ciclu formează un traseu închis.
+</p>
 
-        </div>
 
+<nav class="lesson-page-nav no-print">
 
-        <div class="concept-card">
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Procese ciclice
+</button>
 
-          <h3>
-            Proces termodinamic
-          </h3>
+<span class="lesson-page-indicator">
+Pagina 7 din 9
+</span>
 
-          \[
-            \boxed{
-              A\rightarrow B
-            }
-          \]
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Laborator virtual →
+</button>
 
-          <p>
-            trecerea dintr-o stare în alta
-          </p>
+</nav>
 
-        </div>
+</section>
 
 
-        <div class="concept-card">
+<!-- =========================================================
+     PAGINA 8
+========================================================= -->
 
-          <h3>
-            Proces cvasi-static
-          </h3>
+<section
+  id="pagina-8"
+  class="lesson-page"
+  data-page="8"
+  hidden
+  aria-hidden="true"
+>
 
-          <p>
-            succesiune de stări foarte apropiate de echilibru
-          </p>
 
-        </div>
+<span class="lesson-page-label">
+7. Laborator virtual
+</span>
 
 
-        <div class="concept-card">
+<h2>
+🎮 Comprimă gazul: lent sau rapid?
+</h2>
 
-          <h3>
-            Izocor
-          </h3>
 
-          \[
-            \boxed{
-              V=\text{constant}
-            }
-          \]
+<p>
+Modifică viteza pistonului și observă
+cum se schimbă uniformitatea gazului
+în modelul vizual.
+</p>
 
-        </div>
 
+<div class="process-lab">
 
-        <div class="concept-card">
 
-          <h3>
-            Izobar
-          </h3>
+<div class="lab-controls">
 
-          \[
-            \boxed{
-              p=\text{constant}
-            }
-          \]
 
-        </div>
+<div class="lab-control">
 
+<label for="speedSlider">
+Viteza relativă a pistonului
+</label>
 
-        <div class="concept-card">
+<input
+  id="speedSlider"
+  type="range"
+  min="1"
+  max="100"
+  step="1"
+  value="15"
+>
 
-          <h3>
-            Izoterm
-          </h3>
+<strong id="speedLabel">
+15%
+</strong>
 
-          \[
-            \boxed{
-              T=\text{constant}
-            }
-          \]
+</div>
 
-        </div>
 
+<div class="lab-control">
 
-        <div class="concept-card">
+<label for="compressionSlider">
+Comprimare
+</label>
 
-          <h3>
-            Diagramă \(p-V\)
-          </h3>
+<input
+  id="compressionSlider"
+  type="range"
+  min="0"
+  max="60"
+  step="1"
+  value="30"
+>
 
-          <p>
-            stare = punct
-          </p>
+<strong id="compressionLabel">
+30%
+</strong>
 
-          <p>
-            proces cvasi-static = curbă
-          </p>
+</div>
 
-        </div>
 
-      </div>
+<div class="lab-control">
 
+<label for="frictionSelect">
+Frecare în piston
+</label>
 
-      <div class="formula-card">
+<select id="frictionSelect">
 
-        \[
-          \boxed{
-            \text{parametri}
-            \longrightarrow
-            \text{stare}
-            \longrightarrow
-            \text{proces}
-            \longrightarrow
-            \text{stare nouă}
-          }
-        \]
+<option value="0">
+neglijabilă
+</option>
 
-      </div>
+<option value="1">
+prezentă
+</option>
 
+</select>
 
-      <div class="lesson-banner">
+</div>
 
-        <h3>
-          Ideea centrală
-        </h3>
 
-        <p>
-          <strong>
-            Starea spune „cum este sistemul”.
-          </strong>
-        </p>
+</div>
 
-        <p>
-          <strong>
-            Procesul spune „cum se modifică sistemul”.
-          </strong>
-        </p>
 
-      </div>
+<div class="lab-results">
 
 
-      <div class="warning-card">
+<div class="lab-result">
 
-        <h3>
-          Trei diferențe esențiale
-        </h3>
+<span>
+Caracterul procesului
+</span>
 
-        <div class="responsive-table">
+<strong id="quasiValue">
+—
+</strong>
 
-          <table>
+</div>
 
-            <thead>
-              <tr>
-                <th>Noțiune</th>
-                <th>Semnificație</th>
-              </tr>
-            </thead>
 
-            <tbody>
+<div class="lab-result">
 
-              <tr>
-                <td>stare</td>
-                <td>valori ale parametrilor termodinamici</td>
-              </tr>
+<span>
+Uniformitate internă
+</span>
 
-              <tr>
-                <td>echilibru</td>
-                <td>
-                  absența modificărilor macroscopice spontane în
-                  condiții exterioare constante
-                </td>
-              </tr>
+<strong id="uniformityValue">
+—
+</strong>
 
-              <tr>
-                <td>proces</td>
-                <td>trecerea sistemului între două stări</td>
-              </tr>
+</div>
 
-            </tbody>
 
-          </table>
+<div class="lab-result">
 
-        </div>
+<span>
+Reversibilitate ideală
+</span>
 
-      </div>
+<strong id="reversibleValue">
+—
+</strong>
 
+</div>
 
-      <div class="lesson-actions no-print">
 
-        <button
-          type="button"
-          class="lesson-button pdf-button"
-          data-pdf-button
-        >
-          Descarcă PDF
-        </button>
+<div class="lab-result">
 
-      </div>
+<span>
+Volum relativ
+</span>
 
+<strong id="relativeVolumeValue">
+—
+</strong>
 
-      <nav
-        class="lesson-page-nav no-print"
-        aria-label="Navigare între lecții"
-      >
+</div>
 
-        <a
-          class="lesson-button secondary"
-          href="3-sistem-termodinamic-parametri-de-stare-grade-de-libertate.html"
-        >
-          ← Lecția 3
-        </a>
 
-        <span class="lesson-page-indicator">
-          Pagina 9 din 9
-        </span>
+<div class="lab-result">
 
-        <!--
-          Lecția 5:
-          completează href-ul după confirmarea numelui exact
-          al fișierului următor din repository.
-        -->
+<span>
+Presiune vizuală
+</span>
 
-      </nav>
+<strong id="pressureVisualValue">
+—
+</strong>
 
+</div>
 
-      <div class="back-to-lessons no-print">
 
-        <a
-          class="lesson-button secondary"
-          href="../index.html"
-        >
-          ← Înapoi la lecții
-        </a>
+<div class="lab-result">
 
-      </div>
+<span>
+Frecare
+</span>
 
+<strong id="frictionValue">
+—
+</strong>
 
-      <footer class="lesson-footer">
+</div>
 
-        <p>
-          <strong>
-            Prof. Dănuț Andronie
-          </strong>
-        </p>
 
-        <p>
-          <a href="mailto:danutmg@gmail.com">
-            e-Mail: danutmg@gmail.com
-          </a>
-        </p>
+</div>
 
-        <p>
-          Fizică • Clasa a X-a • Noțiuni termodinamice de bază • Lecția 4
-        </p>
 
-      </footer>
+<div class="lab-canvases">
 
-    </section>
 
-  </main>
+<div class="canvas-shell">
 
+<canvas
+  id="pistonCanvas"
+  aria-label="Cilindru cu gaz și piston mobil"
+></canvas>
 
-  <!-- =========================================================
-       PDF
-       ========================================================= -->
+</div>
 
-  <script src="../../../assets/js/pdf-helper.js"></script>
 
+<div class="canvas-shell">
 
-  <!-- =========================================================
-       NAVIGARE INTERNĂ
-       ========================================================= -->
+<canvas
+  id="processCanvas"
+  aria-label="Diagramă conceptuală a procesului"
+></canvas>
 
-  <script>
-    (function () {
-      "use strict";
+</div>
 
-      const pages =
-        Array.from(
-          document.querySelectorAll(
-            ".lesson-page"
-          )
-        );
 
-      if (!pages.length) {
-        return;
-      }
+</div>
 
 
-      const total =
-        pages.length;
+<div
+  id="labMessage"
+  class="answer-card"
+  style="margin-top:18px"
+>
 
+<span class="box-label">
+🟢 Observație
+</span>
 
-      let currentPage =
-        1;
+<p>
+Modifică viteza pistonului.
+</p>
 
+</div>
 
-      const progressText =
-        document.getElementById(
-          "lessonProgressText"
-        );
 
+</div>
 
-      const progressTrack =
-        document.getElementById(
-          "lessonProgressTrack"
-        );
 
+<h2>
+Ce trebuie să observi?
+</h2>
 
-      const progressBar =
-        document.getElementById(
-          "lessonProgressBar"
-        );
 
+<div class="cause-effect">
 
-      function getPageFromHash() {
+<span class="box-label">
+🟡 Piston lent
+</span>
 
-        const match =
-          window.location.hash.match(
-            /^#pagina-(\d+)$/
+<p>
+viteză mică
+→ redistribuire rapidă față de modificarea impusă
+→ neuniformități mici
+→ model cvasistatic.
+</p>
+
+</div>
+
+
+<div class="cause-effect">
+
+<span class="box-label">
+🟡 Piston rapid
+</span>
+
+<p>
+viteză mare
+→ gazul nu se redistribuie suficient de repede
+→ apar diferențe interne
+→ proces necvasistatic.
+</p>
+
+</div>
+
+
+<div class="warning-card">
+
+<span class="box-label">
+🟠 Test pentru reversibilitate
+</span>
+
+<p>
+Setează pistonul foarte lent,
+dar selectează
+<strong>„frecare prezentă”</strong>.
+</p>
+
+<p>
+Procesul poate rămâne aproximativ cvasistatic,
+dar nu este reversibil.
+</p>
+
+<p>
+Aceasta ilustrează:
+</p>
+
+<div class="formula-card">
+
+\[
+\boxed{
+\text{cvasistatic}
+\not\Rightarrow
+\text{reversibil}
+}
+\]
+
+</div>
+
+</div>
+
+
+<h2>
+Clasifică procesele
+</h2>
+
+
+<div class="classifier">
+
+<label for="scenarioSelect">
+
+<strong>
+Alege situația:
+</strong>
+
+</label>
+
+<select id="scenarioSelect">
+
+<option value="slow-no-friction">
+Piston foarte lent, frecare neglijabilă, model ideal
+</option>
+
+<option value="fast">
+Comprimare rapidă
+</option>
+
+<option value="slow-friction">
+Piston lent, dar cu frecare
+</option>
+
+<option value="cycle">
+Sistemul revine la starea inițială
+</option>
+
+</select>
+
+
+<div class="classifier-actions">
+
+<button
+  type="button"
+  class="classifier-button"
+  data-classify
+>
+Clasifică
+</button>
+
+</div>
+
+
+<div
+  id="scenarioFeedback"
+  class="classifier-feedback"
+  aria-live="polite"
+>
+Alege o situație și apasă „Clasifică”.
+</div>
+
+</div>
+
+
+<nav class="lesson-page-nav no-print">
+
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Diagrama de stare
+</button>
+
+<span class="lesson-page-indicator">
+Pagina 8 din 9
+</span>
+
+<button
+  type="button"
+  class="lesson-button"
+  data-next
+>
+Evaluare →
+</button>
+
+</nav>
+
+</section>
+
+
+<!-- =========================================================
+     PAGINA 9
+========================================================= -->
+
+<section
+  id="pagina-9"
+  class="lesson-page"
+  data-page="9"
+  hidden
+  aria-hidden="true"
+>
+
+
+<span class="lesson-page-label">
+8. Evaluare și sinteză
+</span>
+
+
+<h2>
+✅ Verificare rapidă
+</h2>
+
+
+<div class="quiz-list">
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="1"
+>
+
+<h3>
+1. Un proces termodinamic este:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+numai o stare de echilibru
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+trecerea sistemului dintr-o stare în alta
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+numărul moleculelor din sistem
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Procesul descrie transformarea dintre stări."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="2"
+>
+
+<h3>
+2. Într-un proces cvasistatic:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+nu există stări intermediare
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+sistemul trebuie să fie permanent nemișcat
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+stările intermediare pot fi considerate apropiate de echilibru
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Cvasistaticitatea se referă la caracterul stărilor intermediare."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="0"
+>
+
+<h3>
+3. O comprimare foarte rapidă este de regulă:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+necvasistatică
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+obligatoriu reversibilă
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+obligatoriu ciclică
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="În timpul comprimării rapide apar neuniformități interne."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="1"
+>
+
+<h3>
+4. Un proces reversibil:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+este obligatoriu rapid
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+poate fi parcurs în ambele sensuri prin aceleași stări intermediare
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+nu poate fi cvasistatic
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Aceasta este caracteristica definitorie folosită în manual."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="2"
+>
+
+<h3>
+5. Care implicație este corectă?
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+cvasistatic ⇒ reversibil întotdeauna
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+ciclic ⇒ reversibil întotdeauna
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+reversibil ⇒ cvasistatic
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Reversibilitatea este mai restrictivă decât cvasistaticitatea."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="0"
+>
+
+<h3>
+6. Un proces lent, dar cu frecare, poate fi:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+cvasistatic și ireversibil
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+obligatoriu reversibil
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+obligatoriu neciclic
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect. Frecarea produce ireversibilitate."
+  data-wrong-feedback="Viteza mică nu elimină efectele disipative."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="1"
+>
+
+<h3>
+7. Un proces este ciclic dacă:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+presiunea este constantă
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+starea finală coincide cu starea inițială
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+temperatura este zero
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Criteriul unui ciclu este revenirea la starea inițială."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="2"
+>
+
+<h3>
+8. Un proces ciclic este:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+întotdeauna reversibil
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+întotdeauna ireversibil
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+posibil reversibil sau ireversibil
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Ciclicitatea și reversibilitatea sunt criterii diferite."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="0"
+>
+
+<h3>
+9. Într-o diagramă \(p-V\), o stare de echilibru este reprezentată prin:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+un punct
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+obligatoriu un cerc
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+o moleculă desenată
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Coordonatele punctului sunt valorile parametrilor aleși."
+></div>
+
+</article>
+
+
+<article
+  class="quiz-question"
+  data-interactive-question
+  data-answer="1"
+>
+
+<h3>
+10. Un proces cvasistatic poate fi reprezentat în diagrama de stare prin:
+</h3>
+
+<div class="quiz-options">
+
+<button
+  class="quiz-option"
+  data-option="0"
+>
+un singur punct indiferent de transformare
+</button>
+
+<button
+  class="quiz-option"
+  data-option="1"
+>
+o succesiune continuă de stări, adică o curbă
+</button>
+
+<button
+  class="quiz-option"
+  data-option="2"
+>
+niciun element geometric
+</button>
+
+</div>
+
+<div
+  class="quiz-feedback"
+  data-correct-feedback="Corect."
+  data-wrong-feedback="Fiecare stare intermediară de echilibru corespunde unui punct."
+></div>
+
+</article>
+
+
+</div>
+
+
+<div
+  id="quizScore"
+  class="lesson-highlight"
+>
+Scor: 0 / 10
+</div>
+
+
+<h2>
+📌 Sinteza vizuală
+</h2>
+
+
+<div class="lesson-highlight">
+
+<span class="box-label">
+🔵 Definiții
+</span>
+
+<p>
+<strong>Proces termodinamic</strong>
+= trecerea sistemului dintr-o stare în alta.
+</p>
+
+<p>
+<strong>Cvasistatic</strong>
+= stările intermediare pot fi considerate stări de echilibru.
+</p>
+
+<p>
+<strong>Reversibil</strong>
+= proces ideal care poate fi parcurs invers prin aceleași stări intermediare.
+</p>
+
+<p>
+<strong>Ciclic</strong>
+= starea finală coincide cu starea inițială.
+</p>
+
+</div>
+
+
+<div class="answer-card">
+
+<span class="box-label">
+🟢 De reținut
+</span>
+
+<div class="formula-card">
+
+\[
+\boxed{
+\text{reversibil}
+\Rightarrow
+\text{cvasistatic}
+}
+\]
+
+</div>
+
+<div class="formula-card">
+
+\[
+\boxed{
+\text{cvasistatic}
+\not\Rightarrow
+\text{obligatoriu reversibil}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="cause-effect">
+
+<span class="box-label">
+🟡 Cauză → efect
+</span>
+
+<p>
+Proces foarte lent
+→ sistemul rămâne aproape de echilibru
+→ proces aproximativ cvasistatic.
+</p>
+
+<p>
+Proces rapid
+→ apar neuniformități macroscopice
+→ proces necvasistatic.
+</p>
+
+</div>
+
+
+<div class="warning-card">
+
+<span class="box-label">
+🟠 Nu confunda
+</span>
+
+<ul class="lesson-list">
+
+<li>
+<strong>cvasistatic</strong> cu <strong>reversibil</strong>;
+</li>
+
+<li>
+<strong>ciclic</strong> cu <strong>reversibil</strong>;
+</li>
+
+<li>
+<strong>staționar</strong> cu <strong>echilibru termodinamic</strong>;
+</li>
+
+<li>
+o <strong>stare</strong> cu un <strong>proces</strong>;
+</li>
+
+<li>
+stările inițială și finală cu întregul traseu al procesului.
+</li>
+
+</ul>
+
+</div>
+
+
+<h2>
+🧠 Schema lecției
+</h2>
+
+
+<div class="logic-flow">
+
+<div class="logic-step">
+stare inițială
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+proces termodinamic
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+stare finală
+</div>
+
+</div>
+
+
+<div class="logic-flow">
+
+<div class="logic-step">
+stări intermediare
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+cvasistatic / necvasistatic
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+reversibil / ireversibil
+</div>
+
+</div>
+
+
+<div class="logic-flow">
+
+<div class="logic-step">
+comparăm starea finală cu cea inițială
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+identice?
+</div>
+
+<div class="logic-arrow">
+→
+</div>
+
+<div class="logic-step">
+ciclic / neciclic
+</div>
+
+</div>
+
+
+<h2>
+Ce urmează?
+</h2>
+
+
+<div class="answer-card">
+
+<span class="box-label">
+🟢 Punte spre lecția 5
+</span>
+
+<p>
+Am văzut că starea unui sistem se poate modifica
+prin interacțiunea cu mediul.
+</p>
+
+<p>
+În lecția următoare vom analiza două moduri fundamentale
+prin care sistemul poate interacționa:
+</p>
+
+<ul class="lesson-list">
+
+<li>
+<strong>contactul mecanic</strong>;
+</li>
+
+<li>
+<strong>contactul termic</strong>.
+</li>
+
+</ul>
+
+</div>
+
+
+<!-- =====================================================
+     NAVIGAREA GLOBALĂ APARE NUMAI PE ULTIMA PAGINĂ
+===================================================== -->
+
+<nav
+  class="lesson-final-nav no-print"
+  aria-label="Navigare între lecții"
+>
+
+
+<a
+  href="3-sistem-termodinamic-parametri-de-stare-grade-de-libertate.html"
+>
+← Lecția 3<br>
+Sistem termodinamic. Parametri de stare
+</a>
+
+
+<a
+  href="index.html"
+>
+☰ Cuprins capitol
+</a>
+
+
+<a
+  class="next-lesson"
+  href="5-contact-mecanic-si-contact-termic.html"
+>
+Lecția 5<br>
+Contact mecanic și contact termic →
+</a>
+
+
+</nav>
+
+
+<nav class="lesson-page-nav no-print">
+
+<button
+  type="button"
+  class="lesson-button secondary"
+  data-prev
+>
+← Laborator virtual
+</button>
+
+<span class="lesson-page-indicator">
+Pagina 9 din 9
+</span>
+
+<button
+  type="button"
+  class="lesson-button"
+  data-top
+>
+↑ Începutul lecției
+</button>
+
+</nav>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+   NAVIGARE INTERNĂ
+========================================================= */
+
+const pages =
+  Array.from(
+    document.querySelectorAll(
+      ".lesson-page"
+    )
+  );
+
+
+const progressText =
+  document.getElementById(
+    "lessonProgressText"
+  );
+
+
+const progressTrack =
+  document.getElementById(
+    "lessonProgressTrack"
+  );
+
+
+const progressBar =
+  document.getElementById(
+    "lessonProgressBar"
+  );
+
+
+let currentPage = 1;
+
+
+function typesetMath(){
+
+  if(
+    window.MathJax &&
+    typeof MathJax.typesetPromise ===
+    "function"
+  ){
+
+    MathJax
+      .typesetPromise()
+      .catch(
+        error=>{
+          console.warn(
+            "MathJax:",
+            error
           );
-
-
-        if (!match) {
-          return 1;
-        }
-
-
-        const value =
-          Number(match[1]);
-
-
-        if (
-          !Number.isInteger(value) ||
-          value < 1 ||
-          value > total
-        ) {
-          return 1;
-        }
-
-
-        return value;
-
-      }
-
-
-      function refreshMathJax(page) {
-
-        if (
-          !window.MathJax ||
-          !window.MathJax.typesetPromise
-        ) {
-          return;
-        }
-
-
-        window.MathJax
-          .typesetPromise([page])
-          .catch(
-            function (error) {
-
-              console.warn(
-                "MathJax:",
-                error
-              );
-
-            }
-          );
-
-      }
-
-
-      function showPage(
-        pageNumber,
-        updateHash = true,
-        moveFocus = true
-      ) {
-
-        if (
-          pageNumber < 1 ||
-          pageNumber > total
-        ) {
-          return;
-        }
-
-
-        currentPage =
-          pageNumber;
-
-
-        pages.forEach(
-          function (page, index) {
-
-            const active =
-              index ===
-              pageNumber - 1;
-
-
-            page.hidden =
-              !active;
-
-
-            page.classList.toggle(
-              "is-active",
-              active
-            );
-
-
-            page.setAttribute(
-              "aria-hidden",
-              active
-                ? "false"
-                : "true"
-            );
-
-          }
-        );
-
-
-        const activePage =
-          pages[
-            pageNumber - 1
-          ];
-
-
-        const percentage =
-          Math.round(
-            pageNumber /
-            total *
-            100
-          );
-
-
-        if (progressText) {
-
-          progressText.textContent =
-            `Pagina ${pageNumber} din ${total}`;
-
-        }
-
-
-        if (progressTrack) {
-
-          progressTrack.setAttribute(
-            "aria-valuenow",
-            String(pageNumber)
-          );
-
-
-          progressTrack.setAttribute(
-            "aria-valuemax",
-            String(total)
-          );
-
-        }
-
-
-        if (progressBar) {
-
-          progressBar.style.width =
-            `${percentage}%`;
-
-        }
-
-
-        activePage
-          .querySelectorAll(
-            ".lesson-page-indicator"
-          )
-          .forEach(
-            function (indicator) {
-
-              indicator.textContent =
-                `Pagina ${pageNumber} din ${total}`;
-
-            }
-          );
-
-
-        if (updateHash) {
-
-          history.replaceState(
-            null,
-            "",
-            `#pagina-${pageNumber}`
-          );
-
-        }
-
-
-        refreshMathJax(
-          activePage
-        );
-
-
-        window.scrollTo({
-          top: 0,
-          behavior: "auto"
-        });
-
-
-        if (moveFocus) {
-
-          const heading =
-            activePage.querySelector(
-              "h1, h2"
-            );
-
-
-          if (heading) {
-
-            heading.setAttribute(
-              "tabindex",
-              "-1"
-            );
-
-
-            heading.focus({
-              preventScroll: true
-            });
-
-          }
-
-        }
-
-      }
-
-
-      document.addEventListener(
-        "click",
-        function (event) {
-
-          const next =
-            event.target.closest(
-              "[data-next]"
-            );
-
-
-          if (next) {
-
-            showPage(
-              currentPage + 1
-            );
-
-            return;
-
-          }
-
-
-          const previous =
-            event.target.closest(
-              "[data-prev]"
-            );
-
-
-          if (previous) {
-
-            showPage(
-              currentPage - 1
-            );
-
-          }
-
         }
       );
 
+  }
 
-      document.addEventListener(
-        "keydown",
-        function (event) {
-
-          const interactive =
-            event.target.closest(
-              "input, textarea, select, button, a"
-            );
+}
 
 
-          if (interactive) {
-            return;
-          }
+function showPage(
+  pageNumber,
+  scroll=true
+){
+
+  const target =
+    Math.max(
+      1,
+      Math.min(
+        pages.length,
+        pageNumber
+      )
+    );
 
 
-          if (
-            event.key ===
-            "ArrowRight"
-          ) {
-
-            showPage(
-              currentPage + 1
-            );
-
-          }
+  currentPage =
+    target;
 
 
-          if (
-            event.key ===
-            "ArrowLeft"
-          ) {
+  pages.forEach(
+    (
+      page,
+      index
+    )=>{
 
-            showPage(
-              currentPage - 1
-            );
+      const active =
+        index ===
+        target - 1;
 
-          }
 
-        }
+      page.hidden =
+        !active;
+
+
+      page.classList.toggle(
+        "is-active",
+        active
       );
 
 
-      window.addEventListener(
-        "hashchange",
-        function () {
-
-          showPage(
-            getPageFromHash(),
-            false,
-            false
-          );
-
-        }
+      page.setAttribute(
+        "aria-hidden",
+        active
+          ? "false"
+          : "true"
       );
 
+    }
+  );
+
+
+  progressText.textContent =
+    `Pagina ${target} din ${pages.length}`;
+
+
+  progressTrack.setAttribute(
+    "aria-valuenow",
+    String(
+      target
+    )
+  );
+
+
+  progressBar.style.width =
+    `${target/pages.length*100}%`;
+
+
+  if(
+    target ===
+    7
+  ){
+
+    requestAnimationFrame(
+      ()=>{
+        resizePVCanvas();
+        drawPVDiagram();
+      }
+    );
+
+  }
+
+
+  if(
+    target ===
+    8
+  ){
+
+    requestAnimationFrame(
+      ()=>{
+        resizeLabCanvases();
+        updateLab();
+      }
+    );
+
+  }
+
+
+  if(scroll){
+
+    window.scrollTo({
+
+      top:0,
+
+      behavior:"smooth"
+
+    });
+
+  }
+
+
+  typesetMath();
+
+}
+
+
+/* =========================================================
+   BUTOANE
+========================================================= */
+
+document.addEventListener(
+  "click",
+  event=>{
+
+    const next =
+      event.target.closest(
+        "[data-next]"
+      );
+
+
+    const prev =
+      event.target.closest(
+        "[data-prev]"
+      );
+
+
+    const top =
+      event.target.closest(
+        "[data-top]"
+      );
+
+
+    const pdf =
+      event.target.closest(
+        "[data-pdf-button]"
+      );
+
+
+    if(next){
 
       showPage(
-        getPageFromHash(),
-        true,
-        false
+        currentPage + 1
       );
 
-    })();
-  </script>
+      return;
+
+    }
 
 
-  <!-- =========================================================
-       ACTIVITĂȚI + QUIZ
-       ========================================================= -->
+    if(prev){
 
-  <script>
-    (function () {
-      "use strict";
+      showPage(
+        currentPage - 1
+      );
 
+      return;
 
-      function setResult(
-        question,
-        correct,
-        feedback
-      ) {
-
-        question.dataset.correct =
-          correct
-            ? "true"
-            : "false";
+    }
 
 
-        feedback.textContent =
-          correct
-            ? feedback.dataset.correctFeedback
-            : feedback.dataset.wrongFeedback;
+    if(top){
+
+      showPage(
+        1
+      );
+
+      return;
+
+    }
 
 
-        feedback.className =
-          correct
-            ? "quiz-feedback is-correct"
-            : "quiz-feedback is-wrong";
+    if(pdf){
 
-      }
+      window.print();
 
+    }
 
-      const interactiveQuestions =
-        Array.from(
-          document.querySelectorAll(
-            "[data-interactive-question]"
-          )
-        );
+  }
+);
 
 
-      interactiveQuestions.forEach(
-        function (question) {
+/* =========================================================
+   NAVIGARE CU TASTATURA
+========================================================= */
 
-          const expected =
-            Number(
-              question.dataset.answer
-            );
+document.addEventListener(
+  "keydown",
+  event=>{
 
-
-          const options =
-            Array.from(
-              question.querySelectorAll(
-                "[data-option]"
-              )
-            );
+    const tag =
+      document.activeElement
+        ?.tagName
+        ?.toLowerCase();
 
 
-          const feedback =
-            question.querySelector(
-              ".quiz-feedback"
-            );
+    if(
+      tag === "input" ||
+      tag === "select" ||
+      tag === "textarea"
+    ){
+      return;
+    }
 
 
-          options.forEach(
-            function (button) {
+    if(
+      event.key ===
+      "ArrowRight"
+    ){
 
-              button.addEventListener(
-                "click",
-                function () {
+      showPage(
+        currentPage + 1
+      );
 
-                  options.forEach(
-                    function (item) {
-
-                      item.classList.remove(
-                        "is-correct",
-                        "is-wrong"
-                      );
-
-                    }
-                  );
+    }
 
 
-                  const selected =
-                    Number(
-                      button.dataset.option
-                    );
+    if(
+      event.key ===
+      "ArrowLeft"
+    ){
+
+      showPage(
+        currentPage - 1
+      );
+
+    }
+
+  }
+);
 
 
-                  const correct =
-                    selected ===
-                    expected;
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const quizQuestions =
+  Array.from(
+    document.querySelectorAll(
+      "[data-interactive-question]"
+    )
+  );
 
 
-                  button.classList.add(
-                    correct
-                      ? "is-correct"
-                      : "is-wrong"
-                  );
+let finalCorrect = 0;
+let finalAnswered = 0;
 
 
-                  setResult(
-                    question,
-                    correct,
-                    feedback
-                  );
+quizQuestions.forEach(
+  question=>{
 
-                }
+    const correct =
+      Number(
+        question.dataset.answer
+      );
+
+
+    const options =
+      Array.from(
+        question.querySelectorAll(
+          ".quiz-option"
+        )
+      );
+
+
+    const feedback =
+      question.querySelector(
+        ".quiz-feedback"
+      );
+
+
+    options.forEach(
+      option=>{
+
+        option.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered ===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered =
+              "true";
+
+
+            const chosen =
+              Number(
+                option.dataset.option
               );
 
-            }
-          );
 
-        }
-      );
-
-
-      const quiz =
-        document.getElementById(
-          "lessonQuiz"
-        );
-
-
-      const scoreButton =
-        document.getElementById(
-          "quizScoreButton"
-        );
-
-
-      const resetButton =
-        document.getElementById(
-          "quizResetButton"
-        );
-
-
-      const resultBox =
-        document.getElementById(
-          "quizResult"
-        );
-
-
-      if (
-        !quiz ||
-        !scoreButton ||
-        !resetButton ||
-        !resultBox
-      ) {
-        return;
-      }
-
-
-      const quizQuestions =
-        Array.from(
-          quiz.querySelectorAll(
-            "[data-quiz-question]"
-          )
-        );
-
-
-      scoreButton.addEventListener(
-        "click",
-        function () {
-
-          const answered =
-            quizQuestions.filter(
-              function (question) {
-
-                return (
-                  question.dataset.correct ===
-                    "true" ||
-                  question.dataset.correct ===
-                    "false"
-                );
-
+            options.forEach(
+              button=>{
+                button.disabled=true;
               }
-            ).length;
-
-
-          const correct =
-            quizQuestions.filter(
-              function (question) {
-
-                return (
-                  question.dataset.correct ===
-                  "true"
-                );
-
-              }
-            ).length;
-
-
-          const total =
-            quizQuestions.length;
-
-
-          resultBox.hidden =
-            false;
-
-
-          if (
-            answered < total
-          ) {
-
-            resultBox.innerHTML =
-              `<strong>Ai răspuns la ${answered} din ${total} itemi.</strong>` +
-              "<br>Rezolvă toți itemii pentru rezultatul final.";
-
-            return;
-
-          }
-
-
-          const percentage =
-            Math.round(
-              correct /
-              total *
-              100
             );
 
 
-          let message;
+            const correctButton =
+              options.find(
+                button=>
+                  Number(
+                    button.dataset.option
+                  ) ===
+                  correct
+              );
 
 
-          if (
-            correct === total
-          ) {
+            correctButton
+              ?.classList
+              .add(
+                "correct"
+              );
 
-            message =
-              "Foarte bine. Diferențiezi corect starea, echilibrul și procesul termodinamic și poți interpreta elementar o diagramă p–V.";
 
-          } else if (
-            percentage >= 75
-          ) {
+            if(
+              chosen ===
+              correct
+            ){
 
-            message =
-              "Rezultat bun. Revizuiește noțiunea de proces cvasi-static și reprezentarea proceselor pe diagrama p–V.";
+              option.classList.add(
+                "correct"
+              );
 
-          } else if (
-            percentage >= 50
-          ) {
 
-            message =
-              "Ai înțeles ideile principale. Reia diferența dintre stare și proces și clasificarea izocor–izobar–izoterm.";
+              feedback.textContent =
+                feedback.dataset.correctFeedback ||
+                "Corect.";
 
-          } else {
 
-            message =
-              "Reia lecția pornind de la parametrii de stare, apoi urmărește trecerea stare → proces → stare nouă.";
+              feedback.style.color =
+                "#15803d";
+
+            }
+
+            else{
+
+              option.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent =
+                feedback.dataset.wrongFeedback ||
+                "Răspuns incorect.";
+
+
+              feedback.style.color =
+                "#b91c1c";
+
+            }
+
+
+            /*
+             * Scorăm numai cele 10 întrebări
+             * de pe ultima pagină.
+             */
+
+            if(
+              question.closest(
+                "#pagina-9"
+              )
+            ){
+
+              finalAnswered++;
+
+
+              if(
+                chosen ===
+                correct
+              ){
+
+                finalCorrect++;
+
+              }
+
+
+              updateFinalScore();
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+function updateFinalScore(){
+
+  const score =
+    document.getElementById(
+      "quizScore"
+    );
+
+
+  score.textContent =
+    `Scor: ${finalCorrect} / 10`;
+
+
+  if(
+    finalAnswered !==
+    10
+  ){
+    return;
+  }
+
+
+  if(
+    finalCorrect ===
+    10
+  ){
+
+    score.textContent =
+      "Scor: 10 / 10 — Excelent! Clasificarea proceselor este bine stăpânită.";
+
+  }
+
+  else if(
+    finalCorrect >=
+    8
+  ){
+
+    score.textContent =
+      `Scor: ${finalCorrect} / 10 — Foarte bine. Revizuiește numai itemii greșiți.`;
+
+  }
+
+  else if(
+    finalCorrect >=
+    6
+  ){
+
+    score.textContent =
+      `Scor: ${finalCorrect} / 10 — Bine. Revizuiește în special diferența dintre cvasistatic, reversibil și ciclic.`;
+
+  }
+
+  else{
+
+    score.textContent =
+      `Scor: ${finalCorrect} / 10 — Reia sinteza colorată și laboratorul virtual.`;
+
+  }
+
+}
+
+
+/* =========================================================
+   DIAGRAMĂ p-V
+========================================================= */
+
+const pvCanvas =
+  document.getElementById(
+    "pvCanvas"
+  );
+
+
+const pvCtx =
+  pvCanvas.getContext(
+    "2d"
+  );
+
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const dpr =
+    window.devicePixelRatio ||
+    1;
+
+
+  canvas.width =
+    Math.max(
+      1,
+      Math.round(
+        rect.width *
+        dpr
+      )
+    );
+
+
+  canvas.height =
+    Math.max(
+      1,
+      Math.round(
+        rect.height *
+        dpr
+      )
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+function resizePVCanvas(){
+
+  resizeCanvas(
+    pvCanvas,
+    pvCtx
+  );
+
+}
+
+
+function drawPVDiagram(){
+
+  const rect =
+    pvCanvas.getBoundingClientRect();
+
+
+  const W =
+    rect.width;
+
+
+  const H =
+    rect.height;
+
+
+  if(
+    W <
+    20 ||
+    H <
+    20
+  ){
+    return;
+  }
+
+
+  pvCtx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  pvCtx.fillStyle =
+    "#f8fafc";
+
+
+  pvCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const left=70;
+  const right=W-35;
+  const top=50;
+  const bottom=H-65;
+
+
+  pvCtx.strokeStyle =
+    "#334155";
+
+
+  pvCtx.lineWidth=2.5;
+
+
+  pvCtx.beginPath();
+
+  pvCtx.moveTo(
+    left,
+    top
+  );
+
+  pvCtx.lineTo(
+    left,
+    bottom
+  );
+
+  pvCtx.lineTo(
+    right,
+    bottom
+  );
+
+  pvCtx.stroke();
+
+
+  /*
+   * Axe
+   */
+
+  pvCtx.fillStyle =
+    "#0f172a";
+
+
+  pvCtx.font =
+    "bold 15px system-ui";
+
+
+  pvCtx.fillText(
+    "p",
+    left-28,
+    top+8
+  );
+
+
+  pvCtx.fillText(
+    "V",
+    right-5,
+    bottom+35
+  );
+
+
+  /*
+   * Curba A -> B
+   */
+
+  const Ax =
+    left+
+    70;
+
+
+  const Ay =
+    top+
+    75;
+
+
+  const Bx =
+    right-
+    70;
+
+
+  const By =
+    bottom-
+    65;
+
+
+  pvCtx.strokeStyle =
+    "#0284c7";
+
+
+  pvCtx.lineWidth=4;
+
+
+  pvCtx.beginPath();
+
+  pvCtx.moveTo(
+    Ax,
+    Ay
+  );
+
+
+  pvCtx.bezierCurveTo(
+    W*.42,
+    top+80,
+    W*.60,
+    bottom-150,
+    Bx,
+    By
+  );
+
+
+  pvCtx.stroke();
+
+
+  /*
+   * Săgeată direcție
+   */
+
+  const arrowX =
+    W*.56;
+
+
+  const arrowY =
+    H*.49;
+
+
+  pvCtx.fillStyle =
+    "#0284c7";
+
+
+  pvCtx.beginPath();
+
+  pvCtx.moveTo(
+    arrowX+16,
+    arrowY
+  );
+
+  pvCtx.lineTo(
+    arrowX-6,
+    arrowY-10
+  );
+
+  pvCtx.lineTo(
+    arrowX-4,
+    arrowY+12
+  );
+
+  pvCtx.closePath();
+
+  pvCtx.fill();
+
+
+  /*
+   * Puncte
+   */
+
+  function drawPoint(
+    x,
+    y,
+    label,
+    color
+  ){
+
+    pvCtx.beginPath();
+
+    pvCtx.arc(
+      x,
+      y,
+      8,
+      0,
+      Math.PI*2
+    );
+
+
+    pvCtx.fillStyle =
+      color;
+
+
+    pvCtx.fill();
+
+
+    pvCtx.fillStyle =
+      "#0f172a";
+
+
+    pvCtx.font =
+      "bold 15px system-ui";
+
+
+    pvCtx.fillText(
+      label,
+      x+13,
+      y-11
+    );
+
+  }
+
+
+  drawPoint(
+    Ax,
+    Ay,
+    "A",
+    "#16a34a"
+  );
+
+
+  drawPoint(
+    Bx,
+    By,
+    "B",
+    "#dc2626"
+  );
+
+
+  pvCtx.fillStyle =
+    "#475569";
+
+
+  pvCtx.font =
+    "13px system-ui";
+
+
+  pvCtx.textAlign =
+    "center";
+
+
+  pvCtx.fillText(
+    "proces cvasistatic: succesiune continuă de stări de echilibru",
+    W/2,
+    H-20
+  );
+
+
+  pvCtx.textAlign =
+    "left";
+
+}
+
+
+/* =========================================================
+   LABORATOR CU PISTON
+========================================================= */
+
+const speedSlider =
+  document.getElementById(
+    "speedSlider"
+  );
+
+
+const compressionSlider =
+  document.getElementById(
+    "compressionSlider"
+  );
+
+
+const frictionSelect =
+  document.getElementById(
+    "frictionSelect"
+  );
+
+
+const speedLabel =
+  document.getElementById(
+    "speedLabel"
+  );
+
+
+const compressionLabel =
+  document.getElementById(
+    "compressionLabel"
+  );
+
+
+const quasiValue =
+  document.getElementById(
+    "quasiValue"
+  );
+
+
+const uniformityValue =
+  document.getElementById(
+    "uniformityValue"
+  );
+
+
+const reversibleValue =
+  document.getElementById(
+    "reversibleValue"
+  );
+
+
+const relativeVolumeValue =
+  document.getElementById(
+    "relativeVolumeValue"
+  );
+
+
+const pressureVisualValue =
+  document.getElementById(
+    "pressureVisualValue"
+  );
+
+
+const frictionValue =
+  document.getElementById(
+    "frictionValue"
+  );
+
+
+const labMessage =
+  document.getElementById(
+    "labMessage"
+  );
+
+
+const pistonCanvas =
+  document.getElementById(
+    "pistonCanvas"
+  );
+
+
+const pistonCtx =
+  pistonCanvas.getContext(
+    "2d"
+  );
+
+
+const processCanvas =
+  document.getElementById(
+    "processCanvas"
+  );
+
+
+const processCtx =
+  processCanvas.getContext(
+    "2d"
+  );
+
+
+function resizeLabCanvases(){
+
+  resizeCanvas(
+    pistonCanvas,
+    pistonCtx
+  );
+
+
+  resizeCanvas(
+    processCanvas,
+    processCtx
+  );
+
+}
+
+
+/* =========================================================
+   MODEL DIDACTIC
+========================================================= */
+
+function readLab(){
+
+  const speed =
+    Number(
+      speedSlider.value
+    );
+
+
+  const compression =
+    Number(
+      compressionSlider.value
+    );
+
+
+  const friction =
+    frictionSelect.value ===
+    "1";
+
+
+  const relativeVolume =
+    1-
+    compression/
+    100;
+
+
+  /*
+   * Model vizual simplificat:
+   * pentru a ilustra numai tendința.
+   */
+
+  const visualPressure =
+    1/
+    relativeVolume;
+
+
+  const quasi =
+    speed <=
+    30;
+
+
+  const uniformity =
+    Math.max(
+      0,
+      100-
+      speed*
+      .85
+    );
+
+
+  const reversible =
+    quasi &&
+    !friction;
+
+
+  return{
+
+    speed,
+    compression,
+    friction,
+    relativeVolume,
+    visualPressure,
+    quasi,
+    uniformity,
+    reversible
+
+  };
+
+}
+
+
+/* =========================================================
+   ACTUALIZARE LAB
+========================================================= */
+
+function updateLab(){
+
+  const m =
+    readLab();
+
+
+  speedLabel.textContent =
+    `${m.speed}%`;
+
+
+  compressionLabel.textContent =
+    `${m.compression}%`;
+
+
+  quasiValue.textContent =
+    m.quasi
+      ? "aprox. cvasistatic"
+      : "necvasistatic";
+
+
+  uniformityValue.textContent =
+    `${Math.round(
+      m.uniformity
+    )}%`;
+
+
+  reversibleValue.textContent =
+    m.reversible
+      ? "posibil în modelul ideal"
+      : "nu";
+
+
+  relativeVolumeValue.textContent =
+    `${Math.round(
+      m.relativeVolume*
+      100
+    )}% din V₀`;
+
+
+  pressureVisualValue.textContent =
+    `${m.visualPressure.toFixed(2).replace(".",",")} p₀`;
+
+
+  frictionValue.textContent =
+    m.friction
+      ? "prezentă"
+      : "neglijabilă";
+
+
+  if(
+    m.quasi &&
+    !m.friction
+  ){
+
+    labMessage.innerHTML =
+      `
+      <span class="box-label">
+      🟢 Observație
+      </span>
+
+      <p>
+      Pistonul se deplasează suficient de lent în model,
+      iar frecarea este neglijată.
+      Procesul poate fi tratat ca
+      <strong>aproximativ cvasistatic</strong>
+      și poate aproxima un proces reversibil ideal.
+      </p>
+      `;
+
+  }
+
+  else if(
+    m.quasi &&
+    m.friction
+  ){
+
+    labMessage.innerHTML =
+      `
+      <span class="box-label">
+      🟠 Observație importantă
+      </span>
+
+      <p>
+      Mișcarea este lentă,
+      deci procesul poate fi aproximativ cvasistatic,
+      dar frecarea introduce disipare.
+      Prin urmare procesul este
+      <strong>ireversibil</strong>.
+      </p>
+      `;
+
+  }
+
+  else{
+
+    labMessage.innerHTML =
+      `
+      <span class="box-label">
+      🟠 Observație
+      </span>
+
+      <p>
+      Pistonul se deplasează rapid.
+      Modelul indică neuniformități interne importante,
+      deci procesul este
+      <strong>necvasistatic</strong>
+      și nu poate fi reversibil.
+      </p>
+      `;
+
+  }
+
+
+  drawPiston(
+    m
+  );
+
+
+  drawProcessGraph(
+    m
+  );
+
+
+  typesetMath();
+
+}
+
+
+/* =========================================================
+   DESEN PISTON
+========================================================= */
+
+function drawPiston(
+  m
+){
+
+  const rect =
+    pistonCanvas.getBoundingClientRect();
+
+
+  const W =
+    rect.width;
+
+
+  const H =
+    rect.height;
+
+
+  if(
+    W <
+    20 ||
+    H <
+    20
+  ){
+    return;
+  }
+
+
+  const gradient =
+    pistonCtx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#0c4a6e"
+  );
+
+
+  pistonCtx.fillStyle =
+    gradient;
+
+
+  pistonCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  pistonCtx.fillStyle =
+    "#e0f2fe";
+
+
+  pistonCtx.font =
+    "bold 15px system-ui";
+
+
+  pistonCtx.fillText(
+    "Cilindru cu piston",
+    20,
+    30
+  );
+
+
+  const chamberLeft=40;
+  const chamberTop=80;
+  const chamberBottom=H-75;
+
+
+  const maxRight =
+    W-
+    50;
+
+
+  const minPistonX =
+    chamberLeft+
+    90;
+
+
+  const maxPistonX =
+    maxRight-
+    20;
+
+
+  const pistonX =
+    maxPistonX-
+    m.compression/
+    100*
+    (
+      maxPistonX-
+      minPistonX
+    );
+
+
+  /*
+   * Gaz
+   */
+
+  pistonCtx.fillStyle =
+    "rgba(14,165,233,.18)";
+
+
+  pistonCtx.fillRect(
+    chamberLeft,
+    chamberTop,
+    pistonX-
+    chamberLeft,
+    chamberBottom-
+    chamberTop
+  );
+
+
+  /*
+   * Cilindru
+   */
+
+  pistonCtx.strokeStyle =
+    "#bae6fd";
+
+
+  pistonCtx.lineWidth=4;
+
+
+  pistonCtx.beginPath();
+
+  pistonCtx.moveTo(
+    chamberLeft,
+    chamberTop
+  );
+
+  pistonCtx.lineTo(
+    maxRight,
+    chamberTop
+  );
+
+  pistonCtx.moveTo(
+    chamberLeft,
+    chamberBottom
+  );
+
+  pistonCtx.lineTo(
+    maxRight,
+    chamberBottom
+  );
+
+  pistonCtx.moveTo(
+    chamberLeft,
+    chamberTop
+  );
+
+  pistonCtx.lineTo(
+    chamberLeft,
+    chamberBottom
+  );
+
+  pistonCtx.stroke();
+
+
+  /*
+   * Piston
+   */
+
+  pistonCtx.fillStyle =
+    "#f8fafc";
+
+
+  pistonCtx.fillRect(
+    pistonX,
+    chamberTop+
+    3,
+    16,
+    chamberBottom-
+    chamberTop-
+    6
+  );
+
+
+  pistonCtx.fillRect(
+    pistonX+
+    16,
+    (
+      chamberTop+
+      chamberBottom
+    )/
+    2-
+    6,
+    maxRight-
+    pistonX-
+    16,
+    12
+  );
+
+
+  /*
+   * Molecule
+   */
+
+  const particleCount=44;
+
+
+  for(
+    let i=0;
+    i<particleCount;
+    i++
+  ){
+
+    /*
+     * La viteză mare,
+     * moleculele sunt aglomerate vizual lângă piston.
+     */
+
+    const base =
+      (
+        i*
+        37
+      )%
+      997/
+      997;
+
+
+    const distortion =
+      m.speed/
+      100;
+
+
+    const biased =
+      m.quasi
+        ? base
+        :
+          Math.pow(
+            base,
+            0.55+
+            distortion*
+            .25
+          );
+
+
+    const x =
+      chamberLeft+
+      15+
+      biased*
+      Math.max(
+        20,
+        pistonX-
+        chamberLeft-
+        35
+      );
+
+
+    const y =
+      chamberTop+
+      15+
+      (
+        (
+          i*
+          61
+        )%
+        991/
+        991
+      )*
+      (
+        chamberBottom-
+        chamberTop-
+        30
+      );
+
+
+    pistonCtx.beginPath();
+
+
+    pistonCtx.arc(
+      x,
+      y,
+      4.5,
+      0,
+      Math.PI*2
+    );
+
+
+    pistonCtx.fillStyle =
+      i%
+      3===
+      0
+        ? "#fbbf24"
+        : "#38bdf8";
+
+
+    pistonCtx.fill();
+
+  }
+
+
+  /*
+   * Săgeată piston
+   */
+
+  pistonCtx.strokeStyle =
+    m.speed>
+    30
+      ? "#fb923c"
+      : "#4ade80";
+
+
+  pistonCtx.fillStyle =
+    m.speed>
+    30
+      ? "#fb923c"
+      : "#4ade80";
+
+
+  pistonCtx.lineWidth =
+    3+
+    m.speed/
+    30;
+
+
+  const arrowY =
+    chamberTop-
+    28;
+
+
+  pistonCtx.beginPath();
+
+  pistonCtx.moveTo(
+    pistonX+
+    65,
+    arrowY
+  );
+
+  pistonCtx.lineTo(
+    pistonX+
+    12,
+    arrowY
+  );
+
+  pistonCtx.stroke();
+
+
+  pistonCtx.beginPath();
+
+  pistonCtx.moveTo(
+    pistonX+
+    12,
+    arrowY
+  );
+
+  pistonCtx.lineTo(
+    pistonX+
+    28,
+    arrowY-
+    9
+  );
+
+  pistonCtx.lineTo(
+    pistonX+
+    28,
+    arrowY+
+    9
+  );
+
+  pistonCtx.closePath();
+
+  pistonCtx.fill();
+
+
+  /*
+   * Text
+   */
+
+  pistonCtx.fillStyle =
+    "#cbd5e1";
+
+
+  pistonCtx.font =
+    "12px system-ui";
+
+
+  pistonCtx.fillText(
+    m.quasi
+      ? "deplasare lentă → distribuție aproape uniformă"
+      : "deplasare rapidă → neuniformități temporare",
+    20,
+    H-
+    34
+  );
+
+}
+
+
+/* =========================================================
+   GRAFIC CONCEPTUAL
+========================================================= */
+
+function drawProcessGraph(
+  m
+){
+
+  const rect =
+    processCanvas.getBoundingClientRect();
+
+
+  const W =
+    rect.width;
+
+
+  const H =
+    rect.height;
+
+
+  if(
+    W <
+    20 ||
+    H <
+    20
+  ){
+    return;
+  }
+
+
+  processCtx.fillStyle =
+    "#f8fafc";
+
+
+  processCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  const left=65;
+  const right=W-35;
+  const top=60;
+  const bottom=H-65;
+
+
+  processCtx.strokeStyle =
+    "#334155";
+
+
+  processCtx.lineWidth=2.5;
+
+
+  processCtx.beginPath();
+
+  processCtx.moveTo(
+    left,
+    top
+  );
+
+  processCtx.lineTo(
+    left,
+    bottom
+  );
+
+  processCtx.lineTo(
+    right,
+    bottom
+  );
+
+  processCtx.stroke();
+
+
+  processCtx.fillStyle =
+    "#0f172a";
+
+
+  processCtx.font =
+    "bold 14px system-ui";
+
+
+  processCtx.fillText(
+    "p",
+    left-28,
+    top+5
+  );
+
+
+  processCtx.fillText(
+    "V",
+    right-5,
+    bottom+28
+  );
+
+
+  const volume =
+    m.relativeVolume;
+
+
+  const endX =
+    left+
+    volume*
+    (
+      right-
+      left-
+      55
+    );
+
+
+  const endY =
+    bottom-
+    Math.min(
+      .8,
+      (
+        m.visualPressure-
+        1
+      )/
+      2
+    )*
+    (
+      bottom-
+      top-
+      40
+    );
+
+
+  const startX =
+    right-
+    50;
+
+
+  const startY =
+    bottom-
+    45;
+
+
+  if(
+    m.quasi
+  ){
+
+    processCtx.strokeStyle =
+      m.friction
+        ? "#f59e0b"
+        : "#16a34a";
+
+
+    processCtx.lineWidth=4;
+
+
+    processCtx.beginPath();
+
+    processCtx.moveTo(
+      startX,
+      startY
+    );
+
+
+    processCtx.bezierCurveTo(
+      W*.68,
+      H*.62,
+      W*.45,
+      H*.35,
+      endX,
+      endY
+    );
+
+
+    processCtx.stroke();
+
+  }
+
+  else{
+
+    /*
+     * Necvasistatic:
+     * nu desenăm o curbă de echilibru completă.
+     */
+
+    processCtx.strokeStyle =
+      "#ef4444";
+
+
+    processCtx.lineWidth=3;
+
+
+    processCtx.setLineDash([
+      8,
+      7
+    ]);
+
+
+    processCtx.beginPath();
+
+    processCtx.moveTo(
+      startX,
+      startY
+    );
+
+    processCtx.lineTo(
+      endX,
+      endY
+    );
+
+    processCtx.stroke();
+
+
+    processCtx.setLineDash([]);
+
+  }
+
+
+  function point(
+    x,
+    y,
+    label,
+    color
+  ){
+
+    processCtx.beginPath();
+
+    processCtx.arc(
+      x,
+      y,
+      7,
+      0,
+      Math.PI*2
+    );
+
+
+    processCtx.fillStyle =
+      color;
+
+
+    processCtx.fill();
+
+
+    processCtx.fillStyle =
+      "#0f172a";
+
+
+    processCtx.font =
+      "bold 13px system-ui";
+
+
+    processCtx.fillText(
+      label,
+      x+11,
+      y-9
+    );
+
+  }
+
+
+  point(
+    startX,
+    startY,
+    "A",
+    "#0284c7"
+  );
+
+
+  point(
+    endX,
+    endY,
+    "B",
+    "#dc2626"
+  );
+
+
+  processCtx.fillStyle =
+    "#475569";
+
+
+  processCtx.font =
+    "12px system-ui";
+
+
+  processCtx.textAlign =
+    "center";
+
+
+  processCtx.fillText(
+    m.quasi
+      ? "curbă de stări aproape de echilibru"
+      : "linia punctată nu reprezintă stări intermediare de echilibru",
+    W/2,
+    H-
+    22
+  );
+
+
+  processCtx.textAlign =
+    "left";
+
+}
+
+
+/* =========================================================
+   EVENIMENTE LAB
+========================================================= */
+
+[
+  speedSlider,
+  compressionSlider,
+  frictionSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateLab
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateLab
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CLASIFICATOR
+========================================================= */
+
+const scenarioSelect =
+  document.getElementById(
+    "scenarioSelect"
+  );
+
+
+const scenarioFeedback =
+  document.getElementById(
+    "scenarioFeedback"
+  );
+
+
+document
+  .querySelector(
+    "[data-classify]"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      const scenario =
+        scenarioSelect.value;
+
+
+      let text="";
+      let bg="#dcfce7";
+      let color="#14532d";
+      let border="#4ade80";
+
+
+      if(
+        scenario ===
+        "slow-no-friction"
+      ){
+
+        text =
+          "Proces aproximativ cvasistatic; în modelul ideal fără disipare poate aproxima un proces reversibil.";
+
+      }
+
+
+      if(
+        scenario ===
+        "fast"
+      ){
+
+        text =
+          "Proces necvasistatic și ireversibil: apar stări intermediare de neechilibru.";
+
+        bg="#ffedd5";
+        color="#7c2d12";
+        border="#fb923c";
+
+      }
+
+
+      if(
+        scenario ===
+        "slow-friction"
+      ){
+
+        text =
+          "Procesul poate fi aproximativ cvasistatic, dar este ireversibil deoarece frecarea produce disipare.";
+
+        bg="#fef3c7";
+        color="#78350f";
+        border="#fbbf24";
+
+      }
+
+
+      if(
+        scenario ===
+        "cycle"
+      ){
+
+        text =
+          "Proces ciclic: starea finală coincide cu cea inițială. Din această informație nu putem decide singuri dacă este reversibil sau ireversibil.";
+
+      }
+
+
+      scenarioFeedback.textContent =
+        text;
+
+
+      scenarioFeedback.style.background =
+        bg;
+
+
+      scenarioFeedback.style.color =
+        color;
+
+
+      scenarioFeedback.style.border =
+        `1px solid ${border}`;
+
+    }
+  );
+
+
+/* =========================================================
+   REDIMENSIONARE
+========================================================= */
+
+let resizeTimer;
+
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    clearTimeout(
+      resizeTimer
+    );
+
+
+    resizeTimer =
+      setTimeout(
+        ()=>{
+
+          if(
+            currentPage ===
+            7
+          ){
+
+            resizePVCanvas();
+            drawPVDiagram();
 
           }
 
 
-          resultBox.innerHTML =
-            `<strong>${correct}/${total} răspunsuri corecte – ${percentage}%</strong>` +
-            `<br>${message}`;
+          if(
+            currentPage ===
+            8
+          ){
 
-        }
+            resizeLabCanvases();
+            updateLab();
+
+          }
+
+        },
+        100
       );
 
-
-      resetButton.addEventListener(
-        "click",
-        function () {
-
-          quizQuestions.forEach(
-            function (question) {
-
-              delete question.dataset.correct;
+  }
+);
 
 
-              question
-                .querySelectorAll(
-                  ".quiz-option"
-                )
-                .forEach(
-                  function (button) {
+/* =========================================================
+   INITIALIZARE
+========================================================= */
 
-                    button.classList.remove(
-                      "is-correct",
-                      "is-wrong"
-                    );
+window.addEventListener(
+  "load",
+  ()=>{
 
-                  }
-                );
+    showPage(
+      1,
+      false
+    );
 
 
-              const feedback =
-                question.querySelector(
-                  ".quiz-feedback"
-                );
+    /*
+     * Le dimensionăm o dată.
+     * Când paginile devin vizibile,
+     * showPage le redimensionează din nou.
+     */
 
+    resizePVCanvas();
 
-              if (feedback) {
+    resizeLabCanvases();
 
-                feedback.textContent =
-                  "";
+    updateLab();
 
-                feedback.className =
-                  "quiz-feedback";
+  }
+);
 
-              }
-
-            }
-          );
-
-
-          resultBox.hidden =
-            true;
-
-          resultBox.textContent =
-            "";
-
-        }
-      );
-
-    })();
-  </script>
+</script>
 
 </body>
+
 </html>
