@@ -1,1 +1,6947 @@
+<!DOCTYPE html>
+<html lang="ro">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>
+3. Transformatorul. Construcție și principiu de funcționare. Raport de transformare | Fizică – Clasa a X-a
+</title>
+
+<meta
+  name="description"
+  content="Transformatorul electric: construcție, înfășurare primară și secundară, miez magnetic, inducție electromagnetică, raport de transformare, transformator ridicător și coborâtor de tensiune, relația curenților, randament, exemple și simulator interactiv – Fizică, clasa a X-a.">
+
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
+  },
+  options: {
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
+  }
+};
+</script>
+
+<script
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+
+:root{
+
+  --bg:#f1f5f9;
+  --surface:#ffffff;
+  --soft:#f8fafc;
+
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbe3ee;
+
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+
+  --cyan:#0891b2;
+  --cyan-soft:#ecfeff;
+
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+
+  --orange:#ea580c;
+  --orange-soft:#fff7ed;
+
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fefce8;
+
+  --shadow:
+    0 10px 30px
+    rgba(15,23,42,.08);
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  color:var(--text);
+  background:var(--bg);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  line-height:1.65;
+
+}
+
+a{
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  position:relative;
+  overflow:hidden;
+
+  padding:42px 18px 54px;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 84% 15%,
+      rgba(250,204,21,.24),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(34,211,238,.27),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 52% 120%,
+      rgba(168,85,247,.22),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #172554,
+      #312e81 47%,
+      #0e7490
+    );
+
+}
+
+.topbar::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-8%;
+  right:-8%;
+  bottom:-55px;
+
+  height:105px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border-radius:50%;
+
+}
+
+.topbar-inner{
+
+  position:relative;
+  z-index:2;
+
+  width:min(100%,1050px);
+
+  margin:auto;
+
+}
+
+.breadcrumb{
+
+  margin-bottom:16px;
+
+  font-size:.9rem;
+
+  opacity:.9;
+
+}
+
+.breadcrumb a{
+
+  color:white;
+  text-decoration:none;
+
+}
+
+.lesson-number,
+.class-badge,
+.chapter-badge{
+
+  display:inline-block;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:.82rem;
+  font-weight:850;
+
+}
+
+.lesson-number{
+
+  margin-bottom:12px;
+
+  background:
+    rgba(255,255,255,.14);
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+}
+
+.class-badge{
+
+  margin-left:8px;
+
+  color:#fef08a;
+
+  background:
+    rgba(250,204,21,.13);
+
+  border:
+    1px solid rgba(253,224,71,.32);
+
+}
+
+.chapter-badge{
+
+  margin-left:8px;
+
+  color:#cffafe;
+
+  background:
+    rgba(6,182,212,.16);
+
+  border:
+    1px solid rgba(103,232,249,.30);
+
+}
+
+h1{
+
+  margin:0;
+
+  font-size:
+    clamp(1.9rem,5vw,3rem);
+
+  line-height:1.08;
+
+}
+
+.subtitle{
+
+  max-width:950px;
+
+  margin:18px 0 0;
+
+  color:#e0f2fe;
+
+  font-size:
+    clamp(1rem,2.4vw,1.22rem);
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+main{
+
+  width:
+    min(
+      calc(100% - 28px),
+      1050px
+    );
+
+  margin:30px auto 60px;
+
+}
+
+.card{
+
+  margin-bottom:24px;
+
+  padding:
+    clamp(20px,4vw,34px);
+
+  background:var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.card h2{
+
+  margin-top:0;
+
+  font-size:
+    clamp(1.45rem,3vw,2rem);
+
+  line-height:1.2;
+
+}
+
+.card h3{
+
+  margin-top:24px;
+
+  line-height:1.25;
+
+}
+
+.grid-2{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+
+}
+
+.grid-3{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:16px;
+
+}
+
+.mini-card{
+
+  padding:18px;
+
+  background:var(--soft);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:14px;
+
+}
+
+.mini-card h3,
+.mini-card h4{
+  margin-top:0;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.blue-box,
+.cyan-box,
+.green-box,
+.orange-box,
+.red-box,
+.purple-box,
+.yellow-box{
+
+  margin:18px 0;
+
+  padding:16px 18px;
+
+  border-left:5px solid;
+
+  border-radius:12px;
+
+}
+
+.blue-box{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+}
+
+.cyan-box{
+  border-color:var(--cyan);
+  background:var(--cyan-soft);
+}
+
+.green-box{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+
+.orange-box{
+  border-color:var(--orange);
+  background:var(--orange-soft);
+}
+
+.red-box{
+  border-color:var(--red);
+  background:var(--red-soft);
+}
+
+.purple-box{
+  border-color:var(--purple);
+  background:var(--purple-soft);
+}
+
+.yellow-box{
+  border-color:var(--yellow);
+  background:var(--yellow-soft);
+}
+
+
+/* =========================================================
+   FORMULAS
+========================================================= */
+
+.formula{
+
+  margin:18px 0;
+
+  padding:15px;
+
+  overflow-x:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  font-size:1.08rem;
+
+}
+
+.big-formula{
+
+  background:var(--cyan-soft);
+
+  border-color:#a5f3fc;
+
+  font-size:
+    clamp(1.1rem,3vw,1.42rem);
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+
+  width:100%;
+
+  margin:20px 0;
+
+  border-collapse:collapse;
+
+  background:white;
+
+}
+
+th,
+td{
+
+  padding:11px 12px;
+
+  border:
+    1px solid #cbd5e1;
+
+  text-align:left;
+  vertical-align:top;
+
+}
+
+th{
+  background:#ecfeff;
+}
+
+.center-table th,
+.center-table td{
+  text-align:center;
+}
+
+
+/* =========================================================
+   FLOW
+========================================================= */
+
+.flow{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr auto 1fr;
+
+  gap:12px;
+
+  align-items:center;
+
+  margin:22px 0;
+
+}
+
+.flow-card{
+
+  padding:18px;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:13px;
+
+}
+
+.flow-arrow{
+
+  color:#0891b2;
+
+  font-size:1.8rem;
+
+  font-weight:950;
+
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps{
+
+  padding-left:0;
+
+  list-style:none;
+
+  counter-reset:step;
+
+}
+
+.steps li{
+
+  position:relative;
+
+  padding:
+    0 0 20px 52px;
+
+}
+
+.steps li::before{
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  display:grid;
+  place-items:center;
+
+  width:34px;
+  height:34px;
+
+  content:
+    counter(step);
+
+  counter-increment:step;
+
+  color:white;
+  background:var(--cyan);
+
+  border-radius:50%;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   PROBLEMS
+========================================================= */
+
+.problem{
+
+  margin:18px 0;
+
+  padding:18px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+.problem h3{
+  margin-top:0;
+}
+
+.problem-level{
+
+  display:inline-block;
+
+  margin-bottom:8px;
+
+  padding:4px 9px;
+
+  color:#155e75;
+  background:#cffafe;
+
+  border-radius:999px;
+
+  font-size:.8rem;
+  font-weight:900;
+
+}
+
+details{
+
+  margin-top:12px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+summary{
+
+  padding:11px 14px;
+
+  color:#0e7490;
+
+  cursor:pointer;
+
+  font-weight:850;
+
+}
+
+.solution{
+
+  padding:
+    0 16px 16px;
+
+}
+
+
+/* =========================================================
+   SIMULATOR
+========================================================= */
+
+.simulator{
+
+  background:
+    linear-gradient(
+      180deg,
+      #ecfeff,
+      #f5f3ff
+    );
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.control{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.control label{
+
+  font-size:.9rem;
+
+  font-weight:800;
+
+}
+
+.control input,
+.control select{
+
+  width:100%;
+
+  padding:10px 11px;
+
+  color:var(--text);
+  background:white;
+
+  border:
+    1px solid #b9c7da;
+
+  border-radius:9px;
+
+  font:inherit;
+
+}
+
+.control input[type="range"]{
+  padding:5px 0;
+}
+
+.range-value{
+
+  color:#0e7490;
+
+  font-size:.85rem;
+  font-weight:850;
+
+}
+
+.button-row{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin:18px 0;
+
+}
+
+button{
+
+  padding:11px 17px;
+
+  border:0;
+
+  border-radius:10px;
+
+  font:inherit;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+
+}
+
+button:hover{
+
+  transform:translateY(-1px);
+
+  filter:brightness(.97);
+
+}
+
+.primary{
+  color:white;
+  background:#2563eb;
+}
+
+.secondary{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+
+.green-button{
+  color:#166534;
+  background:#dcfce7;
+}
+
+.orange-button{
+  color:#9a3412;
+  background:#ffedd5;
+}
+
+.cyan-button{
+  color:#155e75;
+  background:#cffafe;
+}
+
+.purple-button{
+  color:#6d28d9;
+  background:#ede9fe;
+}
+
+.sim-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:15px;
+
+  margin-top:18px;
+
+}
+
+.canvas-wrap{
+
+  overflow:hidden;
+
+  background:#020617;
+
+  border:
+    1px solid #1e3a8a;
+
+  border-radius:15px;
+
+}
+
+#transformerCanvas,
+#graphCanvas{
+
+  display:block;
+
+  width:100%;
+  height:600px;
+
+}
+
+.results{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-top:16px;
+
+}
+
+.result-box{
+
+  padding:12px;
+
+  background:white;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+.result-box span{
+
+  display:block;
+
+  color:#64748b;
+
+  font-size:.8rem;
+
+}
+
+.result-box strong{
+  font-size:1.04rem;
+}
+
+.status-box{
+
+  margin-top:16px;
+
+  padding:16px;
+
+  color:#155e75;
+  background:#ecfeff;
+
+  border:
+    2px solid #67e8f9;
+
+  border-radius:12px;
+
+  font-weight:750;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.question{
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.question:last-child{
+  border-bottom:0;
+}
+
+.answers{
+
+  display:grid;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+.answer-btn{
+
+  text-align:left;
+
+  color:#0f172a;
+  background:#f1f5f9;
+
+  border:
+    1px solid #cbd5e1;
+
+  font-weight:600;
+
+}
+
+.answer-btn.correct{
+
+  background:#dcfce7;
+
+  border-color:#22c55e;
+
+}
+
+.answer-btn.wrong{
+
+  background:#fee2e2;
+
+  border-color:#ef4444;
+
+}
+
+.feedback{
+
+  min-height:26px;
+
+  margin-top:8px;
+
+  font-weight:700;
+
+}
+
+.quiz-score{
+
+  margin-top:18px;
+
+  padding:14px;
+
+  background:var(--cyan-soft);
+
+  border-radius:10px;
+
+  font-weight:800;
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.lesson-nav{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  gap:12px;
+
+  margin-top:35px;
+
+}
+
+.nav-link{
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:66px;
+
+  padding:12px 16px;
+
+  background:white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  text-align:center;
+
+  text-decoration:none;
+
+  font-weight:800;
+
+}
+
+.nav-link:hover{
+  background:var(--blue-soft);
+}
+
+.nav-link.next{
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0891b2,
+      #7c3aed
+    );
+
+}
+
+footer{
+
+  padding:22px;
+
+  color:#64748b;
+
+  text-align:center;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .grid-3,
+  .results{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  }
+
+  .sim-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:720px){
+
+  .grid-2,
+  .grid-3,
+  .controls,
+  .results{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .flow{
+    grid-template-columns:1fr;
+  }
+
+  .flow-arrow{
+    transform:rotate(90deg);
+  }
+
+  .lesson-nav{
+    grid-template-columns:1fr;
+  }
+
+  #transformerCanvas,
+  #graphCanvas{
+    height:520px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .card{
+    box-shadow:none;
+  }
+
+  .button-row,
+  .lesson-nav{
+    display:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="topbar">
+
+<div class="topbar-inner">
+
+<div class="breadcrumb">
+
+<a href="../../index.html">
+Clasa a X-a
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="../index.html">
+Lecții
+</a>
+
+&nbsp;›&nbsp;
+
+<a href="index.html">
+Energia și puterea în curent alternativ. Transformatorul
+</a>
+
+</div>
+
+
+<div>
+
+<span class="lesson-number">
+Lecția 3
+</span>
+
+<span class="class-badge">
+Clasa a X-a
+</span>
+
+<span class="chapter-badge">
+Transformatorul
+</span>
+
+</div>
+
+
+<h1>
+Transformatorul. Construcție și principiu de funcționare. Raport de transformare
+</h1>
+
+
+<p class="subtitle">
+Transformatorul folosește inducția electromagnetică pentru a modifica
+valoarea tensiunii alternative fără a modifica frecvența.
+În modelul ideal,
+raportul tensiunilor este determinat de raportul numerelor de spire,
+iar curenții se transformă în raport invers.
+</p>
+
+</div>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================================================
+     OBJECTIVES
+========================================================= -->
+
+<section class="card">
+
+<h2>🎯 Ce vei învăța</h2>
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>La final vei putea:</h3>
+
+<ul>
+
+<li>să identifici părțile principale ale unui transformator;</li>
+
+<li>să diferențiezi înfășurarea primară de cea secundară;</li>
+
+<li>să explici rolul miezului magnetic;</li>
+
+<li>să explici funcționarea prin inducție electromagnetică;</li>
+
+<li>să folosești raportul de transformare;</li>
+
+<li>să recunoști un transformator ridicător sau coborâtor de tensiune;</li>
+
+<li>să explici relația dintre curenții primar și secundar;</li>
+
+<li>să aplici conservarea puterii în modelul ideal;</li>
+
+<li>să diferențiezi transformatorul ideal de cel real;</li>
+
+<li>să explici de ce transformatorul necesită flux magnetic variabil.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Relațiile centrale</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+k=
+\frac{N_1}{N_2}
+=
+\frac{U_1}{U_2}
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{I_2}{I_1}
+=
+\frac{N_1}{N_2}
+=
+k
+}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+P_1=P_2
+}
+\]
+
+<p>
+pentru transformatorul ideal.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MOTIVATION
+========================================================= -->
+
+<section class="card">
+
+<h2>1. De ce avem nevoie de transformatoare?</h2>
+
+<p>
+În lecția precedentă am observat că,
+pentru o anumită putere activă,
+creșterea tensiunii permite reducerea curentului:
+</p>
+
+<div class="formula">
+
+\[
+I=
+\frac{
+P
+}{
+U\cos\varphi
+}
+\]
+
+</div>
+
+<p>
+Iar pierderile Joule pe conductoare sunt:
+</p>
+
+<div class="formula">
+
+\[
+P_J=
+I^2R
+\]
+
+</div>
+
+
+<div class="flow">
+
+<div class="flow-card">
+
+tensiune mai mare
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-card">
+
+curent mai mic
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-card">
+
+pierderi Joule mai mici
+</div>
+
+</div>
+
+
+<div class="blue-box">
+
+Transformatorul este dispozitivul care permite
+<strong>creșterea sau micșorarea tensiunii alternative</strong>
+prin inducție electromagnetică.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DEFINITION
+========================================================= -->
+
+<section class="card">
+
+<h2>2. Ce este transformatorul?</h2>
+
+<p>
+Transformatorul este un aparat electromagnetic static
+care transferă energie electrică între două circuite
+prin intermediul unui câmp magnetic variabil.
+</p>
+
+<p>
+În forma sa de bază conține:
+</p>
+
+<ul>
+
+<li>o înfășurare primară;</li>
+
+<li>o înfășurare secundară;</li>
+
+<li>un miez magnetic comun.</li>
+
+</ul>
+
+
+<div class="purple-box">
+
+Transformatorul nu are nevoie de contact electric direct
+între înfășurarea primară și cea secundară în modelul obișnuit cu înfășurări separate.
+
+Transferul energiei se realizează prin
+<strong>cuplaj magnetic</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CONSTRUCTION
+========================================================= -->
+
+<section class="card">
+
+<h2>3. Construcția transformatorului</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Înfășurarea primară</h3>
+
+<p>
+Are:
+</p>
+
+<div class="formula">
+
+\[
+N_1
+\]
+
+</div>
+
+<p>
+spire și este conectată la sursa de tensiune alternativă:
+</p>
+
+<div class="formula">
+
+\[
+U_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Înfășurarea secundară</h3>
+
+<p>
+Are:
+</p>
+
+<div class="formula">
+
+\[
+N_2
+\]
+
+</div>
+
+<p>
+spire și alimentează receptorul cu tensiunea:
+</p>
+
+<div class="formula">
+
+\[
+U_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Miezul magnetic</h3>
+
+<p>
+Asigură o cale de reluctanță magnetică mică
+și favorizează cuplarea fluxului magnetic
+între cele două înfășurări.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CORE
+========================================================= -->
+
+<section class="card">
+
+<h2>4. De ce miez feromagnetic?</h2>
+
+<p>
+Curentul alternativ din primar produce un câmp magnetic variabil.
+Miezul feromagnetic concentrează o mare parte din fluxul magnetic
+astfel încât acesta să străbată și înfășurarea secundară.
+</p>
+
+
+<div class="green-box">
+
+Rolul miezului este să realizeze un
+<strong>cuplaj magnetic eficient</strong>
+între înfășurări.
+</div>
+
+
+<h3>De ce este adesea realizat din tole?</h3>
+
+<p>
+Într-un miez conductor supus unui flux magnetic variabil
+se pot induce curenți turbionari.
+Aceștia încălzesc inutil miezul.
+</p>
+
+<p>
+Construirea miezului din foi subțiri izolate electric între ele
+reduce intensitatea acestor curenți.
+</p>
+
+
+<div class="orange-box">
+
+Laminarea miezului reduce
+<strong>pierderile prin curenți turbionari</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PRINCIPLE
+========================================================= -->
+
+<section class="card">
+
+<h2>5. Principiul de funcționare</h2>
+
+<ol class="steps">
+
+<li>
+Aplicăm o tensiune alternativă la înfășurarea primară.
+</li>
+
+<li>
+Prin primar circulă un curent alternativ.
+</li>
+
+<li>
+Curentul produce în miez un flux magnetic variabil.
+</li>
+
+<li>
+Fluxul variabil străbate și spirele înfășurării secundare.
+</li>
+
+<li>
+Prin inducție electromagnetică apare o tensiune electromotoare în secundar.
+</li>
+
+<li>
+Dacă secundarul este conectat la un receptor,
+prin el circulă curent și se transferă energie către receptor.
+</li>
+
+</ol>
+
+
+<div class="flow">
+
+<div class="flow-card">
+
+curent alternativ în primar
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-card">
+
+flux magnetic variabil
+</div>
+
+<div class="flow-arrow">
+→
+</div>
+
+<div class="flow-card">
+
+tensiune indusă în secundar
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FARADAY
+========================================================= -->
+
+<section class="card">
+
+<h2>6. Legătura cu legea inducției electromagnetice</h2>
+
+<p>
+Pentru o bobină cu \(N\) spire,
+tensiunea electromotoare indusă este descrisă de:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+e=
+-N
+\frac{d\Phi}{dt}
+}
+\]
+
+</div>
+
+<p>
+În transformator,
+ambele înfășurări sunt străbătute aproximativ de același flux magnetic variabil
+în modelul ideal.
+</p>
+
+<p>
+De aceea amplitudinea tensiunii induse este proporțională cu numărul de spire:
+</p>
+
+<div class="formula">
+
+\[
+E\propto N
+\]
+
+</div>
+
+<p>
+iar pentru cele două înfășurări:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+}
+\]
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     TRANSFORMATION RATIO
+========================================================= -->
+
+<section class="card">
+
+<h2>7. Raportul de transformare</h2>
+
+<p>
+În această lecție definim:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+k=
+\frac{N_1}{N_2}
+=
+\frac{U_1}{U_2}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+În unele surse,
+raportul de transformare poate fi definit invers.
+
+De aceea,
+înainte de rezolvarea unei probleme,
+verifică întotdeauna
+<strong>definiția lui \(k\)</strong>.
+
+În această lecție folosim:
+
+\[
+\boxed{
+k=
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+}
+\]
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     STEP UP DOWN
+========================================================= -->
+
+<section class="card">
+
+<h2>8. Ridicător sau coborâtor de tensiune?</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Ridicător</h3>
+
+<div class="formula">
+
+\[
+N_2>N_1
+\]
+
+</div>
+
+<p>
+deci:
+</p>
+
+<div class="formula">
+
+\[
+U_2>U_1
+\]
+
+</div>
+
+<p>
+și, cu definiția noastră:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+k<1
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Coborâtor</h3>
+
+<div class="formula">
+
+\[
+N_2<N_1
+\]
+
+</div>
+
+<p>
+deci:
+</p>
+
+<div class="formula">
+
+\[
+U_2<U_1
+\]
+
+</div>
+
+<p>
+și:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+k>1
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Raport 1:1</h3>
+
+<div class="formula">
+
+\[
+N_2=N_1
+\]
+
+</div>
+
+<p>
+deci:
+</p>
+
+<div class="formula">
+
+\[
+U_2=U_1
+\]
+
+</div>
+
+<p>
+și:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+k=1
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     BASIC CALC
+========================================================= -->
+
+<section class="card">
+
+<h2>9. Cum calculăm tensiunea secundară?</h2>
+
+<p>
+Din:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+</div>
+
+<p>
+rezultă:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+U_2=
+U_1
+\frac{N_2}{N_1}
+}
+\]
+
+</div>
+
+
+<h3>Exemplu rapid</h3>
+
+<p>
+Dacă:
+</p>
+
+<div class="formula">
+
+\[
+U_1=12\,V,
+\quad
+N_1=400,
+\quad
+N_2=800
+\]
+
+</div>
+
+<p>
+atunci:
+</p>
+
+<div class="formula">
+
+\[
+U_2=
+12
+\frac{800}{400}
+\]
+
+</div>
+
+<div class="formula">
+
+\[
+\boxed{
+U_2=24\,V
+}
+\]
+
+</div>
+
+<p>
+Transformatorul este ridicător de tensiune.
+</p>
+
+</section>
+
+
+<!-- =========================================================
+     IDEAL POWER
+========================================================= -->
+
+<section class="card">
+
+<h2>10. Puterea într-un transformator ideal</h2>
+
+<p>
+Un transformator ideal nu are pierderi de energie.
+Prin urmare:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+P_1=P_2
+}
+\]
+
+</div>
+
+<p>
+În modelul simplificat:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+U_1I_1=
+U_2I_2
+}
+\]
+
+</div>
+
+<p>
+Această relație arată că transformatorul nu „creează putere”.
+</p>
+
+
+<div class="purple-box">
+
+Dacă transformatorul mărește tensiunea,
+curentul disponibil pe secundar scade în raport corespunzător.
+
+Dacă micșorează tensiunea,
+curentul secundar poate fi mai mare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CURRENT RATIO
+========================================================= -->
+
+<section class="card">
+
+<h2>11. Raportul curenților</h2>
+
+<p>
+Pornim de la:
+</p>
+
+<div class="formula">
+
+\[
+U_1I_1=
+U_2I_2
+\]
+
+</div>
+
+<p>
+de unde:
+</p>
+
+<div class="formula">
+
+\[
+\frac{I_2}{I_1}
+=
+\frac{U_1}{U_2}
+\]
+
+</div>
+
+<p>
+dar:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+=
+k
+\]
+
+</div>
+
+<p>
+Deci:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\frac{I_2}{I_1}
+=
+\frac{N_1}{N_2}
+=
+k
+}
+\]
+
+</div>
+
+<p>
+sau echivalent:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{I_1}{I_2}
+=
+\frac{N_2}{N_1}
+}
+\]
+
+</div>
+
+
+<div class="blue-box">
+
+Tensiunile se transformă în același raport cu numărul de spire.
+
+Curenții se transformă în
+<strong>raport invers</strong>.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     COMPARISON
+========================================================= -->
+
+<section class="card">
+
+<h2>12. Tensiune și curent – efecte opuse</h2>
+
+<div class="table-wrap">
+
+<table class="center-table">
+
+<thead>
+
+<tr>
+
+<th>
+Tip
+</th>
+
+<th>
+Spire
+</th>
+
+<th>
+Tensiune
+</th>
+
+<th>
+Curent ideal
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+
+<tr>
+
+<td>
+Ridicător de tensiune
+</td>
+
+<td>
+
+\[
+N_2>N_1
+\]
+
+</td>
+
+<td>
+
+\[
+U_2>U_1
+\]
+
+</td>
+
+<td>
+
+\[
+I_2<I_1
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+Coborâtor de tensiune
+</td>
+
+<td>
+
+\[
+N_2<N_1
+\]
+
+</td>
+
+<td>
+
+\[
+U_2<U_1
+\]
+
+</td>
+
+<td>
+
+\[
+I_2>I_1
+\]
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>
+1:1
+</td>
+
+<td>
+
+\[
+N_2=N_1
+\]
+
+</td>
+
+<td>
+
+\[
+U_2=U_1
+\]
+
+</td>
+
+<td>
+
+\[
+I_2=I_1
+\]
+
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FREQUENCY
+========================================================= -->
+
+<section class="card">
+
+<h2>13. Transformatorul modifică frecvența?</h2>
+
+<p>
+Nu.
+În funcționarea ideală:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+f_2=f_1
+}
+\]
+
+</div>
+
+<p>
+Dacă primarul este alimentat sinusoidal la \(50\,Hz\),
+tensiunea secundară are aceeași frecvență:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+f_2=50\,Hz
+}
+\]
+
+</div>
+
+
+<div class="green-box">
+
+Transformatorul poate modifica
+<strong>tensiunea și curentul</strong>,
+dar nu modifică frecvența semnalului alternativ.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DC
+========================================================= -->
+
+<section class="card">
+
+<h2>14. De ce un transformator nu funcționează normal în curent continuu?</h2>
+
+<p>
+Principiul transformatorului necesită:
+</p>
+
+<div class="formula">
+
+\[
+\frac{d\Phi}{dt}\neq0
+\]
+
+</div>
+
+<p>
+adică un flux magnetic variabil.
+</p>
+
+<p>
+După regimul tranzitoriu,
+un curent continuu constant ar produce un flux aproximativ constant:
+</p>
+
+<div class="formula">
+
+\[
+\frac{d\Phi}{dt}=0
+\]
+
+</div>
+
+<p>
+și tensiunea indusă în secundar ar deveni:
+</p>
+
+<div class="formula">
+
+\[
+e_2=0
+\]
+
+</div>
+
+
+<div class="red-box">
+
+Un transformator proiectat pentru curent alternativ
+nu trebuie conectat la o sursă de curent continuu în regim normal.
+
+În primar poate apărea un curent foarte mare,
+limitat în principal de rezistența înfășurării,
+cu risc de încălzire și deteriorare.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REAL TRANSFORMER
+========================================================= -->
+
+<section class="card">
+
+<h2>15. Transformatorul real</h2>
+
+<p>
+Un transformator real are pierderi,
+deci:
+</p>
+
+<div class="formula">
+
+\[
+P_2<P_1
+\]
+
+</div>
+
+<p>
+Definim randamentul:
+</p>
+
+<div class="formula big-formula">
+
+\[
+\boxed{
+\eta=
+\frac{P_2}{P_1}
+}
+\]
+
+</div>
+
+<p>
+sau procentual:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta[\%]
+=
+\frac{P_2}{P_1}
+\cdot100
+}
+\]
+
+</div>
+
+
+<h3>Surse principale de pierderi</h3>
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>În înfășurări</h3>
+
+<p>
+Efect Joule:
+</p>
+
+<div class="formula">
+
+\[
+P_J=
+I^2R
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>În miez</h3>
+
+<p>
+Curenți turbionari și pierderi asociate magnetizării ciclice.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Flux de dispersie</h3>
+
+<p>
+Nu întregul flux produs de o înfășurare străbate perfect cealaltă înfășurare.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     REAL POWER
+========================================================= -->
+
+<section class="card">
+
+<h2>16. Puterea în cazul real</h2>
+
+<p>
+Pentru un receptor general în curent alternativ:
+</p>
+
+<div class="formula">
+
+\[
+P_2=
+U_2I_2\cos\varphi_2
+\]
+
+</div>
+
+<p>
+iar la intrare:
+</p>
+
+<div class="formula">
+
+\[
+P_1=
+U_1I_1\cos\varphi_1
+\]
+
+</div>
+
+<p>
+Randamentul este:
+</p>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=
+\frac{
+U_2I_2\cos\varphi_2
+}{
+U_1I_1\cos\varphi_1
+}
+}
+\]
+
+</div>
+
+
+<div class="yellow-box">
+
+Relația simplă:
+
+\[
+U_1I_1=U_2I_2
+\]
+
+se folosește pentru
+<strong>transformatorul ideal</strong>
+sau ca aproximație atunci când pierderile pot fi neglijate.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     EXAMPLES
+========================================================= -->
+
+<section class="card">
+
+<h2>🧮 Exemple rezolvate</h2>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 1 – Tensiunea secundară</h3>
+
+<p>
+Se dau:
+</p>
+
+<div class="formula">
+
+\[
+N_1=500,
+\quad
+N_2=100,
+\quad
+U_1=20\,V
+\]
+
+</div>
+
+<p>
+Determinați \(U_2\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+<p>
+Folosim:
+</p>
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+<p>
+deci:
+</p>
+
+\[
+U_2=
+U_1
+\frac{N_2}{N_1}
+\]
+
+\[
+U_2=
+20
+\frac{100}{500}
+\]
+
+\[
+\boxed{
+U_2=4\,V
+}
+\]
+
+<p>
+Transformatorul este coborâtor de tensiune.
+</p>
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 2 – Numărul de spire secundare</h3>
+
+<p>
+Se dau:
+</p>
+
+<div class="formula">
+
+\[
+U_1=12\,V,
+\quad
+U_2=36\,V,
+\quad
+N_1=200
+\]
+
+</div>
+
+<p>
+Determinați \(N_2\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+<p>
+de unde:
+</p>
+
+\[
+N_2=
+N_1
+\frac{U_2}{U_1}
+\]
+
+\[
+N_2=
+200
+\frac{36}{12}
+\]
+
+\[
+\boxed{
+N_2=600
+}
+\]
+
+<p>
+Secundarul are de trei ori mai multe spire decât primarul.
+</p>
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 1
+</span>
+
+<h3>Exemplul 3 – Raportul de transformare</h3>
+
+<p>
+Un transformator are:
+</p>
+
+<div class="formula">
+
+\[
+N_1=1000,
+\quad
+N_2=250
+\]
+
+</div>
+
+<p>
+Determinați \(k\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+<p>
+În convenția utilizată în această lecție:
+</p>
+
+\[
+k=
+\frac{N_1}{N_2}
+\]
+
+\[
+k=
+\frac{1000}{250}
+\]
+
+\[
+\boxed{
+k=4
+}
+\]
+
+<p>
+Cum \(k>1\),
+transformatorul este coborâtor de tensiune.
+</p>
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 4 – Curentul secundar</h3>
+
+<p>
+Un transformator ideal are:
+</p>
+
+<div class="formula">
+
+\[
+N_1=600,
+\quad
+N_2=200
+\]
+
+</div>
+
+<p>
+iar curentul primar este:
+</p>
+
+<div class="formula">
+
+\[
+I_1=0,5\,A
+\]
+
+</div>
+
+<p>
+Determinați \(I_2\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\frac{I_2}{I_1}
+=
+\frac{N_1}{N_2}
+\]
+
+\[
+I_2=
+I_1
+\frac{N_1}{N_2}
+\]
+
+\[
+I_2=
+0,5
+\frac{600}{200}
+\]
+
+\[
+\boxed{
+I_2=1,5\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 5 – Puterea ideală</h3>
+
+<p>
+Un transformator ideal are:
+</p>
+
+<div class="formula">
+
+\[
+U_1=120\,V,
+\quad
+I_1=0,40\,A
+\]
+
+</div>
+
+<p>
+și:
+</p>
+
+<div class="formula">
+
+\[
+U_2=24\,V
+\]
+
+</div>
+
+<p>
+Determinați \(I_2\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+<p>
+Pentru transformatorul ideal:
+</p>
+
+\[
+U_1I_1=
+U_2I_2
+\]
+
+<p>
+deci:
+</p>
+
+\[
+I_2=
+\frac{
+U_1I_1
+}{
+U_2
+}
+\]
+
+\[
+I_2=
+\frac{
+120\cdot0,40
+}{
+24
+}
+\]
+
+\[
+\boxed{
+I_2=2\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 6 – Transformator ridicător</h3>
+
+<p>
+Un transformator are:
+</p>
+
+<div class="formula">
+
+\[
+U_1=10\,V,
+\quad
+U_2=50\,V
+\]
+
+</div>
+
+<p>
+iar secundarul are:
+</p>
+
+<div class="formula">
+
+\[
+N_2=1000
+\]
+
+</div>
+
+<p>
+Determinați \(N_1\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+\[
+N_1=
+N_2
+\frac{U_1}{U_2}
+\]
+
+\[
+N_1=
+1000
+\frac{10}{50}
+\]
+
+\[
+\boxed{
+N_1=200
+}
+\]
+
+<p>
+Deoarece:
+</p>
+
+\[
+N_2>N_1
+\]
+
+<p>
+transformatorul este ridicător de tensiune.
+</p>
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 2
+</span>
+
+<h3>Exemplul 7 – Randament</h3>
+
+<p>
+Un transformator real primește:
+</p>
+
+<div class="formula">
+
+\[
+P_1=500\,W
+\]
+
+</div>
+
+<p>
+și furnizează:
+</p>
+
+<div class="formula">
+
+\[
+P_2=450\,W
+\]
+
+</div>
+
+<p>
+Determinați randamentul.
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+\[
+\eta=
+\frac{P_2}{P_1}
+\]
+
+\[
+\eta=
+\frac{450}{500}
+=
+0,90
+\]
+
+\[
+\boxed{
+\eta=90\%
+}
+\]
+
+<p>
+Puterea pierdută este:
+</p>
+
+\[
+P_{pierderi}
+=
+500-450
+=
+50\,W
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 8 – Receptor rezistiv pe secundar</h3>
+
+<p>
+Un transformator ideal are:
+</p>
+
+<div class="formula">
+
+\[
+U_1=12\,V,
+\quad
+N_1=400,
+\quad
+N_2=200
+\]
+
+</div>
+
+<p>
+La secundar se conectează:
+</p>
+
+<div class="formula">
+
+\[
+R=10\,\Omega
+\]
+
+</div>
+
+<p>
+Determinați \(U_2\), \(I_2\), \(P_2\) și \(I_1\).
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+<p>
+Tensiunea secundară:
+</p>
+
+\[
+U_2=
+12
+\frac{200}{400}
+=
+6\,V
+\]
+
+<p>
+Curentul prin receptor:
+</p>
+
+\[
+I_2=
+\frac{U_2}{R}
+=
+\frac6{10}
+=
+0,6\,A
+\]
+
+<p>
+Puterea secundară:
+</p>
+
+\[
+P_2=
+U_2I_2
+=
+6\cdot0,6
+=
+3,6\,W
+\]
+
+<p>
+Pentru transformatorul ideal:
+</p>
+
+\[
+P_1=P_2
+\]
+
+<p>
+deci:
+</p>
+
+\[
+I_1=
+\frac{P_1}{U_1}
+=
+\frac{3,6}{12}
+=
+0,30\,A
+\]
+
+<p>
+Rezultă:
+</p>
+
+\[
+\boxed{
+U_2=6\,V
+}
+\]
+
+\[
+\boxed{
+I_2=0,6\,A
+}
+\]
+
+\[
+\boxed{
+P_2=3,6\,W
+}
+\]
+
+\[
+\boxed{
+I_1=0,30\,A
+}
+\]
+
+</div>
+
+</details>
+
+</div>
+
+
+<div class="problem">
+
+<span class="problem-level">
+Nivel 3
+</span>
+
+<h3>Exemplul 9 – Frecvența secundară</h3>
+
+<p>
+Primarul unui transformator este alimentat la:
+</p>
+
+<div class="formula">
+
+\[
+f_1=50\,Hz
+\]
+
+</div>
+
+<p>
+iar transformatorul ridică tensiunea de cinci ori.
+Care este frecvența secundară?
+</p>
+
+<details>
+
+<summary>
+Vezi rezolvarea
+</summary>
+
+<div class="solution">
+
+<p>
+Transformatorul nu modifică frecvența:
+</p>
+
+\[
+f_2=f_1
+\]
+
+<p>
+Prin urmare:
+</p>
+
+\[
+\boxed{
+f_2=50\,Hz
+}
+\]
+
+<p>
+Faptul că tensiunea se modifică de cinci ori nu schimbă frecvența.
+</p>
+
+</div>
+
+</details>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CLASS ACTIVITY
+========================================================= -->
+
+<section class="card">
+
+<h2>🔬 17. Activitate demonstrativă – transformator didactic</h2>
+
+<p>
+Se poate utiliza un transformator didactic cu miez demontabil
+și două bobine cu numere de spire cunoscute.
+</p>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>Materiale</h3>
+
+<ul>
+
+<li>sursă alternativă izolată de joasă tensiune;</li>
+
+<li>miez feromagnetic didactic;</li>
+
+<li>două bobine;</li>
+
+<li>două voltmetre pentru c.a.;</li>
+
+<li>conductoare de legătură.</li>
+
+</ul>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ce verificăm?</h3>
+
+<p>
+Măsurăm:
+</p>
+
+<div class="formula">
+
+\[
+U_1
+\]
+
+</div>
+
+<p>
+și:
+</p>
+
+<div class="formula">
+
+\[
+U_2
+\]
+
+</div>
+
+<p>
+apoi comparăm:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_1}{U_2}
+\]
+
+</div>
+
+<p>
+cu:
+</p>
+
+<div class="formula">
+
+\[
+\frac{N_1}{N_2}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<h3>Procedură</h3>
+
+<ol class="steps">
+
+<li>
+Notează numărul de spire \(N_1\) și \(N_2\).
+</li>
+
+<li>
+Montează bobinele pe miezul magnetic.
+</li>
+
+<li>
+Conectează primarul la sursa alternativă de joasă tensiune.
+</li>
+
+<li>
+Măsoară \(U_1\).
+</li>
+
+<li>
+Măsoară tensiunea secundară în gol \(U_2\).
+</li>
+
+<li>
+Calculează raportul \(U_1/U_2\).
+</li>
+
+<li>
+Compară-l cu raportul \(N_1/N_2\).
+</li>
+
+<li>
+Inversează rolurile bobinelor și observă schimbarea tensiunii secundare.
+</li>
+
+</ol>
+
+
+<div class="red-box">
+
+Activitatea se realizează numai cu
+<strong>sursă didactică alternativă izolată și tensiune joasă</strong>.
+
+Nu conectați bobine experimentale direct la rețeaua de 230 V.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SIMULATOR
+========================================================= -->
+
+<section class="card simulator">
+
+<h2>🎮 Simulator – transformator ideal</h2>
+
+<p>
+Modifică tensiunea primară,
+numărul de spire și sarcina rezistivă.
+Simulatorul aplică modelul transformatorului ideal.
+</p>
+
+
+<div class="controls">
+
+
+<div class="control">
+
+<label for="primaryVoltageSlider">
+Tensiune primară \(U_1\) [V]
+</label>
+
+<input
+  id="primaryVoltageSlider"
+  type="range"
+  min="2"
+  max="24"
+  step="1"
+  value="12">
+
+<span
+  class="range-value"
+  id="primaryVoltageLabel">
+12 V
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="primaryTurnsSlider">
+Spire primar \(N_1\)
+</label>
+
+<input
+  id="primaryTurnsSlider"
+  type="range"
+  min="100"
+  max="1000"
+  step="50"
+  value="400">
+
+<span
+  class="range-value"
+  id="primaryTurnsLabel">
+400 spire
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="secondaryTurnsSlider">
+Spire secundar \(N_2\)
+</label>
+
+<input
+  id="secondaryTurnsSlider"
+  type="range"
+  min="50"
+  max="1500"
+  step="50"
+  value="200">
+
+<span
+  class="range-value"
+  id="secondaryTurnsLabel">
+200 spire
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="loadSlider">
+Sarcină rezistivă \(R\) [Ω]
+</label>
+
+<input
+  id="loadSlider"
+  type="range"
+  min="5"
+  max="200"
+  step="5"
+  value="20">
+
+<span
+  class="range-value"
+  id="loadLabel">
+20 Ω
+</span>
+
+</div>
+
+
+<div class="control">
+
+<label for="animationSelect">
+Flux magnetic
+</label>
+
+<select id="animationSelect">
+
+<option value="on" selected>
+animat
+</option>
+
+<option value="off">
+oprit
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div class="button-row">
+
+<button
+  class="green-button"
+  id="stepDownBtn">
+
+Coborâtor
+
+</button>
+
+
+<button
+  class="orange-button"
+  id="stepUpBtn">
+
+Ridicător
+
+</button>
+
+
+<button
+  class="cyan-button"
+  id="oneToOneBtn">
+
+Raport 1:1
+
+</button>
+
+
+<button
+  class="purple-button"
+  id="doubleSecondaryBtn">
+
+\(N_2\times2\)
+
+</button>
+
+
+<button
+  class="primary"
+  id="swapBtn">
+
+Inversează bobinele
+
+</button>
+
+
+<button
+  class="secondary"
+  id="resetBtn">
+
+↻ Resetare
+
+</button>
+
+</div>
+
+
+<div class="sim-grid">
+
+
+<div class="canvas-wrap">
+
+<canvas id="transformerCanvas"></canvas>
+
+</div>
+
+
+<div class="canvas-wrap">
+
+<canvas id="graphCanvas"></canvas>
+
+</div>
+
+
+</div>
+
+
+<div class="results">
+
+
+<div class="result-box">
+
+<span>
+Raport \(k=U_1/U_2\)
+</span>
+
+<strong id="ratioValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tensiune secundară \(U_2\)
+</span>
+
+<strong id="secondaryVoltageValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent secundar \(I_2\)
+</span>
+
+<strong id="secondaryCurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Curent primar \(I_1\)
+</span>
+
+<strong id="primaryCurrentValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere secundară
+</span>
+
+<strong id="secondaryPowerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Putere primară ideală
+</span>
+
+<strong id="primaryPowerValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Raport curenți \(I_2/I_1\)
+</span>
+
+<strong id="currentRatioValue">
+—
+</strong>
+
+</div>
+
+
+<div class="result-box">
+
+<span>
+Tip transformator
+</span>
+
+<strong id="typeValue">
+—
+</strong>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="status-box"
+  id="simStatus">
+
+Modifică numărul de spire și observă efectul asupra tensiunii.
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MISSIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>18. Misiuni în simulator</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>A. Dublează \(N_2\)</h3>
+
+<p>
+Păstrează \(N_1\) și \(U_1\) constante.
+</p>
+
+<p>
+Predicție:
+</p>
+
+<div class="formula">
+
+\[
+U_2\rightarrow2U_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>B. Înjumătățește \(N_2\)</h3>
+
+<p>
+Ce se întâmplă cu tensiunea secundară?
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>C. Raport 1:1</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+N_1=N_2
+\]
+
+</div>
+
+<p>
+Verifică:
+</p>
+
+<div class="formula">
+
+\[
+U_1=U_2
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>D. Ridicător</h3>
+
+<p>
+Alege:
+</p>
+
+<div class="formula">
+
+\[
+N_2>N_1
+\]
+
+</div>
+
+<p>
+Compară \(U_2\) și \(U_1\).</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>E. Curenții</h3>
+
+<p>
+Observă că atunci când tensiunea secundară crește,
+curentul secundar disponibil pentru aceeași putere se transformă invers.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>F. Schimbă sarcina</h3>
+
+<p>
+Mărește rezistența receptorului.</p>
+
+<p>
+Ce se întâmplă cu \(I_2\) și cu puterea transmisă?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>G. Inversează bobinele</h3>
+
+<p>
+Apasă „Inversează bobinele”.
+</p>
+
+<p>
+Un transformator coborâtor devine ridicător?</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>H. Verifică puterea</h3>
+
+<p>
+Compară:
+</p>
+
+<div class="formula">
+
+\[
+P_1
+\]
+
+</div>
+
+<p>
+și:
+</p>
+
+<div class="formula">
+
+\[
+P_2
+\]
+
+</div>
+
+<p>
+în modelul ideal.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     CAUSE EFFECT
+========================================================= -->
+
+<section class="card">
+
+<h2>💭 19. Gândește fizic – cauză și efect</h2>
+
+<ol>
+
+<li>
+De ce tensiunea alternativă aplicată primarului produce flux magnetic variabil?
+</li>
+
+<li>
+De ce un flux magnetic variabil poate produce tensiune în secundar?</li>
+
+<li>
+De ce tensiunea secundară este proporțională cu numărul de spire?</li>
+
+<li>
+De ce un transformator cu \(N_2>N_1\) ridică tensiunea?</li>
+
+<li>
+De ce curentul se transformă în sens opus tensiunii?</li>
+
+<li>
+De ce transformatorul ideal nu poate mări simultan și tensiunea, și curentul menținând aceeași putere?</li>
+
+<li>
+De ce frecvența nu se modifică?</li>
+
+<li>
+De ce este necesar un flux magnetic variabil?</li>
+
+<li>
+De ce miezul transformatorului este realizat adesea din tole?</li>
+
+<li>
+De ce transformatorul real se încălzește?</li>
+
+<li>
+Cum contribuie transformatorul la reducerea pierderilor în transportul energiei?</li>
+
+<li>
+De ce raportul de transformare trebuie definit explicit înainte de calcule?</li>
+
+</ol>
+
+</section>
+
+
+<!-- =========================================================
+     MISCONCEPTIONS
+========================================================= -->
+
+<section class="card">
+
+<h2>⚠️ 20. Greșeli frecvente</h2>
+
+
+<div class="grid-2">
+
+
+<div class="mini-card">
+
+<h3>1. „Transformatorul funcționează numai prin contact electric între bobine.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Transferul dintre înfășurările separate se realizează prin câmpul magnetic variabil.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>2. „Mai multe spire în secundar înseamnă tensiune mai mică.”</h3>
+
+<p>
+Nu.</p>
+
+<div class="formula">
+
+\[
+N_2>N_1
+\Rightarrow
+U_2>U_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>3. „Transformatorul mărește puterea.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+În modelul ideal:
+</p>
+
+<div class="formula">
+
+\[
+P_1=P_2
+\]
+
+</div>
+
+<p>
+iar în realitate:
+</p>
+
+<div class="formula">
+
+\[
+P_2<P_1
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>4. „Dacă tensiunea crește, crește obligatoriu și curentul.”</h3>
+
+<p>
+Nu în transformarea ideală a aceleiași puteri.</p>
+
+<p>
+Curenții se transformă invers.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>5. „Transformatorul schimbă frecvența.”</h3>
+
+<p>
+Nu.</p>
+
+<div class="formula">
+
+\[
+\boxed{
+f_1=f_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>6. „Raportul de transformare este definit identic în toate sursele.”</h3>
+
+<p>
+Nu neapărat.</p>
+
+<p>
+În această lecție:
+</p>
+
+<div class="formula">
+
+\[
+k=
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>7. „La curent continuu transformatorul funcționează la fel.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Este necesar un flux magnetic variabil.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>8. „Dacă \(k>1\), transformatorul este ridicător.”</h3>
+
+<p>
+Nu cu definiția folosită aici.</p>
+
+<div class="formula">
+
+\[
+k>1
+\Rightarrow
+U_1>U_2
+\]
+
+</div>
+
+<p>
+deci este coborâtor de tensiune.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>9. „Miezul laminat mărește curenții turbionari.”</h3>
+
+<p>
+Nu.</p>
+
+<p>
+Laminarea este folosită tocmai pentru reducerea lor.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>10. „Randamentul unui transformator real este 100%.”</h3>
+
+<p>
+Nu.</p>
+
+<div class="formula">
+
+\[
+\eta<1
+\]
+
+</div>
+
+<p>
+din cauza pierderilor reale.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+========================================================= -->
+
+<section class="card">
+
+<h2>✅ Verificare rapidă</h2>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>1.</strong>
+Transformatorul funcționează pe baza:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+efectului fotoelectric
+</button>
+
+<button class="answer-btn">
+inducției electromagnetice
+</button>
+
+<button class="answer-btn">
+electrolizei
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>2.</strong>
+În modelul ideal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_1/U_2=N_2/N_1\)
+</button>
+
+<button class="answer-btn">
+\(U_1U_2=N_1N_2\)
+</button>
+
+<button class="answer-btn">
+\(U_1/U_2=N_1/N_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>3.</strong>
+Dacă \(N_2>N_1\), atunci:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(U_2>U_1\)
+</button>
+
+<button class="answer-btn">
+\(U_2<U_1\)
+</button>
+
+<button class="answer-btn">
+\(U_2=0\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>4.</strong>
+În convenția lecției,
+raportul de transformare este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(k=N_2/N_1\)
+</button>
+
+<button class="answer-btn">
+\(k=N_1/N_2\)
+</button>
+
+<button class="answer-btn">
+\(k=N_1N_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>5.</strong>
+Pentru un transformator ideal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(P_2>P_1\)
+</button>
+
+<button class="answer-btn">
+\(P_2<P_1\)
+</button>
+
+<button class="answer-btn">
+\(P_2=P_1\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>6.</strong>
+Relația curenților este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(I_2/I_1=N_1/N_2\)
+</button>
+
+<button class="answer-btn">
+\(I_2/I_1=N_2/N_1\)
+</button>
+
+<button class="answer-btn">
+\(I_1I_2=N_1/N_2\)
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>7.</strong>
+Transformatorul ideal:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+dublează frecvența dacă dublează tensiunea
+</button>
+
+<button class="answer-btn">
+nu modifică frecvența
+</button>
+
+<button class="answer-btn">
+transformă automat curentul alternativ în curent continuu
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="2">
+
+<p>
+<strong>8.</strong>
+Miezul laminat contribuie la reducerea:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+numărului de spire
+</button>
+
+<button class="answer-btn">
+frecvenței
+</button>
+
+<button class="answer-btn">
+curenților turbionari
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="0">
+
+<p>
+<strong>9.</strong>
+Un transformator proiectat pentru c.a. nu funcționează normal la c.c. deoarece:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+lipsește fluxul magnetic variabil în regim staționar
+</button>
+
+<button class="answer-btn">
+numărul de spire devine zero
+</button>
+
+<button class="answer-btn">
+frecvența secundară devine infinită
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="question"
+  data-correct="1">
+
+<p>
+<strong>10.</strong>
+Randamentul transformatorului real este:
+</p>
+
+<div class="answers">
+
+<button class="answer-btn">
+\(\eta>1\)
+</button>
+
+<button class="answer-btn">
+\(\eta<1\)
+</button>
+
+<button class="answer-btn">
+întotdeauna exact zero
+</button>
+
+</div>
+
+<div class="feedback"></div>
+
+</div>
+
+
+<div
+  class="quiz-score"
+  id="quizScore">
+
+Scor: 0 / 10
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<section class="card">
+
+<h2>📌 De reținut</h2>
+
+
+<div class="grid-3">
+
+
+<div class="mini-card">
+
+<h3>Principiu</h3>
+
+<p>
+Inducție electromagnetică prin flux magnetic variabil.
+</p>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Tensiuni</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Raport</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+k=
+\frac{N_1}{N_2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Curenți</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\frac{I_2}{I_1}
+=
+\frac{N_1}{N_2}
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Transformator ideal</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+P_1=P_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Frecvență</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+f_1=f_2
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Ridicător</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+N_2>N_1
+\Rightarrow
+U_2>U_1
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Coborâtor</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+N_2<N_1
+\Rightarrow
+U_2<U_1
+}
+\]
+
+</div>
+
+</div>
+
+
+<div class="mini-card">
+
+<h3>Transformator real</h3>
+
+<div class="formula">
+
+\[
+\boxed{
+\eta=
+\frac{P_2}{P_1}<1
+}
+\]
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="green-box">
+
+Schema mentală:
+
+<strong>
+tensiune alternativă în primar →
+curent alternativ →
+flux magnetic variabil →
+inducție în secundar →
+\(U_1/U_2=N_1/N_2\) →
+curenți în raport invers →
+putere aproximativ conservată →
+pierderi în transformatorul real.
+</strong>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEXT
+========================================================= -->
+
+<section class="card">
+
+<h2>🧭 Ce urmează?</h2>
+
+<p>
+Am dedus teoretic:
+</p>
+
+<div class="formula">
+
+\[
+\frac{U_1}{U_2}
+=
+\frac{N_1}{N_2}
+\]
+
+</div>
+
+<p>
+și am discutat diferența dintre transformatorul ideal și cel real.
+</p>
+
+
+<div class="purple-box">
+
+În lecția următoare,
+<strong>„Studiul transformatorului – experiment”</strong>,
+vom verifica prin măsurători:
+
+<ul>
+
+<li>raportul tensiunilor;</li>
+
+<li>raportul numerelor de spire;</li>
+
+<li>comportarea în gol și în sarcină;</li>
+
+<li>abaterile dintre modelul ideal și transformatorul real;</li>
+
+<li>randamentul experimental.</li>
+
+</ul>
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="lesson-nav">
+
+
+<a
+  class="nav-link"
+  href="2-factorul-de-putere-energia-in-curent-alternativ.html">
+
+← Lecția 2<br>
+Factorul de putere. Energia în curent alternativ
+
+</a>
+
+
+<a
+  class="nav-link"
+  href="index.html">
+
+☰ Cuprins capitol
+
+</a>
+
+
+<a
+  class="nav-link next"
+  href="4-studiul-transformatorului-exp.html">
+
+Lecția 4<br>
+Studiul transformatorului – experiment →
+
+</a>
+
+
+</nav>
+
+</main>
+
+
+<footer>
+
+Fizică – Clasa a X-a • Energia și puterea în curent alternativ. Transformatorul
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+
+function formatRo(
+  value,
+  digits=2
+){
+
+  if(
+    !Number.isFinite(
+      value
+    )
+  ){
+    return "—";
+  }
+
+
+  const threshold=
+    Math.pow(
+      10,
+      -digits
+    )/
+    2;
+
+
+  const safe=
+    Math.abs(
+      value
+    )<
+    threshold
+      ? 0
+      : value;
+
+
+  return safe
+    .toFixed(
+      digits
+    )
+    .replace(
+      ".",
+      ","
+    );
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const primaryVoltageSlider=
+  document.getElementById(
+    "primaryVoltageSlider"
+  );
+
+
+const primaryTurnsSlider=
+  document.getElementById(
+    "primaryTurnsSlider"
+  );
+
+
+const secondaryTurnsSlider=
+  document.getElementById(
+    "secondaryTurnsSlider"
+  );
+
+
+const loadSlider=
+  document.getElementById(
+    "loadSlider"
+  );
+
+
+const animationSelect=
+  document.getElementById(
+    "animationSelect"
+  );
+
+
+const primaryVoltageLabel=
+  document.getElementById(
+    "primaryVoltageLabel"
+  );
+
+
+const primaryTurnsLabel=
+  document.getElementById(
+    "primaryTurnsLabel"
+  );
+
+
+const secondaryTurnsLabel=
+  document.getElementById(
+    "secondaryTurnsLabel"
+  );
+
+
+const loadLabel=
+  document.getElementById(
+    "loadLabel"
+  );
+
+
+const ratioValue=
+  document.getElementById(
+    "ratioValue"
+  );
+
+
+const secondaryVoltageValue=
+  document.getElementById(
+    "secondaryVoltageValue"
+  );
+
+
+const secondaryCurrentValue=
+  document.getElementById(
+    "secondaryCurrentValue"
+  );
+
+
+const primaryCurrentValue=
+  document.getElementById(
+    "primaryCurrentValue"
+  );
+
+
+const secondaryPowerValue=
+  document.getElementById(
+    "secondaryPowerValue"
+  );
+
+
+const primaryPowerValue=
+  document.getElementById(
+    "primaryPowerValue"
+  );
+
+
+const currentRatioValue=
+  document.getElementById(
+    "currentRatioValue"
+  );
+
+
+const typeValue=
+  document.getElementById(
+    "typeValue"
+  );
+
+
+const simStatus=
+  document.getElementById(
+    "simStatus"
+  );
+
+
+const transformerCanvas=
+  document.getElementById(
+    "transformerCanvas"
+  );
+
+
+const transformerCtx=
+  transformerCanvas.getContext(
+    "2d"
+  );
+
+
+const graphCanvas=
+  document.getElementById(
+    "graphCanvas"
+  );
+
+
+const graphCtx=
+  graphCanvas.getContext(
+    "2d"
+  );
+
+
+let animationPhase=0;
+let lastTimestamp=0;
+
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+function readModel(){
+
+  const U1=
+    Number(
+      primaryVoltageSlider.value
+    );
+
+
+  const N1=
+    Number(
+      primaryTurnsSlider.value
+    );
+
+
+  const N2=
+    Number(
+      secondaryTurnsSlider.value
+    );
+
+
+  const R=
+    Number(
+      loadSlider.value
+    );
+
+
+  const k=
+    N1/
+    N2;
+
+
+  const U2=
+    U1*
+    N2/
+    N1;
+
+
+  /*
+  Resistive secondary load.
+  */
+
+  const I2=
+    U2/
+    R;
+
+
+  const P2=
+    U2*
+    I2;
+
+
+  /*
+  Ideal transformer:
+  P1=P2.
+  */
+
+  const P1=
+    P2;
+
+
+  const I1=
+    U1>
+    0
+      ? P1/
+        U1
+      : 0;
+
+
+  let type=
+    "1:1";
+
+
+  if(
+    N2>
+    N1
+  ){
+
+    type=
+      "ridicător";
+
+  }
+
+  else if(
+    N2<
+    N1
+  ){
+
+    type=
+      "coborâtor";
+
+  }
+
+
+  return{
+
+    U1,
+    U2,
+
+    N1,
+    N2,
+
+    R,
+
+    k,
+
+    I1,
+    I2,
+
+    P1,
+    P2,
+
+    type
+
+  };
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function updateResults(){
+
+  const m=
+    readModel();
+
+
+  primaryVoltageLabel.textContent=
+    `${formatRo(
+      m.U1,
+      0
+    )} V`;
+
+
+  primaryTurnsLabel.textContent=
+    `${formatRo(
+      m.N1,
+      0
+    )} spire`;
+
+
+  secondaryTurnsLabel.textContent=
+    `${formatRo(
+      m.N2,
+      0
+    )} spire`;
+
+
+  loadLabel.textContent=
+    `${formatRo(
+      m.R,
+      0
+    )} Ω`;
+
+
+  ratioValue.textContent=
+    formatRo(
+      m.k,
+      3
+    );
+
+
+  secondaryVoltageValue.textContent=
+    `${formatRo(
+      m.U2,
+      2
+    )} V`;
+
+
+  secondaryCurrentValue.textContent=
+    `${formatRo(
+      m.I2,
+      3
+    )} A`;
+
+
+  primaryCurrentValue.textContent=
+    `${formatRo(
+      m.I1,
+      3
+    )} A`;
+
+
+  secondaryPowerValue.textContent=
+    `${formatRo(
+      m.P2,
+      2
+    )} W`;
+
+
+  primaryPowerValue.textContent=
+    `${formatRo(
+      m.P1,
+      2
+    )} W`;
+
+
+  currentRatioValue.textContent=
+    m.I1>
+    0
+      ? formatRo(
+          m.I2/
+          m.I1,
+          3
+        )
+      : "—";
+
+
+  typeValue.textContent=
+    m.type;
+
+
+  if(
+    m.type===
+    "ridicător"
+  ){
+
+    simStatus.innerHTML=
+      `Transformator
+       <strong>ridicător de tensiune</strong>:
+       N<sub>2</sub>&gt;N<sub>1</sub>,
+       deci U<sub>2</sub>&gt;U<sub>1</sub>.
+       În modelul ideal,
+       curentul se transformă în raport invers.`;
+
+  }
+
+  else if(
+    m.type===
+    "coborâtor"
+  ){
+
+    simStatus.innerHTML=
+      `Transformator
+       <strong>coborâtor de tensiune</strong>:
+       N<sub>2</sub>&lt;N<sub>1</sub>,
+       deci U<sub>2</sub>&lt;U<sub>1</sub>.
+       Pentru sarcina rezistivă selectată,
+       I<sub>2</sub>=U<sub>2</sub>/R.`;
+
+  }
+
+  else{
+
+    simStatus.innerHTML=
+      `Raport de transformare
+       <strong>1:1</strong>:
+       N<sub>1</sub>=N<sub>2</sub>,
+       U<sub>1</sub>=U<sub>2</sub>
+       în modelul ideal.`;
+
+  }
+
+
+  drawTransformer(
+    m
+  );
+
+
+  drawGraph(
+    m
+  );
+
+
+  return m;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+function resizeCanvas(
+  canvas,
+  context
+){
+
+  const rect=
+    canvas.getBoundingClientRect();
+
+
+  const dpr=
+    window.devicePixelRatio||
+    1;
+
+
+  canvas.width=
+    Math.round(
+      rect.width*
+      dpr
+    );
+
+
+  canvas.height=
+    Math.round(
+      rect.height*
+      dpr
+    );
+
+
+  context.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   TRANSFORMER DRAWING
+========================================================= */
+
+function drawTransformer(
+  m
+){
+
+  const rect=
+    transformerCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  const gradient=
+    transformerCtx.createLinearGradient(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020617"
+  );
+
+
+  gradient.addColorStop(
+    .55,
+    "#172554"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#164e63"
+  );
+
+
+  transformerCtx.fillStyle=
+    gradient;
+
+
+  transformerCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  transformerCtx.fillStyle=
+    "#e2e8f0";
+
+
+  transformerCtx.font=
+    "bold 15px system-ui";
+
+
+  transformerCtx.textAlign=
+    "left";
+
+
+  transformerCtx.fillText(
+    "Transformator ideal",
+    18,
+    29
+  );
+
+
+  transformerCtx.fillStyle=
+    "#c4b5fd";
+
+
+  transformerCtx.font=
+    "11px system-ui";
+
+
+  transformerCtx.fillText(
+    "flux magnetic comun • tensiunea este proporțională cu numărul de spire",
+    18,
+    49
+  );
+
+
+  const coreLeft=
+    W*
+    .32;
+
+
+  const coreRight=
+    W*
+    .68;
+
+
+  const coreTop=
+    115;
+
+
+  const coreBottom=
+    H-
+    165;
+
+
+  /*
+  Core outer frame.
+  */
+
+  transformerCtx.strokeStyle=
+    "#94a3b8";
+
+
+  transformerCtx.lineWidth=26;
+
+
+  transformerCtx.lineJoin=
+    "round";
+
+
+  transformerCtx.strokeRect(
+    coreLeft,
+    coreTop,
+    coreRight-
+    coreLeft,
+    coreBottom-
+    coreTop
+  );
+
+
+  /*
+  Inner highlight.
+  */
+
+  transformerCtx.strokeStyle=
+    "#475569";
+
+
+  transformerCtx.lineWidth=8;
+
+
+  transformerCtx.strokeRect(
+    coreLeft,
+    coreTop,
+    coreRight-
+    coreLeft,
+    coreBottom-
+    coreTop
+  );
+
+
+  /*
+  Coils.
+  */
+
+  const coilTop=
+    coreTop+
+    38;
+
+
+  const coilBottom=
+    coreBottom-
+    38;
+
+
+  const coilHeight=
+    coilBottom-
+    coilTop;
+
+
+  const visibleTurnsPrimary=
+    Math.round(
+      clamp(
+        m.N1/
+        55,
+        5,
+        18
+      )
+    );
+
+
+  const visibleTurnsSecondary=
+    Math.round(
+      clamp(
+        m.N2/
+        55,
+        5,
+        18
+      )
+    );
+
+
+  function drawCoil(
+    x,
+    visibleTurns,
+    color,
+    side
+  ){
+
+    transformerCtx.strokeStyle=
+      color;
+
+
+    transformerCtx.lineWidth=
+      4;
+
+
+    const spacing=
+      coilHeight/
+      visibleTurns;
+
+
+    for(
+      let n=0;
+      n<visibleTurns;
+      n++
+    ){
+
+      const y=
+        coilTop+
+        spacing*
+        (
+          n+
+          .5
+        );
+
+
+      transformerCtx.beginPath();
+
+
+      if(
+        side===
+        "left"
+      ){
+
+        transformerCtx.arc(
+          x,
+          y,
+          13,
+          -Math.PI/
+          2,
+          Math.PI/
+          2
+        );
+
+      }
+
+      else{
+
+        transformerCtx.arc(
+          x,
+          y,
+          13,
+          Math.PI/
+          2,
+          3*
+          Math.PI/
+          2
+        );
+
+      }
+
+
+      transformerCtx.stroke();
+
+    }
+
+  }
+
+
+  drawCoil(
+    coreLeft-
+    3,
+    visibleTurnsPrimary,
+    "#60a5fa",
+    "left"
+  );
+
+
+  drawCoil(
+    coreRight+
+    3,
+    visibleTurnsSecondary,
+    "#f59e0b",
+    "right"
+  );
+
+
+  /*
+  Animated flux.
+  */
+
+  const flux=
+    Math.sin(
+      animationPhase
+    );
+
+
+  const alpha=
+    .25+
+    .65*
+    Math.abs(
+      flux
+    );
+
+
+  transformerCtx.strokeStyle=
+    `rgba(34,211,238,${alpha})`;
+
+
+  transformerCtx.lineWidth=
+    5;
+
+
+  transformerCtx.setLineDash([
+    10,
+    8
+  ]);
+
+
+  const inset=
+    18;
+
+
+  transformerCtx.strokeRect(
+    coreLeft+
+    inset,
+    coreTop+
+    inset,
+    coreRight-
+    coreLeft-
+    2*
+    inset,
+    coreBottom-
+    coreTop-
+    2*
+    inset
+  );
+
+
+  transformerCtx.setLineDash([]);
+
+
+  transformerCtx.fillStyle=
+    `rgba(103,232,249,${alpha})`;
+
+
+  transformerCtx.font=
+    "bold 12px system-ui";
+
+
+  transformerCtx.textAlign=
+    "center";
+
+
+  transformerCtx.fillText(
+    flux>=0
+      ? "Φ(t) ↻"
+      : "Φ(t) ↺",
+    W/
+    2,
+    coreTop+
+    42
+  );
+
+
+  /*
+  Labels.
+  */
+
+  transformerCtx.textAlign=
+    "center";
+
+
+  transformerCtx.font=
+    "bold 12px system-ui";
+
+
+  transformerCtx.fillStyle=
+    "#93c5fd";
+
+
+  transformerCtx.fillText(
+    "PRIMAR",
+    coreLeft-
+    72,
+    coreTop-
+    24
+  );
+
+
+  transformerCtx.fillText(
+    `N₁ = ${m.N1}`,
+    coreLeft-
+    72,
+    coreTop-
+    6
+  );
+
+
+  transformerCtx.fillText(
+    `U₁ = ${formatRo(m.U1,1)} V`,
+    coreLeft-
+    72,
+    coreBottom+
+    48
+  );
+
+
+  transformerCtx.fillText(
+    `I₁ = ${formatRo(m.I1,2)} A`,
+    coreLeft-
+    72,
+    coreBottom+
+    68
+  );
+
+
+  transformerCtx.fillStyle=
+    "#fbbf24";
+
+
+  transformerCtx.fillText(
+    "SECUNDAR",
+    coreRight+
+    72,
+    coreTop-
+    24
+  );
+
+
+  transformerCtx.fillText(
+    `N₂ = ${m.N2}`,
+    coreRight+
+    72,
+    coreTop-
+    6
+  );
+
+
+  transformerCtx.fillText(
+    `U₂ = ${formatRo(m.U2,1)} V`,
+    coreRight+
+    72,
+    coreBottom+
+    48
+  );
+
+
+  transformerCtx.fillText(
+    `I₂ = ${formatRo(m.I2,2)} A`,
+    coreRight+
+    72,
+    coreBottom+
+    68
+  );
+
+
+  /*
+  Load.
+  */
+
+  transformerCtx.fillStyle=
+    "rgba(15,23,42,.82)";
+
+
+  transformerCtx.fillRect(
+    20,
+    H-
+    118,
+    W-
+    40,
+    88
+  );
+
+
+  transformerCtx.textAlign=
+    "left";
+
+
+  transformerCtx.font=
+    "bold 11px system-ui";
+
+
+  transformerCtx.fillStyle=
+    "#e2e8f0";
+
+
+  transformerCtx.fillText(
+    `k = N₁/N₂ = U₁/U₂ = ${formatRo(m.k,3)}`,
+    34,
+    H-
+    86
+  );
+
+
+  transformerCtx.fillText(
+    `P₁ = P₂ = ${formatRo(m.P2,2)} W`,
+    34,
+    H-
+    60
+  );
+
+
+  transformerCtx.fillStyle=
+    "#86efac";
+
+
+  transformerCtx.fillText(
+    `tip: ${m.type}`,
+    34,
+    H-
+    36
+  );
+
+}
+
+
+/* =========================================================
+   GRAPH U2 VS N2
+========================================================= */
+
+function drawGraph(
+  m
+){
+
+  const rect=
+    graphCanvas.getBoundingClientRect();
+
+
+  const W=
+    rect.width;
+
+
+  const H=
+    rect.height;
+
+
+  graphCtx.fillStyle=
+    "#f8fafc";
+
+
+  graphCtx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 15px system-ui";
+
+
+  graphCtx.textAlign=
+    "left";
+
+
+  graphCtx.fillText(
+    "Dependența U₂ de N₂",
+    20,
+    29
+  );
+
+
+  graphCtx.fillStyle=
+    "#64748b";
+
+
+  graphCtx.font=
+    "11px system-ui";
+
+
+  graphCtx.fillText(
+    "U₁ și N₁ sunt menținute constante",
+    20,
+    49
+  );
+
+
+  const left=68;
+  const right=W-30;
+
+  const top=90;
+  const bottom=H-85;
+
+
+  const maxN2=
+    Number(
+      secondaryTurnsSlider.max
+    );
+
+
+  const maxU2=
+    m.U1*
+    maxN2/
+    m.N1;
+
+
+  function xFor(
+    N2
+  ){
+
+    return left+
+      N2/
+      maxN2*
+      (
+        right-
+        left
+      );
+
+  }
+
+
+  function yFor(
+    U2
+  ){
+
+    return bottom-
+      U2/
+      Math.max(
+        maxU2,
+        1
+      )*
+      (
+        bottom-
+        top
+      )*
+      .9;
+
+  }
+
+
+  /*
+  Grid.
+  */
+
+  graphCtx.strokeStyle=
+    "#e2e8f0";
+
+
+  graphCtx.lineWidth=1;
+
+
+  for(
+    let k=0;
+    k<=5;
+    k++
+  ){
+
+    const x=
+      left+
+      (
+        right-
+        left
+      )*
+      k/
+      5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      x,
+      top
+    );
+
+    graphCtx.lineTo(
+      x,
+      bottom
+    );
+
+    graphCtx.stroke();
+
+  }
+
+
+  for(
+    let k=0;
+    k<=5;
+    k++
+  ){
+
+    const y=
+      top+
+      (
+        bottom-
+        top
+      )*
+      k/
+      5;
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      left,
+      y
+    );
+
+    graphCtx.lineTo(
+      right,
+      y
+    );
+
+    graphCtx.stroke();
+
+  }
+
+
+  /*
+  Axes.
+  */
+
+  graphCtx.strokeStyle=
+    "#475569";
+
+
+  graphCtx.lineWidth=2;
+
+
+  graphCtx.beginPath();
+
+  graphCtx.moveTo(
+    left,
+    top
+  );
+
+  graphCtx.lineTo(
+    left,
+    bottom
+  );
+
+  graphCtx.lineTo(
+    right,
+    bottom
+  );
+
+  graphCtx.stroke();
+
+
+  /*
+  Line.
+  */
+
+  graphCtx.strokeStyle=
+    "#0891b2";
+
+
+  graphCtx.lineWidth=4;
+
+
+  graphCtx.beginPath();
+
+  graphCtx.moveTo(
+    xFor(0),
+    yFor(0)
+  );
+
+  graphCtx.lineTo(
+    xFor(
+      maxN2
+    ),
+    yFor(
+      maxU2
+    )
+  );
+
+  graphCtx.stroke();
+
+
+  /*
+  N2=N1 reference.
+  */
+
+  if(
+    m.N1<=
+    maxN2
+  ){
+
+    const refX=
+      xFor(
+        m.N1
+      );
+
+
+    graphCtx.strokeStyle=
+      "#16a34a";
+
+
+    graphCtx.lineWidth=2;
+
+
+    graphCtx.setLineDash([
+      6,
+      5
+    ]);
+
+
+    graphCtx.beginPath();
+
+    graphCtx.moveTo(
+      refX,
+      top
+    );
+
+    graphCtx.lineTo(
+      refX,
+      bottom
+    );
+
+    graphCtx.stroke();
+
+
+    graphCtx.setLineDash([]);
+
+
+    graphCtx.fillStyle=
+      "#15803d";
+
+
+    graphCtx.font=
+      "bold 10px system-ui";
+
+
+    graphCtx.textAlign=
+      "center";
+
+
+    graphCtx.fillText(
+      "N₂=N₁",
+      refX,
+      top+
+      17
+    );
+
+  }
+
+
+  /*
+  Current point.
+  */
+
+  const pointX=
+    xFor(
+      m.N2
+    );
+
+
+  const pointY=
+    yFor(
+      m.U2
+    );
+
+
+  graphCtx.beginPath();
+
+  graphCtx.arc(
+    pointX,
+    pointY,
+    8,
+    0,
+    Math.PI*
+    2
+  );
+
+
+  graphCtx.fillStyle=
+    "#dc2626";
+
+
+  graphCtx.fill();
+
+
+  graphCtx.fillStyle=
+    "#b91c1c";
+
+
+  graphCtx.font=
+    "bold 10px system-ui";
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.fillText(
+    `(${m.N2}; ${formatRo(m.U2,1)} V)`,
+    pointX,
+    Math.max(
+      top+
+      38,
+      pointY-
+      14
+    )
+  );
+
+
+  /*
+  Labels.
+  */
+
+  graphCtx.fillStyle=
+    "#475569";
+
+
+  graphCtx.font=
+    "10px system-ui";
+
+
+  for(
+    let k=0;
+    k<=5;
+    k++
+  ){
+
+    const N=
+      maxN2*
+      k/
+      5;
+
+
+    graphCtx.textAlign=
+      "center";
+
+
+    graphCtx.fillText(
+      formatRo(
+        N,
+        0
+      ),
+      xFor(
+        N
+      ),
+      bottom+
+      21
+    );
+
+  }
+
+
+  graphCtx.save();
+
+
+  graphCtx.translate(
+    20,
+    (
+      top+
+      bottom
+    )/
+    2
+  );
+
+
+  graphCtx.rotate(
+    -Math.PI/
+    2
+  );
+
+
+  graphCtx.font=
+    "bold 11px system-ui";
+
+
+  graphCtx.fillText(
+    "U₂ [V]",
+    0,
+    0
+  );
+
+
+  graphCtx.restore();
+
+
+  graphCtx.textAlign=
+    "center";
+
+
+  graphCtx.fillText(
+    "N₂ [spire]",
+    (
+      left+
+      right
+    )/
+    2,
+    H-
+    26
+  );
+
+
+  graphCtx.fillStyle=
+    "#0f172a";
+
+
+  graphCtx.font=
+    "bold 11px system-ui";
+
+
+  graphCtx.fillText(
+    "U₂ = U₁ · N₂/N₁",
+    W/
+    2,
+    H-
+    50
+  );
+
+}
+
+
+/* =========================================================
+   PRESETS
+========================================================= */
+
+function setStepDown(){
+
+  primaryTurnsSlider.value=
+    "600";
+
+
+  secondaryTurnsSlider.value=
+    "200";
+
+
+  updateResults();
+
+}
+
+
+function setStepUp(){
+
+  primaryTurnsSlider.value=
+    "200";
+
+
+  secondaryTurnsSlider.value=
+    "600";
+
+
+  updateResults();
+
+}
+
+
+function setOneToOne(){
+
+  primaryTurnsSlider.value=
+    "400";
+
+
+  secondaryTurnsSlider.value=
+    "400";
+
+
+  updateResults();
+
+}
+
+
+function doubleSecondary(){
+
+  secondaryTurnsSlider.value=
+    String(
+      clamp(
+        Number(
+          secondaryTurnsSlider.value
+        )*
+        2,
+        Number(
+          secondaryTurnsSlider.min
+        ),
+        Number(
+          secondaryTurnsSlider.max
+        )
+      )
+    );
+
+
+  updateResults();
+
+}
+
+
+function swapWindings(){
+
+  const oldN1=
+    primaryTurnsSlider.value;
+
+
+  primaryTurnsSlider.value=
+    secondaryTurnsSlider.value;
+
+
+  secondaryTurnsSlider.value=
+    oldN1;
+
+
+  updateResults();
+
+}
+
+
+function resetAll(){
+
+  primaryVoltageSlider.value=
+    "12";
+
+
+  primaryTurnsSlider.value=
+    "400";
+
+
+  secondaryTurnsSlider.value=
+    "200";
+
+
+  loadSlider.value=
+    "20";
+
+
+  animationSelect.value=
+    "on";
+
+
+  animationPhase=0;
+
+
+  updateResults();
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+[
+  primaryVoltageSlider,
+  primaryTurnsSlider,
+  secondaryTurnsSlider,
+  loadSlider,
+  animationSelect
+]
+.forEach(
+  element=>{
+
+    element.addEventListener(
+      "input",
+      updateResults
+    );
+
+
+    element.addEventListener(
+      "change",
+      updateResults
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "stepDownBtn"
+  )
+  .addEventListener(
+    "click",
+    setStepDown
+  );
+
+
+document
+  .getElementById(
+    "stepUpBtn"
+  )
+  .addEventListener(
+    "click",
+    setStepUp
+  );
+
+
+document
+  .getElementById(
+    "oneToOneBtn"
+  )
+  .addEventListener(
+    "click",
+    setOneToOne
+  );
+
+
+document
+  .getElementById(
+    "doubleSecondaryBtn"
+  )
+  .addEventListener(
+    "click",
+    doubleSecondary
+  );
+
+
+document
+  .getElementById(
+    "swapBtn"
+  )
+  .addEventListener(
+    "click",
+    swapWindings
+  );
+
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    resetAll
+  );
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(
+  timestamp
+){
+
+  if(
+    !lastTimestamp
+  ){
+
+    lastTimestamp=
+      timestamp;
+
+  }
+
+
+  const dt=
+    Math.min(
+      (
+        timestamp-
+        lastTimestamp
+      )/
+      1000,
+      .05
+    );
+
+
+  lastTimestamp=
+    timestamp;
+
+
+  if(
+    animationSelect.value===
+    "on"
+  ){
+
+    animationPhase+=
+      dt*
+      2.2;
+
+
+    if(
+      animationPhase>
+      2*
+      Math.PI
+    ){
+
+      animationPhase-=
+        2*
+        Math.PI;
+
+    }
+
+
+    drawTransformer(
+      readModel()
+    );
+
+  }
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeAll(){
+
+  resizeCanvas(
+    transformerCanvas,
+    transformerCtx
+  );
+
+
+  resizeCanvas(
+    graphCanvas,
+    graphCtx
+  );
+
+
+  updateResults();
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeAll
+);
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const questions=
+  document.querySelectorAll(
+    ".question"
+  );
+
+
+let score=0;
+let answered=0;
+
+
+questions.forEach(
+  question=>{
+
+    const correctIndex=
+      Number(
+        question.dataset.correct
+      );
+
+
+    const buttons=
+      question.querySelectorAll(
+        ".answer-btn"
+      );
+
+
+    const feedback=
+      question.querySelector(
+        ".feedback"
+      );
+
+
+    buttons.forEach(
+      (
+        button,
+        index
+      )=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              question.dataset.answered===
+              "true"
+            ){
+              return;
+            }
+
+
+            question.dataset.answered=
+              "true";
+
+
+            answered++;
+
+
+            buttons.forEach(
+              item=>{
+                item.disabled=true;
+              }
+            );
+
+
+            buttons[
+              correctIndex
+            ].classList.add(
+              "correct"
+            );
+
+
+            if(
+              index===
+              correctIndex
+            ){
+
+              score++;
+
+
+              feedback.textContent=
+                "✓ Corect.";
+
+
+              feedback.style.color=
+                "#15803d";
+
+            }
+
+            else{
+
+              button.classList.add(
+                "wrong"
+              );
+
+
+              feedback.textContent=
+                "✗ Revizuiește inducția electromagnetică, raportul U₁/U₂=N₁/N₂ și transformarea inversă a curenților.";
+
+
+              feedback.style.color=
+                "#b91c1c";
+
+            }
+
+
+            const scoreBox=
+              document.getElementById(
+                "quizScore"
+              );
+
+
+            scoreBox.textContent=
+              `Scor: ${score} / ${questions.length}`;
+
+
+            if(
+              answered===
+              questions.length
+            ){
+
+              if(
+                score===
+                questions.length
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Excelent! Poți trece la studiul experimental al transformatorului.`;
+
+              }
+
+              else if(
+                score>=8
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Foarte bine. Revizuiește doar itemii greșiți.`;
+
+              }
+
+              else if(
+                score>=6
+              ){
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Nivel bun. Mai exersează raportul curenților și diferența dintre modelul ideal și cel real.`;
+
+              }
+
+              else{
+
+                scoreBox.textContent=
+                  `Scor: ${score} / ${questions.length} — Reia traseul: flux variabil → inducție → U₁/U₂=N₁/N₂ → curenți în raport invers → P₁≈P₂.`;
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+window.addEventListener(
+  "load",
+  ()=>{
+
+    resizeCanvas(
+      transformerCanvas,
+      transformerCtx
+    );
+
+
+    resizeCanvas(
+      graphCanvas,
+      graphCtx
+    );
+
+
+    resetAll();
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
