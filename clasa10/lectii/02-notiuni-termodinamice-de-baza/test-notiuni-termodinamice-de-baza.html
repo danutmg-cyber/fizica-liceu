@@ -51,7 +51,6 @@ Test – Noțiuni termodinamice de bază | Clasa a X-a
   --test-red:#dc2626;
   --test-orange:#ea580c;
 
-  --test-bg:#0b1220;
   --test-soft:#f8fafc;
   --test-border:#cbd5e1;
 
@@ -89,8 +88,11 @@ Test – Noțiuni termodinamice de bază | Clasa a X-a
 
 
 html{
+
   -webkit-text-size-adjust:100%;
+
   text-size-adjust:100%;
+
 }
 
 
@@ -451,7 +453,9 @@ button:disabled{
   display:grid;
 
   grid-template-columns:
-    1fr auto 1fr;
+    minmax(0,1fr)
+    auto
+    auto;
 
   gap:12px;
 
@@ -502,35 +506,28 @@ button:disabled{
 }
 
 
-.toolbar-right{
-
-  display:flex;
-
-  justify-content:flex-end;
-
-  align-items:center;
-
-}
-
-
-.catalog-badge{
+.variant-badge{
 
   display:inline-flex;
 
   align-items:center;
   justify-content:center;
 
-  min-width:58px;
   min-height:39px;
 
-  padding:5px 10px;
+  padding:
+    5px 12px;
 
   color:#ffffff;
   background:#2563eb;
 
   border-radius:999px;
 
+  font-size:.94rem;
+
   font-weight:900;
+
+  white-space:nowrap;
 
 }
 
@@ -716,28 +713,8 @@ button:disabled{
 }
 
 
-.formula-inline{
-
-  display:inline-block;
-
-  padding:2px 7px;
-
-  color:#0f172a;
-  background:#f1f5f9;
-
-  border-radius:6px;
-
-  font-family:
-    "Times New Roman",
-    serif;
-
-  font-size:1.1em;
-
-}
-
-
 /* =========================================================
-   ALEGERE / ADEVĂRAT-FALS
+   ALEGERE UNICĂ / ADEVĂRAT-FALS
 ========================================================= */
 
 .options-list{
@@ -911,8 +888,21 @@ button:disabled{
 
 
 /* =========================================================
-   MINI-TASTATURĂ SIMBOLURI
+   TASTATURĂ DE SIMBOLURI
 ========================================================= */
+
+.symbol-help{
+
+  margin-top:14px;
+
+  color:#475569;
+
+  font-size:.9rem;
+
+  font-weight:700;
+
+}
+
 
 .symbol-keyboard{
 
@@ -922,15 +912,15 @@ button:disabled{
 
   gap:9px;
 
-  margin-top:13px;
+  margin-top:8px;
 
 }
 
 
 .symbol-keyboard button{
 
-  min-width:55px;
-  min-height:49px;
+  min-width:57px;
+  min-height:50px;
 
   padding:7px 13px;
 
@@ -946,7 +936,12 @@ button:disabled{
     "Times New Roman",
     serif;
 
-  font-size:1.45rem;
+  font-size:
+    clamp(
+      1.15rem,
+      1rem + .7vw,
+      1.5rem
+    );
 
   font-weight:850;
 
@@ -962,6 +957,16 @@ button:disabled{
   background:#e0f2fe;
 
   border-color:#38bdf8;
+
+}
+
+
+.symbol-keyboard button.selected-symbol{
+
+  color:#ffffff;
+  background:#2563eb;
+
+  border-color:#1d4ed8;
 
 }
 
@@ -1243,37 +1248,44 @@ button:disabled{
 
     grid-template-columns:
       minmax(0,1fr)
-      auto
       auto;
 
-    gap:7px;
+    gap:8px;
 
-    padding:
-      10px 9px;
+  }
+
+
+  .toolbar-left{
+
+    grid-column:
+      1 / -1;
 
   }
 
 
   .toolbar-left strong{
 
-    font-size:.86rem;
+    text-align:center;
+
+    font-size:.9rem;
 
   }
 
 
-  .catalog-badge{
+  .variant-badge{
 
-    min-width:52px;
+    justify-self:start;
 
-    padding:
-      4px 8px;
+    font-size:.86rem;
 
   }
 
 
   .timer{
 
-    font-size:.9rem;
+    justify-self:end;
+
+    font-size:.95rem;
 
   }
 
@@ -1337,7 +1349,7 @@ button:disabled{
 
 
 <!-- =========================================================
-     ECRAN DE PORNIRE
+     ECRAN PORNIRE
 ========================================================= -->
 
 <section
@@ -1504,10 +1516,10 @@ Ecran complet
 
 
 <div
-  id="catalogToolbar"
-  class="catalog-badge"
+  id="variantToolbar"
+  class="variant-badge"
 >
-—
+Varianta nr. —
 </div>
 
 
@@ -1552,11 +1564,7 @@ Item 1 din 25
 <article
   id="itemCard"
   class="item-card"
->
-
-<!-- generat din JavaScript -->
-
-</article>
+></article>
 
 
 <div
@@ -1762,7 +1770,7 @@ Salvează PDF
 ============================================================ */
 
 const TEST_VERSION =
-  "TERM10-CAP02-v3";
+  "TERM10-CAP02-v4";
 
 
 const TOTAL_ITEMS =
@@ -1782,12 +1790,8 @@ const MAX_CATALOG =
   30;
 
 
-const AVOGADRO_COEFFICIENT =
-  6.02214076;
-
-
-const U_COEFFICIENT =
-  0.1660539;
+const AVOGADRO =
+  6.022;
 
 
 /* ============================================================
@@ -1875,9 +1879,9 @@ const studentToolbar =
   );
 
 
-const catalogToolbar =
+const variantToolbar =
   document.getElementById(
-    "catalogToolbar"
+    "variantToolbar"
   );
 
 
@@ -1966,7 +1970,7 @@ const toast =
 
 
 /* ============================================================
-   RNG DETERMINIST
+   GENERATOR DETERMINIST
 ============================================================ */
 
 function hashString(
@@ -1979,7 +1983,7 @@ function hashString(
 
   for(
     let i=0;
-    i<text.length;
+    i < text.length;
     i++
   ){
 
@@ -2098,7 +2102,7 @@ function shuffle(
     let i=
       copy.length -
       1;
-    i>0;
+    i > 0;
     i--
   ){
 
@@ -2128,7 +2132,7 @@ function shuffle(
 
 
 /* ============================================================
-   FUNCȚII UTILE
+   UTILE
 ============================================================ */
 
 function roundTo(
@@ -2225,7 +2229,7 @@ function formatDuration(
   milliseconds
 ){
 
-  const totalSeconds =
+  const seconds =
     Math.max(
       0,
       Math.round(
@@ -2237,12 +2241,11 @@ function formatDuration(
 
 
   if(
-    totalSeconds <
-    60
+    seconds < 60
   ){
 
     return (
-      totalSeconds
+      seconds
         .toFixed(
           1
         )
@@ -2258,13 +2261,13 @@ function formatDuration(
 
   const minutes =
     Math.floor(
-      totalSeconds /
+      seconds /
       60
     );
 
 
-  const seconds =
-    totalSeconds -
+  const rest =
+    seconds -
     minutes *
     60;
 
@@ -2272,7 +2275,7 @@ function formatDuration(
   return (
     minutes +
     " min " +
-    seconds
+    rest
       .toFixed(
         1
       )
@@ -2327,7 +2330,7 @@ function parseNumberRo(
   value
 ){
 
-  const cleaned =
+  return Number(
     String(
       value ??
       ""
@@ -2340,11 +2343,7 @@ function parseNumberRo(
     .replace(
       /\s+/g,
       ""
-    );
-
-
-  return Number(
-    cleaned
+    )
   );
 
 }
@@ -2432,7 +2431,7 @@ function showToast(
 
 
 /* ============================================================
-   CONSTRUCTORI ITEMI
+   CONSTRUCTORI
 ============================================================ */
 
 function makeChoice(
@@ -2505,23 +2504,6 @@ function makeMatching(
   pairs
 ){
 
-  const rights =
-    shuffle(
-      rng,
-      pairs.map(
-        pair=>({
-
-          id:
-            pair.id,
-
-          text:
-            pair.right
-
-        })
-      )
-    );
-
-
   return{
 
     type:"matching",
@@ -2532,7 +2514,21 @@ function makeMatching(
 
     pairs,
 
-    rights,
+    rights:
+      shuffle(
+        rng,
+        pairs.map(
+          pair=>({
+
+            id:
+              pair.id,
+
+            text:
+              pair.right
+
+          })
+        )
+      ),
 
     maxPoints:
       POINTS_PER_ITEM
@@ -2603,7 +2599,7 @@ function makeNumeric(
 
 
 /* ============================================================
-   BANCA – ALEGERE UNICĂ
+   ALEGERE UNICĂ
 ============================================================ */
 
 const choiceBank = [
@@ -2630,7 +2626,7 @@ const choiceBank = [
   rng=>
     makeChoice(
       rng,
-      "Mol și numărul lui Avogadro",
+      "Mol",
       `
       Un mol de entități conține aproximativ:
       `,
@@ -2649,9 +2645,7 @@ const choiceBank = [
       rng,
       "Masa molară",
       `
-      Unitatea SI a masei molare
-      <strong>μ</strong>
-      este:
+      Unitatea SI a masei molare este:
       `,
       [
         "kg/mol",
@@ -2683,10 +2677,28 @@ const choiceBank = [
   rng=>
     makeChoice(
       rng,
+      "Parametri de stare",
+      `
+      Care grup conține numai parametri extensivi?
+      `,
+      [
+        "m, V, ν",
+        "p, T, ρ",
+        "p, V, T",
+        "ρ, T, ν"
+      ],
+      "m, V, ν"
+    ),
+
+
+  rng=>
+    makeChoice(
+      rng,
       "Grade de libertate",
       `
-      Numărul parametrilor independenți necesari și suficienți
-      pentru descrierea stării unui sistem se numește:
+      Numărul parametrilor independenți
+      necesari și suficienți pentru descrierea stării
+      unui sistem reprezintă:
       `,
       [
         "numărul gradelor de libertate",
@@ -2704,14 +2716,13 @@ const choiceBank = [
       "Procese termodinamice",
       `
       Un proces în care stările intermediare
-      pot fi considerate foarte apropiate de stări de echilibru
-      se numește:
+      pot fi considerate stări de echilibru se numește:
       `,
       [
         "cvasistatic",
         "necvasistatic",
-        "obligatoriu ciclic",
-        "obligatoriu ireversibil"
+        "ciclic",
+        "staționar"
       ],
       "cvasistatic"
     ),
@@ -2726,8 +2737,8 @@ const choiceBank = [
       `,
       [
         "starea finală coincide cu starea inițială",
-        "volumul este întotdeauna constant",
         "temperatura este întotdeauna constantă",
+        "volumul este întotdeauna constant",
         "procesul este întotdeauna reversibil"
       ],
       "starea finală coincide cu starea inițială"
@@ -2737,16 +2748,16 @@ const choiceBank = [
   rng=>
     makeChoice(
       rng,
-      "Contact mecanic și termic",
+      "Contact termic",
       `
-      Care situație reprezintă contact termic
-      fără deplasarea mecanică a frontierei?
+      Care situație permite contact termic
+      fără deplasarea frontierei?
       `,
       [
         "Două gaze separate de un perete metalic rigid.",
         "Două gaze separate de un piston mobil adiabatic.",
-        "Un gaz comprimat cu un piston termoizolator.",
-        "Un sistem delimitat de un perete rigid adiabatic ideal."
+        "Un recipient rigid cu pereți adiabatici.",
+        "Un gaz comprimat cu un piston termoizolator."
       ],
       "Două gaze separate de un perete metalic rigid."
     ),
@@ -2757,15 +2768,15 @@ const choiceBank = [
       rng,
       "Principiul zero",
       `
-      Dacă A și B sunt fiecare în echilibru termic
-      cu același sistem C,
+      Dacă sistemele A și B sunt fiecare
+      în echilibru termic cu același sistem C,
       atunci:
       `,
       [
         "A și B sunt în echilibru termic.",
         "A este obligatoriu mai cald decât B.",
         "B este obligatoriu mai cald decât A.",
-        "A și B trebuie să aibă aceeași masă."
+        "A și B au obligatoriu aceeași masă."
       ],
       "A și B sunt în echilibru termic."
     ),
@@ -2793,33 +2804,15 @@ const choiceBank = [
       rng,
       "Modelul gazului ideal",
       `
-      În modelul gazului ideal,
-      presiunea exercitată asupra pereților este asociată microscopic cu:
+      Presiunea unui gaz este asociată microscopic cu:
       `,
       [
-        "ciocnirile particulelor cu pereții",
-        "culoarea moleculelor",
+        "ciocnirile particulelor cu pereții recipientului",
+        "culoarea particulelor",
         "masa recipientului",
-        "forma recipientului"
+        "forma termometrului"
       ],
-      "ciocnirile particulelor cu pereții"
-    ),
-
-
-  rng=>
-    makeChoice(
-      rng,
-      "Modelul gazului ideal",
-      `
-      Care afirmație aparține modelului gazului ideal?
-      `,
-      [
-        "Volumul propriu al moleculelor este neglijabil în raport cu volumul gazului.",
-        "Moleculele sunt complet imobile.",
-        "Moleculele ocupă aproape întreg volumul recipientului.",
-        "Gazul nu exercită presiune asupra pereților."
-      ],
-      "Volumul propriu al moleculelor este neglijabil în raport cu volumul gazului."
+      "ciocnirile particulelor cu pereții recipientului"
     )
 
 
@@ -2827,7 +2820,7 @@ const choiceBank = [
 
 
 /* ============================================================
-   BANCA – ADEVĂRAT / FALS
+   ADEVĂRAT / FALS
 ============================================================ */
 
 const tfBank = [
@@ -2913,7 +2906,7 @@ const tfBank = [
     makeTF(
       "Contact termic",
       `
-      Un perete rigid este întotdeauna și adiabatic.
+      Un perete rigid este întotdeauna adiabatic.
       `,
       false
     ),
@@ -2958,7 +2951,7 @@ const tfBank = [
       "Stare staționară",
       `
       O stare staționară nu presupune obligatoriu
-      uniformitate spațială a temperaturii.
+      uniformitatea spațială a temperaturii.
       `,
       true
     )
@@ -2968,7 +2961,7 @@ const tfBank = [
 
 
 /* ============================================================
-   BANCA – ASOCIERE
+   ASOCIERE
 ============================================================ */
 
 const matchingBank = [
@@ -2979,7 +2972,8 @@ const matchingBank = [
       rng,
       "Mărimi fizice",
       `
-      Asociază fiecare simbol cu mărimea fizică reprezentată.
+      Asociază fiecare simbol
+      cu mărimea fizică reprezentată.
       `,
       [
         {
@@ -3043,13 +3037,14 @@ const matchingBank = [
       rng,
       "Procese termodinamice",
       `
-      Asociază tipul procesului cu descrierea corectă.
+      Asociază procesul
+      cu descrierea corespunzătoare.
       `,
       [
         {
           id:"a",
           left:"cvasistatic",
-          right:"stările intermediare sunt foarte apropiate de echilibru"
+          right:"stările intermediare pot fi considerate stări de echilibru"
         },
         {
           id:"b",
@@ -3075,13 +3070,14 @@ const matchingBank = [
       rng,
       "Contact și izolare",
       `
-      Asociază noțiunea cu descrierea corectă.
+      Asociază noțiunea
+      cu descrierea corespunzătoare.
       `,
       [
         {
           id:"a",
           left:"piston mobil",
-          right:"permite interacțiune mecanică prin deplasarea frontierei"
+          right:"permite deplasarea frontierei"
         },
         {
           id:"b",
@@ -3107,7 +3103,8 @@ const matchingBank = [
       rng,
       "Mase molare",
       `
-      Asociază substanța cu masa molară aproximativă.
+      Asociază substanța
+      cu masa molară aproximativă.
       `,
       [
         {
@@ -3139,8 +3136,8 @@ const matchingBank = [
       rng,
       "Temperatură",
       `
-      Asociază temperatura Celsius
-      cu valoarea Kelvin corespunzătoare.
+      Asociază temperatura exprimată în °C
+      cu valoarea corespunzătoare în K.
       `,
       [
         {
@@ -3172,7 +3169,8 @@ const matchingBank = [
       rng,
       "Model microscopic",
       `
-      Asociază noțiunea cu descrierea sa.
+      Asociază noțiunea
+      cu descrierea corespunzătoare.
       `,
       [
         {
@@ -3204,7 +3202,8 @@ const matchingBank = [
       rng,
       "Parametri de stare",
       `
-      Asociază fiecare mărime cu clasificarea potrivită.
+      Asociază fiecare mărime
+      cu clasificarea corespunzătoare.
       `,
       [
         {
@@ -3235,15 +3234,15 @@ const matchingBank = [
 
 
 /* ============================================================
-   BANCA – RĂSPUNS SCURT
+   RĂSPUNS SCURT
 ============================================================ */
 
 const shortBank = [
 
 
-  ()=>
+  rng=>
     makeShort(
-      "Mol",
+      "Cantitate de substanță",
       `
       Scrie simbolul folosit pentru
       <strong>cantitatea de substanță</strong>.
@@ -3252,13 +3251,21 @@ const shortBank = [
         "ν",
         "nu"
       ],
-      [
-        "ν"
-      ]
+      shuffle(
+        rng,
+        [
+          "ν",
+          "μ",
+          "ρ",
+          "n",
+          "N",
+          "m"
+        ]
+      )
     ),
 
 
-  ()=>
+  rng=>
     makeShort(
       "Masa molară",
       `
@@ -3269,25 +3276,42 @@ const shortBank = [
         "μ",
         "mu"
       ],
-      [
-        "μ"
-      ]
+      shuffle(
+        rng,
+        [
+          "μ",
+          "ν",
+          "m",
+          "m₀",
+          "mᵣ",
+          "Vμ"
+        ]
+      )
     ),
 
 
-  ()=>
+  rng=>
     makeShort(
-      "Parametri de stare",
+      "Densitate",
       `
-      Scrie simbolul densității.
+      Scrie simbolul folosit pentru
+      <strong>densitate</strong>.
       `,
       [
         "ρ",
         "rho"
       ],
-      [
-        "ρ"
-      ]
+      shuffle(
+        rng,
+        [
+          "ρ",
+          "p",
+          "ν",
+          "μ",
+          "n",
+          "V"
+        ]
+      )
     ),
 
 
@@ -3309,8 +3333,9 @@ const shortBank = [
     makeShort(
       "Procese termodinamice",
       `
-      Cum se numește procesul în care stările intermediare
-      pot fi considerate foarte apropiate de stări de echilibru?
+      Cum se numește procesul
+      în care stările intermediare
+      pot fi considerate stări de echilibru?
       `,
       [
         "cvasistatic",
@@ -3323,9 +3348,8 @@ const shortBank = [
     makeShort(
       "Contact termic",
       `
-      Cum se numește,
-      în modelul ideal,
-      peretele care nu permite transfer termic?
+      Cum se numește peretele ideal
+      care nu permite transfer termic?
       `,
       [
         "adiabatic",
@@ -3338,10 +3362,8 @@ const shortBank = [
     makeShort(
       "Principiul zero",
       `
-      Cum se numește proprietatea exprimată de principiul zero:
-      dacă A este în echilibru termic cu C
-      și B este în echilibru termic cu C,
-      atunci A este în echilibru termic cu B?
+      Cum se numește proprietatea exprimată
+      de principiul zero al termodinamicii?
       `,
       [
         "tranzitivitate",
@@ -3355,11 +3377,10 @@ const shortBank = [
     makeShort(
       "Temperatură",
       `
-      Scrie denumirea unității SI
+      Scrie simbolul unității SI
       pentru temperatura termodinamică.
       `,
       [
-        "kelvin",
         "k"
       ]
     ),
@@ -3367,12 +3388,12 @@ const shortBank = [
 
   ()=>
     makeShort(
-      "Modelul gazului ideal",
+      "Gaz ideal",
       `
-      Cum se numește modelul teoretic
-      în care volumul propriu al moleculelor este neglijabil,
-      iar interacțiunile dintre molecule sunt neglijate
-      în afara ciocnirilor?
+      Cum se numește modelul de gaz
+      în care volumul propriu al moleculelor
+      este considerat neglijabil
+      în raport cu volumul ocupat de gaz?
       `,
       [
         "gaz ideal",
@@ -3385,8 +3406,8 @@ const shortBank = [
     makeShort(
       "Procese termodinamice",
       `
-      Cum se numește procesul în care
-      starea finală coincide cu starea inițială?
+      Cum se numește procesul
+      în care starea finală coincide cu starea inițială?
       `,
       [
         "ciclic",
@@ -3399,7 +3420,8 @@ const shortBank = [
 
 
 /* ============================================================
-   BANCA – PROBLEME NUMERICE
+   PROBLEME NUMERICE
+   NU SE AFIȘEAZĂ FORMULA DE CALCUL
 ============================================================ */
 
 function catalogTemperatureItem(
@@ -3413,20 +3435,15 @@ function catalogTemperatureItem(
     2;
 
 
-  const answer =
-    tC +
-    273.15;
-
-
   return makeNumeric(
     "Temperatură",
     `
-    Transformă temperatura
-    <strong>${tC} °C</strong>
-    în kelvini.
-    Introdu numai valoarea numerică.
+    O temperatură are valoarea
+    <strong>${tC} °C</strong>.
+    Exprimă temperatura în K.
     `,
-    answer,
+    tC +
+    273.15,
     0.02,
     "K"
   );
@@ -3496,14 +3513,17 @@ const numericBank = [
 
 
     return makeNumeric(
-      "Mol și masă molară",
+      "Cantitate de substanță",
       `
       O probă de
-      <strong>${roNumber(mass,1)} g ${substance.name}</strong>
-      are masa molară
-      <strong>μ = ${substance.mu} g/mol</strong>.
-      Calculează cantitatea de substanță
-      <strong>ν</strong>.
+      <strong>${substance.name}</strong>
+      are masa de
+      <strong>${roNumber(mass,1)} g</strong>.
+
+      Masa molară este
+      <strong>${substance.mu} g/mol</strong>.
+
+      Calculează cantitatea de substanță.
       `,
       nu,
       0.01,
@@ -3566,12 +3586,17 @@ const numericBank = [
 
 
     return makeNumeric(
-      "Mol și masă molară",
+      "Masa unei probe",
       `
-      Calculează masa a
-      <strong>${nu} mol ${substance.name}</strong>,
-      știind că
-      <strong>μ = ${substance.mu} g/mol</strong>.
+      O probă conține
+      <strong>${nu} mol</strong>
+      de
+      <strong>${substance.name}</strong>.
+
+      Masa molară a substanței este
+      <strong>${substance.mu} g/mol</strong>.
+
+      Calculează masa probei.
       `,
       mass,
       0.02,
@@ -3601,7 +3626,7 @@ const numericBank = [
     const coefficient =
       roundTo(
         nu *
-        AVOGADRO_COEFFICIENT,
+        AVOGADRO,
         3
       );
 
@@ -3610,10 +3635,22 @@ const numericBank = [
       "Numărul lui Avogadro",
       `
       O probă conține
-      <strong>${nu} mol</strong>.
-      Numărul de particule se scrie
-      <strong>N = a·10<sup>23</sup></strong>.
-      Determină coeficientul
+      <strong>${nu} mol</strong>
+      de substanță.
+
+      Se consideră
+      <strong>
+        N<sub>A</sub> =
+        6,022·10<sup>23</sup> mol<sup>−1</sup>
+      </strong>.
+
+      Calculează numărul de particule.
+
+      Scrie rezultatul sub forma
+      <strong>
+        a·10<sup>23</sup>
+      </strong>
+      și introdu numai valoarea lui
       <strong>a</strong>.
       `,
       coefficient,
@@ -3640,7 +3677,7 @@ const numericBank = [
       );
 
 
-    const volume =
+    const answer =
       roundTo(
         nu *
         22.4,
@@ -3651,14 +3688,16 @@ const numericBank = [
     return makeNumeric(
       "Volum molar",
       `
-      Calculează volumul ocupat în condiții normale
-      de
+      O cantitate de
       <strong>${nu} mol</strong>
-      de gaz,
-      folosind
-      <strong>V<sub>μ0</sub> = 22,4 L/mol</strong>.
+      de gaz se află în condiții normale.
+
+      Volumul molar în aceste condiții este
+      <strong>22,4 L/mol</strong>.
+
+      Calculează volumul ocupat de gaz.
       `,
-      volume,
+      answer,
       0.03,
       "L"
     );
@@ -3676,19 +3715,16 @@ const numericBank = [
       );
 
 
-    const kelvin =
-      tC +
-      273.15;
-
-
     return makeNumeric(
       "Temperatură",
       `
-      Transformă
-      <strong>${tC} °C</strong>
-      în kelvini.
+      O temperatură are valoarea
+      <strong>${tC} °C</strong>.
+
+      Exprimă temperatura în K.
       `,
-      kelvin,
+      tC +
+      273.15,
       0.02,
       "K"
     );
@@ -3714,9 +3750,10 @@ const numericBank = [
     return makeNumeric(
       "Temperatură",
       `
-      Transformă
-      <strong>${roNumber(kelvin,2)} K</strong>
-      în grade Celsius.
+      O temperatură are valoarea
+      <strong>${roNumber(kelvin,2)} K</strong>.
+
+      Exprimă temperatura în °C.
       `,
       tC,
       0.02,
@@ -3764,14 +3801,14 @@ const numericBank = [
 
 
     return makeNumeric(
-      "Parametri de stare",
+      "Densitate",
       `
       Un sistem are masa
       <strong>${roNumber(mass,2)} kg</strong>
-      și volumul
+      și ocupă volumul
       <strong>${roNumber(volume,1)} m³</strong>.
-      Calculează densitatea
-      <strong>ρ = m / V</strong>.
+
+      Calculează densitatea sistemului.
       `,
       density,
       0.02,
@@ -3820,12 +3857,12 @@ const numericBank = [
     return makeNumeric(
       "Volum molar",
       `
-      Un sistem cu
+      O cantitate de
       <strong>${nu} mol</strong>
-      ocupă volumul
+      de substanță ocupă volumul
       <strong>${roNumber(volume,2)} L</strong>.
-      Calculează volumul molar
-      <strong>V<sub>μ</sub> = V / ν</strong>.
+
+      Calculează volumul molar.
       `,
       molarVolume,
       0.03,
@@ -3852,7 +3889,7 @@ const numericBank = [
     const coefficient =
       roundTo(
         mr *
-        U_COEFFICIENT,
+        0.1660539,
         3
       );
 
@@ -3860,13 +3897,23 @@ const numericBank = [
     return makeNumeric(
       "Masa unei molecule",
       `
-      Pentru o moleculă cu
-      <strong>m<sub>r</sub> = ${mr}</strong>,
-      folosește
-      <strong>u ≈ 1,660539·10<sup>−27</sup> kg</strong>.
-      Masa moleculei se scrie
-      <strong>m<sub>0</sub> = a·10<sup>−26</sup> kg</strong>.
-      Determină coeficientul
+      Masa moleculară relativă a unei substanțe este
+      <strong>
+        m<sub>r</sub> = ${mr}
+      </strong>.
+
+      Se consideră
+      <strong>
+        u = 1,660539·10<sup>−27</sup> kg
+      </strong>.
+
+      Calculează masa unei molecule.
+
+      Scrie rezultatul sub forma
+      <strong>
+        a·10<sup>−26</sup> kg
+      </strong>
+      și introdu numai valoarea lui
       <strong>a</strong>.
       `,
       coefficient,
@@ -3899,7 +3946,7 @@ const numericBank = [
       );
 
 
-    const coefficientDensity =
+    const answer =
       roundTo(
         coefficientN /
         volume,
@@ -3913,14 +3960,21 @@ const numericBank = [
       Într-un volum de
       <strong>${roNumber(volume,1)} m³</strong>
       se află
-      <strong>N = ${coefficientN}·10<sup>24</sup></strong>
+      <strong>
+        ${coefficientN}·10<sup>24</sup>
+      </strong>
       particule.
-      Numărul volumic se scrie
-      <strong>n = a·10<sup>24</sup> m<sup>−3</sup></strong>.
-      Determină coeficientul
+
+      Calculează numărul volumic.
+
+      Scrie rezultatul sub forma
+      <strong>
+        a·10<sup>24</sup> m<sup>−3</sup>
+      </strong>
+      și introdu numai valoarea lui
       <strong>a</strong>.
       `,
-      coefficientDensity,
+      answer,
       0.03,
       ""
     );
@@ -3930,40 +3984,33 @@ const numericBank = [
 
   rng=>{
 
-    const masses =
-      [
-        9,
-        18,
-        27,
-        36,
-        45,
-        54
-      ];
-
-
     const mass =
       choose(
         rng,
-        masses
+        [
+          9,
+          18,
+          27,
+          36,
+          45,
+          54
+        ]
       );
 
 
-    const nu =
-      mass /
-      18;
-
-
     return makeNumeric(
-      "Cantitatea de substanță",
+      "Cantitate de substanță",
       `
-      O probă de apă are masa
+      O probă de apă are masa de
       <strong>${mass} g</strong>.
-      Pentru apă,
-      <strong>μ = 18 g/mol</strong>.
-      Calculează
-      <strong>ν</strong>.
+
+      Masa molară a apei este
+      <strong>18 g/mol</strong>.
+
+      Calculează cantitatea de substanță.
       `,
-      nu,
+      mass /
+      18,
       0.01,
       "mol"
     );
@@ -3975,7 +4022,7 @@ const numericBank = [
 
 
 /* ============================================================
-   SELECTAREA ITEMILOR
+   SELECTARE
 ============================================================ */
 
 function selectFactories(
@@ -3997,7 +4044,7 @@ function selectFactories(
 
 
 /* ============================================================
-   GENERAREA TESTULUI
+   GENERARE TEST
 ============================================================ */
 
 function generateTest(
@@ -4159,7 +4206,7 @@ function generateTest(
 
 
 /* ============================================================
-   ETICHETE TIPURI
+   TIPURI
 ============================================================ */
 
 const TYPE_LABELS = {
@@ -4183,7 +4230,7 @@ const TYPE_LABELS = {
 
 
 /* ============================================================
-   INITIALIZAREA RĂSPUNSURILOR
+   RĂSPUNSURI
 ============================================================ */
 
 function initializeResponses(){
@@ -4224,10 +4271,6 @@ function initializeResponses(){
 
 }
 
-
-/* ============================================================
-   RĂSPUNS COMPLET?
-============================================================ */
 
 function isAnswered(
   item
@@ -4298,7 +4341,7 @@ function countAnswered(){
 
 
 /* ============================================================
-   RANDAREA ITEMULUI
+   RANDARE ITEM
 ============================================================ */
 
 function renderCurrentItem(){
@@ -4534,37 +4577,67 @@ function renderCurrentItem(){
     "short"
   ){
 
-    const symbolsHtml =
+    let symbolsHtml =
+      "";
+
+
+    if(
       item.symbols &&
       item.symbols.length
-        ?
+    ){
+
+      symbolsHtml =
         `
+
+        <div class="symbol-help">
+          Poți selecta simbolul:
+        </div>
+
         <div class="symbol-keyboard">
 
-          ${
-            item.symbols
-              .map(
-                symbol=>`
+        ${
+          item.symbols
+            .map(
+              symbol=>{
+
+                const selected =
+                  String(
+                    responses[
+                      item.id
+                    ] ??
+                    ""
+                  ) ===
+                  symbol;
+
+
+                return `
 
                 <button
                   type="button"
                   data-symbol="${escapeHtml(symbol)}"
-                  aria-label="Introdu simbolul ${escapeHtml(symbol)}"
+                  class="${
+                    selected
+                      ? "selected-symbol"
+                      : ""
+                  }"
                 >
                   ${escapeHtml(symbol)}
                 </button>
 
-                `
-              )
-              .join(
-                ""
-              )
-          }
+                `;
+
+              }
+            )
+            .join(
+              ""
+            )
+        }
 
         </div>
-        `
-        :
-        "";
+
+        `;
+
+    }
 
 
     answerHtml =
@@ -4594,7 +4667,7 @@ function renderCurrentItem(){
 
 
   /* ----------------------------------------------------------
-     Numeric
+     Problemă numerică
   ---------------------------------------------------------- */
 
   if(
@@ -4702,8 +4775,6 @@ function attachAnswerListeners(
   item
 ){
 
-  /* Alegere */
-
   if(
     item.type ===
     "choice"
@@ -4739,8 +4810,6 @@ function attachAnswerListeners(
   }
 
 
-  /* Adevărat/Fals */
-
   if(
     item.type ===
     "tf"
@@ -4774,8 +4843,6 @@ function attachAnswerListeners(
 
   }
 
-
-  /* Asociere */
 
   if(
     item.type ===
@@ -4811,8 +4878,6 @@ function attachAnswerListeners(
 
   }
 
-
-  /* Răspuns scurt */
 
   if(
     item.type ===
@@ -4862,17 +4927,10 @@ function attachAnswerListeners(
                 input.value;
 
 
-              input.dispatchEvent(
-                new Event(
-                  "input",
-                  {
-                    bubbles:true
-                  }
-                )
-              );
+              onAnswerChanged();
 
 
-              input.focus();
+              renderCurrentItem();
 
             }
           );
@@ -4882,8 +4940,6 @@ function attachAnswerListeners(
 
   }
 
-
-  /* Numeric */
 
   if(
     item.type ===
@@ -4980,8 +5036,7 @@ function goToItem(
 
   if(
     index < 0 ||
-    index >=
-    testItems.length
+    index >= testItems.length
   ){
     return;
   }
@@ -5066,7 +5121,7 @@ function updateProgress(){
 
 
 /* ============================================================
-   MONITORIZAREA ECRANULUI
+   MONITORIZARE ECRAN
 ============================================================ */
 
 function currentItemId(){
@@ -5132,11 +5187,9 @@ function startAway(
     itemId
   ].events.push({
 
-    category:
-      "away",
+    category:"away",
 
-    action:
-      "leave",
+    action:"leave",
 
     reason,
 
@@ -5190,11 +5243,9 @@ function endAway(
       itemId
     ].events.push({
 
-      category:
-        "away",
+      category:"away",
 
-      action:
-        "return",
+      action:"return",
 
       reason,
 
@@ -5218,10 +5269,6 @@ function endAway(
 
 }
 
-
-/* ============================================================
-   EVENIMENTE DE INTEGRITATE
-============================================================ */
 
 function addIntegrityEvent(
   reason
@@ -5253,8 +5300,7 @@ function addIntegrityEvent(
     itemId
   ].events.push({
 
-    category:
-      "integrity",
+    category:"integrity",
 
     reason,
 
@@ -5264,13 +5310,15 @@ function addIntegrityEvent(
   });
 
 
+  updateMonitorBox();
+
   persistSession();
 
 }
 
 
 /* ============================================================
-   VISIBILITY / FOCUS
+   VISIBILITY
 ============================================================ */
 
 document.addEventListener(
@@ -5514,7 +5562,7 @@ function updateMonitorBox(){
   );
 
 
-  let text =
+  let message =
     "";
 
 
@@ -5523,7 +5571,7 @@ function updateMonitorBox(){
     0
   ){
 
-    text +=
+    message +=
       "Părăsire ecran: " +
       log.awayCount +
       " eveniment(e), timp total " +
@@ -5540,12 +5588,15 @@ function updateMonitorBox(){
     0
   ){
 
-    if(text){
-      text += " ";
+    if(message){
+
+      message +=
+        " ";
+
     }
 
 
-    text +=
+    message +=
       "Alte evenimente înregistrate: " +
       log.integrityCount +
       ".";
@@ -5554,7 +5605,7 @@ function updateMonitorBox(){
 
 
   monitorBox.textContent =
-    text;
+    message;
 
 }
 
@@ -5572,7 +5623,7 @@ function updateTimer(){
   }
 
 
-  const finalMoment =
+  const moment =
     testFinished &&
     endTime
       ? endTime
@@ -5582,7 +5633,7 @@ function updateTimer(){
   const totalSeconds =
     Math.floor(
       (
-        finalMoment.getTime() -
+        moment.getTime() -
         startTime.getTime()
       ) /
       1000
@@ -5614,7 +5665,7 @@ function updateTimer(){
 
 
 /* ============================================================
-   PORNIRE TEST
+   PORNIRE
 ============================================================ */
 
 startButton.addEventListener(
@@ -5753,9 +5804,9 @@ startButton.addEventListener(
       student.name;
 
 
-    catalogToolbar.textContent =
-      student.catalog +
-      "/30";
+    variantToolbar.textContent =
+      "Varianta nr. " +
+      student.catalog;
 
 
     startScreen.hidden =
@@ -5802,6 +5853,7 @@ startButton.addEventListener(
           .requestFullscreen();
 
       }
+
       catch(error){
 
         console.warn(
@@ -5894,14 +5946,10 @@ function scoreItem(
     "short"
   ){
 
-    const normalized =
+    return item.accepted.includes(
       normalizeText(
         response
-      );
-
-
-    return item.accepted.includes(
-      normalized
+      )
     )
       ? item.maxPoints
       : 0;
@@ -5947,10 +5995,6 @@ function scoreItem(
 }
 
 
-/* ============================================================
-   SCORURI
-============================================================ */
-
 function calculateScores(){
 
   let total =
@@ -5995,17 +6039,19 @@ function calculateScores(){
 
 
 /* ============================================================
-   TEXTUL CERINȚEI PENTRU PDF
+   CERINȚĂ PENTRU RAPORT
 ============================================================ */
 
-function itemRequirementText(
+function itemRequirementHtml(
   item
 ){
 
-  let text =
-    htmlToText(
-      item.promptHtml
-    );
+  let html =
+    `
+    <div>
+      ${item.promptHtml}
+    </div>
+    `;
 
 
   if(
@@ -6013,29 +6059,24 @@ function itemRequirementText(
     "choice"
   ){
 
-    text +=
-      " Opțiuni: ";
-
-
-    text +=
-      item.options
-        .map(
-          (
-            option,
-            index
-          )=>
-            String.fromCharCode(
-              65 +
-              index
-            ) +
-            ") " +
-            htmlToText(
-              option
+    html +=
+      `
+      <ol type="A">
+        ${
+          item.options
+            .map(
+              option=>`
+              <li>
+                ${option}
+              </li>
+              `
             )
-        )
-        .join(
-          "; "
-        );
+            .join(
+              ""
+            )
+        }
+      </ol>
+      `;
 
   }
 
@@ -6045,8 +6086,13 @@ function itemRequirementText(
     "tf"
   ){
 
-    text +=
-      " Răspuns posibil: Adevărat sau Fals.";
+    html +=
+      `
+      <p>
+        Opțiuni:
+        Adevărat / Fals
+      </p>
+      `;
 
   }
 
@@ -6056,45 +6102,59 @@ function itemRequirementText(
     "matching"
   ){
 
-    text +=
-      " Elemente: ";
+    html +=
+      `
+      <p>
+        <strong>Elemente:</strong>
+      </p>
 
+      <ul>
+        ${
+          item.pairs
+            .map(
+              pair=>`
+              <li>
+                ${escapeHtml(pair.left)}
+              </li>
+              `
+            )
+            .join(
+              ""
+            )
+        }
+      </ul>
 
-    text +=
-      item.pairs
-        .map(
-          pair=>
-            pair.left
-        )
-        .join(
-          "; "
-        );
+      <p>
+        <strong>Opțiuni:</strong>
+      </p>
 
-
-    text +=
-      ". Opțiuni: ";
-
-
-    text +=
-      item.rights
-        .map(
-          right=>
-            right.text
-        )
-        .join(
-          "; "
-        );
+      <ul>
+        ${
+          item.rights
+            .map(
+              right=>`
+              <li>
+                ${escapeHtml(right.text)}
+              </li>
+              `
+            )
+            .join(
+              ""
+            )
+        }
+      </ul>
+      `;
 
   }
 
 
-  return text;
+  return html;
 
 }
 
 
 /* ============================================================
-   RĂSPUNS ELEV PENTRU PDF
+   RĂSPUNS PENTRU RAPORT
 ============================================================ */
 
 function responseToText(
@@ -6171,12 +6231,11 @@ function responseToText(
 
 
           const selected =
-            item.rights
-              .find(
-                right=>
-                  right.id ===
-                  selectedId
-              );
+            item.rights.find(
+              right=>
+                right.id ===
+                selectedId
+            );
 
 
           return (
@@ -6198,59 +6257,37 @@ function responseToText(
   }
 
 
-  if(
-    item.type ===
-    "short"
-  ){
-
-    const text =
-      String(
-        response ??
-        ""
-      )
-      .trim();
+  const value =
+    String(
+      response ??
+      ""
+    )
+    .trim();
 
 
-    return text ||
-      "Fără răspuns";
+  if(!value){
+
+    return "Fără răspuns";
 
   }
 
 
   if(
     item.type ===
-    "numeric"
+    "numeric" &&
+    item.unit
   ){
 
-    const text =
-      String(
-        response ??
-        ""
-      )
-      .trim();
-
-
-    if(!text){
-
-      return "Fără răspuns";
-
-    }
-
-
     return (
-      text +
-      (
-        item.unit
-          ? " " +
-            item.unit
-          : ""
-      )
+      value +
+      " " +
+      item.unit
     );
 
   }
 
 
-  return "Fără răspuns";
+  return value;
 
 }
 
@@ -6269,13 +6306,13 @@ finishButton.addEventListener(
 
     if(
       answered <
-      testItems.length
+      TOTAL_ITEMS
     ){
 
       finishMessage.textContent =
         "Mai ai " +
         (
-          testItems.length -
+          TOTAL_ITEMS -
           answered
         ) +
         " item(i) fără răspuns.";
@@ -6323,10 +6360,6 @@ async function finishTest(){
   updateTimer();
 
 
-  const scores =
-    calculateScores();
-
-
   persistSession();
 
 
@@ -6340,6 +6373,7 @@ async function finishTest(){
       await document.exitFullscreen();
 
     }
+
     catch(error){
 
       console.warn(
@@ -6352,7 +6386,7 @@ async function finishTest(){
 
 
   renderResult(
-    scores
+    calculateScores()
   );
 
 
@@ -6376,7 +6410,7 @@ async function finishTest(){
 
 
 /* ============================================================
-   STATISTICI MONITORIZARE
+   MONITORIZARE – TOTAL
 ============================================================ */
 
 function totalAwayTime(){
@@ -6426,9 +6460,8 @@ function renderResult(
     "resultStudent"
   ).textContent =
     student.name +
-    " • " +
-    student.catalog +
-    "/30";
+    " • nr. catalog " +
+    student.catalog;
 
 
   document.getElementById(
@@ -6474,7 +6507,7 @@ function renderResult(
 
 
 /* ============================================================
-   SALVARE LOCALĂ
+   SALVARE SESIUNE
 ============================================================ */
 
 function sessionKey(){
@@ -6558,6 +6591,7 @@ function persistSession(){
     );
 
   }
+
   catch(error){
 
     console.warn(
@@ -6583,6 +6617,7 @@ function restoreSession(){
       );
 
   }
+
   catch(error){
 
     return false;
@@ -6608,6 +6643,7 @@ function restoreSession(){
       );
 
   }
+
   catch(error){
 
     return false;
@@ -6654,7 +6690,7 @@ function restoreSession(){
           saved.currentIndex,
           0
         ),
-        testItems.length -
+        TOTAL_ITEMS -
         1
       )
       :
@@ -6721,7 +6757,7 @@ window.addEventListener(
 
 
 /* ============================================================
-   PDF / PRINT
+   RAPORT PDF PRIN WINDOW.PRINT()
 ============================================================ */
 
 function saveTestPdf(){
@@ -6737,11 +6773,6 @@ function saveTestPdf(){
 
   }
 
-
-  /*
-   * Fereastra se deschide direct din click,
-   * pentru a evita blocarea pop-up-ului pe telefon.
-   */
 
   const reportWindow =
     globalThis.open(
@@ -6764,12 +6795,6 @@ function saveTestPdf(){
 
   const scores =
     calculateScores();
-
-
-  const studentName =
-    escapeHtml(
-      student.name
-    );
 
 
   const itemBlocks =
@@ -6805,7 +6830,7 @@ function saveTestPdf(){
             0;
 
 
-          const integrityEvents =
+          const otherEvents =
             [
               ...new Set(
                 log.events
@@ -6881,10 +6906,8 @@ function saveTestPdf(){
 
               <div class="requirement">
 
-                ${escapeHtml(
-                  itemRequirementText(
-                    item
-                  )
+                ${itemRequirementHtml(
+                  item
                 )}
 
               </div>
@@ -6974,7 +6997,7 @@ function saveTestPdf(){
 
 
               ${
-                integrityEvents.length
+                otherEvents.length
                   ?
                   `
 
@@ -6985,7 +7008,7 @@ function saveTestPdf(){
                   </strong>
 
                   ${escapeHtml(
-                    integrityEvents.join(
+                    otherEvents.join(
                       "; "
                     )
                   )}
@@ -7039,7 +7062,7 @@ function saveTestPdf(){
 >
 
 <title>
-Test termodinamică - ${studentName}
+Test termodinamică
 </title>
 
 
@@ -7293,7 +7316,22 @@ h1{
   border-left:
     4px solid #28637b;
 
-  white-space:pre-wrap;
+}
+
+
+.requirement p{
+
+  margin:
+    4px 0;
+
+}
+
+
+.requirement ol,
+.requirement ul{
+
+  margin:
+    7px 0;
 
 }
 
@@ -7318,7 +7356,8 @@ h1{
 
 .score-detail{
 
-  padding:9px 10px;
+  padding:
+    9px 10px;
 
   color:#14532d;
   background:#ecfdf5;
@@ -7451,13 +7490,6 @@ h1{
 
   }
 
-
-  .item-report{
-
-    box-shadow:none;
-
-  }
-
 }
 
 
@@ -7507,7 +7539,9 @@ Clasa a X-a
 Numele și prenumele:
 </strong>
 
-${studentName}
+${escapeHtml(
+  student.name
+)}
 
 </div>
 
@@ -7516,6 +7550,17 @@ ${studentName}
 
 <strong>
 Nr. catalog:
+</strong>
+
+${student.catalog}
+
+</div>
+
+
+<div>
+
+<strong>
+Varianta:
 </strong>
 
 ${student.catalog}
