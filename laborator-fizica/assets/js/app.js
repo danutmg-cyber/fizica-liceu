@@ -6,10 +6,10 @@
  */
 (function () {
   "use strict";
-  if (window.PhysicsInput && window.PhysicsInput.version === "2.1.0") return;
+  if (window.PhysicsInput && window.PhysicsInput.version === "2.1.1") return;
 
   const symbols = [
-    ["=", "egal"], ["−", "minus"], ["±", "plus-minus"], ["μ", "miu"],
+    [",", "virgulă"], [".", "punct zecimal"], ["=", "egal"], ["−", "minus"], ["±", "plus-minus"], ["μ", "miu"],
     ["ν", "niu"], ["ε", "epsilon"], ["ω", "omega mic"],
     ["Ω", "omega mare / ohm"], ["Δ", "delta mare"],
     ["δ", "delta mic"], ["α", "alfa"], ["β", "beta"],
@@ -330,7 +330,7 @@
   }
 
   window.PhysicsInput = {
-    version: "2.1.0", init: init, normalizeFormula: normalizeFormula,
+    version: "2.1.1", init: init, normalizeFormula: normalizeFormula,
     parseNumber: parseNumber, parseUncertainty: parseUncertainty,
     readNumber: function (input) { return parseNumber(input.value); },
     numberFieldError: numberFieldError
