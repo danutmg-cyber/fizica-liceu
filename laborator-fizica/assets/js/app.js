@@ -6,7 +6,7 @@
  */
 (function () {
   "use strict";
-  if (window.PhysicsInput && window.PhysicsInput.version === "2.0.1") return;
+  if (window.PhysicsInput && window.PhysicsInput.version === "2.1.0") return;
 
   const symbols = [
     ["=", "egal"], ["−", "minus"], ["±", "plus-minus"], ["μ", "miu"],
@@ -79,8 +79,46 @@
       .test(fieldDescription(input));
   }
 
+  function isDecimalField(input) {
+    return input.tagName === "INPUT" &&
+      (input.hasAttribute("data-decimal-number") || input.dataset.physicsKind === "number") &&
+      ["text", "number"].includes(input.type) && !identityField(input);
+  }
+
+  // Conversie explicită: scripturile vechi pot folosi valueAsNumber.
+  function prepareDecimalField(input) {
+    if (!isDecimalField(input)) return false;
+    input.type = "text";
+    input.inputMode = "decimal";
+    input.setAttribute("inputmode", "decimal");
+    input.dataset.physicsKind = "number";
+    input.spellcheck = false;
+    input.setAttribute("autocapitalize", "off");
+    return true;
+  }
+
+  function numberFieldError(input) {
+    if (input.disabled || input.readOnly) return "";
+    if (!input.value.trim()) return input.required ? "Introdu o valoare." : "";
+    const value = parseNumber(input.value);
+    if (!Number.isFinite(value)) return "Introdu un număr, cu virgulă sau punct pentru zecimale.";
+    const min = input.getAttribute("min"), max = input.getAttribute("max");
+    if (min !== null && min !== "" && value < Number(min)) return "Valoarea minimă permisă este " + min + ".";
+    if (max !== null && max !== "" && value > Number(max)) return "Valoarea maximă permisă este " + max + ".";
+    const step = parseNumber(input.getAttribute("step") || "any");
+    if (Number.isFinite(step) && step > 0) {
+      const base = min !== null && min !== "" ? Number(min) : parseNumber(input.getAttribute("value") || "0");
+      const quotient = (value - base) / step;
+      if (Math.abs(quotient - Math.round(quotient)) > 1e-7 * Math.max(1, Math.abs(quotient))) {
+        return "Respectă pasul de " + step + " indicat pentru acest câmp.";
+      }
+    }
+    return "";
+  }
+
   function canUseSymbols(input) {
     if (input.hasAttribute("data-no-physics-symbols")) return false;
+    if (isDecimalField(input)) return false;
     if (input.dataset.physicsKind === "number") return false;
     if (input.tagName !== "TEXTAREA" && !["text", "search"].includes(input.type)) return false;
     if (input.type === "search") return false;
@@ -126,9 +164,10 @@
 
   function enhance(input) {
     if (installed.has(input) || !input.parentNode) return;
+    const decimal = prepareDecimalField(input);
     const signed = canChangeSign(input);
     const symbolic = canUseSymbols(input);
-    if (!signed && !symbolic) return;
+    if (!signed && !symbolic && !decimal) return;
     installed.add(input);
     addStyle();
     const tools = document.createElement("div");
@@ -165,6 +204,40 @@
       status.textContent = "Simbol introdus.";
     }
 
+    if (decimal) {
+      const separator = makeButton(", — zecimale", "Introdu separatorul zecimal; sunt acceptate virgula și punctul");
+      separator.addEventListener("click", function () {
+        if (input.disabled || input.readOnly) return;
+        const start = Math.min(selection.start, input.value.length);
+        const end = Math.min(selection.end, input.value.length);
+        let candidate = input.value.slice(0, start) + "," + input.value.slice(end);
+        if (candidate === "," || candidate === "-," || candidate === "+,") {
+          insert("0,"); return;
+        }
+        // Un singur separator în mantisă; exponentul rămâne întreg.
+        if (!/^[+\-−]?(?:\d*(?:[.,]\d*)?)(?:[eE][+\-]?\d*)?$/.test(candidate)) {
+          status.textContent = "Folosește un singur separator zecimal, înaintea exponentului.";
+          return;
+        }
+        insert(",");
+        status.textContent = "Virgula și punctul sunt acceptate pentru zecimale.";
+      });
+      tools.appendChild(separator);
+      function validateDecimal() {
+        const error = numberFieldError(input);
+        input.setCustomValidity(error);
+        status.textContent = error;
+      }
+      input.addEventListener("blur", validateDecimal);
+      input.addEventListener("change", validateDecimal);
+      input.addEventListener("input", function () {
+        // Nu respinge etapele intermediare ale tastării: -, 0, sau 1e-.
+        input.setCustomValidity("");
+        status.textContent = "";
+      });
+      validateDecimal();
+    }
+
     if (signed) {
       // Ascunde vechiul buton daca un formular are deja un wrapper legacy.
       const wrapper = input.closest(".signed-number-field");
@@ -183,7 +256,7 @@
             (max !== null && max !== "" && value > Number(max))) {
           status.textContent = "Semnul nu este permis de limitele acestui camp."; return;
         }
-        input.value = String(value);
+        input.value = decimal && input.value.includes(",") ? String(value).replace(".", ",") : String(value);
         signal(input); input.focus({ preventScroll: true });
         status.textContent = "Semnul a fost schimbat.";
       });
@@ -257,8 +330,10 @@
   }
 
   window.PhysicsInput = {
-    version: "2.0.1", init: init, normalizeFormula: normalizeFormula,
-    parseNumber: parseNumber, parseUncertainty: parseUncertainty
+    version: "2.1.0", init: init, normalizeFormula: normalizeFormula,
+    parseNumber: parseNumber, parseUncertainty: parseUncertainty,
+    readNumber: function (input) { return parseNumber(input.value); },
+    numberFieldError: numberFieldError
   };
   // Alias pastrat pentru experimentele existente.
   window.initSignedNumberInputs = init;
