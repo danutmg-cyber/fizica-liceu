@@ -829,11 +829,6 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script
-    src="../assets/js/google-sheets.js"
-    defer
-></script>
-
 </head>
 
 
@@ -2798,7 +2793,7 @@ cronometrarea, calculele și concluziile.
     class="btn"
     type="submit"
 >
-Finalizează experimentul și trimite raportul
+Finalizează experimentul și generează raportul
 </button>
 
 </form>
@@ -2851,14 +2846,11 @@ Copie locală:
 <p>
 
 <strong>
-Transmitere:
+Confidențialitate:
 </strong>
 
-<span
-    data-submission-status
-    aria-live="polite"
->
-Raportul nu a fost încă trimis.
+<span>
+Datele rămân pe acest dispozitiv și nu sunt transmise către servicii externe.
 </span>
 
 </p>
@@ -2870,24 +2862,6 @@ Raportul nu a fost încă trimis.
 
 
 <div class="actions report-actions">
-
-<button
-    class="btn success"
-    data-submit-report
-    type="button"
->
-Trimite datele
-</button>
-
-
-<button
-    class="btn warning"
-    data-resubmit-report
-    type="button"
->
-Retrimite datele
-</button>
-
 
 <button
     class="btn secondary"
@@ -3302,8 +3276,6 @@ const state = {
     reportId:null,
 
     reportPayload:null,
-
-    reportConfirmed:false,
 
     finalized:false,
 
@@ -8415,21 +8387,6 @@ function buildReportPayload(){
     };
 
 
-    if(
-        globalThis
-            .LaboratorGoogleSheets
-            ?.buildPayload
-    ){
-
-        return globalThis
-            .LaboratorGoogleSheets
-            .buildPayload(
-                base
-            );
-
-    }
-
-
     return base;
 
 }
@@ -8886,34 +8843,16 @@ qs(
 
         try{
 
-            const api =
-                globalThis
-                    .LaboratorGoogleSheets;
-
-
             state.reportPayload =
                 buildReportPayload();
 
 
-            if(
-                !api
-                    ?.savePending
-            ){
-
-                throw new Error(
-                    "Modulul de salvare locală nu este disponibil."
-                );
-
-            }
-
-
-            /*
-               1. Salvăm local înainte de orice POST.
-            */
-            state.reportPayload =
-                await api.savePending(
+            localStorage.setItem(
+                `fizica-laborator-raport-${state.reportId}`,
+                JSON.stringify(
                     state.reportPayload
-                );
+                )
+            );
 
 
             qs(
@@ -8928,15 +8867,7 @@ qs(
                 "status-local";
 
 
-            setSubmissionStatus(
-                "Raport salvat local. Se încearcă transmiterea..."
-            );
-
-
-            /*
-               2. Eveniment comun pentru sistemul central
-               de certificare / semnătură / QR.
-            */
+            /* Eveniment local pentru componentele raportului și ale PDF-ului. */
             document.dispatchEvent(
 
                 new CustomEvent(
@@ -8963,13 +8894,6 @@ qs(
             );
 
 
-            /*
-               3. Se transmite exact payload-ul salvat local.
-            */
-            await sendReport(
-                true
-            );
-
         }
         catch(error){
 
@@ -8981,7 +8905,7 @@ qs(
             qs(
                 "[data-local-save-status]"
             ).textContent =
-                "salvarea sau transmiterea necesită verificare";
+                "salvarea locală necesită verificare";
 
 
             qs(
@@ -8990,423 +8914,11 @@ qs(
                 "status-error";
 
 
-            setSubmissionStatus(
-                `Raportul a fost finalizat, dar transmiterea nu a fost confirmată: ${error.message}`,
-                "error"
+            alert(
+                `Raportul a fost finalizat, dar copia locală nu a putut fi salvată: ${error.message}`
             );
 
         }
-
-    }
-);
-
-
-/* =========================================================
-   TRANSMITERE
-========================================================= */
-
-function setSubmissionStatus(
-    message,
-    type=""
-){
-
-    const element =
-        qs(
-            "[data-submission-status]"
-        );
-
-
-    element.textContent =
-        message;
-
-
-    element.className =
-        type
-            ? `status-${type}`
-            : "";
-
-}
-
-
-function markReportConfirmed(
-    status="stored"
-){
-
-    state.reportConfirmed =
-        true;
-
-
-    qs(
-        "[data-submit-report]"
-    ).disabled =
-        true;
-
-
-    qs(
-        "[data-resubmit-report]"
-    ).disabled =
-        true;
-
-
-    setSubmissionStatus(
-        status ===
-            "duplicate"
-            ? "Raportul există deja în registru; nu a fost duplicat."
-            : "Raport transmis și confirmat.",
-        "success"
-    );
-
-
-    qs(
-        "[data-local-save-status]"
-    ).textContent =
-        "confirmat de server";
-
-
-    qs(
-        "[data-local-save-status]"
-    ).className =
-        "status-success";
-
-}
-
-
-function handleSubmissionResult(
-    result
-){
-
-    const status =
-        result?.status;
-
-
-    if(
-        status ===
-            "stored"
-        ||
-        status ===
-            "duplicate"
-    ){
-
-        markReportConfirmed(
-            status
-        );
-
-
-        return;
-
-    }
-
-
-    if(
-        status ===
-        "unconfirmed"
-    ){
-
-        setSubmissionStatus(
-            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local și poate fi retransmis.",
-            "error"
-        );
-
-    }
-
-}
-
-
-async function sendReport(
-    preferSaved=false
-){
-
-    if(
-        state.reportConfirmed
-    ){
-        return;
-    }
-
-
-    const sendButton =
-        qs(
-            "[data-submit-report]"
-        );
-
-
-    const retryButton =
-        qs(
-            "[data-resubmit-report]"
-        );
-
-
-    sendButton.disabled =
-        true;
-
-
-    retryButton.disabled =
-        true;
-
-
-    try{
-
-        const api =
-            globalThis
-                .LaboratorGoogleSheets;
-
-
-        if(!api){
-
-            throw new Error(
-                "Modulul Google Sheets nu este disponibil."
-            );
-
-        }
-
-
-        if(
-            !state.reportId
-        ){
-
-            throw new Error(
-                "Raportul nu a fost încă finalizat."
-            );
-
-        }
-
-
-        setSubmissionStatus(
-            preferSaved
-                ? "Se transmite raportul salvat local..."
-                : "Se transmite raportul..."
-        );
-
-
-        const pending =
-            api.getPendingReport?.(
-                state.reportId
-            );
-
-
-        let result;
-
-
-        if(
-            pending
-            &&
-            api.retryReport
-        ){
-
-            result =
-                await api.retryReport(
-                    state.reportId
-                );
-
-        }
-        else if(
-            api.hasBeenSent?.(
-                state.reportId
-            )
-        ){
-
-            result = {
-
-                status:
-                    "duplicate",
-
-                reportId:
-                    state.reportId,
-
-                confirmed:
-                    true
-
-            };
-
-        }
-        else{
-
-            state.reportPayload =
-                state.reportPayload ||
-                buildReportPayload();
-
-
-            state.reportPayload =
-                await api.savePending(
-                    state.reportPayload
-                );
-
-
-            result =
-                await api.retryReport(
-                    state.reportId
-                );
-
-        }
-
-
-        handleSubmissionResult(
-            result
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
-            "error"
-        );
-
-    }
-    finally{
-
-        if(
-            !state.reportConfirmed
-        ){
-
-            const alreadySent =
-                globalThis
-                    .LaboratorGoogleSheets
-                    ?.hasBeenSent?.(
-                        state.reportId
-                    );
-
-
-            if(alreadySent){
-
-                markReportConfirmed(
-                    "stored"
-                );
-
-            }
-            else{
-
-                sendButton.disabled =
-                    false;
-
-
-                retryButton.disabled =
-                    false;
-
-            }
-
-        }
-
-    }
-
-}
-
-
-qs(
-    "[data-submit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            false
-        );
-
-    }
-);
-
-
-qs(
-    "[data-resubmit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            true
-        );
-
-    }
-);
-
-
-/* =========================================================
-   EVENIMENTE TRANSMITERE
-========================================================= */
-
-document.addEventListener(
-    "laborator:submission-sent",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        const status =
-            event.detail
-                ?.status;
-
-
-        if(
-            status ===
-                "stored"
-            ||
-            status ===
-                "duplicate"
-        ){
-
-            markReportConfirmed(
-                status
-            );
-
-        }
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-unconfirmed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
-            "error"
-        );
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-failed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit${
-                event.detail?.message
-                    ? `: ${event.detail.message}`
-                    : "."
-            } Raportul rămâne salvat local.`,
-            "error"
-        );
 
     }
 );
@@ -9509,15 +9021,11 @@ function savePortfolioPdf(){
 
 
     const serverStatus =
-        state.reportConfirmed
-            ? "✓ RAPORT CONFIRMAT DE SERVER"
-            : "⚠ RAPORT LOCAL – TRANSMITEREA NU A FOST CONFIRMATĂ";
+        "✓ RAPORT SALVAT LOCAL – DATELE NU AU FOST TRANSMISE";
 
 
     const statusColor =
-        state.reportConfirmed
-            ? "#16794b"
-            : "#9a6100";
+        "#16794b";
 
 
     const measurementsRows =
@@ -10141,27 +9649,6 @@ qs(
     "click",
     savePortfolioPdf
 );
-
-
-/* =========================================================
-   GOOGLE SHEETS
-========================================================= */
-
-try{
-
-    globalThis
-        .LaboratorGoogleSheets
-        ?.init?.();
-
-}
-catch(error){
-
-    console.warn(
-        "Inițializarea Google Sheets:",
-        error
-    );
-
-}
 
 
 /* =========================================================
