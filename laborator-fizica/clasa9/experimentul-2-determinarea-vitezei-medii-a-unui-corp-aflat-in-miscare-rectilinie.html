@@ -239,6 +239,40 @@ body{
     flex:0 0 auto;
 }
 
+/* Rigla din etapa 3 trebuie să păstreze diviziunile de 1 cm lizibile.
+   O scală 0–300 cm comprimată la lățimea panoului suprapune marcajele. */
+.distance-scale .lab-scale-viewport{
+    min-height:390px;
+    scroll-behavior:smooth;
+}
+
+.distance-scale .lab-scale-svg{
+    width:3160px;
+    min-width:3160px;
+    max-width:none;
+    height:360px;
+    min-height:360px;
+    margin:0;
+}
+
+.distance-scale .lab-scale-viewport.is-zoomed .lab-scale-svg{
+    width:3160px;
+    min-width:3160px;
+    min-height:360px;
+}
+
+.distance-scale-help{
+    margin:.65rem 0 0;
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.45;
+}
+
+.distance-scale .distance-landmark{
+    fill:var(--text);
+    font:700 16px system-ui,sans-serif;
+}
+
 .actions{
     display:flex;
     flex-wrap:wrap;
@@ -4397,7 +4431,13 @@ function renderDistanceInstrument(){
 
     slot.innerHTML = `
 
-        <div data-tape-target></div>
+        <div class="distance-scale" data-tape-target></div>
+
+
+        <p class="distance-scale-help">
+            Rigla este afișată la scară mărită și poziționată automat în zona
+            reperului SOSIRE. Glisează orizontal pentru a examina întreaga scală.
+        </p>
 
 
         <div class="field-grid">
@@ -4507,6 +4547,12 @@ function renderDistanceInstrument(){
             tolerance:
                 .01,
 
+            width:
+                3160,
+
+            height:
+                360,
+
             showNumericValue:
                 false,
 
@@ -4538,6 +4584,141 @@ function renderDistanceInstrument(){
                 )
 
         });
+
+
+    /* Păstrează diviziunile de 1 cm suficient de depărtate pentru citire și
+       aduce reperul SOSIRE în câmpul vizual, inclusiv pe ecrane înguste. */
+    requestAnimationFrame(
+        () => {
+
+            const viewport =
+                qs(
+                    ".lab-scale-viewport",
+                    slot
+                );
+
+
+            if(
+                !viewport
+            ){
+                return;
+            }
+
+
+            const scaleStart =
+                70;
+
+
+            const scaleEnd =
+                3160 - 50;
+
+
+            const finishX =
+                scaleStart +
+                state.set.instrumentValues.distanceCm /
+                300 *
+                (
+                    scaleEnd -
+                    scaleStart
+                );
+
+
+            viewport.tabIndex =
+                0;
+
+
+            viewport.setAttribute(
+                "aria-label",
+                "Riglă gradată de la 0 la 300 cm. Folosește derularea orizontală pentru a examina scala."
+            );
+
+
+            const drawing =
+                qs(
+                    ".lab-scale-drawing",
+                    viewport
+                );
+
+
+            if(
+                drawing
+            ){
+
+                const addLandmark =
+                    (
+                        x,
+                        label,
+                        anchor
+                    ) => {
+
+                        const marker =
+                            document.createElementNS(
+                                "http://www.w3.org/2000/svg",
+                                "text"
+                            );
+
+
+                        marker.setAttribute(
+                            "x",
+                            x
+                        );
+
+
+                        marker.setAttribute(
+                            "y",
+                            56
+                        );
+
+
+                        marker.setAttribute(
+                            "text-anchor",
+                            anchor
+                        );
+
+
+                        marker.setAttribute(
+                            "class",
+                            "distance-landmark"
+                        );
+
+
+                        marker.textContent =
+                            label;
+
+
+                        drawing.append(
+                            marker
+                        );
+
+                    };
+
+
+                addLandmark(
+                    scaleStart,
+                    "START (0 cm)",
+                    "start"
+                );
+
+
+                addLandmark(
+                    finishX,
+                    "SOSIRE",
+                    "middle"
+                );
+
+            }
+
+
+            viewport.scrollLeft =
+                Math.max(
+                    0,
+                    finishX -
+                    viewport.clientWidth *
+                    .72
+                );
+
+        }
+    );
 
 
     const handler =
