@@ -643,6 +643,11 @@ body{
     color:#805100;
 }
 
+.evaluation-detail{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:#fff;}
+.evaluation-detail td:first-child{text-align:left;}
+.evaluation-correct{color:var(--success);font-weight:800;}
+.evaluation-wrong{color:var(--danger);font-weight:800;}
+
 .report-actions{
     justify-content:flex-start;
 }
@@ -742,10 +747,7 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script
-    src="../assets/js/google-sheets.js"
-    defer
-></script>
+<script src="../assets/js/pdf-local.js" defer></script>
 
 </head>
 
@@ -2619,7 +2621,7 @@ calculele, interpretarea și concluziile.
     type="submit"
     data-finalize-button
 >
-Finalizează experimentul și trimite raportul
+Finalizează experimentul și generează raportul
 </button>
 
 </form>
@@ -2641,6 +2643,9 @@ Raportul experimentului
 ></div>
 
 
+<div class="evaluation-detail" data-evaluation-details></div>
+
+
 <div class="report-status">
 
 <p>
@@ -2653,38 +2658,11 @@ Raportul experimentului
 <span data-local-save-status>—</span>
 </p>
 
-<p>
-<strong>Transmitere:</strong>
-
-<span
-    data-submission-status
-    aria-live="polite"
->
-Raportul nu a fost încă trimis.
-</span>
-
-</p>
 
 </div>
 
 
 <div class="actions report-actions">
-
-<button
-    class="btn success"
-    data-submit-report
-    type="button"
->
-Trimite datele
-</button>
-
-<button
-    class="btn warning"
-    data-resubmit-report
-    type="button"
->
-Retrimite raportul
-</button>
 
 <button
     class="btn secondary"
@@ -3463,8 +3441,7 @@ function generateSet(
         (
             slitDistance_mm *
             1e-3
-        ) *
-        1000;
+        );
 
 
     const compactClass =
@@ -7149,24 +7126,22 @@ function buildReportPayload(){
     };
 
 
-    if(
-        globalThis
-            .LaboratorGoogleSheets
-            ?.buildPayload
-    ){
-
-        return globalThis
-            .LaboratorGoogleSheets
-            .buildPayload(
-                base
-            );
-
-    }
-
-
     return base;
 
 }
+
+
+const EVALUATION_ITEMS={
+    q1:{question:"În experimentul Young, interfranja este:",correct:"lambdaDoverd",labels:{lambdaDoverd:"i = λD/d",lambdadD:"i = λd/D"}},
+    q2:{question:"Dacă distanța dintre fante crește:",correct:"smaller",labels:{smaller:"interfranja scade",larger:"interfranja crește"}},
+    q3:{question:"Pentru inelele întunecate ale lui Newton în lumină reflectată:",correct:"square",labels:{square:"D_m² este proporțional cu ordinul m",diameter:"D_m este direct proporțional cu m"}},
+    q4:{question:"Inelele lui Newton reprezintă interferență localizată deoarece:",correct:"film",labels:{film:"franjele sunt asociate grosimilor peliculei subțiri","far-screen":"se formează numai pe un ecran foarte îndepărtat"}}
+};
+
+function evaluationItems(answers){return Object.entries(EVALUATION_ITEMS).map(([id,item],index)=>({
+    id,number:index+1,question:item.question,studentAnswer:item.labels[answers[id]]||"Fără răspuns",
+    correctAnswer:item.labels[item.correct],correct:answers[id]===item.correct,points:answers[id]===item.correct?1:0
+}));}
 
 
 /* =========================================================
@@ -7311,35 +7286,10 @@ qs(
         }
 
 
-        const correct = {
-
-            q1:
-                "lambdaDoverd",
-
-            q2:
-                "smaller",
-
-            q3:
-                "square",
-
-            q4:
-                "film"
-
-        };
+        const items=evaluationItems(answers);
 
 
-        const score =
-            Object.keys(
-                correct
-            ).filter(
-                key =>
-                    answers[
-                        key
-                    ] ===
-                    correct[
-                        key
-                    ]
-            ).length;
+        const score=items.reduce((total,item)=>total+item.points,0);
 
 
         state.evaluation = {
@@ -7357,6 +7307,8 @@ qs(
                 ),
 
             answers,
+
+            items,
 
             initialPredictions:
                 state.predictions,
@@ -7571,6 +7523,9 @@ qs(
         `;
 
 
+        qs("[data-evaluation-details]").innerHTML=`<h4>Detalierea evaluării conceptuale</h4><table><thead><tr><th>Item</th><th>Răspunsul elevului</th><th>Răspunsul corect</th><th>Punctaj</th></tr></thead><tbody>${items.map(item=>`<tr><td>${item.number}. ${escapeHtml(item.question)}</td><td>${escapeHtml(item.studentAnswer)}</td><td>${escapeHtml(item.correctAnswer)}</td><td class="${item.correct?"evaluation-correct":"evaluation-wrong"}">${item.correct?"Corect — 1 p":"Incorect — 0 p"}</td></tr>`).join("")}</tbody></table>`;
+
+
         qs(
             "[data-report-id]"
         ).textContent =
@@ -7606,484 +7561,22 @@ qs(
 
 
 /* ---------------------------------------------------------
-   SALVARE LOCALĂ + TRANSMITERE AUTOMATĂ
+   SALVARE LOCALĂ — FĂRĂ TRANSMITERE EXTERNĂ
 --------------------------------------------------------- */
 
         try{
-
-            state.reportPayload =
-                buildReportPayload();
-
-
-            const api =
-                globalThis
-                    .LaboratorGoogleSheets;
-
-
-            if(
-                api
-                    ?.savePending
-            ){
-
-                /*
-                   1. Salvare locală înaintea rețelei.
-                */
-                await api.savePending(
-                    state.reportPayload
-                );
-
-
-                qs(
-                    "[data-local-save-status]"
-                ).textContent =
-                    "salvat pe acest dispozitiv";
-
-
-                qs(
-                    "[data-local-save-status]"
-                ).className =
-                    "status-local";
-
-
-                setSubmissionStatus(
-                    "Raport salvat local. Se încearcă transmiterea..."
-                );
-
-
-                /*
-                   2. Raportul final este pregătit.
-                */
-                document.dispatchEvent(
-
-                    new CustomEvent(
-                        "laborator:report-ready",
-                        {
-                            detail:{
-
-                                reportId:
-                                    state.reportId,
-
-                                finishedAt:
-                                    state.evaluation
-                                        .finishedAt
-
-                            }
-                        }
-                    )
-
-                );
-
-
-                /*
-                   3. Transmitere automată.
-                */
-                await sendReport(
-                    false
-                );
-
-            }
-            else{
-
-                qs(
-                    "[data-local-save-status]"
-                ).textContent =
-                    "modulul de salvare nu este disponibil";
-
-
-                setSubmissionStatus(
-                    "Raportul este finalizat, dar modulul Google Sheets nu este disponibil.",
-                    "error"
-                );
-
-            }
-
-        }
-        catch(error){
-
-            console.error(
-                error
-            );
-
-
-            qs(
-                "[data-local-save-status]"
-            ).textContent =
-                "salvarea locală nu a fost confirmată";
-
-
-            setSubmissionStatus(
-                `Raportul nu a putut fi pregătit pentru transmitere: ${error.message}`,
-                "error"
-            );
-
+            state.reportPayload=buildReportPayload();
+            localStorage.setItem(`fizica-laborator-raport-${state.reportId}`,JSON.stringify(state.reportPayload));
+            qs("[data-local-save-status]").textContent="salvat pe acest dispozitiv — datele nu au fost transmise";
+            qs("[data-local-save-status]").className="status-local";
+            document.dispatchEvent(new CustomEvent("laborator:report-ready",{detail:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt,payload:clone(state.reportPayload)}}));
+        }catch(error){
+            console.error(error);
+            qs("[data-local-save-status]").textContent="salvarea locală nu a fost confirmată";
+            qs("[data-local-save-status]").className="status-error";
+            alert(`Raportul este finalizat, dar copia locală nu a putut fi salvată: ${error.message}`);
         }
 
-    }
-);
-
-
-/* =========================================================
-   TRANSMITERE GOOGLE SHEETS
-========================================================= */
-
-function setSubmissionStatus(
-    message,
-    type=""
-){
-
-    const element =
-        qs(
-            "[data-submission-status]"
-        );
-
-
-    element.textContent =
-        message;
-
-
-    element.className =
-        type
-            ? `status-${type}`
-            : "";
-
-}
-
-
-function markReportConfirmed(
-    status="stored"
-){
-
-    state.reportConfirmed =
-        true;
-
-
-    qs(
-        "[data-submit-report]"
-    ).disabled =
-        true;
-
-
-    qs(
-        "[data-resubmit-report]"
-    ).disabled =
-        true;
-
-
-    setSubmissionStatus(
-        status ===
-            "duplicate"
-            ? "Raportul există deja în registru; nu a fost duplicat."
-            : "Raport transmis și confirmat.",
-        "success"
-    );
-
-
-    qs(
-        "[data-local-save-status]"
-    ).textContent =
-        "confirmat de server";
-
-
-    qs(
-        "[data-local-save-status]"
-    ).className =
-        "status-success";
-
-}
-
-
-function handleSubmissionResult(
-    result
-){
-
-    const status =
-        result?.status;
-
-
-    if(
-        status ===
-            "stored" ||
-        status ===
-            "duplicate"
-    ){
-
-        markReportConfirmed(
-            status
-        );
-
-
-        return;
-
-    }
-
-
-    if(
-        status ===
-        "unconfirmed"
-    ){
-
-        setSubmissionStatus(
-            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local și poate fi retransmis.",
-            "error"
-        );
-
-    }
-
-}
-
-
-async function sendReport(
-    retry=false
-){
-
-    if(
-        state.reportConfirmed
-    ){
-        return;
-    }
-
-
-    const sendButton =
-        qs(
-            "[data-submit-report]"
-        );
-
-
-    const retryButton =
-        qs(
-            "[data-resubmit-report]"
-        );
-
-
-    sendButton.disabled =
-        true;
-
-
-    retryButton.disabled =
-        true;
-
-
-    try{
-
-        if(
-            !state.reportId
-        ){
-
-            throw new Error(
-                "Raportul nu a fost încă finalizat."
-            );
-
-        }
-
-
-        const api =
-            globalThis
-                .LaboratorGoogleSheets;
-
-
-        if(!api){
-
-            throw new Error(
-                "Modulul Google Sheets nu este disponibil."
-            );
-
-        }
-
-
-        if(
-            !state.reportPayload
-        ){
-
-            state.reportPayload =
-                buildReportPayload();
-
-        }
-
-
-        setSubmissionStatus(
-            retry
-                ? "Se retransmite raportul..."
-                : "Se transmite raportul..."
-        );
-
-
-        const result =
-            retry
-                ? await api.retryReport(
-                    state.reportId
-                )
-                : await api.submit(
-                    state.reportPayload
-                );
-
-
-        handleSubmissionResult(
-            result
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
-            "error"
-        );
-
-    }
-    finally{
-
-        if(
-            !state.reportConfirmed
-        ){
-
-            const alreadySent =
-                globalThis
-                    .LaboratorGoogleSheets
-                    ?.hasBeenSent?.(
-                        state.reportId
-                    );
-
-
-            if(alreadySent){
-
-                markReportConfirmed(
-                    "stored"
-                );
-
-            }
-            else{
-
-                sendButton.disabled =
-                    false;
-
-
-                retryButton.disabled =
-                    false;
-
-            }
-
-        }
-
-    }
-
-}
-
-
-qs(
-    "[data-submit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            false
-        );
-
-    }
-);
-
-
-qs(
-    "[data-resubmit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            true
-        );
-
-    }
-);
-
-
-/* =========================================================
-   EVENIMENTE GOOGLE SHEETS
-========================================================= */
-
-document.addEventListener(
-    "laborator:submission-sent",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        const status =
-            event.detail
-                ?.status;
-
-
-        if(
-            status ===
-                "stored" ||
-            status ===
-                "duplicate"
-        ){
-
-            markReportConfirmed(
-                status
-            );
-
-        }
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-unconfirmed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
-            "error"
-        );
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-failed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit${
-                event.detail?.message
-                    ? `: ${event.detail.message}`
-                    : "."
-            } Raportul rămâne salvat local.`,
-            "error"
-        );
 
     }
 );
@@ -8093,419 +7586,35 @@ document.addEventListener(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
-function savePortfolioPdf(){
-
-    if(
-        !state.evaluation ||
-        !state.notebook
-    ){
-
-        alert(
-            "Finalizează mai întâi experimentul."
-        );
-
-
-        return;
-
-    }
-
-
-    const reportWindow =
-        globalThis.open(
-            "",
-            "_blank"
-        );
-
-
-    if(!reportWindow){
-
-        alert(
-            "Browserul a blocat fereastra raportului. Permite ferestrele pop-up și încearcă din nou."
-        );
-
-
-        return;
-
-    }
-
-
-    const student =
-        escapeHtml(
-            state.session
-                .studentName
-        );
-
-
-    const className =
-        escapeHtml(
-            state.session
-                .studentClass
-        );
-
-
-    const reportId =
-        escapeHtml(
-            state.reportId
-        );
-
-
-    const c =
-        state.notebook
-            .calculations;
-
-
-    reportWindow.document.open();
-
-
-    reportWindow.document.write(`
-
-<!doctype html>
-
-<html lang="ro">
-
-<head>
-
-<meta charset="utf-8">
-
-<title>
-EXP10 - ${student}
-</title>
-
-<style>
-
-body{
-    font-family:Arial,sans-serif;
-    color:#172b3a;
-    margin:28px;
-    line-height:1.45;
+async function savePortfolioPdf(){
+    if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}
+    const pdfApi=globalThis.LaboratorPdfLocal;
+    if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}
+    const c=state.notebook.calculations;
+    const evaluationLines=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(item=>[
+        `${item.number}. ${item.question}`,`Raspuns elev: ${item.studentAnswer}`,`Raspuns corect: ${item.correctAnswer}`,
+        `Punctaj: ${item.correct?"Corect - 1 p":"Incorect - 0 p"}`,""
+    ]);
+    const lines=[
+        "PORTOFOLIU DE LABORATOR - FIZICA","","Clasa a XI-a","EXP10 - Studiul interferentei luminii: nelocalizata si localizata","",
+        `Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Numar catalog: ${state.session.catalogNumber}`,
+        `Data: ${state.session.experimentDate}`,`Set: ${state.set.id}`,`ID raport: ${state.reportId}`,
+        "STATUS: RAPORT SALVAT LOCAL - DATELE NU AU FOST TRANSMISE","",
+        "EXPERIMENTUL YOUNG",`d=${state.set.visible.slitDistance_mm.toFixed(3)} mm`,`D=${state.set.visible.screenDistance_m.toFixed(2)} m`,
+        `xA=${state.young.xA_mm.toFixed(2)} mm`,`xB=${state.young.xB_mm.toFixed(2)} mm`,`Delta x pentru 10 interfranje=${state.young.deltaX_mm.toFixed(2)} mm`,
+        `interfranja i=${Number(c.young.interfringe_mm).toFixed(3)} mm`,`lambda Young=${Number(c.young.wavelength_nm).toFixed(1)} nm`,"",
+        "INELELE LUI NEWTON",`R=${state.set.visible.curvatureRadius_m.toFixed(2)} m`,`D5=${state.newton.diameter5_mm.toFixed(2)} mm`,
+        `D10=${state.newton.diameter10_mm.toFixed(2)} mm`,`lambda Newton=${Number(c.newton.wavelength_nm).toFixed(1)} nm`,"",
+        "COMPARAREA METODELOR",`lambda medie=${Number(c.comparison.meanWavelength_nm).toFixed(1)} nm`,
+        `diferenta relativa=${Number(c.comparison.relativeDifference_percent).toFixed(2)} %`,"",
+        `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,
+        "INTERPRETARE",state.notebook.comparison.studentInterpretation,"","CONCLUZIE",state.evaluation.conclusion,"",
+        "SURSE DE EROARE",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`
+    ];
+    const blob=pdfApi.createTextPdfBlob(lines);
+    const fileName=`EXP10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
+    try{await pdfApi.saveBlob(blob,fileName,"Raport EXP10 - Fizică");}catch(error){console.error(error);alert("PDF-ul nu a putut fi salvat pe acest dispozitiv.");}
 }
-
-h1{
-    font-size:22px;
-}
-
-h2{
-    margin-top:24px;
-    padding-bottom:5px;
-    font-size:17px;
-    border-bottom:1px solid #aaa;
-}
-
-.identity{
-    padding:12px;
-    margin:16px 0;
-    border:2px solid #28637b;
-}
-
-table{
-    width:100%;
-    margin:12px 0;
-    border-collapse:collapse;
-}
-
-th,
-td{
-    padding:7px;
-    border:1px solid #aaa;
-}
-
-th{
-    background:#eef4f7;
-}
-
-.id{
-    font-family:monospace;
-    overflow-wrap:anywhere;
-}
-
-@page{
-    size:A4;
-    margin:15mm;
-}
-
-@media print{
-
-    button{
-        display:none;
-    }
-
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<h1>
-Portofoliu de laborator – Fizică
-</h1>
-
-
-<p>
-
-<strong>
-EXP10
-</strong>
-
-<br>
-
-Studiul interferenței luminii:
-nelocalizată și localizată
-
-</p>
-
-
-<div class="identity">
-
-<strong>
-Nume și prenume:
-</strong>
-
-${student}
-
-<br>
-
-<strong>
-Clasa:
-</strong>
-
-${className}
-
-<br>
-
-<strong>
-Număr în catalog:
-</strong>
-
-${state.session.catalogNumber}
-
-<br>
-
-<strong>
-Data:
-</strong>
-
-${escapeHtml(state.session.experimentDate)}
-
-<br>
-
-<strong>
-Set experimental:
-</strong>
-
-${escapeHtml(state.set.id)}
-
-<br>
-
-<strong>
-ID raport:
-</strong>
-
-<span class="id">
-${reportId}
-</span>
-
-</div>
-
-
-<h2>
-Experimentul Young
-</h2>
-
-
-<table>
-
-<tr>
-<td>d</td>
-<td>${state.set.visible.slitDistance_mm.toFixed(3)} mm</td>
-</tr>
-
-<tr>
-<td>D</td>
-<td>${state.set.visible.screenDistance_m.toFixed(2)} m</td>
-</tr>
-
-<tr>
-<td>xA</td>
-<td>${state.young.xA_mm.toFixed(2)} mm</td>
-</tr>
-
-<tr>
-<td>xB</td>
-<td>${state.young.xB_mm.toFixed(2)} mm</td>
-</tr>
-
-<tr>
-<td>Δx pentru 10 interfranje</td>
-<td>${state.young.deltaX_mm.toFixed(2)} mm</td>
-</tr>
-
-<tr>
-<td>Interfranja i</td>
-<td>${Number(c.young.interfringe_mm).toFixed(3)} mm</td>
-</tr>
-
-<tr>
-<td>λ Young</td>
-<td>${Number(c.young.wavelength_nm).toFixed(1)} nm</td>
-</tr>
-
-</table>
-
-
-<h2>
-Inelele lui Newton
-</h2>
-
-
-<table>
-
-<tr>
-<td>R</td>
-<td>${state.set.visible.curvatureRadius_m.toFixed(2)} m</td>
-</tr>
-
-<tr>
-<td>D₅</td>
-<td>${state.newton.diameter5_mm.toFixed(2)} mm</td>
-</tr>
-
-<tr>
-<td>D₁₀</td>
-<td>${state.newton.diameter10_mm.toFixed(2)} mm</td>
-</tr>
-
-<tr>
-<td>λ Newton</td>
-<td>${Number(c.newton.wavelength_nm).toFixed(1)} nm</td>
-</tr>
-
-</table>
-
-
-<h2>
-Compararea metodelor
-</h2>
-
-
-<table>
-
-<tr>
-<td>λ medie</td>
-<td>${Number(c.comparison.meanWavelength_nm).toFixed(1)} nm</td>
-</tr>
-
-<tr>
-<td>Diferență relativă</td>
-<td>${Number(c.comparison.relativeDifference_percent).toFixed(2)} %</td>
-</tr>
-
-</table>
-
-
-<h2>
-Interpretare
-</h2>
-
-<p>
-${escapeHtml(state.notebook.comparison.studentInterpretation)}
-</p>
-
-
-<h2>
-Concluzie
-</h2>
-
-<p>
-${escapeHtml(state.evaluation.conclusion)}
-</p>
-
-
-<h2>
-Surse de eroare
-</h2>
-
-<p>
-${escapeHtml(state.evaluation.errorSources)}
-</p>
-
-
-<h2>
-Dovada realizării experimentului
-</h2>
-
-
-<p>
-
-Experiment realizat individual de
-
-<strong>
-${student}
-</strong>,
-
-clasa
-
-<strong>
-${className}
-</strong>,
-
-numărul în catalog
-
-<strong>
-${state.session.catalogNumber}
-</strong>.
-
-</p>
-
-
-<p>
-
-<strong>
-ID unic raport:
-</strong>
-
-<span class="id">
-${reportId}
-</span>
-
-</p>
-
-
-<button onclick="window.print()">
-Salvează ca PDF
-</button>
-
-
-<script>
-
-window.addEventListener(
-    "load",
-    () => {
-
-        setTimeout(
-            () => window.print(),
-            300
-        );
-
-    }
-);
-
-<\/script>
-
-</body>
-
-</html>
-
-    `);
-
-
-    reportWindow.document.close();
-
-}
-
 
 qs(
     "[data-download-pdf]"
@@ -8513,27 +7622,6 @@ qs(
     "click",
     savePortfolioPdf
 );
-
-
-/* =========================================================
-   GOOGLE SHEETS
-========================================================= */
-
-try{
-
-    globalThis
-        .LaboratorGoogleSheets
-        ?.init?.();
-
-}
-catch(error){
-
-    console.warn(
-        "Inițializarea Google Sheets:",
-        error
-    );
-
-}
 
 
 /* =========================================================
