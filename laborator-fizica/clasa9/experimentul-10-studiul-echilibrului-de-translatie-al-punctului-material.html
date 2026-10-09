@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Laborator virtual de fizică, clasa a IX-a: studiul echilibrului de translație al punctului material.">
+
+<title>Studiul echilibrului de translație al punctului material</title>
+
+<link rel="stylesheet" href="../assets/css/laborator-core.css">
+<link rel="stylesheet" href="../assets/css/laborator-2d.css">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/print.css" media="print">
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --blue:#126e82;--blue2:#31527c;--green:#16794b;
+  --red:#b42318;--orange:#a95f00;--ink:#17324d;
+  --muted:#586d7c;--line:#bfd0da;--pale:#edf7fb
+}
+body{margin:0;background:#eef5f7;color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+.shell{width:min(1180px,100%);margin:auto;padding:1rem}
+.hero{padding:1.4rem;border-radius:18px;color:#fff;background:linear-gradient(135deg,var(--blue2),#14818c)}
+.hero h1{margin:.25rem 0;font-size:clamp(1.45rem,4vw,2.35rem)}
+.meta,.actions{display:flex;flex-wrap:wrap;gap:.65rem}
+.meta{margin-top:1rem}.meta span{padding:.35rem .7rem;border:1px solid #ffffff66;border-radius:999px;background:#ffffff18}
+.monitor{margin:1rem 0;padding:.8rem;border:1px solid #e3a322;border-radius:10px;background:#fff8df}
+.progress{height:12px;margin:1rem 0;overflow:hidden;border-radius:99px;background:#dbe8ef}
+.progress>div{height:100%;background:var(--green);transition:.2s}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin:1rem 0}
+.tab{min-height:44px;border:1px solid #aac0ce;border-radius:9px;background:#fff;font:inherit;font-weight:750}
+.tab.active{color:#fff;background:var(--blue)}.tab.done{border-color:var(--green);background:#eaf8f1}
+.panel{padding:clamp(1rem,3vw,1.6rem);border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 8px 25px #17324d12}
+[hidden]{display:none!important}
+.grid,.results,.reading-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.equipment{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+.field{display:grid;gap:.35rem;margin:.6rem 0}
+.field input,.field textarea{width:100%;padding:.72rem;border:2px solid #829aaa;border-radius:8px;font:inherit}
+.choice{display:flex;gap:.6rem;align-items:flex-start;margin:.4rem 0;padding:.75rem;border:1px solid var(--line);border-radius:10px;background:#f7fbfd}
+.choice input{width:1.2rem;height:1.2rem;flex:none}
+.btn{min-height:44px;padding:.7rem 1rem;border:0;border-radius:9px;color:#fff;background:var(--blue);font:inherit;font-weight:750;cursor:pointer}
+.btn.secondary{color:var(--ink);background:#e6eff4}.btn.success{background:var(--green)}.btn.warning{background:var(--orange)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.actions{justify-content:space-between;margin-top:1.2rem}
+.feedback,.calc-feedback{margin:.7rem 0;padding:.65rem;border-radius:8px;min-height:1.3rem}
+.feedback:empty,.calc-feedback:empty{padding:0;min-height:0}
+.ok{color:#0c5534;background:#eaf8f1;border-left:4px solid var(--green)}
+.bad{color:#7e1710;background:#fff0ee;border-left:4px solid var(--red)}
+.warn{color:#794300;background:#fff6e5;border-left:4px solid var(--orange)}
+.info{color:#31536a;background:#edf6fa}
+.formula,.info-box,.warning{padding:1rem;margin:1rem 0;border-radius:8px}
+.formula,.info-box{border-left:5px solid var(--blue);background:var(--pale)}
+.warning{border-left:5px solid var(--orange);background:#fff7e6}
+.card,.calc-block,.instrument{padding:1rem;margin:1rem 0;border:1px solid var(--line);border-radius:12px;background:#f8fbfd}
+.parameters{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin:1rem 0}
+.parameter{padding:.8rem;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:center}
+.parameter span{display:block;color:var(--muted);font-size:.88rem}
+.parameter strong{display:block;margin-top:.25rem}
+.data-scroll{overflow:auto}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{padding:.55rem;border:1px solid #b8c9d7;text-align:center}
+th{background:#edf5f8}
+.data-table input{width:100%;min-width:70px;padding:.45rem;border:2px solid #829aaa;border-radius:7px;font:inherit}
+.table-ok,.calc-ok{border-color:var(--green)!important;background:#f3fcf7!important}
+.table-error,.calc-error{border-color:var(--red)!important;background:#fff7f6!important}
+.rounding{color:var(--muted);font-size:.9rem}
+
+/* montaj */
+.apparatus{position:relative;min-height:520px;margin:1rem 0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:linear-gradient(#eaf8ff 0 88%,#c7a276 88%)}
+.instruction{position:absolute;top:12px;left:50%;z-index:20;width:min(94%,760px);transform:translateX(-50%);padding:.7rem;border-radius:9px;background:#ffffffed;text-align:center;font-weight:750}
+.support{position:absolute;top:92px;width:64px;height:64px;border:5px solid #526b79;border-radius:50%;background:#dde8ed}
+.support.left{left:11%}.support.right{right:11%}
+.ring{position:absolute;left:50%;top:275px;width:36px;height:36px;transform:translate(-50%,-50%);border:7px solid #d18a00;border-radius:50%;background:white;z-index:8}
+.rope{position:absolute;height:4px;background:#49545a;transform-origin:left center;z-index:4}
+.hook{position:absolute;width:48px;height:48px;display:grid;place-items:center;border:4px dashed var(--green);border-radius:50%;background:#eaf8f199;font-weight:800;z-index:12}
+.mass{position:absolute;bottom:25px;width:88px;height:62px;display:grid;place-items:center;border:3px solid #435966;border-radius:9px;color:#fff;background:#607d8b;font-weight:800}
+.mass.m1{left:7%}.mass.m3{left:calc(50% - 44px)}.mass.m2{right:7%}
+.hung{position:absolute;width:72px;height:55px;display:grid;place-items:center;border:3px solid #435966;border-radius:8px;color:#fff;background:#607d8b;font-weight:800;z-index:13}
+.vector{position:absolute;height:5px;transform-origin:left center;z-index:9}
+.vector:after{content:"";position:absolute;right:-2px;top:-6px;border-left:13px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent}
+.vector.f1{color:#c13d32;background:#c13d32}.vector.f2{color:#16794b;background:#16794b}.vector.f3{color:#315fc2;background:#315fc2}
+.vector-label{position:absolute;z-index:10;padding:.15rem .35rem;border-radius:5px;color:#fff;font-weight:800}
+.mount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0}
+
+/* raportor */
+.protractor-card{padding:1rem;border:1px solid var(--line);border-radius:12px;background:#f8fbfd}
+.protractor{position:relative;height:240px;overflow:hidden}
+.semi{position:absolute;left:50%;bottom:24px;width:360px;height:180px;transform:translateX(-50%);border:4px solid #78551f;border-bottom:0;border-radius:360px 360px 0 0;background:repeating-conic-gradient(from 270deg at 50% 100%,transparent 0 4.5deg,#78551f 4.5deg 5deg),repeating-conic-gradient(from 270deg at 50% 100%,transparent 0 .78deg,#c4a77d .78deg 1deg)}
+.baseline{position:absolute;left:calc(50% - 180px);bottom:20px;width:360px;border-top:4px solid #78551f}
+.ray{position:absolute;left:50%;bottom:24px;width:170px;height:5px;background:var(--red);transform-origin:left center}
+.ray:after{content:"";position:absolute;right:-2px;top:-6px;border-left:12px solid var(--red);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.origin{position:absolute;left:50%;bottom:15px;width:20px;height:20px;transform:translateX(-50%);border-radius:50%;background:var(--blue)}
+.angle-scale{display:flex;justify-content:space-between;font-weight:700}
+
+/* grafic */
+.bars{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;align-items:end;min-height:280px;padding:1rem;border:1px solid var(--line);border-radius:12px;background:#fff}
+.bar-wrap{height:220px;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar{width:70%;min-height:4px;margin:auto;background:var(--blue);border-radius:8px 8px 0 0}.bar.ref{background:var(--green)}
+.report-status{padding:1rem;margin:1rem 0;border:1px solid var(--line);border-radius:12px;background:#f8fbfd}
+.status-success{color:var(--green)}.status-error{color:var(--red)}.status-local{color:#805100}
+.result-card{padding:.9rem;border:1px solid var(--line);border-radius:10px;background:#f8fbfd}.result-card span{display:block;color:var(--muted)}
+@media(max-width:760px){
+ .tabs{grid-template-columns:repeat(2,1fr)}
+ .grid,.results,.reading-grid,.equipment,.parameters,.mount-grid{grid-template-columns:1fr}
+ .actions .btn{flex:1 1 160px}
+ .apparatus{min-height:560px}
+ .support.left{left:3%}.support.right{right:3%}
+ .semi{width:300px;height:150px}.baseline{left:calc(50% - 150px);width:300px}.ray{width:140px}
+}
+</style>
+
+<script>
+window.LAB_EXPERIMENT_CONFIG={
+  id:"clasa9-exp10-echilibru-translatie",
+  code:"EXP10",
+  title:"Studiul echilibrului de translație al punctului material",
+  classLevel:"9",
+  domain:"Mecanică",
+  totalSteps:8,
+  risks:["mase-suspendate","scripeți","fire"],
+  requiredEquipment:[
+    "lab-coat",
+    "safety-glasses",
+    "laboratory-stand",
+    "clamp-and-bosshead",
+    "pulley",
+    "slotted-masses",
+    "protractor"
+  ],
+  modules:{monitoring:true}
+};
+</script>
+
+<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/monitorizare.js" defer></script>
+</head>
+
+<body>
+<main class="shell" data-app>
+
+<header class="hero">
+<p>Laborator virtual de fizică • Clasa a IX-a • Mecanică</p>
+<h1>Studiul echilibrului de translație al punctului material</h1>
+<p>Forțe concurente • componente carteziene • condiția vectorială ΣF⃗ = 0</p>
+<div class="meta">
+<span data-head-name>Elev neidentificat</span>
+<span data-head-class>Clasa —</span>
+<span data-head-catalog>Nr. catalog —</span>
+<span data-head-date>Data —</span>
+<span>Monitorizare: <b data-monitoring-status>oprită</b></span>
+</div>
+</header>
+
+<aside class="monitor">
+<strong>Monitorizarea atenției este activă.</strong>
+Schimbări de ecran: <b data-monitoring-count="tabSwitches">0</b> •
+Timp în afara laboratorului: <b data-monitoring-count="screenAwaySeconds">0</b> s
+</aside>
+
+<p data-progress-text>Etapa 1 din 8</p>
+<div class="progress"><div data-progress></div></div>
+<nav class="tabs" data-tabs></nav>
+
+<!-- 1 -->
+<section class="panel" data-panel="0">
+<h2>1. Identificarea elevului</h2>
+<p>Clasa și numărul din catalog determină setul experimental unic și reproductibil.</p>
+
+<form data-identification>
+<div class="grid">
+<label class="field">Numele și prenumele
+<input name="name" minlength="3" maxlength="80" required>
+</label>
+
+<label class="field">Clasa
+<input name="class" list="classes" placeholder="IX A" required>
+</label>
+</div>
+
+<datalist id="classes">
+<option value="IX A"><option value="IX B"><option value="IX C"><option value="IX D">
+</datalist>
+
+<div class="grid">
+<label class="field">Numărul în catalog
+<input name="catalog" type="number" min="1" max="30" step="1" inputmode="numeric" required>
+</label>
+
+<label class="field">Set experimental
+<input data-set-id readonly>
+</label>
+</div>
+
+<label class="field">Data și ora
+<input data-session-date readonly>
+</label>
+
+<label class="choice"><input type="checkbox" name="monitor" required>
+<span>Am înțeles că se pot înregistra schimbările de filă/aplicație și timpul petrecut în afara laboratorului.</span></label>
+
+<label class="choice"><input type="checkbox" name="identity" required>
+<span>Confirm că voi realiza individual experimentul, calculele și concluziile.</span></label>
+
+<p class="feedback" data-feedback="id"></p>
+<button class="btn">Începe laboratorul</button>
+</form>
+</section>
+
+<!-- 2 -->
+<section class="panel" data-panel="1" hidden>
+<h2>2. Securitatea în laborator</h2>
+
+<ul>
+<li>Fixează stativele și scripeții înainte de suspendarea maselor.</li>
+<li>Nu sta și nu ține mâinile sub masele suspendate.</li>
+<li>Susține masa cu mâna când o montezi sau o îndepărtezi.</li>
+<li>Nu elibera brusc firele tensionate.</li>
+<li>Așteaptă oprirea oscilațiilor înainte de citirea unghiurilor.</li>
+</ul>
+
+<div class="warning">Masele suspendate și firele tensionate trebuie manipulate controlat.</div>
+
+<label class="choice"><input type="radio" name="safe" value="correct">
+<span>Susțin masa cu mâna în timpul montării și demontării.</span></label>
+
+<label class="choice"><input type="radio" name="safe" value="wrong">
+<span>Desprind masa și o las să cadă.</span></label>
+
+<label class="choice"><input type="checkbox" data-safety-check>
+<span>Am citit și am înțeles regulile de securitate.</span></label>
+
+<p class="feedback" data-feedback="safety"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn" type="button" data-safety>Accept instructajul</button>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="panel" data-panel="2" hidden>
+<h2>3. Selectarea materialelor</h2>
+
+<p>Selectează exact materialele necesare montajului.</p>
+<div class="equipment" data-equipment></div>
+<p class="feedback" data-feedback="equipment"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn" type="button" data-check-equipment>Verifică materialele</button>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="panel" data-panel="3" hidden>
+<h2>4. Pregătirea experimentului</h2>
+
+<div class="formula">
+<strong>Condiția vectorială:</strong><br>
+ΣF⃗ = 0<br><br>
+
+Alegem Ox orizontal spre dreapta și Oy vertical în sus:<br><br>
+
+R<sub>x</sub> = F₂ cosβ − F₁ cosα<br>
+R<sub>y</sub> = F₁ sinα + F₂ sinβ − F₃<br><br>
+
+F = mg
+</div>
+
+<div class="info-box">
+Unghiurile α și β sunt măsurate față de orizontală.
+Forța F₁ este orientată în sus și spre stânga,
+F₂ în sus și spre dreapta,
+iar F₃ vertical în jos.
+</div>
+
+<div class="parameters">
+<div class="parameter"><span>Set</span><strong data-set-display>—</strong></div>
+<div class="parameter"><span>g</span><strong>9,8 N/kg</strong></div>
+<div class="parameter"><span>Diviziune raportor</span><strong>1°</strong></div>
+<div class="parameter"><span>Determinări</span><strong>4</strong></div>
+</div>
+
+<fieldset>
+<legend>Predicție</legend>
+
+<label class="choice"><input type="radio" name="prediction" value="zero">
+<span>Dacă punctul este în echilibru, rezultanta celor trei forțe trebuie să fie aproximativ nulă.</span></label>
+
+<label class="choice"><input type="radio" name="prediction" value="sum">
+<span>Dacă punctul este în echilibru, suma modulelor celor trei forțe trebuie să fie nulă.</span></label>
+</fieldset>
+
+<label class="field">Transcrie formulele și convenția axelor în caiet
+<textarea data-initial-notes rows="6" placeholder="F=mg; ΣF=0; Rx=F2 cosβ−F1 cosα; Ry=F1 sinα+F2 sinβ−F3..."></textarea>
+</label>
+
+<label class="choice"><input type="checkbox" data-initial-noted>
+<span>Am notat formulele, unitățile și convenția de semne.</span></label>
+
+<button class="btn" type="button" data-check-preparation>Verifică pregătirea</button>
+<p class="feedback" data-feedback="preparation"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn success" type="button" data-start-experiment disabled>Continuă la experiment</button>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="panel" data-panel="4" hidden>
+<h2>5. Montarea sistemului de forțe</h2>
+
+<p>Montează succesiv cele trei mase în pozițiile marcate. După montare, sistemul se stabilizează.</p>
+
+<div class="parameters">
+<div class="parameter"><span>Determinarea</span><strong data-trial>1/4</strong></div>
+<div class="parameter"><span>m₁</span><strong data-m1>—</strong></div>
+<div class="parameter"><span>m₂</span><strong data-m2>—</strong></div>
+<div class="parameter"><span>m₃</span><strong data-m3>—</strong></div>
+</div>
+
+<div class="apparatus" data-apparatus>
+<div class="instruction" data-instruction>Montează cele trei mase.</div>
+
+<div class="support left"></div>
+<div class="support right"></div>
+<div class="ring"></div>
+
+<div class="rope" data-rope-left></div>
+<div class="rope" data-rope-right></div>
+<div class="rope" data-rope-center></div>
+
+<div class="vector f1" data-vector-left></div>
+<div class="vector f2" data-vector-right></div>
+<div class="vector f3" data-vector-center></div>
+
+<span class="vector-label" data-label-left>F₁</span>
+<span class="vector-label" data-label-right>F₂</span>
+<span class="vector-label" data-label-center>F₃</span>
+
+<div class="hook" data-hook-left>1</div>
+<div class="hook" data-hook-right>2</div>
+<div class="hook" data-hook-center>3</div>
+
+<div class="hung" data-hung-left></div>
+<div class="hung" data-hung-right></div>
+<div class="hung" data-hung-center></div>
+
+<div class="mass m1" data-free-left></div>
+<div class="mass m3" data-free-center></div>
+<div class="mass m2" data-free-right></div>
+</div>
+
+<div class="mount-grid">
+<button class="btn" type="button" data-mount="left">Montează m₁</button>
+<button class="btn" type="button" data-mount="center">Montează m₃</button>
+<button class="btn" type="button" data-mount="right">Montează m₂</button>
+</div>
+
+<p class="feedback" data-feedback="mount"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn success" type="button" data-read-angles disabled>Continuă la citirea unghiurilor</button>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="panel" data-panel="5" hidden>
+<h2>6. Citirea unghiurilor</h2>
+
+<p>Citește fiecare raportor independent. Unghiurile sunt măsurate față de orizontală.</p>
+
+<div class="reading-grid">
+
+<div class="protractor-card">
+<h3>Unghiul α</h3>
+<div class="protractor" data-protractor-alpha>
+<div class="semi"></div><div class="baseline"></div><div class="ray"></div><div class="origin"></div>
+</div>
+<div class="angle-scale"><span>0°</span><span>30°</span><span>60°</span><span>90°</span><span>120°</span><span>150°</span><span>180°</span></div>
+
+<label class="field">α (°)
+<input data-alpha type="number" min="0" max="180" step="1" inputmode="numeric">
+</label>
+<button class="btn" type="button" data-check-alpha>Verifică α</button>
+<p class="calc-feedback" data-alpha-feedback></p>
+</div>
+
+<div class="protractor-card">
+<h3>Unghiul β</h3>
+<div class="protractor" data-protractor-beta>
+<div class="semi"></div><div class="baseline"></div><div class="ray"></div><div class="origin"></div>
+</div>
+<div class="angle-scale"><span>0°</span><span>30°</span><span>60°</span><span>90°</span><span>120°</span><span>150°</span><span>180°</span></div>
+
+<label class="field">β (°)
+<input data-beta type="number" min="0" max="180" step="1" inputmode="numeric">
+</label>
+<button class="btn" type="button" data-check-beta>Verifică β</button>
+<p class="calc-feedback" data-beta-feedback></p>
+</div>
+
+</div>
+
+<label class="choice"><input type="checkbox" data-reading-noted>
+<span>Am notat masele, α, β și rezoluția raportorului în caiet.</span></label>
+
+<p class="feedback" data-feedback="reading"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn success" type="button" data-next-trial disabled>Următoarea determinare</button>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="panel" data-panel="6" hidden>
+<h2>7. Prelucrarea datelor</h2>
+
+<h3>A. Transcrierea măsurărilor</h3>
+<div class="data-scroll">
+<table class="data-table">
+<thead>
+<tr><th>Nr.</th><th>m₁ (g)</th><th>m₂ (g)</th><th>m₃ (g)</th><th>α (°)</th><th>β (°)</th></tr>
+</thead>
+<tbody data-measurements></tbody>
+</table>
+</div>
+
+<label class="choice"><input type="checkbox" data-table-noted>
+<span>Am transcris cele patru determinări în caiet.</span></label>
+
+<button class="btn" type="button" data-check-table>Verifică tabelul</button>
+<p class="feedback" data-feedback="table"></p>
+
+<div data-calculation-area hidden>
+
+<div class="formula">
+F₁=m₁g; F₂=m₂g; F₃=m₃g<br><br>
+Rₓ=F₂cosβ−F₁cosα<br>
+Rᵧ=F₁sinα+F₂sinβ−F₃<br>
+|R⃗|=√(Rₓ²+Rᵧ²)<br><br>
+ε = |R⃗| / [(F₁+F₂+F₃)/3] ·100%
+</div>
+
+<div class="info-box">
+<strong>ε nu reprezintă „eroarea” unei singure mărimi.</strong>
+Este un indicator adimensional al abaterii rezultantei experimentale de la zero,
+normalizat la ordinul de mărime al forțelor din montaj.
+</div>
+
+<p>
+Rotunjire: F₁, F₂, F₃, Rₓ, Rᵧ și |R⃗| la <strong>3 zecimale</strong>;
+ε și ε̄ la <strong>2 zecimale</strong>.
+Se acceptă și trunchierea corectă.
+</p>
+
+<div class="card">
+<strong data-calc-progress>Calcule verificate: 0/29</strong>
+</div>
+
+<div data-trial-calculations></div>
+
+<div class="calc-block">
+<h3>Abaterea relativă normalizată medie</h3>
+<div class="formula">ε̄=(ε₁+ε₂+ε₃+ε₄)/4</div>
+<label class="field">ε̄ (%)
+<input data-calc="mean-error" type="number" min="0" step="0.01" inputmode="decimal" disabled>
+</label>
+<p class="calc-feedback info" data-calc-feedback="mean-error">Verifică mai întâi cele patru valori ε.</p>
+<button class="btn secondary" type="button" data-check-calc="mean-error" disabled>Verifică</button>
+</div>
+
+<div class="calc-block" data-chart hidden>
+<h3>Rezultanta medie comparată cu forța medie caracteristică</h3>
+<div class="bars" data-bars></div>
+</div>
+
+<div class="calc-block">
+<h3>Calculul din caiet</h3>
+<label class="field">Transcrie cel puțin o determinare completă și rezultatele celorlalte.
+<textarea data-student-steps rows="10"></textarea>
+</label>
+<p class="calc-feedback" data-calc-feedback="steps"></p>
+</div>
+
+<div class="calc-block">
+<h3>Interpretarea fizică</h3>
+<label class="field">Interpretează valorile lui Rₓ, Rᵧ și |R⃗|.
+<textarea data-interpretation rows="8" placeholder="Explică de ce rezultanta ar trebui să fie nulă și de ce experimental poate rămâne o valoare mică nenulă."></textarea>
+</label>
+<p class="calc-feedback" data-calc-feedback="interpretation"></p>
+</div>
+
+<label class="choice"><input type="checkbox" data-analysis-noted>
+<span>Am trecut măsurările, calculele și interpretarea în caiet.</span></label>
+<p class="calc-feedback" data-calc-feedback="notebook"></p>
+
+<button class="btn" type="button" data-check-analysis>Verifică interpretarea</button>
+<p class="feedback" data-feedback="analysis"></p>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+<button class="btn success" type="button" data-next-evaluation disabled>Continuă la evaluare</button>
+</div>
+
+</div>
+</section>
+
+<!-- 8 -->
+<section class="panel" data-panel="7" hidden>
+<h2>8. Evaluarea și raportul final</h2>
+
+<form data-evaluation>
+
+<fieldset><legend>1. Condiția echilibrului de translație este:</legend>
+<label class="choice"><input type="radio" name="q1" value="vector"><span>ΣF⃗=0</span></label>
+<label class="choice"><input type="radio" name="q1" value="modules"><span>F₁+F₂+F₃=0 pentru modulele pozitive</span></label>
+</fieldset>
+
+<fieldset><legend>2. Pe axa Ox, pentru acest montaj:</legend>
+<label class="choice"><input type="radio" name="q2" value="x"><span>F₂cosβ ≈ F₁cosα</span></label>
+<label class="choice"><input type="radio" name="q2" value="wrong"><span>F₂sinβ ≈ F₁sinα</span></label>
+</fieldset>
+
+<fieldset><legend>3. Pe axa Oy, pentru acest montaj:</legend>
+<label class="choice"><input type="radio" name="q3" value="y"><span>F₁sinα+F₂sinβ ≈ F₃</span></label>
+<label class="choice"><input type="radio" name="q3" value="wrong"><span>F₁cosα+F₂cosβ ≈ F₃</span></label>
+</fieldset>
+
+<fieldset><legend>4. Dacă Rₓ≈0 și Rᵧ≈0:</legend>
+<label class="choice"><input type="radio" name="q4" value="equilibrium"><span>punctul material este compatibil cu echilibrul de translație</span></label>
+<label class="choice"><input type="radio" name="q4" value="accelerated"><span>punctul are obligatoriu accelerație mare</span></label>
+</fieldset>
+
+<label class="field">Concluzia experimentului
+<textarea data-conclusion rows="7" minlength="120" required></textarea>
+</label>
+
+<label class="field">Cel puțin două surse de eroare sau limitări
+<textarea data-errors rows="5" minlength="40" required></textarea>
+</label>
+
+<label class="choice"><input type="checkbox" data-individual required>
+<span>Confirm că am realizat individual măsurările, calculele și concluziile.</span></label>
+
+<button class="btn">Finalizează experimentul și generează raportul</button>
+</form>
+
+<div data-final hidden>
+<h3>Raport final</h3>
+<div class="results" data-results></div>
+
+<div class="report-status">
+<p><strong>ID raport:</strong> <span data-report-id>—</span></p>
+<p><strong>Copie locală:</strong> <span data-local-status>—</span></p>
+<p><strong>Confidențialitate:</strong> <span>Datele rămân pe acest dispozitiv și nu sunt transmise către servicii externe.</span></p>
+<div data-report-security-slot></div>
+</div>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-pdf>Salvează PDF pentru portofoliu</button>
+<button class="btn secondary" type="button" onclick="window.print()">Tipărește</button>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn secondary" type="button" data-prev>Înapoi</button>
+</div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{"use strict";
+
+const CONFIG=window.LAB_EXPERIMENT_CONFIG;
+const G=9.8;
+const $=(s,p=document)=>p.querySelector(s);
+const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+const root=$("[data-app]");
+const now=()=>new Date().toISOString();
+const clone=x=>typeof structuredClone==="function"?structuredClone(x):JSON.parse(JSON.stringify(x));
+const esc=x=>String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+const num=x=>{const s=String(x??"").trim().replace(/\s+/g,"").replace("%","").replace(",",".");return s===""?NaN:Number(s)};
+const rnd=(x,d=2)=>Math.round((x+Number.EPSILON)*10**d)/10**d;
+const trunc=(x,d)=>Math.trunc(x*10**d)/10**d;
+const avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const rad=d=>d*Math.PI/180;
+const norm=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const makeId=p=>`${p}-${crypto?.randomUUID?.()||Date.now().toString(36).toUpperCase()+"-"+Math.random().toString(36).slice(2,9).toUpperCase()}`;
+
+function accepted(v,e,d){
+  if(!Number.isFinite(v))return false;
+  const a=Array.isArray(e)?e:[e];
+  return a.some(x=>Number.isFinite(x)&&(Math.abs(v-rnd(x,d))<1e-10||Math.abs(v-trunc(x,d))<1e-10));
+}
+
+const state={
+ step:0,completed:new Set(),session:null,set:null,safety:null,equipment:null,preparation:null,
+ trial:0,mounted:new Set(),readings:[null,null,null,null],tableOK:false,
+ calculationVerified:{},analysisVerified:false,notebook:null,evaluation:null,
+ reportId:null,reportPayload:null,finalized:false,
+ activity:{
+   equipmentChecks:0,
+   mountActions:[0,0,0,0],
+   alphaAttempts:[0,0,0,0],
+   betaAttempts:[0,0,0,0],
+   tableChecks:0,
+   calculationChecks:0,
+   calculationAttempts:{},
+   correctedFields:[]
+ }
+};
+
+function fb(name,text,type="bad"){
+ const e=$(`[data-feedback="${name}"]`);
+ if(!e)return;
+ e.textContent=text;e.className=`feedback${text?" "+type:""}`;
+}
+
+/* navigare */
+const panels=$$("[data-panel]");
+const labels=["Identificare","Securitate","Materiale","Pregătire","Montaj","Unghiuri","Calcule","Evaluare"];
+
+labels.forEach((label,i)=>{
+ const b=document.createElement("button");
+ b.type="button";b.className="tab";b.textContent=`${i+1}. ${label}`;
+ b.onclick=()=>{if(i<=state.step||state.completed.has(i-1))show(i)};
+ $("[data-tabs]").append(b);
+});
+
+function show(i){
+ state.step=i;
+ panels.forEach((p,j)=>p.hidden=j!==i);
+ $$(".tab").forEach((b,j)=>{
+   b.classList.toggle("active",j===i);
+   b.classList.toggle("done",state.completed.has(j));
+ });
+ $("[data-progress-text]").textContent=`Etapa ${i+1} din 8`;
+ $("[data-progress]").style.width=`${(i+1)/8*100}%`;
+ scrollTo({top:0,behavior:"smooth"});
+}
+$$("[data-prev]").forEach(b=>b.onclick=()=>show(Math.max(0,state.step-1)));
+
+/* set determinist */
+const ANGLES=[[30,45],[35,50],[40,55],[45,60],[50,40],[55,35],[60,45],[65,50],[70,55],[75,60]];
+function normalizeClass(x){return String(x||"").trim().toUpperCase().replace(/^9/,"IX").replace(/^(IX)([A-D])$/,"$1 $2").replace(/\s+/g," ")}
+function classIndex(x){return {A:0,B:1,C:2,D:3}[normalizeClass(x).match(/[A-D]$/)?.[0]]??0}
+
+function generateSet(cls,catalog){
+ const ci=classIndex(cls),n=Number(catalog),slot=((n-1)*13+ci*17)%120;
+
+ const trials=[0,1,2,3].map(i=>{
+   const [alpha,beta]=ANGLES[(slot+i*3)%ANGLES.length];
+
+   /* mase în multipli de 5 g, apropiate de condiția teoretică */
+   const m1g=75+((slot+i*2)%10)*5;
+   const m2Ideal=m1g*Math.cos(rad(alpha))/Math.cos(rad(beta));
+   const m2g=Math.max(40,Math.round(m2Ideal/5)*5);
+
+   const m3Ideal=m1g*Math.sin(rad(alpha))+m2g*Math.sin(rad(beta));
+   const m3g=Math.max(40,Math.round(m3Ideal/5)*5);
+
+   return {alpha,beta,m1g,m2g,m3g};
+ });
+
+ return {
+   id:`${normalizeClass(cls).replace(/\s/g,"-")}-${String(n).padStart(2,"0")}-EXP10`,
+   visible:{g:G,protractorResolutionDeg:1,determinationCount:4},
+   trials
+ };
+}
+
+/* identificare */
+$("[data-session-date]").value=new Intl.DateTimeFormat("ro-RO",{dateStyle:"long",timeStyle:"medium"}).format(new Date());
+
+$("[data-identification]").onsubmit=e=>{
+ e.preventDefault();
+ const f=new FormData(e.currentTarget);
+ const name=String(f.get("name")||"").trim(),cls=normalizeClass(f.get("class")),catalog=Number(f.get("catalog"));
+
+ if(name.length<3||!/^IX [A-D]$/.test(cls)||!Number.isInteger(catalog)||catalog<1||catalog>30||!f.get("monitor")||!f.get("identity")){
+   fb("id","Completează corect identificarea și confirmările.");return;
+ }
+
+ state.set=generateSet(cls,catalog);
+ state.session={
+   sessionId:makeId("FIZ"),studentName:name,studentClass:cls,catalogNumber:catalog,
+   experimentId:CONFIG.id,experimentTitle:CONFIG.title,dataSetId:state.set.id,
+   startedAt:now(),experimentDate:new Intl.DateTimeFormat("ro-RO",{dateStyle:"long"}).format(new Date()),
+   identityConfirmed:true,monitoringAcknowledged:true
+ };
+ window.LAB_SESSION=clone(state.session);
+
+ $("[data-set-id]").value=state.set.id;
+ $("[data-set-display]").textContent=state.set.id;
+ $("[data-head-name]").textContent=name;
+ $("[data-head-class]").textContent=`Clasa ${cls}`;
+ $("[data-head-catalog]").textContent=`Nr. ${catalog}`;
+ $("[data-head-date]").textContent=state.session.experimentDate;
+ $("[data-monitoring-status]").textContent="activă";
+
+ document.dispatchEvent(new CustomEvent("laborator:identification-complete",{detail:clone(state.session)}));
+ state.completed.add(0);show(1);
+};
+
+/* securitate */
+$("[data-safety]").onclick=()=>{
+ if($('input[name="safe"]:checked')?.value!=="correct"||!$("[data-safety-check]").checked){
+   fb("safety","Alege conduita sigură și confirmă instructajul.");return;
+ }
+ state.safety={accepted:true,acceptedAt:now(),activeDomains:["general","mechanical"]};
+ window.LAB_SAFETY_STATE=clone(state.safety);
+ document.dispatchEvent(new CustomEvent("laborator:safety-complete",{detail:clone(state.safety)}));
+ fb("safety","Instructaj acceptat.","ok");state.completed.add(1);show(2);
+};
+
+/* echipamente */
+const equipment=[
+ ["lab-coat","Halat de laborator"],["safety-glasses","Ochelari de protecție"],
+ ["laboratory-stand","Stativ de laborator"],["clamp-and-bosshead","Clemă și mufă"],
+ ["pulley","Scripete"],["slotted-masses","Mase marcate"],["protractor","Raportor"],
+ ["dynamometer","Dinamometru"],["spring","Resort"],["ruler","Riglă gradată"],["stopwatch","Cronometru"]
+];
+const required=new Set(CONFIG.requiredEquipment);
+
+equipment.forEach(([id,name])=>{
+ const l=document.createElement("label");l.className="choice";
+ l.innerHTML=`<input type="checkbox" value="${esc(id)}"><span>${esc(name)}</span>`;
+ $("[data-equipment]").append(l);
+});
+
+$("[data-check-equipment]").onclick=()=>{
+ state.activity.equipmentChecks++;
+ const chosen=new Set($$("[data-equipment] input:checked").map(x=>x.value));
+ const missing=[...required].filter(x=>!chosen.has(x)),extra=[...chosen].filter(x=>!required.has(x));
+
+ if(missing.length||extra.length){
+   fb("equipment",missing.length?`Mai lipsesc ${missing.length} elemente necesare.`:`Ai selectat ${extra.length} elemente care nu sunt necesare.`);
+   return;
+ }
+
+ state.equipment={
+   completed:true,selectedAt:now(),selectionAttempts:state.activity.equipmentChecks,
+   selectedIds:[...chosen],
+   items:[...chosen].map(id=>({id,name:equipment.find(x=>x[0]===id)?.[1]||id})),
+   stationEquipment:[
+     {id:"equilibrium-ring-station",name:"Inel pentru forțe concurente"},
+     {id:"cords-station",name:"Fire de legătură și suporturi"}
+   ]
+ };
+ window.LAB_EQUIPMENT_STATE=clone(state.equipment);
+ document.dispatchEvent(new CustomEvent("laborator:equipment-complete",{detail:clone(state.equipment)}));
+ fb("equipment","Materialele selectate sunt corecte.","ok");
+ state.completed.add(2);show(3);
+};
+
+/* pregătire */
+$("[data-check-preparation]").onclick=()=>{
+ const prediction=$('input[name="prediction"]:checked')?.value;
+ const notes=$("[data-initial-notes]").value.trim(),t=norm(notes);
+
+ if(!prediction){fb("preparation","Formulează predicția.");return}
+ if(notes.length<90){fb("preparation","Transcrie mai complet formulele și convenția axelor.");return}
+ if(!(t.includes("mg")||t.includes("f="))||!t.includes("rx")||!t.includes("ry")){
+   fb("preparation","În notițe trebuie să apară F=mg, Rx și Ry.");return;
+ }
+ if(!$("[data-initial-noted]").checked){fb("preparation","Confirmă notarea în caiet.");return}
+
+ state.preparation={prediction,initialNotes:notes,completedAt:now()};
+ window.LAB_PREPARATION_STATE=clone(state.preparation);
+
+ $$('input[name="prediction"]').forEach(x=>x.disabled=true);
+ $("[data-initial-notes]").disabled=true;
+ $("[data-initial-noted]").disabled=true;
+ $("[data-check-preparation]").disabled=true;
+ $("[data-start-experiment]").disabled=false;
+
+ fb("preparation","Pregătirea este completă.","ok");state.completed.add(3);
+};
+
+$("[data-start-experiment]").onclick=()=>{prepareTrial();show(4)};
+
+/* montaj */
+const trial=()=>state.set.trials[state.trial];
+
+function placeLine(el,x1,y1,x2,y2){
+ const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+ el.style.left=x1+"px";el.style.top=y1+"px";el.style.width=len+"px";el.style.transform=`rotate(${ang}deg)`;
+}
+
+function drawApparatus(){
+ const box=$("[data-apparatus]"),w=box.clientWidth;
+ const ring={x:w/2,y:275},left={x:w*.14,y:124},right={x:w*.86,y:124},down={x:w/2,y:435};
+
+ placeLine($("[data-rope-left]"),ring.x,ring.y,left.x,left.y);
+ placeLine($("[data-rope-right]"),ring.x,ring.y,right.x,right.y);
+ placeLine($("[data-rope-center]"),ring.x,ring.y,down.x,down.y);
+
+ placeLine($("[data-vector-left]"),ring.x,ring.y,ring.x-(ring.x-left.x)*.55,ring.y-(ring.y-left.y)*.55);
+ placeLine($("[data-vector-right]"),ring.x,ring.y,ring.x+(right.x-ring.x)*.55,ring.y-(ring.y-right.y)*.55);
+ placeLine($("[data-vector-center]"),ring.x,ring.y,ring.x,ring.y+110);
+
+ $("[data-label-left]").style.cssText=`left:${ring.x-110}px;top:${ring.y-75}px;background:#c13d32`;
+ $("[data-label-right]").style.cssText=`left:${ring.x+85}px;top:${ring.y-75}px;background:#16794b`;
+ $("[data-label-center]").style.cssText=`left:${ring.x+10}px;top:${ring.y+75}px;background:#315fc2`;
+
+ $("[data-hook-left]").style.cssText=`left:${left.x-24}px;top:${left.y-24}px`;
+ $("[data-hook-right]").style.cssText=`left:${right.x-24}px;top:${right.y-24}px`;
+ $("[data-hook-center]").style.cssText=`left:${down.x-24}px;top:${down.y-24}px`;
+
+ $("[data-hung-left]").style.cssText=`left:${left.x-36}px;top:${left.y+40}px`;
+ $("[data-hung-right]").style.cssText=`left:${right.x-36}px;top:${right.y+40}px`;
+ $("[data-hung-center]").style.cssText=`left:${down.x-36}px;top:${down.y-10}px`;
+}
+
+function prepareTrial(){
+ state.mounted.clear();
+ const t=trial();
+
+ $("[data-trial]").textContent=`${state.trial+1}/4`;
+ $("[data-m1]").textContent=`${t.m1g} g`;
+ $("[data-m2]").textContent=`${t.m2g} g`;
+ $("[data-m3]").textContent=`${t.m3g} g`;
+ $("[data-free-left]").textContent=`m₁ ${t.m1g} g`;
+ $("[data-free-right]").textContent=`m₂ ${t.m2g} g`;
+ $("[data-free-center]").textContent=`m₃ ${t.m3g} g`;
+
+ ["left","right","center"].forEach(x=>{
+   $(`[data-free-${x}]`).hidden=false;
+   $(`[data-hung-${x}]`).textContent=x==="left"?`${t.m1g} g`:x==="right"?`${t.m2g} g`:`${t.m3g} g`;
+   $(`[data-hung-${x}]`).hidden=true;
+   $(`[data-mount="${x}"]`).disabled=false;
+ });
+
+ $("[data-read-angles]").disabled=true;
+ $("[data-instruction]").textContent="Montează cele trei mase.";
+ fb("mount","");
+ requestAnimationFrame(drawApparatus);
+}
+
+$$("[data-mount]").forEach(b=>b.onclick=()=>{
+ const side=b.dataset.mount;
+ if(state.mounted.has(side))return;
+ state.mounted.add(side);state.activity.mountActions[state.trial]++;
+ $(`[data-free-${side}]`).hidden=true;$(`[data-hung-${side}]`).hidden=false;b.disabled=true;
+
+ if(state.mounted.size===3){
+   $("[data-read-angles]").disabled=false;
+   $("[data-instruction]").textContent="Sistemul s-a stabilizat. Continuă la citirea unghiurilor.";
+   fb("mount","Cele trei mase sunt montate corect.","ok");
+ }else fb("mount",`Mase montate: ${state.mounted.size}/3.`,"warn");
+});
+
+window.addEventListener("resize",()=>{if(state.step===4)drawApparatus()});
+$("[data-read-angles]").onclick=()=>{prepareAngles();show(5)};
+
+/* raportoare */
+function setRay(cardSelector,angle,mirror=false){
+ const ray=$(`${cardSelector} .ray`);
+ ray.style.transform=`rotate(${mirror?180-angle:angle-180}deg)`;
+}
+
+function prepareAngles(){
+ const t=trial();
+ $("[data-alpha]").value="";$("[data-beta]").value="";
+ $("[data-alpha]").disabled=false;$("[data-beta]").disabled=false;
+ $("[data-check-alpha]").disabled=false;$("[data-check-beta]").disabled=false;
+ $("[data-alpha-feedback]").textContent="";$("[data-beta-feedback]").textContent="";
+ $("[data-reading-noted]").checked=false;$("[data-next-trial]").disabled=true;
+
+ /* razele sunt desenate ca unghiuri față de orizontală */
+ $("[data-protractor-alpha] .ray").style.transform=`rotate(${-t.alpha}deg)`;
+ $("[data-protractor-beta] .ray").style.transform=`rotate(${180+t.beta}deg)`;
+
+ state.readings[state.trial]={
+   determination:state.trial+1,
+   massLeftG:t.m1g,massRightG:t.m2g,massCenterG:t.m3g,
+   alphaDeg:null,betaDeg:null,alphaAttempts:0,betaAttempts:0
+ };
+}
+
+function checkAngle(which){
+ const isA=which==="alpha",input=$(`[data-${which}]`),out=$(`[data-${which}-feedback]`);
+ const raw=input.value.trim(),v=num(raw),expected=isA?trial().alpha:trial().beta;
+ if(isA)state.activity.alphaAttempts[state.trial]++;else state.activity.betaAttempts[state.trial]++;
+
+ input.classList.remove("calc-ok","calc-error");
+ if(!raw){out.textContent="Completează citirea.";out.className="calc-feedback bad";input.classList.add("calc-error");return}
+ if(!Number.isFinite(v)){out.textContent="Introdu numai valoarea numerică.";out.className="calc-feedback bad";input.classList.add("calc-error");return}
+ if(Math.abs(v-expected)>.51){out.textContent="Reverifică direcția firului și scala raportorului. Unghiul se măsoară față de orizontală.";out.className="calc-feedback bad";input.classList.add("calc-error");return}
+
+ input.classList.add("calc-ok");input.disabled=true;$(`[data-check-${which}]`).disabled=true;
+ out.textContent="Citire corectă.";out.className="calc-feedback ok";
+
+ const r=state.readings[state.trial];
+ if(isA){r.alphaDeg=v;r.alphaAttempts=state.activity.alphaAttempts[state.trial]}
+ else{r.betaDeg=v;r.betaAttempts=state.activity.betaAttempts[state.trial]}
+ readingReady();
+}
+
+$("[data-check-alpha]").onclick=()=>checkAngle("alpha");
+$("[data-check-beta]").onclick=()=>checkAngle("beta");
+$("[data-reading-noted]").onchange=readingReady;
+
+function readingReady(){
+ const r=state.readings[state.trial];
+ const ready=Number.isFinite(r?.alphaDeg)&&Number.isFinite(r?.betaDeg)&&$("[data-reading-noted]").checked;
+ $("[data-next-trial]").disabled=!ready;
+ if(ready){
+   r.completedAt=now();
+   $("[data-next-trial]").textContent=state.trial===3?"Continuă la calcule":"Următoarea determinare";
+   fb("reading","Ambele unghiuri sunt citite și notate.","ok");
+ }
+}
+
+$("[data-next-trial]").onclick=()=>{
+ if(state.trial<3){state.trial++;prepareTrial();show(4);return}
+ buildTable();state.completed.add(4);state.completed.add(5);show(6);
+};
+
+/* tabel */
+function buildTable(){
+ $("[data-measurements]").innerHTML=state.readings.map((r,i)=>`
+ <tr><td>${i+1}</td>
+ <td><input data-t="m1-${i}" type="number" min="0" step="1" inputmode="numeric"></td>
+ <td><input data-t="m2-${i}" type="number" min="0" step="1" inputmode="numeric"></td>
+ <td><input data-t="m3-${i}" type="number" min="0" step="1" inputmode="numeric"></td>
+ <td><input data-t="a-${i}" type="number" min="0" max="180" step="1" inputmode="numeric"></td>
+ <td><input data-t="b-${i}" type="number" min="0" max="180" step="1" inputmode="numeric"></td></tr>`).join("");
+}
+
+$("[data-check-table]").onclick=()=>{
+ state.activity.tableChecks++;
+ let ok=true,first=null;
+ state.readings.forEach((r,i)=>{
+   [["m1",r.massLeftG],["m2",r.massRightG],["m3",r.massCenterG],["a",r.alphaDeg],["b",r.betaDeg]].forEach(([k,e])=>{
+     const x=$(`[data-t="${k}-${i}"]`),v=num(x.value);
+     x.classList.remove("table-ok","table-error");
+     if(Number.isFinite(v)&&Math.abs(v-e)<1e-8)x.classList.add("table-ok");
+     else{x.classList.add("table-error");ok=false;first=first||x}
+   });
+ });
+ if(!$("[data-table-noted]").checked){ok=false;first=first||$("[data-table-noted]")}
+ if(!ok){fb("table","Reverifică masele, unghiurile și confirmarea din caiet.");first?.focus();return}
+
+ $$("[data-t]").forEach(x=>x.disabled=true);$("[data-table-noted]").disabled=true;$("[data-check-table]").disabled=true;
+ state.tableOK=true;prepareCalculations();$("[data-calculation-area]").hidden=false;fb("table","Tabelul este corect.","ok");
+};
+
+/* calcule */
+const f1=i=>`f1-${i}`,f2=i=>`f2-${i}`,f3=i=>`f3-${i}`,rx=i=>`rx-${i}`,ry=i=>`ry-${i}`,res=i=>`res-${i}`,err=i=>`err-${i}`;
+
+function prepareCalculations(){
+ state.calculationVerified={};state.activity.calculationAttempts={};
+ for(let i=0;i<4;i++)[f1(i),f2(i),f3(i),rx(i),ry(i),res(i),err(i)].forEach(k=>{state.calculationVerified[k]=false;state.activity.calculationAttempts[k]=0});
+ state.calculationVerified["mean-error"]=false;state.activity.calculationAttempts["mean-error"]=0;
+ renderCalcBlocks();bindCalcs();dependencies();progress();
+}
+
+function renderCalcBlocks(){
+ $("[data-trial-calculations]").innerHTML=state.readings.map((r,i)=>{
+   const n=i+1;
+   const block=(title,formula,key,dec,disabled=false,note="")=>`
+   <div class="calc-block">
+   <h3>${title}</h3><div class="formula">${formula}</div>
+   <label class="field">Rezultat ${key.startsWith("err")?"(%)":"(N)"}
+   <span class="rounding">${dec} zecimale.</span>
+   <input
+     data-calc="${key}"
+     type="number"
+     ${key.startsWith("rx-") || key.startsWith("ry-")
+       ? 'step="0.001" inputmode="decimal" data-signed-number'
+       : key.startsWith("err-")
+         ? 'min="0" step="0.01" inputmode="decimal"'
+         : 'min="0" step="0.001" inputmode="decimal"'}
+     ${disabled?"disabled":""}
+   >
+   </label>
+   <p class="calc-feedback ${disabled?"info":""}" data-calc-feedback="${key}">${note}</p>
+   <button class="btn secondary" type="button" data-check-calc="${key}" ${disabled?"disabled":""}>Verifică</button>
+   </div>`;
+
+   return `
+   <h3>Determinarea ${n}</h3>
+   ${block(`F₁ — determinarea ${n}`,`F₁=${(r.massLeftG/1000).toFixed(3)}·9,8`,f1(i),3)}
+   ${block(`F₂ — determinarea ${n}`,`F₂=${(r.massRightG/1000).toFixed(3)}·9,8`,f2(i),3)}
+   ${block(`F₃ — determinarea ${n}`,`F₃=${(r.massCenterG/1000).toFixed(3)}·9,8`,f3(i),3)}
+   ${block(`Rₓ — determinarea ${n}`,`Rₓ=F₂cos${r.betaDeg}°−F₁cos${r.alphaDeg}°`,rx(i),3,true,"Verifică mai întâi F₁ și F₂.")}
+   ${block(`Rᵧ — determinarea ${n}`,`Rᵧ=F₁sin${r.alphaDeg}°+F₂sin${r.betaDeg}°−F₃`,ry(i),3,true,"Verifică mai întâi F₁, F₂ și F₃.")}
+   ${block(`|R⃗| — determinarea ${n}`,`|R⃗|=√(Rₓ²+Rᵧ²)`,res(i),3,true,"Verifică mai întâi Rₓ și Rᵧ.")}
+   ${block(`ε — determinarea ${n}`,`ε=|R⃗|/[(F₁+F₂+F₃)/3]·100%`,err(i),2,true,"Verifică mai întâi forțele și rezultanta.")}`;
+ }).join("");
+}
+
+function expected(i){
+ const r=state.readings[i];
+ const F1=r.massLeftG/1000*G,F2=r.massRightG/1000*G,F3=r.massCenterG/1000*G;
+ const Rx=F2*Math.cos(rad(r.betaDeg))-F1*Math.cos(rad(r.alphaDeg));
+ const Ry=F1*Math.sin(rad(r.alphaDeg))+F2*Math.sin(rad(r.betaDeg))-F3;
+ const R=Math.hypot(Rx,Ry),ref=(F1+F2+F3)/3,E=R/ref*100;
+ return {F1,F2,F3,Rx,Ry,R,ref,E};
+}
+
+function value(k){return num($(`[data-calc="${k}"]`).value)}
+function decimals(k){return k.startsWith("err-")||k==="mean-error"?2:3}
+function mark(k,ok,msg){
+ const x=$(`[data-calc="${k}"]`),o=$(`[data-calc-feedback="${k}"]`);
+ x.classList.remove("calc-ok","calc-error");x.classList.add(ok?"calc-ok":"calc-error");
+ o.textContent=msg;o.className=`calc-feedback ${ok?"ok":"bad"}`;
+ const b=$(`[data-check-calc="${k}"]`);
+ if(b){b.textContent=ok?"Corect ✓":"Verifică";b.classList.toggle("success",ok);b.classList.toggle("secondary",!ok)}
+}
+function wrong(k){if(!state.activity.correctedFields.includes(k))state.activity.correctedFields.push(k)}
+
+function validate(k,expect,hint,special){
+ const x=$(`[data-calc="${k}"]`),raw=x.value.trim(),v=num(raw),d=decimals(k);
+ if(!raw){wrong(k);mark(k,false,"Completează acest rezultat.");return false}
+ if(!Number.isFinite(v)){wrong(k);mark(k,false,"Introdu numai valoarea numerică. Poți folosi virgulă sau punct zecimal.");return false}
+ if(accepted(v,expect,d)){mark(k,true,`Corect. Se acceptă rotunjirea sau trunchierea la ${d} zecimale.`);return true}
+ wrong(k);mark(k,false,special?.(v)||hint);return false;
+}
+
+function verify(k){
+ state.activity.calculationChecks++;state.activity.calculationAttempts[k]++;
+ let ok=false;
+
+ if(/^f[123]-/.test(k)){
+   const [which,is]=k.split("-"),i=Number(is),r=state.readings[i],e=expected(i);
+   const def={f1:[e.F1,r.massLeftG],f2:[e.F2,r.massRightG],f3:[e.F3,r.massCenterG]}[which];
+   ok=validate(k,def[0],"Folosește F=mg cu masa exprimată în kilograme.",v=>{
+     if(accepted(v,def[1]*G,3))return "Ai folosit masa în grame. Transformă mai întâi în kilograme.";
+     if(accepted(v,def[1]/1000,3))return "Ai transformat masa în kg, dar lipsește înmulțirea cu g.";
+   });
+ }
+
+ else if(k.startsWith("rx-")){
+   const i=Number(k.split("-")[1]),r=state.readings[i],e=expected(i);
+   const pf=value(f2(i))*Math.cos(rad(r.betaDeg))-value(f1(i))*Math.cos(rad(r.alphaDeg));
+   ok=validate(k,[e.Rx,pf],"Reverifică semnele și componentele pe Ox.",v=>{
+     const sum=value(f2(i))*Math.cos(rad(r.betaDeg))+value(f1(i))*Math.cos(rad(r.alphaDeg));
+     if(accepted(v,sum,3))return "Componentele orizontale au sensuri opuse; ele se scad.";
+   });
+ }
+
+ else if(k.startsWith("ry-")){
+   const i=Number(k.split("-")[1]),r=state.readings[i],e=expected(i);
+   const pf=value(f1(i))*Math.sin(rad(r.alphaDeg))+value(f2(i))*Math.sin(rad(r.betaDeg))-value(f3(i));
+   ok=validate(k,[e.Ry,pf],"Reverifică componentele verticale și semnul lui F₃.",v=>{
+     const wrong=value(f1(i))*Math.cos(rad(r.alphaDeg))+value(f2(i))*Math.cos(rad(r.betaDeg))-value(f3(i));
+     if(accepted(v,wrong,3))return "Pe Oy se folosesc componentele cu sinus deoarece unghiurile sunt măsurate față de orizontală.";
+   });
+ }
+
+ else if(k.startsWith("res-")){
+   const i=Number(k.split("-")[1]),e=expected(i),prop=Math.hypot(value(rx(i)),value(ry(i)));
+   ok=validate(k,[e.R,prop],"Folosește |R⃗|=√(Rₓ²+Rᵧ²).",v=>{
+     if(accepted(v,value(rx(i))+value(ry(i)),3))return "Componentele perpendiculare nu se adună algebric; folosește teorema lui Pitagora.";
+     if(v<0)return "Modulul unui vector nu poate fi negativ.";
+   });
+ }
+
+ else if(k.startsWith("err-")){
+   const i=Number(k.split("-")[1]),e=expected(i);
+   const ref=(value(f1(i))+value(f2(i))+value(f3(i)))/3;
+   const prop=value(res(i))/ref*100;
+   ok=validate(k,[e.E,prop],"Folosește |R⃗| împărțit la media celor trei forțe și înmulțește cu 100%.",v=>{
+     if(accepted(v,value(res(i))/ref,2))return "Lipsește factorul 100 pentru exprimarea procentuală.";
+     if(v<0)return "Abaterea normalizată nu poate fi negativă.";
+   });
+ }
+
+ else if(k==="mean-error"){
+   const vals=[0,1,2,3].map(i=>value(err(i)));
+   const prop=avg(vals),exact=avg([0,1,2,3].map(i=>expected(i).E));
+   ok=validate(k,[exact,prop],"Calculează media aritmetică a celor patru valori ε.",v=>{
+     if(accepted(v,vals.reduce((a,b)=>a+b,0),2))return "Ai calculat suma, dar nu ai împărțit la 4.";
+   });
+ }
+
+ state.calculationVerified[k]=ok;
+ dependencies();progress();
+}
+
+function depsOf(k){
+ if(k.startsWith("f1-")){const i=+k.split("-")[1];return[rx(i),ry(i),err(i)]}
+ if(k.startsWith("f2-")){const i=+k.split("-")[1];return[rx(i),ry(i),err(i)]}
+ if(k.startsWith("f3-")){const i=+k.split("-")[1];return[ry(i),err(i)]}
+ if(k.startsWith("rx-")||k.startsWith("ry-")){const i=+k.split("-")[1];return[res(i)]}
+ if(k.startsWith("res-")){const i=+k.split("-")[1];return[err(i)]}
+ if(k.startsWith("err-"))return["mean-error"];
+ return[];
+}
+
+function invalidate(k,seen=new Set()){
+ if(seen.has(k))return;seen.add(k);state.calculationVerified[k]=false;
+ const b=$(`[data-check-calc="${k}"]`);if(b){b.textContent="Verifică";b.classList.remove("success");b.classList.add("secondary")}
+ depsOf(k).forEach(d=>{
+   state.calculationVerified[d]=false;
+   $(`[data-calc="${d}"]`)?.classList.remove("calc-ok","calc-error");
+   const o=$(`[data-calc-feedback="${d}"]`);if(o){o.textContent="Reverifică acest rezultat deoarece ai modificat o valoare utilizată în calcul.";o.className="calc-feedback bad"}
+   invalidate(d,seen);
+ });
+ state.analysisVerified=false;state.notebook=null;state.completed.delete(6);$("[data-chart]").hidden=true;
+ dependencies();progress();
+}
+
+function enable(k,on,msg){
+ const x=$(`[data-calc="${k}"]`),b=$(`[data-check-calc="${k}"]`);
+ if(x)x.disabled=!on;if(b)b.disabled=!on;
+ if(!on&&!state.calculationVerified[k]){
+   const o=$(`[data-calc-feedback="${k}"]`);if(o&&o.textContent===""){o.textContent=msg;o.className="calc-feedback info"}
+ }
+}
+
+function dependencies(){
+ for(let i=0;i<4;i++){
+   enable(rx(i),state.calculationVerified[f1(i)]&&state.calculationVerified[f2(i)],"Verifică mai întâi F₁ și F₂.");
+   enable(ry(i),state.calculationVerified[f1(i)]&&state.calculationVerified[f2(i)]&&state.calculationVerified[f3(i)],"Verifică mai întâi F₁, F₂ și F₃.");
+   enable(res(i),state.calculationVerified[rx(i)]&&state.calculationVerified[ry(i)],"Verifică mai întâi Rₓ și Rᵧ.");
+   enable(err(i),state.calculationVerified[f1(i)]&&state.calculationVerified[f2(i)]&&state.calculationVerified[f3(i)]&&state.calculationVerified[res(i)],"Verifică mai întâi forțele și rezultanta.");
+ }
+ enable("mean-error",[0,1,2,3].every(i=>state.calculationVerified[err(i)]),"Verifică mai întâi cele patru valori ε.");
+}
+
+function allVerified(){return Object.values(state.calculationVerified).every(Boolean)}
+function progress(){
+ const a=Object.values(state.calculationVerified),n=a.filter(Boolean).length;
+ $("[data-calc-progress]").textContent=`Calcule verificate: ${n}/${a.length}`;
+ $("[data-next-evaluation]").disabled=!(allVerified()&&state.analysisVerified&&state.notebook);
+ if(n===a.length)renderChart();
+}
+
+function bindCalcs(){
+ $$("[data-check-calc]").forEach(b=>b.onclick=()=>verify(b.dataset.checkCalc));
+ $$("[data-calc]").forEach(x=>x.oninput=()=>{if(!state.finalized){x.classList.remove("calc-ok","calc-error");invalidate(x.dataset.calc)}});
+}
+
+function calculatedRows(){
+ return state.readings.map((r,i)=>({
+   determination:i+1,massLeftG:r.massLeftG,massRightG:r.massRightG,massCenterG:r.massCenterG,
+   alphaDeg:r.alphaDeg,betaDeg:r.betaDeg,
+   force1N:value(f1(i)),force2N:value(f2(i)),force3N:value(f3(i)),
+   resultantXN:value(rx(i)),resultantYN:value(ry(i)),resultantN:value(res(i)),
+   normalizedResidualPercent:value(err(i))
+ }));
+}
+
+function renderChart(){
+ const rows=calculatedRows();
+ const R=avg(rows.map(x=>x.resultantN));
+ const F=avg(rows.map(x=>(x.force1N+x.force2N+x.force3N)/3));
+ const max=Math.max(F,.001);
+ $("[data-bars]").innerHTML=`
+ <div class="bar-wrap"><strong>${R.toFixed(3)} N</strong><div class="bar" style="height:${Math.max(5,R/max*180)}px"></div><span>|R⃗| mediu</span></div>
+ <div class="bar-wrap"><strong>${F.toFixed(3)} N</strong><div class="bar ref" style="height:180px"></div><span>forță medie caracteristică</span></div>`;
+ $("[data-chart]").hidden=false;
+}
+
+/* analiză */
+function invalidateAnalysis(){if(state.finalized)return;state.analysisVerified=false;state.notebook=null;state.completed.delete(6);progress()}
+$("[data-student-steps]").oninput=invalidateAnalysis;
+$("[data-interpretation]").oninput=invalidateAnalysis;
+$("[data-analysis-noted]").onchange=invalidateAnalysis;
+
+$("[data-check-analysis]").onclick=()=>{
+ const steps=$("[data-student-steps]"),interp=$("[data-interpretation]");
+ const s=steps.value.trim(),t=norm(s),p=interp.value.trim(),q=norm(p);
+ let bad=false;
+
+ if(s.length<180||!t.includes("f")||!t.includes("rx")||!t.includes("ry")){
+   steps.classList.add("calc-error");$('[data-calc-feedback="steps"]').textContent="Transcrie cel puțin o determinare completă: forțe, componente și rezultantă.";$('[data-calc-feedback="steps"]').className="calc-feedback bad";bad=true;
+ }else{
+   steps.classList.remove("calc-error");steps.classList.add("calc-ok");$('[data-calc-feedback="steps"]').textContent="Calculul transcris este suficient de detaliat.";$('[data-calc-feedback="steps"]').className="calc-feedback ok";
+ }
+
+ if(p.length<150||!q.includes("rezult")||!(q.includes("zero")||q.includes("nul"))||!(q.includes("ero")||q.includes("rezol")||q.includes("frec")||q.includes("abat"))){
+   interp.classList.add("calc-error");$('[data-calc-feedback="interpretation"]').textContent="Explică apropierea rezultantei de zero și cauzele unei valori experimentale nenule.";$('[data-calc-feedback="interpretation"]').className="calc-feedback bad";bad=true;
+ }else{
+   interp.classList.remove("calc-error");interp.classList.add("calc-ok");$('[data-calc-feedback="interpretation"]').textContent="Interpretarea conține ideile fizice esențiale.";$('[data-calc-feedback="interpretation"]').className="calc-feedback ok";
+ }
+
+ if(!$("[data-analysis-noted]").checked){
+   $('[data-calc-feedback="notebook"]').textContent="Confirmă notarea în caiet.";$('[data-calc-feedback="notebook"]').className="calc-feedback bad";bad=true;
+ }else{
+   $('[data-calc-feedback="notebook"]').textContent="Confirmarea caietului este înregistrată.";$('[data-calc-feedback="notebook"]').className="calc-feedback ok";
+ }
+
+ if(bad){fb("analysis","Mai există elemente de corectat.");return}
+ state.analysisVerified=true;
+ if(!allVerified()){fb("analysis","Interpretarea este corectă, dar mai există calcule numerice neverificate.","warn");return}
+
+ const rows=calculatedRows();
+ state.notebook={
+   dataSetId:state.set.id,
+   measurements:{
+     trials:state.readings.map((r,i)=>({
+       determination:i+1,massLeftG:r.massLeftG,massRightG:r.massRightG,massCenterG:r.massCenterG,
+       alphaDeg:r.alphaDeg,betaDeg:r.betaDeg,protractorResolutionDeg:1,
+       alphaAttempts:r.alphaAttempts,betaAttempts:r.betaAttempts
+     }))
+   },
+   calculations:{
+     rows,
+     meanNormalizedResidualPercent:value("mean-error"),
+     meanResultantN:avg(rows.map(x=>x.resultantN)),
+     formulas:["F=m*g","Rx=F2*cos(beta)-F1*cos(alpha)","Ry=F1*sin(alpha)+F2*sin(beta)-F3","R=sqrt(Rx^2+Ry^2)","epsilon=R/((F1+F2+F3)/3)*100"],
+     studentSteps:s
+   },
+   comparison:{
+     interpretation:p,
+     prediction:state.preparation.prediction,
+     physicalStatement:"În echilibru de translație, suma vectorială a forțelor concurente este aproximativ nulă."
+   },
+   activity:{
+     equipmentChecks:state.activity.equipmentChecks,
+     mountActions:clone(state.activity.mountActions),
+     alphaAttempts:clone(state.activity.alphaAttempts),
+     betaAttempts:clone(state.activity.betaAttempts),
+     tableChecks:state.activity.tableChecks,
+     calculationChecks:state.activity.calculationChecks,
+     calculationAttemptsByField:clone(state.activity.calculationAttempts),
+     fieldsRequiringCorrection:clone(state.activity.correctedFields)
+   },
+   completed:true,completedAt:now()
+ };
+
+ window.LAB_NOTEBOOK_STATE=clone(state.notebook);
+ document.dispatchEvent(new CustomEvent("laborator:notebook-complete",{detail:clone(state.notebook)}));
+ state.completed.add(6);fb("analysis","Calculele și interpretarea sunt verificate.","ok");progress();
+};
+
+$("[data-next-evaluation]").onclick=()=>{if(state.notebook&&allVerified()&&state.analysisVerified)show(7)};
+
+/* raport */
+function buildPayload(){
+ const monitoring=window.LaboratorMonitorizare?.getState?.()||{};
+ const base={
+   reportId:state.reportId,
+   student:{name:state.session.studentName,className:state.session.studentClass,catalogNumber:state.session.catalogNumber,identityConfirmed:true},
+   experiment:{
+     id:CONFIG.id,code:CONFIG.code,title:CONFIG.title,classLevel:CONFIG.classLevel,domain:CONFIG.domain,dataSetId:state.set.id,
+     generatedData:{g:G,protractorResolutionDeg:1,determinationCount:4}
+   },
+   session:{
+     sessionId:state.session.sessionId,startedAt:state.session.startedAt,finishedAt:state.evaluation.finishedAt,
+     durationSeconds:Math.max(0,Math.round((Date.parse(state.evaluation.finishedAt)-Date.parse(state.session.startedAt))/1000)),
+     dateDisplay:state.session.experimentDate,completed:true,totalSteps:8
+   },
+   safety:state.safety,equipment:state.equipment,preparation:state.preparation,
+   notebook:state.notebook,measurements:state.notebook.measurements,calculations:state.notebook.calculations,
+   comparison:state.notebook.comparison,activity:state.notebook.activity,evaluation:state.evaluation,
+   monitoring,completed:true,completedSteps:[...state.completed].sort((a,b)=>a-b),totalSteps:8,
+   report:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt}
+ };
+ return base;
+}
+
+function lock(){
+ state.finalized=true;
+ $$("[data-calc],[data-check-calc],[data-student-steps],[data-interpretation],[data-analysis-noted],[data-check-analysis]").forEach(x=>x.disabled=true);
+}
+
+$("[data-evaluation]").onsubmit=async e=>{
+ e.preventDefault();
+ if(state.evaluation&&state.reportId){$("[data-final]").hidden=false;return}
+ if(!state.notebook||!allVerified()||!state.analysisVerified){alert("Finalizează toate calculele și interpretarea.");return}
+
+ const f=new FormData(e.currentTarget);
+ const answers={q1:f.get("q1"),q2:f.get("q2"),q3:f.get("q3"),q4:f.get("q4")};
+ const conclusion=$("[data-conclusion]").value.trim(),errors=$("[data-errors]").value.trim();
+
+ if(Object.values(answers).some(x=>!x)||conclusion.length<120||errors.length<40||!$("[data-individual]").checked){
+   alert("Completează evaluarea, concluzia, sursele de eroare și confirmarea.");return;
+ }
+
+ const correct={q1:"vector",q2:"x",q3:"y",q4:"equilibrium"};
+ const score=Object.keys(correct).filter(k=>answers[k]===correct[k]).length;
+
+ state.evaluation={score,maximumScore:4,percent:rnd(score/4*100,2),answers,conclusion,errorSources:errors,individualWorkConfirmed:true,finishedAt:now()};
+ window.LAB_EVALUATION_STATE=clone(state.evaluation);
+ state.reportId=state.reportId||makeId("RAP");
+ state.completed.add(7);
+
+ document.dispatchEvent(new CustomEvent("laborator:evaluation-complete",{detail:clone(state.evaluation)}));
+
+ const c=state.notebook.calculations;
+ $("[data-results]").innerHTML=`
+ <div class="result-card"><span>Elev</span><strong>${esc(state.session.studentName)}</strong></div>
+ <div class="result-card"><span>Clasa / nr.</span><strong>${esc(state.session.studentClass)} / ${state.session.catalogNumber}</strong></div>
+ <div class="result-card"><span>|R⃗| mediu</span><strong>${Number(c.meanResultantN).toFixed(3)} N</strong></div>
+ <div class="result-card"><span>ε̄</span><strong>${Number(c.meanNormalizedResidualPercent).toFixed(2)} %</strong></div>
+ <div class="result-card"><span>Evaluare</span><strong>${score}/4</strong></div>
+ <div class="result-card"><span>Set</span><strong>${esc(state.set.id)}</strong></div>`;
+
+ $("[data-report-id]").textContent=state.reportId;
+ $("[data-final]").hidden=false;
+ $$("input,textarea,button",e.currentTarget).forEach(x=>x.disabled=true);
+ lock();
+
+ try{
+   state.reportPayload=buildPayload();
+   localStorage.setItem(`fizica-laborator-raport-${state.reportId}`,JSON.stringify(state.reportPayload));
+
+   $("[data-local-status]").textContent="salvat pe acest dispozitiv";
+   $("[data-local-status]").className="status-local";
+
+   document.dispatchEvent(new CustomEvent("laborator:report-ready",{detail:{
+     reportId:state.reportId,
+     finishedAt:state.evaluation.finishedAt,
+     payload:clone(state.reportPayload)
+   }}));
+ }catch(error){
+   console.error(error);
+   $("[data-local-status]").textContent="salvarea locală necesită verificare";
+   $("[data-local-status]").className="status-error";
+   alert(`Raportul este finalizat, dar copia locală nu a putut fi salvată: ${error.message}`);
+ }
+};
+
+/* PDF */
+$("[data-pdf]").onclick=()=>{
+ if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return}
+
+ const w=open("","_blank");if(!w){alert("Browserul a blocat fereastra raportului.");return}
+ const c=state.notebook.calculations,a=state.notebook.activity;
+ const duration=Math.max(1,Math.round((Date.parse(state.evaluation.finishedAt)-Date.parse(state.session.startedAt))/60000));
+
+ const rows=c.rows.map(r=>`
+ <tr><td>${r.determination}</td><td>${r.massLeftG}</td><td>${r.massRightG}</td><td>${r.massCenterG}</td>
+ <td>${r.alphaDeg}</td><td>${r.betaDeg}</td><td>${r.force1N.toFixed(3)}</td><td>${r.force2N.toFixed(3)}</td><td>${r.force3N.toFixed(3)}</td>
+ <td>${r.resultantXN.toFixed(3)}</td><td>${r.resultantYN.toFixed(3)}</td><td>${r.resultantN.toFixed(3)}</td><td>${r.normalizedResidualPercent.toFixed(2)}</td></tr>`).join("");
+
+ const attempts=Object.entries(a.calculationAttemptsByField).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("");
+
+ w.document.write(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>EXP10 - ${esc(state.session.studentName)}</title>
+ <style>
+ body{font-family:Arial,sans-serif;color:#172b3a;margin:24px;line-height:1.4}h1{font-size:22px}h2{font-size:17px;border-bottom:1px solid #aaa;padding-bottom:4px;margin-top:22px}
+ .id{padding:12px;border:2px solid #28637b}.status{padding:10px;margin:15px 0;border:2px solid #16794b;color:#16794b;font-weight:bold}
+ table{width:100%;border-collapse:collapse;font-size:9.5px}th,td{border:1px solid #aaa;padding:4px;text-align:center}th{background:#eef4f7}
+ .formula{padding:10px;border-left:4px solid #28637b;background:#eef6f9}@page{size:A4 landscape;margin:10mm}@media print{button{display:none}}
+ </style></head><body>
+ <h1>Portofoliu de laborator – Fizică</h1>
+ <h2>EXP10 — Studiul echilibrului de translație al punctului material</h2>
+ <div class="id"><b>Elev:</b> ${esc(state.session.studentName)}<br><b>Clasa:</b> ${esc(state.session.studentClass)} • <b>Nr. catalog:</b> ${state.session.catalogNumber}<br>
+ <b>Data:</b> ${esc(state.session.experimentDate)}<br><b>Set:</b> ${esc(state.set.id)}<br><b>ID raport:</b> ${esc(state.reportId)}</div>
+ <div class="status">✓ RAPORT SALVAT LOCAL – DATELE NU AU FOST TRANSMISE</div>
+
+ <h2>Scop</h2><p>Verificarea experimentală a condiției de echilibru de translație ΣF⃗=0 pentru trei forțe concurente.</p>
+
+ <h2>Relații</h2><div class="formula">
+ F=mg<br>Rₓ=F₂cosβ−F₁cosα<br>Rᵧ=F₁sinα+F₂sinβ−F₃<br>|R⃗|=√(Rₓ²+Rᵧ²)<br>
+ ε=|R⃗|/[(F₁+F₂+F₃)/3]·100%
+ </div>
+
+ <h2>Măsurări și rezultate</h2>
+ <table><tr><th>Nr.</th><th>m₁ g</th><th>m₂ g</th><th>m₃ g</th><th>α°</th><th>β°</th><th>F₁ N</th><th>F₂ N</th><th>F₃ N</th><th>Rₓ N</th><th>Rᵧ N</th><th>|R| N</th><th>ε %</th></tr>${rows}</table>
+
+ <h2>Rezultat final</h2>
+ <p><b>|R⃗| mediu:</b> ${c.meanResultantN.toFixed(3)} N<br>
+ <b>ε̄:</b> ${c.meanNormalizedResidualPercent.toFixed(2)} %<br>
+ <b>Evaluare conceptuală:</b> ${state.evaluation.score}/4</p>
+
+ <h2>Parcurs experimental</h2>
+ <p>Verificări echipamente: ${a.equipmentChecks} • Montări: ${a.mountActions.join(" / ")} •
+ Citiri α: ${a.alphaAttempts.join(" / ")} • Citiri β: ${a.betaAttempts.join(" / ")} •
+ Verificări tabel: ${a.tableChecks} • Verificări calcule: ${a.calculationChecks} • Durată: ${duration} min</p>
+
+ <h2>Încercări pe calcul</h2><table><tr><th>Calcul</th><th>Încercări</th></tr>${attempts}</table>
+
+ <h2>Calcul transcris</h2><p>${esc(c.studentSteps)}</p>
+ <h2>Interpretare</h2><p>${esc(state.notebook.comparison.interpretation)}</p>
+ <h2>Concluzie</h2><p>${esc(state.evaluation.conclusion)}</p>
+ <h2>Surse de eroare și limitări</h2><p>${esc(state.evaluation.errorSources)}</p>
+
+ <p><b>Status portofoliu: REALIZAT</b></p>
+ <button onclick="window.print()">Salvează ca PDF</button>
+ <script>addEventListener("load",()=>setTimeout(()=>print(),300));<\/script>
+ </body></html>`);
+ w.document.close();
+};
+
+/* inițializare */
+show(0);
+
+});
+</script>
+</body>
+</html>
