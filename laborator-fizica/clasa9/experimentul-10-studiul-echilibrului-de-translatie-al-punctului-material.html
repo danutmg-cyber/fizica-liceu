@@ -86,7 +86,7 @@ th{background:#edf5f8}
 /* raportor */
 .protractor-card{padding:1rem;border:1px solid var(--line);border-radius:12px;background:#f8fbfd}
 .protractor{position:relative;height:240px;overflow:hidden}
-.semi{position:absolute;left:50%;bottom:24px;width:360px;height:180px;transform:translateX(-50%);border:4px solid #78551f;border-bottom:0;border-radius:360px 360px 0 0;background:repeating-conic-gradient(from 270deg at 50% 100%,transparent 0 4.5deg,#9b7b54 4.5deg 5deg,transparent 5deg 9.5deg,#9b7b54 9.5deg 10deg)}
+.semi{position:absolute;left:50%;bottom:24px;width:360px;height:180px;transform:translateX(-50%);border:4px solid #78551f;border-bottom:0;border-radius:360px 360px 0 0;background:repeating-conic-gradient(from 270deg at 50% 100%,transparent 0 4.5deg,#78551f 4.5deg 5deg),repeating-conic-gradient(from 270deg at 50% 100%,transparent 0 .78deg,#c4a77d .78deg 1deg)}
 .baseline{position:absolute;left:calc(50% - 180px);bottom:20px;width:360px;border-top:4px solid #78551f}
 .ray{position:absolute;left:50%;bottom:24px;width:170px;height:5px;background:var(--red);transform-origin:left center}
 .ray:after{content:"";position:absolute;right:-2px;top:-6px;border-left:12px solid var(--red);border-top:7px solid transparent;border-bottom:7px solid transparent}
@@ -134,7 +134,6 @@ window.LAB_EXPERIMENT_CONFIG={
 
 <script src="../assets/js/app.js" defer></script>
 <script src="../assets/js/monitorizare.js" defer></script>
-<script src="../assets/js/google-sheets.js" defer></script>
 </head>
 
 <body>
@@ -381,7 +380,7 @@ iar F₃ vertical în jos.
 <div class="protractor" data-protractor-alpha>
 <div class="semi"></div><div class="baseline"></div><div class="ray"></div><div class="origin"></div>
 </div>
-<div class="angle-scale"><span>0°</span><span>90°</span><span>180°</span></div>
+<div class="angle-scale"><span>0°</span><span>30°</span><span>60°</span><span>90°</span><span>120°</span><span>150°</span><span>180°</span></div>
 
 <label class="field">α (°)
 <input data-alpha type="number" min="0" max="180" step="1" inputmode="numeric">
@@ -395,7 +394,7 @@ iar F₃ vertical în jos.
 <div class="protractor" data-protractor-beta>
 <div class="semi"></div><div class="baseline"></div><div class="ray"></div><div class="origin"></div>
 </div>
-<div class="angle-scale"><span>0°</span><span>90°</span><span>180°</span></div>
+<div class="angle-scale"><span>0°</span><span>30°</span><span>60°</span><span>90°</span><span>120°</span><span>150°</span><span>180°</span></div>
 
 <label class="field">β (°)
 <input data-beta type="number" min="0" max="180" step="1" inputmode="numeric">
@@ -548,7 +547,7 @@ Se acceptă și trunchierea corectă.
 <label class="choice"><input type="checkbox" data-individual required>
 <span>Confirm că am realizat individual măsurările, calculele și concluziile.</span></label>
 
-<button class="btn">Finalizează experimentul și trimite raportul</button>
+<button class="btn">Finalizează experimentul și generează raportul</button>
 </form>
 
 <div data-final hidden>
@@ -558,13 +557,11 @@ Se acceptă și trunchierea corectă.
 <div class="report-status">
 <p><strong>ID raport:</strong> <span data-report-id>—</span></p>
 <p><strong>Copie locală:</strong> <span data-local-status>—</span></p>
-<p><strong>Transmitere:</strong> <span data-send-status>Raportul nu a fost încă trimis.</span></p>
+<p><strong>Confidențialitate:</strong> <span>Datele rămân pe acest dispozitiv și nu sunt transmise către servicii externe.</span></p>
 <div data-report-security-slot></div>
 </div>
 
 <div class="actions">
-<button class="btn success" type="button" data-send>Trimite datele</button>
-<button class="btn warning" type="button" data-retry>Retrimite datele</button>
 <button class="btn secondary" type="button" data-pdf>Salvează PDF pentru portofoliu</button>
 <button class="btn secondary" type="button" onclick="window.print()">Tipărește</button>
 </div>
@@ -606,7 +603,7 @@ const state={
  step:0,completed:new Set(),session:null,set:null,safety:null,equipment:null,preparation:null,
  trial:0,mounted:new Set(),readings:[null,null,null,null],tableOK:false,
  calculationVerified:{},analysisVerified:false,notebook:null,evaluation:null,
- reportId:null,reportPayload:null,reportConfirmed:false,finalized:false,
+ reportId:null,reportPayload:null,finalized:false,
  activity:{
    equipmentChecks:0,
    mountActions:[0,0,0,0],
@@ -1260,7 +1257,7 @@ function buildPayload(){
    monitoring,completed:true,completedSteps:[...state.completed].sort((a,b)=>a-b),totalSteps:8,
    report:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt}
  };
- return window.LaboratorGoogleSheets?.buildPayload?window.LaboratorGoogleSheets.buildPayload(base):base;
+ return base;
 }
 
 function lock(){
@@ -1306,76 +1303,24 @@ $("[data-evaluation]").onsubmit=async e=>{
  lock();
 
  try{
-   const api=window.LaboratorGoogleSheets;
-   if(!api)throw new Error("Modulul Google Sheets nu este disponibil.");
-   await api.init?.();
-
    state.reportPayload=buildPayload();
-
-   /* salvare locală obligatorie înainte de orice cerere de rețea */
-   state.reportPayload=await api.savePending(state.reportPayload);
+   localStorage.setItem(`fizica-laborator-raport-${state.reportId}`,JSON.stringify(state.reportPayload));
 
    $("[data-local-status]").textContent="salvat pe acest dispozitiv";
    $("[data-local-status]").className="status-local";
-   sendStatus("Raport salvat local. Se încearcă transmiterea...");
 
    document.dispatchEvent(new CustomEvent("laborator:report-ready",{detail:{
      reportId:state.reportId,
      finishedAt:state.evaluation.finishedAt,
      payload:clone(state.reportPayload)
    }}));
-
-   await sendSaved();
  }catch(error){
    console.error(error);
-   sendStatus(`Raportul este finalizat, dar transmiterea nu a fost confirmată: ${error.message}`,"error");
+   $("[data-local-status]").textContent="salvarea locală necesită verificare";
+   $("[data-local-status]").className="status-error";
+   alert(`Raportul este finalizat, dar copia locală nu a putut fi salvată: ${error.message}`);
  }
 };
-
-function sendStatus(text,type=""){
- const e=$("[data-send-status]");e.textContent=text;e.className=type?`status-${type}`:"";
-}
-
-function confirmed(status="stored"){
- state.reportConfirmed=true;$("[data-send]").disabled=true;$("[data-retry]").disabled=true;
- sendStatus(status==="duplicate"?"Raportul exista deja în registru și nu a fost duplicat.":"Raport transmis și confirmat de server.","success");
- $("[data-local-status]").textContent="confirmat de server";$("[data-local-status]").className="status-success";
-}
-
-function submissionResult(r){
- if(r?.status==="stored"||r?.status==="duplicate")confirmed(r.status);
- else if(r?.status==="unconfirmed"||r?.status==="pending")sendStatus("Transmiterea nu a fost confirmată. Raportul rămâne salvat local.","error");
-}
-
-async function sendSaved(){
- if(state.reportConfirmed)return;
- const a=$("[data-send]"),b=$("[data-retry]");a.disabled=b.disabled=true;
- try{
-   const api=window.LaboratorGoogleSheets;
-   if(!api?.retryReport)throw new Error("Funcția de retransmitere nu este disponibilă.");
-   if(api.hasBeenSent?.(state.reportId)){confirmed("duplicate");return}
-   if(!api.getPendingReport?.(state.reportId)&&state.reportPayload)state.reportPayload=await api.savePending(state.reportPayload);
-   sendStatus("Se transmite raportul salvat local...");
-   submissionResult(await api.retryReport(state.reportId));
- }catch(error){
-   console.error(error);sendStatus(`Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,"error");
- }finally{
-   if(!state.reportConfirmed)a.disabled=b.disabled=false;
- }
-}
-
-$("[data-send]").onclick=sendSaved;
-$("[data-retry]").onclick=sendSaved;
-
-document.addEventListener("laborator:submission-sent",e=>{
- if(e.detail?.reportId===state.reportId&&(e.detail.status==="stored"||e.detail.status==="duplicate"))confirmed(e.detail.status);
-});
-document.addEventListener("laborator:submission-unconfirmed",e=>{
- if(e.detail?.reportId===state.reportId)sendStatus("Transmiterea nu a fost confirmată. Raportul rămâne salvat local.","error");
-});
-document.addEventListener("laborator:submission-failed",e=>{
- if(e.detail?.reportId===state.reportId)sendStatus(`Transmiterea nu a reușit${e.detail?.message?": "+e.detail.message:""}. Raportul rămâne salvat local.`,"error");
-});
 
 /* PDF */
 $("[data-pdf]").onclick=()=>{
@@ -1395,7 +1340,7 @@ $("[data-pdf]").onclick=()=>{
  w.document.write(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>EXP10 - ${esc(state.session.studentName)}</title>
  <style>
  body{font-family:Arial,sans-serif;color:#172b3a;margin:24px;line-height:1.4}h1{font-size:22px}h2{font-size:17px;border-bottom:1px solid #aaa;padding-bottom:4px;margin-top:22px}
- .id{padding:12px;border:2px solid #28637b}.status{padding:10px;margin:15px 0;border:2px solid ${state.reportConfirmed?"#16794b":"#9a6100"};color:${state.reportConfirmed?"#16794b":"#9a6100"};font-weight:bold}
+ .id{padding:12px;border:2px solid #28637b}.status{padding:10px;margin:15px 0;border:2px solid #16794b;color:#16794b;font-weight:bold}
  table{width:100%;border-collapse:collapse;font-size:9.5px}th,td{border:1px solid #aaa;padding:4px;text-align:center}th{background:#eef4f7}
  .formula{padding:10px;border-left:4px solid #28637b;background:#eef6f9}@page{size:A4 landscape;margin:10mm}@media print{button{display:none}}
  </style></head><body>
@@ -1403,7 +1348,7 @@ $("[data-pdf]").onclick=()=>{
  <h2>EXP10 — Studiul echilibrului de translație al punctului material</h2>
  <div class="id"><b>Elev:</b> ${esc(state.session.studentName)}<br><b>Clasa:</b> ${esc(state.session.studentClass)} • <b>Nr. catalog:</b> ${state.session.catalogNumber}<br>
  <b>Data:</b> ${esc(state.session.experimentDate)}<br><b>Set:</b> ${esc(state.set.id)}<br><b>ID raport:</b> ${esc(state.reportId)}</div>
- <div class="status">${state.reportConfirmed?"✓ RAPORT CONFIRMAT DE SERVER":"⚠ RAPORT LOCAL – TRANSMITERE NECONFIRMATĂ"}</div>
+ <div class="status">✓ RAPORT SALVAT LOCAL – DATELE NU AU FOST TRANSMISE</div>
 
  <h2>Scop</h2><p>Verificarea experimentală a condiției de echilibru de translație ΣF⃗=0 pentru trei forțe concurente.</p>
 
@@ -1440,7 +1385,6 @@ $("[data-pdf]").onclick=()=>{
 };
 
 /* inițializare */
-try{window.LaboratorGoogleSheets?.init?.()}catch(e){console.warn(e)}
 show(0);
 
 });
