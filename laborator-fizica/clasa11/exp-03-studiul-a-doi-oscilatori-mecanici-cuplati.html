@@ -826,6 +826,28 @@ textarea.calc-error{
     font-size:1.15rem;
 }
 
+.evaluation-detail{
+    padding:1rem;
+    margin:1rem 0;
+    border:1px solid #b8c9d7;
+    border-radius:12px;
+    background:#fff;
+}
+
+.evaluation-detail td:first-child{
+    text-align:left;
+}
+
+.evaluation-correct{
+    color:var(--success);
+    font-weight:800;
+}
+
+.evaluation-wrong{
+    color:var(--danger);
+    font-weight:800;
+}
+
 .report-status{
     margin:1rem 0;
     padding:1rem;
@@ -954,11 +976,6 @@ window.LAB_EXPERIMENT_CONFIG = {
 <script src="../assets/js/app.js" defer></script>
 <script
     src="../assets/js/monitorizare.js"
-    defer
-></script>
-
-<script
-    src="../assets/js/google-sheets.js"
     defer
 ></script>
 
@@ -3261,6 +3278,11 @@ Precizează cel puțin două surse de eroare experimentală
     data-result-grid
 ></div>
 
+<div
+    class="evaluation-detail"
+    data-evaluation-details
+></div>
+
 
 <div class="report-status">
 
@@ -3274,40 +3296,10 @@ Precizează cel puțin două surse de eroare experimentală
 <span data-local-save-status>—</span>
 </p>
 
-<p>
-<strong>Transmitere:</strong>
-
-<span
-    data-submission-status
-    aria-live="polite"
->
-    Raportul nu a fost încă trimis.
-</span>
-
-</p>
-
 </div>
 
 
 <div class="actions report-actions">
-
-<button
-    class="btn success"
-    data-submit-report
-    type="button"
->
-    Trimite datele
-</button>
-
-
-<button
-    class="btn warning"
-    data-resubmit-report
-    type="button"
->
-    Retrimite datele
-</button>
-
 
 <button
     class="btn secondary"
@@ -3742,9 +3734,7 @@ const state = {
 
     reportId:null,
 
-    reportPayload:null,
-
-    reportConfirmed:false
+    reportPayload:null
 
 };
 
@@ -8132,21 +8122,6 @@ function buildReportPayload(){
     };
 
 
-    if(
-        globalThis
-            .LaboratorGoogleSheets
-            ?.buildPayload
-    ){
-
-        return globalThis
-            .LaboratorGoogleSheets
-            .buildPayload(
-                base
-            );
-
-    }
-
-
     return base;
 
 }
@@ -8156,11 +8131,67 @@ function buildReportPayload(){
    EVALUAREA FINALĂ
 ========================================================= */
 
+const EVALUATION_ITEMS = {
+
+    q1:{
+        question:"În modul normal simetric:",
+        correct:"same",
+        labels:{
+            same:"corpurile se deplasează în același sens",
+            opposite:"corpurile se deplasează în sensuri opuse"
+        }
+    },
+
+    q2:{
+        question:"În modul antisimetric, resortul de cuplaj:",
+        correct:"deforms",
+        labels:{
+            deforms:"se deformează și contribuie la forța de revenire",
+            inactive:"rămâne permanent nedeformat"
+        }
+    },
+
+    q3:{
+        question:"Comparând cele două moduri:",
+        correct:"fa-greater",
+        labels:{
+            "fa-greater":"fa > fs",
+            "fs-greater":"fs > fa"
+        }
+    },
+
+    q4:{
+        question:"Primul transfer maxim de energie apare aproximativ după:",
+        correct:"half",
+        labels:{
+            half:"jumătate din perioada bătăilor",
+            double:"două perioade ale bătăilor"
+        }
+    }
+
+};
+
+
+function evaluationItems(answers){
+
+    return Object.entries(EVALUATION_ITEMS)
+        .map(([id,item],index) => ({
+            id,
+            number:index + 1,
+            question:item.question,
+            studentAnswer:item.labels[answers[id]] || "Fără răspuns",
+            correctAnswer:item.labels[item.correct],
+            correct:answers[id] === item.correct,
+            points:answers[id] === item.correct ? 1 : 0
+        }));
+
+}
+
 qs(
     "[data-evaluation-form]"
 ).addEventListener(
     "submit",
-    async event => {
+    event => {
 
         event.preventDefault();
 
@@ -8248,34 +8279,15 @@ qs(
         }
 
 
-        const correct = {
-
-            q1:
-                "same",
-
-            q2:
-                "deforms",
-
-            q3:
-                "fa-greater",
-
-            q4:
-                "half"
-
-        };
+        const items =
+            evaluationItems(answers);
 
 
         const score =
-            Object
-                .keys(
-                    correct
-                )
-                .filter(
-                    key =>
-                        answers[key] ===
-                        correct[key]
-                )
-                .length;
+            items.reduce(
+                (total,item) => total + item.points,
+                0
+            );
 
 
         state.evaluation = {
@@ -8294,6 +8306,8 @@ qs(
                 ),
 
             answers,
+
+            items,
 
             initialPredictions:
                 state.predictions,
@@ -8412,6 +8426,38 @@ qs(
 
 
         qs(
+            "[data-evaluation-details]"
+        ).innerHTML = `
+
+            <h4>Detalierea evaluării conceptuale</h4>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Răspunsul elevului</th>
+                        <th>Răspunsul corect</th>
+                        <th>Punctaj</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr>
+                            <td>${item.number}. ${escapeHtml(item.question)}</td>
+                            <td>${escapeHtml(item.studentAnswer)}</td>
+                            <td>${escapeHtml(item.correctAnswer)}</td>
+                            <td class="${item.correct ? "evaluation-correct" : "evaluation-wrong"}">
+                                ${item.correct ? "Corect — 1 p" : "Incorect — 0 p"}
+                            </td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+
+        `;
+
+
+        qs(
             "[data-report-id]"
         ).textContent =
             state.reportId;
@@ -8435,45 +8481,22 @@ qs(
                 buildReportPayload();
 
 
-            if(
-                globalThis
-                    .LaboratorGoogleSheets
-                    ?.savePending
-            ){
-
-                await globalThis
-                    .LaboratorGoogleSheets
-                    .savePending(
-                        state.reportPayload
-                    );
+            localStorage.setItem(
+                `fizica-laborator-raport-${state.reportId}`,
+                JSON.stringify(state.reportPayload)
+            );
 
 
-                qs(
-                    "[data-local-save-status]"
-                ).textContent =
-                    "salvat pe acest dispozitiv";
+            qs(
+                "[data-local-save-status]"
+            ).textContent =
+                "salvat pe acest dispozitiv — datele nu au fost transmise";
 
 
-                qs(
-                    "[data-local-save-status]"
-                ).className =
-                    "status-local";
-
-
-                qs(
-                    "[data-submission-status]"
-                ).textContent =
-                    "Raport salvat local. Poate fi trimis sau retransmis ulterior.";
-
-            }
-            else{
-
-                qs(
-                    "[data-local-save-status]"
-                ).textContent =
-                    "modulul de salvare nu este disponibil";
-
-            }
+            qs(
+                "[data-local-save-status]"
+            ).className =
+                "status-local";
 
 
             document.dispatchEvent(
@@ -8510,401 +8533,7 @@ qs(
                 "salvarea locală nu a fost confirmată";
 
 
-            qs(
-                "[data-submission-status]"
-            ).textContent =
-                `Problemă la salvarea locală: ${error.message}`;
-
         }
-
-    }
-);
-
-
-/* =========================================================
-   TRANSMITERE RAPORT
-========================================================= */
-
-function setSubmissionStatus(
-    message,
-    type=""
-){
-
-    const element =
-        qs(
-            "[data-submission-status]"
-        );
-
-
-    element.textContent =
-        message;
-
-
-    element.className =
-        type
-            ? `status-${type}`
-            : "";
-
-}
-
-
-function markReportConfirmed(
-    status="stored"
-){
-
-    state.reportConfirmed =
-        true;
-
-
-    qs(
-        "[data-submit-report]"
-    ).disabled =
-        true;
-
-
-    qs(
-        "[data-resubmit-report]"
-    ).disabled =
-        true;
-
-
-    setSubmissionStatus(
-        status ===
-            "duplicate"
-            ? "Raportul exista deja în registru. Nu a fost creat un duplicat."
-            : "Datele au fost înregistrate și confirmate de server.",
-        "success"
-    );
-
-
-    qs(
-        "[data-local-save-status]"
-    ).textContent =
-        "confirmat de server";
-
-
-    qs(
-        "[data-local-save-status]"
-    ).className =
-        "status-success";
-
-}
-
-
-function handleSubmissionResult(
-    result
-){
-
-    const status =
-        result?.status;
-
-
-    if(
-        status ===
-            "stored" ||
-        status ===
-            "duplicate"
-    ){
-
-        markReportConfirmed(
-            status
-        );
-
-
-        return;
-
-    }
-
-
-    if(
-        status ===
-        "unconfirmed"
-    ){
-
-        setSubmissionStatus(
-            "Serverul nu a confirmat încă salvarea. Raportul rămâne salvat local.",
-            "error"
-        );
-
-    }
-
-}
-
-
-async function sendReport(
-    retry=false
-){
-
-    if(
-        state.reportConfirmed
-    ){
-        return;
-    }
-
-
-    const sendButton =
-        qs(
-            "[data-submit-report]"
-        );
-
-
-    const retryButton =
-        qs(
-            "[data-resubmit-report]"
-        );
-
-
-    sendButton.disabled =
-        true;
-
-
-    retryButton.disabled =
-        true;
-
-
-    try{
-
-        if(
-            !state.reportId
-        ){
-
-            throw new Error(
-                "Raportul nu a fost încă finalizat."
-            );
-
-        }
-
-
-        const api =
-            globalThis
-                .LaboratorGoogleSheets;
-
-
-        if(!api){
-
-            throw new Error(
-                "Modulul Google Sheets nu este disponibil."
-            );
-
-        }
-
-
-        setSubmissionStatus(
-            retry
-                ? "Se retransmit datele..."
-                : "Se transmit datele..."
-        );
-
-
-        let result;
-
-
-        if(retry){
-
-            result =
-                await api.retryReport(
-                    state.reportId
-                );
-
-        }
-        else{
-
-            if(
-                !state.reportPayload
-            ){
-
-                state.reportPayload =
-                    buildReportPayload();
-
-            }
-
-
-            result =
-                await api.submit(
-                    state.reportPayload
-                );
-
-        }
-
-
-        handleSubmissionResult(
-            result
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit: ${error.message}. Raportul rămâne salvat local.`,
-            "error"
-        );
-
-    }
-    finally{
-
-        if(
-            !state.reportConfirmed
-        ){
-
-            const confirmed =
-                globalThis
-                    .LaboratorGoogleSheets
-                    ?.hasBeenSent?.(
-                        state.reportId
-                    );
-
-
-            if(confirmed){
-
-                markReportConfirmed(
-                    "stored"
-                );
-
-            }
-            else{
-
-                sendButton.disabled =
-                    false;
-
-
-                retryButton.disabled =
-                    false;
-
-            }
-
-        }
-
-    }
-
-}
-
-
-qs(
-    "[data-submit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            false
-        );
-
-    }
-);
-
-
-qs(
-    "[data-resubmit-report]"
-).addEventListener(
-    "click",
-    () => {
-
-        sendReport(
-            true
-        );
-
-    }
-);
-
-
-/* =========================================================
-   EVENIMENTE GOOGLE SHEETS
-========================================================= */
-
-document.addEventListener(
-    "laborator:submission-sent",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        const status =
-            event.detail
-                ?.status;
-
-
-        if(
-            status ===
-                "stored" ||
-            status ===
-                "duplicate"
-        ){
-
-            markReportConfirmed(
-                status
-            );
-
-        }
-        else if(
-            event.detail
-                ?.duplicate ===
-            true
-        ){
-
-            markReportConfirmed(
-                "duplicate"
-            );
-
-        }
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-unconfirmed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            "Transmiterea nu a fost confirmată. Raportul rămâne salvat local.",
-            "error"
-        );
-
-    }
-);
-
-
-document.addEventListener(
-    "laborator:submission-failed",
-    event => {
-
-        if(
-            event.detail
-                ?.reportId !==
-            state.reportId
-        ){
-            return;
-        }
-
-
-        setSubmissionStatus(
-            `Transmiterea nu a reușit${
-                event.detail?.message
-                    ? `: ${event.detail.message}`
-                    : "."
-            } Raportul rămâne salvat local.`,
-            "error"
-        );
 
     }
 );
@@ -9380,6 +9009,19 @@ function downloadPdf(){
 
         "",
 
+        "DETALIERE EVALUARE CONCEPTUALA",
+
+        ...(
+            state.evaluation.items
+            || evaluationItems(state.evaluation.answers)
+        ).flatMap(item => [
+            `${item.number}. ${item.question}`,
+            `Raspuns elev: ${item.studentAnswer}`,
+            `Raspuns corect: ${item.correctAnswer}`,
+            `Punctaj: ${item.correct ? "Corect - 1 p" : "Incorect - 0 p"}`,
+            ""
+        ]),
+
         `ID unic raport: ${state.reportId}`
 
     ];
@@ -9442,27 +9084,6 @@ qs(
     "click",
     downloadPdf
 );
-
-
-/* =========================================================
-   GOOGLE SHEETS
-========================================================= */
-
-try{
-
-    globalThis
-        .LaboratorGoogleSheets
-        ?.init?.();
-
-}
-catch(error){
-
-    console.warn(
-        "Inițializarea Google Sheets:",
-        error
-    );
-
-}
 
 
 /* =========================================================
