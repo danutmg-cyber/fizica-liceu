@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+  name="description"
+  content="Simulare interactivă a parametrilor de stare pentru un gaz într-un cilindru cu piston."
+>
+
+<title>
+Cilindru cu piston – parametrii de stare
+</title>
+
+<link
+  rel="stylesheet"
+  href="../../../assets/css/main.css"
+>
+
+<link
+  rel="stylesheet"
+  href="../../../assets/css/lesson.css"
+>
+
+
+<style>
+
+:root{
+
+  --blue:#2563eb;
+  --red:#dc2626;
+  --green:#16a34a;
+  --orange:#f97316;
+  --slate:#475569;
+
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+.simulation-back{
+
+  position:sticky;
+
+  top:10px;
+
+  z-index:100;
+
+  width:min(
+    calc(100% - 24px),
+    1180px
+  );
+
+  margin:10px auto;
+
+}
+
+
+.simulation-back .lesson-button{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  box-shadow:
+    0 6px 18px
+    rgba(15,23,42,.16);
+
+}
+
+
+.sim-shell{
+
+  width:min(
+    calc(100% - 24px),
+    1180px
+  );
+
+  margin:
+    0 auto 40px;
+
+}
+
+
+.sim-title{
+
+  margin:
+    10px 0 16px;
+
+  text-align:center;
+
+}
+
+
+.sim-title h1{
+
+  margin-bottom:5px;
+
+  font-size:
+    clamp(
+      1.6rem,
+      1.2rem + 1.8vw,
+      2.7rem
+    );
+
+}
+
+
+.sim-title p{
+
+  margin:0;
+
+  color:#64748b;
+
+}
+
+
+/* =========================================================
+   PARAMETRI
+========================================================= */
+
+.parameters{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+
+  margin-bottom:15px;
+
+}
+
+
+.parameter{
+
+  padding:14px;
+
+  background:#ffffff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+  text-align:center;
+
+}
+
+
+.parameter span{
+
+  display:block;
+
+  margin-bottom:4px;
+
+  color:#64748b;
+
+  font-size:.92rem;
+
+}
+
+
+.parameter strong{
+
+  display:block;
+
+  color:#1d4ed8;
+
+  font-size:
+    clamp(
+      1.2rem,
+      1rem + .55vw,
+      1.55rem
+    );
+
+}
+
+
+/* =========================================================
+   ZONA PRINCIPALĂ
+========================================================= */
+
+.visual-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(360px,.95fr);
+
+  gap:16px;
+
+}
+
+
+/* =========================================================
+   CILINDRU
+========================================================= */
+
+.scene{
+
+  position:relative;
+
+  min-height:540px;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eff6ff,
+      #f8fafc
+    );
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:18px;
+
+}
+
+
+.state-badge{
+
+  position:absolute;
+
+  top:14px;
+  left:14px;
+
+  z-index:5;
+
+  padding:
+    8px 14px;
+
+  color:#1e3a8a;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .92
+    );
+
+  border:
+    1px solid #bfdbfe;
+
+  border-radius:999px;
+
+  font-weight:850;
+
+}
+
+
+.scene svg{
+
+  display:block;
+
+  width:100%;
+  height:540px;
+
+}
+
+
+/* =========================================================
+   GRAFIC
+========================================================= */
+
+.graph-card{
+
+  padding:14px;
+
+  background:#ffffff;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:18px;
+
+}
+
+
+.graph-card h2{
+
+  margin:
+    0 0 3px;
+
+  font-size:
+    clamp(
+      1.18rem,
+      1rem + .6vw,
+      1.55rem
+    );
+
+}
+
+
+.graph-note{
+
+  margin:
+    0 0 8px;
+
+  color:#64748b;
+
+  font-size:.9rem;
+
+}
+
+
+#stateGraph{
+
+  display:block;
+
+  width:100%;
+
+  min-height:465px;
+
+}
+
+
+/* =========================================================
+   CURSOARE
+========================================================= */
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+
+  margin-top:16px;
+
+}
+
+
+.control{
+
+  padding:14px;
+
+  background:#f8fafc;
+
+  border:
+    1px solid #cbd5e1;
+
+  border-radius:14px;
+
+}
+
+
+.control label{
+
+  display:block;
+
+  margin-bottom:8px;
+
+  color:#0f172a;
+
+  font-weight:850;
+
+}
+
+
+.control input[type="range"]{
+
+  width:100%;
+
+}
+
+
+.control-value{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  gap:8px;
+
+  margin-top:6px;
+
+  color:#475569;
+
+  font-size:.9rem;
+
+}
+
+
+.control-value strong{
+
+  color:#1d4ed8;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.process-status{
+
+  margin-top:14px;
+
+  padding:
+    12px 16px;
+
+  color:#14532d;
+  background:#dcfce7;
+
+  border-left:
+    5px solid #16a34a;
+
+  border-radius:12px;
+
+  text-align:center;
+
+  font-weight:850;
+
+}
+
+
+/* =========================================================
+   BUTOANE
+========================================================= */
+
+.actions{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  justify-content:center;
+
+  gap:10px;
+
+  margin-top:14px;
+
+}
+
+
+.sim-button{
+
+  min-height:46px;
+
+  padding:
+    9px 20px;
+
+  color:#ffffff;
+  background:#475569;
+
+  border:0;
+
+  border-radius:999px;
+
+  cursor:pointer;
+
+  font:inherit;
+  font-weight:850;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .visual-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  #stateGraph{
+
+    min-height:420px;
+
+  }
+
+}
+
+
+@media(max-width:700px){
+
+  .parameters,
+  .controls{
+
+    grid-template-columns:1fr;
+
+  }
+
+
+  .scene{
+
+    min-height:440px;
+
+  }
+
+
+  .scene svg{
+
+    height:440px;
+
+  }
+
+}
+
+
+@media(prefers-reduced-motion:reduce){
+
+  *{
+
+    scroll-behavior:auto !important;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body class="lesson-body">
+
+
+<!-- =========================================================
+     ÎNAPOI
+========================================================= -->
+
+<div class="simulation-back">
+
+<a
+  class="lesson-button secondary"
+  href="../../lectii/02-notiuni-termodinamice-de-baza/4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html"
+>
+← Înapoi la lecție
+</a>
+
+</div>
+
+
+<main class="sim-shell">
+
+
+<header class="sim-title">
+
+<h1>
+Cilindru cu piston
+</h1>
+
+<p>
+Modificarea parametrilor de stare ai gazului
+</p>
+
+</header>
+
+
+<!-- =========================================================
+     VALORI
+========================================================= -->
+
+<section class="parameters">
+
+
+<div class="parameter">
+
+<span>
+Temperatura
+</span>
+
+<strong id="temperatureValue">
+293 K
+</strong>
+
+</div>
+
+
+<div class="parameter">
+
+<span>
+Presiunea
+</span>
+
+<strong id="pressureValue">
+101,3 kPa
+</strong>
+
+</div>
+
+
+<div class="parameter">
+
+<span>
+Volumul
+</span>
+
+<strong id="volumeValue">
+2,40 L
+</strong>
+
+</div>
+
+
+</section>
+
+
+<!-- =========================================================
+     VIZUAL
+========================================================= -->
+
+<section class="visual-grid">
+
+
+<!-- =========================================================
+     CILINDRU
+========================================================= -->
+
+<div class="scene">
+
+<div
+  id="stateBadge"
+  class="state-badge"
+>
+Echilibru
+</div>
+
+
+<svg
+  viewBox="0 0 650 540"
+  role="img"
+  aria-label="Gaz într-un cilindru cu piston mobil"
+>
+
+
+<!-- suport -->
+
+<line
+  x1="120"
+  y1="465"
+  x2="530"
+  y2="465"
+  stroke="#64748b"
+  stroke-width="7"
+></line>
+
+
+<!-- cilindru -->
+
+<line
+  x1="190"
+  y1="105"
+  x2="190"
+  y2="430"
+  stroke="#334155"
+  stroke-width="9"
+></line>
+
+<line
+  x1="460"
+  y1="105"
+  x2="460"
+  y2="430"
+  stroke="#334155"
+  stroke-width="9"
+></line>
+
+<line
+  x1="190"
+  y1="430"
+  x2="460"
+  y2="430"
+  stroke="#334155"
+  stroke-width="9"
+></line>
+
+
+<!-- gaz -->
+
+<rect
+  id="gasBody"
+  x="199"
+  y="235"
+  width="252"
+  height="190"
+  fill="#93c5fd"
+  opacity=".78"
+></rect>
+
+
+<!-- piston -->
+
+<g id="pistonGroup">
+
+<rect
+  id="piston"
+  x="180"
+  y="220"
+  width="290"
+  height="28"
+  rx="5"
+  fill="#64748b"
+  stroke="#334155"
+  stroke-width="4"
+></rect>
+
+
+<rect
+  id="pistonRod"
+  x="312"
+  y="80"
+  width="26"
+  height="140"
+  fill="#94a3b8"
+  stroke="#475569"
+  stroke-width="3"
+></rect>
+
+
+<rect
+  id="handle"
+  x="265"
+  y="62"
+  width="120"
+  height="22"
+  rx="8"
+  fill="#475569"
+></rect>
+
+</g>
+
+
+<!-- particule -->
+
+<g id="particles">
+
+<circle cx="230" cy="310" r="7" fill="#1d4ed8"></circle>
+<circle cx="285" cy="270" r="7" fill="#1d4ed8"></circle>
+<circle cx="350" cy="330" r="7" fill="#1d4ed8"></circle>
+<circle cx="405" cy="290" r="7" fill="#1d4ed8"></circle>
+<circle cx="250" cy="380" r="7" fill="#1d4ed8"></circle>
+<circle cx="325" cy="390" r="7" fill="#1d4ed8"></circle>
+<circle cx="395" cy="370" r="7" fill="#1d4ed8"></circle>
+<circle cx="300" cy="345" r="7" fill="#1d4ed8"></circle>
+
+</g>
+
+
+<!-- temperatura -->
+
+<text
+  id="temperatureText"
+  x="325"
+  y="405"
+  text-anchor="middle"
+  font-size="26"
+  font-family="Arial, sans-serif"
+  font-weight="bold"
+  fill="#0f172a"
+>
+T = 293 K
+</text>
+
+
+<!-- săgeată apăsare -->
+
+<g
+  id="pressArrow"
+  opacity="0"
+>
+
+<line
+  x1="325"
+  y1="18"
+  x2="325"
+  y2="58"
+  stroke="#dc2626"
+  stroke-width="9"
+></line>
+
+<polygon
+  points="
+    325,74
+    310,48
+    340,48
+  "
+  fill="#dc2626"
+></polygon>
+
+<text
+  x="355"
+  y="44"
+  font-size="23"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#dc2626"
+>
+F
+</text>
+
+</g>
+
+
+<!-- săgeată tragere -->
+
+<g
+  id="pullArrow"
+  opacity="0"
+>
+
+<line
+  x1="325"
+  y1="58"
+  x2="325"
+  y2="18"
+  stroke="#16a34a"
+  stroke-width="9"
+></line>
+
+<polygon
+  points="
+    325,7
+    310,32
+    340,32
+  "
+  fill="#16a34a"
+></polygon>
+
+<text
+  x="355"
+  y="44"
+  font-size="23"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#15803d"
+>
+F
+</text>
+
+</g>
+
+
+<!-- sursă termică -->
+
+<g
+  id="heatingSymbol"
+  opacity="0"
+>
+
+<path
+  d="
+    M 265 478
+    C 245 450 275 440 260 415
+    C 300 438 285 456 305 478
+  "
+  fill="#f97316"
+></path>
+
+<path
+  d="
+    M 325 478
+    C 305 450 335 440 320 415
+    C 360 438 345 456 365 478
+  "
+  fill="#dc2626"
+></path>
+
+<path
+  d="
+    M 385 478
+    C 365 450 395 440 380 415
+    C 420 438 405 456 425 478
+  "
+  fill="#f97316"
+></path>
+
+</g>
+
+
+<!-- răcire -->
+
+<g
+  id="coolingSymbol"
+  opacity="0"
+>
+
+<text
+  x="325"
+  y="505"
+  text-anchor="middle"
+  font-size="46"
+  font-family="Arial"
+  fill="#0284c7"
+>
+❄
+</text>
+
+</g>
+
+
+<!-- Q -->
+
+<text
+  id="heatLabel"
+  x="500"
+  y="410"
+  font-size="25"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#dc2626"
+  opacity="0"
+>
+Q
+</text>
+
+
+</svg>
+
+</div>
+
+
+<!-- =========================================================
+     GRAFIC DINAMIC
+========================================================= -->
+
+<div class="graph-card">
+
+<h2>
+Evoluția parametrilor
+</h2>
+
+<p class="graph-note">
+\(T(t)\), \(p(t)\), \(V(t)\)
+</p>
+
+
+<svg
+  id="stateGraph"
+  viewBox="0 0 500 500"
+  role="img"
+  aria-label="Evoluția temperaturii, presiunii și volumului în timp"
+>
+
+
+<!-- =====================================================
+     GRAFIC T
+===================================================== -->
+
+<rect
+  x="55"
+  y="25"
+  width="410"
+  height="120"
+  rx="8"
+  fill="#fff7ed"
+  stroke="#fed7aa"
+></rect>
+
+
+<text
+  x="16"
+  y="48"
+  font-size="20"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#dc2626"
+>
+T
+</text>
+
+
+<text
+  id="graphTValue"
+  x="450"
+  y="48"
+  text-anchor="end"
+  font-size="16"
+  font-family="Arial"
+  fill="#dc2626"
+>
+293 K
+</text>
+
+
+<line
+  x1="65"
+  y1="130"
+  x2="455"
+  y2="130"
+  stroke="#94a3b8"
+  stroke-width="1"
+></line>
+
+
+<path
+  id="temperaturePath"
+  fill="none"
+  stroke="#dc2626"
+  stroke-width="4"
+  stroke-linejoin="round"
+  stroke-linecap="round"
+></path>
+
+
+<!-- =====================================================
+     GRAFIC p
+===================================================== -->
+
+<rect
+  x="55"
+  y="175"
+  width="410"
+  height="120"
+  rx="8"
+  fill="#eff6ff"
+  stroke="#bfdbfe"
+></rect>
+
+
+<text
+  x="16"
+  y="198"
+  font-size="20"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#2563eb"
+>
+p
+</text>
+
+
+<text
+  id="graphPValue"
+  x="450"
+  y="198"
+  text-anchor="end"
+  font-size="16"
+  font-family="Arial"
+  fill="#2563eb"
+>
+101,3 kPa
+</text>
+
+
+<line
+  x1="65"
+  y1="280"
+  x2="455"
+  y2="280"
+  stroke="#94a3b8"
+  stroke-width="1"
+></line>
+
+
+<path
+  id="pressurePath"
+  fill="none"
+  stroke="#2563eb"
+  stroke-width="4"
+  stroke-linejoin="round"
+  stroke-linecap="round"
+></path>
+
+
+<!-- =====================================================
+     GRAFIC V
+===================================================== -->
+
+<rect
+  x="55"
+  y="325"
+  width="410"
+  height="120"
+  rx="8"
+  fill="#f0fdf4"
+  stroke="#bbf7d0"
+></rect>
+
+
+<text
+  x="16"
+  y="348"
+  font-size="20"
+  font-family="Arial"
+  font-weight="bold"
+  fill="#16a34a"
+>
+V
+</text>
+
+
+<text
+  id="graphVValue"
+  x="450"
+  y="348"
+  text-anchor="end"
+  font-size="16"
+  font-family="Arial"
+  fill="#15803d"
+>
+2,40 L
+</text>
+
+
+<line
+  x1="65"
+  y1="430"
+  x2="455"
+  y2="430"
+  stroke="#94a3b8"
+  stroke-width="1"
+></line>
+
+
+<path
+  id="volumePath"
+  fill="none"
+  stroke="#16a34a"
+  stroke-width="4"
+  stroke-linejoin="round"
+  stroke-linecap="round"
+></path>
+
+
+<!-- timp -->
+
+<line
+  x1="65"
+  y1="470"
+  x2="455"
+  y2="470"
+  stroke="#334155"
+  stroke-width="2"
+></line>
+
+
+<polygon
+  points="
+    465,470
+    448,462
+    448,478
+  "
+  fill="#334155"
+></polygon>
+
+
+<text
+  x="450"
+  y="494"
+  font-size="18"
+  font-family="Arial"
+  fill="#334155"
+>
+t
+</text>
+
+
+</svg>
+
+</div>
+
+
+</section>
+
+
+<!-- =========================================================
+     CURSOARE
+========================================================= -->
+
+<section class="controls">
+
+
+<!-- T -->
+
+<div class="control">
+
+<label for="temperatureSlider">
+🔥 Temperatura \(T\)
+</label>
+
+<input
+  id="temperatureSlider"
+  type="range"
+  min="250"
+  max="380"
+  step="1"
+  value="293"
+>
+
+<div class="control-value">
+
+<span>
+250 K
+</span>
+
+<strong id="temperatureSliderValue">
+293 K
+</strong>
+
+<span>
+380 K
+</span>
+
+</div>
+
+</div>
+
+
+<!-- p -->
+
+<div class="control">
+
+<label for="pressureSlider">
+↕ Presiunea \(p\)
+</label>
+
+<input
+  id="pressureSlider"
+  type="range"
+  min="60"
+  max="170"
+  step="1"
+  value="101.3"
+>
+
+<div class="control-value">
+
+<span>
+60 kPa
+</span>
+
+<strong id="pressureSliderValue">
+101,3 kPa
+</strong>
+
+<span>
+170 kPa
+</span>
+
+</div>
+
+</div>
+
+
+<!-- V -->
+
+<div class="control">
+
+<label for="volumeSlider">
+↕ Volumul \(V\)
+</label>
+
+<input
+  id="volumeSlider"
+  type="range"
+  min="1.5"
+  max="4"
+  step="0.01"
+  value="2.40"
+>
+
+<div class="control-value">
+
+<span>
+1,5 L
+</span>
+
+<strong id="volumeSliderValue">
+2,40 L
+</strong>
+
+<span>
+4,0 L
+</span>
+
+</div>
+
+</div>
+
+
+</section>
+
+
+<div
+  id="processStatus"
+  class="process-status"
+>
+Echilibru
+</div>
+
+
+<div class="actions">
+
+<button
+  id="resetButton"
+  type="button"
+  class="sim-button"
+>
+Reia
+</button>
+
+</div>
+
+
+</main>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+   CONSTANTE
+========================================================= */
+
+const R =
+  8.314;
+
+
+const AMOUNT =
+  0.10;
+
+
+/*
+ * Domenii grafice
+ */
+
+const T_MIN = 250;
+const T_MAX = 380;
+
+const P_MIN = 60;
+const P_MAX = 170;
+
+const V_MIN = 1.5;
+const V_MAX = 4.0;
+
+
+/* =========================================================
+   ELEMENTE
+========================================================= */
+
+const temperatureSlider =
+  document.getElementById(
+    "temperatureSlider"
+  );
+
+
+const pressureSlider =
+  document.getElementById(
+    "pressureSlider"
+  );
+
+
+const volumeSlider =
+  document.getElementById(
+    "volumeSlider"
+  );
+
+
+const temperatureValue =
+  document.getElementById(
+    "temperatureValue"
+  );
+
+
+const pressureValue =
+  document.getElementById(
+    "pressureValue"
+  );
+
+
+const volumeValue =
+  document.getElementById(
+    "volumeValue"
+  );
+
+
+const temperatureSliderValue =
+  document.getElementById(
+    "temperatureSliderValue"
+  );
+
+
+const pressureSliderValue =
+  document.getElementById(
+    "pressureSliderValue"
+  );
+
+
+const volumeSliderValue =
+  document.getElementById(
+    "volumeSliderValue"
+  );
+
+
+const stateBadge =
+  document.getElementById(
+    "stateBadge"
+  );
+
+
+const processStatus =
+  document.getElementById(
+    "processStatus"
+  );
+
+
+const gasBody =
+  document.getElementById(
+    "gasBody"
+  );
+
+
+const piston =
+  document.getElementById(
+    "piston"
+  );
+
+
+const pistonRod =
+  document.getElementById(
+    "pistonRod"
+  );
+
+
+const handle =
+  document.getElementById(
+    "handle"
+  );
+
+
+const particles =
+  document.getElementById(
+    "particles"
+  );
+
+
+const temperatureText =
+  document.getElementById(
+    "temperatureText"
+  );
+
+
+const pressArrow =
+  document.getElementById(
+    "pressArrow"
+  );
+
+
+const pullArrow =
+  document.getElementById(
+    "pullArrow"
+  );
+
+
+const heatingSymbol =
+  document.getElementById(
+    "heatingSymbol"
+  );
+
+
+const coolingSymbol =
+  document.getElementById(
+    "coolingSymbol"
+  );
+
+
+const heatLabel =
+  document.getElementById(
+    "heatLabel"
+  );
+
+
+const temperaturePath =
+  document.getElementById(
+    "temperaturePath"
+  );
+
+
+const pressurePath =
+  document.getElementById(
+    "pressurePath"
+  );
+
+
+const volumePath =
+  document.getElementById(
+    "volumePath"
+  );
+
+
+const graphTValue =
+  document.getElementById(
+    "graphTValue"
+  );
+
+
+const graphPValue =
+  document.getElementById(
+    "graphPValue"
+  );
+
+
+const graphVValue =
+  document.getElementById(
+    "graphVValue"
+  );
+
+
+const resetButton =
+  document.getElementById(
+    "resetButton"
+  );
+
+
+/* =========================================================
+   STARE INIȚIALĂ
+========================================================= */
+
+let T =
+  293;
+
+
+let p =
+  101.3;
+
+
+/*
+ * pV = νRT
+ *
+ * p în Pa
+ * V în m³
+ *
+ * rezultatul este convertit în litri.
+ */
+
+let V =
+  (
+    AMOUNT *
+    R *
+    T /
+    (
+      p *
+      1000
+    )
+  ) *
+  1000;
+
+
+let action =
+  "equilibrium";
+
+
+let transitionFrame =
+  null;
+
+
+let simTime =
+  0;
+
+
+let lastGraphSample =
+  -1;
+
+
+const history =
+  [];
+
+
+/* =========================================================
+   FORMATARE
+========================================================= */
+
+function ro(
+  value,
+  decimals=1
+){
+
+  return Number(
+    value
+  )
+  .toFixed(
+    decimals
+  )
+  .replace(
+    ".",
+    ","
+  );
+
+}
+
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.min(
+    max,
+    Math.max(
+      min,
+      value
+    )
+  );
+
+}
+
+
+/* =========================================================
+   ECUAȚIA DE STARE
+========================================================= */
+
+function volumeFromTP(
+  temperature,
+  pressureKPa
+){
+
+  return (
+    AMOUNT *
+    R *
+    temperature /
+    (
+      pressureKPa *
+      1000
+    )
+  ) *
+  1000;
+
+}
+
+
+function pressureFromTV(
+  temperature,
+  volumeL
+){
+
+  return (
+    AMOUNT *
+    R *
+    temperature /
+    (
+      volumeL /
+      1000
+    )
+  ) /
+  1000;
+
+}
+
+
+/* =========================================================
+   GRAFIC
+========================================================= */
+
+function addHistoryPoint(){
+
+  if(
+    simTime -
+    lastGraphSample <
+    0.06
+  ){
+
+    return;
+
+  }
+
+
+  lastGraphSample =
+    simTime;
+
+
+  history.push({
+
+    t:simTime,
+    T,
+    p,
+    V
+
+  });
+
+
+  /*
+   * Maximum aproximativ 25 s.
+   */
+
+  while(
+    history.length >
+    1 &&
+    history[
+      history.length -
+      1
+    ].t -
+    history[
+      0
+    ].t >
+    25
+  ){
+
+    history.shift();
+
+  }
+
+}
+
+
+function mapY(
+  value,
+  min,
+  max,
+  top,
+  bottom
+){
+
+  const fraction =
+    (
+      value -
+      min
+    ) /
+    (
+      max -
+      min
+    );
+
+
+  return (
+    bottom -
+    fraction *
+    (
+      bottom -
+      top
+    )
+  );
+
+}
+
+
+function buildPath(
+  key,
+  min,
+  max,
+  top,
+  bottom
+){
+
+  if(
+    history.length ===
+    0
+  ){
+
+    return "";
+
+  }
+
+
+  const lastTime =
+    history[
+      history.length -
+      1
+    ].t;
+
+
+  const firstTime =
+    Math.max(
+      0,
+      lastTime -
+      20
+    );
+
+
+  const range =
+    Math.max(
+      10,
+      lastTime -
+      firstTime
+    );
+
+
+  return history
+    .filter(
+      point=>
+        point.t >=
+        firstTime
+    )
+    .map(
+      (
+        point,
+        index
+      )=>{
+
+        const x =
+          65 +
+          (
+            (
+              point.t -
+              firstTime
+            ) /
+            range
+          ) *
+          390;
+
+
+        const y =
+          mapY(
+            point[
+              key
+            ],
+            min,
+            max,
+            top,
+            bottom
+          );
+
+
+        return (
+          (
+            index ===
+            0
+          )
+            ? `M ${x} ${y}`
+            : `L ${x} ${y}`
+        );
+
+      }
+    )
+    .join(
+      " "
+    );
+
+}
+
+
+function updateGraph(){
+
+  temperaturePath.setAttribute(
+    "d",
+    buildPath(
+      "T",
+      T_MIN,
+      T_MAX,
+      35,
+      135
+    )
+  );
+
+
+  pressurePath.setAttribute(
+    "d",
+    buildPath(
+      "p",
+      P_MIN,
+      P_MAX,
+      185,
+      285
+    )
+  );
+
+
+  volumePath.setAttribute(
+    "d",
+    buildPath(
+      "V",
+      V_MIN,
+      V_MAX,
+      335,
+      435
+    )
+  );
+
+
+  graphTValue.textContent =
+    `${Math.round(
+      T
+    )} K`;
+
+
+  graphPValue.textContent =
+    `${ro(
+      p,
+      1
+    )} kPa`;
+
+
+  graphVValue.textContent =
+    `${ro(
+      V,
+      2
+    )} L`;
+
+}
+
+
+/* =========================================================
+   CILINDRU
+========================================================= */
+
+function updateCylinder(){
+
+  /*
+   * Volum mare -> piston sus.
+   *
+   * y:
+   * 310 pentru volum mic,
+   * 125 pentru volum mare.
+   */
+
+  const fraction =
+    (
+      V -
+      V_MIN
+    ) /
+    (
+      V_MAX -
+      V_MIN
+    );
+
+
+  const pistonY =
+    310 -
+    clamp(
+      fraction,
+      0,
+      1
+    ) *
+    185;
+
+
+  const gasY =
+    pistonY +
+    28;
+
+
+  const gasHeight =
+    430 -
+    gasY;
+
+
+  piston.setAttribute(
+    "y",
+    pistonY
+  );
+
+
+  pistonRod.setAttribute(
+    "y",
+    pistonY -
+    140
+  );
+
+
+  handle.setAttribute(
+    "y",
+    pistonY -
+    158
+  );
+
+
+  gasBody.setAttribute(
+    "y",
+    gasY
+  );
+
+
+  gasBody.setAttribute(
+    "height",
+    Math.max(
+      20,
+      gasHeight
+    )
+  );
+
+
+  /*
+   * Poziția particulelor se deplasează
+   * odată cu pistonul.
+   */
+
+  particles.setAttribute(
+    "transform",
+    `translate(0 ${pistonY - 220})`
+  );
+
+
+  temperatureText.setAttribute(
+    "y",
+    Math.min(
+      405,
+      gasY +
+      gasHeight *
+      0.82
+    )
+  );
+
+
+  temperatureText.textContent =
+    `T = ${Math.round(T)} K`;
+
+
+  /*
+   * Culoarea gazului indică temperatura.
+   */
+
+  const tempFraction =
+    clamp(
+      (
+        T -
+        T_MIN
+      ) /
+      (
+        T_MAX -
+        T_MIN
+      ),
+      0,
+      1
+    );
+
+
+  const hue =
+    210 -
+    195 *
+    tempFraction;
+
+
+  gasBody.setAttribute(
+    "fill",
+    `hsl(${hue},78%,68%)`
+  );
+
+}
+
+
+/* =========================================================
+   ACȚIUNE VIZUALĂ
+========================================================= */
+
+function updateAction(){
+
+  pressArrow.setAttribute(
+    "opacity",
+    action ===
+    "press"
+      ? "1"
+      : "0"
+  );
+
+
+  pullArrow.setAttribute(
+    "opacity",
+    action ===
+    "pull"
+      ? "1"
+      : "0"
+  );
+
+
+  heatingSymbol.setAttribute(
+    "opacity",
+    action ===
+    "heat"
+      ? "1"
+      : "0"
+  );
+
+
+  coolingSymbol.setAttribute(
+    "opacity",
+    action ===
+    "cool"
+      ? "1"
+      : "0"
+  );
+
+
+  heatLabel.setAttribute(
+    "opacity",
+    (
+      action ===
+      "heat" ||
+      action ===
+      "cool"
+    )
+      ? "1"
+      : "0"
+  );
+
+
+  if(
+    action ===
+    "heat"
+  ){
+
+    stateBadge.textContent =
+      "Încălzire";
+
+
+    processStatus.textContent =
+      "Q > 0 • T crește • pistonul urcă";
+
+  }
+
+
+  else if(
+    action ===
+    "cool"
+  ){
+
+    stateBadge.textContent =
+      "Răcire";
+
+
+    processStatus.textContent =
+      "Q < 0 • T scade • pistonul coboară";
+
+  }
+
+
+  else if(
+    action ===
+    "press"
+  ){
+
+    stateBadge.textContent =
+      "Apăsare";
+
+
+    processStatus.textContent =
+      "Forță în jos • p crește • V scade";
+
+  }
+
+
+  else if(
+    action ===
+    "pull"
+  ){
+
+    stateBadge.textContent =
+      "Tragere";
+
+
+    processStatus.textContent =
+      "Forță în sus • p scade • V crește";
+
+  }
+
+
+  else{
+
+    stateBadge.textContent =
+      "Echilibru";
+
+
+    processStatus.textContent =
+      "Stare de echilibru";
+
+  }
+
+}
+
+
+/* =========================================================
+   VALORI + CURSOARE
+========================================================= */
+
+function updateValues(){
+
+  temperatureValue.textContent =
+    `${Math.round(
+      T
+    )} K`;
+
+
+  pressureValue.textContent =
+    `${ro(
+      p,
+      1
+    )} kPa`;
+
+
+  volumeValue.textContent =
+    `${ro(
+      V,
+      2
+    )} L`;
+
+
+  temperatureSlider.value =
+    clamp(
+      T,
+      T_MIN,
+      T_MAX
+    );
+
+
+  pressureSlider.value =
+    clamp(
+      p,
+      P_MIN,
+      P_MAX
+    );
+
+
+  volumeSlider.value =
+    clamp(
+      V,
+      V_MIN,
+      V_MAX
+    );
+
+
+  temperatureSliderValue.textContent =
+    `${Math.round(
+      T
+    )} K`;
+
+
+  pressureSliderValue.textContent =
+    `${ro(
+      p,
+      1
+    )} kPa`;
+
+
+  volumeSliderValue.textContent =
+    `${ro(
+      V,
+      2
+    )} L`;
+
+
+  updateCylinder();
+
+  updateAction();
+
+  updateGraph();
+
+}
+
+
+/* =========================================================
+   TRANZIȚIE DINAMICĂ
+========================================================= */
+
+function startTransition(
+  mode,
+  targetValue
+){
+
+  if(
+    transitionFrame !==
+    null
+  ){
+
+    cancelAnimationFrame(
+      transitionFrame
+    );
+
+  }
+
+
+  const startT =
+    T;
+
+
+  const startP =
+    p;
+
+
+  const startV =
+    V;
+
+
+  let targetT =
+    T;
+
+
+  let targetP =
+    p;
+
+
+  let targetV =
+    V;
+
+
+  /*
+   * Modificarea temperaturii:
+   *
+   * considerăm presiunea aproximativ
+   * constantă pe durata încălzirii/răcirii.
+   */
+
+  if(
+    mode ===
+    "T"
+  ){
+
+    targetT =
+      Number(
+        targetValue
+      );
+
+
+    targetP =
+      startP;
+
+
+    targetV =
+      volumeFromTP(
+        targetT,
+        targetP
+      );
+
+
+    action =
+      targetT >
+      startT
+        ? "heat"
+        : "cool";
+
+  }
+
+
+  /*
+   * Modificarea presiunii:
+   *
+   * temperatura este menținută constantă,
+   * iar volumul se ajustează.
+   */
+
+  if(
+    mode ===
+    "p"
+  ){
+
+    targetP =
+      Number(
+        targetValue
+      );
+
+
+    targetT =
+      startT;
+
+
+    targetV =
+      volumeFromTP(
+        targetT,
+        targetP
+      );
+
+
+    action =
+      targetP >
+      startP
+        ? "press"
+        : "pull";
+
+  }
+
+
+  /*
+   * Modificarea volumului:
+   *
+   * temperatura este menținută constantă,
+   * iar presiunea se ajustează.
+   */
+
+  if(
+    mode ===
+    "V"
+  ){
+
+    targetV =
+      Number(
+        targetValue
+      );
+
+
+    targetT =
+      startT;
+
+
+    targetP =
+      pressureFromTV(
+        targetT,
+        targetV
+      );
+
+
+    action =
+      targetV <
+      startV
+        ? "press"
+        : "pull";
+
+  }
+
+
+  targetT =
+    clamp(
+      targetT,
+      T_MIN,
+      T_MAX
+    );
+
+
+  targetP =
+    clamp(
+      targetP,
+      P_MIN,
+      P_MAX
+    );
+
+
+  targetV =
+    clamp(
+      targetV,
+      V_MIN,
+      V_MAX
+    );
+
+
+  const duration =
+    900;
+
+
+  let previousTimestamp =
+    null;
+
+
+  const start =
+    performance.now();
+
+
+  function animate(
+    timestamp
+  ){
+
+    if(
+      previousTimestamp ===
+      null
+    ){
+
+      previousTimestamp =
+        timestamp;
+
+    }
+
+
+    const dt =
+      (
+        timestamp -
+        previousTimestamp
+      ) /
+      1000;
+
+
+    previousTimestamp =
+      timestamp;
+
+
+    simTime +=
+      dt;
+
+
+    const fraction =
+      clamp(
+        (
+          timestamp -
+          start
+        ) /
+        duration,
+        0,
+        1
+      );
+
+
+    /*
+     * Tranziție lină.
+     */
+
+    const ease =
+      fraction <
+      0.5
+        ? 2 *
+          fraction *
+          fraction
+        : 1 -
+          Math.pow(
+            -2 *
+            fraction +
+            2,
+            2
+          ) /
+          2;
+
+
+    if(
+      mode ===
+      "T"
+    ){
+
+      T =
+        startT +
+        (
+          targetT -
+          startT
+        ) *
+        ease;
+
+
+      p =
+        startP;
+
+
+      V =
+        volumeFromTP(
+          T,
+          p
+        );
+
+    }
+
+
+    if(
+      mode ===
+      "p"
+    ){
+
+      p =
+        startP +
+        (
+          targetP -
+          startP
+        ) *
+        ease;
+
+
+      T =
+        startT;
+
+
+      V =
+        volumeFromTP(
+          T,
+          p
+        );
+
+    }
+
+
+    if(
+      mode ===
+      "V"
+    ){
+
+      V =
+        startV +
+        (
+          targetV -
+          startV
+        ) *
+        ease;
+
+
+      T =
+        startT;
+
+
+      p =
+        pressureFromTV(
+          T,
+          V
+        );
+
+    }
+
+
+    addHistoryPoint();
+
+    updateValues();
+
+
+    if(
+      fraction <
+      1
+    ){
+
+      transitionFrame =
+        requestAnimationFrame(
+          animate
+        );
+
+    }
+
+    else{
+
+      transitionFrame =
+        null;
+
+
+      action =
+        "equilibrium";
+
+
+      addHistoryPoint();
+
+      updateValues();
+
+    }
+
+  }
+
+
+  transitionFrame =
+    requestAnimationFrame(
+      animate
+    );
+
+}
+
+
+/* =========================================================
+   CURSOARE
+========================================================= */
+
+temperatureSlider.addEventListener(
+  "input",
+  ()=>{
+
+    startTransition(
+      "T",
+      temperatureSlider.value
+    );
+
+  }
+);
+
+
+pressureSlider.addEventListener(
+  "input",
+  ()=>{
+
+    startTransition(
+      "p",
+      pressureSlider.value
+    );
+
+  }
+);
+
+
+volumeSlider.addEventListener(
+  "input",
+  ()=>{
+
+    startTransition(
+      "V",
+      volumeSlider.value
+    );
+
+  }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetSimulation(){
+
+  if(
+    transitionFrame !==
+    null
+  ){
+
+    cancelAnimationFrame(
+      transitionFrame
+    );
+
+
+    transitionFrame =
+      null;
+
+  }
+
+
+  T =
+    293;
+
+
+  p =
+    101.3;
+
+
+  V =
+    volumeFromTP(
+      T,
+      p
+    );
+
+
+  action =
+    "equilibrium";
+
+
+  simTime =
+    0;
+
+
+  lastGraphSample =
+    -1;
+
+
+  history.length =
+    0;
+
+
+  addHistoryPoint();
+
+  updateValues();
+
+}
+
+
+resetButton.addEventListener(
+  "click",
+  resetSimulation
+);
+
+
+/* =========================================================
+   INIȚIALIZARE
+========================================================= */
+
+addHistoryPoint();
+
+updateValues();
+
+</script>
+
+
+</body>
+
+</html>
