@@ -6286,26 +6286,37 @@ window.addEventListener(
   document.querySelectorAll('a[href*="/simulari/termodinamica/"]').forEach(a=>{
     a.addEventListener('click',()=>{
       const page=a.closest('.lesson-page');
-      sessionStorage.setItem(KEY,JSON.stringify({page:Number(page?.dataset.page)||1,y:window.scrollY,url:location.pathname}));
+      try{sessionStorage.setItem(KEY,JSON.stringify({page:Number(page?.dataset.page)||1,y:window.scrollY,url:location.pathname}));
       // Compatibilitate cu paginile de simulare dezvoltate anterior:
       const y=window.scrollY, n=Number(page?.dataset.page)||1;
       sessionStorage.setItem('termoReturn_reversibil',JSON.stringify({page:n,y}));
       sessionStorage.setItem('termoReturn_ciclice',JSON.stringify({page:n,y}));
       sessionStorage.setItem('termoPagina',String(n));
-      sessionStorage.setItem('termoScroll',String(y));
+      sessionStorage.setItem('termoScroll',String(y));}catch(e){/* Navigarea funcționează și fără stocare disponibilă. */}
     });
   });
-  window.addEventListener('load',()=>{
+  function restoreLessonPosition(){
     const hash=location.hash;
-    if(!/revenire|pagina-[1-9]/.test(hash)) return;
-    let saved=null;try{saved=JSON.parse(sessionStorage.getItem(KEY)||'null')}catch(e){}
-    let page=saved?.page || Number(hash.match(/pagina-(\d)/)?.[1]) || (hash.includes('ciclice')?6:hash.includes('reversibil')?5:4);
+    if(!/revenire|pagina-\d+/.test(hash)) return;
+    let saved=null;
+    try{saved=JSON.parse(sessionStorage.getItem(KEY)||'null')}catch(e){}
+    const explicitPage=Number(hash.match(/pagina-(\d+)/)?.[1]);
+    const page=explicitPage || (hash.includes('ciclice')?6:hash.includes('reversibil')?5:saved?.page||4);
+    const validSaved=saved && saved.url===location.pathname && Number(saved.page)===page && Number.isFinite(saved.y) && saved.y>=0;
     if(typeof showPage==='function')showPage(page,false);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(saved)window.scrollTo(0,Number(saved.y)||0);
-      sessionStorage.removeItem(KEY);
-      history.replaceState(null,'',location.pathname+location.search);
+    const restore=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      window.scrollTo({top:validSaved?saved.y:0,left:0,behavior:'instant'});
+      try{sessionStorage.removeItem(KEY)}catch(e){}
+      history.replaceState(history.state,'',location.pathname+location.search);
     }));
-  });
+    // Așteptăm și fonturile/formulele, care pot schimba înălțimea paginii.
+    const fonts=document.fonts?document.fonts.ready:Promise.resolve();
+    const math=window.MathJax?.typesetPromise?window.MathJax.typesetPromise():Promise.resolve();
+    Promise.allSettled([fonts,math]).then(restore);
+  }
+  window.addEventListener('load',restoreLessonPosition);
+  window.addEventListener('hashchange',restoreLessonPosition);
+  window.addEventListener('pageshow',event=>{if(event.persisted)restoreLessonPosition()});
   const cases=[
     ['Comprimare lentă cu frecare','Gaz comprimat foarte lent, cu frecare; la sfârșit starea diferă de cea inițială.',['q','ir','nc'],'Aproape de echilibru, dar frecarea disipă energie; starea finală este alta.'],
     ['Comprimare rapidă','Un piston comprimă rapid gazul; apar neuniformități macroscopice. Starea finală diferă de cea inițială.',['nq','ir','nc'],'Proces necvasistatic și ireversibil în condițiile descrise, iar starea finală diferă.'],
