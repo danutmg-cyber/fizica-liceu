@@ -2611,7 +2611,39 @@ procesul este
 
 </div>
 
+<!-- BUTON: introdu în <section id="pagina-6">, după definiții,
+     înainte de întrebarea de verificare a secțiunii. -->
+<div class="lesson-highlight no-print">
+  <h3>🔬 Experiment virtual: Procese ciclice și neciclice</h3>
+  <p>Compară o transformare închisă A → D → C → B → A cu una deschisă A → D → C.</p>
+  <a class="lesson-button" style="display:inline-block;text-decoration:none"
+     href="7-simulare-procese-ciclice-neciclice.html"
+     onclick="sessionStorage.setItem('termoReturn_ciclice',JSON.stringify({page:6,y:window.scrollY}));">
+    ▶ Experimentează: procese ciclice și neciclice
+  </a>
+</div>
 
+<!-- SCRIPT DE REVENIRE:
+     inserează DUPĂ scriptul principal al lecției și ÎNAINTE de </body>.
+     Lecția apelează showPage(1,false) la evenimentul load, de aceea
+     restaurarea trebuie făcută tot la load, înregistrată după acel script. -->
+<script>
+window.addEventListener("load", function () {
+  if (location.hash !== "#revenire-ciclice") return;
+  const key = "termoReturn_ciclice";
+  let state = null;
+  try { state = JSON.parse(sessionStorage.getItem(key) || "null"); }
+  catch (e) {}
+  if (typeof showPage === "function") showPage(state?.page || 6, false);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (state) window.scrollTo({ top: Number(state.y) || 0, behavior: "instant" });
+    sessionStorage.removeItem(key);
+    history.replaceState(null, "", location.pathname + location.search);
+  }));
+});
+</script>
+
+  
 <h2>
 Ciclic nu înseamnă reversibil
 </h2>
