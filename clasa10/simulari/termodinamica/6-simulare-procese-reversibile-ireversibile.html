@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Procese reversibile și ireversibile — simulare, clasa a X-a</title>
+<style>
+:root{font-family:system-ui,Arial,sans-serif;color:#15283e;background:#f1f6fc}*{box-sizing:border-box}body{margin:0}header{background:#12345a;color:white;padding:20px max(16px,calc((100vw - 1100px)/2))}h1{font-size:clamp(1.35rem,3vw,2.1rem);margin:.5rem 0}header p{margin:.4rem 0;color:#dcecff}main{max-width:1100px;margin:auto;padding:18px}section{background:white;border:1px solid #d4e2f1;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px #12345a09}h2{margin-top:0;color:#12345a}h3{margin:8px 0}button,.back{background:#1769ad;color:white;border:0;border-radius:9px;padding:12px 16px;cursor:pointer;font-weight:700;font-size:1rem;display:inline-block;text-decoration:none}button:hover,.back:hover{background:#104f85}button:disabled{opacity:.45;cursor:not-allowed}.secondary{background:#5f7287}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}.layout{display:grid;grid-template-columns:minmax(250px,1fr) minmax(250px,1fr);gap:18px}.panel{background:#f7fbff;border:1px solid #d3e3f2;padding:15px;border-radius:12px}canvas{display:block;width:100%;height:auto;max-height:320px;background:white;border:1px solid #dae5f0;border-radius:10px}label{font-weight:650}select,input{font:inherit;accent-color:#1769ad}input[type=range]{width:min(270px,100%)}.callout{background:#e8f3fe;border-left:5px solid #1769ad;padding:13px;border-radius:5px;margin-top:12px}.alert{background:#fff2e6;border-left-color:#d87828}.status{min-height:54px}.small{font-size:.91rem;color:#435c74}.metric{font-size:1.13rem;font-weight:800;color:#0d548c}nav{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}@media(max-width:720px){.layout{grid-template-columns:1fr}section{padding:14px}}
+</style></head><body>
+<header><h1>🔬 Procese reversibile și ireversibile</h1><p>Fizică — clasa a X-a · Două experimente interactive</p></header>
+<main>
+<nav><button id="backTop">← Revenire în lecție</button><span class="small">Revenire la pagina 5 și la poziția de plecare, dacă simularea a fost lansată din lecție.</span></nav>
+<section><h2>1. Pistonul: comprimare și destindere</h2>
+<p>Compară un piston idealizat, fără frecare, cu unul care întâmpină frecare. Transformarea este <strong>izotermă și cvasistatică (model idealizat)</strong>; numai cazul fără frecare poate fi considerat reversibil.</p>
+<div class="controls"><label for="friction">Tipul procesului:</label><select id="friction"><option value="0">Idealizat — fără frecare</option><option value="1">Cu frecare — ireversibil</option></select>
+<button id="forward">Comprimă A → B</button><button id="reverse" disabled>Destinde B → A</button><button id="reset1" class="secondary">Reinițializează</button></div>
+<div class="layout"><div class="panel"><h3>Cilindru cu piston</h3><canvas id="piston" width="480" height="300" aria-label="Cilindru cu piston și molecule de gaz"></canvas><p id="state" class="metric" aria-live="polite">Starea A · Volum relativ: 100%</p><p id="dissipation" class="small">Energie disipată, indicator ilustrativ: 0 unități</p></div>
+<div class="panel"><h3>Diagrama p–V</h3><canvas id="pv" width="480" height="300" aria-label="Grafic presiune-volum al transformării izoterme"></canvas><p class="small">Curba pV = constant reprezintă stările de echilibru ale gazului. La pistonul cu frecare, diferența apare în interacțiunea mecanică cu mediul exterior, nu în această curbă ideală a gazului.</p></div></div>
+<div id="feedback1" class="callout status" aria-live="polite">Apasă „Comprimă”, apoi „Destinde” și compară bilanțul după revenirea pistonului.</div>
+</section>
+<section><h2>2. Amestecarea spontană a două gaze</h2>
+<p>Două gaze ideale diferite, reprezentate prin particule albastre și portocalii, sunt inițial separate printr-un perete. Deschide peretele despărțitor și observă difuzia.</p>
+<div class="controls"><button id="removeWall">Îndepărtează peretele</button><button id="putWall" disabled class="secondary">Pune peretele la loc</button><button id="reset2" class="secondary">Reinițializează gazele</button></div>
+<canvas id="mix" width="960" height="330" aria-label="Particule din două gaze care se amestecă"></canvas>
+<p id="mixStat" class="metric" aria-live="polite">Gazele sunt separate.</p><div class="callout alert"><strong>Observație:</strong> reintroducerea peretelui nu sortează moleculele. Separarea spontană completă este extrem de improbabilă la nivel macroscopic. Animația prezintă un model didactic de particule, nu un calcul molecular exact.</div>
+</section>
+<section><h2>Verifică ce ai înțeles</h2><p>Un piston revine în poziția inițială, dar a existat frecare. Procesul complet este reversibil?</p>
+<div class="controls"><button id="answerNo">Nu, deoarece energia s-a disipat</button><button id="answerYes" class="secondary">Da, deoarece pistonul a revenit</button></div><div id="quiz" class="callout status" aria-live="polite">Alege un răspuns.</div>
+</section>
+<nav><button id="backBottom">← Revenire în lecție</button></nav>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const lesson="4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html";
+function goBack(){const saved=sessionStorage.getItem("termoReturn_reversibil");const u=new URL(lesson,location.href);if(saved){u.hash="revenire-reversibil";}else{u.hash="pagina-5";}location.href=u.href}
+$("backTop").addEventListener("click",goBack);$("backBottom").addEventListener("click",goBack);
+let fraction=0, direction=0,dis=0,complete=false,last=performance.now();const maxDis=60;
+const a=$("piston"),p=$("pv"),ac=a.getContext("2d"),pc=p.getContext("2d");
+function line(c,x1,y1,x2,y2,color="#365d7f",w=2){c.strokeStyle=color;c.lineWidth=w;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
+function pistonDraw(){
+ ac.clearRect(0,0,480,300);const top=38+fraction*95;
+ ac.fillStyle="#dcedfb";ac.fillRect(120,top+12,225,224-top);ac.strokeStyle="#325775";ac.lineWidth=6;ac.strokeRect(119,30,227,246);
+ ac.fillStyle="#8599ab";ac.fillRect(107,top,251,14);ac.fillRect(225,5+fraction*95,14,top-5-fraction*95);
+ for(let i=0;i<22;i++){let x=140+(i*61%183),y=top+30+(i*47%(220-top));ac.beginPath();ac.arc(x,y,4,0,Math.PI*2);ac.fillStyle="#308cd0";ac.fill()}
+ ac.fillStyle="#173b5c";ac.font="16px system-ui";ac.fillText("Piston",365,top+13);ac.fillText("Gaz",205,247);
+ if($("friction").value==="1"){ac.fillStyle="#cc6e23";ac.font="bold 14px system-ui";ac.fillText("⚡ Frecare",18,290)}
+ pc.clearRect(0,0,480,300);line(pc,58,255,442,255);line(pc,58,255,58,20);pc.fillStyle="#2a4762";pc.font="16px system-ui";pc.fillText("p",40,20);pc.fillText("V",444,272);pc.fillText("A",392,220);pc.fillText("B",205,100);
+ const xFor=t=>400-190*t,yFor=t=>230/(1+0.92*t);pc.strokeStyle="#0d75c4";pc.lineWidth=3;pc.beginPath();
+ for(let t=0;t<=1.001;t+=.01){let x=xFor(t),y=255-yFor(t);if(t===0)pc.moveTo(x,y);else pc.lineTo(x,y)}pc.stroke();
+ let cx=xFor(fraction),cy=255-yFor(fraction);pc.fillStyle="#e37830";pc.beginPath();pc.arc(cx,cy,7,0,Math.PI*2);pc.fill();pc.fillStyle="#25435d";pc.font="15px system-ui";pc.fillText("Volum →",215,286);pc.fillText("Presiune ↑",70,18);
+ $("state").textContent=`Starea ${fraction===0?"A":fraction===1?"B":"intermediară"} · Volum relativ: ${Math.round(100-50*fraction)}%`;
+ $("dissipation").textContent=`Energie disipată, indicator ilustrativ: ${Math.round(dis)} unități`;
+}
+$("friction").addEventListener("change",()=>{fraction=0;direction=0;dis=0;complete=false;$("forward").disabled=false;$("reverse").disabled=true;$("feedback1").textContent="Pornește comprimarea cu noul tip de piston.";pistonDraw()});
+$("forward").onclick=()=>{if(direction)return;direction=1;$("forward").disabled=true;$("reverse").disabled=true;$("feedback1").textContent="Se comprimă lent gazul..."};
+$("reverse").onclick=()=>{if(direction)return;direction=-1;$("reverse").disabled=true;$("feedback1").textContent="Se destinde lent gazul..."};
+$("reset1").onclick=()=>{fraction=0;dis=0;direction=0;complete=false;$("forward").disabled=false;$("reverse").disabled=true;$("feedback1").textContent="Experiment reinițializat.";pistonDraw()};
+function animate(t){let dt=Math.min((t-last)/1000,.05);last=t;if(direction){let old=fraction;fraction=Math.max(0,Math.min(1,fraction+direction*dt*.3));if($("friction").value==="1")dis+=Math.abs(fraction-old)*maxDis;if(direction===1&&fraction===1){direction=0;$("reverse").disabled=false;$("feedback1").textContent="S-a atins starea B. Acum destinde gazul."}else if(direction===-1&&fraction===0){direction=0;complete=true;$("forward").disabled=false;$("feedback1").textContent=$("friction").value==="1"?"Pistonul a revenit la A, dar energia disipată a modificat mediul exterior: proces ireversibil.":"Model ideal: pistonul, gazul și mediul pot reveni la stările inițiale: proces reversibil idealizat."}pistonDraw()}moveGas(dt);requestAnimationFrame(animate)}
+pistonDraw();
+const m=$("mix"),mc=m.getContext("2d");let wall=true,everMixed=false;
+const particles=Array.from({length:74},(_,i)=>{let left=i<37;return{x:left?35+Math.random()*398:526+Math.random()*398,y:30+Math.random()*267,vx:(Math.random()-.5)*105,vy:(Math.random()-.5)*105,c:left?"#1987d3":"#eb8a2b",left}});
+function resetGas(){wall=true;everMixed=false;particles.forEach((o,i)=>{o.x=o.left?35+Math.random()*398:526+Math.random()*398;o.y=30+Math.random()*267;o.vx=(Math.random()-.5)*105;o.vy=(Math.random()-.5)*105});$("removeWall").disabled=false;$("putWall").disabled=true;$("mixStat").textContent="Gazele sunt separate."}
+$("removeWall").onclick=()=>{wall=false;everMixed=true;$("removeWall").disabled=true;$("putWall").disabled=false;$("mixStat").textContent="Peretele a fost îndepărtat: gazele se amestecă."};
+$("putWall").onclick=()=>{wall=true;$("removeWall").disabled=false;$("putWall").disabled=true;$("mixStat").textContent="Peretele este la loc; gazele rămân amestecate."};
+$("reset2").onclick=resetGas;
+function moveGas(dt){mc.clearRect(0,0,960,330);mc.strokeStyle="#355a7c";mc.lineWidth=5;mc.strokeRect(10,10,940,310);if(wall){line(mc,480,13,480,317,"#8b96a4",8)}for(const o of particles){let ox=o.x;o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x<20||o.x>940){o.x=Math.max(20,Math.min(940,o.x));o.vx*=-1}if(o.y<20||o.y>310){o.y=Math.max(20,Math.min(310,o.y));o.vy*=-1}if(wall&&(ox-480)*(o.x-480)<=0){o.x=ox;o.vx*=-1}mc.beginPath();mc.fillStyle=o.c;mc.arc(o.x,o.y,6,0,2*Math.PI);mc.fill()}if(everMixed&&!wall){let crossed=particles.filter(o=>o.left?o.x>480:o.x<480).length;$("mixStat").textContent=`Amestecare în curs · particule ajunse în celălalt compartiment: ${crossed} din ${particles.length}`}}
+$("answerNo").onclick=()=>$("quiz").textContent="Corect! Revenirea pistonului nu garantează revenirea mediului exterior. Frecarea produce disipare.";
+$("answerYes").onclick=()=>$("quiz").textContent="Încearcă din nou: reversibilitatea cere revenirea atât a sistemului, cât și a mediului exterior la stările inițiale.";
+requestAnimationFrame(animate);
+</script></body></html>
