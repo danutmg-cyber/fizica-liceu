@@ -2391,6 +2391,48 @@ ca reversibile.
   </a>
 </div>
 
+<!-- INSEREAZĂ ACEST BUTON pe pagina 5, înainte de întrebarea
+     <article class="quiz-question" data-answer="2"> -->
+<div class="lesson-highlight no-print">
+  <h3>🔬 Experiment virtual — procese reversibile și ireversibile</h3>
+  <p>Compară pistonul fără frecare cu cel cu frecare și observă amestecarea a două gaze.</p>
+  <a class="lesson-button"
+     style="display:inline-block;text-decoration:none"
+     href="6-simulare-procese-reversibile-ireversibile.html"
+     onclick="sessionStorage.setItem('termoReturn_reversibil',JSON.stringify({page:5,y:window.scrollY}));">
+     ▶ Experimentează: procese reversibile și ireversibile
+  </a>
+</div>
+
+<!-- ADAUGĂ ACEST SCRIPT în lecție, după scripturile existente,
+     imediat înaintea etichetei </body>.
+     Se execută DUPĂ ce funcția showPage(...) a fost declarată. -->
+<script>
+(function restoreSimulationReturn(){
+  const key='termoReturn_reversibil';
+  if(location.hash!=='#revenire-reversibil') return;
+  let position;
+  try { position=JSON.parse(sessionStorage.getItem(key)||'null'); }
+  catch(e){ position=null; }
+  // Funcția showPage trebuie să existe în lecție.
+  if(typeof showPage==='function'){
+    showPage(position?.page || 5,false);
+  }else{
+    const target=document.getElementById('pagina-5');
+    if(target) target.hidden=false;
+  }
+  if(position){
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        window.scrollTo({top:Number(position.y)||0,behavior:'instant'});
+      });
+    });
+  }
+  sessionStorage.removeItem(key);
+  history.replaceState(null,'',location.pathname+location.search);
+})();
+</script>
+
   
 <article
   class="quiz-question"
