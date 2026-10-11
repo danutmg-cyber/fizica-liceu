@@ -3,9 +3,17 @@
 <title>Procese ciclice și neciclice — Fizică, clasa a X-a</title>
 <style>
 *{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;margin:0;background:#f0f5fb;color:#20344b;line-height:1.5}header{background:#12385f;color:white;padding:22px max(18px,calc((100vw - 1100px)/2))}header h1{margin:0;font-size:clamp(1.5rem,3vw,2.25rem)}main{max-width:1100px;margin:auto;padding:18px}.card{background:white;border:1px solid #d6e1ee;border-radius:14px;padding:20px;margin:16px 0;box-shadow:0 3px 12px #12385f08}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:17px}.scene{min-width:0;background:#f8fbff;border:1px solid #dbe6f2;border-radius:12px;padding:12px}canvas{width:100%;height:auto;background:white;border:1px solid #d7e4f0;border-radius:10px}button{background:#146aaf;color:white;border:0;border-radius:9px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#60758b}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}h2{color:#113f6b;margin-top:0}h3{margin:8px 0}.badge{font-weight:800;color:#135d9a}.note{background:#e9f4ff;padding:13px;border-left:5px solid #1976bd;border-radius:5px}.metric{font-size:1.07rem;font-weight:700;min-height:2.5em}.small{color:#54677c;font-size:.93rem}@media(max-width:750px){.twocol{grid-template-columns:1fr}.card{padding:13px}}
+/* Test final: fonturi mai mari pentru întrebare, răspunsuri și feedback. */
+#finalQuiz{font-size:1.25rem;line-height:1.6}
+#finalQuiz h2{font-size:1.65rem}
+#finalQuiz button,#finalQuiz #answer{font-size:1.25rem;line-height:1.6}
+#finalQuiz button{max-width:100%;white-space:normal;text-align:left}
+.back{background:#146aaf;color:white;border-radius:9px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;display:inline-block;text-decoration:none}
+.back:hover{background:#104f85}
+button:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
 </style></head><body>
 <header><h1>🔁 Procese ciclice și neciclice</h1><div>Laborator virtual · Fizică · Clasa a X-a</div></header>
-<main><div class="controls"><button class="back">← Revenire în lecție</button></div>
+<main><div class="controls"><a id="backTop" class="back" href="../../lectii/02-notiuni-termodinamice-de-baza/4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html#pagina-6-revenire">← Revenire în lecție</a></div>
 <div class="card"><p><strong>Scop:</strong> observă un gaz într-un cilindru și urmărește traseul stărilor sale în diagrama presiune–volum (<strong>p–V</strong>). Compară un traseu închis, care revine în A, cu unul deschis, care se oprește în altă stare.</p><p class="small">Model didactic: gaz ideal aflat în stări de echilibru; p și V sunt în unități relative, iar T este proporțională cu p·V. Nu se presupune că orice proces ciclic este reversibil.</p></div>
 <section class="card" id="cycle"><h2>Experimentul 1. Proces ciclic A → D → C → B → A</h2>
 <p>Gazul parcurge patru transformări idealizate: volum constant, presiune constantă, volum constant, presiune constantă. La final, <strong>p, V și T revin la valorile inițiale</strong>.</p>
@@ -16,13 +24,12 @@
 <div class="controls"><button id="runN">▶ Pornește transformarea</button><button id="stepN">Pasul următor</button><button id="resetN" class="secondary">Reinițializează</button></div>
 <div class="twocol"><div class="scene"><h3>Cilindru cu piston</h3><canvas id="pistonN" width="480" height="280"></canvas><p id="statN" class="metric" aria-live="polite"></p></div><div class="scene"><h3>Diagrama p–V</h3><canvas id="graphN" width="480" height="280"></canvas><p id="msgN" class="small" aria-live="polite">Transformarea se va opri în starea C.</p></div></div>
 <div class="note">Într-un proces neciclic, starea finală este diferită de cea inițială. <strong>ΔU poate fi diferită de zero</strong>; în modelul nostru, temperatura finală diferă de cea inițială.</div></section>
-<section class="card"><h2>Verifică ce ai înțeles</h2><p>Un gaz revine la volumul inițial, dar are presiunea finală diferită. A efectuat un proces ciclic?</p><div class="controls"><button id="no">Nu, starea finală diferă</button><button id="yes" class="secondary">Da, volumul este același</button></div><div class="note" id="answer" aria-live="polite">Alege o variantă.</div></section>
-<div class="controls"><button class="back">← Revenire în lecție</button></div></main>
+<section class="card" id="finalQuiz"><h2>Verifică ce ai înțeles</h2><p>Un gaz revine la volumul inițial, dar are presiunea finală diferită. A efectuat un proces ciclic?</p><div class="controls"><button id="no">Nu, starea finală diferă</button><button id="yes" class="secondary">Da, volumul este același</button></div><div class="note" id="answer" aria-live="polite">Alege o variantă.</div></section>
+<div class="controls"><a id="backBottom" class="back" href="../../lectii/02-notiuni-termodinamice-de-baza/4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html#pagina-6-revenire">← Revenire în lecție</a></div></main>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const lesson="4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html";
-document.querySelectorAll(".back").forEach(b=>b.onclick=()=>{const url=new URL(lesson,location.href);url.hash="#revenire-ciclice";location.assign(url.href)});
+// La revenire, lecția afișează pagina 6 și restaurează poziția memorată.
 const nodes={A:{v:2,p:1},D:{v:2,p:2},C:{v:4,p:2},B:{v:4,p:1}};
 const formats={A:"A: V=2, p=1, T∝2",D:"D: V=2, p=2, T∝4",C:"C: V=4, p=2, T∝8",B:"B: V=4, p=1, T∝4"};
 const experiments=[

@@ -3,10 +3,16 @@
 <title>Procese reversibile și ireversibile — simulare, clasa a X-a</title>
 <style>
 :root{font-family:system-ui,Arial,sans-serif;color:#15283e;background:#f1f6fc}*{box-sizing:border-box}body{margin:0}header{background:#12345a;color:white;padding:20px max(16px,calc((100vw - 1100px)/2))}h1{font-size:clamp(1.35rem,3vw,2.1rem);margin:.5rem 0}header p{margin:.4rem 0;color:#dcecff}main{max-width:1100px;margin:auto;padding:18px}section{background:white;border:1px solid #d4e2f1;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px #12345a09}h2{margin-top:0;color:#12345a}h3{margin:8px 0}button,.back{background:#1769ad;color:white;border:0;border-radius:9px;padding:12px 16px;cursor:pointer;font-weight:700;font-size:1rem;display:inline-block;text-decoration:none}button:hover,.back:hover{background:#104f85}button:disabled{opacity:.45;cursor:not-allowed}.secondary{background:#5f7287}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}.layout{display:grid;grid-template-columns:minmax(250px,1fr) minmax(250px,1fr);gap:18px}.panel{background:#f7fbff;border:1px solid #d3e3f2;padding:15px;border-radius:12px}canvas{display:block;width:100%;height:auto;max-height:320px;background:white;border:1px solid #dae5f0;border-radius:10px}label{font-weight:650}select,input{font:inherit;accent-color:#1769ad}input[type=range]{width:min(270px,100%)}.callout{background:#e8f3fe;border-left:5px solid #1769ad;padding:13px;border-radius:5px;margin-top:12px}.alert{background:#fff2e6;border-left-color:#d87828}.status{min-height:54px}.small{font-size:.91rem;color:#435c74}.metric{font-size:1.13rem;font-weight:800;color:#0d548c}nav{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}@media(max-width:720px){.layout{grid-template-columns:1fr}section{padding:14px}}
+/* Test final: fonturi mai mari, inclusiv pentru răspunsuri și feedback. */
+#finalQuiz{font-size:1.25rem;line-height:1.6}
+#finalQuiz h2{font-size:1.65rem}
+#finalQuiz button,#finalQuiz #quiz{font-size:1.25rem;line-height:1.6}
+#finalQuiz button{max-width:100%;white-space:normal;text-align:left}
+button:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
 </style></head><body>
 <header><h1>🔬 Procese reversibile și ireversibile</h1><p>Fizică — clasa a X-a · Două experimente interactive</p></header>
 <main>
-<nav><button id="backTop">← Revenire în lecție</button><span class="small">Revenire la pagina 5 și la poziția de plecare, dacă simularea a fost lansată din lecție.</span></nav>
+<nav><a id="backTop" class="back" href="../../lectii/02-notiuni-termodinamice-de-baza/4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html#pagina-5-revenire">← Revenire în lecție</a><span class="small">Revenire la pagina 5 și la poziția de plecare, dacă simularea a fost lansată din lecție.</span></nav>
 <section><h2>1. Pistonul: comprimare și destindere</h2>
 <p>Compară un piston idealizat, fără frecare, cu unul care întâmpină frecare. Transformarea este <strong>izotermă și cvasistatică (model idealizat)</strong>; numai cazul fără frecare poate fi considerat reversibil.</p>
 <div class="controls"><label for="friction">Tipul procesului:</label><select id="friction"><option value="0">Idealizat — fără frecare</option><option value="1">Cu frecare — ireversibil</option></select>
@@ -21,17 +27,15 @@
 <canvas id="mix" width="960" height="330" aria-label="Particule din două gaze care se amestecă"></canvas>
 <p id="mixStat" class="metric" aria-live="polite">Gazele sunt separate.</p><div class="callout alert"><strong>Observație:</strong> reintroducerea peretelui nu sortează moleculele. Separarea spontană completă este extrem de improbabilă la nivel macroscopic. Animația prezintă un model didactic de particule, nu un calcul molecular exact.</div>
 </section>
-<section><h2>Verifică ce ai înțeles</h2><p>Un piston revine în poziția inițială, dar a existat frecare. Procesul complet este reversibil?</p>
+<section id="finalQuiz"><h2>Verifică ce ai înțeles</h2><p>Un piston revine în poziția inițială, dar a existat frecare. Procesul complet este reversibil?</p>
 <div class="controls"><button id="answerNo">Nu, deoarece energia s-a disipat</button><button id="answerYes" class="secondary">Da, deoarece pistonul a revenit</button></div><div id="quiz" class="callout status" aria-live="polite">Alege un răspuns.</div>
 </section>
-<nav><button id="backBottom">← Revenire în lecție</button></nav>
+<nav><a id="backBottom" class="back" href="../../lectii/02-notiuni-termodinamice-de-baza/4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html#pagina-5-revenire">← Revenire în lecție</a></nav>
 </main>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const lesson="4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html";
-function goBack(){const saved=sessionStorage.getItem("termoReturn_reversibil");const u=new URL(lesson,location.href);if(saved){u.hash="revenire-reversibil";}else{u.hash="pagina-5";}location.href=u.href}
-$("backTop").addEventListener("click",goBack);$("backBottom").addEventListener("click",goBack);
+// Legătura deschide pagina 5; lecția restaurează poziția memorată la plecare.
 let fraction=0, direction=0,dis=0,complete=false,last=performance.now();const maxDis=60;
 const a=$("piston"),p=$("pv"),ac=a.getContext("2d"),pc=p.getContext("2d");
 function line(c,x1,y1,x2,y2,color="#365d7f",w=2){c.strokeStyle=color;c.lineWidth=w;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
