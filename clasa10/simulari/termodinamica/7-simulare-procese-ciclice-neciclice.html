@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Procese ciclice și neciclice — Fizică, clasa a X-a</title>
+<style>
+*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;margin:0;background:#f0f5fb;color:#20344b;line-height:1.5}header{background:#12385f;color:white;padding:22px max(18px,calc((100vw - 1100px)/2))}header h1{margin:0;font-size:clamp(1.5rem,3vw,2.25rem)}main{max-width:1100px;margin:auto;padding:18px}.card{background:white;border:1px solid #d6e1ee;border-radius:14px;padding:20px;margin:16px 0;box-shadow:0 3px 12px #12385f08}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:17px}.scene{min-width:0;background:#f8fbff;border:1px solid #dbe6f2;border-radius:12px;padding:12px}canvas{width:100%;height:auto;background:white;border:1px solid #d7e4f0;border-radius:10px}button{background:#146aaf;color:white;border:0;border-radius:9px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#60758b}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}h2{color:#113f6b;margin-top:0}h3{margin:8px 0}.badge{font-weight:800;color:#135d9a}.note{background:#e9f4ff;padding:13px;border-left:5px solid #1976bd;border-radius:5px}.metric{font-size:1.07rem;font-weight:700;min-height:2.5em}.small{color:#54677c;font-size:.93rem}@media(max-width:750px){.twocol{grid-template-columns:1fr}.card{padding:13px}}
+</style></head><body>
+<header><h1>🔁 Procese ciclice și neciclice</h1><div>Laborator virtual · Fizică · Clasa a X-a</div></header>
+<main><div class="controls"><button class="back">← Revenire în lecție</button></div>
+<div class="card"><p><strong>Scop:</strong> observă un gaz într-un cilindru și urmărește traseul stărilor sale în diagrama presiune–volum (<strong>p–V</strong>). Compară un traseu închis, care revine în A, cu unul deschis, care se oprește în altă stare.</p><p class="small">Model didactic: gaz ideal aflat în stări de echilibru; p și V sunt în unități relative, iar T este proporțională cu p·V. Nu se presupune că orice proces ciclic este reversibil.</p></div>
+<section class="card" id="cycle"><h2>Experimentul 1. Proces ciclic A → D → C → B → A</h2>
+<p>Gazul parcurge patru transformări idealizate: volum constant, presiune constantă, volum constant, presiune constantă. La final, <strong>p, V și T revin la valorile inițiale</strong>.</p>
+<div class="controls"><button id="runC">▶ Pornește ciclul</button><button id="stepC">Pasul următor</button><button id="resetC" class="secondary">Reinițializează</button></div>
+<div class="twocol"><div class="scene"><h3>Cilindru cu piston</h3><canvas id="pistonC" width="480" height="280"></canvas><p id="statC" class="metric" aria-live="polite"></p></div><div class="scene"><h3>Diagrama p–V</h3><canvas id="graphC" width="480" height="280"></canvas><p id="msgC" class="small" aria-live="polite">Pornește simularea și urmărește traseul închis.</p></div></div>
+<div class="note">Într-un ciclu, variația energiei interne este <strong>ΔU = 0</strong> (starea finală coincide cu cea inițială). Lucrul mecanic net al gazului este aria orientată a ciclului din diagrama p–V.</div></section>
+<section class="card" id="noncycle"><h2>Experimentul 2. Proces neciclic A → D → C</h2><p>Repetă doar primele două etape și oprește procesul în C. Compară starea finală cu starea inițială A.</p>
+<div class="controls"><button id="runN">▶ Pornește transformarea</button><button id="stepN">Pasul următor</button><button id="resetN" class="secondary">Reinițializează</button></div>
+<div class="twocol"><div class="scene"><h3>Cilindru cu piston</h3><canvas id="pistonN" width="480" height="280"></canvas><p id="statN" class="metric" aria-live="polite"></p></div><div class="scene"><h3>Diagrama p–V</h3><canvas id="graphN" width="480" height="280"></canvas><p id="msgN" class="small" aria-live="polite">Transformarea se va opri în starea C.</p></div></div>
+<div class="note">Într-un proces neciclic, starea finală este diferită de cea inițială. <strong>ΔU poate fi diferită de zero</strong>; în modelul nostru, temperatura finală diferă de cea inițială.</div></section>
+<section class="card"><h2>Verifică ce ai înțeles</h2><p>Un gaz revine la volumul inițial, dar are presiunea finală diferită. A efectuat un proces ciclic?</p><div class="controls"><button id="no">Nu, starea finală diferă</button><button id="yes" class="secondary">Da, volumul este același</button></div><div class="note" id="answer" aria-live="polite">Alege o variantă.</div></section>
+<div class="controls"><button class="back">← Revenire în lecție</button></div></main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const lesson="4-stare-termodinamica-echilibru-termodinamic-proces-termodinamic.html";
+document.querySelectorAll(".back").forEach(b=>b.onclick=()=>{const url=new URL(lesson,location.href);url.hash="#revenire-ciclice";location.assign(url.href)});
+const nodes={A:{v:2,p:1},D:{v:2,p:2},C:{v:4,p:2},B:{v:4,p:1}};
+const formats={A:"A: V=2, p=1, T∝2",D:"D: V=2, p=2, T∝4",C:"C: V=4, p=2, T∝8",B:"B: V=4, p=1, T∝4"};
+const experiments=[
+ {s:"C",path:["A","D","C","B","A"],index:0,from:0,to:0,phase:0,playing:false,auto:false},
+ {s:"N",path:["A","D","C"],index:0,from:0,to:0,phase:0,playing:false,auto:false}
+];
+function line(c,x1,y1,x2,y2,color="#52738f",w=2){c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.strokeStyle=color;c.lineWidth=w;c.stroke()}
+function xy(v,p){return [65+(v-1)*105,235-(p-.5)*112]}
+function view(e){let idx=e.index;const x=e.phase;let source=nodes[e.path[e.from]],dest=nodes[e.path[e.to]];
+const v=source.v+(dest.v-source.v)*x,p=source.p+(dest.p-source.p)*x;
+const a=$("piston"+e.s),c=a.getContext("2d");c.clearRect(0,0,480,280);
+const left=128,right=345,bottom=247,top=bottom-49*v;
+c.fillStyle="#e1f1fc";c.fillRect(left+4,top+11,right-left-8,bottom-top-16);line(c,left,35,left,bottom,"#385775",6);line(c,right,35,right,bottom,"#385775",6);line(c,left,bottom,right,bottom,"#385775",6);
+c.fillStyle="#8298aa";c.fillRect(left-6,top, right-left+12,13);c.fillRect(229,8,12,top);
+for(let i=0;i<23;i++){let mx=145+(i*59)%174,my=top+22+(i*53)%Math.max(17,bottom-top-30);c.fillStyle="#2f92d1";c.beginPath();c.arc(mx,my,4,0,Math.PI*2);c.fill()}
+c.fillStyle="#294b69";c.font="15px system-ui";c.fillText("Piston",355,top+13);c.fillText("p="+p.toFixed(2),18,42);c.fillText("V="+v.toFixed(2),18,64);
+$("stat"+e.s).textContent=`Starea ${e.phase===0?e.path[idx]:"intermediară"} · V=${v.toFixed(2)}, p=${p.toFixed(2)}, T∝${(p*v).toFixed(2)}`;
+const g=$("graph"+e.s).getContext("2d");g.clearRect(0,0,480,280);line(g,45,235,449,235);line(g,45,235,45,18);g.fillStyle="#234866";g.font="16px system-ui";g.fillText("p",24,23);g.fillText("V",454,251);
+for(const [name,st] of Object.entries(nodes)){const [px,py]=xy(st.v,st.p);g.beginPath();g.arc(px,py,4,0,Math.PI*2);g.fillStyle="#607f9d";g.fill();g.fillText(name,px+9,py-9)}
+for(let i=1;i<e.path.length;i++){let st=nodes[e.path[i-1]],nd=nodes[e.path[i]],x1=xy(st.v,st.p),x2=xy(nd.v,nd.p);
+if(i<=idx){line(g,...x1,...x2,"#1876bb",4)} else if(i===idx+1){line(g,...x1,x1[0]+(x2[0]-x1[0])*e.phase,x1[1]+(x2[1]-x1[1])*e.phase,"#1876bb",4)}
+else{g.setLineDash([6,6]);line(g,...x1,...x2,"#c1ccd6",2);g.setLineDash([])}}
+let pt=xy(v,p);g.beginPath();g.arc(...pt,8,0,Math.PI*2);g.fillStyle="#ed7c27";g.fill();
+}
+function advance(e){if(e.playing||e.index>=e.path.length-1)return;e.from=e.index;e.to=e.index+1;e.phase=0;e.playing=true;toggle(e)}
+function toggle(e){$("run"+e.s).disabled=e.playing||e.index===e.path.length-1;$("step"+e.s).disabled=e.playing||e.index===e.path.length-1}
+function reset(e){e.index=0;e.from=0;e.to=0;e.phase=0;e.playing=false;e.auto=false;$("msg"+e.s).textContent=e.s==="C"?"Pornește și urmărește traseul închis.":"Pornește și urmărește traseul deschis.";toggle(e);view(e)}
+for(const e of experiments){$("run"+e.s).onclick=()=>{if(e.playing||e.index===e.path.length-1)return;e.auto=true;advance(e)};$("step"+e.s).onclick=()=>advance(e);$("reset"+e.s).onclick=()=>reset(e);reset(e)}
+let prev=performance.now();function tick(now){const dt=Math.min((now-prev)/1000,.06);prev=now;for(const e of experiments){if(e.playing){e.phase=Math.min(1,e.phase+dt*.65);if(e.phase===1){e.index=e.to;e.from=e.index;e.phase=0;e.playing=false;const end=e.index===e.path.length-1;
+$("msg"+e.s).textContent=end?(e.s==="C"?"Ciclul s-a închis: A final = A inițial. ΔU=0; lucrul mecanic net este pozitiv.":"Proces încheiat în C: p, V și T diferă față de A. Proces neciclic."):`S-a ajuns în ${e.path[e.index]}. Apasă din nou pentru etapa următoare.`;toggle(e);if(e.auto&&!end)advance(e)}view(e)}}requestAnimationFrame(tick)}requestAnimationFrame(tick);
+$("no").onclick=()=>$("answer").textContent="Corect! Un ciclu se închide numai dacă toate mărimile de stare revin la valorile inițiale.";
+$("yes").onclick=()=>$("answer").textContent="Nu. Egalitatea volumelor singură nu garantează egalitatea stărilor termodinamice.";
+</script></body></html>
