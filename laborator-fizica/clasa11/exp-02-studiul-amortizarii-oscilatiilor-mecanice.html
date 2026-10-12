@@ -827,7 +827,8 @@ window.LAB_EXPERIMENT_CONFIG = {
 </script>
 
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa11" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 <script src="../assets/js/instrumente-scala.js" defer></script>
 <script src="../assets/js/monitorizare.js" defer></script>
 
@@ -1003,7 +1004,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Set experimental
 
-    <input
+    <input data-no-physics-symbols
         data-session-set
         readonly
     >
@@ -1017,7 +1018,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Data și ora începerii
 
-    <input
+    <input data-no-physics-symbols
         data-session-date
         readonly
     >
@@ -1654,7 +1655,9 @@ e<sup>−βt</sup>
     A₁ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-a1-answer="weak"
@@ -1776,7 +1779,9 @@ Oscilații:
     t₁ pentru 5 oscilații (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-time-answer="weak"
@@ -1838,7 +1843,9 @@ Oscilații:
     A₆ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-a6-answer="weak"
@@ -2041,7 +2048,9 @@ Oscilații:
     A₁ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-a1-answer="strong"
@@ -2162,7 +2171,9 @@ Oscilații:
     t₂ pentru 5 oscilații (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-time-answer="strong"
@@ -2224,7 +2235,9 @@ Oscilații:
     A₆ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-a6-answer="strong"
@@ -2446,7 +2459,9 @@ T₁ (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2479,7 +2494,9 @@ Decrementul logaritmic Λ₁
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2511,7 +2528,9 @@ Decrementul logaritmic Λ₁
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2543,7 +2562,9 @@ Decrementul logaritmic Λ₁
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2576,7 +2597,9 @@ Scăderea amplitudinii după 5 perioade (%)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2621,7 +2644,9 @@ T₂ (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2653,7 +2678,9 @@ Decrementul logaritmic Λ₂
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2685,7 +2712,9 @@ Decrementul logaritmic Λ₂
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2717,7 +2746,9 @@ Decrementul logaritmic Λ₂
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2750,7 +2781,9 @@ Scăderea amplitudinii după 5 perioade (%)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -3230,42 +3263,15 @@ const clone =
     };
 
 
-const numeric =
-    value => {
+function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[character]);
+}
 
-        const normalized =
-            String(
-                value ??
-                ""
-            )
-                .trim()
-                .replace(
-                    /\s+/g,
-                    ""
-                )
-                .replace(
-                    "%",
-                    ""
-                )
-                .replace(
-                    ",",
-                    "."
-                );
-
-
-        if(
-            normalized ===
-            ""
-        ){
-            return NaN;
-        }
-
-
-        return Number(
-            normalized
-        );
-
-    };
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
+}
 
 
 const round = (
@@ -8549,7 +8555,7 @@ function createPdfBlob(
 }
 
 
-function downloadPdf(){
+async function downloadPdf(){
 
     if(
         !state.evaluation ||
@@ -8681,53 +8687,19 @@ function downloadPdf(){
     ];
 
 
-    const blob =
-        createPdfBlob(
-            lines
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const anchor =
-        document.createElement(
-            "a"
-        );
-
-
-    anchor.href =
-        url;
-
-
-    anchor.download =
-        `EXP02-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
-
-
-    document.body.append(
-        anchor
-    );
-
-
-    anchor.click();
-
-
-    anchor.remove();
-
-
-    globalThis.setTimeout(
-        () => {
-
-            URL.revokeObjectURL(
-                url
-            );
-
-        },
-        1000
-    );
+    const pdfApi = globalThis.LaboratorPdfLocal;
+    if(!pdfApi){
+        alert("Modulul PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");
+        return;
+    }
+    const blob = pdfApi.createTextPdfBlob(lines);
+    const fileName = `EXP02-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
+    try {
+        await pdfApi.saveBlob(blob, fileName, "Raport EXP02 – Fizică");
+    } catch(error){
+        console.error("Descărcarea raportului PDF a eșuat.", error);
+        alert("Nu s-a putut salva PDF-ul. Încearcă din nou în browserul telefonului, tabletei sau calculatorului.");
+    }
 
 }
 

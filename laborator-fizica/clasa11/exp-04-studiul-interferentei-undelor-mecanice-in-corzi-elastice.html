@@ -840,9 +840,9 @@ window.LAB_EXPERIMENT_CONFIG = {
 </script>
 
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa11" defer></script>
 <script src="../assets/js/monitorizare.js" defer></script>
-<script src="../assets/js/pdf-local.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 
 </head>
 
@@ -1016,7 +1016,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Set experimental
 
-    <input
+    <input data-no-physics-symbols
         data-session-set
         readonly
     >
@@ -1030,7 +1030,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Data și ora începerii
 
-    <input
+    <input data-no-physics-symbols
         data-session-date
         readonly
     >
@@ -1692,7 +1692,9 @@ folosește modul
     A₁ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-reading="a1"
@@ -1754,7 +1756,9 @@ folosește modul
     A₂ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-reading="a2"
@@ -1820,7 +1824,9 @@ folosește modul
     λ (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-reading="wavelength"
@@ -1927,7 +1933,9 @@ Oscilații:
     Transcrie timpul pentru 5 oscilații, t (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-time-answer
@@ -2117,7 +2125,9 @@ Oscilații:
     Amplitudinea rezultantă măsurată (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-result-reading="zero"
@@ -2182,7 +2192,9 @@ Oscilații:
     Amplitudinea rezultantă măsurată (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-result-reading="middle"
@@ -2244,7 +2256,9 @@ Oscilații:
     Amplitudinea rezultantă măsurată (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-result-reading="pi"
@@ -2498,7 +2512,9 @@ t/5
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2531,7 +2547,9 @@ f =
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2577,7 +2595,9 @@ v =
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2622,7 +2642,9 @@ A₁ + A₂
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2656,7 +2678,9 @@ A<sub>teoretic,0</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2715,7 +2739,9 @@ A₂² +
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2749,7 +2775,9 @@ A<sub>teoretic,φ</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2794,7 +2822,9 @@ A<sub>teoretic,180</sub> =
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -2828,7 +2858,9 @@ A<sub>teoretic,180</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         autocomplete="off"
@@ -3307,44 +3339,14 @@ const clone =
     };
 
 
-function numeric(
-    value
-){
+function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[character]);
+}
 
-    const normalized =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(
-                /\s+/g,
-                ""
-            )
-            .replace(
-                "%",
-                ""
-            )
-            .replace(
-                ",",
-                "."
-            );
-
-
-    if(
-        normalized ===
-        ""
-    ){
-
-        return NaN;
-
-    }
-
-
-    return Number(
-        normalized
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
 
 

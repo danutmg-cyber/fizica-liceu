@@ -973,7 +973,8 @@ window.LAB_EXPERIMENT_CONFIG = {
 </script>
 
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa11" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 <script
     src="../assets/js/monitorizare.js"
     defer
@@ -1150,7 +1151,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Set experimental
 
-    <input
+    <input data-no-physics-symbols
         data-session-set
         readonly
     >
@@ -1164,7 +1165,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Data și ora începerii
 
-    <input
+    <input data-no-physics-symbols
         data-session-date
         readonly
     >
@@ -1807,7 +1808,9 @@ T<sub>b</sub>/2
     Amplitudinea A (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-amplitude-answer
@@ -2001,7 +2004,9 @@ Oscilații:
     t<sub>s</sub> (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-time-answer="symmetric"
@@ -2203,7 +2208,9 @@ Oscilații:
     t<sub>a</sub> (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-time-answer="antisymmetric"
@@ -2413,7 +2420,9 @@ Oscilații:
     Timpul măsurat pentru primul transfer maxim (s)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-transfer-answer
@@ -2629,7 +2638,9 @@ T<sub>s</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2661,7 +2672,9 @@ f<sub>s</sub> (Hz)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2695,7 +2708,9 @@ k (N/m)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2740,7 +2755,9 @@ T<sub>a</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2772,7 +2789,9 @@ f<sub>a</sub> (Hz)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2812,7 +2831,9 @@ k<sub>c</sub> (N/m)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2858,7 +2879,9 @@ T<sub>b</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2890,7 +2913,9 @@ t<sub>transfer,teoretic</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2924,7 +2949,9 @@ Eroarea relativă ε (%)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -3404,44 +3431,14 @@ const clone =
     };
 
 
-function numeric(
-    value
-){
+function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[character]);
+}
 
-    const normalized =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(
-                /\s+/g,
-                ""
-            )
-            .replace(
-                "%",
-                ""
-            )
-            .replace(
-                ",",
-                "."
-            );
-
-
-    if(
-        normalized ===
-        ""
-    ){
-
-        return NaN;
-
-    }
-
-
-    return Number(
-        normalized
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
 
 
@@ -5303,6 +5300,7 @@ function setModePosition(
     mode,
     time
 ){
+    if(!state.set) return;
 
     const period =
         mode ===
@@ -5868,6 +5866,7 @@ qs(
 function setTransferVisual(
     time
 ){
+    if(!state.set) return;
 
     const fs =
         state.set.hidden
@@ -8893,7 +8892,7 @@ function createPdfBlob(
 }
 
 
-function downloadPdf(){
+async function downloadPdf(){
 
     if(
         !state.evaluation ||
@@ -9027,53 +9026,19 @@ function downloadPdf(){
     ];
 
 
-    const blob =
-        createPdfBlob(
-            lines
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const anchor =
-        document.createElement(
-            "a"
-        );
-
-
-    anchor.href =
-        url;
-
-
-    anchor.download =
-        `EXP03-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
-
-
-    document.body.append(
-        anchor
-    );
-
-
-    anchor.click();
-
-
-    anchor.remove();
-
-
-    globalThis.setTimeout(
-        () => {
-
-            URL.revokeObjectURL(
-                url
-            );
-
-        },
-        1000
-    );
+    const pdfApi = globalThis.LaboratorPdfLocal;
+    if(!pdfApi){
+        alert("Modulul PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");
+        return;
+    }
+    const blob = pdfApi.createTextPdfBlob(lines);
+    const fileName = `EXP03-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
+    try {
+        await pdfApi.saveBlob(blob, fileName, "Raport EXP03 – Fizică");
+    } catch(error){
+        console.error("Descărcarea raportului PDF a eșuat.", error);
+        alert("Nu s-a putut salva PDF-ul. Încearcă din nou în browserul telefonului, tabletei sau calculatorului.");
+    }
 
 }
 

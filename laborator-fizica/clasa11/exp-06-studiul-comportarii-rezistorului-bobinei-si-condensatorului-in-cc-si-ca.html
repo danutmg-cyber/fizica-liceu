@@ -843,10 +843,10 @@ window.LAB_EXPERIMENT_CONFIG = {
 
 </script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa11" defer></script>
 <script src="../assets/js/instrumente-scala.js" defer></script>
 <script src="../assets/js/monitorizare.js" defer></script>
-<script src="../assets/js/pdf-local.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 
 </head>
 
@@ -1019,7 +1019,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Set experimental
 
-    <input
+    <input data-no-physics-symbols
         data-session-set
         readonly
     >
@@ -1033,7 +1033,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Data și ora începerii
 
-    <input
+    <input data-no-physics-symbols
         data-session-date
         readonly
     >
@@ -2040,7 +2040,9 @@ I<sub>R,CC</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="Rdc"
@@ -2085,7 +2087,9 @@ I<sub>L,CC</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="coil-r"
@@ -2130,7 +2134,9 @@ I<sub>R,CA</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="ZR"
@@ -2175,7 +2181,9 @@ I<sub>L,CA</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="ZL"
@@ -2208,7 +2216,9 @@ Z<sub>L</sub>² − r²
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="XL"
@@ -2240,7 +2250,9 @@ X<sub>L</sub> /
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="L"
@@ -2273,7 +2285,9 @@ X<sub>L</sub>/r
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="phiL"
@@ -2318,7 +2332,9 @@ I<sub>C,CA</sub>
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="XC"
@@ -2352,7 +2368,9 @@ C =
     </span>
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-calc="C"
@@ -2860,44 +2878,8 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const normalized =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(
-                /\s+/g,
-                ""
-            )
-            .replace(
-                "%",
-                ""
-            )
-            .replace(
-                ",",
-                "."
-            );
-
-
-    if(
-        normalized ===
-        ""
-    ){
-
-        return NaN;
-
-    }
-
-
-    return Number(
-        normalized
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
 
 
@@ -4682,7 +4664,9 @@ function cardHtml(
                         ${field.label} (${field.unit})
 
                         <input
-                            type="number"
+                            type="text"
+                            data-decimal-number
+                            data-physics-symbols
                             step="any"
                             inputmode="decimal"
                             data-measure-input="${key}:${field.name}"

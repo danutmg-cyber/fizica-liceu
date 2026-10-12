@@ -867,7 +867,8 @@ window.LAB_EXPERIMENT_CONFIG = {
 </script>
 
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa11" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 <script src="../assets/js/instrumente-scala.js" defer></script>
 <script src="../assets/js/monitorizare.js" defer></script>
 
@@ -1043,7 +1044,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Set experimental
 
-    <input
+    <input data-no-physics-symbols
         data-session-set
         readonly
     >
@@ -1057,7 +1058,7 @@ window.LAB_EXPERIMENT_CONFIG = {
 
     Data și ora
 
-    <input
+    <input data-no-physics-symbols
         data-session-date
         readonly
     >
@@ -1565,7 +1566,9 @@ până la centrul corpului.
     Lungimea citită l (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-grav-length-answer
@@ -1707,7 +1710,9 @@ Oscilații:
 Transcrie timpul indicat de cronometru, t (s)
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     data-grav-time-answer
@@ -1817,7 +1822,9 @@ Transcrie timpul indicat de cronometru, t (s)
     Forța F (N)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-force-answer
@@ -1874,7 +1881,9 @@ Transcrie timpul indicat de cronometru, t (s)
     Alungirea Δl (cm)
 
     <input
-        type="number"
+        type="text"
+        data-decimal-number
+        data-physics-symbols
         step="any"
         inputmode="decimal"
         data-extension-answer
@@ -2048,7 +2057,9 @@ Oscilații:
 Transcrie timpul indicat de cronometru, t (s)
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     data-elastic-time-answer
@@ -2279,7 +2290,9 @@ Perioada T<sub>g</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2314,7 +2327,9 @@ Accelerația gravitațională g (m/s²)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2348,7 +2363,9 @@ Abaterea relativă ε<sub>g</sub> (%)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2415,7 +2432,9 @@ k<sub>static</sub> (N/m)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2461,7 +2480,9 @@ Perioada T<sub>e</sub> (s)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2496,7 +2517,9 @@ k<sub>dinamic</sub> (N/m)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -2535,7 +2558,9 @@ Diferența relativă δ (%)
 </span>
 
 <input
-    type="number"
+    type="text"
+    data-decimal-number
+    data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -3009,27 +3034,15 @@ const clone =
     };
 
 
-const numeric =
-    value =>
-        Number(
-            String(
-                value ??
-                ""
-            )
-                .trim()
-                .replace(
-                    /\s+/g,
-                    ""
-                )
-                .replace(
-                    "%",
-                    ""
-                )
-                .replace(
-                    ",",
-                    "."
-                )
-        );
+function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[character]);
+}
+
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
+}
 
 
 const round = (
@@ -8251,7 +8264,7 @@ function createPdfBlob(
 }
 
 
-function downloadPdf(){
+async function downloadPdf(){
 
     if(
         !state.evaluation ||
@@ -8391,53 +8404,19 @@ function downloadPdf(){
     ];
 
 
-    const blob =
-        createPdfBlob(
-            lines
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const anchor =
-        document.createElement(
-            "a"
-        );
-
-
-    anchor.href =
-        url;
-
-
-    anchor.download =
-        `EXP01-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
-
-
-    document.body.append(
-        anchor
-    );
-
-
-    anchor.click();
-
-
-    anchor.remove();
-
-
-    globalThis.setTimeout(
-        () => {
-
-            URL.revokeObjectURL(
-                url
-            );
-
-        },
-        1000
-    );
+    const pdfApi = globalThis.LaboratorPdfLocal;
+    if(!pdfApi){
+        alert("Modulul PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");
+        return;
+    }
+    const blob = pdfApi.createTextPdfBlob(lines);
+    const fileName = `EXP01-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;
+    try {
+        await pdfApi.saveBlob(blob, fileName, "Raport EXP01 – Fizică");
+    } catch(error){
+        console.error("Descărcarea raportului PDF a eșuat.", error);
+        alert("Nu s-a putut salva PDF-ul. Încearcă din nou în browserul telefonului, tabletei sau calculatorului.");
+    }
 
 }
 
