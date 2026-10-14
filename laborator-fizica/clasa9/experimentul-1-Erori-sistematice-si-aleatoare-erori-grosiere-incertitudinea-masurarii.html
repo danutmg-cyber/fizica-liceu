@@ -713,9 +713,13 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
-    src="../assets/js/app.js"
+    src="../assets/js/app.js?v=2.1.2-clasa9"
     defer
 ></script>
+<script src="../../assets/vendor/html2pdf.bundle.min.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa9" defer></script>
+<script src="../assets/js/pdf-html.js?v=1" defer></script>
+
 
 <script
     src="../assets/js/monitorizare.js"
@@ -895,7 +899,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -909,7 +913,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1358,7 +1362,7 @@ scăderea unei valori negative înseamnă adunare.
 Transcrie e₀ (mm)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     autocomplete="off"
@@ -1374,7 +1378,7 @@ Transcrie e₀ (mm)
 Transcrie rezoluția riglei (mm)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -1998,7 +2002,7 @@ L̄ (mm)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2059,7 +2063,7 @@ u<sub>L</sub> (mm)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2120,7 +2124,7 @@ u<sub>rel</sub> (%)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2818,35 +2822,9 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
-
 
 function round(
     value,
@@ -4355,7 +4333,7 @@ function renderRuler(){
                 Lungimea citită (mm)
 
                 <input
-                    type="number"
+                    type="text" data-decimal-number data-physics-symbols
                     min="0"
                     step="any"
                     inputmode="decimal"
@@ -4638,7 +4616,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
                                 step="any"
                                 inputmode="decimal"
@@ -5456,7 +5434,7 @@ function renderCorrectionBlocks(){
                             </span>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
                                 step="any"
                                 inputmode="decimal"
@@ -8456,7 +8434,7 @@ qs(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
-function savePortfolioPdf(){
+async function savePortfolioPdf(){
 
     if(
         !state.evaluation
@@ -8466,25 +8444,6 @@ function savePortfolioPdf(){
 
         alert(
             "Finalizează mai întâi experimentul."
-        );
-
-
-        return;
-
-    }
-
-
-    const reportWindow =
-        globalThis.open(
-            "",
-            "_blank"
-        );
-
-
-    if(!reportWindow){
-
-        alert(
-            "Browserul a blocat fereastra raportului. Permite ferestrele pop-up și încearcă din nou."
         );
 
 
@@ -8630,10 +8589,10 @@ function savePortfolioPdf(){
         ).join("");
 
 
-    reportWindow.document.open();
+    
 
 
-    reportWindow.document.write(`
+    const reportHtml = (`
 
 <!doctype html>
 
@@ -9166,7 +9125,14 @@ window.addEventListener(
     `);
 
 
-    reportWindow.document.close();
+    try {
+        await globalThis.LaboratorPdfHtml.saveReport(reportHtml,
+            `EXP01-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,
+            "Raport EXP01 – Fizică", "portrait");
+    } catch(error){
+        console.error(error);
+        alert("PDF-ul nu a putut fi salvat. Reîncarcă pagina și încearcă din nou.");
+    }
 
 }
 

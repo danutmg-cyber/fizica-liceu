@@ -824,9 +824,13 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
-    src="../assets/js/app.js"
+    src="../assets/js/app.js?v=2.1.2-clasa9"
     defer
 ></script>
+<script src="../../assets/vendor/html2pdf.bundle.min.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa9" defer></script>
+<script src="../assets/js/pdf-html.js?v=1" defer></script>
+
 
 <script
     src="../assets/js/instrumente-scala.js"
@@ -1012,7 +1016,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -1026,7 +1030,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1470,9 +1474,11 @@ Cântărește corpul
 Masa corpului indicată de balanță (kg)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
-    step="0.001    
+    step="0.001"
+    inputmode="decimal"
+    data-base-mass
 >
 
 </label>
@@ -1482,7 +1488,7 @@ Masa corpului indicată de balanță (kg)
 
 Perechea de suprafețe
 
-<input
+<input data-no-physics-symbols
     data-surface-copy
     readonly
 >
@@ -2117,7 +2123,7 @@ I. Coeficientul mediu
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2176,7 +2182,7 @@ J. Semidispersia coeficienților
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2236,7 +2242,7 @@ u<sub>rel</sub> (%)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2866,35 +2872,9 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
-
 
 function round(
     value,
@@ -4943,9 +4923,11 @@ function renderForceInstrument(){
                 Forța citită (N)
 
                 <input
-                    type="number"
+                    type="text" data-decimal-number data-physics-symbols
                     min="0"
-                    step="0.1                    
+                    step="0.1"
+                    inputmode="decimal"
+                    data-force-answer
                 >
 
             </label>
@@ -5232,9 +5214,9 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
-                                step="0.001                                "${index}"
+                                step="0.001" inputmode="decimal" data-table-mass="${index}"
                             >
 
                         </td>
@@ -5243,9 +5225,9 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
-                                step="0.1                                "${index}"
+                                step="0.1" inputmode="decimal" data-table-force="${index}"
                             >
 
                         </td>
@@ -5941,7 +5923,7 @@ function renderIndividualCalculations(){
                         </span>
 
                         <input
-                            type="number"
+                            type="text" data-decimal-number data-physics-symbols
                             min="0"
                             step="any"
                             inputmode="decimal"
@@ -6002,7 +5984,7 @@ function renderIndividualCalculations(){
                         </span>
 
                         <input
-                            type="number"
+                            type="text" data-decimal-number data-physics-symbols
                             min="0"
                             step="any"
                             inputmode="decimal"
@@ -9147,7 +9129,7 @@ qs(
    PDF / PORTOFOLIU
 ========================================================= */
 
-function savePortfolioPdf(){
+async function savePortfolioPdf(){
 
     if(
         !state.evaluation
@@ -9157,25 +9139,6 @@ function savePortfolioPdf(){
 
         alert(
             "Finalizează mai întâi experimentul."
-        );
-
-
-        return;
-
-    }
-
-
-    const reportWindow =
-        globalThis.open(
-            "",
-            "_blank"
-        );
-
-
-    if(!reportWindow){
-
-        alert(
-            "Browserul a blocat fereastra raportului. Permite ferestrele pop-up și încearcă din nou."
         );
 
 
@@ -9302,10 +9265,10 @@ function savePortfolioPdf(){
         ).join("");
 
 
-    reportWindow.document.open();
+    
 
 
-    reportWindow.document.write(`
+    const reportHtml = (`
 
 <!doctype html>
 
@@ -9845,7 +9808,14 @@ window.addEventListener(
     `);
 
 
-    reportWindow.document.close();
+    try {
+        await globalThis.LaboratorPdfHtml.saveReport(reportHtml,
+            `EXP04-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,
+            "Raport EXP04 – Fizică", "portrait");
+    } catch(error){
+        console.error(error);
+        alert("PDF-ul nu a putut fi salvat. Reîncarcă pagina și încearcă din nou.");
+    }
 
 }
 

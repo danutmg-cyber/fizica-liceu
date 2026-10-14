@@ -132,7 +132,11 @@ window.LAB_EXPERIMENT_CONFIG={
 };
 </script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa9" defer></script>
+<script src="../../assets/vendor/html2pdf.bundle.min.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa9" defer></script>
+<script src="../assets/js/pdf-html.js?v=1" defer></script>
+
 <script src="../assets/js/monitorizare.js" defer></script>
 </head>
 
@@ -170,11 +174,11 @@ Timp în afara laboratorului: <b data-monitoring-count="screenAwaySeconds">0</b>
 <form data-identification>
 <div class="grid">
 <label class="field">Numele și prenumele
-<input name="name" minlength="3" maxlength="80" required>
+<input data-no-physics-symbols name="name" minlength="3" maxlength="80" required>
 </label>
 
 <label class="field">Clasa
-<input name="class" list="classes" placeholder="IX A" required>
+<input data-no-physics-symbols name="class" list="classes" placeholder="IX A" required>
 </label>
 </div>
 
@@ -188,12 +192,12 @@ Timp în afara laboratorului: <b data-monitoring-count="screenAwaySeconds">0</b>
 </label>
 
 <label class="field">Set experimental
-<input data-set-id readonly>
+<input data-no-physics-symbols data-set-id readonly>
 </label>
 </div>
 
 <label class="field">Data și ora
-<input data-session-date readonly>
+<input data-no-physics-symbols data-session-date readonly>
 </label>
 
 <label class="choice"><input type="checkbox" name="monitor" required>
@@ -468,7 +472,7 @@ Se acceptă și trunchierea corectă.
 <h3>Abaterea relativă normalizată medie</h3>
 <div class="formula">ε̄=(ε₁+ε₂+ε₃+ε₄)/4</div>
 <label class="field">ε̄ (%)
-<input data-calc="mean-error" type="number" min="0" step="0.01" inputmode="decimal" disabled>
+<input data-calc="mean-error" type="text" data-decimal-number data-physics-symbols min="0" step="0.01" inputmode="decimal" disabled>
 </label>
 <p class="calc-feedback info" data-calc-feedback="mean-error">Verifică mai întâi cele patru valori ε.</p>
 <button class="btn secondary" type="button" data-check-calc="mean-error" disabled>Verifică</button>
@@ -585,7 +589,7 @@ const root=$("[data-app]");
 const now=()=>new Date().toISOString();
 const clone=x=>typeof structuredClone==="function"?structuredClone(x):JSON.parse(JSON.stringify(x));
 const esc=x=>String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-const num=x=>{const s=String(x??"").trim().replace(/\s+/g,"").replace("%","").replace(",",".");return s===""?NaN:Number(s)};
+const num=x=>globalThis.PhysicsInput.parseNumber(x ?? "");
 const rnd=(x,d=2)=>Math.round((x+Number.EPSILON)*10**d)/10**d;
 const trunc=(x,d)=>Math.trunc(x*10**d)/10**d;
 const avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
@@ -972,7 +976,7 @@ function renderCalcBlocks(){
    <span class="rounding">${dec} zecimale.</span>
    <input
      data-calc="${key}"
-     type="number"
+     type="text" data-decimal-number data-physics-symbols
      ${key.startsWith("rx-") || key.startsWith("ry-")
        ? 'step="0.001" inputmode="decimal" data-signed-number'
        : key.startsWith("err-")
@@ -1323,11 +1327,10 @@ $("[data-evaluation]").onsubmit=async e=>{
 };
 
 /* PDF */
-$("[data-pdf]").onclick=()=>{
+$("[data-pdf]").onclick=async()=>{
  if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return}
 
- const w=open("","_blank");if(!w){alert("Browserul a blocat fereastra raportului.");return}
- const c=state.notebook.calculations,a=state.notebook.activity;
+const c=state.notebook.calculations,a=state.notebook.activity;
  const duration=Math.max(1,Math.round((Date.parse(state.evaluation.finishedAt)-Date.parse(state.session.startedAt))/60000));
 
  const rows=c.rows.map(r=>`
@@ -1337,7 +1340,7 @@ $("[data-pdf]").onclick=()=>{
 
  const attempts=Object.entries(a.calculationAttemptsByField).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("");
 
- w.document.write(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>EXP10 - ${esc(state.session.studentName)}</title>
+ const reportHtml = (`<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>EXP10 - ${esc(state.session.studentName)}</title>
  <style>
  body{font-family:Arial,sans-serif;color:#172b3a;margin:24px;line-height:1.4}h1{font-size:22px}h2{font-size:17px;border-bottom:1px solid #aaa;padding-bottom:4px;margin-top:22px}
  .id{padding:12px;border:2px solid #28637b}.status{padding:10px;margin:15px 0;border:2px solid #16794b;color:#16794b;font-weight:bold}
@@ -1381,7 +1384,14 @@ $("[data-pdf]").onclick=()=>{
  <button onclick="window.print()">Salvează ca PDF</button>
  <script>addEventListener("load",()=>setTimeout(()=>print(),300));<\/script>
  </body></html>`);
- w.document.close();
+ try {
+        await globalThis.LaboratorPdfHtml.saveReport(reportHtml,
+            `EXP10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,
+            "Raport EXP10 – Fizică", "landscape");
+    } catch(error){
+        console.error(error);
+        alert("PDF-ul nu a putut fi salvat. Reîncarcă pagina și încearcă din nou.");
+    }
 };
 
 /* inițializare */

@@ -815,9 +815,13 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
-    src="../assets/js/app.js"
+    src="../assets/js/app.js?v=2.1.2-clasa9"
     defer
 ></script>
+<script src="../../assets/vendor/html2pdf.bundle.min.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa9" defer></script>
+<script src="../assets/js/pdf-html.js?v=1" defer></script>
+
 
 <script
     src="../assets/js/instrumente-scala.js"
@@ -1002,7 +1006,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -1016,7 +1020,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1534,7 +1538,7 @@ Pornește determinarea 1
 Timpul citit pe cronometru (s)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="0.01"
     inputmode="decimal"
@@ -1960,7 +1964,7 @@ A. Conversia deplasării în metri
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2016,7 +2020,7 @@ v₁ (m/s)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2076,7 +2080,7 @@ v₂ (m/s)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2136,7 +2140,7 @@ v₃ (m/s)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2196,7 +2200,7 @@ v̄ (m/s)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2256,7 +2260,7 @@ F. Incertitudinea estimată prin semidispersie
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2316,7 +2320,7 @@ u<sub>rel</sub> (%)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -2376,7 +2380,7 @@ v̄ (km/h)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     min="0"
     step="any"
     inputmode="decimal"
@@ -3000,35 +3004,9 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
+function numeric(value){
+    return globalThis.PhysicsInput.parseNumber(value ?? "");
 }
-
 
 function round(
     value,
@@ -4419,7 +4397,7 @@ function renderDistanceInstrument(){
                 Distanța citită (cm)
 
                 <input
-                    type="number"
+                    type="text" data-decimal-number data-physics-symbols
                     min="0"
                     step="any"
                     inputmode="decimal"
@@ -5304,7 +5282,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
                                 step="any"
                                 inputmode="decimal"
@@ -5318,7 +5296,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="number"
+                                type="text" data-decimal-number data-physics-symbols
                                 min="0"
                                 step="any"
                                 inputmode="decimal"
@@ -8928,7 +8906,7 @@ qs(
    PDF / PORTOFOLIU
 ========================================================= */
 
-function savePortfolioPdf(){
+async function savePortfolioPdf(){
 
     if(
         !state.evaluation
@@ -8938,25 +8916,6 @@ function savePortfolioPdf(){
 
         alert(
             "Finalizează mai întâi experimentul."
-        );
-
-
-        return;
-
-    }
-
-
-    const reportWindow =
-        globalThis.open(
-            "",
-            "_blank"
-        );
-
-
-    if(!reportWindow){
-
-        alert(
-            "Browserul a blocat fereastra raportului. Permite ferestrele pop-up și încearcă din nou."
         );
 
 
@@ -9063,10 +9022,10 @@ function savePortfolioPdf(){
             .join("");
 
 
-    reportWindow.document.open();
+    
 
 
-    reportWindow.document.write(`
+    const reportHtml = (`
 
 <!doctype html>
 
@@ -9634,7 +9593,14 @@ window.addEventListener(
     `);
 
 
-    reportWindow.document.close();
+    try {
+        await globalThis.LaboratorPdfHtml.saveReport(reportHtml,
+            `EXP02-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,
+            "Raport EXP02 – Fizică", "portrait");
+    } catch(error){
+        console.error(error);
+        alert("PDF-ul nu a putut fi salvat. Reîncarcă pagina și încearcă din nou.");
+    }
 
 }
 
