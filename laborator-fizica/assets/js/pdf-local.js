@@ -1,15 +1,22 @@
 (function(global){
     "use strict";
 
+    // Fontul PDF existent este ASCII: păstrăm sensul formulelor prin echivalente text.
+    const physicsSymbols = {"±":"+/-","−":"-","﹣":"-","－":"-","–":"-","—":"-","π":" pi ","λ":" lambda ","θ":" theta ","ω":" omega ","Ω":" ohm ","μ":" mu ","µ":" mu ","ν":" nu ","ε":" epsilon ","Δ":" Delta ","δ":" delta ","α":" alpha ","β":" beta ","γ":" gamma ","ρ":" rho ","η":" eta ","σ":" sigma ","φ":" phi ","ϕ":" phi ","Σ":" Sigma ","√":"sqrt","∞":"infinity","∝":" proportional cu ","×":"*","·":"*","°":" grade ","≤":"<=","≥":">=","≠":"!=","≈":"~=","“":"\"","”":"\"","’":"'","…":"..."};
+    const superscripts = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁺":"+","⁻":"-"};
+    const subscripts = {"₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9","ₐ":"a","ₑ":"e","ₒ":"o","ₓ":"x","ₙ":"n","ₘ":"m","ₛ":"s","ₜ":"t","ᵢ":"i","ⱼ":"j"};
+
     function asciiText(value){
         return String(value ?? "")
+            .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, sequence => "^" + Array.from(sequence, character => superscripts[character]).join(""))
+            .replace(/[₀₁₂₃₄₅₆₇₈₉ₐₑₒₓₙₘₛₜᵢⱼ]+/g, sequence => "_" + Array.from(sequence, character => subscripts[character]).join(""))
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
             .replace(/ș|ş/g, "s")
             .replace(/Ș|Ş/g, "S")
             .replace(/ț|ţ/g, "t")
             .replace(/Ț|Ţ/g, "T")
-            .replace(/[^\x20-\x7E]/g, " ");
+            .replace(/[^\x20-\x7E]/g, character => physicsSymbols[character] || " ");
     }
 
     function pdfEscape(value){

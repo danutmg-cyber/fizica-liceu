@@ -6,10 +6,10 @@
  */
 (function () {
   "use strict";
-  if (window.PhysicsInput && window.PhysicsInput.version === "2.1.1") return;
+  if (window.PhysicsInput && window.PhysicsInput.version === "2.1.2") return;
 
   const symbols = [
-    [",", "virgulă"], [".", "punct zecimal"], ["=", "egal"], ["−", "minus"], ["±", "plus-minus"], ["μ", "miu"],
+    [",", "virgulă"], [".", "punct zecimal"], ["+", "plus"], ["=", "egal"], ["−", "minus"], ["±", "plus-minus"], ["μ", "miu"],
     ["ν", "niu"], ["ε", "epsilon"], ["ω", "omega mic"],
     ["Ω", "omega mare / ohm"], ["Δ", "delta mare"],
     ["δ", "delta mic"], ["α", "alfa"], ["β", "beta"],
@@ -118,7 +118,7 @@
 
   function canUseSymbols(input) {
     if (input.hasAttribute("data-no-physics-symbols")) return false;
-    if (isDecimalField(input)) return false;
+    if (isDecimalField(input)) return input.hasAttribute("data-physics-symbols");
     if (input.dataset.physicsKind === "number") return false;
     if (input.tagName !== "TEXTAREA" && !["text", "search"].includes(input.type)) return false;
     if (input.type === "search") return false;
@@ -284,9 +284,12 @@
       tools.appendChild(open);
       const note = document.createElement("p");
       note.className = "physics-symbol-note";
-      note.textContent = "Alege simbolul. ω = omega mic; Ω = ohm; ν = niu, diferit de v.";
+      note.textContent = decimal
+        ? "Introdu valoarea cu virgulă sau punct. ± indică o incertitudine; în câmpurile de calcul se cere o singură valoare numerică."
+        : "Alege simbolul. ω = omega mic; Ω = ohm; ν = niu, diferit de v.";
       panel.appendChild(note);
-      symbols.forEach(function (pair) {
+      const fieldSymbols = decimal ? symbols.filter(pair => [",", ".", "+", "−", "±"].includes(pair[0])) : symbols;
+      fieldSymbols.forEach(function (pair) {
         const button = makeButton(pair[0] + " — " + pair[1]);
         button.addEventListener("click", function () { insert(pair[0]); });
         panel.appendChild(button);
@@ -312,6 +315,8 @@
     tools.appendChild(status);
     function sync() {
       const disabled = input.disabled || input.readOnly;
+      tools.hidden = input.readOnly;
+      tools.style.display = input.readOnly ? "none" : "";
       tools.querySelectorAll("button").forEach(function (b) { b.disabled = disabled; });
       const panel = tools.nextElementSibling;
       if (panel && panel.classList.contains("physics-symbol-panel")) {
@@ -330,7 +335,7 @@
   }
 
   window.PhysicsInput = {
-    version: "2.1.1", init: init, normalizeFormula: normalizeFormula,
+    version: "2.1.2", init: init, normalizeFormula: normalizeFormula,
     parseNumber: parseNumber, parseUncertainty: parseUncertainty,
     readNumber: function (input) { return parseNumber(input.value); },
     numberFieldError: numberFieldError
