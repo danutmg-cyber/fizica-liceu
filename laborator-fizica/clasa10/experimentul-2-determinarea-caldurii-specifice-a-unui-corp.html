@@ -784,14 +784,14 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa10" defer></script>
 
 <script
     src="../assets/js/monitorizare.js"
     defer
 ></script>
 
-<script src="../assets/js/pdf-local.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa10" defer></script>
 
 </head>
 
@@ -966,7 +966,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -980,7 +980,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1344,7 +1344,7 @@ Determină masa corpului, masa apei și temperatura inițială a apei.
 Temperatura apei T<sub>a</sub> (°C)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-water-temperature-answer
@@ -1674,7 +1674,7 @@ Corpul nu a fost încă introdus în baia de încălzire.
 Temperatura corpului T<sub>c</sub> (°C)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-body-temperature-answer
@@ -1838,7 +1838,7 @@ Temperatura nu a fost încă stabilizată.
 Temperatura de echilibru T<sub>e</sub> (°C)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-equilibrium-answer
@@ -2072,7 +2072,7 @@ m<sub>c</sub> (kg)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="body-mass-kg"
@@ -2123,7 +2123,7 @@ m<sub>a</sub> (kg)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="water-mass-kg"
@@ -2174,7 +2174,7 @@ T<sub>e</sub> − T<sub>a</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="water-delta"
@@ -2225,7 +2225,7 @@ T<sub>c</sub> − T<sub>e</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="body-delta"
@@ -2278,7 +2278,7 @@ Q<sub>a</sub> (J)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="water-heat"
@@ -2340,7 +2340,7 @@ c<sub>c</sub> [J/(kg·K)]
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="specific-heat"
@@ -2421,7 +2421,7 @@ c<sub>ref</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="relative-error"
@@ -2966,35 +2966,7 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
-}
-
+function numeric(value){ return globalThis.PhysicsInput.parseNumber(value ?? ""); }
 
 function round(
     value,
@@ -4538,7 +4510,7 @@ function createBalanceMeasurement({
                 Valoarea citită (g)
 
                 <input
-                    type="text"
+                    type="text" data-decimal-number data-physics-symbols
                     inputmode="decimal"
                     data-balance-answer
                 >
@@ -8585,7 +8557,20 @@ qs(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
-async function savePortfolioPdf(){if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}const pdfApi=globalThis.LaboratorPdfLocal;if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}const m=state.notebook.measurements,c=state.notebook.calculations;const evaluationLines=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(item=>[`${item.number}. ${item.question}`,`Raspuns elev: ${item.studentAnswer}`,`Raspuns corect: ${item.correctAnswer}`,`Punctaj: ${item.correct?"Corect - 1 p":"Incorect - 0 p"}`,""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","","Clasa a X-a","EXP02 - Determinarea caldurii specifice a unui corp","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Numar catalog: ${state.session.catalogNumber}`,`Data: ${state.session.experimentDate}`,`Set: ${state.set.id}`,`ID raport: ${state.reportId}`,"STATUS: RAPORT SALVAT LOCAL - DATELE NU AU FOST TRANSMISE","",`Material: ${state.set.visible.materialName}`,"MASURARI",`m corp=${Number(m.bodyMass.studentReading).toFixed(0)} g; m apa=${Number(m.waterMass.studentReading).toFixed(0)} g`,`T apa=${Number(m.waterTemperature.studentReading).toFixed(1)} grade C; T corp=${Number(m.bodyTemperature.studentReading).toFixed(1)} grade C; T echilibru=${Number(m.equilibriumTemperature.studentReading).toFixed(1)} grade C`,"","REZULTATE",`c determinat=${Number(c.specificHeat_J_kgK).toFixed(0)} J/(kg K)`,`c referinta=${Number(c.referenceSpecificHeat_J_kgK).toFixed(0)} J/(kg K)`,`eroare relativa=${Number(c.relativeError_percent).toFixed(2)} %`,"",`Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,"INTERPRETARE",state.notebook.comparison.interpretation,"","CONCLUZIE",state.evaluation.conclusion,"","SURSE DE EROARE SI LIMITARI",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`];const blob=pdfApi.createTextPdfBlob(lines);const fileName=`EXP02-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;try{await pdfApi.saveBlob(blob,fileName,"Raport EXP02 clasa a X-a - Fizică");}catch(error){console.error(error);alert("PDF-ul nu a putut fi salvat pe acest dispozitiv.");}}
+
+let pdfExportPending=false;
+async function savePortfolioPdf(){
+    if(pdfExportPending) return;
+    const button=document.querySelector('[data-download-pdf]');
+    const label=button?.textContent,disabled=button?.disabled;
+    pdfExportPending=true;
+    if(button){button.disabled=true;button.textContent='Se pregătește PDF-ul…';}
+    try{await exportPortfolioPdf();}
+    catch(error){console.error(error);alert('PDF-ul nu a putut fi salvat. Încearcă din nou.');}
+    finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
+}
+
+async function exportPortfolioPdf(){if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}const pdfApi=globalThis.LaboratorPdfLocal;if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}const m=state.notebook.measurements,c=state.notebook.calculations;const evaluationLines=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(item=>[`${item.number}. ${item.question}`,`Raspuns elev: ${item.studentAnswer}`,`Raspuns corect: ${item.correctAnswer}`,`Punctaj: ${item.correct?"Corect - 1 p":"Incorect - 0 p"}`,""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","","Clasa a X-a","EXP02 - Determinarea caldurii specifice a unui corp","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Numar catalog: ${state.session.catalogNumber}`,`Data: ${state.session.experimentDate}`,`Set: ${state.set.id}`,`ID raport: ${state.reportId}`,"STATUS: RAPORT SALVAT LOCAL - DATELE NU AU FOST TRANSMISE","",`Material: ${state.set.visible.materialName}`,"MASURARI",`m corp=${Number(m.bodyMass.studentReading).toFixed(0)} g; m apa=${Number(m.waterMass.studentReading).toFixed(0)} g`,`T apa=${Number(m.waterTemperature.studentReading).toFixed(1)} grade C; T corp=${Number(m.bodyTemperature.studentReading).toFixed(1)} grade C; T echilibru=${Number(m.equilibriumTemperature.studentReading).toFixed(1)} grade C`,"","REZULTATE",`c determinat=${Number(c.specificHeat_J_kgK).toFixed(0)} J/(kg K)`,`c referinta=${Number(c.referenceSpecificHeat_J_kgK).toFixed(0)} J/(kg K)`,`eroare relativa=${Number(c.relativeError_percent).toFixed(2)} %`,"",`Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,"INTERPRETARE",state.notebook.comparison.interpretation,"","CONCLUZIE",state.evaluation.conclusion,"","SURSE DE EROARE SI LIMITARI",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`];const blob=pdfApi.createTextPdfBlob(lines);const fileName=`EXP02-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;try{await pdfApi.saveBlob(blob,fileName,"Raport EXP02 clasa a X-a - Fizică");}catch(error){console.error(error);alert("PDF-ul nu a putut fi salvat pe acest dispozitiv.");}}
 
 qs(
     "[data-download-pdf]"

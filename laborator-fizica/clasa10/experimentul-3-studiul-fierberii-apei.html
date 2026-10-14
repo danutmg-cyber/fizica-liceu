@@ -764,14 +764,14 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa10" defer></script>
 
 <script
     src="../assets/js/monitorizare.js"
     defer
 ></script>
 
-<script src="../assets/js/pdf-local.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa10" defer></script>
 
 </head>
 
@@ -946,7 +946,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -960,7 +960,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1390,7 +1390,7 @@ creșterea masei apei
 Transcrie intervalul dintre citiri (min)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-copy-interval
@@ -1852,7 +1852,7 @@ aflat înainte de palierul de fierbere.
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="heating-time"
@@ -1904,7 +1904,7 @@ T<sub>pre</sub> − T₀
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="heating-rise"
@@ -1956,7 +1956,7 @@ v<sub>T</sub> (°C/min)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="heating-rate"
@@ -2018,7 +2018,7 @@ T<sub>f,exp</sub> (°C)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="boiling-mean"
@@ -2076,7 +2076,7 @@ Folosește numai ultimele trei citiri.
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="plateau-spread"
@@ -2129,7 +2129,7 @@ F. Abaterea absolută față de 100 °C
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="absolute-deviation"
@@ -2184,7 +2184,7 @@ G. Abaterea relativă
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="relative-deviation"
@@ -2731,35 +2731,7 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
-}
-
+function numeric(value){ return globalThis.PhysicsInput.parseNumber(value ?? ""); }
 
 function round(
     value,
@@ -4368,7 +4340,7 @@ function renderReading(){
                 Temperatura citită (°C)
 
                 <input
-                    type="text"
+                    type="text" data-decimal-number data-physics-symbols
                     inputmode="decimal"
                     autocomplete="off"
                     data-scale-answer
@@ -4640,7 +4612,7 @@ function buildDataTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="text" data-decimal-number data-physics-symbols
                                 inputmode="decimal"
                                 data-table-value="${index}"
                                 aria-label="Temperatura la ${reading.timeMinutes} minute"
@@ -7710,7 +7682,20 @@ qs(
    PDF PORTOFOLIU
 ========================================================= */
 
-async function savePortfolioPdf(){if(!state.evaluation||!state.notebook)return alert("Finalizează mai întâi experimentul.");const api=globalThis.LaboratorPdfLocal;if(!api)return alert("Modulul PDF nu s-a încărcat.");const readings=state.notebook.measurements.readings||[];const details=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(x=>[`${x.number}. ${x.question}`,`Raspuns elev: ${x.studentAnswer}`,`Raspuns corect: ${x.correctAnswer}`,x.correct?"Corect - 1 p":"Incorect - 0 p",""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","Clasa a X-a - EXP03 - Studiul fierberii apei","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Nr. catalog: ${state.session.catalogNumber}`,`ID raport: ${state.reportId}`,"DATELE NU AU FOST TRANSMISE","","MASURARI",...readings.map(r=>`t=${Number(r.timeMinutes).toFixed(1)} min; T=${Number(r.temperatureC).toFixed(1)} grade C`),"",`Punctaj: ${state.evaluation.score}/4`,"DETALIERE EVALUARE",...details,"CONCLUZIE",state.evaluation.conclusion,"SURSE DE EROARE",state.evaluation.errorSources];const blob=api.createTextPdfBlob(lines);await api.saveBlob(blob,`EXP03-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,"Raport EXP03 - Fizică")}
+
+let pdfExportPending=false;
+async function savePortfolioPdf(){
+    if(pdfExportPending) return;
+    const button=document.querySelector('[data-download-pdf]');
+    const label=button?.textContent,disabled=button?.disabled;
+    pdfExportPending=true;
+    if(button){button.disabled=true;button.textContent='Se pregătește PDF-ul…';}
+    try{await exportPortfolioPdf();}
+    catch(error){console.error(error);alert('PDF-ul nu a putut fi salvat. Încearcă din nou.');}
+    finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
+}
+
+async function exportPortfolioPdf(){if(!state.evaluation||!state.notebook)return alert("Finalizează mai întâi experimentul.");const api=globalThis.LaboratorPdfLocal;if(!api)return alert("Modulul PDF nu s-a încărcat.");const readings=state.notebook.measurements||[];const details=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(x=>[`${x.number}. ${x.question}`,`Raspuns elev: ${x.studentAnswer}`,`Raspuns corect: ${x.correctAnswer}`,x.correct?"Corect - 1 p":"Incorect - 0 p",""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","Clasa a X-a - EXP03 - Studiul fierberii apei","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Nr. catalog: ${state.session.catalogNumber}`,`ID raport: ${state.reportId}`,"DATELE NU AU FOST TRANSMISE","","MASURARI",...readings.map(r=>`t=${Number(r.timeMinutes).toFixed(1)} min; T=${Number(r.temperatureC).toFixed(1)} grade C`),"",`Punctaj: ${state.evaluation.score}/4`,"DETALIERE EVALUARE",...details,"CONCLUZIE",state.evaluation.conclusion,"SURSE DE EROARE",state.evaluation.errorSources];const blob=api.createTextPdfBlob(lines);await api.saveBlob(blob,`EXP03-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`,"Raport EXP03 - Fizică")}
 
 /* =========================================================
    PDF

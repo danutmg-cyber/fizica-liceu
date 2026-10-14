@@ -783,7 +783,7 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa10" defer></script>
 
 <script
     src="../assets/js/monitorizare.js"
@@ -791,7 +791,7 @@ window.LAB_EXPERIMENT_CONFIG={
 ></script>
 
 <script
-    src="../assets/js/pdf-local.js"
+    src="../assets/js/pdf-local.js?v=2.1.2-clasa10"
     defer
 ></script>
 
@@ -968,7 +968,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -982,7 +982,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -2195,7 +2195,7 @@ r<sub>U1</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="ru1"
@@ -2237,7 +2237,7 @@ r<sub>N1</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="rn1"
@@ -2282,7 +2282,7 @@ r<sub>N1</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="e1"
@@ -2340,7 +2340,7 @@ r<sub>U2</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="ru2"
@@ -2382,7 +2382,7 @@ r<sub>N2</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="rn2"
@@ -2427,7 +2427,7 @@ r<sub>N2</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="e2"
@@ -2485,7 +2485,7 @@ r<sub>U3</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="ru3"
@@ -2527,7 +2527,7 @@ r<sub>N3</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="rn3"
@@ -2572,7 +2572,7 @@ r<sub>N3</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="e3"
@@ -2630,7 +2630,7 @@ D. Abaterea relativă medie
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="e-mean"
@@ -3287,35 +3287,7 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
-}
-
+function numeric(value){ return globalThis.PhysicsInput.parseNumber(value ?? ""); }
 
 function round(
     value,
@@ -5219,7 +5191,7 @@ function renderInstrument(){
                 Tensiunea efectivă citită (V)
 
                 <input
-                    type="text"
+                    type="text" data-decimal-number data-physics-symbols
                     inputmode="decimal"
                     autocomplete="off"
                     data-meter-answer
@@ -5601,7 +5573,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="text" data-decimal-number data-physics-symbols
                                 inputmode="decimal"
                                 data-table-u1="${index}"
                                 aria-label="U1 pentru configurația ${index + 1}"
@@ -5612,7 +5584,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="text" data-decimal-number data-physics-symbols
                                 inputmode="decimal"
                                 data-table-u2="${index}"
                                 aria-label="U2 pentru configurația ${index + 1}"
@@ -9114,7 +9086,20 @@ qs(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
+
+let pdfExportPending=false;
 async function savePortfolioPdf(){
+    if(pdfExportPending) return;
+    const button=document.querySelector('[data-download-pdf]');
+    const label=button?.textContent,disabled=button?.disabled;
+    pdfExportPending=true;
+    if(button){button.disabled=true;button.textContent='Se pregătește PDF-ul…';}
+    try{await exportPortfolioPdf();}
+    catch(error){console.error(error);alert('PDF-ul nu a putut fi salvat. Încearcă din nou.');}
+    finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
+}
+
+async function exportPortfolioPdf(){
     if(!state.evaluation||!state.notebook)return alert("Finalizează mai întâi experimentul.");
     const api=globalThis.LaboratorPdfLocal;
     if(!api)return alert("Modulul PDF nu s-a încărcat.");

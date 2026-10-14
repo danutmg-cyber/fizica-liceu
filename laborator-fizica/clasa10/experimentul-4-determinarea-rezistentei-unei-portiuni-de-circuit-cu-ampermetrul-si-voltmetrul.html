@@ -1359,7 +1359,7 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa10" defer></script>
 
 
 <script
@@ -1369,7 +1369,7 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
-    src="../assets/js/pdf-local.js"
+    src="../assets/js/pdf-local.js?v=2.1.2-clasa10"
     defer
 ></script>
 
@@ -1558,7 +1558,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -1572,7 +1572,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -2718,7 +2718,7 @@ R₁ (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r1"
@@ -2771,7 +2771,7 @@ R₂ (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r2"
@@ -2824,7 +2824,7 @@ R₃ (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r3"
@@ -2877,7 +2877,7 @@ R₄ (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r4"
@@ -2932,7 +2932,7 @@ R<sub>med</sub> (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r-mean"
@@ -2991,7 +2991,7 @@ R<sub>graf</sub> (Ω)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="r-graph"
@@ -3077,7 +3077,7 @@ R<sub>ref</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="relative-error"
@@ -3631,46 +3631,7 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(
-                /\s+/g,
-                ""
-            )
-            .replace(
-                "%",
-                ""
-            )
-            .replace(
-                ",",
-                "."
-            );
-
-
-    if(
-        text ===
-        ""
-    ){
-
-        return NaN;
-
-    }
-
-
-    return Number(
-        text
-    );
-
-}
-
+function numeric(value){ return globalThis.PhysicsInput.parseNumber(value ?? ""); }
 
 function round(
     value,
@@ -5578,7 +5539,7 @@ function renderInstrument(){
                 Valoarea citită (${unit})
 
                 <input
-                    type="text"
+                    type="text" data-decimal-number data-physics-symbols
                     inputmode="decimal"
                     autocomplete="off"
                     data-meter-answer
@@ -5941,7 +5902,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="text" data-decimal-number data-physics-symbols
                                 inputmode="decimal"
                                 data-table-u="${index}"
                                 aria-label="Tensiunea determinării ${index + 1}"
@@ -5953,7 +5914,7 @@ function buildMeasurementTable(){
                         <td>
 
                             <input
-                                type="text"
+                                type="text" data-decimal-number data-physics-symbols
                                 inputmode="decimal"
                                 data-table-i="${index}"
                                 aria-label="Intensitatea determinării ${index + 1}"
@@ -9381,7 +9342,20 @@ qs(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
+
+let pdfExportPending=false;
 async function savePortfolioPdf(){
+    if(pdfExportPending) return;
+    const button=document.querySelector('[data-download-pdf]');
+    const label=button?.textContent,disabled=button?.disabled;
+    pdfExportPending=true;
+    if(button){button.disabled=true;button.textContent='Se pregătește PDF-ul…';}
+    try{await exportPortfolioPdf();}
+    catch(error){console.error(error);alert('PDF-ul nu a putut fi salvat. Încearcă din nou.');}
+    finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
+}
+
+async function exportPortfolioPdf(){
     if(!state.evaluation||!state.notebook)return alert("Finalizează mai întâi experimentul.");
     const api=globalThis.LaboratorPdfLocal;
     if(!api)return alert("Modulul PDF nu s-a încărcat.");

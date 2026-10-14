@@ -672,14 +672,14 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
-<script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/app.js?v=2.1.2-clasa10" defer></script>
 
 <script
     src="../assets/js/monitorizare.js"
     defer
 ></script>
 
-<script src="../assets/js/pdf-local.js" defer></script>
+<script src="../assets/js/pdf-local.js?v=2.1.2-clasa10" defer></script>
 
 </head>
 
@@ -854,7 +854,7 @@ Numărul în catalog
 
 Set experimental
 
-<input
+<input data-no-physics-symbols
     data-session-set
     readonly
 >
@@ -868,7 +868,7 @@ Set experimental
 
 Data și ora începerii
 
-<input
+<input data-no-physics-symbols
     data-session-date
     readonly
 >
@@ -1543,7 +1543,7 @@ Citește termometrul după stabilizarea temperaturii.
 Temperatura citită T<sub>e,măsurat</sub> (°C)
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-final-answer
@@ -1779,7 +1779,7 @@ m₁ (g)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="mass-cold"
@@ -1831,7 +1831,7 @@ m₂ (g)
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="mass-hot"
@@ -1891,7 +1891,7 @@ Verifică mai întâi m₁ și m₂.
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="equilibrium-temperature"
@@ -1951,7 +1951,7 @@ T<sub>e,calc</sub>|
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="absolute-difference"
@@ -2015,7 +2015,7 @@ T<sub>e,calc</sub>
 </span>
 
 <input
-    type="number"
+    type="text" data-decimal-number data-physics-symbols
     step="any"
     inputmode="decimal"
     data-calc="relative-difference"
@@ -2570,35 +2570,7 @@ function escapeHtml(
 }
 
 
-function numeric(
-    value
-){
-
-    const text =
-        String(
-            value ??
-            ""
-        )
-            .trim()
-            .replace(/\s+/g,"")
-            .replace("%","")
-            .replace(",",".");
-
-
-    if(
-        text ===
-        ""
-    ){
-        return NaN;
-    }
-
-
-    return Number(
-        text
-    );
-
-}
-
+function numeric(value){ return globalThis.PhysicsInput.parseNumber(value ?? ""); }
 
 function round(
     value,
@@ -4191,6 +4163,8 @@ function createInstrumentCard(
 
     input.inputMode =
         "decimal";
+    input.setAttribute("data-decimal-number", "");
+    input.setAttribute("data-physics-symbols", "");
 
 
     field.append(
@@ -7688,7 +7662,20 @@ qs(
    PDF PENTRU PORTOFOLIU
 ========================================================= */
 
+
+let pdfExportPending=false;
 async function savePortfolioPdf(){
+    if(pdfExportPending) return;
+    const button=document.querySelector('[data-download-pdf]');
+    const label=button?.textContent,disabled=button?.disabled;
+    pdfExportPending=true;
+    if(button){button.disabled=true;button.textContent='Se pregătește PDF-ul…';}
+    try{await exportPortfolioPdf();}
+    catch(error){console.error(error);alert('PDF-ul nu a putut fi salvat. Încearcă din nou.');}
+    finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
+}
+
+async function exportPortfolioPdf(){
     if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}
     const pdfApi=globalThis.LaboratorPdfLocal;
     if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}
