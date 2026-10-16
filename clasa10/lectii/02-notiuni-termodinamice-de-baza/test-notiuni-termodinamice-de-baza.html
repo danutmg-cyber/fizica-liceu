@@ -1469,6 +1469,10 @@ Ecran complet
 </div>
 
 
+<div class="form-field" style="margin-top:18px">
+<label for="resumeSession"><input id="resumeSession" type="checkbox"> Reia sesiunea salvată pentru acest nume și număr de catalog</label>
+<p>Implicit, „Începe testul” pornește un test nou de la itemul 1, cu răspunsurile și cronometrul resetate. Bifează opțiunea doar pentru a continua testul salvat sau a vedea rezultatul anterior. Un test nou înlocuiește sesiunea salvată pentru aceleași date.</p>
+</div>
 <div class="start-actions">
 
 <button
@@ -4931,6 +4935,7 @@ function attachAnswerListeners(
 
 
               renderCurrentItem();
+    window.scrollTo({top: 0, behavior: "auto"});
 
             }
           );
@@ -5735,8 +5740,13 @@ startButton.addEventListener(
     };
 
 
-    const restored =
-      restoreSession();
+    const resumeRequested = document.getElementById("resumeSession").checked;
+    const restored = resumeRequested && restoreSession();
+    if (resumeRequested && !restored) {
+      startError.textContent = "Nu există o sesiune salvată pentru aceste date. Debifează reluarea pentru a începe un test nou.";
+      startError.hidden = false;
+      return;
+    }
 
 
     if(
