@@ -2081,20 +2081,29 @@ temperatura de echilibru.
 
 <div class="calculation-block">
 
-<h3>
-G. Interpretarea fizică
-</h3>
+<h3>G. Interpretarea fizică și reflecția asupra învățării</h3>
+<p class="lab-warning"><strong>Repetarea nu se penalizează; corectarea explicată și aplicarea independentă sunt valorificate.</strong><br>Încercările sunt consemnate pentru a descrie exersarea. Nu reduc punctajul și nu sunt folosite pentru clasamente.</p>
+<div id="interpretation-guide">
+<p><strong>În caseta de interpretare, răspunde pe puncte:</strong></p>
+<ol>
+<li><strong>Compară rezultatele.</strong> Scrie temperatura măsurată, temperatura calculată, diferența absolută și diferența relativă, cu unitățile lor.</li>
+<li><strong>Explică sensul fizic.</strong> Arată unde se situează temperatura de echilibru față de temperaturile inițiale și în ce sens are loc transferul spontan de căldură.</li>
+<li><strong>Discută modelul și măsurarea.</strong> Precizează ce neglijează modelul ideal și explică două surse posibile ale diferenței observate, inclusiv rolul calorimetrului, al mediului sau al citirii termometrului.</li>
+</ol>
+</div>
 
 
 <label class="field">
 
-Explică de ce temperatura măsurată poate fi diferită
-de temperatura calculată în modelul ideal.
+Interpretarea rezultatelor — urmează punctele 1–3 de mai sus.
 
 <textarea
     rows="7"
     data-comparison
-    placeholder="Discută schimbul de căldură cu calorimetrul și mediul, rezoluția termometrului și ipotezele modelului ideal."
+    aria-describedby="interpretation-guide"
+    placeholder="1. Compararea valorilor: …
+2. Sensul fizic al rezultatului: …
+3. Ipotezele modelului și sursele diferenței: …"
 ></textarea>
 
 <p
@@ -2103,6 +2112,20 @@ de temperatura calculată în modelul ideal.
 ></p>
 
 </label>
+<label class="field">
+<strong>4. Corectare explicată sau verificare</strong>
+<span id="correction-guide">Dacă ai revizuit un răspuns, descrie ce ai modificat, de ce și cum ai verificat noul rezultat. Dacă nu ai avut de corectat, explică o verificare făcută (unități, înlocuire în formulă sau plauzibilitate). Nu este necesar să greșești pentru a completa această secțiune.</span>
+<textarea rows="4" data-correction-reflection aria-describedby="correction-guide" placeholder="Am revizuit… deoarece… Am verificat prin… / Nu am avut de corectat; am verificat…"></textarea>
+<p class="calc-feedback" data-calc-feedback="correction-reflection" aria-live="polite"></p>
+</label>
+<label class="field">
+<strong>5. Aplicare într-o situație nouă</strong>
+<span id="transfer-guide">Păstrezi temperaturile inițiale și masa apei reci, dar dublezi masa apei calde. Fără să refaci simularea, prezice cum se modifică temperatura de echilibru și justifică prin bilanțul termic sau media ponderată. Formulează răspunsul cu propriile cuvinte; profesorul va aprecia explicația.</span>
+<textarea rows="4" data-independent-application aria-describedby="transfer-guide" placeholder="Prezic că… Justific prin…"></textarea>
+<p class="calc-feedback" data-calc-feedback="independent-application" aria-live="polite"></p>
+</label>
+<p class="rounding-note">Explicațiile de la punctele 4 și 5 sunt păstrate în raport pentru feedbackul profesorului. Completarea lor nu certifică automat corectitudinea sau lucrul independent și nu modifică punctajul conceptual.</p>
+
 
 </div>
 
@@ -2417,6 +2440,7 @@ Raportul experimentului
 
 
 <div class="evaluation-detail" data-evaluation-details></div>
+<section data-learning-process aria-label="Parcurs de învățare"></section>
 
 
 <div class="report-status">
@@ -2817,6 +2841,8 @@ const state = {
 
     activity:{
 
+        readingAttempts:{coldVolume:0,coldTemperature:0,hotVolume:0,hotTemperature:0,finalTemperature:0},
+        learningChecks:{safety:0,predictions:0,analysis:0,evaluation:0},
         equipmentChecks:0,
 
         calculationChecks:0,
@@ -4093,8 +4119,7 @@ function sanitizeInstrumentResult(
         studentReading:
             result.studentReading,
 
-        attempts:
-            result.attempts,
+        attempts: accumulatedReadingAttempts(result),
 
         verifiedAt:
             result.verifiedAt
@@ -6457,7 +6482,9 @@ function invalidateAnalysis(){
 
 [
     "[data-calculation-steps]",
-    "[data-comparison]"
+    "[data-comparison]",
+    "[data-correction-reflection]",
+    "[data-independent-application]"
 ].forEach(
     selector => {
 
@@ -6486,12 +6513,19 @@ qs(
     "click",
     () => {
 
-        const errors =
-            [];
+        const errors = [];
+        let reflectionInvalid = null;
+        for(const [attribute,key,minimum] of [['data-correction-reflection','correction-reflection',40],['data-independent-application','independent-application',50]]){
+            const input=qs('['+attribute+']'),output=qs('[data-calc-feedback="'+key+'"]');
+            const complete=input.value.trim().length>=minimum;
+            input.classList.toggle('calc-error',!complete);
+            input.classList.toggle('calc-ok',complete);
+            output.textContent=complete?'Răspuns consemnat pentru feedbackul profesorului; nu este notat automat.':'Dezvoltă explicația cerută, folosind o idee și justificarea ei.';
+            output.className='calc-feedback '+(complete?'ok':'bad');
+            if(!complete){errors.push(key==='correction-reflection'?'corectarea explicată sau verificarea':'aplicarea în situația nouă');reflectionInvalid=reflectionInvalid||input;}
+        }
 
-
-        let firstInvalid =
-            null;
+        let firstInvalid = reflectionInvalid;
 
 
 /* ---------------------------------------------------------
@@ -6616,7 +6650,7 @@ qs(
 
 
             comparisonFeedback.textContent =
-                "Dezvoltă explicația. Discută calorimetrul, schimbul de căldură cu mediul și rezoluția instrumentelor.";
+                "Dezvoltă punctele 1–3: compară valorile, explică sensul transferului de căldură și discută ipotezele modelului și sursele diferenței.";
 
 
             comparisonFeedback.className =
@@ -6643,7 +6677,7 @@ qs(
 
 
             comparisonFeedback.textContent =
-                "Interpretarea este suficient dezvoltată.";
+                "Interpretarea este consemnată. Profesorul va aprecia explicația fizică.";
 
 
             comparisonFeedback.className =
@@ -6918,6 +6952,9 @@ function finalizeNotebook(){
         },
 
         comparison:{
+            correctionReflection:qs('[data-correction-reflection]').value.trim(),
+            independentApplication:qs('[data-independent-application]').value.trim(),
+            reflectionAssessment:'teacher-feedback-pending',
 
             interpretation:
                 qs(
@@ -7208,6 +7245,7 @@ function buildReportPayload(){
     };
 
 
+    base.learningProcess=learningProcessSnapshot();
     return base;
 
 }
@@ -7234,6 +7272,7 @@ function lockFinalReport(){
 
     state.finalized =
         true;
+    qsa("[data-correction-reflection], [data-independent-application]").forEach(input=>input.disabled=true);
 
 
     qsa(
@@ -7567,11 +7606,11 @@ qs(
             <div class="result-card">
 
                 <span>
-                    Verificări calcule
+                    Exersare fără penalizare
                 </span>
 
                 <strong>
-                    ${state.activity.calculationChecks}
+                    Consemnată separat
                 </strong>
 
             </div>
@@ -7605,6 +7644,7 @@ qs(
         `;
 
 
+        renderLearningProcess();
         qs("[data-evaluation-details]").innerHTML=`<h4>Detalierea evaluării conceptuale</h4><table><thead><tr><th>Item</th><th>Răspunsul elevului</th><th>Răspunsul corect</th><th>Punctaj</th></tr></thead><tbody>${items.map(item=>`<tr><td>${item.number}. ${escapeHtml(item.question)}</td><td>${escapeHtml(item.studentAnswer)}</td><td>${escapeHtml(item.correctAnswer)}</td><td class="${item.correct?"evaluation-correct":"evaluation-wrong"}">${item.correct?"Corect — 1 p":"Incorect — 0 p"}</td></tr>`).join("")}</tbody></table>`;
 
 
@@ -7696,7 +7736,12 @@ async function exportPortfolioPdf(){
         `Te calculat=${Number(calculations.calculatedEquilibriumTemperature_C).toFixed(1)} grade C`,`Delta T=${Number(calculations.absoluteDifference_C).toFixed(1)} grade C`,
         `diferenta relativa=${Number(calculations.relativeDifference_percent).toFixed(2)} %`,"",
         `Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,
-        "CALCULUL DIN CAIET",calculations.studentSteps,"","INTERPRETARE",state.notebook.comparison.interpretation,"",
+        "CALCULUL DIN CAIET",calculations.studentSteps,"","INTERPRETARE - PUNCTELE 1-3",state.notebook.comparison.interpretation,"",
+        "4. CORECTARE EXPLICATA SAU VERIFICARE",state.notebook.comparison.correctionReflection,"",
+        "5. APLICARE INTR-O SITUATIE NOUA",state.notebook.comparison.independentApplication,
+        "Sarcina: dublezi masa apei calde, pastrand temperaturile initiale si masa apei reci. Prezice si justifica temperatura de echilibru.",
+        "Explicatiile sunt consemnate pentru feedbackul profesorului; nu sunt notate automat.","",
+        ...learningProcessLines(),"",
         "CONCLUZIE",state.evaluation.conclusion,"","SURSE DE EROARE SI LIMITARI",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`
     ];
     const blob=pdfApi.createTextPdfBlob(lines);
@@ -7720,6 +7765,67 @@ qs(
 /* =========================================================
    START
 ========================================================= */
+
+
+// Counts describe practice in this session. They never enter the score formula.
+const LEARNING_PRINCIPLE="Repetarea nu se penalizează; corectarea explicată și aplicarea independentă sunt valorificate.";
+const LEARNING_CALCULATIONS=[['mass-cold','Masa apei reci'],['mass-hot','Masa apei calde'],['equilibrium-temperature','Temperatura de echilibru calculată'],['absolute-difference','Diferența absolută'],['relative-difference','Diferența relativă']];
+function readingAttemptKey(result){
+    return {'exp01-coldVolume':'coldVolume','exp01-coldTemperature':'coldTemperature','exp01-hotVolume':'hotVolume','exp01-hotTemperature':'hotTemperature','exp01-temperatura-echilibru':'finalTemperature'}[result.instrumentId];
+}
+function accumulatedReadingAttempts(result){
+    const key=readingAttemptKey(result);
+    return key?state.activity.readingAttempts[key]:result.attempts;
+}
+document.addEventListener('laborator:instrument-reading',event=>{
+    if(state.finalized || !event.detail || !Number.isFinite(event.detail.studentReading))return;
+    const key=readingAttemptKey(event.detail);
+    if(key)state.activity.readingAttempts[key]++;
+},{capture:true});
+function learningProcessSnapshot(){
+    const m=state.notebook.measurements;
+    return {
+        principle:LEARNING_PRINCIPLE,
+        scope:'Sesiunea curentă; numerele descriu exersarea, fără penalizare sau clasament.',
+        readingCountDefinition:'Citiri numerice evaluate de instrument, inclusiv citirea acceptată; câmpurile goale și confirmarea lipsă nu sunt citiri numerice evaluate.',
+        calculationCountDefinition:'Apăsări pe Verifică, inclusiv răspunsuri goale, revizuiri și verificarea acceptată. Editarea simplă nu se numără.',
+        readings:[
+            {label:'Volumul apei reci',attempts:m.coldWater.volumeAttempts},
+            {label:'Temperatura apei reci',attempts:m.coldWater.temperatureAttempts},
+            {label:'Volumul apei calde',attempts:m.hotWater.volumeAttempts},
+            {label:'Temperatura apei calde',attempts:m.hotWater.temperatureAttempts},
+            {label:'Temperatura de echilibru măsurată',attempts:m.equilibrium.attempts}
+        ],
+        calculations:LEARNING_CALCULATIONS.map(([key,label])=>({key,label,attempts:state.activity.calculationAttempts[key],validated:state.calculationVerified[key]})),
+        stages:[
+            {label:'Verificări de securitate',attempts:state.activity.learningChecks.safety},
+            {label:'Verificări ale trusei',attempts:state.activity.equipmentChecks},
+            {label:'Verificări ale predicțiilor',attempts:state.activity.learningChecks.predictions},
+            {label:'Acțiuni în procedura de amestecare',attempts:state.procedure.attempts},
+            {label:'Verificări ale interpretării și caietului',attempts:state.activity.learningChecks.analysis},
+            {label:'Trimiteri ale evaluării finale',attempts:state.activity.learningChecks.evaluation}
+        ],
+        scorePolicy:'Punctajul conceptual depinde numai de răspunsurile la cei patru itemi. Repetarea nu reduce punctajul.',
+        reflection:{correctionOrVerification:state.notebook.comparison.correctionReflection,independentApplication:state.notebook.comparison.independentApplication,assessment:'De apreciat de profesor; fără certificare automată a independenței.'}
+    };
+}
+function learningProcessLines(){
+    const p=learningProcessSnapshot();
+    return ['PARCURS DE INVATARE - INCERCARI',p.principle,p.scope,'',p.readingCountDefinition,...p.readings.map(r=>r.label+': '+r.attempts),
+        '',p.calculationCountDefinition,...p.calculations.map(r=>r.label+': '+r.attempts+'; rezultat verificat: '+(r.validated?'da':'nu')),
+        '','ETAPE DE LUCRU',...p.stages.map(r=>r.label+': '+r.attempts),
+        'Numerele de la etape descriu apasari sau actiuni; nu se aduna intr-un scor si nu se compara intre elevi.',p.scorePolicy];
+}
+function renderLearningProcess(){
+    const p=learningProcessSnapshot(),table=(title,rows)=>'<h4>'+title+'</h4><table class="measurements-table"><thead><tr><th scope="col">Activitate</th><th scope="col">Încercări / verificări</th></tr></thead><tbody>'+rows.map(r=>'<tr><th scope="row">'+escapeHtml(r.label)+'</th><td>'+r.attempts+'</td></tr>').join('')+'</tbody></table>';
+    const reflection=state.notebook.comparison;
+    qs('[data-learning-process]').innerHTML='<h3>Parcursul de învățare</h3><p><strong>'+escapeHtml(p.principle)+'</strong></p><p>'+escapeHtml(p.scope)+'</p><p>'+escapeHtml(p.readingCountDefinition)+'</p>'+table('Citiri ale instrumentelor',p.readings)+'<p>'+escapeHtml(p.calculationCountDefinition)+'</p>'+table('Calcule',p.calculations)+table('Etape de lucru',p.stages)+'<p>Numerele descriu acțiuni diferite; nu se adună într-un scor și nu se compară între elevi.</p><p>'+escapeHtml(p.scorePolicy)+'</p><h4>Corectare explicată sau verificare</h4><p style="white-space:pre-wrap">'+escapeHtml(reflection.correctionReflection)+'</p><h4>Aplicare într-o situație nouă</h4><p>Dublezi masa apei calde, păstrând temperaturile inițiale și masa apei reci. Prezice și justifică temperatura de echilibru.</p><p style="white-space:pre-wrap">'+escapeHtml(reflection.independentApplication)+'</p><p>Explicații consemnate pentru feedbackul profesorului, fără notare automată.</p>';
+}
+// Capture counts before the existing validators run, and freeze them at finalization.
+for(const [selector,key] of [['[data-complete-safety]','safety'],['[data-check-predictions]','predictions'],['[data-check-analysis]','analysis']]){
+    qs(selector).addEventListener('click',()=>{if(!state.finalized)state.activity.learningChecks[key]++;},{capture:true});
+}
+qs('[data-evaluation-form]').addEventListener('submit',()=>{if(!state.finalized)state.activity.learningChecks.evaluation++;},{capture:true});
 
 showStep(
     0
