@@ -616,6 +616,13 @@ body{
 
 }
 
+.instrument-grid > *, .instrument-card, .instrument-answer, .instrument-answer .field {
+    min-width:0;
+}
+.instrument-card .lab-scale-instrument, .instrument-card .lab-scale-viewport {
+    min-width:0;
+    max-width:100%;
+}
 </style>
 
 
@@ -668,7 +675,7 @@ window.LAB_EXPERIMENT_CONFIG={
 
 
 <script
-    src="../assets/js/instrumente-scala.js"
+    src="../assets/js/instrumente-scala.js?v=20261019-3"
     defer
 ></script>
 
@@ -712,6 +719,7 @@ Studiul schimbului de căldură dintre două cantități de apă
 
 
 <div class="experiment-meta">
+<span data-lab-version>Versiunea 3 · 19.10.2026</span>
 
 <span data-header-student>
 Elev neidentificat
@@ -1274,7 +1282,7 @@ mai mare decât ambele sau mai mică decât ambele
 >
 
 <span>
-Am notat modelul fizic și predicțiile în caiet.
+Am notat modelul fizic și predicțiile în caiet. După completarea celor două predicții și bifarea acestei confirmări, ele se înregistrează automat.
 </span>
 
 </label>
@@ -3952,11 +3960,7 @@ qs(
    PREDICȚII
 ========================================================= */
 
-qs(
-    "[data-check-predictions]"
-).addEventListener(
-    "click",
-    () => {
+function recordInitialPredictions(recordingMethod="manual"){
 
         const direction =
             qs(
@@ -3990,6 +3994,7 @@ qs(
 
 
         state.predictions = {
+            recordingMethod,
 
             direction,
 
@@ -4020,11 +4025,18 @@ qs(
         );
 
 
+        qsa('input[name="predictionDirection"], input[name="predictionEquilibrium"]').forEach(input=>input.disabled=true);
         checkInitialReadingsComplete();
 
-    }
-);
-
+}
+qs('[data-check-predictions]').addEventListener('click',()=>recordInitialPredictions());
+function registerPredictionsWhenReady(){
+    if(state.finalized||state.predictions)return;
+    if(qs('input[name="predictionDirection"]:checked') && qs('input[name="predictionEquilibrium"]:checked') && qs('[data-prediction-notebook]').checked){
+        recordInitialPredictions('automatic-after-completion');
+    }else{checkInitialReadingsComplete();}
+}
+qsa('input[name="predictionDirection"], input[name="predictionEquilibrium"], [data-prediction-notebook]').forEach(input=>input.addEventListener('change',registerPredictionsWhenReady));
 
 /* =========================================================
    INSTRUMENTE INIȚIALE
@@ -4403,6 +4415,13 @@ function createInstrumentCard(
 
 
 function createInitialInstruments(){
+    const host=qs('[data-initial-instruments]');
+    if(state.initialInstrumentsSetId===state.set.id && host.querySelectorAll('.instrument-card').length===initialInstrumentDefinitions.length){
+        checkInitialReadingsComplete();
+        return;
+    }
+    state.initialInstrumentsSetId=state.set.id;
+    qs('[data-next-mixing]').disabled=true;
 
     qs(
         "[data-initial-instruments]"
@@ -4422,46 +4441,20 @@ function createInitialInstruments(){
 
 
 function checkInitialReadingsComplete(){
-
-    const measurementsComplete =
-        initialInstrumentDefinitions
-            .every(
-                definition =>
-                    Boolean(
-                        state.initialReadings[
-                            definition.key
-                        ]
-                    )
-            );
-
-
-    if(
-        !measurementsComplete ||
-        !state.predictions
-    ){
-        return;
+    const missing=initialInstrumentDefinitions.filter(definition=>!state.initialReadings[definition.key]);
+    const ready=missing.length===0 && Boolean(state.predictions);
+    qs('[data-next-mixing]').disabled=!ready;
+    if(ready){
+        state.completed.add(3);
+        feedback('initial','Predicțiile și toate cele patru citiri sunt înregistrate. Poți continua la amestecare.','ok');
+    }else{
+        state.completed.delete(3);
+        const tasks=[];
+        if(!state.predictions)tasks.push('completează ambele predicții și confirmă notarea lor în caiet (se înregistrează automat)');
+        if(missing.length)tasks.push('verifică citirile: '+missing.map(definition=>definition.label).join(', '));
+        feedback('initial','Pentru a continua: '+tasks.join('; ')+'.','warn');
     }
-
-
-    state.completed.add(
-        3
-    );
-
-
-    feedback(
-        "initial",
-        "Predicțiile și toate cele patru măsurări inițiale sunt complete.",
-        "ok"
-    );
-
-
-    qs(
-        "[data-next-mixing]"
-    ).disabled =
-        false;
-
 }
-
 
 /* =========================================================
    AMESTECARE
@@ -7800,7 +7793,7 @@ function learningProcessSnapshot(){
         stages:[
             {label:'Verificări de securitate',attempts:state.activity.learningChecks.safety},
             {label:'Verificări ale trusei',attempts:state.activity.equipmentChecks},
-            {label:'Verificări ale predicțiilor',attempts:state.activity.learningChecks.predictions},
+            {label:'Verificări manuale ale predicțiilor (înregistrarea automată nu se numără)',attempts:state.activity.learningChecks.predictions},
             {label:'Acțiuni în procedura de amestecare',attempts:state.procedure.attempts},
             {label:'Verificări ale interpretării și caietului',attempts:state.activity.learningChecks.analysis},
             {label:'Trimiteri ale evaluării finale',attempts:state.activity.learningChecks.evaluation}
