@@ -793,6 +793,7 @@ window.LAB_EXPERIMENT_CONFIG={
 
 <script src="../assets/js/pdf-local.js?v=2.1.2-clasa10" defer></script>
 
+<style data-spatial-style>.spatial-view{margin:20px 0;padding:18px;border:1px solid #b5ced4;border-radius:14px;background:#f7fbfc}.spatial-toolbar,.spatial-camera{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.spatial-view [hidden]{display:none!important}.spatial-view button[aria-pressed=true]{background:#126c77;color:white}.spatial-view canvas{display:block;width:100%;height:auto;max-height:460px;margin:14px 0;border-radius:10px}.spatial-camera label{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spatial-note{font-size:.9em;color:#48616d}@media print{.spatial-view{display:none}}</style>
 </head>
 
 
@@ -8580,6 +8581,152 @@ qs(
 );
 
 
+/* SPATIAL-BEGIN */
+/* Scene suplimentare: folosesc starea montajului, fără a modifica măsurările. */
+function installSpatialView(experiment, state, root) {
+  const descriptions = {"101":"Transferă cele două cantități de apă folosind comenzile experimentului. Culorile disting apa rece, apa caldă și amestecul; nu reprezintă o scară de temperatură.","102":"Urmărește încălzirea corpului și transferul său în calorimetru. Săgeata Q indică sensul transferului de căldură de la corpul cald la apa mai rece.","103":"Termometrul este cufundat în apă fără să atingă fundul vasului. În timpul fierberii, energia primită susține schimbarea stării de agregare.","104":"Urmărește circuitul principal și ramura voltmetrului. Ampermetrul este în serie, iar voltmetrul este conectat între bornele rezistorului.","105":"Observă becul în circuitul principal. Ampermetrul este în serie cu becul, iar voltmetrul măsoară tensiunea la bornele acestuia.","106":"Sursa furnizează tensiune alternativă. Aparatele utilizate în modul c.a. indică valori efective; graficul se trasează în reprezentarea 2D existentă.","107":"Observă bobinele pe miezul comun. Primarul alimentat în c.a. produce flux magnetic variabil. Secundarul funcționează în gol. Numărul de bucle desenate este schematic."};
+  let mode = '2D', yaw = -.55, pitch = .38;
+  const views = [];
+  for (const step of [3, 4, 5]) {
+    const panel = root.querySelector(`[data-panel="${step}"]`);
+    if (!panel) continue;
+    const box = document.createElement('section');
+    box.className = 'spatial-view';
+    box.innerHTML = `<h3>Explorarea montajului</h3><div class="spatial-toolbar" role="group" aria-label="Vizualizarea montajului"><button type="button" class="btn secondary" data-view="2D" aria-pressed="true">2D</button><button type="button" class="btn secondary" data-view="3D" aria-pressed="false">3D</button><button type="button" class="btn secondary" data-reset-view>Resetează vederea</button></div><canvas width="960" height="460" role="img" aria-label="Montaj experimental în două sau trei dimensiuni"></canvas><div class="spatial-camera" hidden><label>Rotire orizontală <input type="range" min="-120" max="120" value="-32" data-yaw></label><label>Înclinarea vederii <input type="range" min="10" max="65" value="22" data-pitch></label></div><p>${descriptions[experiment]}</p><p class="spatial-note">Montaj schematic. Folosește comenzile experimentului de mai jos pentru efectuarea măsurărilor. Citește valorile pe instrumentele gradate din pagină.</p>`;
+    panel.insertBefore(box, panel.querySelector('h2')?.nextSibling || panel.firstChild);
+    const canvas = box.querySelector('canvas');
+    const view = { box, canvas, ctx: canvas.getContext('2d') };
+    views.push(view);
+    box.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.view; sync(); }));
+    box.querySelector('[data-reset-view]').addEventListener('click', () => { yaw = -.55; pitch = .38; sync(); });
+    box.querySelector('[data-yaw]').addEventListener('input', e => { yaw = Number(e.target.value) * Math.PI / 180; sync(); });
+    box.querySelector('[data-pitch]').addEventListener('input', e => { pitch = Number(e.target.value) * Math.PI / 180; sync(); });
+  }
+  function sync() {
+    for (const {box} of views) {
+      box.dataset.mode = mode;
+      box.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === mode)));
+      box.querySelector('.spatial-camera').hidden = mode !== '3D';
+      box.querySelector('[data-reset-view]').hidden = mode !== '3D';
+      box.querySelector('[data-yaw]').value = Math.round(yaw * 180 / Math.PI);
+      box.querySelector('[data-pitch]').value = Math.round(pitch * 180 / Math.PI);
+    }
+  }
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  function draw(view) {
+    const {ctx:c} = view;
+    if (!c || !state.set) return;
+    const faces = [], lines = [], labels = []; let layer = -1;
+    function project([x,y,z]) {
+      if (mode === '2D') return experiment>=104&&experiment<=106 ? [480+x*185,210+z*150-y*25,z] : [480+x*185,365-y*185,z];
+      const xx = x*Math.cos(yaw)+z*Math.sin(yaw);
+      const zz = -x*Math.sin(yaw)+z*Math.cos(yaw);
+      const yy = y*Math.cos(pitch)-zz*Math.sin(pitch);
+      const depth = -y*Math.sin(pitch)-zz*Math.cos(pitch);
+      const scale = 175/(1+depth*.08);
+      return [480+xx*scale,320-yy*scale,depth];
+    }
+    function face(points,color) { faces.push({points:points.map(project),color,layer}); }
+    function line(a,b,color='#31465b',width=3) { lines.push({a:project(a),b:project(b),color,width}); }
+    function label(p,text,color='#183b48') { labels.push({p:project(p),text,color}); }
+    function arrow(a,b,color,text) { line(a,b,color,4); const pa=project(a),pb=project(b),t=Math.atan2(pb[1]-pa[1],pb[0]-pa[0]); lines.push({head:pb,t,color}); if(text) label(b,text,color); }
+    function cuboid(x,y,z,w,h,d,color='#41948e') {
+      const a=[x,y,z],b=[x+w,y,z],cc=[x+w,y+h,z],dd=[x,y+h,z],e=[x,y,z+d],f=[x+w,y,z+d],g=[x+w,y+h,z+d],hh=[x,y+h,z+d];
+      face([a,b,cc,dd],color);face([e,f,g,hh],color);face([a,e,hh,dd],'#28686b');face([b,f,g,cc],'#5aa9a0');face([dd,cc,g,hh],'#9ad3c9');
+    }
+    function cylinder(x,y,z,r,h,color) {
+      const top=[]; for(let i=0;i<32;i++){const a=i*Math.PI/16,b=(i+1)*Math.PI/16; const p=[x+r*Math.cos(a),y,z+r*Math.sin(a)],q=[x+r*Math.cos(b),y,z+r*Math.sin(b)]; face([p,q,[q[0],y+h,q[2]],[p[0],y+h,p[2]]],i<16?color:'#8bc8cf');top.push([p[0],y+h,p[2]]); } face(top,color);
+    }
+    const visual = sel => root.querySelector(sel);
+    const v = state.set.visible, iv=state.set.instrumentValues || {}, trial=Math.min(state.readingIndex||0,8);
+    c.clearRect(0,0,960,460);c.fillStyle='#f0f6f8';c.fillRect(0,0,960,460);
+    face([[-1.65,-.08,-.7],[1.65,-.08,-.7],[1.65,-.08,.8],[-1.65,-.08,.8]],'#dfe9ed');
+    layer = 0;
+    const number=experiment-100, phase=state.procedure?.index||0;
+    function vessel(x,level,color,solid=false){
+      if(level>0)cylinder(x,.03,0,.28,level,color);
+      for(let i=0;i<36;i++){
+        const a=i*Math.PI/18,b=(i+1)*Math.PI/18;
+        for(const y of [.03,.9])line([x+.3*Math.cos(a),y,.3*Math.sin(a)],[x+.3*Math.cos(b),y,.3*Math.sin(b)],'#70899b',2);
+      }
+      for(const dx of [-.3,.3])line([x+dx,.03,0],[x+dx,.9,0],'#70899b',2);
+      if(solid){layer=1;cuboid(x-.12,.16,-.12,.24,.25,.24,'#a97a52');layer=0;}
+    }
+    function thermometer(x,z=0){line([x,.18,z],[x,1.2,z],'#617e91',9);line([x,.2,z],[x,.88,z],'#c54b45',3);label([x,1.24,z],'T');}
+    if(number===1){
+      const cold=clamp((iv.coldVolume_mL||100)/300,.15,.65),hot=clamp((iv.hotVolume_mL||100)/300,.15,.65);
+      vessel(-1.05,phase<1?cold:0,'#3ca8e8');vessel(1.05,phase<2?hot:0,'#df8664');
+      vessel(0,phase<1?0:phase<2?cold/2:.65,phase<2?'#3ca8e8':'#967aba');thermometer(.13);
+      label([-1.35,1.15,0],'Apă rece');label([.85,1.15,0],'Apă caldă');label([-.35,-.25,0],'Calorimetru');
+      if(phase===1)arrow([1,.95,0],[.2,.6,0],'#c34e39','Transfer');
+      if(phase>=2&&phase<4){arrow([0,.45,0],[-.45,.45,0],'#c34e39','Q');label([-.6,1.5,0],'Schimb de căldură');}
+      if(phase>=4)label([-.5,1.5,0],'Echilibru termic');
+    } else if(number===2){
+      const transferred=state.heating?.transferred,immersed=state.heating?.index>0;
+      vessel(-.9,.6,'#df8664',immersed&&!transferred);vessel(.8,.52,'#4ca3cf',transferred);
+      cuboid(-1.25,-.08,-.35,.7,.12,.7,'#b46a42');
+      if(!immersed&&!transferred){layer=1;cuboid(-1,1,-.1,.22,.23,.22,'#a97a52');layer=0;}
+      thermometer(.9);label([-1.4,1.4,0],'Baie de încălzire');label([.4,-.25,0],'Calorimetru');
+      if(transferred&&state.mixing.index<2)arrow([.75,.45,0],[1.2,.45,0],'#c34e39','Q');
+      if(transferred&&state.mixing.index>=2)label([.3,1.4,0],'Echilibru termic');
+    } else if(number===3){
+      const started=visual('[data-start-heating]')?.hidden,boiling=started&&state.readingIndex>=6;
+      vessel(0,.6,'#4ca3cf');cuboid(-.45,-.12,-.4,.9,.15,.8,started?'#d87848':'#718392');thermometer(.1,.08);
+      label([-.4,-.32,0],'Sursă de căldură');
+      if(started)arrow([-.6,0,0],[-.6,.5,0],'#c34e39','Q');
+      if(boiling){
+        for(let i=0;i<7;i++){const p=(performance.now()/2200+i/7)%1;line([-.2+i*.06,.05+p*.52,.08],[ -.2+i*.06,.08+p*.52,.08],'#d5f1fa',4);}
+        label([-.8,1.5,0],'Fierbere: T ≈ constantă');
+      }else label([-.5,1.5,0],started?'Încălzire':'Montaj pregătit');
+    } else if(number>=4&&number<=6){
+      const on=state.step===4&&state.readingActive,wire=on?'#167f77':'#708394';
+      const points={s:[-1.3,.2,.45],k:[-.75,.2,.45],a:[0,.2,.45],r:[.95,.2,.45],rh:[-.2,.2,-.55]};
+      const wirePath=arr=>arr.slice(1).forEach((p,i)=>line(arr[i],p,wire,4));
+      // Circuit principal în serie; voltmetrul formează o ramură între bornele specimenului.
+      wirePath([points.s,[-1.3,.2,-.55],points.rh,[1.3,.2,-.55],[1.3,.2,.45]]);
+      wirePath([points.s,[-.9,.2,.45]]);line([-.9,.2,.45],[-.6,on?.2:.45,.45],wire,4);
+      wirePath([[-.6,.2,.45],points.a,[.6,.2,.45]]);
+      wirePath([[.6,.2,.45],[.6,.2,1],[1.3,.2,1],[1.3,.2,.45]]);
+      cuboid(-1.48,.04,.26,.36,.32,.38,'#527d9c');label([-1.5,.55,.45],number===6?'Sursă c.a.':'Sursă c.c.');
+      cuboid(-.16,.05,.3,.32,.3,.3,'#d4dce1');label([-.06,.43,.45],'A');
+      cuboid(.78,.05,.9,.32,.3,.3,'#d4dce1');label([.9,.43,1],'V');
+      cuboid(-.42,.04,-.7,.45,.25,.3,'#ba9068');label([-.37,.42,-.55],'Rh');
+      if(number===5){cylinder(.95,.1,.45,.13,.3,on?'#ffc95c':'#ced9df');label([.8,.62,.45],'Bec');}
+      else{cuboid(.6,.08,.3,.7,.24,.3,'#a77950');label([.8,.55,.45],'R');}
+      label([-.7,1.4,0],on?'Circuit alimentat':'Întrerupător deschis');
+      if(number===6)label([-.8,1.12,0],'Valori efective Uef și Ief');
+    } else if(number===7){
+      const on=state.step===4&&state.measurementActive,idx=Math.min(state.readingIndex||0,2);
+      cuboid(-1.05,.1,-.2,.25,1,.4,'#7c8c9b');cuboid(.8,.1,-.2,.25,1,.4,'#7c8c9b');
+      cuboid(-1.05,.1,-.2,2.1,.2,.4,'#8e9eac');cuboid(-1.05,.9,-.2,2.1,.2,.4,'#8e9eac');
+      layer=1;
+      for(const [x,count,color] of [[-.93,9,'#ba783d'],[.93,clamp(Math.round(9*(v.n2?.[idx]||v.n1)/v.n1),4,16),'#c7904e']])for(let k=0;k<count;k++){
+        const y=.31+k*.56/count;
+        line([x-.21,y,-.31],[x+.21,y,-.31],color,5);line([x+.21,y,-.31],[x+.21,y,.31],color,5);line([x+.21,y,.31],[x-.21,y,.31],color,5);line([x-.21,y,.31],[x-.21,y,-.31],color,5);
+      }
+      label([-1.6,1.4,0],'Primar N₁');label([.65,1.4,0],'Secundar N₂');
+      label([-.65,-.25,0],on?'Flux magnetic variabil':'Sursă oprită');
+      if(on){const sign=Math.sin(performance.now()/1500)>0?1:-1;
+        for(const [a,b] of [[[-.93,1,0],[.93,1,0]],[[.93,1,0],[.93,.2,0]],[[.93,.2,0],[-.93,.2,0]],[[-.93,.2,0],[-.93,1,0]]])arrow(sign>0?a:b,sign>0?b:a,'#137d92','');
+        label([0,1,0],'Φ');label([-.8,1.48,0],'Variație reprezentată încetinit');
+      }
+      label([.65,.65,.6],'În gol');
+    }
+
+    faces.sort((a,b)=>a.layer-b.layer || b.points.reduce((s,p)=>s+p[2],0)/b.points.length-a.points.reduce((s,p)=>s+p[2],0)/a.points.length);
+    for(const f of faces){c.beginPath();f.points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=f.color;c.fill();c.strokeStyle='#536b7b55';c.lineWidth=1;c.stroke();}
+    for(const l of lines){c.strokeStyle=l.color;c.fillStyle=l.color;c.lineWidth=l.width||3;c.beginPath();if(l.head){const p=l.head;c.moveTo(p[0],p[1]);c.lineTo(p[0]-12*Math.cos(l.t-.4),p[1]-12*Math.sin(l.t-.4));c.lineTo(p[0]-12*Math.cos(l.t+.4),p[1]-12*Math.sin(l.t+.4));c.closePath();c.fill();}else{c.moveTo(l.a[0],l.a[1]);c.lineTo(l.b[0],l.b[1]);c.stroke();}}
+    c.font='18px system-ui';for(const l of labels){c.fillStyle=l.color;c.fillText(l.text,l.p[0]+5,l.p[1]-6);}
+    c.fillStyle='#173b48';c.font='bold 19px system-ui';c.fillText(`${mode} · Montaj experimental`,20,30);
+  }
+  sync();
+  let last=0;
+  function frame(now){if(now-last>40&&!document.hidden){last=now;for(const view of views)if(!view.box.closest('[data-panel]').hidden)draw(view);}requestAnimationFrame(frame);}
+  requestAnimationFrame(frame);
+}
+
+installSpatialView(102, state, root);
+/* SPATIAL-END */
 /* =========================================================
    START
 ========================================================= */
