@@ -907,6 +907,7 @@ window.LAB_EXPERIMENT_CONFIG={
     defer
 ></script>
 
+<style data-spatial-style>.spatial-view{margin:20px 0;padding:18px;border:1px solid #b5ced4;border-radius:14px;background:#f7fbfc}.spatial-toolbar,.spatial-camera{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.spatial-view [hidden]{display:none!important}.spatial-view button[aria-pressed=true]{background:#126c77;color:white}.spatial-view canvas{display:block;width:100%;height:auto;max-height:460px;margin:14px 0;border-radius:10px}.spatial-camera label{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spatial-note{font-size:.9em;color:#48616d}@media print{.spatial-view{display:none}}</style>
 </head>
 
 
@@ -10046,6 +10047,134 @@ qs(
 );
 
 
+/* SPATIAL-BEGIN */
+/* Scene suplimentare: folosesc starea montajului, fără a modifica măsurările. */
+function installSpatialView(experiment, state, root) {
+  const descriptions = {
+    3: 'Viteza este tangentă la cerc, iar accelerația centripetă este orientată spre centru. Rotește vederea pentru a observa planul traiectoriei.',
+    6: 'Urmărește poziția corpului pe plan și înălțimea sa față de bază. La coborâre, energia potențială scade; frecarea disipă o parte din energia mecanică.',
+    7: 'Forța de tracțiune este paralelă cu planul. Lungimea drumului pe plan diferă de înălțimea la care este ridicat corpul.',
+    8: 'Urmărește jetul și acumularea apei în cilindru. Debitul se determină din volumul sau masa colectată și intervalul de timp.',
+    9: 'Brațul forței este distanța perpendiculară de la axă la dreapta suport a forței. Masele suspendate produc momente de sensuri opuse.'
+  };
+  let mode = '2D', yaw = -.55, pitch = .38;
+  const views = [];
+  for (const step of [3, 4]) {
+    const panel = root.querySelector(`[data-panel="${step}"]`);
+    if (!panel) continue;
+    const box = document.createElement('section');
+    box.className = 'spatial-view';
+    box.innerHTML = `<h3>Explorarea montajului</h3><div class="spatial-toolbar" role="group" aria-label="Vizualizarea montajului"><button type="button" class="btn secondary" data-view="2D" aria-pressed="true">2D</button><button type="button" class="btn secondary" data-view="3D" aria-pressed="false">3D</button><button type="button" class="btn secondary" data-reset-view>Resetează vederea</button></div><canvas width="960" height="460" role="img" aria-label="Montaj experimental în două sau trei dimensiuni"></canvas><div class="spatial-camera" hidden><label>Rotire orizontală <input type="range" min="-120" max="120" value="-32" data-yaw></label><label>Înclinarea vederii <input type="range" min="10" max="65" value="22" data-pitch></label></div><p>${descriptions[experiment]}</p><p class="spatial-note">Folosește comenzile experimentului de mai jos pentru efectuarea măsurărilor. Citește valorile pe instrumentele gradate din pagină.</p>`;
+    panel.insertBefore(box, panel.querySelector('h2')?.nextSibling || panel.firstChild);
+    const canvas = box.querySelector('canvas');
+    const view = { box, canvas, ctx: canvas.getContext('2d') };
+    views.push(view);
+    box.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.view; sync(); }));
+    box.querySelector('[data-reset-view]').addEventListener('click', () => { yaw = -.55; pitch = .38; sync(); });
+    box.querySelector('[data-yaw]').addEventListener('input', e => { yaw = Number(e.target.value) * Math.PI / 180; sync(); });
+    box.querySelector('[data-pitch]').addEventListener('input', e => { pitch = Number(e.target.value) * Math.PI / 180; sync(); });
+  }
+  function sync() {
+    for (const {box} of views) {
+      box.dataset.mode = mode;
+      box.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === mode)));
+      box.querySelector('.spatial-camera').hidden = mode !== '3D';
+      box.querySelector('[data-reset-view]').hidden = mode !== '3D';
+      box.querySelector('[data-yaw]').value = Math.round(yaw * 180 / Math.PI);
+      box.querySelector('[data-pitch]').value = Math.round(pitch * 180 / Math.PI);
+    }
+  }
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  function draw(view) {
+    const {ctx:c} = view;
+    if (!c || !state.set) return;
+    const faces = [], lines = [], labels = []; let layer = -1;
+    function project([x,y,z]) {
+      if (mode === '2D') return experiment === 3 ? [480+x*150,240+z*150-y*25,z] : [480 + x*190, 340 - y*190, z];
+      const xx = x*Math.cos(yaw)+z*Math.sin(yaw);
+      const zz = -x*Math.sin(yaw)+z*Math.cos(yaw);
+      const yy = y*Math.cos(pitch)-zz*Math.sin(pitch);
+      const depth = -y*Math.sin(pitch)-zz*Math.cos(pitch);
+      const scale = 175/(1+depth*.08);
+      return [480+xx*scale,320-yy*scale,depth];
+    }
+    function face(points,color) { faces.push({points:points.map(project),color,layer}); }
+    function line(a,b,color='#31465b',width=3) { lines.push({a:project(a),b:project(b),color,width}); }
+    function label(p,text,color='#183b48') { labels.push({p:project(p),text,color}); }
+    function arrow(a,b,color,text) { line(a,b,color,4); const pa=project(a),pb=project(b),t=Math.atan2(pb[1]-pa[1],pb[0]-pa[0]); lines.push({head:pb,t,color}); if(text) label(b,text,color); }
+    function cuboid(x,y,z,w,h,d,color='#41948e') {
+      const a=[x,y,z],b=[x+w,y,z],cc=[x+w,y+h,z],dd=[x,y+h,z],e=[x,y,z+d],f=[x+w,y,z+d],g=[x+w,y+h,z+d],hh=[x,y+h,z+d];
+      face([a,b,cc,dd],color);face([e,f,g,hh],color);face([a,e,hh,dd],'#28686b');face([b,f,g,cc],'#5aa9a0');face([dd,cc,g,hh],'#9ad3c9');
+    }
+    function cylinder(x,y,z,r,h,color) {
+      const top=[]; for(let i=0;i<32;i++){const a=i*Math.PI/16,b=(i+1)*Math.PI/16; const p=[x+r*Math.cos(a),y,z+r*Math.sin(a)],q=[x+r*Math.cos(b),y,z+r*Math.sin(b)]; face([p,q,[q[0],y+h,q[2]],[p[0],y+h,p[2]]],i<16?color:'#8bc8cf');top.push([p[0],y+h,p[2]]); } face(top,color);
+    }
+    const visual = sel => root.querySelector(sel);
+    const v = state.set.visible, iv=state.set.instrumentValues || {}, trial=Math.min(state.trial,3);
+    c.clearRect(0,0,960,460);c.fillStyle='#f0f6f8';c.fillRect(0,0,960,460);
+    face([[-1.65,-.08,-.7],[1.65,-.08,-.7],[1.65,-.08,.8],[-1.65,-.08,.8]],'#dfe9ed');
+    layer = 0;
+    if(experiment===3){
+      const radius=clamp((iv.radiusCm||15)/18,.45,1.15), disc=root.querySelector('[data-disc]');
+      let a=0; const transform=disc ? getComputedStyle(disc).transform : 'none';
+      if(transform!=='none'){const matrix=new DOMMatrixReadOnly(transform);a=Math.atan2(matrix.b,matrix.a);}
+      cylinder(0,0,0,.15,.65,'#8297a7');cylinder(0,.65,0,radius,.055,'#b7cbd7');
+      const p=[radius*Math.cos(a),.73,radius*Math.sin(a)];layer=1;cylinder(p[0],p[1],p[2],.065,.06,'#df5d54');
+      line([0,.73,0],p,'#607a93',2);label([0,1.15,0],'Axă de rotație');
+      if(state.running){arrow(p,[p[0]-.5*Math.sin(a),.73,p[2]+.5*Math.cos(a)],'#167c67','v');arrow(p,[p[0]*.45,.73,p[2]*.45],'#bd4f38','aᶜ');}
+      else label([-.9,.1,0],'Discul este oprit');
+    } else if(experiment===6 || experiment===7){
+      const angle=experiment===6?(v.angleDeg||25)*Math.PI/180:Math.asin(clamp((iv.heightM||.4)/(iv.lengthM||1),0,.9));
+      const L=2.4,H=L*Math.sin(angle),X=L*Math.cos(angle);
+      const bottom=[X/2,0,0],top=[-X/2,H,0];
+      face([[top[0],H,-.3],[bottom[0],0,-.3],[bottom[0],0,.3],[top[0],H,.3]],'#a1adb9');
+      face([[top[0],0,.3],[bottom[0],0,.3],[top[0],H,.3]],'#c7d1d9');
+      let f=0;
+      if(experiment===7) f=clamp(68-(parseFloat(visual('[data-block]')?.style.left)||68),0,49)/49;
+      else {const el=visual('[data-cart]');f=clamp((73-(parseFloat(el?getComputedStyle(el).left:'0')||0)/(el?.parentElement?.clientWidth||1)*100)/52,0,1);}
+      // f = distanța relativă față de baza planului, sincronizată cu montajul original.
+      const x=bottom[0]-f*X,y=f*H;
+      layer=1;cuboid(x-.13,y+.025,-.15,.27,.18,.3);
+      line([top[0],0,.4],[top[0],H,.4],'#497aac',2);label([top[0]-.1,H/2,.4],'h');label([0,H/2,-.4],'ℓ');
+      arrow([x,y+.2,0],[x,y-.25,0],'#c94e44','G');
+      if(experiment===7) arrow([x,y+.2,0],[x-.55*Math.cos(angle),y+.2+.55*Math.sin(angle),0],'#167c67','F');
+      else {if(visual('[data-trial-status]')?.textContent.includes('coboară'))arrow([x,y+.2,0],[x+.5*Math.cos(angle),y+.2-.5*Math.sin(angle),0],'#167c67','v');label([-.4,1.35,0],'Coborâre pe planul înclinat');}
+    } else if(experiment===8){
+      cuboid(-1.3,.7,-.2,.65,.6,.5,'#6faec2');line([-.65,.8,0],[.4,.8,0],'#657d90',9);
+      const placed=state.cylinderPlaced, x=placed?.4:1.15;
+      const liquid=visual('[data-collection-liquid]');const fraction=liquid?clamp(parseFloat(getComputedStyle(liquid).height)/(liquid.parentElement.clientHeight||1),0,1):0;
+      if(fraction>0)cylinder(x,0,0,.21,.65*fraction,'#40a7cb');
+      for(const z of [-.23,.23]){line([x-.22,0,z],[x-.22,.75,z],'#55798f',2);line([x+.22,0,z],[x+.22,.75,z],'#55798f',2);}
+      for(const y of [0,.75])for(let i=0;i<32;i++){const a=i*Math.PI/16,b=(i+1)*Math.PI/16;line([x+.23*Math.cos(a),y,.23*Math.sin(a)],[x+.23*Math.cos(b),y,.23*Math.sin(b)],'#55798f',2);}
+      for(let k=0;k<=5;k++)line([x+.18,k*.13,-.23],[x+.26,k*.13,-.23],'#55798f',2);
+      if(state.collecting)line([.4,.8,0],[.4,.65*fraction,0],'#179dd4',5);
+      label([-1.3,1.5,0],'Rezervor');label([x-.25,-.25,0],'Cilindru gradat');
+    } else if(experiment===9){
+      const t=state.set.trials?.[trial];if(!t)return;
+      const right=Number(visual('[data-right-arm-slider]')?.value)||t.d2TargetCm;
+      const ratio=(t.m1g*t.d1GeometricCm-t.m2g*right)/Math.max(t.m1g*t.d1GeometricCm,t.m2g*right,1);
+      const angle=clamp(ratio*12,-8,8)*Math.PI/180;
+      const arm=cm=>[cm/30*Math.cos(angle),.85-cm/30*Math.sin(angle),0];
+      cuboid(-.1,0,-.12,.2,.84,.24,'#8297a7');line(arm(-38),arm(38),'#946d43',12);
+      const left=arm(-t.d1GeometricCm),r=arm(right);
+      for(const [p,m] of [[left,t.m1g],[r,t.m2g]]){line(p,[p[0],p[1]-.32,0]);cuboid(p[0]-.1,p[1]-.5,-.1,.2,.18,.2);arrow([p[0],p[1]-.5,0],[p[0],p[1]-.75,0],'#c24c40','G');}
+      line([left[0],1.2,0],[0,1.2,0],'#497aac',2);line([0,1.3,0],[r[0],1.3,0],'#167c67',2);
+      label([left[0]/2,1.24,0],'d₁');label([r[0]/2,1.36,0],'d₂');label([0,.65,.35],'Axă');
+    }
+    faces.sort((a,b)=>a.layer-b.layer || b.points.reduce((s,p)=>s+p[2],0)/b.points.length-a.points.reduce((s,p)=>s+p[2],0)/a.points.length);
+    for(const f of faces){c.beginPath();f.points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=f.color;c.fill();c.strokeStyle='#536b7b55';c.lineWidth=1;c.stroke();}
+    for(const l of lines){c.strokeStyle=l.color;c.fillStyle=l.color;c.lineWidth=l.width||3;c.beginPath();if(l.head){const p=l.head;c.moveTo(p[0],p[1]);c.lineTo(p[0]-12*Math.cos(l.t-.4),p[1]-12*Math.sin(l.t-.4));c.lineTo(p[0]-12*Math.cos(l.t+.4),p[1]-12*Math.sin(l.t+.4));c.closePath();c.fill();}else{c.moveTo(l.a[0],l.a[1]);c.lineTo(l.b[0],l.b[1]);c.stroke();}}
+    c.font='18px system-ui';for(const l of labels){c.fillStyle=l.color;c.fillText(l.text,l.p[0]+5,l.p[1]-6);}
+    c.fillStyle='#173b48';c.font='bold 19px system-ui';c.fillText(`${mode} · Determinarea ${Math.min(trial+1,experiment===3?3:4)}`,20,30);
+  }
+  sync();
+  let last=0;
+  function frame(now){if(now-last>40&&!document.hidden){last=now;for(const view of views)if(!view.box.closest('[data-panel]').hidden)draw(view);}requestAnimationFrame(frame);}
+  requestAnimationFrame(frame);
+}
+
+installSpatialView(9, state, root);
+/* SPATIAL-END */
 /* =========================================================
    START
 ========================================================= */
