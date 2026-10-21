@@ -673,6 +673,7 @@ window.LAB_EXPERIMENT_CONFIG={
 <script src="../assets/js/monitorizare.js" defer></script>
 <script src="../assets/js/pdf-local.js?v=2.1.2-clasa11" defer></script>
 
+<style data-spatial-style>.spatial-view{margin:20px 0;padding:18px;border:1px solid #b5ced4;border-radius:14px;background:#f7fbfc}.spatial-toolbar,.spatial-camera{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.spatial-view [hidden]{display:none!important}.spatial-view button[aria-pressed=true]{background:#126c77;color:white}.spatial-view canvas{display:block;width:100%;height:auto;max-height:460px;margin:14px 0;border-radius:10px}.spatial-camera label{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spatial-note{font-size:.9em;color:#48616d}@media print{.spatial-view{display:none}}</style>
 </head>
 
 
@@ -7390,6 +7391,200 @@ qs(
 );
 
 
+/* SPATIAL-BEGIN */
+/* Scene suplimentare: folosesc starea montajului, fără a modifica măsurările. */
+function installSpatialView(experiment, state, root, readSpatial) {
+  const descriptions = {"201":"Rotește montajul pentru a observa planul oscilației pendulului și direcția mișcării corpului suspendat de resort. Mișcările urmăresc animațiile experimentului.","202":"Compară scăderea amplitudinii în cele două regimuri. Pozițiile corpurilor urmăresc montajele originale; citirile se fac pe instrumentele gradate.","203":"Compară mișcările în fază și în opoziție de fază, apoi urmărește transferul de energie. Masele și resorturile se deplasează de-a lungul aceluiași ghidaj.","204":"Cele trei curbe sunt prezentate separat pentru comparare: unda 1, unda 2 și suma lor. Separarea pe verticală este grafică; nu reprezintă trei corzi.","205":"Pe coardă, deplasarea este transversală. În tub, aerul oscilează longitudinal. Profilele și săgețile reprezintă schematic forma modului selectat.","206":"Observă forma rezistorului, a bobinei și a condensatorului. Selectarea elementului în experiment actualizează montajul spațial. Defazajele se citesc pe osciloscopul 2D.","207":"Urmărește legarea în serie a elementelor R, L și C. Rezonanța și defazajul se analizează cu graficul și osciloscopul existente.","208":"Modifică cursorul temporal pentru a compara câmpul electric dintre armături și câmpul magnetic al bobinei. Barele reprezintă energiile relative din modelul ideal.","209":"Observă refracția la cele două fețe ale prismei și separarea radiațiilor roșie și violetă. Geometria razelor folosește indicii de refracție ai setului experimental.","210":"În montajul Young, două fante iluminează același ecran. Pentru inelele lui Newton, observă pelicula de aer dintre lentilă și placa de sticlă. Franjele și inelele se măsoară în reprezentările 2D.","211":"Observă rețeaua, direcțiile maximelor și ecranul. Distanțele din scena spațială sunt schematice; măsurările se fac cu cursoarele originale.","212":"Rotește vederea pentru a distinge planul de incidență și direcția transversală a axei analizorului. Unghiurile și intensitatea se citesc în montajul original.","213":"Cele două pendule A și B pornesc din condiții inițiale apropiate. Mișcările 3D folosesc aceleași traiectorii calculate ca animația originală. Mișcarea rămâne în același plan."};
+  let mode = '2D', yaw = -.55, pitch = .38;
+  const views = [];
+  for (const step of [3, 4, 5]) {
+    const panel = root.querySelector(`[data-panel="${step}"]`);
+    if (!panel) continue;
+    const box = document.createElement('section');
+    box.className = 'spatial-view';
+    box.innerHTML = `<h3>Explorarea montajului</h3><div class="spatial-toolbar" role="group" aria-label="Vizualizarea montajului"><button type="button" class="btn secondary" data-view="2D" aria-pressed="true">2D</button><button type="button" class="btn secondary" data-view="3D" aria-pressed="false">3D</button><button type="button" class="btn secondary" data-reset-view>Resetează vederea</button></div><canvas width="960" height="460" role="img" aria-label="Montaj experimental în două sau trei dimensiuni"></canvas><div class="spatial-camera" hidden><label>Rotire orizontală <input type="range" min="-120" max="120" value="-32" data-yaw></label><label>Înclinarea vederii <input type="range" min="10" max="65" value="22" data-pitch></label></div><p>${descriptions[experiment]}</p><p class="spatial-note">Montaj schematic. Folosește comenzile experimentului de mai jos pentru efectuarea măsurărilor. Citește valorile pe instrumentele gradate din pagină.</p>`;
+    panel.insertBefore(box, panel.querySelector('h2')?.nextSibling || panel.firstChild);
+    const canvas = box.querySelector('canvas');
+    const view = { box, canvas, ctx: canvas.getContext('2d') };
+    views.push(view);
+    box.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.view; sync(); }));
+    box.querySelector('[data-reset-view]').addEventListener('click', () => { yaw = -.55; pitch = .38; sync(); });
+    box.querySelector('[data-yaw]').addEventListener('input', e => { yaw = Number(e.target.value) * Math.PI / 180; sync(); });
+    box.querySelector('[data-pitch]').addEventListener('input', e => { pitch = Number(e.target.value) * Math.PI / 180; sync(); });
+  }
+  function sync() {
+    for (const {box} of views) {
+      box.dataset.mode = mode;
+      box.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === mode)));
+      box.querySelector('.spatial-camera').hidden = mode !== '3D';
+      box.querySelector('[data-reset-view]').hidden = mode !== '3D';
+      box.querySelector('[data-yaw]').value = Math.round(yaw * 180 / Math.PI);
+      box.querySelector('[data-pitch]').value = Math.round(pitch * 180 / Math.PI);
+    }
+  }
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  function draw(view) {
+    const {ctx:c} = view;
+    if (!c || !state.set) return;
+    const faces = [], lines = [], labels = []; let layer = -1;
+    function project([x,y,z]) {
+      if (mode === '2D') return experiment===209||experiment===210&&!view.box.closest('[data-panel="5"]')||experiment===211 ? [480+x*180,230+z*150-y*15,z] : [480+x*180,385-y*180,z];
+      const xx = x*Math.cos(yaw)+z*Math.sin(yaw);
+      const zz = -x*Math.sin(yaw)+z*Math.cos(yaw);
+      const yy = y*Math.cos(pitch)-zz*Math.sin(pitch);
+      const depth = -y*Math.sin(pitch)-zz*Math.cos(pitch);
+      const scale = 150/(1+depth*.08);
+      return [480+xx*scale,340-yy*scale,depth];
+    }
+    function face(points,color) { faces.push({points:points.map(project),color,layer}); }
+    function line(a,b,color='#31465b',width=3) { lines.push({a:project(a),b:project(b),color,width}); }
+    function label(p,text,color='#183b48') { labels.push({p:project(p),text,color}); }
+    function arrow(a,b,color,text) { line(a,b,color,4); const pa=project(a),pb=project(b),t=Math.atan2(pb[1]-pa[1],pb[0]-pa[0]); lines.push({head:pb,t,color}); if(text) label(b,text,color); }
+    function cuboid(x,y,z,w,h,d,color='#41948e') {
+      const a=[x,y,z],b=[x+w,y,z],cc=[x+w,y+h,z],dd=[x,y+h,z],e=[x,y,z+d],f=[x+w,y,z+d],g=[x+w,y+h,z+d],hh=[x,y+h,z+d];
+      face([a,b,cc,dd],color);face([e,f,g,hh],color);face([a,e,hh,dd],'#28686b');face([b,f,g,cc],'#5aa9a0');face([dd,cc,g,hh],'#9ad3c9');
+    }
+    function cylinder(x,y,z,r,h,color) {
+      const top=[]; for(let i=0;i<32;i++){const a=i*Math.PI/16,b=(i+1)*Math.PI/16; const p=[x+r*Math.cos(a),y,z+r*Math.sin(a)],q=[x+r*Math.cos(b),y,z+r*Math.sin(b)]; face([p,q,[q[0],y+h,q[2]],[p[0],y+h,p[2]]],i<16?color:'#8bc8cf');top.push([p[0],y+h,p[2]]); } face(top,color);
+    }
+    const visual = sel => root.querySelector(sel);
+    const v = state.set.visible || {}, iv=state.set.instrumentValues || {}, trial=0;
+    c.clearRect(0,0,960,460);c.fillStyle='#f0f6f8';c.fillRect(0,0,960,460);
+    face([[-1.65,-.08,-.7],[1.65,-.08,-.7],[1.65,-.08,.8],[-1.65,-.08,.8]],'#dfe9ed');
+    layer = 0;
+    const number=experiment-200,step=Number(view.box.closest('[data-panel]').dataset.panel),late=step===5;
+    const model=state.set.hidden||{},snap=readSpatial(step)||{};
+    function matrix(sel){const el=visual(sel);if(!el)return new DOMMatrixReadOnly();const t=getComputedStyle(el).transform;return new DOMMatrixReadOnly(t==='none'?undefined:t);}
+    function spring(a,b,color='#a47647'){
+      let prev=a;for(let i=1;i<=90;i++){const u=i/90,s=Math.sin(u*18*Math.PI)*.065,p=[a[0]+(b[0]-a[0])*u+s,a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u+Math.cos(u*18*Math.PI)*.035];line(prev,p,color,2);prev=p;}
+    }
+    function bob(p,color='#4f92b7'){cuboid(p[0]-.075,p[1]-.075,p[2]-.075,.15,.15,.15,color);}
+    function path3(points,color,width=3){points.slice(1).forEach((p,i)=>line(points[i],p,color,width));}
+    function wave(fn,y,z,color){const pts=[];for(let i=0;i<=120;i++){const u=i/120;pts.push([-1.3+2.6*u,y+fn(u),z]);}path3(pts,color);}
+    if(number===1){
+      const m=matrix('[data-pendulum-arm]'),a=Math.atan2(m.b,m.a),origin=[-.75,1.3,0],p=[origin[0]-.8*Math.sin(a),origin[1]-.8*Math.cos(a),0];
+      line([-.95,1.4,0],[-.55,1.4,0],'#6d8191',9);line(origin,p);bob(p);
+      const dy=matrix('[data-spring-system]').f/150;
+      const q=[.75,.45-dy,0];spring([.75,1.3,0],q);bob(q,'#b17b4e');line([.55,1.4,0],[.95,1.4,0],'#6d8191',9);
+      label([-1.25,1.65,0],'Pendul gravitațional');label([.35,1.65,0],'Pendul elastic');
+    }else if(number===2){
+      for(const [i,key]of ['weak','strong'].entries()){
+        const x=i? .8:-.8,el=visual(`[data-mass="${key}"]`),top=parseFloat(el?.style.top)||238,y=.55-(top-238)/180;
+        line([x-.2,1.5,0],[x+.2,1.5,0],'#6d8191',9);spring([x,1.4,0],[x,y,0]);bob([x,y,0]);
+        label([x-.45,1.65,0],i?'Amortizare mai mare':'Amortizare mai mică');
+      }
+    }else if(number===3){
+      const modes=late?['beats']:['symmetric','antisymmetric'];
+      modes.forEach((key,k)=>{
+        const z=0,y=modes.length===1?.65:k===0?1:.3;
+        const x1=-.55+matrix(`[data-mass1="${key}"]`).e/170,x2=.55+matrix(`[data-mass2="${key}"]`).e/170;
+        line([-1.4,y-.12,z],[1.4,y-.12,z],'#8197a8',5);spring([-1.35,y,z],[x1-.1,y,z]);spring([x1+.1,y,z],[x2-.1,y,z]);spring([x2+.1,y,z],[1.35,y,z]);bob([x1,y,z]);bob([x2,y,z],'#b17b4e');
+        label([-1.4,y+.3,z],late?'Transfer de energie':k===0?'Mod simetric':'Mod antisimetric');
+      });
+    }else if(number===4){
+      const phase=(late?state.selectedPhase:0)*Math.PI/180,t=performance.now()/1000;
+      const k=2*Math.PI*2.7,w=2*Math.PI*(model.frequency_Hz||1),A=(model.a1_cm||1)*.065,B=(model.a2_cm||1)*.065;
+      wave(u=>A*Math.sin(k*u-w*t),1.2,0,'#287eb3');wave(u=>B*Math.sin(k*u-w*t+phase),.8,0,'#cc7748');
+      wave(u=>A*Math.sin(k*u-w*t)+B*Math.sin(k*u-w*t+phase),.3,0,'#187d68');
+      label([-1.5,1.55,0],'Unda 1');label([-1.5,.95,0],'Unda 2');label([-1.5,.1,0],'Suprapunere');
+    }else if(number===5){
+      if(!late){const n=visual('[data-string-mode-label]')?.textContent.includes('II')?2:1;
+        line([-1.3,.65,0],[1.3,.65,0],'#a6b8c5',1);wave(u=>.3*Math.sin(n*Math.PI*u),.65,0,'#267caa');
+        for(let j=0;j<=n;j++)bob([-1.3+2.6*j/n,.65,0],'#b35b4b');label([-.8,1.4,0],'Noduri și ventre pe coardă');
+      }else{
+        for(const [i,kind]of ['open','closed'].entries()){
+          const y=i?.3:1,n=visual(`[data-${kind}-mode-label]`)?.textContent.toLowerCase().includes('fundamental')?1:kind==='open'?2:3;
+          for(const z of [-.12,.12])line([-1.3,y,z],[1.3,y,z],'#7d9eaf',3);
+          if(i)line([-1.3,y-.12,0],[-1.3,y+.12,0],'#7d9eaf',8);
+          for(let j=0;j<=12;j++){const u=j/12,amp=i?Math.sin(n*Math.PI*u/2):Math.cos(n*Math.PI*u);const x=-1.2+2.4*u;line([x,y,0],[x+.12*amp,y,0],'#c87c49',4);}
+          label([-1.3,y+.25,0],i?'Tub închis la un capăt':'Tub deschis la ambele capete');
+        }label([-.8,-.1,0],'Deplasări longitudinale ale aerului');
+      }
+    }else if(number>=6&&number<=8){
+      const component=number===6?state.scopeComponent:'RLC';
+      const electrical=number===8,phase=Number(visual('[data-energy-slider]')?.value||0)/100*2*Math.PI;
+      path3([[-1.4,.3,0],[-1.4,.3,.7],[1.4,.3,.7],[1.4,.3,0]],'#587e91',4);
+      if(!electrical){cuboid(-1.55,.15,-.12,.3,.3,.3,'#527d9c');label([-1.6,.7,0],number===6&&component!=='C'?'Sursă CC/CA':'Sursă CA');}
+      if(component==='R'||(component==='RLC'&&!electrical)){cuboid(-1.1,.2,-.1,.5,.2,.2,'#aa7c50');label([-1.05,.65,0],'R');}
+      if(component==='L'||component==='RLC'){
+        for(let i=0;i<100;i++){const a=i*.5,b=(i+1)*.5;line([-.4+i*.008,.35+.15*Math.cos(a),.15*Math.sin(a)],[-.4+(i+1)*.008,.35+.15*Math.cos(b),.15*Math.sin(b)],'#b87539',4);}label([-.2,.8,0],'L');
+      }
+      if(component==='C'||component==='RLC'){
+        for(const x of [.85,1.05])cuboid(x,.12,-.2,.035,.5,.4,'#6598b3');label([.85,.85,0],'C');
+      }
+      const spans=[];if(component==='R'||(component==='RLC'&&!electrical))spans.push([-1.1,-.6]);if(component==='L'||component==='RLC')spans.push([-.4,.4]);if(component==='C'||component==='RLC')spans.push([.85,1.085]);let cursor=-1.4;for(const [a,b]of spans){line([cursor,.3,0],[a,.3,0],'#587e91',3);cursor=b;}line([cursor,.3,0],[1.4,.3,0],'#587e91',3);
+      if(electrical){
+        const e=Math.cos(phase),b=Math.sin(phase);
+        if(Math.abs(e)>.03)for(let j=0;j<3;j++)arrow(e>0?[.86,.22+j*.13,0]:[1.04,.22+j*.13,0],e>0?[1.04,.22+j*.13,0]:[.86,.22+j*.13,0],'#b04d47','');
+        if(Math.abs(b)>.03)arrow(b>0?[-.5,.75,0]:[.5,.75,0],b>0?[.5,.75,0]:[-.5,.75,0],'#277fa5','B');
+        label([-.8,1.45,0],'Câmp electric ↔ câmp magnetic');
+        cuboid(-.7,-.02,-.2,.22,Math.max(.01,.5*e*e),.2,'#b75a4d');cuboid(-.25,-.02,-.2,.22,Math.max(.01,.5*b*b),.2,'#4d8bb4');label([-.75,-.25,0],'E electrică / E magnetică');
+      }else label([-.6,1.35,0],number===6?`Element selectat: ${component}`:`RLC · ${snap.regime==='below'?'sub rezonanță':snap.regime==='above'?'peste rezonanță':'rezonanță'}`);
+    }else if(number===9){
+      const A=(v.prismAngle_deg||60)*Math.PI/180,half=A/2,b=.6*Math.tan(half)*2;
+      const triangle=[[-b,.15,.6],[0,.15,-.6],[b,.15,.6]];
+      face(triangle,'#b4d4e2');face(triangle.map(p=>[p[0],1,p[2]]),'#c6e4ee');
+      for(let i=0;i<3;i++){const p=triangle[i],q=triangle[(i+1)%3];face([p,q,[q[0],1,q[2]],[p[0],1,p[2]]],'#8cb3c580');}
+      if(state.spectrumObserved||late){
+        const i=late?Number(visual('[data-incidence-slider]')?.value||50):50,inc=half-i*Math.PI/180,p=[-b/2,.6,0];
+        line([p[0]-1.1*Math.cos(inc),.6,p[2]-1.1*Math.sin(inc)],p,'#a58c53',5);
+        for(const [n,color]of [[model.nRed,'#d6534b'],[model.nViolet,'#7f53c7']]){
+          const r=Math.asin(Math.sin(i*Math.PI/180)/n),dir=half-r,dx=Math.cos(dir),dz=Math.sin(dir),qDist=(.6*Math.tan(half)-p[0]+p[2]*Math.tan(half))/(dx-dz*Math.tan(half));
+          const q=[p[0]+qDist*dx,.6,p[2]+qDist*dz],e=Math.asin(n*Math.sin(A-r));
+          line(p,q,color,3);if(Number.isFinite(e))line(q,[q[0]+.9*Math.cos(e-half),.6,q[2]+.9*Math.sin(e-half)],color,3);
+        }
+      }label([-.6,1.45,0],'Prismă · dispersie');
+    }else if(number===10){
+      if(!late){
+        cuboid(-1,.1,-.45,.05,1,.9,'#7b93a7');cuboid(1.1,.1,-.8,.05,1.2,1.6,'#e2e9ee');
+        for(const z of [-.18,.18]){line([-1.55,.6,0],[-1,.6,z],'#c35659',3);for(const target of [-.5,0,.5])line([-1,.6,z],[1.1,.6,target],'#cc7f8244',2);}
+        label([-1.2,1.4,0],'Două fante');label([.7,1.6,0],'Ecran');
+      }else{
+        cuboid(-.9,.1,-.6,1.8,.08,1.2,'#8caebf');
+        for(let i=0;i<60;i++){const a=i*Math.PI/30,b=(i+1)*Math.PI/30;line([.75*Math.cos(a),.3,.5*Math.sin(a)],[.75*Math.cos(b),.3,.5*Math.sin(b)],'#6390a7',3);}
+        line([-.75,.3,0],[0,.14,0],'#6390a7',3);line([0,.14,0],[.75,.3,0],'#6390a7',3);label([-.8,1.2,0],'Lentilă pe placă de sticlă');label([-.7,.75,0],'Peliculă subțire de aer');
+        const count=state.newton.selectedOrder||5;for(let j=1;j<=count;j++){const r=.32*Math.sqrt(j/count);for(let k=0;k<50;k++){const a=k*Math.PI/25,b=(k+1)*Math.PI/25;line([r*Math.cos(a),.33,r*Math.sin(a)],[r*Math.cos(b),.33,r*Math.sin(b)],'#6c465b',1);}}
+      }
+    }else if(number===11){
+      cuboid(-.9,.05,-.6,.04,1.1,1.2,'#88afbd');cuboid(1.05,.05,-1,.05,1.25,2,'#d5e2e8');
+      for(let j=0;j<12;j++)line([-.92,.1,-.5+j*.09],[-.92,1.1,-.5+j*.09],'#557c92',1);
+      line([-1.6,.6,0],[-.9,.6,0],'#bf4b4e',3);
+      const spacing=1e-3/v.linesPerMm,lambda=model.wavelength_nm*1e-9,scale=.65;
+      for(let m=-2;m<=2;m++){const s=m*lambda/spacing;if(Math.abs(s)>=1)continue;const z=clamp(Math.tan(Math.asin(s))*scale,-.95,.95);line([-.9,.6,0],[1.05,.6,z],'#bf4b4e',m===0?4:2);bob([1.08,.6,z],'#bf4b4e');}
+      const order=late?2:1;for(const side of ['left','right']){const value=Number(visual(`[data-cursor-${side}="${order}"]`)?.value||0),z=clamp(value/100/v.screenDistance_m*scale,-1,1);line([1.1,.2,z],[1.1,1.05,z],'#187e65',2);}
+      label([-1.35,1.45,0],'Rețea');label([.7,1.6,0],'Maxime pe ecran');
+    }else if(number===12){
+      face([[-1.4,.4,-.8],[1.4,.4,-.8],[1.4,.4,.8],[-1.4,.4,.8]],'#8eb7c999');
+      const i=Number(visual('[data-incidence]')?.value||55)*Math.PI/180,r=Math.asin(Math.sin(i)/(model.refractiveIndex||1.5));
+      const p=[0,.4,0],origin=[-Math.sin(i),.4+Math.cos(i),0],ref=[Math.sin(i),.4+Math.cos(i),0];
+      arrow(origin,p,'#b34b4d','');arrow(p,ref,'#b34b4d','');arrow(p,[Math.sin(r),.4-Math.cos(r),0],'#4a809c','');
+      line([0,-.25,0],[0,1.5,0],'#687e91',1);label([.05,1.5,0],'Normală');
+      if(late){const a=Number(visual('[data-analyzer-angle]')?.value||0)*Math.PI/180;
+        const p=[ref[0]*.7,ref[1]*.7+.12,0],axis=[Math.cos(i)*Math.cos(a),-Math.sin(i)*Math.cos(a),Math.sin(a)];line(p.map((x,j)=>x-.2*axis[j]),p.map((x,j)=>x+.2*axis[j]),'#247c6a',7);label([-.9,1.65,0],'Analizor pe fasciculul reflectat');
+      }else label([-.8,1.65,0],'Planul de incidență');
+    }else if(number===13){
+      const regime=late?'chaotic':'regular',positions=snap[regime],length=(v.l1_m||1)+(v.l2_m||1),scale=.8/length;
+      line([-.4,1.2,0],[.4,1.2,0],'#6c8497',8);
+      for(const [j,key]of ['A','B'].entries()){
+        const p=positions?.[key];if(!p)continue;const a=[p.x1*scale,1.12-p.y1*scale,0],b=[p.x2*scale,1.12-p.y2*scale,0],color=j?'#c75071':'#337cbd';
+        line([0,1.12,0],a,color,4);line(a,b,color,4);bob(a,color);bob(b,color);
+      }label([-1.1,1.6,0],late?'Regim haotic · A și B':'Regim relativ regulat · A și B');
+    }
+
+    faces.sort((a,b)=>a.layer-b.layer || b.points.reduce((s,p)=>s+p[2],0)/b.points.length-a.points.reduce((s,p)=>s+p[2],0)/a.points.length);
+    for(const f of faces){c.beginPath();f.points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=f.color;c.fill();c.strokeStyle='#536b7b55';c.lineWidth=1;c.stroke();}
+    for(const l of lines){c.strokeStyle=l.color;c.fillStyle=l.color;c.lineWidth=l.width||3;c.beginPath();if(l.head){const p=l.head;c.moveTo(p[0],p[1]);c.lineTo(p[0]-12*Math.cos(l.t-.4),p[1]-12*Math.sin(l.t-.4));c.lineTo(p[0]-12*Math.cos(l.t+.4),p[1]-12*Math.sin(l.t+.4));c.closePath();c.fill();}else{c.moveTo(l.a[0],l.a[1]);c.lineTo(l.b[0],l.b[1]);c.stroke();}}
+    c.font='18px system-ui';for(const l of labels){c.fillStyle=l.color;c.fillText(l.text,l.p[0]+5,l.p[1]-6);}
+    c.fillStyle='#173b48';c.font='bold 19px system-ui';c.fillText(`${mode} · Montaj experimental`,20,30);
+  }
+  sync();
+  let last=0;
+  function frame(now){if(now-last>40&&!document.hidden){last=now;for(const view of views)if(!view.box.closest('[data-panel]').hidden)draw(view);}requestAnimationFrame(frame);}
+  requestAnimationFrame(frame);
+}
+
+installSpatialView(211, state, root, ()=>({}));
+/* SPATIAL-END */
 /* =========================================================
    START
 ========================================================= */
