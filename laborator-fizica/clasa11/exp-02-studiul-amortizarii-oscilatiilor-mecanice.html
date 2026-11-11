@@ -1,7 +1,190 @@
 <!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>De ce se opresc oscilațiile? · Clasa XI</title><style>:root{font-family:system-ui,Segoe UI,sans-serif;color:#17384c;background:#edf3f5;--accent:#007e87}*{box-sizing:border-box}body{margin:0}main{max-width:1140px;margin:auto;padding:24px}header{background:#123d51;color:white;padding:32px;border-radius:20px}header small{color:#a4e6df;letter-spacing:.1em}h1{font-size:clamp(26px,4vw,40px);margin:12px 0}h2{margin-top:0}p{line-height:1.6}article,section{background:white;border:1px solid #d5e1e6;padding:24px;border-radius:16px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.fields{display:flex;flex-wrap:wrap;gap:14px;align-items:end}label{display:grid;gap:6px;font-weight:600;flex:1;margin:12px 0}input,select,textarea,button{font:inherit}input,select,textarea{border:1px solid #9ab3bf;padding:10px;border-radius:8px;min-width:0;width:100%;background:white;color:#17384c}textarea{min-height:90px}button{border:0;border-radius:9px;padding:11px 17px;background:var(--accent);color:white;font-weight:700;cursor:pointer;min-height:44px}button.alt{background:#e2eef1;color:#17384c}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #efac38;outline-offset:3px}.toolbar{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0;align-items:center}.toolbar label{flex:0 0 220px}aside{background:#eef8f7;padding:15px;border-left:4px solid var(--accent);border-radius:6px;line-height:1.6;margin:16px 0}.muted,footer,#attemptInfo{color:#526c7a;font-size:14px}nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}nav button[aria-selected=true]{background:#123d51;color:white}nav button{background:white;color:#17384c;border:1px solid #b9cdd5}canvas{width:100%;height:320px;display:block;background:#f5f9fa;border:1px solid #d4e1e5;border-radius:12px}#graph{height:250px}table{border-collapse:collapse;width:100%;margin:16px 0}td,th{border-bottom:1px solid #d4e1e5;padding:10px;text-align:left}th{background:#edf5f7}.scroll{overflow:auto}section[hidden],[hidden]{display:none!important}#result,#storage{white-space:pre-line;line-height:1.8}#result{background:#f2f7f8;padding:16px;border-radius:10px}footer{padding:20px 0}@media(max-width:700px){main{padding:12px}.grid{grid-template-columns:1fr}article,section{padding:17px}header{padding:22px}.fields{display:grid;grid-template-columns:1fr}nav button{flex:1 1 40%}}
 
 #fiveTimes td{vertical-align:middle}#fiveTimes button{min-height:32px;padding:5px 8px;margin-left:8px;font-size:12px}.time-cell{font-variant-numeric:tabular-nums;white-space:nowrap}#meanFeedback{white-space:pre-line;line-height:1.7}input:disabled{background:#edf3f5}#fiveTimes th{min-width:125px}
-.stage-navigation{display:flex;gap:12px;justify-content:space-between;margin-top:24px}.stage-navigation .next-link{background:#007e87;color:white;text-decoration:none;border-radius:9px;padding:12px 16px;font-weight:700}.stage-navigation button{max-width:65%}</style></head><body><main><header><small>LABORATOR VIRTUAL · CLASA A XI-A · F1 / F2</small><h1>De ce se opresc oscilațiile?</h1><p>Observă oscilațiile într-un lichid. Repetă măsurările și folosește media timpilor.</p></header><article><h2>Fișa de laborator</h2><form id="identity"><div class="fields"><label>Nume și prenume<input id="name" required minlength="3" maxlength="80"></label><label>Clasa<input id="classroom" required placeholder="XI A" maxlength="30"></label><label>Număr în catalog<input id="catalog" type="number" min="1" max="40" required></label><button>Deschide fișa</button></div></form><p id="storage" role="status"></p></article><div id="app" hidden><div class="toolbar"><b id="set" hidden></b><label>Reprezentare<select id="view"><option value="2">2D · frontal</option><option value="3">3D · perspectivă</option></select></label><span id="attemptInfo"></span></div><nav id="tabs" aria-label="Activități"><button data-tab="0">1 · Amplitudine</button><button data-tab="1">2 · Ritm</button><button data-tab="2">3 · T și f</button><button data-tab="3">4 · Frânare puternică</button><button data-tab="4">5 · Rezultate</button></nav>
+.stage-navigation{display:flex;gap:12px;justify-content:space-between;margin-top:24px}.stage-navigation .next-link{background:#007e87;color:white;text-decoration:none;border-radius:9px;padding:12px 16px;font-weight:700}.stage-navigation button{max-width:65%}</style><script>
+(function(global){
+    "use strict";
+
+    // Fontul PDF existent este ASCII: păstrăm sensul formulelor prin echivalente text.
+    const physicsSymbols = {"±":"+/-","−":"-","﹣":"-","－":"-","–":"-","—":"-","π":" pi ","λ":" lambda ","θ":" theta ","ω":" omega ","Ω":" ohm ","μ":" mu ","µ":" mu ","ν":" nu ","ε":" epsilon ","Δ":" Delta ","δ":" delta ","α":" alpha ","β":" beta ","γ":" gamma ","ρ":" rho ","η":" eta ","σ":" sigma ","φ":" phi ","ϕ":" phi ","Σ":" Sigma ","√":"sqrt","∞":"infinity","∝":" proportional cu ","×":"*","·":"*","°":" grade ","≤":"<=","≥":">=","≠":"!=","≈":"~=","“":"\"","”":"\"","’":"'","…":"..."};
+    const superscripts = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁺":"+","⁻":"-"};
+    const subscripts = {"₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9","ₐ":"a","ₑ":"e","ₒ":"o","ₓ":"x","ₙ":"n","ₘ":"m","ₛ":"s","ₜ":"t","ᵢ":"i","ⱼ":"j"};
+
+    function asciiText(value){
+        return String(value ?? "")
+            .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, sequence => "^" + Array.from(sequence, character => superscripts[character]).join(""))
+            .replace(/[₀₁₂₃₄₅₆₇₈₉ₐₑₒₓₙₘₛₜᵢⱼ]+/g, sequence => "_" + Array.from(sequence, character => subscripts[character]).join(""))
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/ș|ş/g, "s")
+            .replace(/Ș|Ş/g, "S")
+            .replace(/ț|ţ/g, "t")
+            .replace(/Ț|Ţ/g, "T")
+            .replace(/[^\x20-\x7E]/g, character => physicsSymbols[character] || " ");
+    }
+
+    function pdfEscape(value){
+        return asciiText(value)
+            .replace(/\\/g, "\\\\")
+            .replace(/\(/g, "\\(")
+            .replace(/\)/g, "\\)");
+    }
+
+    function wrapLine(text, maximum=52){
+        const words=asciiText(text).trim().split(/\s+/),lines=[];let line="";
+        for(let word of words){
+            if(line && line.length+word.length+1>maximum){lines.push(line);line="";}
+            while(word.length>maximum){lines.push(word.slice(0,maximum));word=word.slice(maximum);}
+            if(word)line=line?line+" "+word:word;
+        }
+        if(line||!lines.length)lines.push(line);return lines;
+    }
+
+    function byteLength(value){
+        return new TextEncoder().encode(value).length;
+    }
+
+    function createTextPdfBlob(originalLines){
+        const lines = originalLines.flatMap(line => wrapLine(line));
+        const perPage = 48;
+        const pages = [];
+
+        for(let index=0; index<lines.length; index+=perPage){
+            pages.push(lines.slice(index, index + perPage));
+        }
+
+        if(!pages.length){
+            pages.push(["Raport"]);
+        }
+
+        const objects = [];
+        objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+        objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+        const pageIds = [];
+
+        pages.forEach((page,index) => {
+            const pageId = 4 + index * 2;
+            const contentId = pageId + 1;
+            pageIds.push(pageId);
+
+            const content = [
+                "BT",
+                "/F1 10 Tf",
+                "50 790 Td",
+                "14 TL",
+                ...page.flatMap(line => [
+                    `(${pdfEscape(line)}) Tj`,
+                    "T*"
+                ]),
+                "ET"
+            ].join("\n");
+
+            objects[pageId] =
+                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
+
+            objects[contentId] =
+                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
+        });
+
+        objects[2] =
+            `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
+
+        let pdf = "%PDF-1.4\n%1234\n";
+        const offsets = [0];
+
+        for(let id=1; id<objects.length; id+=1){
+            offsets[id] = byteLength(pdf);
+            pdf += `${id} 0 obj\n${objects[id]}\nendobj\n`;
+        }
+
+        const xref = byteLength(pdf);
+        pdf += `xref\n0 ${objects.length}\n`;
+        pdf += "0000000000 65535 f \n";
+
+        for(let id=1; id<objects.length; id+=1){
+            pdf += `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
+        }
+
+        pdf +=
+            `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+
+        return new Blob([pdf], {type:"application/pdf"});
+    }
+
+    const PORTFOLIO_DB = "fizica-laborator-portofoliu";
+    let dbPromise;
+    function openPortfolio(){
+        if(dbPromise) return dbPromise;
+        dbPromise = new Promise((resolve,reject) => {
+            if(!global.indexedDB){ reject(new Error("Stocarea nu este disponibilă.")); return; }
+            const request = global.indexedDB.open(PORTFOLIO_DB,1);
+            request.onupgradeneeded = () => request.result.createObjectStore("pdf",{keyPath:"fileName"});
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            request.onblocked = () => reject(new Error("Stocarea este ocupată."));
+        });
+        dbPromise.catch(()=>{dbPromise=null;});
+        return dbPromise;
+    }
+    async function rememberPdf(blob,fileName,title){
+        const db = await openPortfolio();
+        return new Promise((resolve,reject)=>{
+            const tx=db.transaction("pdf","readwrite");
+            tx.objectStore("pdf").put({fileName,title,blob,updatedAt:new Date().toISOString()});
+            tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+        });
+    }
+    async function getSavedPdfs(){
+        const db=await openPortfolio();
+        return new Promise((resolve,reject)=>{
+            const request=db.transaction("pdf","readonly").objectStore("pdf").getAll();
+            request.onsuccess=()=>resolve(request.result.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)));
+            request.onerror=()=>reject(request.error);
+        });
+    }
+    function prepareFile(blob,fileName){
+        if(!(blob instanceof Blob) || !blob.size) throw new Error("Raportul PDF este gol.");
+        const name=String(fileName||"raport-laborator.pdf").replace(/[\\/:*?"<>|]/g,"_");
+        return {name:name.toLowerCase().endsWith(".pdf")?name:name+".pdf",blob};
+    }
+    function downloadBlob(blob,name){
+        const url=URL.createObjectURL(blob),a=document.createElement("a");
+        a.href=url;a.download=name;a.style.display="none";document.body.append(a);a.click();a.remove();
+        global.setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }
+    function shareableFile(blob,name){
+        try{
+            if(typeof global.File!=="function" || typeof navigator.share!=="function" || typeof navigator.canShare!=="function")return null;
+            const file=new File([blob],name,{type:"application/pdf"});
+            return navigator.canShare({files:[file]})?file:null;
+        }catch{return null;}
+    }
+    async function saveBlob(blob,fileName,title="Raport experiment"){
+        const {name}=prepareFile(blob,fileName);
+        rememberPdf(blob,name,title).catch(()=>{});
+        const apple=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+        const file=apple?shareableFile(blob,name):null;
+        if(file){
+            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
+            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
+        }
+        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
+    }
+    async function shareBlob(blob,fileName,title="Raport experiment"){
+        const {name}=prepareFile(blob,fileName),file=shareableFile(blob,name);
+        rememberPdf(blob,name,title).catch(()=>{});
+        if(file){
+            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
+            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
+        }
+        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
+    }
+
+    global.LaboratorPdfLocal=Object.freeze({createTextPdfBlob,saveBlob,shareBlob,getSavedPdfs});
+})(globalThis);
+
+</script></head><body><main><header><small>LABORATOR VIRTUAL · CLASA A XI-A · F1 / F2</small><h1>De ce se opresc oscilațiile?</h1><p>Observă oscilațiile într-un lichid. Repetă măsurările și folosește media timpilor.</p></header><article><h2>Fișa de laborator</h2><form id="identity"><div class="fields"><label>Nume și prenume<input id="name" required minlength="3" maxlength="80"></label><label>Clasa<input id="classroom" required placeholder="XI A" maxlength="30"></label><label>Număr în catalog<input id="catalog" type="number" min="1" max="40" required></label><button>Deschide fișa</button></div></form><p id="storage" role="status"></p></article><div id="app" hidden><div class="toolbar"><b id="set" hidden></b><label>Reprezentare<select id="view"><option value="2">2D · frontal</option><option value="3">3D · perspectivă</option></select></label><span id="attemptInfo"></span></div><nav id="tabs" aria-label="Activități"><button data-tab="0">1 · Amplitudine</button><button data-tab="1">2 · Ritm</button><button data-tab="2">3 · T și f</button><button data-tab="3">4 · Frânare puternică</button><button data-tab="4">5 · Rezultate</button></nav>
 <section data-panel="0"><h2>1. Observă amplitudinea</h2><p>Corpul suspendat de resort oscilează într-un lichid. Eliberează-l fără impuls și urmărește extremele inferioare succesive. Linia punctată arată echilibrul, iar rigla măsoară deplasarea față de acesta.</p><aside>O oscilație completă înseamnă revenirea în aceeași extremă. Extremele de părți opuse ale echilibrului sunt separate de aproximativ o jumătate de oscilație.</aside><canvas id="sceneA" role="img" aria-label="Oscilator cu riglă pentru citirea amplitudinii"></canvas><div class="toolbar"><button id="startA">Pornește / reia observarea</button><button id="markA" disabled>Marchează următoarea extremă</button><b id="readA"></b></div><p>Marcarea oprește montajul exact la următoarea extremă inferioară. Citește rigla la centrul corpului și înregistrează cinci amplitudini, începând cu n = 0.</p><div class="fields"><label>Amplitudinea citită (cm)<input id="amp" type="number" min="0" max="12" step="0.1"></label><button id="saveA" disabled>Înregistrează</button></div><p id="ampFeedback" role="status"></p><table><thead><tr><th>n</th><th>Amplitudine citită (cm)</th></tr></thead><tbody id="ampRows"></tbody></table><canvas id="graph" role="img" aria-label="Graficul amplitudinilor citite"></canvas><label>Ce observi la extremele succesive?<select id="qa"><option value="">Alege</option><option value="decrease">Amplitudinea scade treptat.</option><option value="same">Amplitudinea rămâne aceeași.</option><option value="increase">Amplitudinea crește.</option></select></label><div class="stage-navigation"><span></span><button type="button" onclick="switchTab(1);document.querySelectorAll('[data-panel]')[1].scrollIntoView()">Mergi mai departe →</button></div></section>
 <section data-panel="1" hidden><h2>2. Compară ritmul oscilațiilor</h2><p>Aceeași masă, același resort și aceeași deplasare inițială. Montajele pornesc simultan în lichide cu vâscozități diferite. Lichidul mai vâscos frânează mai puternic mișcarea.</p><div class="grid"><div><h3>A · Lichid mai puțin vâscos</h3><canvas id="sceneB" role="img" aria-label="Montaj A, frânare slabă"></canvas></div><div><h3>B · Lichid mai vâscos</h3><canvas id="sceneC" role="img" aria-label="Montaj B, frânare mai pronunțată"></canvas></div></div><div class="toolbar"><button id="startB">Pornește simultan / reia</button><b id="readB"></b></div><p id="interval"></p><p>Numără numai oscilațiile complete, de la extrema inferioară la următoarea extremă inferioară. Poziția inițială nu reprezintă o oscilație completă.</p><div class="fields"><label>Oscilații complete A<input id="countA" type="number" min="0" step="1"></label><label>Oscilații complete B<input id="countB" type="number" min="0" step="1"></label></div><label>Care montaj face mai puține oscilații în același timp?<select id="qb"><option value="">Alege</option><option value="B">B · Lichid mai vâscos</option><option value="A">A · Lichid mai puțin vâscos</option><option value="equal">La fel de multe</option></select></label><aside>La frânare fixată, amplitudinea scade, dar perioada rămâne constantă în modelul studiat. Comparăm perioadele atunci când schimbăm frânarea.</aside><div class="stage-navigation"><button type="button" class="alt" onclick="switchTab(0)">← Înapoi</button><button type="button" onclick="switchTab(2);document.querySelectorAll('[data-panel]')[2].scrollIntoView()">Mergi mai departe →</button></div></section>
 <section data-panel="2" hidden>
@@ -86,5 +269,5 @@ function answer(id,value){const el=$(id);return el?.tagName==='SELECT'?[...el.op
 // PDF offline, pagini raster cu fonturile browserului: diacritice fără biblioteci externe.
 function reportPages(best){const pages=[];let c,y;function page(){const el=document.createElement('canvas');el.width=1240;el.height=1754;c=el.getContext('2d');c.fillStyle='white';c.fillRect(0,0,1240,1754);c.fillStyle='#123d51';c.fillRect(0,0,1240,140);c.fillStyle='white';c.font='bold 38px sans-serif';c.fillText('Oscilații mecanice amortizate',65,70);c.font='22px sans-serif';c.fillText('Clasa a XI-a · raport individual',65,110);y=195;pages.push(el);}function text(s,bold=false){const font=`${bold?'bold ':''}24px sans-serif`;c.font=font;c.fillStyle='#17384c';let line='';for(const word of String(s).split(/\s+/)){const next=line?line+' '+word:word;if(c.measureText(next).width>1090&&line){if(y>1600){page();c.font=font;c.fillStyle='#17384c';}c.fillText(line,65,y);y+=35;line=word;}else line=next;}if(y>1600){page();c.font=font;c.fillStyle='#17384c';}c.fillText(line,65,y);y+=43;}page();text('Elev: '+record.identity.name,true);text('Clasa: '+record.identity.cls+' | Număr în catalog: '+record.identity.cat);text('Set: '+params.id);text('Încercări începute în acest browser: '+record.started+'; finalizate: '+record.results.length);text('Cea mai bună încercare: '+best.id+' | NOTA: '+fmt(best.grade)+' / 10',true);text('Finalizată: '+new Date(best.completed).toLocaleString('ro-RO'));text('Repetările nu sunt penalizate. Toate datele de mai jos aparțin aceleiași încercări.');text('1. Amplitudinea',true);for(const r of best.amps)text('n = '+r.n+' | amplitudine citită: '+fmt(r.value,1)+' cm');text(answer('qa',best.fields.qa));text('2. Ritmul oscilațiilor',true);text('Interval: '+fmt(params.window)+' s; oscilații A: '+(best.fields.countA||'—')+'; B: '+(best.fields.countB||'—'));text('Montajul cu mai puține oscilații: '+answer('qb',best.fields.qb));page();text('3. Cinci măsurători, media, perioada și frecvența',true);for(const r of ['a','b']){const suffix=r.toUpperCase(),ts=best.times[r]||[];text('Lichid '+suffix+(r==='a'?' · mai puțin vâscos':' · mai vâscos'),true);for(let i=0;i<5;i++)text('Măsurarea '+(i+1)+': Δt = '+(Number.isFinite(ts[i])?fmt(ts[i]):'—')+' s; N = 3.');text('Media calculată: '+(best.fields['mean'+suffix]||'—')+' s.',true);text('T = '+(best.fields['period'+suffix]||'—')+' s; f = '+(best.fields['freq'+suffix]||'—')+' Hz.');}text(answer('qc',best.fields.qc));text('4. Revenirea aperiodică și energia',true);for(const id of ['qd','qe','qenergy'])text(answer(id,best.fields[id]));text('Concluzia elevului: '+(best.fields.conclusion||'Nescrisă.'));text('Punctaj',true);text('Amplitudine '+fmt(best.parts[0])+'/2; ritm '+fmt(best.parts[1])+'/2; măsurare '+fmt(best.parts[2])+'/3; explorare '+fmt(best.parts[3])+'/2; din oficiu 1.');text('Frânarea reduce amplitudinea. La creșterea frânării, în regimul oscilatoriu studiat, T crește și f scade. La frânare fixată, perioada rămâne constantă.');text('Montaj: corp suspendat de resort, scufundat în lichid. Referință: Rusu și colab., Fizică F1 + F2, XI, pp. 12–13.');pages.forEach((el,i)=>{const cc=el.getContext('2d');cc.font='18px sans-serif';cc.fillStyle='#526c7a';cc.fillText(`Set ${params.id} · Încercarea ${best.id} · Pagina ${i+1}/${pages.length}`,65,1700);});return pages;}
 function makePDF(pages){const enc=new TextEncoder(),chunks=[],offsets=[0];let size=0;const put=s=>{const b=typeof s==='string'?enc.encode(s):s;chunks.push(b);size+=b.length;},objects=[];objects[1]='<< /Type /Catalog /Pages 2 0 R >>';objects[2]=`<< /Type /Pages /Count ${pages.length} /Kids [${pages.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>`;pages.forEach((page,i)=>{const n=3+i*3,raw=atob(page.toDataURL('image/jpeg',.92).split(',')[1]),bytes=Uint8Array.from(raw,ch=>ch.charCodeAt(0));objects[n]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${n+1} 0 R >> >> /Contents ${n+2} 0 R >>`;objects[n+1]={bytes,head:`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>`};const stream='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';objects[n+2]=`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`;});put('%PDF-1.4\n');for(let i=1;i<objects.length;i++){offsets[i]=size;put(`${i} 0 obj\n`);const o=objects[i];if(typeof o==='string')put(o);else{put(o.head+'\nstream\n');put(o.bytes);put('\nendstream');}put('\nendobj\n');}const xref=size;put(`xref\n0 ${objects.length}\n0000000000 65535 f \n`);for(let i=1;i<objects.length;i++)put(String(offsets[i]).padStart(10,'0')+' 00000 n \n');put(`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);return new Blob(chunks,{type:'application/pdf'});}
-$('pdf').onclick=()=>{if(!record.best)return;saveFields();const blob=makePDF(reportPages(record.best)),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`amortizare-${record.identity.cls.replace(/[^a-z0-9]/gi,'-')}-${record.identity.cat}-nota-${record.best.grade}.pdf`;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);};
+$('pdf').onclick=()=>{if(!record.best)return;saveFields();LaboratorPdfLocal.saveBlob(makePDF(reportPages(record.best)),`amortizare-${record.identity.cls.replace(/[^a-z0-9]/gi,'-')}-${record.identity.cat}-nota-${record.best.grade}.pdf`);};
 </script></body></html>
