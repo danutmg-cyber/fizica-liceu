@@ -60,9 +60,9 @@
       required: true
     },
     {
-      id: "googleSheets",
-      file: "google-sheets.js",
-      global: "LaboratorGoogleSheets",
+      id: "pdfLocal",
+      file: "pdf-local.js",
+      global: "LaboratorPdfLocal",
       required: true
     },
     {
@@ -85,7 +85,7 @@
     },
     {
       id: "report",
-      file: "raport-final.js",
+      file: "raport-local.js",
       global: "LaboratorRaport",
       required: false
     }
@@ -1147,15 +1147,6 @@
           `Inițializarea ${globalName}`
         );
       }
-    }
-
-    if (
-      globalThis
-        .LaboratorGoogleSheets?.init
-    ) {
-      await globalThis
-        .LaboratorGoogleSheets
-        .init();
     }
   }
 

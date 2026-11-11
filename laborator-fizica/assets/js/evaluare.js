@@ -962,21 +962,7 @@
     return state.result;
   }
 
-  function retrySubmission() {
-    state.root.dispatchEvent(
-      new CustomEvent(
-        "laborator:submission-retry",
-        {
-          bubbles: true,
-          detail: state.result
-            ? structuredCloneSafe(
-                state.result
-              )
-            : null
-        }
-      )
-    );
-  }
+
 
   function addEventListeners() {
     select(
@@ -993,12 +979,7 @@
       () => globalThis.print()
     );
 
-    select(
-      '[data-action="retry-submission"]'
-    )?.addEventListener(
-      "click",
-      retrySubmission
-    );
+
 
     state.form.addEventListener(
       "submit",
