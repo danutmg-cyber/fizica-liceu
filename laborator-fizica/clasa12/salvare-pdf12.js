@@ -26,33 +26,14 @@
             .replace(/\)/g, "\\)");
     }
 
-    function wrapLine(text, maximum=82){
-        const words = asciiText(text).trim().split(/\s+/);
-
-        if(words.length === 1 && words[0] === ""){
-            return [""];
+    function wrapLine(text, maximum=52){
+        const words=asciiText(text).trim().split(/\s+/),lines=[];let line="";
+        for(let word of words){
+            if(line && line.length+word.length+1>maximum){lines.push(line);line="";}
+            while(word.length>maximum){lines.push(word.slice(0,maximum));word=word.slice(maximum);}
+            if(word)line=line?line+" "+word:word;
         }
-
-        const lines = [];
-        let line = "";
-
-        words.forEach(word => {
-            const next = line ? `${line} ${word}` : word;
-
-            if(next.length > maximum && line){
-                lines.push(line);
-                line = word;
-            }
-            else{
-                line = next;
-            }
-        });
-
-        if(line){
-            lines.push(line);
-        }
-
-        return lines;
+        if(line||!lines.length)lines.push(line);return lines;
     }
 
     function byteLength(value){
@@ -127,44 +108,74 @@
         return new Blob([pdf], {type:"application/pdf"});
     }
 
-    function isAppleMobile(){
-        return /iPad|iPhone|iPod/.test(navigator.userAgent)
-            || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const PORTFOLIO_DB = "fizica-laborator-portofoliu";
+    let dbPromise;
+    function openPortfolio(){
+        if(dbPromise) return dbPromise;
+        dbPromise = new Promise((resolve,reject) => {
+            if(!global.indexedDB){ reject(new Error("Stocarea nu este disponibilă.")); return; }
+            const request = global.indexedDB.open(PORTFOLIO_DB,1);
+            request.onupgradeneeded = () => request.result.createObjectStore("pdf",{keyPath:"fileName"});
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            request.onblocked = () => reject(new Error("Stocarea este ocupată."));
+        });
+        dbPromise.catch(()=>{dbPromise=null;});
+        return dbPromise;
     }
-
+    async function rememberPdf(blob,fileName,title){
+        const db = await openPortfolio();
+        return new Promise((resolve,reject)=>{
+            const tx=db.transaction("pdf","readwrite");
+            tx.objectStore("pdf").put({fileName,title,blob,updatedAt:new Date().toISOString()});
+            tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+        });
+    }
+    async function getSavedPdfs(){
+        const db=await openPortfolio();
+        return new Promise((resolve,reject)=>{
+            const request=db.transaction("pdf","readonly").objectStore("pdf").getAll();
+            request.onsuccess=()=>resolve(request.result.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)));
+            request.onerror=()=>reject(request.error);
+        });
+    }
+    function prepareFile(blob,fileName){
+        if(!(blob instanceof Blob) || !blob.size) throw new Error("Raportul PDF este gol.");
+        const name=String(fileName||"raport-laborator.pdf").replace(/[\\/:*?"<>|]/g,"_");
+        return {name:name.toLowerCase().endsWith(".pdf")?name:name+".pdf",blob};
+    }
+    function downloadBlob(blob,name){
+        const url=URL.createObjectURL(blob),a=document.createElement("a");
+        a.href=url;a.download=name;a.style.display="none";document.body.append(a);a.click();a.remove();
+        global.setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }
+    function shareableFile(blob,name){
+        try{
+            if(typeof global.File!=="function" || typeof navigator.share!=="function" || typeof navigator.canShare!=="function")return null;
+            const file=new File([blob],name,{type:"application/pdf"});
+            return navigator.canShare({files:[file]})?file:null;
+        }catch{return null;}
+    }
     async function saveBlob(blob,fileName,title="Raport experiment"){
-        const file = new File([blob], fileName, {type:"application/pdf"});
-
-        if(
-            isAppleMobile()
-            && navigator.share
-            && navigator.canShare?.({files:[file]})
-        ){
-            try{
-                await navigator.share({files:[file], title});
-                return;
-            }
-            catch(error){
-                if(error?.name === "AbortError"){
-                    return;
-                }
-            }
+        const {name}=prepareFile(blob,fileName);
+        rememberPdf(blob,name,title).catch(()=>{});
+        const apple=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+        const file=apple?shareableFile(blob,name):null;
+        if(file){
+            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
+            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
         }
-
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = fileName;
-        anchor.style.display = "none";
-        document.body.append(anchor);
-        anchor.click();
-        anchor.remove();
-
-        global.setTimeout(() => URL.revokeObjectURL(url), 60000);
+        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
+    }
+    async function shareBlob(blob,fileName,title="Raport experiment"){
+        const {name}=prepareFile(blob,fileName),file=shareableFile(blob,name);
+        rememberPdf(blob,name,title).catch(()=>{});
+        if(file){
+            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
+            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
+        }
+        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
     }
 
-    global.LaboratorPdfLocal = Object.freeze({
-        createTextPdfBlob,
-        saveBlob
-    });
+    global.LaboratorPdfLocal=Object.freeze({createTextPdfBlob,saveBlob,shareBlob,getSavedPdfs});
 })(globalThis);
