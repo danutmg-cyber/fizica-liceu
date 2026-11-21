@@ -792,8 +792,12 @@ window.LAB_EXPERIMENT_CONFIG={
 ></script>
 
 <script src="../assets/js/pdf-local.js?v=2.1.2-clasa10" defer></script>
+<script src="../assets/js/exp02-clasa10-progress.js?v=20261121-32" defer></script>
 
 <style data-spatial-style>.spatial-view{margin:20px 0;padding:18px;border:1px solid #b5ced4;border-radius:14px;background:#f7fbfc}.spatial-toolbar,.spatial-camera{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.spatial-view [hidden]{display:none!important}.spatial-view button[aria-pressed=true]{background:#126c77;color:white}.spatial-view canvas{display:block;width:100%;height:auto;max-height:460px;margin:14px 0;border-radius:10px}.spatial-camera label{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spatial-note{font-size:.9em;color:#48616d}@media print{.spatial-view{display:none}}</style>
+<style>
+.step-tab.is-active.is-done{background:#126e82;color:#fff;border-color:#126e82}
+</style>
 </head>
 
 
@@ -954,7 +958,7 @@ Numărul în catalog
     name="catalogNumber"
     type="number"
     min="1"
-    max="30"
+    max="32"
     step="1"
     inputmode="numeric"
     required
@@ -1256,8 +1260,11 @@ Principiul metodei
 
 <p>
 Corpul încălzit cedează căldură apei mai reci.
-În modelul ideal se neglijează schimbul de căldură
-cu mediul și capacitatea termică a calorimetrului.
+În relația simplificată de calcul se neglijează capacitatea termică
+a calorimetrului și schimbul de căldură cu mediul exterior.
+În simulare, calorimetrul este inițial la temperatura apei și absoarbe și el căldură;
+acest efect și rezoluția instrumentelor pot produce diferențe față de valoarea tabelară.
+Schimbul cu mediul este neglijat în simulare, dar poate apărea într-un montaj real.
 </p>
 
 
@@ -2869,6 +2876,10 @@ Tipărește
 
 </section>
 
+<nav class="actions" aria-label="Navigare între experimente">
+<a class="btn secondary" href="index.html">Experimente — clasa a X-a</a>
+<a class="btn" href="experimentul-3-studiul-fierberii-apei.html">Mergi mai departe →</a>
+</nav>
 </main>
 
 
@@ -3112,26 +3123,14 @@ function quantize(
 }
 
 
-function wait(
-    milliseconds
-){
-
-    return new Promise(
-        resolve =>
-            globalThis.setTimeout(
-                resolve,
-                milliseconds
-            )
-    );
-
+let pendingDelays = 0;
+async function wait(milliseconds){
+    pendingDelays++;
+    try { await new Promise(resolve => setTimeout(resolve,milliseconds)); }
+    finally { pendingDelays--; }
 }
 
-
-const now =
-    () =>
-        new Date()
-            .toISOString();
-
+const now = () => new Date().toISOString();
 
 function makeId(
     prefix
@@ -3608,223 +3607,35 @@ function classIndex(
 }
 
 
-function generateSet(
-    className,
-    catalogNumber
-){
-
-    const ci =
-        classIndex(
-            className
-        );
-
-
-    const number =
-        Number(
-            catalogNumber
-        );
-
-
-    const slot =
-        (
-            (
-                number -
-                1
-            ) *
-            11 +
-            ci *
-            7
-        ) %
-        120;
-
-
-    const material =
-        MATERIALS[
-            (
-                slot +
-                ci
-            ) %
-            MATERIALS.length
-        ];
-
-
-    const bodyMass_g =
-        140 +
-        (
-            (
-                slot *
-                7 +
-                ci
-            ) %
-            7
-        ) *
-        10;
-
-
-    const waterMass_g =
-        120 +
-        (
-            (
-                slot *
-                11 +
-                ci *
-                2
-            ) %
-            6
-        ) *
-        10;
-
-
-    const waterTemperature_C =
-        16 +
-        (
-            (
-                slot *
-                5 +
-                ci
-            ) %
-            9
-        );
-
-
-    const bodyTemperature_C =
-        82 +
-        (
-            (
-                slot *
-                13 +
-                ci
-            ) %
-            13
-        );
-
-
-    /*
-       Efectul calorimetrului este folosit doar intern
-       pentru obținerea unei măsurări realiste.
-       Elevului nu îi este dezvăluită această valoare.
-    */
-    const calorimeterHeatCapacity_J_K =
-        16 +
-        (
-            (
-                slot *
-                17 +
-                ci
-            ) %
-            6
-        ) *
-        4;
-
-
-    const bodyHeatCapacity =
-        (
-            bodyMass_g /
-            1000
-        ) *
-        material.cRef;
-
-
-    const waterHeatCapacity =
-        (
-            waterMass_g /
-            1000
-        ) *
-        4180;
-
-
-    const physicalEquilibrium_C =
-        (
-            bodyHeatCapacity *
-            bodyTemperature_C +
-
-            (
-                waterHeatCapacity +
-                calorimeterHeatCapacity_J_K
-            ) *
-            waterTemperature_C
-        ) /
-        (
-            bodyHeatCapacity +
-            waterHeatCapacity +
-            calorimeterHeatCapacity_J_K
-        );
-
-
-    const measuredEquilibrium_C =
-        round(
-            quantize(
-                physicalEquilibrium_C,
-                .2
-            ),
-            1
-        );
-
-
-    const compactClass =
-        normalizeClass(
-            className
-        )
-            .replace(
-                /\s/g,
-                "-"
-            );
-
-
+function generateSet(className, catalogNumber){
+    const ci = classIndex(className), number = Number(catalogNumber);
+    if (!Number.isInteger(number) || number < 1 || number > 32) throw new RangeError("Numărul din catalog trebuie să fie între 1 și 32.");
+    // Înmulțirea cu 11 permută toate cele 32 de poziții, fără repetare.
+    const slot = ((number - 1) * 11 + ci * 7) % 32;
+    const material = MATERIALS[(slot + ci) % MATERIALS.length];
+    // Perechea de mase identifică distinct fiecare dintre cele 32 de poziții.
+    const bodyMass_g = 140 + (slot % 8) * 10;
+    const waterMass_g = 120 + Math.floor(slot / 8) * 20;
+    const waterTemperature_C = 16 + ((slot * 5 + ci) % 9);
+    const bodyTemperature_C = 82 + ((slot * 5 + ci) % 13);
+    // Calorimetrul, inițial la temperatura apei, absoarbe și el căldură.
+    // Calculul simplificat al elevului neglijează această contribuție.
+    const calorimeterHeatCapacity_J_K = 16 + ((slot * 5 + ci) % 6) * 4;
+    const bodyHeatCapacity = bodyMass_g / 1000 * material.cRef;
+    const waterHeatCapacity = waterMass_g / 1000 * 4180;
+    const physicalEquilibrium_C = (bodyHeatCapacity * bodyTemperature_C +
+        (waterHeatCapacity + calorimeterHeatCapacity_J_K) * waterTemperature_C) /
+        (bodyHeatCapacity + waterHeatCapacity + calorimeterHeatCapacity_J_K);
+    const measuredEquilibrium_C = round(quantize(physicalEquilibrium_C, .2), 1);
     return {
-
-        id:
-            `${compactClass}-${String(number).padStart(2,"0")}-EXP02`,
-
-        visible:{
-
-            materialId:
-                material.id,
-
-            materialName:
-                material.name,
-
-            materialColor:
-                material.color,
-
-            waterSpecificHeat_J_kgK:
-                4180
-
-        },
-
-        reference:{
-
-            bodySpecificHeat_J_kgK:
-                material.cRef
-
-        },
-
-        instrumentValues:{
-
-            bodyMass_g,
-
-            waterMass_g,
-
-            waterTemperature_C,
-
-            bodyTemperature_C,
-
-            measuredEquilibrium_C
-
-        },
-
-        hidden:{
-
-            calorimeterHeatCapacity_J_K,
-
-            physicalEquilibrium_C
-
-        }
-
+        id: `${normalizeClass(className).replace(/\s/g,"-")}-${String(number).padStart(2,"0")}-EXP02`,
+        version: "20261121-32",
+        visible: {materialId:material.id, materialName:material.name, materialColor:material.color, waterSpecificHeat_J_kgK:4180},
+        reference: {bodySpecificHeat_J_kgK:material.cRef},
+        instrumentValues: {bodyMass_g, waterMass_g, waterTemperature_C, bodyTemperature_C, measuredEquilibrium_C},
+        hidden: {calorimeterHeatCapacity_J_K, physicalEquilibrium_C}
     };
-
 }
-
 
 /* =========================================================
    IDENTIFICARE
@@ -3896,7 +3707,7 @@ qs(
             catalogNumber <
                 1 ||
             catalogNumber >
-                30 ||
+                32 ||
             !form.get(
                 "monitorConsent"
             ) ||
@@ -3916,6 +3727,7 @@ qs(
         }
 
 
+        qs("[data-identification-form]").querySelectorAll("input,button").forEach(el => {el.disabled=true;});
         state.set =
             generateSet(
                 studentClass,
@@ -4552,8 +4364,7 @@ function createBalanceMeasurement({
     `;
 
 
-    let attempts =
-        0;
+    let attempts = state.balanceAttempts?.[key] || 0;
 
 
     const input =
@@ -4630,8 +4441,8 @@ function createBalanceMeasurement({
             }
 
 
-            attempts +=
-                1;
+            attempts += 1;
+            (state.balanceAttempts ||= {})[key] = attempts;
 
 
             if(
@@ -4734,6 +4545,7 @@ function createThermometer({
 
 }){
 
+    const previousAttempts = state.readingAttempts?.[key] || 0;
     const instance =
         globalThis
             .LaboratorInstrumente
@@ -4801,8 +4613,11 @@ function createThermometer({
         "laborator:instrument-reading",
         event => {
 
-            const result =
-                event.detail;
+            const result = event.detail;
+            if(Number.isFinite(result?.attempts)){
+                result.attempts += previousAttempts;
+                (state.readingAttempts ||= {})[key] = result.attempts;
+            }
 
 
             if(
@@ -4925,7 +4740,7 @@ function renderInitialStage(){
             "bodyMass",
 
         label:
-            "Masa corpului m₍c₎",
+            "Masa corpului (m_c)",
 
         value:
             state.set
@@ -4949,7 +4764,7 @@ function renderInitialStage(){
             "waterMass",
 
         label:
-            "Masa apei m₍a₎",
+            "Masa apei (m_a)",
 
         value:
             state.set
@@ -5359,7 +5174,7 @@ function showBodyThermometer(){
             5,
 
         label:
-            "Temperatura băii și a corpului",
+            "Temperatura băii, egală cu temperatura corpului după echilibrare",
 
         answerInput:
             qs(
@@ -8547,7 +8362,7 @@ qs(
         lockFinalReport();
 
 
-        try{state.reportPayload=buildReportPayload();localStorage.setItem(`fizica-laborator-raport-${state.reportId}`,JSON.stringify(state.reportPayload));qs("[data-local-save-status]").textContent="salvat pe acest dispozitiv — datele nu au fost transmise";qs("[data-local-save-status]").className="status-local";document.dispatchEvent(new CustomEvent("laborator:report-ready",{detail:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt,payload:clone(state.reportPayload)}}));}catch(error){console.error(error);qs("[data-local-save-status]").textContent="salvarea locală nu a fost confirmată";qs("[data-local-save-status]").className="status-error";alert(`Raportul este finalizat, dar copia locală nu a putut fi salvată: ${error.message}`);}
+        try{state.reportPayload=buildReportPayload();localStorage.setItem(`fizica-laborator-raport-${state.reportId}`,JSON.stringify(state.reportPayload));draftProgress.clear();qs("[data-local-save-status]").textContent="Raport salvat";qs("[data-local-save-status]").className="status-local";document.dispatchEvent(new CustomEvent("laborator:report-ready",{detail:{reportId:state.reportId,finishedAt:state.evaluation.finishedAt,payload:clone(state.reportPayload)}}));}catch(error){console.error(error);qs("[data-local-save-status]").textContent="salvarea locală nu a fost confirmată";qs("[data-local-save-status]").className="status-error";alert(`Raportul este finalizat, dar copia locală nu a putut fi salvată: ${error.message}`);}
 
 
     }
@@ -8571,7 +8386,7 @@ async function savePortfolioPdf(){
     finally{pdfExportPending=false;if(button){button.disabled=disabled;button.textContent=label;}}
 }
 
-async function exportPortfolioPdf(){if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}const pdfApi=globalThis.LaboratorPdfLocal;if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}const m=state.notebook.measurements,c=state.notebook.calculations;const evaluationLines=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(item=>[`${item.number}. ${item.question}`,`Raspuns elev: ${item.studentAnswer}`,`Raspuns corect: ${item.correctAnswer}`,`Punctaj: ${item.correct?"Corect - 1 p":"Incorect - 0 p"}`,""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","","Clasa a X-a","EXP02 - Determinarea caldurii specifice a unui corp","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Numar catalog: ${state.session.catalogNumber}`,`Data: ${state.session.experimentDate}`,`Set: ${state.set.id}`,`ID raport: ${state.reportId}`,"STATUS: RAPORT SALVAT LOCAL - DATELE NU AU FOST TRANSMISE","",`Material: ${state.set.visible.materialName}`,"MASURARI",`m corp=${Number(m.bodyMass.studentReading).toFixed(0)} g; m apa=${Number(m.waterMass.studentReading).toFixed(0)} g`,`T apa=${Number(m.waterTemperature.studentReading).toFixed(1)} grade C; T corp=${Number(m.bodyTemperature.studentReading).toFixed(1)} grade C; T echilibru=${Number(m.equilibriumTemperature.studentReading).toFixed(1)} grade C`,"","REZULTATE",`c determinat=${Number(c.specificHeat_J_kgK).toFixed(0)} J/(kg K)`,`c referinta=${Number(c.referenceSpecificHeat_J_kgK).toFixed(0)} J/(kg K)`,`eroare relativa=${Number(c.relativeError_percent).toFixed(2)} %`,"",`Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,"INTERPRETARE",state.notebook.comparison.interpretation,"","CONCLUZIE",state.evaluation.conclusion,"","SURSE DE EROARE SI LIMITARI",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`];const blob=pdfApi.createTextPdfBlob(lines);const fileName=`EXP02-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;try{await pdfApi.saveBlob(blob,fileName,"Raport EXP02 clasa a X-a - Fizică");}catch(error){console.error(error);alert("PDF-ul nu a putut fi salvat pe acest dispozitiv.");}}
+async function exportPortfolioPdf(){if(!state.evaluation||!state.notebook){alert("Finalizează mai întâi experimentul.");return;}const pdfApi=globalThis.LaboratorPdfLocal;if(!pdfApi){alert("Modulul pentru generarea PDF nu s-a încărcat. Reîncarcă pagina și încearcă din nou.");return;}const m=state.notebook.measurements,c=state.notebook.calculations;const evaluationLines=(state.evaluation.items||evaluationItems(state.evaluation.answers)).flatMap(item=>[`${item.number}. ${item.question}`,`Raspuns elev: ${item.studentAnswer}`,`Raspuns corect: ${item.correctAnswer}`,`Punctaj: ${item.correct?"Corect - 1 p":"Incorect - 0 p"}`,""]);const lines=["PORTOFOLIU DE LABORATOR - FIZICA","","Clasa a X-a","EXP02 - Determinarea caldurii specifice a unui corp","",`Elev: ${state.session.studentName}`,`Clasa: ${state.session.studentClass}`,`Numar catalog: ${state.session.catalogNumber}`,`Data: ${state.session.experimentDate}`,`Set: ${state.set.id}`,`ID raport: ${state.reportId}`,"RAPORT FINALIZAT","",`Material: ${state.set.visible.materialName}`,"MASURARI",`m corp=${Number(m.bodyMass.studentReading).toFixed(0)} g; m apa=${Number(m.waterMass.studentReading).toFixed(0)} g`,`T apa=${Number(m.waterTemperature.studentReading).toFixed(1)} grade C; T corp=${Number(m.bodyTemperature.studentReading).toFixed(1)} grade C; T echilibru=${Number(m.equilibriumTemperature.studentReading).toFixed(1)} grade C`,"","REZULTATE",`c determinat=${Number(c.specificHeat_J_kgK).toFixed(0)} J/(kg K)`,`c referinta=${Number(c.referenceSpecificHeat_J_kgK).toFixed(0)} J/(kg K)`,`eroare relativa=${Number(c.relativeError_percent).toFixed(2)} %`,"",`Punctaj conceptual: ${state.evaluation.score}/${state.evaluation.maximumScore}`,"","DETALIERE EVALUARE CONCEPTUALA",...evaluationLines,"INTERPRETARE",state.notebook.comparison.interpretation,"","CONCLUZIE",state.evaluation.conclusion,"","SURSE DE EROARE SI LIMITARI",state.evaluation.errorSources,"",`ID unic raport: ${state.reportId}`];const blob=pdfApi.createTextPdfBlob(lines);const fileName=`EXP02-clasa10-${state.session.studentClass.replace(/\s/g,"-")}-${String(state.session.catalogNumber).padStart(2,"0")}.pdf`;try{await pdfApi.saveBlob(blob,fileName,"Raport EXP02 clasa a X-a - Fizică");}catch(error){console.error(error);alert("PDF-ul nu a putut fi salvat pe acest dispozitiv.");}}
 
 qs(
     "[data-download-pdf]"
@@ -8584,7 +8399,7 @@ qs(
 /* SPATIAL-BEGIN */
 /* Scene suplimentare: folosesc starea montajului, fără a modifica măsurările. */
 function installSpatialView(experiment, state, root) {
-  const descriptions = {"101":"Transferă cele două cantități de apă folosind comenzile experimentului. Culorile disting apa rece, apa caldă și amestecul; nu reprezintă o scară de temperatură.","102":"Urmărește încălzirea corpului și transferul său în calorimetru. Săgeata Q indică sensul transferului de căldură de la corpul cald la apa mai rece.","103":"Termometrul este cufundat în apă fără să atingă fundul vasului. În timpul fierberii, energia primită susține schimbarea stării de agregare.","104":"Urmărește circuitul principal și ramura voltmetrului. Ampermetrul este în serie, iar voltmetrul este conectat între bornele rezistorului.","105":"Observă becul în circuitul principal. Ampermetrul este în serie cu becul, iar voltmetrul măsoară tensiunea la bornele acestuia.","106":"Sursa furnizează tensiune alternativă. Aparatele utilizate în modul c.a. indică valori efective; graficul se trasează în reprezentarea 2D existentă.","107":"Observă bobinele pe miezul comun. Primarul alimentat în c.a. produce flux magnetic variabil. Secundarul funcționează în gol. Numărul de bucle desenate este schematic."};
+  const descriptions = {102:"Urmărește încălzirea corpului și transferul său în calorimetru. Săgeata Q indică transferul de căldură de la corp la apa mai rece."};
   let mode = '2D', yaw = -.55, pitch = .38;
   const views = [];
   for (const step of [3, 4, 5]) {
@@ -8597,10 +8412,10 @@ function installSpatialView(experiment, state, root) {
     const canvas = box.querySelector('canvas');
     const view = { box, canvas, ctx: canvas.getContext('2d') };
     views.push(view);
-    box.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.view; sync(); }));
-    box.querySelector('[data-reset-view]').addEventListener('click', () => { yaw = -.55; pitch = .38; sync(); });
-    box.querySelector('[data-yaw]').addEventListener('input', e => { yaw = Number(e.target.value) * Math.PI / 180; sync(); });
-    box.querySelector('[data-pitch]').addEventListener('input', e => { pitch = Number(e.target.value) * Math.PI / 180; sync(); });
+    box.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.view; sync(); requestRender(); }));
+    box.querySelector('[data-reset-view]').addEventListener('click', () => { yaw = -.55; pitch = .38; sync(); requestRender(); });
+    box.querySelector('[data-yaw]').addEventListener('input', e => { yaw = Number(e.target.value) * Math.PI / 180; sync(); requestRender(); });
+    box.querySelector('[data-pitch]').addEventListener('input', e => { pitch = Number(e.target.value) * Math.PI / 180; sync(); requestRender(); });
   }
   function sync() {
     for (const {box} of views) {
@@ -8612,13 +8427,12 @@ function installSpatialView(experiment, state, root) {
       box.querySelector('[data-pitch]').value = Math.round(pitch * 180 / Math.PI);
     }
   }
-  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   function draw(view) {
     const {ctx:c} = view;
     if (!c || !state.set) return;
     const faces = [], lines = [], labels = []; let layer = -1;
     function project([x,y,z]) {
-      if (mode === '2D') return experiment>=104&&experiment<=106 ? [480+x*185,210+z*150-y*25,z] : [480+x*185,365-y*185,z];
+      if (mode === '2D') return [480+x*185,365-y*185,z];
       const xx = x*Math.cos(yaw)+z*Math.sin(yaw);
       const zz = -x*Math.sin(yaw)+z*Math.cos(yaw);
       const yy = y*Math.cos(pitch)-zz*Math.sin(pitch);
@@ -8637,12 +8451,9 @@ function installSpatialView(experiment, state, root) {
     function cylinder(x,y,z,r,h,color) {
       const top=[]; for(let i=0;i<32;i++){const a=i*Math.PI/16,b=(i+1)*Math.PI/16; const p=[x+r*Math.cos(a),y,z+r*Math.sin(a)],q=[x+r*Math.cos(b),y,z+r*Math.sin(b)]; face([p,q,[q[0],y+h,q[2]],[p[0],y+h,p[2]]],i<16?color:'#8bc8cf');top.push([p[0],y+h,p[2]]); } face(top,color);
     }
-    const visual = sel => root.querySelector(sel);
-    const v = state.set.visible, iv=state.set.instrumentValues || {}, trial=Math.min(state.readingIndex||0,8);
     c.clearRect(0,0,960,460);c.fillStyle='#f0f6f8';c.fillRect(0,0,960,460);
     face([[-1.65,-.08,-.7],[1.65,-.08,-.7],[1.65,-.08,.8],[-1.65,-.08,.8]],'#dfe9ed');
     layer = 0;
-    const number=experiment-100, phase=state.procedure?.index||0;
     function vessel(x,level,color,solid=false){
       if(level>0)cylinder(x,.03,0,.28,level,color);
       for(let i=0;i<36;i++){
@@ -8653,15 +8464,7 @@ function installSpatialView(experiment, state, root) {
       if(solid){layer=1;cuboid(x-.12,.16,-.12,.24,.25,.24,'#a97a52');layer=0;}
     }
     function thermometer(x,z=0){line([x,.18,z],[x,1.2,z],'#617e91',9);line([x,.2,z],[x,.88,z],'#c54b45',3);label([x,1.24,z],'T');}
-    if(number===1){
-      const cold=clamp((iv.coldVolume_mL||100)/300,.15,.65),hot=clamp((iv.hotVolume_mL||100)/300,.15,.65);
-      vessel(-1.05,phase<1?cold:0,'#3ca8e8');vessel(1.05,phase<2?hot:0,'#df8664');
-      vessel(0,phase<1?0:phase<2?cold/2:.65,phase<2?'#3ca8e8':'#967aba');thermometer(.13);
-      label([-1.35,1.15,0],'Apă rece');label([.85,1.15,0],'Apă caldă');label([-.35,-.25,0],'Calorimetru');
-      if(phase===1)arrow([1,.95,0],[.2,.6,0],'#c34e39','Transfer');
-      if(phase>=2&&phase<4){arrow([0,.45,0],[-.45,.45,0],'#c34e39','Q');label([-.6,1.5,0],'Schimb de căldură');}
-      if(phase>=4)label([-.5,1.5,0],'Echilibru termic');
-    } else if(number===2){
+    {
       const transferred=state.heating?.transferred,immersed=state.heating?.index>0;
       vessel(-.9,.6,'#df8664',immersed&&!transferred);vessel(.8,.52,'#4ca3cf',transferred);
       cuboid(-1.25,-.08,-.35,.7,.12,.7,'#b46a42');
@@ -8669,71 +8472,60 @@ function installSpatialView(experiment, state, root) {
       thermometer(.9);label([-1.4,1.4,0],'Baie de încălzire');label([.4,-.25,0],'Calorimetru');
       if(transferred&&state.mixing.index<2)arrow([.75,.45,0],[1.2,.45,0],'#c34e39','Q');
       if(transferred&&state.mixing.index>=2)label([.3,1.4,0],'Echilibru termic');
-    } else if(number===3){
-      const started=visual('[data-start-heating]')?.hidden,boiling=started&&state.readingIndex>=6;
-      vessel(0,.6,'#4ca3cf');cuboid(-.45,-.12,-.4,.9,.15,.8,started?'#d87848':'#718392');thermometer(.1,.08);
-      label([-.4,-.32,0],'Sursă de căldură');
-      if(started)arrow([-.6,0,0],[-.6,.5,0],'#c34e39','Q');
-      if(boiling){
-        for(let i=0;i<7;i++){const p=(performance.now()/2200+i/7)%1;line([-.2+i*.06,.05+p*.52,.08],[ -.2+i*.06,.08+p*.52,.08],'#d5f1fa',4);}
-        label([-.8,1.5,0],'Fierbere: T ≈ constantă');
-      }else label([-.5,1.5,0],started?'Încălzire':'Montaj pregătit');
-    } else if(number>=4&&number<=6){
-      const on=state.step===4&&state.readingActive,wire=on?'#167f77':'#708394';
-      const points={s:[-1.3,.2,.45],k:[-.75,.2,.45],a:[0,.2,.45],r:[.95,.2,.45],rh:[-.2,.2,-.55]};
-      const wirePath=arr=>arr.slice(1).forEach((p,i)=>line(arr[i],p,wire,4));
-      // Circuit principal în serie; voltmetrul formează o ramură între bornele specimenului.
-      wirePath([points.s,[-1.3,.2,-.55],points.rh,[1.3,.2,-.55],[1.3,.2,.45]]);
-      wirePath([points.s,[-.9,.2,.45]]);line([-.9,.2,.45],[-.6,on?.2:.45,.45],wire,4);
-      wirePath([[-.6,.2,.45],points.a,[.6,.2,.45]]);
-      wirePath([[.6,.2,.45],[.6,.2,1],[1.3,.2,1],[1.3,.2,.45]]);
-      cuboid(-1.48,.04,.26,.36,.32,.38,'#527d9c');label([-1.5,.55,.45],number===6?'Sursă c.a.':'Sursă c.c.');
-      cuboid(-.16,.05,.3,.32,.3,.3,'#d4dce1');label([-.06,.43,.45],'A');
-      cuboid(.78,.05,.9,.32,.3,.3,'#d4dce1');label([.9,.43,1],'V');
-      cuboid(-.42,.04,-.7,.45,.25,.3,'#ba9068');label([-.37,.42,-.55],'Rh');
-      if(number===5){cylinder(.95,.1,.45,.13,.3,on?'#ffc95c':'#ced9df');label([.8,.62,.45],'Bec');}
-      else{cuboid(.6,.08,.3,.7,.24,.3,'#a77950');label([.8,.55,.45],'R');}
-      label([-.7,1.4,0],on?'Circuit alimentat':'Întrerupător deschis');
-      if(number===6)label([-.8,1.12,0],'Valori efective Uef și Ief');
-    } else if(number===7){
-      const on=state.step===4&&state.measurementActive,idx=Math.min(state.readingIndex||0,2);
-      cuboid(-1.05,.1,-.2,.25,1,.4,'#7c8c9b');cuboid(.8,.1,-.2,.25,1,.4,'#7c8c9b');
-      cuboid(-1.05,.1,-.2,2.1,.2,.4,'#8e9eac');cuboid(-1.05,.9,-.2,2.1,.2,.4,'#8e9eac');
-      layer=1;
-      for(const [x,count,color] of [[-.93,9,'#ba783d'],[.93,clamp(Math.round(9*(v.n2?.[idx]||v.n1)/v.n1),4,16),'#c7904e']])for(let k=0;k<count;k++){
-        const y=.31+k*.56/count;
-        line([x-.21,y,-.31],[x+.21,y,-.31],color,5);line([x+.21,y,-.31],[x+.21,y,.31],color,5);line([x+.21,y,.31],[x-.21,y,.31],color,5);line([x-.21,y,.31],[x-.21,y,-.31],color,5);
-      }
-      label([-1.6,1.4,0],'Primar N₁');label([.65,1.4,0],'Secundar N₂');
-      label([-.65,-.25,0],on?'Flux magnetic variabil':'Sursă oprită');
-      if(on){const sign=Math.sin(performance.now()/1500)>0?1:-1;
-        for(const [a,b] of [[[-.93,1,0],[.93,1,0]],[[.93,1,0],[.93,.2,0]],[[.93,.2,0],[-.93,.2,0]],[[-.93,.2,0],[-.93,1,0]]])arrow(sign>0?a:b,sign>0?b:a,'#137d92','');
-        label([0,1,0],'Φ');label([-.8,1.48,0],'Variație reprezentată încetinit');
-      }
-      label([.65,.65,.6],'În gol');
     }
-
     faces.sort((a,b)=>a.layer-b.layer || b.points.reduce((s,p)=>s+p[2],0)/b.points.length-a.points.reduce((s,p)=>s+p[2],0)/a.points.length);
     for(const f of faces){c.beginPath();f.points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=f.color;c.fill();c.strokeStyle='#536b7b55';c.lineWidth=1;c.stroke();}
     for(const l of lines){c.strokeStyle=l.color;c.fillStyle=l.color;c.lineWidth=l.width||3;c.beginPath();if(l.head){const p=l.head;c.moveTo(p[0],p[1]);c.lineTo(p[0]-12*Math.cos(l.t-.4),p[1]-12*Math.sin(l.t-.4));c.lineTo(p[0]-12*Math.cos(l.t+.4),p[1]-12*Math.sin(l.t+.4));c.closePath();c.fill();}else{c.moveTo(l.a[0],l.a[1]);c.lineTo(l.b[0],l.b[1]);c.stroke();}}
     c.font='18px system-ui';for(const l of labels){c.fillStyle=l.color;c.fillText(l.text,l.p[0]+5,l.p[1]-6);}
     c.fillStyle='#173b48';c.font='bold 19px system-ui';c.fillText(`${mode} · Montaj experimental`,20,30);
   }
-  sync();
-  let last=0;
-  function frame(now){if(now-last>40&&!document.hidden){last=now;for(const view of views)if(!view.box.closest('[data-panel]').hidden)draw(view);}requestAnimationFrame(frame);}
-  requestAnimationFrame(frame);
+  let pending = 0, disposed = false;
+  function requestRender(){
+    if (disposed || pending) return;
+    pending = requestAnimationFrame(() => {
+      pending = 0;
+      for (const view of views) if (!view.box.closest('[data-panel]').hidden) draw(view);
+    });
+  }
+  // La schimbări de etapă, acțiuni asincrone sau reluare, nu în buclă continuă.
+  const observer = new MutationObserver(requestRender);
+  for (const panel of root.querySelectorAll('[data-panel]'))
+    observer.observe(panel, {attributes:true, attributeFilter:['hidden']});
+  const phaseObserver = new MutationObserver(requestRender);
+  for (const node of root.querySelectorAll('[data-heating-phase], [data-equilibrium-phase]'))
+    phaseObserver.observe(node, {childList:true, subtree:true, characterData:true});
+  root.addEventListener('click', requestRender);
+  root.addEventListener('laborator:instrument-reading', requestRender);
+  root.addEventListener('laborator:progress-restored', requestRender);
+  window.addEventListener('resize', requestRender);
+  document.addEventListener('visibilitychange', requestRender);
+  window.addEventListener('pagehide', () => {
+    disposed = true;
+    observer.disconnect(); phaseObserver.disconnect();
+    cancelAnimationFrame(pending); pending = 0;
+    root.removeEventListener('click', requestRender);
+    root.removeEventListener('laborator:instrument-reading', requestRender);
+    root.removeEventListener('laborator:progress-restored', requestRender);
+    window.removeEventListener('resize', requestRender);
+    document.removeEventListener('visibilitychange', requestRender);
+  }, {once:true});
+  // Reinstalarea după revenirea din memoria de navigare este gestionată prin reload.
+  window.addEventListener('pageshow', event => { if(event.persisted) location.reload(); });
+  sync(); requestRender();
 }
-
 installSpatialView(102, state, root);
 /* SPATIAL-END */
+const draftProgress = globalThis.Exp02Progress.install({
+    root, state, config:CONFIG, generateSet, renderInitialStage,
+    showBodyThermometer, showEquilibriumThermometer, showStep,
+    renderMeasurementSummary, updateCalculationDependencies, updateCalculationProgress,
+    isBusy: () => pendingDelays > 0
+});
 /* =========================================================
    START
 ========================================================= */
 
-showStep(
-    0
-);
+if (!draftProgress.restore()) showStep(0);
 
     }
 );
