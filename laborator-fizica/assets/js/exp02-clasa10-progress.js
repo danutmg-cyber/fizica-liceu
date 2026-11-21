@@ -1,9 +1,10 @@
 (function(global){
   'use strict';
-  const VERSION = '20261121-32';
+  const VERSION = '20261121-guided2';
   function install(api){
     const {root,state,config} = api;
     const key = `fizica-draft-${config.id}:${VERSION}`;
+    const oldKey = `fizica-draft-${config.id}:20261121-32`;
     let restoring = false, timer = 0, cleared = false;
     const keys = ['step','session','set','safety','equipment','predictions','measurements',
       'heating','mixing','activity','calculationVerified','analysisVerified','notebook',
@@ -55,13 +56,22 @@
     function clear(){
       // Numai după scrierea confirmată a raportului final.
       try{sessionStorage.removeItem(key);}catch(_){}
+      try{sessionStorage.removeItem(oldKey);}catch(_){}
       cleared=true;clearTimeout(timer);
     }
     function restore(){
-      let saved;
+      let saved, migrated=false;
       try{
         saved=JSON.parse(sessionStorage.getItem(key)||'null');
+        if(!saved){saved=JSON.parse(sessionStorage.getItem(oldKey)||'null');migrated=Boolean(saved);}
         if(!saved) return false;
+        if(migrated && saved.version==='20261121-32'){
+          saved.version=VERSION;
+          saved.ui=saved.ui.filter(item=>!item.path.startsWith('[data-panel="7"]'));
+          saved.step=Math.min(saved.step,6);
+          saved.completed=saved.completed.filter(n=>n<6);
+          saved.analysisVerified=false;saved.notebook=null;
+        }
         if(saved.version!==VERSION || !saved.session || !Array.isArray(saved.completed) ||
            !Array.isArray(saved.ui) || !Number.isInteger(saved.step) || saved.step<0 || saved.step>7 ||
            !/^X [A-D]$/.test(saved.session.studentClass)) throw Error('Progres incompatibil');
@@ -99,6 +109,7 @@
       global.LAB_SAFETY_STATE=state.safety;
       document.dispatchEvent(new CustomEvent('laborator:identification-complete',{detail:global.LAB_SESSION}));
       api.showStep(saved.step);
+      if(migrated) api.invalidateAnalysis();
       restoring=false;
       root.dispatchEvent(new CustomEvent('laborator:progress-restored'));
       return true;
