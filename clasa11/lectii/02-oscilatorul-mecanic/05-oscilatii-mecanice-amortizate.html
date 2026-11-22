@@ -949,8 +949,9 @@
         </p>
 
         <p>
-          Repetă aceeași perturbare pentru diferite niveluri de
-          amortizare.
+          Alege două valori ale lui δ și folosește de fiecare dată
+          butonul „Pornește de la aceeași deplasare”. Compară cât de
+          repede scad maximele elongației.
         </p>
 
       </div>
@@ -1007,6 +1008,14 @@
             Amortizare puternică
           </button>
 
+        </div>
+
+
+        <div class="no-print">
+          <label for="dampingRate">Coeficient de amortizare δ (s⁻¹)</label>
+          <input id="dampingRate" type="range" min="0" max="1.5" step="0.005"
+            value="0.14" style="display:block; width:100%;">
+          <output id="dampingRateValue" for="dampingRate">0,14 s⁻¹</output>
         </div>
 
 
@@ -1163,6 +1172,7 @@
 
         <svg
           id="dampingGraph"
+          aria-describedby="dampingGraphLegend"
           viewBox="0 0 900 400"
           width="100%"
           role="img"
@@ -1224,6 +1234,9 @@
             x
           </text>
 
+          <path id="dampingEnvelope" fill="none" stroke="#b91c1c"
+            stroke-width="3" stroke-dasharray="10 7" />
+
           <polyline
             id="dampingGraphLine"
             points=""
@@ -1236,6 +1249,10 @@
 
         </svg>
 
+        <p id="dampingGraphLegend">
+          Linia albastră arată elongația. Curbele roșii întrerupte
+          delimitează oscilația și arată cum scade amplitudinea.
+        </p>
 
         <div class="concept-grid">
 
@@ -3493,6 +3510,11 @@
         );
 
 
+      const envelope = document.getElementById("dampingEnvelope");
+      const rate = document.getElementById("dampingRate");
+      const rateValue = document.getElementById("dampingRateValue");
+      const formatRate = new Intl.NumberFormat("ro-RO", {maximumFractionDigits: 3});
+
       const modeReadout =
         document.getElementById(
           "dampingModeReadout"
@@ -3590,11 +3612,11 @@
         6.2;
 
 
-      const dampingLevels = {
+      const rates = {
         none: 0,
-        weak: 0.28,
-        medium: 0.72,
-        strong: 1.35
+        weak: 0.14,
+        medium: 0.36,
+        strong: 0.675
       };
 
 
@@ -3602,12 +3624,14 @@
         none: "neamortizat",
         weak: "amortizare slabă",
         medium: "amortizare medie",
-        strong: "amortizare puternică"
+        strong: "amortizare puternică",
+        custom: "amortizare reglabilă"
       };
 
 
-      let mode =
-        "weak";
+      let mode = "weak";
+      let decayRate = rates.weak;
+      let initialDisplacement = 0;
 
 
       let q =
@@ -3664,6 +3688,8 @@
 
 
       function updateButtons() {
+        rate.value = decayRate;
+        rateValue.value = `${formatRate.format(decayRate)} s⁻¹`;
 
         setPressed(
           noneButton,
@@ -3858,146 +3884,58 @@
          GRAFIC
          ======================================================= */
 
+      const graphDuration = 12;
+
       function resetHistory() {
-
-        history =
-          [];
-
-
-        historyClock =
-          0;
-
-
-        graphLine.setAttribute(
-          "points",
-          ""
-        );
-
+        initialDisplacement = 0;
+        history = [];
+        historyClock = 0;
       }
 
+      function startHistory() {
+        initialDisplacement = q;
+        history = [{time: 0, value: q}];
+        historyClock = 0;
+        lastTime = null;
+      }
 
-      function addHistoryPoint(
-        dt
-      ) {
-
-        historyClock +=
-          dt;
-
-
-        if (
-          history.length === 0 ||
-          historyClock -
-          history[
-            history.length - 1
-          ].time >
-          0.025
-        ) {
-
-          history.push({
-            time: historyClock,
-            value: q
-          });
-
+      function addHistoryPoint() {
+        if (historyClock - history.at(-1).time > 0.025) {
+          history.push({time: historyClock, value: q});
         }
 
-
-        const maxDuration =
-          12;
-
-
-        while (
-          history.length &&
-          historyClock -
-          history[0].time >
-          maxDuration
-        ) {
-
+        while (history[0].time < historyClock - graphDuration) {
           history.shift();
-
         }
-
       }
-
 
       function drawGraph() {
-
         if (!history.length) {
-
-          graphLine.setAttribute(
-            "points",
-            ""
-          );
-
+          graphLine.setAttribute("points", "");
+          envelope.removeAttribute("d");
           return;
-
         }
 
+        const frequency = Math.sqrt(springFactor - decayRate ** 2);
+        const initialAmplitude = Math.abs(initialDisplacement) *
+          Math.hypot(1, decayRate / frequency);
+        const startTime = Math.max(0, historyClock - graphDuration);
+        const scale = 135 / Math.max(maximum, initialAmplitude);
+        const graphX = (time) => 80 + (time - startTime) * 760 / graphDuration;
 
-        const left =
-          80;
+        graphLine.setAttribute("points", history.map(({time, value}) =>
+          `${graphX(time)},${200 - value * scale}`
+        ).join(" "));
 
-
-        const right =
-          840;
-
-
-        const center =
-          200;
-
-
-        const graphAmplitude =
-          135;
-
-
-        const duration =
-          12;
-
-
-        const startTime =
-          Math.max(
-            0,
-            historyClock -
-            duration
-          );
-
-
-        const points =
-          history.map(
-            function (point) {
-
-              const x =
-                left +
-                (
-                  point.time -
-                  startTime
-                ) /
-                duration *
-                (
-                  right -
-                  left
-                );
-
-
-              const y =
-                center -
-                (
-                  point.value /
-                  maximum
-                ) *
-                graphAmplitude;
-
-
-              return `${x},${y}`;
-
-            }
-          );
-
-
-        graphLine.setAttribute(
-          "points",
-          points.join(" ")
-        );
-
+        const upper = [];
+        const lower = [];
+        for (const {time} of history) {
+          const x = graphX(time);
+          const amplitude = initialAmplitude * Math.exp(-decayRate * time) * scale;
+          upper.push(`${x},${200 - amplitude}`);
+          lower.push(`${x},${200 + amplitude}`);
+        }
+        envelope.setAttribute("d", `M${upper.join(" L")} M${lower.join(" L")}`);
       }
 
 
@@ -4090,10 +4028,7 @@
 
         /* amortizarea */
 
-        const damping =
-          dampingLevels[
-            mode
-          ];
+        const damping = 2 * decayRate;
 
 
         if (
@@ -4278,80 +4213,18 @@
           );
 
 
-        const damping =
-          dampingLevels[
-            mode
-          ];
-
-
-        const acceleration =
-          -springFactor *
-          q -
-          damping *
-          velocity;
-
-
-        velocity +=
-          acceleration *
-          dt;
-
-
-        q +=
-          velocity *
-          dt;
-
-
-        if (
-          q >
-          maximum
-        ) {
-
-          q =
-            maximum;
-
-
-          velocity *=
-            -0.15;
-
+        if (!history.length) {
+          return;
         }
 
-
-        if (
-          q <
-          -maximum
-        ) {
-
-          q =
-            -maximum;
-
-
-          velocity *=
-            -0.15;
-
-        }
-
-
-        if (
-          damping > 0 &&
-          Math.abs(q) <
-          0.05 &&
-          Math.abs(velocity) <
-          0.05
-        ) {
-
-          q =
-            0;
-
-
-          velocity =
-            0;
-
-        }
-
-
-        addHistoryPoint(
-          dt
-        );
+        historyClock += dt;
+        // Soluția pentru x'' + 2δx' + ω₀²x = 0, cu v(0) = 0.
+        const frequency = Math.sqrt(springFactor - decayRate ** 2);
+        const phase = frequency * historyClock;
+        const displacementScale = initialDisplacement * Math.exp(-decayRate * historyClock);
+        q = displacementScale * (Math.cos(phase) + decayRate / frequency * Math.sin(phase));
+        velocity = -displacementScale * springFactor / frequency * Math.sin(phase);
+        addHistoryPoint();
 
 
         render();
@@ -4514,9 +4387,7 @@
         }
 
 
-        lastTime =
-          null;
-
+        startHistory();
 
         status.textContent =
           "Corpul a fost eliberat. Urmărește simultan oscilația și graficul x(t).";
@@ -4543,12 +4414,9 @@
          MODURI
          ======================================================= */
 
-      function selectMode(
-        newMode
-      ) {
-
-        mode =
-          newMode;
+      function selectMode(newMode, newRate = rates[newMode]) {
+        mode = newMode;
+        decayRate = newRate;
 
 
         updateButtons();
@@ -4577,6 +4445,12 @@
 
       }
 
+
+      rate.addEventListener("input", function () {
+        const newRate = rate.valueAsNumber;
+        const preset = Object.keys(rates).find((name) => rates[name] === newRate);
+        selectMode(preset ?? "custom", newRate);
+      });
 
       noneButton.addEventListener(
         "click",
@@ -4638,12 +4512,7 @@
             "Pauză";
 
 
-          resetHistory();
-
-
-          lastTime =
-            null;
-
+          startHistory();
 
           status.textContent =
             `Pornire de la aceeași deplasare în regimul: ${labels[mode]}.`;
@@ -4687,8 +4556,8 @@
         "click",
         function () {
 
-          mode =
-            "weak";
+          mode = "weak";
+          decayRate = rates.weak;
 
 
           q =
