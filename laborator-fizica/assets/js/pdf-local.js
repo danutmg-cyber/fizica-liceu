@@ -40,7 +40,7 @@
         return new TextEncoder().encode(value).length;
     }
 
-    function createTextPdfBlob(originalLines){
+    function createTextPdfBlob(originalLines, gradingRows){
         const lines = originalLines.flatMap(line => wrapLine(line));
         const perPage = 48;
         const pages = [];
@@ -51,6 +51,13 @@
 
         if(!pages.length){
             pages.push(["Raport"]);
+        }
+
+        if(gradingRows){
+            const lastPage = pages[pages.length - 1];
+            if(lastPage.length + gradingRows.length * 1.5 + 3 > perPage){
+                pages.push([]);
+            }
         }
 
         const objects = [];
@@ -73,7 +80,10 @@
                     `(${pdfEscape(line)}) Tj`,
                     "T*"
                 ]),
-                "ET"
+                "ET",
+                ...(gradingRows && index === pages.length - 1
+                    ? gradingTable(gradingRows, 768 - page.length * 14)
+                    : [])
             ].join("\n");
 
             objects[pageId] =
@@ -106,6 +116,31 @@
             `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
 
         return new Blob([pdf], {type:"application/pdf"});
+    }
+
+    function gradingTable(rows, top){
+        const columns = [50, 334, 414, 494];
+        const rowHeight = 21;
+        const bottom = top - rows.length * rowHeight;
+        const textAt = (value, x, y) => `BT /F1 10 Tf ${x} ${y} Td (${pdfEscape(value)}) Tj ET`;
+        return [
+            "q",
+            textAt("Punctaj și nota finală", columns[0], top + 10),
+            "0.91 0.95 0.97 rg",
+            `50 ${top - rowHeight} 444 ${rowHeight} re f`,
+            `50 ${bottom} 444 ${rowHeight} re f`,
+            "0 g 0.45 G 0.5 w",
+            ...columns.map(x => `${x} ${bottom} m ${x} ${top} l S`),
+            ...rows.flatMap((row, index) => {
+                const y = top - index * rowHeight;
+                return [
+                    `50 ${y} m 494 ${y} l S`,
+                    ...row.map((cell, column) => textAt(cell, columns[column] + 8, y - 14))
+                ];
+            }),
+            `50 ${bottom} m 494 ${bottom} l S`,
+            "Q"
+        ];
     }
 
     const PORTFOLIO_DB = "fizica-laborator-portofoliu";

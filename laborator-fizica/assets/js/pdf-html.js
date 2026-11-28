@@ -88,7 +88,27 @@
         return lines.filter((line, index) => line !== "" || lines[index - 1] !== "");
     }
 
-    async function saveReport(reportHtml, fileName, title="Raport experiment"){
+    function class9GradingRows(evaluation){
+        const {score, maximumScore} = evaluation;
+        if(!Number.isInteger(score) || !Number.isInteger(maximumScore) ||
+           maximumScore <= 0 || score < 0 || score > maximumScore){
+            throw new Error("Punctajul evaluării conceptuale nu este valid.");
+        }
+
+        const conceptualPoints = 2 * score / maximumScore;
+        const format = value => value.toLocaleString("ro-RO", {maximumFractionDigits: 2});
+        return [
+            ["Criteriu", "Obținut", "Maxim"],
+            ["Parcurs experimental finalizat", "1", "1"],
+            ["Măsurători și unități validate", "2", "2"],
+            ["Calcule validate", "3", "3"],
+            ["Interpretare și concluzie completate", "2", "2"],
+            [`Evaluare conceptuală (${score}/${maximumScore})`, format(conceptualPoints), "2"],
+            ["Nota finală (calcul automat)", format(8 + conceptualPoints), "10"]
+        ];
+    }
+
+    async function saveReport(reportHtml, fileName, title="Raport experiment", options={}){
         const pdf = global.LaboratorPdfLocal;
 
         if(!pdf){
@@ -101,7 +121,8 @@
             throw new Error("Raportul nu conține text.");
         }
 
-        const blob = pdf.createTextPdfBlob(lines);
+        const gradingRows = options.class9Evaluation ? class9GradingRows(options.class9Evaluation) : undefined;
+        const blob = pdf.createTextPdfBlob(lines, gradingRows);
         await pdf.saveBlob(blob, fileName, title);
     }
 
