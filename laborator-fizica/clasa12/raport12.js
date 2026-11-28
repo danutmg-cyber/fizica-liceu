@@ -9,7 +9,6 @@ async function make(state,spec,targets,chart,scene){
  function image(source,title){if(!source)return;const width=Math.min(content,960),h=width*source.height/source.width;room(h+130);heading(title);ctx.drawImage(source,M+(content-width)/2,y,width,h);y+=h+25;}
  page();text(`${String(spec.id).padStart(2,'0')}. ${spec.title}`,32,true);text(`${spec.type} · ${spec.section}`,20);
  text(`Elev: ${state.identity.name}`);text(`Clasa: ${state.identity.className} · Număr catalog: ${state.identity.catalog}`);text(`Început: ${new Date(state.identity.started).toLocaleString('ro-RO')} · Final: ${new Date(state.finished).toLocaleString('ro-RO')}`,19);text(`ID raport: ${state.identity.reportId}`,18);text(`Nota automată: ${fmt(state.grade)}`,29,true);
- text('Nota include 1 punct din oficiu și 9 puncte distribuite astfel: pregătire 10%, citiri 30%, calcule 40%, interpretare obiectivă 20%. Punctajul se bazează pe prima încercare verificată. Interpretarea liberă rămâne pentru verificarea profesorului.',19);
  heading('Model și date de lucru');text(spec.formula,21);for(const line of Lab12Data.known(state.data))text(line,19);text('Limite: '+spec.limits,19);
  heading('Măsurări înregistrate');text(`${spec.xLabel} → ${spec.yLabel} (${spec.unit}); q = ${fmt(state.data.resolution)} ${spec.unit}`,20,true);
  state.readings.forEach((value,i)=>{text(`${i+1}. ${fmt(state.data.xs[i])} → ${fmt(value)} ${spec.unit}`,22);const attempts=state.readingAttempts[i]||[];text('Încercări: '+attempts.map(a=>`${a.raw} [${a.correct?'validată':'corectată'}]`).join('; '),18);});
@@ -18,8 +17,32 @@ async function make(state,spec,targets,chart,scene){
  image(chart,'Graficul citirilor validate');image(scene,'Vederea montajului utilizată de elev');
  room(400);heading('Interpretare obiectivă');spec.questions.forEach((q,i)=>{room(300);text(q.prompt,22,true);text('Răspuns final: '+q.options[state.answers['analysis'+i]],21);text('Primul răspuns verificat: '+q.options[state.firstAnswer['analysis'+i]],19);text('Prima verificare: '+(state.first['analysis'+i]?'corectă':'corectată ulterior'),18);});
  heading('Interpretarea și concluzia elevului');text(state.conclusion,22);heading('Surse de eroare și limite indicate de elev');text(state.errors,22);
- heading('Detalierea punctajului');for(const [key,correct]of Object.entries(state.first)){const label=key==='safety'?'Securitate':key==='equipment'?'Materiale':key==='prediction'?'Predicție':key.startsWith('reading')?'Citirea '+(Number(key.slice(7))+1):key.startsWith('calc')?targets.find(t=>t.key===key.slice(4)).label:'Interpretare, item '+(Number(key.slice(8))+1);text(`${label}: ${correct?'corect la prima verificare':'corectat după prima verificare'}`,18);}
+ heading('Istoricul verificărilor');for(const [key,correct]of Object.entries(state.first)){const label=key==='safety'?'Securitate':key==='equipment'?'Materiale':key==='prediction'?'Predicție':key.startsWith('reading')?'Citirea '+(Number(key.slice(7))+1):key.startsWith('calc')?targets.find(t=>t.key===key.slice(4)).label:'Interpretare, item '+(Number(key.slice(8))+1);text(`${label}: ${correct?'corect la prima verificare':'corectat după prima verificare'}`,18);}
  text('Raport generat local. Datele nu au fost trimise către un serviciu extern. Fișierul poate fi încărcat de elev în Google Classroom.',18);
+ const gradingRows=[
+  ['Criteriu','Obținut','Maxim'],
+  ...state.criteria.map(([label,points,maximum])=>[label,fmt(points),fmt(maximum)]),
+  ['Nota finală',fmt(state.grade),'10']
+ ];
+ const rowHeight=46,columns=[M,M+710,M+885,W-M];
+ room(62+gradingRows.length*rowHeight);
+ y+=15;
+ text('Punctaj și nota finală',27,true);
+ const tableTop=y;
+ gradingRows.forEach((row,i)=>{
+  const top=tableTop+i*rowHeight;
+  const emphasis=i===0||i===gradingRows.length-1;
+  if(emphasis){ctx.fillStyle='#e8f2f6';ctx.fillRect(M,top,content,rowHeight);}
+  ctx.strokeStyle='#a7bdc8';
+  ctx.lineWidth=1;
+  ctx.fillStyle='#173b49';
+  ctx.font=(emphasis?'bold ':'')+'23px Arial';
+  row.forEach((value,j)=>{
+   const width=columns[j+1]-columns[j];
+   ctx.strokeRect(columns[j],top,width,rowHeight);
+   ctx.fillText(value,columns[j]+12,top+31,width-24);
+  });
+ });
  pages.forEach((p,i)=>{const c=p.getContext('2d');c.fillStyle='#597886';c.font='18px Arial';c.fillText(`Pagina ${i+1} / ${pages.length} · EXP${String(spec.id).padStart(2,'0')} · ${state.identity.className} · Nr. ${state.identity.catalog}`,M,H-45);});
  const enc=new TextEncoder(),objects=[],parts=[],offsets=[0];let length=0;
  const put=value=>{const b=typeof value==='string'?enc.encode(value):value;parts.push(b);length+=b.length;};
