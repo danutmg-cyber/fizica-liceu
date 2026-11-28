@@ -118,6 +118,30 @@
         return new Blob([pdf], {type:"application/pdf"});
     }
 
+    function gradingRows(evaluation){
+        const {score, maximumScore} = evaluation;
+        if(!Number.isInteger(score) || !Number.isInteger(maximumScore) ||
+           maximumScore <= 0 || score < 0 || score > maximumScore){
+            throw new Error("Punctajul evaluării conceptuale nu este valid.");
+        }
+
+        const conceptualPoints = 2 * score / maximumScore;
+        const format = value => value.toLocaleString("ro-RO", {maximumFractionDigits: 2});
+        return [
+            ["Criteriu", "Obținut", "Maxim"],
+            ["Parcurs experimental finalizat", "1", "1"],
+            ["Măsurători și unități validate", "2", "2"],
+            ["Calcule validate", "3", "3"],
+            ["Interpretare și concluzie completate", "2", "2"],
+            [`Evaluare conceptuală (${score}/${maximumScore})`, format(conceptualPoints), "2"],
+            ["Nota finală (calcul automat)", format(8 + conceptualPoints), "10"]
+        ];
+    }
+
+    function createGradedPdfBlob(lines, evaluation){
+        return createTextPdfBlob(lines, gradingRows(evaluation));
+    }
+
     function gradingTable(rows, top){
         const columns = [50, 334, 414, 494];
         const rowHeight = 21;
@@ -141,6 +165,66 @@
             `50 ${bottom} m 494 ${bottom} l S`,
             "Q"
         ];
+    }
+
+    function activityGrade(measurements, calculations, interpretation, correct, maximumScore){
+        const criteria = [
+            ["Punct din oficiu", 1, 1],
+            ["Măsurători înregistrate", 2 * measurements, 2],
+            ["Calcule completate", 3 * calculations, 3],
+            ["Interpretare și concluzie completate", 2 * interpretation, 2],
+            [`Evaluare conceptuală (${correct}/${maximumScore})`, 2 * correct / maximumScore, 2]
+        ];
+        const grade = Math.round(criteria.reduce((total, row) => total + row[1], 0) * 100) / 100;
+        return {criteria, grade};
+    }
+
+    function activityGradeRows(attempt){
+        const format = amount => amount.toLocaleString("ro-RO", {maximumFractionDigits: 2});
+        return [
+            ["Criteriu", "Obținut", "Maxim"],
+            ...attempt.criteria.map(([label, points, max]) => [label, format(points), format(max)]),
+            [attempt.draft ? "Nota provizorie" : "Nota finală", format(attempt.grade), "10"]
+        ];
+    }
+
+    function drawGradingTable(context, x, y, rows, title="Punctaj și nota finală"){
+        const columns = [0, 780, 940, 1110];
+        const rowHeight = 46;
+        const top = y + 18;
+        const bottom = top + rowHeight * rows.length;
+
+        context.save();
+        context.font = "bold 26px sans-serif";
+        context.fillStyle = "#17394d";
+        context.fillText(title, x, y);
+        context.fillStyle = "#e8f2f6";
+        context.fillRect(x, top, columns[3], rowHeight);
+        context.fillRect(x, bottom - rowHeight, columns[3], rowHeight);
+        context.strokeStyle = "#9eb2be";
+        context.lineWidth = 1;
+        context.beginPath();
+        columns.forEach(column => {
+            context.moveTo(x + column, top);
+            context.lineTo(x + column, bottom);
+        });
+        for(let index=0; index<=rows.length; index++){
+            const lineY = top + index * rowHeight;
+            context.moveTo(x, lineY);
+            context.lineTo(x + columns[3], lineY);
+        }
+        context.stroke();
+
+        context.fillStyle = "#17394d";
+        rows.forEach((row, index) => {
+            context.font = index === 0 || index === rows.length - 1
+                ? "bold 23px sans-serif" : "23px sans-serif";
+            row.forEach((value, column) => {
+                context.fillText(value, x + columns[column] + 12, top + index * rowHeight + 31,
+                    columns[column + 1] - columns[column] - 24);
+            });
+        });
+        context.restore();
     }
 
     const PORTFOLIO_DB = "fizica-laborator-portofoliu";
@@ -212,5 +296,5 @@
         downloadBlob(blob,name);return {status:"downloaded",fileName:name};
     }
 
-    global.LaboratorPdfLocal=Object.freeze({createTextPdfBlob,saveBlob,shareBlob,getSavedPdfs});
+    global.LaboratorPdfLocal=Object.freeze({createTextPdfBlob,createGradedPdfBlob,activityGrade,activityGradeRows,drawGradingTable,saveBlob,shareBlob,getSavedPdfs});
 })(globalThis);
