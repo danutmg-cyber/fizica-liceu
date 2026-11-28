@@ -1,195 +1,12 @@
 <!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Studiul unui sistem simplu cu comportament haotic · Clasa a XI-a</title><meta name="description" content="Experiment virtual de fizică pentru clasa a XI-a: Cum pot două începuturi apropiate să ducă la evoluții diferite?"><style>:root{font-family:system-ui,Segoe UI,sans-serif;background:#edf3f5;color:#183b50;--ink:#123d51;--teal:#007f84;--border:#cbdce3}*{box-sizing:border-box}body{margin:0}main{max-width:1140px;margin:auto;padding:24px}header{background:var(--ink);border-radius:20px;padding:32px;color:white}header small{letter-spacing:.1em;color:#a6e6df;font-weight:700}h1{font-size:clamp(27px,3.8vw,40px);line-height:1.2;margin:13px 0}header p{color:#d5e8ed;margin-bottom:0}h2{font-size:24px;margin-top:0;line-height:1.35}p{line-height:1.65}article,section.panel{background:white;border:1px solid var(--border);padding:24px;border-radius:17px;margin:18px 0}label{display:grid;gap:7px;font-weight:650;min-width:0}label small{font-weight:400;line-height:1.5;color:#4c6b7b}input,select,textarea,button{font:inherit}input,select,textarea{padding:11px;border:1px solid #91acb9;border-radius:8px;background:#fff;color:#183b50;min-width:0;width:100%}input[type=range]{padding:10px 0;accent-color:var(--teal);min-height:44px}textarea{min-height:100px}button,.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:44px;border:0;border-radius:9px;padding:11px 17px;background:var(--teal);color:white;font-weight:700;cursor:pointer}button.alt{background:#e4eff3;color:#183b50}button.quiet{padding:7px 10px;min-height:36px;background:#e8f0f3;color:#385d70}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #eba631;outline-offset:3px}.fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px;align-items:end}.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}.row label{flex:1;min-width:165px}.profile-row{display:grid;grid-template-columns:1fr auto;gap:15px;margin-top:16px;align-items:end}.muted{color:#567382;font-size:14px}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:16px 0}.toolbar label{width:200px}.topbar{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:20px 0}.topbar label{width:200px}.badge{background:#e0f0ee;padding:8px 12px;border-radius:8px;font-size:14px}nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}nav button{background:white;color:#183b50;border:1px solid var(--border);flex:1}nav button[aria-selected=true]{background:var(--ink);color:white}nav button.complete{border-bottom:4px solid var(--teal)}aside{background:#edf8f6;padding:14px 17px;border-left:4px solid var(--teal);border-radius:6px;line-height:1.6;margin:16px 0}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin:20px 0}.controls output{font-size:14px;color:var(--teal)}#scene{width:100%;height:420px;background:#f6fafb;border:1px solid var(--border);border-radius:13px;display:block}#graph{width:100%;height:220px;display:block;margin-top:20px;border-radius:12px}.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin:16px 0}.meter{background:#eef5f8;border:1px solid #cfdee5;border-radius:11px;padding:15px}.meter span{display:block;font-size:14px;color:#4d6d7e}.meter strong{display:block;font:700 25px ui-monospace,Consolas,monospace;margin-top:6px;color:#125c72}.entry{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin:18px 0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid #d6e3e8;padding:11px;min-width:100px}th{background:#edf5f7}td:first-child{min-width:210px}.correct{color:#15734f}.check{color:#986118}#feedback{white-space:pre-line;line-height:1.6;min-height:25px}details{background:#f7fafb;border:1px solid var(--border);border-radius:10px;padding:15px;margin:18px 0}summary{font-weight:700;cursor:pointer;min-height:28px}.navigation{display:flex;gap:12px;justify-content:space-between;margin:22px 0}.navigation #next{margin-left:auto;background:#124f69}.summary-row{display:flex;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid #d7e4e9}.grade{font-size:24px;font-weight:750;white-space:pre-line}footer{font-size:13px;color:#597886;padding:18px 0}input:disabled,select:disabled,textarea:disabled{background:#f0f4f6}#storage{font-size:14px;color:#3d7165}[hidden]{display:none!important}@media(max-width:650px){main{padding:12px}header{padding:23px}article,section.panel{padding:17px}.fields,.profile-row{grid-template-columns:1fr}nav button{flex:1 1 42%}.toolbar label{width:100%}.navigation button{font-size:14px;padding:10px 12px}.summary-row{font-size:14px}h2{font-size:21px}.meter strong{font-size:22px}}
-</style><script>
-(function(global){
-    "use strict";
-
-    // Fontul PDF existent este ASCII: păstrăm sensul formulelor prin echivalente text.
-    const physicsSymbols = {"±":"+/-","−":"-","﹣":"-","－":"-","–":"-","—":"-","π":" pi ","λ":" lambda ","θ":" theta ","ω":" omega ","Ω":" ohm ","μ":" mu ","µ":" mu ","ν":" nu ","ε":" epsilon ","Δ":" Delta ","δ":" delta ","α":" alpha ","β":" beta ","γ":" gamma ","ρ":" rho ","η":" eta ","σ":" sigma ","φ":" phi ","ϕ":" phi ","Σ":" Sigma ","√":"sqrt","∞":"infinity","∝":" proportional cu ","×":"*","·":"*","°":" grade ","≤":"<=","≥":">=","≠":"!=","≈":"~=","“":"\"","”":"\"","’":"'","…":"..."};
-    const superscripts = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁺":"+","⁻":"-"};
-    const subscripts = {"₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9","ₐ":"a","ₑ":"e","ₒ":"o","ₓ":"x","ₙ":"n","ₘ":"m","ₛ":"s","ₜ":"t","ᵢ":"i","ⱼ":"j"};
-
-    function asciiText(value){
-        return String(value ?? "")
-            .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, sequence => "^" + Array.from(sequence, character => superscripts[character]).join(""))
-            .replace(/[₀₁₂₃₄₅₆₇₈₉ₐₑₒₓₙₘₛₜᵢⱼ]+/g, sequence => "_" + Array.from(sequence, character => subscripts[character]).join(""))
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/ș|ş/g, "s")
-            .replace(/Ș|Ş/g, "S")
-            .replace(/ț|ţ/g, "t")
-            .replace(/Ț|Ţ/g, "T")
-            .replace(/[^\x20-\x7E]/g, character => physicsSymbols[character] || " ");
-    }
-
-    function pdfEscape(value){
-        return asciiText(value)
-            .replace(/\\/g, "\\\\")
-            .replace(/\(/g, "\\(")
-            .replace(/\)/g, "\\)");
-    }
-
-    function wrapLine(text, maximum=52){
-        const words=asciiText(text).trim().split(/\s+/),lines=[];let line="";
-        for(let word of words){
-            if(line && line.length+word.length+1>maximum){lines.push(line);line="";}
-            while(word.length>maximum){lines.push(word.slice(0,maximum));word=word.slice(maximum);}
-            if(word)line=line?line+" "+word:word;
-        }
-        if(line||!lines.length)lines.push(line);return lines;
-    }
-
-    function byteLength(value){
-        return new TextEncoder().encode(value).length;
-    }
-
-    function createTextPdfBlob(originalLines){
-        const lines = originalLines.flatMap(line => wrapLine(line));
-        const perPage = 48;
-        const pages = [];
-
-        for(let index=0; index<lines.length; index+=perPage){
-            pages.push(lines.slice(index, index + perPage));
-        }
-
-        if(!pages.length){
-            pages.push(["Raport"]);
-        }
-
-        const objects = [];
-        objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
-        objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
-
-        const pageIds = [];
-
-        pages.forEach((page,index) => {
-            const pageId = 4 + index * 2;
-            const contentId = pageId + 1;
-            pageIds.push(pageId);
-
-            const content = [
-                "BT",
-                "/F1 10 Tf",
-                "50 790 Td",
-                "14 TL",
-                ...page.flatMap(line => [
-                    `(${pdfEscape(line)}) Tj`,
-                    "T*"
-                ]),
-                "ET"
-            ].join("\n");
-
-            objects[pageId] =
-                `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`;
-
-            objects[contentId] =
-                `<< /Length ${byteLength(content)} >>\nstream\n${content}\nendstream`;
-        });
-
-        objects[2] =
-            `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`;
-
-        let pdf = "%PDF-1.4\n%1234\n";
-        const offsets = [0];
-
-        for(let id=1; id<objects.length; id+=1){
-            offsets[id] = byteLength(pdf);
-            pdf += `${id} 0 obj\n${objects[id]}\nendobj\n`;
-        }
-
-        const xref = byteLength(pdf);
-        pdf += `xref\n0 ${objects.length}\n`;
-        pdf += "0000000000 65535 f \n";
-
-        for(let id=1; id<objects.length; id+=1){
-            pdf += `${String(offsets[id]).padStart(10,"0")} 00000 n \n`;
-        }
-
-        pdf +=
-            `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
-
-        return new Blob([pdf], {type:"application/pdf"});
-    }
-
-    const PORTFOLIO_DB = "fizica-laborator-portofoliu";
-    let dbPromise;
-    function openPortfolio(){
-        if(dbPromise) return dbPromise;
-        dbPromise = new Promise((resolve,reject) => {
-            if(!global.indexedDB){ reject(new Error("Stocarea nu este disponibilă.")); return; }
-            const request = global.indexedDB.open(PORTFOLIO_DB,1);
-            request.onupgradeneeded = () => request.result.createObjectStore("pdf",{keyPath:"fileName"});
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-            request.onblocked = () => reject(new Error("Stocarea este ocupată."));
-        });
-        dbPromise.catch(()=>{dbPromise=null;});
-        return dbPromise;
-    }
-    async function rememberPdf(blob,fileName,title){
-        const db = await openPortfolio();
-        return new Promise((resolve,reject)=>{
-            const tx=db.transaction("pdf","readwrite");
-            tx.objectStore("pdf").put({fileName,title,blob,updatedAt:new Date().toISOString()});
-            tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
-        });
-    }
-    async function getSavedPdfs(){
-        const db=await openPortfolio();
-        return new Promise((resolve,reject)=>{
-            const request=db.transaction("pdf","readonly").objectStore("pdf").getAll();
-            request.onsuccess=()=>resolve(request.result.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)));
-            request.onerror=()=>reject(request.error);
-        });
-    }
-    function prepareFile(blob,fileName){
-        if(!(blob instanceof Blob) || !blob.size) throw new Error("Raportul PDF este gol.");
-        const name=String(fileName||"raport-laborator.pdf").replace(/[\\/:*?"<>|]/g,"_");
-        return {name:name.toLowerCase().endsWith(".pdf")?name:name+".pdf",blob};
-    }
-    function downloadBlob(blob,name){
-        const url=URL.createObjectURL(blob),a=document.createElement("a");
-        a.href=url;a.download=name;a.style.display="none";document.body.append(a);a.click();a.remove();
-        global.setTimeout(()=>URL.revokeObjectURL(url),60000);
-    }
-    function shareableFile(blob,name){
-        try{
-            if(typeof global.File!=="function" || typeof navigator.share!=="function" || typeof navigator.canShare!=="function")return null;
-            const file=new File([blob],name,{type:"application/pdf"});
-            return navigator.canShare({files:[file]})?file:null;
-        }catch{return null;}
-    }
-    async function saveBlob(blob,fileName,title="Raport experiment"){
-        const {name}=prepareFile(blob,fileName);
-        rememberPdf(blob,name,title).catch(()=>{});
-        const apple=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-        const file=apple?shareableFile(blob,name):null;
-        if(file){
-            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
-            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
-        }
-        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
-    }
-    async function shareBlob(blob,fileName,title="Raport experiment"){
-        const {name}=prepareFile(blob,fileName),file=shareableFile(blob,name);
-        rememberPdf(blob,name,title).catch(()=>{});
-        if(file){
-            try{await navigator.share({files:[file],title});return {status:"shared",fileName:name};}
-            catch(error){if(error?.name==="AbortError")return {status:"cancelled",fileName:name};}
-        }
-        downloadBlob(blob,name);return {status:"downloaded",fileName:name};
-    }
-
-    global.LaboratorPdfLocal=Object.freeze({createTextPdfBlob,saveBlob,shareBlob,getSavedPdfs});
-})(globalThis);
-
-</script></head><body><main>
+</style><script src="../assets/js/pdf-local.js?v=2.1.4-clasa11"></script></head><body><main>
 <header><small>LABORATOR VIRTUAL · CLASA A XI-A · EXPERIMENTUL 13</small><h1>Studiul unui sistem simplu cu comportament haotic</h1><p>Observă. Măsoară. Compară. Explică.</p></header>
 <article><h2>Fișa de laborator</h2><form id="identity"><div class="fields"><label>Nume și prenume<input id="studentName" required minlength="3" maxlength="80" autocomplete="name"></label><label>Clasa<input id="studentClass" required maxlength="30" placeholder="XI A"></label><label>Număr în catalog<input id="catalog" type="number" min="1" max="40" step="1" required></label></div><div class="profile-row"><label>Profil<select id="profile"><option value="F1">F1 · profil real</option><option value="F1-mil">F1 · profil militar</option><option value="F2-2">F2 · 2 ore/săptămână</option><option value="F2-1">F2 · 1 oră/săptămână</option></select></label><button>Deschide fișa</button></div></form><p id="storage" role="status"></p></article>
 <div id="lab" hidden><div class="topbar"><label>Reprezentare<select id="view"><option value="2">2D · frontal</option><option value="3">3D · perspectivă</option></select></label><label id="angleBox" hidden>Unghi de observare<input id="angle" type="range" min="-45" max="45" step="1" value="-20"></label><span id="attempts" class="muted"></span><span id="best" class="badge"></span></div><aside id="profileNotice" hidden></aside>
 <details><summary>Pregătirea experimentului</summary><p><strong>Materiale:</strong> <span id="materials"></span></p><p id="safetyText"></p><p id="prerequisite"></p></details>
 <p id="progress" class="muted"></p><nav aria-label="Etapele experimentului"><button data-step="0">1 · Observă</button><button data-step="1">2 · Compară</button><button data-step="2">3 · Verifică</button><button data-step="3">4 · Explică</button><button data-step="4">5 · Rezultate</button></nav>
 <section id="activities" class="panel"><h2 id="activityTitle"></h2><p id="instructions"></p><p id="required" class="muted"></p><div id="controls" class="controls"></div><canvas id="scene" role="img" aria-label="Montajul experimentului și evoluția fenomenului"></canvas><div class="toolbar"><button id="run">Pornește observarea</button><button id="reset" class="alt">Revino la început</button><button id="sound" class="alt" hidden>Ascultă</button><label>Redare<select id="speed"><option value="1">Normală</option><option value="2">Mai rapidă</option><option value="0.5">Mai lentă</option></select></label><span id="clock" class="muted">Timpul simulării: 0 s</span></div><div id="meters" class="meters" aria-live="polite"></div><div id="entry" class="entry"></div><button id="capture">Înregistrează măsurarea</button><p id="feedback" role="status"></p><p id="coverage" class="muted"></p><div class="scroll"><table id="measurements"></table></div><canvas id="graph" role="img" aria-label="Graficul măsurărilor înregistrate"></canvas><label style="margin-top:24px"><span id="questionText"></span><select id="answer"></select></label></section>
-<section id="results" class="panel" hidden><h2>Rezultate și concluzii</h2><p>Nota include 1 punct din oficiu și câte 2,25 puncte pentru fiecare activitate: 1,50 pentru măsurări și calcule, 0,75 pentru interpretare. Repetările nu reduc nota.</p><div id="resultText" class="grade" role="status"></div><div id="breakdown"></div><label style="margin:20px 0">Concluzia ta<textarea id="conclusion" maxlength="1200" placeholder="Ce ai observat și cum explici rezultatele?"></textarea><small>Concluzia se păstrează în raport.</small></label><div class="toolbar"><button id="evaluate">Finalizează și evaluează</button><button id="retry" class="alt">Începe o încercare nouă</button><button id="pdf" disabled>Descarcă PDF-ul</button></div><p class="muted">Raportul păstrează măsurările și nota din cea mai bună încercare. La note egale se reține cea mai recentă.</p><div id="history"></div></section>
+<section id="results" class="panel" hidden><h2>Rezultate și concluzii</h2><p>Barem: 1 punct din oficiu, 2 pentru măsurători, 3 pentru completarea calculelor, 2 pentru interpretare și concluzie, 2 pentru răspunsurile conceptuale corecte. Citirile și calculele se punctează după completare.</p><div id="resultText" class="grade" role="status"></div><div id="breakdown"></div><label style="margin:20px 0">Concluzia ta<textarea id="conclusion" maxlength="1200" placeholder="Ce ai observat și cum explici rezultatele?"></textarea><small>Concluzia se păstrează în raport.</small></label><div class="toolbar"><button id="evaluate">Finalizează și evaluează</button><button id="retry" class="alt">Începe o încercare nouă</button><button id="pdf" disabled>Descarcă PDF-ul</button></div><p class="muted">Raportul păstrează măsurările și nota din cea mai bună încercare. La note egale se reține cea mai recentă.</p><div id="history"></div></section>
 <div class="navigation"><button id="back" class="alt">← Înapoi</button><button id="next">Mergi mai departe →</button></div><details id="extension"><summary>Relații utile și aprofundare</summary><p id="extensionText"></p></details></div><footer>Laborator virtual de fizică · Clasa a XI-a</footer></main><script>const EXPERIMENT_ID=13;const NEXT_PAGE="index.html";
 'use strict';
 const Physics=(()=>{
@@ -507,10 +324,10 @@ function persist(){if(!book)return;try{localStorage.setItem(key,JSON.stringify(b
 function controls(){return {...config.stages[active].fixed,...stepState().controls};}
 function readings(s,c){return s.meters.map(m=>({...m,number:Number(m.value(params,c).toFixed(m.decimals))}));}
 function stopped(){motion.running=false;$('run').textContent='Pornește observarea';}
-function showActivity(n){stopped();active=n;current().active=n;$('activities').hidden=n===4;$('results').hidden=n!==4;document.querySelectorAll('[data-step]').forEach((b,i)=>{b.setAttribute('aria-selected',String(i===n));b.classList.toggle('complete',i<4&&stageScore(current().steps[i],config.stages[i]).points>=2.24);});$('progress').textContent=`Etapa ${n+1} din 5`;$('back').disabled=n===0;$('next').textContent=n===4?'Mergi mai departe → următorul experiment':'Mergi mai departe →';
+function showActivity(n){stopped();active=n;current().active=n;$('activities').hidden=n===4;$('results').hidden=n!==4;document.querySelectorAll('[data-step]').forEach((b,i)=>{b.setAttribute('aria-selected',String(i===n));b.classList.toggle('complete',i<4&&selectedRows(current().steps[i],config.stages[i]).length>=config.stages[i].minimum&&Boolean(current().steps[i].answer));});$('progress').textContent=`Etapa ${n+1} din 5`;$('back').disabled=n===0;$('next').textContent=n===4?'Mergi mai departe → următorul experiment':'Mergi mai departe →';
  if(n<4)renderActivity();else renderResults();persist();updateTop();}
 function updateTop(){$('attempts').textContent=`Încercarea ${current().id} · încercări începute: ${book.started}`;const b=bestAttempt();$('best').textContent=b?`Cea mai bună notă: ${format(b.grade)}`:'Nicio încercare finalizată';$('pdf').disabled=!b;$('evaluate').disabled=current().finished;}
-$('identity').addEventListener('submit',e=>{e.preventDefault();if(book)persist();stopped();const name=$('studentName').value.trim().replace(/\s+/g,' '),cls=$('studentClass').value.trim().toUpperCase().replace(/\s+/g,' '),cat=numeric($('catalog').value),profile=$('profile').value;if(name.length<3||!cls||!Number.isInteger(cat)||cat<1||cat>40)return;params=Physics.parameters(cls,cat);config=makeExperiment(EXPERIMENT_ID,params,profile);key=`fizica-xi-refacut-v1:${EXPERIMENT_ID}:`+JSON.stringify([cls,cat]);try{book=JSON.parse(localStorage.getItem(key));if(book?.version!==CONTENT_VERSION||!book.routes||!Number.isInteger(book.started))book=null;}catch{book=null;}if(!book)book={version:CONTENT_VERSION,identity:{name,cls,cat},started:0,routes:{}};book.identity={name,cls,cat};if(!book.routes[profile]){book.routes[profile]={results:[],best:null};route=book.routes[profile];route.current=fresh();}else route=book.routes[profile];view=book.view===3?3:2;$('view').value=String(view);$('angleBox').hidden=view!==3;$('lab').hidden=false;$('profileNotice').textContent=config.profileNotice;$('profileNotice').hidden=!config.profileNotice;$('materials').textContent=config.materials;$('safetyText').textContent=config.safety;$('prerequisite').textContent=config.prerequisite;$('extensionText').textContent=config.extension;$('extension').hidden=!config.extension;$('conclusion').value=current().conclusion||'';$('conclusion').disabled=current().finished;showActivity(Math.min(current().active||0,4));});
+$('identity').addEventListener('submit',e=>{e.preventDefault();if(book)persist();stopped();const name=$('studentName').value.trim().replace(/\s+/g,' '),cls=$('studentClass').value.trim().toUpperCase().replace(/\s+/g,' '),cat=numeric($('catalog').value),profile=$('profile').value;if(name.length<3||!cls||!Number.isInteger(cat)||cat<1||cat>40)return;params=Physics.parameters(cls,cat);config=makeExperiment(EXPERIMENT_ID,params,profile);key=`fizica-xi-refacut-v1:${EXPERIMENT_ID}:`+JSON.stringify([cls,cat]);try{book=JSON.parse(localStorage.getItem(key));if(book?.version!==CONTENT_VERSION||!book.routes||!Number.isInteger(book.started))book=null;}catch{book=null;}if(!book)book={version:CONTENT_VERSION,identity:{name,cls,cat},started:0,routes:{}};book.identity={name,cls,cat};refreshGrades();if(!book.routes[profile]){book.routes[profile]={results:[],best:null};route=book.routes[profile];route.current=fresh();}else route=book.routes[profile];view=book.view===3?3:2;$('view').value=String(view);$('angleBox').hidden=view!==3;$('lab').hidden=false;$('profileNotice').textContent=config.profileNotice;$('profileNotice').hidden=!config.profileNotice;$('materials').textContent=config.materials;$('safetyText').textContent=config.safety;$('prerequisite').textContent=config.prerequisite;$('extensionText').textContent=config.extension;$('extension').hidden=!config.extension;$('conclusion').value=current().conclusion||'';$('conclusion').disabled=current().finished;showActivity(Math.min(current().active||0,4));});
 function renderActivity(){const s=config.stages[active],st=stepState();motion={t:st.time||0,running:false};$('activityTitle').textContent=`${active+1}. ${s.title}`;$('instructions').textContent=s.text;$('required').textContent=`Înregistrează ${s.minimum} situații diferite, folosind opțiunile de mai jos.`;$('controls').replaceChildren();for(const control of s.controls){const label=document.createElement('label');label.textContent=control.label;let el;if(control.options){el=document.createElement('select');for(const opt of control.options){const o=document.createElement('option');o.value=opt.value;o.textContent=opt.label;el.append(o);}}else{el=document.createElement('input');el.type='range';for(const k of ['min','max','step'])el[k]=control[k];const out=document.createElement('output');out.textContent=st.controls[control.key]+' '+control.unit;label.append(out);el.addEventListener('input',()=>out.textContent=el.value+' '+control.unit);}el.dataset.control=control.key;el.value=st.controls[control.key];el.disabled=current().finished;el.addEventListener('input',()=>{st.controls[control.key]=el.value;st.observed=false;st.time=0;motion={t:0,running:false};stopped();updateReadings();persist();});label.append(el);$('controls').append(label);}
  $('entry').replaceChildren();for(const f of s.fields){const label=document.createElement('label');label.textContent=f.label+(f.unit?` (${f.unit})`:'');const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.autocomplete='off';inp.dataset.field=f.key;inp.setAttribute('aria-label',label.textContent);inp.disabled=current().finished;label.append(inp);if(f.formula){const note=document.createElement('small');note.textContent=f.formula;label.append(note);}$('entry').append(label);}
  $('questionText').textContent=s.quiz.text;const select=$('answer');select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='Alege concluzia';select.append(empty);for(const opt of s.quiz.options){const o=document.createElement('option');o.value=opt.value;o.textContent=opt.label;select.append(o);}select.value=st.answer;select.disabled=current().finished;$('capture').disabled=current().finished;$('run').disabled=current().finished;$('reset').disabled=current().finished;$('feedback').textContent='';$('sound').hidden=s.scene!=='music';renderRows();updateReadings();}
@@ -523,17 +340,34 @@ $('reset').onclick=()=>{stopped();motion.t=0;stepState().time=0;stepState().obse
 function signature(c,s){return s.distinct.map(k=>`${k}=${c[k]}`).join('|');}
 function rowAccuracy(row,s){if(!row.valid)return 0;return s.fields.reduce((sum,f)=>sum+(Number.isFinite(row.values[f.key])&&Math.abs(row.values[f.key]-row.expected[f.key])<=f.tolerance?1:0),0)/s.fields.length;}
 function selectedRows(st,s){const byCase=new Map();for(const row of st.rows){const k=signature(row.controls,s),old=byCase.get(k);if(!old||rowAccuracy(row,s)>=rowAccuracy(old,s))byCase.set(k,row);}return [...byCase.values()].sort((a,b)=>rowAccuracy(b,s)-rowAccuracy(a,s)).slice(0,s.minimum);}
-function stageScore(st,s){const rows=selectedRows(st,s),measurement=rows.reduce((a,r)=>a+rowAccuracy(r,s),0)/s.minimum*1.5,observation=st.answer===s.quiz.correct?.75:0;return {points:measurement+observation,measurement,observation,rows};}
-function evaluate(at){const parts=at.steps.map((st,i)=>stageScore(st,config.stages[i]));return {parts:parts.map(x=>({points:x.points,measurement:x.measurement,observation:x.observation})),grade:Math.round((1+parts.reduce((a,x)=>a+x.points,0))*100)/100};}
+function evaluate(at, stages=config.stages){
+ const entries=at.steps.map((step,i)=>selectedRows(step,stages[i]));
+ const average=fractions=>fractions.reduce((total,value)=>total+value,0)/stages.length;
+ const measurements=average(entries.map((rows,i)=>rows.length/stages[i].minimum));
+ const calculations=average(entries.map((rows,i)=>rows.filter(row=>
+  stages[i].fields.every(field=>Number.isFinite(row.values[field.key]))).length/stages[i].minimum));
+ const answered=at.steps.filter(step=>Boolean(step.answer)).length;
+ const interpretation=(answered/stages.length+Number(Boolean(at.conclusion?.trim())))/2;
+ const correct=at.steps.filter((step,i)=>step.answer===stages[i].quiz.correct).length;
+ return LaboratorPdfLocal.activityGrade(measurements,calculations,interpretation,correct,stages.length);
+}
+function refreshGrades(){
+ Object.entries(book.routes).forEach(([profile,data])=>{
+  const stages=makeExperiment(EXPERIMENT_ID,params,profile).stages;
+  for(const attempt of data.results) Object.assign(attempt,evaluate(attempt,stages));
+  if(data.current?.finished) Object.assign(data.current,evaluate(data.current,stages));
+  data.best=data.results.reduce((best,attempt)=>!best||attempt.grade>=best.grade?attempt:best,null);
+ });
+}
 $('capture').onclick=()=>{if(current().finished)return;const s=config.stages[active],c=controls(),ms=readings(s,c),values={};for(const f of s.fields){const inp=$('entry').querySelector(`[data-field="${f.key}"]`);values[f.key]=numeric(inp.value);if(!Number.isFinite(values[f.key])){$('feedback').textContent='Completează toate citirile și calculele cu valori numerice.';inp.focus();return;}}const row={controls:clone(c),meters:ms.map(({key,label,unit,number,decimals})=>({key,label,unit,number,decimals})),values,expected:Object.fromEntries(s.fields.map(f=>[f.key,f.expected(params,c,ms)])),valid:!s.valid||s.valid(params,c),time:motion.t,recorded:new Date().toISOString()};stepState().rows.push(row);const accuracy=rowAccuracy(row,s);$('feedback').textContent=!row.valid?s.invalidHint:accuracy===1?'Înregistrare corectă. Compară cu o altă situație.':'Înregistrare salvată. Verifică citirea, unitățile și formula; poți înregistra din nou aceeași situație.';persist();renderRows();};
 function controlLabel(c,s){return s.controls.map(control=>{const v=c[control.key],label=control.options?.find(x=>x.value===v)?.label||v+(control.unit||'');return `${control.label}: ${label}`;}).join(' · ');}
-function renderRows(){const s=config.stages[active],st=stepState(),table=$('measurements');table.replaceChildren();const head=document.createElement('thead'),tr=document.createElement('tr');for(const label of ['Situație',...s.fields.map(f=>`${f.label}${f.unit?' ('+f.unit+')':''}`),'']){const th=document.createElement('th');th.textContent=label;tr.append(th);}head.append(tr);table.append(head);const body=document.createElement('tbody');st.rows.forEach((row,index)=>{const tr=document.createElement('tr'),condition=document.createElement('td');condition.textContent=controlLabel(row.controls,s);tr.append(condition);for(const f of s.fields){const td=document.createElement('td');td.textContent=format(row.values[f.key],Math.abs(row.values[f.key])<1?3:2);td.className=Math.abs(row.values[f.key]-row.expected[f.key])<=f.tolerance&&row.valid?'correct':'check';tr.append(td);}const td=document.createElement('td');if(!current().finished){const b=document.createElement('button');b.type='button';b.className='quiet';b.textContent='Șterge';b.setAttribute('aria-label','Șterge înregistrarea '+(index+1));b.onclick=()=>{st.rows.splice(index,1);persist();renderRows();};td.append(b);}tr.append(td);body.append(tr);});table.append(body);Scenes.graph($('graph'),st.rows,s);const score=stageScore(st,s);$('coverage').textContent=`Situații distincte reținute: ${score.rows.length}/${s.minimum}.`;
+function renderRows(){const s=config.stages[active],st=stepState(),table=$('measurements');table.replaceChildren();const head=document.createElement('thead'),tr=document.createElement('tr');for(const label of ['Situație',...s.fields.map(f=>`${f.label}${f.unit?' ('+f.unit+')':''}`),'']){const th=document.createElement('th');th.textContent=label;tr.append(th);}head.append(tr);table.append(head);const body=document.createElement('tbody');st.rows.forEach((row,index)=>{const tr=document.createElement('tr'),condition=document.createElement('td');condition.textContent=controlLabel(row.controls,s);tr.append(condition);for(const f of s.fields){const td=document.createElement('td');td.textContent=format(row.values[f.key],Math.abs(row.values[f.key])<1?3:2);td.className=Math.abs(row.values[f.key]-row.expected[f.key])<=f.tolerance&&row.valid?'correct':'check';tr.append(td);}const td=document.createElement('td');if(!current().finished){const b=document.createElement('button');b.type='button';b.className='quiet';b.textContent='Șterge';b.setAttribute('aria-label','Șterge înregistrarea '+(index+1));b.onclick=()=>{st.rows.splice(index,1);persist();renderRows();};td.append(b);}tr.append(td);body.append(tr);});table.append(body);Scenes.graph($('graph'),st.rows,s);$('coverage').textContent=`Situații distincte reținute: ${selectedRows(st,s).length}/${s.minimum}.`;
 }
 $('back').onclick=()=>{if(active>0)showActivity(active-1);};$('next').onclick=()=>{if(active<4)showActivity(active+1);else location.href=NEXT_PAGE;};document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>showActivity(Number(b.dataset.step)));
 $('conclusion').oninput=()=>{if(book&&!current().finished){current().conclusion=$('conclusion').value;persist();}};
 $('evaluate').onclick=()=>{if(current().finished)return;stopped();current().finished=true;current().completed=new Date().toISOString();Object.assign(current(),evaluate(current()));route.results.push(clone(current()));if(!route.best||current().grade>=route.best.grade)route.best=clone(current());persist();renderResults();updateTop();};
 $('retry').onclick=()=>{if(!current().finished){$('resultText').textContent='Finalizează încercarea curentă. Poți corecta și repeta măsurările înainte de finalizare.';return;}route.current=fresh();$('conclusion').value='';$('conclusion').disabled=false;persist();showActivity(0);};
-function renderResults(){const at=current();$('conclusion').value=at.conclusion||'';$('conclusion').disabled=at.finished;$('evaluate').disabled=at.finished;$('resultText').textContent=at.finished?`Nota încercării ${at.id}: ${format(at.grade)} / 10`:'Finalizează când ai înregistrat măsurările și concluziile.';$('breakdown').replaceChildren();config.stages.forEach((s,i)=>{const row=document.createElement('div');row.className='summary-row';const ss=at.finished?at.parts[i]:stageScore(at.steps[i],s);const label=document.createElement('span');label.textContent=s.title;const value=document.createElement('strong');value.textContent=`${format(ss.points)} / 2,25`;row.append(label,value);$('breakdown').append(row);});$('history').replaceChildren();const best=bestAttempt();Object.values(book.routes).flatMap(r=>r.results).sort((a,b)=>a.id-b.id).forEach(at=>{const p=document.createElement('p');p.textContent=`Încercarea ${at.id} · ${profileName(at.profile)} · ${new Date(at.completed).toLocaleString('ro-RO')} · nota ${format(at.grade)}${best.id===at.id?' · inclusă în PDF':''}`;$('history').append(p);});$('pdf').disabled=!bestAttempt();}
+function renderResults(){const at=current();$('conclusion').value=at.conclusion||'';$('conclusion').disabled=at.finished;$('evaluate').disabled=at.finished;$('resultText').textContent=at.finished?`Nota încercării ${at.id}: ${format(at.grade)} / 10`:'Finalizează când ai înregistrat măsurările și concluziile.';$('breakdown').replaceChildren();(at.finished?at:evaluate(at)).criteria.forEach(([criterion,points,max])=>{const row=document.createElement('div');row.className='summary-row';const label=document.createElement('span');label.textContent=criterion;const value=document.createElement('strong');value.textContent=`${format(points)} / ${format(max)}`;row.append(label,value);$('breakdown').append(row);});$('history').replaceChildren();const best=bestAttempt();Object.values(book.routes).flatMap(r=>r.results).sort((a,b)=>a.id-b.id).forEach(at=>{const p=document.createElement('p');p.textContent=`Încercarea ${at.id} · ${profileName(at.profile)} · ${new Date(at.completed).toLocaleString('ro-RO')} · nota ${format(at.grade)}${best.id===at.id?' · inclusă în PDF':''}`;$('history').append(p);});$('pdf').disabled=!bestAttempt();}
 function frame(t){if(book&&active<4){if(motion.running){const elapsed=(t-motion.start)/1000;if(motion.duration!==null){const fraction=Math.min(1,elapsed/motion.wall);motion.t=motion.duration*fraction;if(fraction>=1){stopped();stepState().observed=true;persist();}}else motion.t=elapsed;stepState().time=motion.t;$('clock').textContent=`Timpul simulării: ${format(motion.t,3)} s`;drawScene();if(!motion.running)updateReadings();}if(t-lastTick>5000){persist();lastTick=t;}}requestAnimationFrame(frame);}requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{if(book&&active<4){drawScene();Scenes.graph($('graph'),stepState().rows,config.stages[active]);}});window.addEventListener('pagehide',persist);
 let audioContext=null;
@@ -542,8 +376,9 @@ function pdfPages(best){const reportConfig=makeExperiment(EXPERIMENT_ID,params,b
  function page(){const c=document.createElement('canvas');c.width=PW;c.height=PH;g=c.getContext('2d');g.fillStyle='white';g.fillRect(0,0,PW,PH);g.fillStyle='#123d51';g.fillRect(0,0,PW,140);g.fillStyle='white';g.font='bold 29px sans-serif';g.fillText(`Experimentul ${String(EXPERIMENT_ID).padStart(2,'0')} · ${reportConfig.domain}`,60,65);g.font='22px sans-serif';g.fillText('Fișa de laborator · Clasa a XI-a',60,108);pages.push(c);y=195;}
  function text(s,bold=false,size=23){const font=`${bold?'bold ':''}${size}px sans-serif`,words=String(s).split(/\s+/).flatMap(w=>w.match(new RegExp('.{1,'+Math.floor(1050/size)+'}','g'))||['']);let line='';function write(){if(y>1595){page();}g.font=font;g.fillStyle='#17394d';g.fillText(line,60,y);y+=size+12;}for(const word of words){g.font=font;const next=line?line+' '+word:word;if(g.measureText(next).width>1110&&line){write();line=word;}else line=next;}write();y+=6;}
  page();text(reportConfig.title,true,28);text(`Elev: ${book.identity.name}`,true);text(`Clasa: ${book.identity.cls} · Nr. catalog: ${book.identity.cat} · Profil: ${profileName(best.profile)}`);text(`Încercări începute: ${book.started} · Finalizate: ${Object.values(book.routes).reduce((n,r)=>n+r.results.length,0)}`);text(`Încercarea reținută: ${best.id} · Nota maximă: ${format(best.grade)} / 10`,true,27);text(`Data: ${new Date(best.completed).toLocaleString('ro-RO')}`);text('Repetarea nu este penalizată.');if(reportConfig.profileNotice)text(reportConfig.profileNotice);
- reportConfig.stages.forEach((s,i)=>{if(i===2)page();if(y>1270)page();text(`${i+1}. ${s.title}`,true,25);const st=best.steps[i],rows=selectedRows(st,s);if(!rows.length)text('Nu sunt înregistrări.');rows.forEach((row,j)=>{text(`${j+1}) ${controlLabel(row.controls,s)}`,true,20);text(s.fields.map(f=>`${f.label}: ${format(row.values[f.key],Math.abs(row.values[f.key])<1?3:2)} ${f.unit}`).join(' · '),false,20);});const selected=s.quiz.options.find(x=>x.value===st.answer);text('Concluzie: '+(selected?selected.label:'Fără răspuns.'),false,21);text(`Punctaj: ${format(best.parts[i].points)} / 2,25`,true,20);y+=12;});
- if(y>1260)page();text('Concluzia elevului',true,25);text(best.conclusion||'Nescrisă.',false,21);text(`Nota finală: ${format(best.grade)} / 10 (include 1 punct din oficiu)`,true,26);
+ reportConfig.stages.forEach((s,i)=>{if(i===2)page();if(y>1270)page();text(`${i+1}. ${s.title}`,true,25);const st=best.steps[i],rows=selectedRows(st,s);if(!rows.length)text('Nu sunt înregistrări.');rows.forEach((row,j)=>{text(`${j+1}) ${controlLabel(row.controls,s)}`,true,20);text(s.fields.map(f=>`${f.label}: ${format(row.values[f.key],Math.abs(row.values[f.key])<1?3:2)} ${f.unit}`).join(' · '),false,20);});const selected=s.quiz.options.find(x=>x.value===st.answer);text('Concluzie: '+(selected?selected.label:'Fără răspuns.'),false,21);y+=12;});
+ if(y>1260)page();text('Concluzia elevului',true,25);text(best.conclusion||'Nescrisă.',false,21);if(y>1230)page();
+ LaboratorPdfLocal.drawGradingTable(g,60,y,LaboratorPdfLocal.activityGradeRows(best),best.draft?"Punctaj provizoriu":"Punctaj și nota finală");
  pages.forEach((page,i)=>{const c=page.getContext('2d');c.fillStyle='#607b89';c.font='18px sans-serif';c.fillText(`${book.identity.cls} · Nr. ${book.identity.cat} · Încercarea ${best.id} · Pagina ${i+1}/${pages.length}`,60,1695);});return pages;}
 function profileName(p){return {'F1':'F1 · profil real','F1-mil':'F1 · profil militar','F2-2':'F2 · 2 ore/săptămână','F2-1':'F2 · 1 oră/săptămână'}[p]||p;}
 function pdfBlob(pages){const enc=new TextEncoder(),chunks=[],offsets=[0];let length=0;const write=v=>{const bytes=typeof v==='string'?enc.encode(v):v;chunks.push(bytes);length+=bytes.length;},objs=[];objs[1]='<< /Type /Catalog /Pages 2 0 R >>';objs[2]=`<< /Type /Pages /Count ${pages.length} /Kids [${pages.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>`;pages.forEach((page,i)=>{const n=3+i*3,raw=atob(page.toDataURL('image/jpeg',.92).split(',')[1]),bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));objs[n]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${n+1} 0 R >> >> /Contents ${n+2} 0 R >>`;objs[n+1]={bytes,head:`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>`};const stream='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';objs[n+2]=`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`;});write('%PDF-1.4\n');for(let i=1;i<objs.length;i++){offsets[i]=length;write(`${i} 0 obj\n`);if(typeof objs[i]==='string')write(objs[i]);else{write(objs[i].head+'\nstream\n');write(objs[i].bytes);write('\nendstream');}write('\nendobj\n');}const start=length;write(`xref\n0 ${objs.length}\n0000000000 65535 f \n`);for(let i=1;i<objs.length;i++)write(String(offsets[i]).padStart(10,'0')+' 00000 n \n');write(`trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF`);return new Blob(chunks,{type:'application/pdf'});}
